@@ -11,8 +11,8 @@ use std::time::SystemTime;
 use boxed_error::Boxed;
 use data_url::DataUrl;
 use deno_error::JsError;
-use deno_maybe_sync::MaybeSend;
-use deno_maybe_sync::MaybeSync;
+use edno_maybe_sync::MaybeSend;
+use edno_maybe_sync::MaybeSync;
 use deno_media_type::MediaType;
 use deno_path_util::url_to_file_path;
 use http::header;
@@ -175,7 +175,7 @@ impl File {
 }
 
 #[allow(clippy::disallowed_types, reason = "arc wrapper type")]
-pub type MemoryFilesRc = deno_maybe_sync::MaybeArc<dyn MemoryFiles>;
+pub type MemoryFilesRc = edno_maybe_sync::MaybeArc<dyn MemoryFiles>;
 
 pub trait MemoryFiles: std::fmt::Debug + MaybeSend + MaybeSync {
   fn get(&self, url: &Url) -> Option<File>;

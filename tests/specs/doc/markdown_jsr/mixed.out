@@ -1,6 +1,6 @@
-Download http://127.0.0.1:4250/@denotest/markdown/meta.json
-Download http://127.0.0.1:4250/@denotest/markdown/1.0.0_meta.json
-Download http://127.0.0.1:4250/@denotest/markdown/1.0.0/readme.md
+Download http://127.0.0.1:4250/@ednotest/markdown/meta.json
+Download http://127.0.0.1:4250/@ednotest/markdown/1.0.0_meta.json
+Download http://127.0.0.1:4250/@ednotest/markdown/1.0.0/readme.md
 file://[WILDCARD]/mod.ts
 
 Defined in file://[WILDCARD]/mod.ts:1:1
@@ -8,11 +8,11 @@ Defined in file://[WILDCARD]/mod.ts:1:1
 function add(a: number, b: number): number
   Adds two numbers.
 
-http://127.0.0.1:4250/@denotest/markdown/1.0.0/readme.md
+http://127.0.0.1:4250/@ednotest/markdown/1.0.0/readme.md
 
 # Markdown Test Package
 
-A package for testing `deno doc` with markdown files from JSR.
+A package for testing `edno doc` with markdown files from JSR.
 
 ## Features
 

@@ -59,17 +59,17 @@ const {
   validateObject,
   validateOneOf,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { codes } = core.loadExtScript("ext:deno_node/internal/error_codes.ts");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { codes } = core.loadExtScript("ext:edno_node/internal/error_codes.ts");
 const { shouldColorize } = core.loadExtScript(
-  "ext:deno_node/internal/util/colorize.mjs",
+  "ext:edno_node/internal/util/colorize.mjs",
 );
 const {
   createStylizeWithColor,
   formatBigInt,
   formatNumber,
   formatValue,
-} = core.loadExtScript("ext:deno_web/01_console.js");
+} = core.loadExtScript("ext:edno_web/01_console.js");
 
 // Set Graphics Rendition https://en.wikipedia.org/wiki/ANSI_escape_code#graphics
 // Each color consists of an array with the color code as first entry and the
@@ -186,10 +186,10 @@ const inspectDefaultOptions = {
 
   // node only
   maxArrayLength: 100,
-  maxStringLength: 10000, // deno: strAbbreviateSize: 100
+  maxStringLength: 10000, // edno: strAbbreviateSize: 100
   customInspect: true,
 
-  // deno only
+  // edno only
   /** You can override the quotes preference in inspectString.
    * Used by util.inspect() */
   // TODO(kt3k): Consider using symbol as a key to hide this from the public
@@ -494,7 +494,7 @@ function formatWithOptionsInternal(inspectOptions, args) {
         const nextChar = StringPrototypeCharCodeAt(first, ++i);
         if (a + 1 !== args.length) {
           switch (nextChar) {
-            // deno-lint-ignore no-case-declarations
+            // edno-lint-ignore no-case-declarations
             case 115: // 's'
               const tempArg = args[++a];
               if (typeof tempArg === "number") {
@@ -519,7 +519,7 @@ function formatWithOptionsInternal(inspectOptions, args) {
             case 106: // 'j'
               tempStr = tryStringify(args[++a]);
               break;
-            // deno-lint-ignore no-case-declarations
+            // edno-lint-ignore no-case-declarations
             case 100: // 'd'
               const tempNum = args[++a];
               if (typeof tempNum === "bigint") {
@@ -541,7 +541,7 @@ function formatWithOptionsInternal(inspectOptions, args) {
                 depth: 4,
               });
               break;
-            // deno-lint-ignore no-case-declarations
+            // edno-lint-ignore no-case-declarations
             case 105: // 'i'
               const tempInteger = args[++a];
               if (typeof tempInteger === "bigint") {
@@ -555,7 +555,7 @@ function formatWithOptionsInternal(inspectOptions, args) {
                 );
               }
               break;
-            // deno-lint-ignore no-case-declarations
+            // edno-lint-ignore no-case-declarations
             case 102: // 'f'
               const tempFloat = args[++a];
               if (typeof tempFloat === "symbol") {

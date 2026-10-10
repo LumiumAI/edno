@@ -11,7 +11,7 @@ import { assert, assertEquals, assertRejects } from "./test_util.ts";
 //        i32.add)
 //      (export "add" (func $add))
 //    )
-// deno-fmt-ignore
+// edno-fmt-ignore
 const simpleWasm = new Uint8Array([
   0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x07, 0x01, 0x60,
   0x02, 0x7f, 0x7f, 0x01, 0x7f, 0x03, 0x02, 0x01, 0x00, 0x07, 0x07, 0x01,
@@ -19,7 +19,7 @@ const simpleWasm = new Uint8Array([
   0x00, 0x20, 0x01, 0x6a, 0x0b
 ]);
 
-Deno.test(async function wasmInstantiateWorksWithBuffer() {
+Edno.test(async function wasmInstantiateWorksWithBuffer() {
   const { module, instance } = await WebAssembly.instantiate(simpleWasm);
   assertEquals(WebAssembly.Module.exports(module), [{
     name: "add",
@@ -34,7 +34,7 @@ Deno.test(async function wasmInstantiateWorksWithBuffer() {
 // V8's default implementation of `WebAssembly.instantiateStreaming()` if you
 // don't set the Wasm streaming callback, is to take a byte source. Here we
 // check that our implementation of the callback disallows it.
-Deno.test(
+Edno.test(
   async function wasmInstantiateStreamingFailsWithBuffer() {
     await assertRejects(async () => {
       await WebAssembly.instantiateStreaming(
@@ -45,7 +45,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   async function wasmInstantiateStreamingNoContentType() {
     const response = new Response(simpleWasm);
     // Rejects, not throws.
@@ -58,7 +58,7 @@ Deno.test(
   },
 );
 
-Deno.test(async function wasmInstantiateStreaming() {
+Edno.test(async function wasmInstantiateStreaming() {
   let isomorphic = "";
   for (const byte of simpleWasm) {
     isomorphic += String.fromCharCode(byte);
@@ -78,7 +78,7 @@ Deno.test(async function wasmInstantiateStreaming() {
   assertEquals(add(1, 3), 4);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function wasmFileStreaming() {
     const url = import.meta.resolve("../testdata/assets/unreachable.wasm");
@@ -92,13 +92,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function wasmStreamingNonTrivial() {
-    // deno-dom's Wasm file is a real-world non-trivial case that gave us
+    // edno-dom's Wasm file is a real-world non-trivial case that gave us
     // trouble when implementing this.
     await WebAssembly.instantiateStreaming(fetch(
-      "http://localhost:4545/assets/deno_dom_0.1.3-alpha2.wasm",
+      "http://localhost:4545/assets/edno_dom_0.1.3-alpha2.wasm",
     ));
   },
 );

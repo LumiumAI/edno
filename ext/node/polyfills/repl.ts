@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent and Node contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-this-alias no-unused-vars no-explicit-any
+// edno-lint-ignore-file no-this-alias no-unused-vars no-explicit-any
 
 import { core, primordials } from "ext:core/mod.js";
 const {
@@ -59,31 +59,31 @@ const {
   SyntaxError,
 } = primordials;
 
-import { Interface } from "ext:deno_node/_readline.mjs";
+import { Interface } from "ext:edno_node/_readline.mjs";
 const { commonPrefix } = core.loadExtScript(
-  "ext:deno_node/internal/readline/utils.mjs",
+  "ext:edno_node/internal/readline/utils.mjs",
 );
 const { inspect } = core.loadExtScript(
-  "ext:deno_node/internal/util/inspect.mjs",
+  "ext:edno_node/internal/util/inspect.mjs",
 );
 const {
   ERR_INVALID_REPL_EVAL_CONFIG,
   ERR_INVALID_REPL_INPUT,
   ERR_MISSING_ARGS,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { validateFunction } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const { shouldColorize } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
-const vm = core.loadExtScript("ext:deno_node/vm.js").default;
+const vm = core.loadExtScript("ext:edno_node/vm.js").default;
 import process from "node:process";
 import path from "node:path";
 import fs from "node:fs";
 import { Console } from "node:console";
 import Module from "node:module";
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 
 export const REPL_MODE_SLOPPY = Symbol("repl-sloppy");
 export const REPL_MODE_STRICT = Symbol("repl-strict");
@@ -141,7 +141,7 @@ function _replCaptureCallback(err: any) {
   if (typeof _prevCaptureCallback === "function") {
     _prevCaptureCallback(err);
   } else {
-    // Re-throw so deno_core's default uncaught handler runs.
+    // Re-throw so edno_core's default uncaught handler runs.
     throw err;
   }
 }
@@ -203,7 +203,7 @@ const reNodeParenFrame = new SafeRegExp(/\(node:[a-z_]+:/);
 const reNodeFrame = new SafeRegExp(/\bnode:[a-z_]+:\d+:\d+\)?$/);
 const reOpenParen = new SafeRegExp(/\(/);
 
-// Drop frames that originate from the REPL polyfill / deno_core internals,
+// Drop frames that originate from the REPL polyfill / edno_core internals,
 // plus the trailing top-level eval frame, so the stack matches Node's
 // `overrideStackTrace`-filtered output.
 function filterReplStack(stack: string): string {
@@ -336,7 +336,7 @@ interface PreviewSession {
 // this file only see the post-`removeImportedOps` view, which doesn't
 // include `op_node_repl_inspector_connect`. See `_repl_preview.js`.
 const { createPreviewSession: _createPreviewSession } = core.loadExtScript(
-  "ext:deno_node/_repl_preview.js",
+  "ext:edno_node/_repl_preview.js",
 ) as { createPreviewSession(): PreviewSession | null };
 
 const reUnexpectedEndOfInput = new SafeRegExp(/Unexpected end of input/);
@@ -1693,7 +1693,7 @@ export class REPLServer extends (Interface as any) {
             "",
           );
 
-          // Deno's V8 doesn't include source context in SyntaxError stacks
+          // Edno's V8 doesn't include source context in SyntaxError stacks
           // like Node.js does. Add it if we have the source code attached.
           if ((e as any)._replSourceCode) {
             const srcLine = (e as any)._replSourceCode;
@@ -1875,7 +1875,7 @@ export class REPLServer extends (Interface as any) {
     try {
       // `path` is the node:path module, not an Array; `path.join` is the
       // path joiner.
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       const replPath = path.join(process.cwd(), "repl");
       const replRequire = Module.createRequire(replPath);
       ObjectDefineProperty(context, "require", {

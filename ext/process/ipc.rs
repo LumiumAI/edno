@@ -5,14 +5,14 @@ use std::rc::Rc;
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::AtomicUsize;
 
-use deno_core::AsyncRefCell;
-use deno_core::CancelHandle;
-use deno_core::ExternalOpsTracker;
-use deno_core::RcRef;
-use deno_core::serde_json;
-use deno_io::BiPipe;
-use deno_io::BiPipeRead;
-use deno_io::BiPipeWrite;
+use edno_core::AsyncRefCell;
+use edno_core::CancelHandle;
+use edno_core::ExternalOpsTracker;
+use edno_core::RcRef;
+use edno_core::serde_json;
+use edno_io::BiPipe;
+use edno_io::BiPipeRead;
+use edno_io::BiPipeWrite;
 use memchr::memchr;
 use tokio::io::AsyncWriteExt;
 
@@ -142,7 +142,7 @@ pub struct IpcJsonStreamResource {
   pub ref_tracker: IpcRefTracker,
 }
 
-impl deno_core::Resource for IpcJsonStreamResource {
+impl edno_core::Resource for IpcJsonStreamResource {
   fn close(self: Rc<Self>) {
     self.cancel.cancel();
   }
@@ -471,7 +471,7 @@ impl IpcAdvancedStreamResource {
   }
 }
 
-impl deno_core::Resource for IpcAdvancedStreamResource {
+impl edno_core::Resource for IpcAdvancedStreamResource {
   fn close(self: Rc<Self>) {
     self.cancel.cancel();
   }
@@ -579,8 +579,8 @@ impl IpcJsonStream {
 mod tests {
   use std::rc::Rc;
 
-  use deno_core::RcRef;
-  use deno_core::serde_json::json;
+  use edno_core::RcRef;
+  use edno_core::serde_json::json;
 
   use super::IpcJsonStreamResource;
 
@@ -606,7 +606,7 @@ mod tests {
     use tokio::net::windows::named_pipe::ServerOptions;
 
     let name =
-      format!(r"\\.\pipe\deno-named-pipe-test-{}", rand::random::<u32>());
+      format!(r"\\.\pipe\edno-named-pipe-test-{}", rand::random::<u32>());
 
     let server = ServerOptions::new().create(name.clone()).unwrap();
     let client = ClientOptions::new().open(name).unwrap();
@@ -695,8 +695,8 @@ mod tests {
     Ok(())
   }
 
-  fn json_to_bytes(v: deno_core::serde_json::Value) -> Vec<u8> {
-    let mut buf = deno_core::serde_json::to_vec(&v).unwrap();
+  fn json_to_bytes(v: edno_core::serde_json::Value) -> Vec<u8> {
+    let mut buf = edno_core::serde_json::to_vec(&v).unwrap();
     buf.push(b'\n');
     buf
   }

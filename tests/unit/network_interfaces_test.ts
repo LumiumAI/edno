@@ -2,13 +2,13 @@
 
 import { assert } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   {
-    name: "Deno.networkInterfaces",
+    name: "Edno.networkInterfaces",
     permissions: { sys: ["networkInterfaces"] },
   },
   () => {
-    const networkInterfaces = Deno.networkInterfaces();
+    const networkInterfaces = Edno.networkInterfaces();
     assert(Array.isArray(networkInterfaces));
     assert(networkInterfaces.length > 0);
     for (

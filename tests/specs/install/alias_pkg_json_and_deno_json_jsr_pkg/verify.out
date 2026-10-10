@@ -1,2 +1,2 @@
-@denotest/esm-basic
+@ednotest/esm-basic
 [Module: null prototype] { add: [Function: add] }

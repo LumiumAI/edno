@@ -7,18 +7,18 @@ use std::path::PathBuf;
 use std::rc::Rc;
 
 use boxed_error::Boxed;
-use deno_core::FastString;
-use deno_core::JsRuntimeInspector;
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::url::Url;
-use deno_core::v8;
+use edno_core::FastString;
+use edno_core::JsRuntimeInspector;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::url::Url;
+use edno_core::v8;
 use deno_error::JsErrorBox;
-use deno_package_json::PackageJsonRc;
+use edno_package_json::PackageJsonRc;
 use deno_path_util::normalize_path;
 use deno_path_util::url_from_file_path;
 use deno_path_util::url_to_file_path;
-use deno_permissions::PermissionsContainer;
+use edno_permissions::PermissionsContainer;
 use node_resolver::InNpmPackageChecker;
 use node_resolver::NodeResolutionKind;
 use node_resolver::NpmPackageFolderResolver;
@@ -94,7 +94,7 @@ pub enum RequireErrorKind {
   Fs(
     #[from]
     #[inherit]
-    deno_io::fs::FsError,
+    edno_io::fs::FsError,
   ),
   #[class(inherit)]
   #[error(transparent)]
@@ -437,10 +437,10 @@ pub fn op_require_real_path<TSys: ExtNodeSys + 'static>(
     deno_path_util::strip_unc_prefix(match sys.fs_canonicalize(&path) {
       Ok(path) => path,
       Err(err) => {
-        if path.ends_with("$deno$eval.cjs")
-          || path.ends_with("$deno$eval.cts")
-          || path.ends_with("$deno$stdin.cjs")
-          || path.ends_with("$deno$stdin.cts")
+        if path.ends_with("$edno$eval.cjs")
+          || path.ends_with("$edno$eval.cts")
+          || path.ends_with("$edno$stdin.cjs")
+          || path.ends_with("$edno$stdin.cts")
         {
           path.to_path_buf()
         } else {
@@ -571,10 +571,10 @@ pub fn op_require_read_file<TSys: ExtNodeSys + 'static>(
       .map_err(|e| RequireErrorKind::ReadModule(e).into_box())?
   };
   // Apply load-time security mitigations for known React Server Components
-  // CVEs to required (CommonJS) source. Opt in via `DENO_PATCH_REACT_CVE`.
+  // CVEs to required (CommonJS) source. Opt in via `EDNO_PATCH_REACT_CVE`.
   let sys = state.borrow::<TSys>();
-  if deno_resolver::is_react_cve_patch_enabled(sys) {
-    match deno_resolver::patch_react_cves(file_path_str, code.as_str().into()) {
+  if edno_resolver::is_react_cve_patch_enabled(sys) {
+    match edno_resolver::patch_react_cves(file_path_str, code.as_str().into()) {
       Cow::Borrowed(_) => Ok(code),
       Cow::Owned(s) => Ok(s.into()),
     }

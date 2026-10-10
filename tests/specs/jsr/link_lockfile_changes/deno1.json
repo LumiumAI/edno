@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@denotest/add": "jsr:@denotest/add"
+    "@ednotest/add": "jsr:@ednotest/add"
   },
   "links": [
     "./add"

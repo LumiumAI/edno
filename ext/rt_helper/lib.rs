@@ -15,18 +15,18 @@ use std::sync::OnceLock;
 
 use sys_traits::EnvTempDir;
 
-const NATIVE_ADDON_CACHE_DIR_NAME: &str = "deno-native-addons";
+const NATIVE_ADDON_CACHE_DIR_NAME: &str = "edno-native-addons";
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
 pub enum LoadError {
   #[class(generic)]
-  #[error("Failed to write native addon (Deno FFI/Node API) '{0}' to '{1}' because the file system was readonly. This is a limitation of native addons with deno compile.", executable_path.display(), real_path.display())]
+  #[error("Failed to write native addon (Edno FFI/Node API) '{0}' to '{1}' because the file system was readonly. This is a limitation of native addons with edno compile.", executable_path.display(), real_path.display())]
   ReadOnlyFilesystem {
     real_path: PathBuf,
     executable_path: PathBuf,
   },
   #[class(generic)]
-  #[error("Failed to write native addon (Deno FFI/Node API) '{0}' to '{1}'.", executable_path.display(), real_path.display())]
+  #[error("Failed to write native addon (Edno FFI/Node API) '{0}' to '{1}'.", executable_path.display(), real_path.display())]
   FailedWriting {
     real_path: PathBuf,
     executable_path: PathBuf,
@@ -38,13 +38,13 @@ pub enum LoadError {
   Io(std::io::Error),
 }
 
-pub type DenoRtNativeAddonLoaderRc = Arc<dyn DenoRtNativeAddonLoader>;
+pub type EdnoRtNativeAddonLoaderRc = Arc<dyn EdnoRtNativeAddonLoader>;
 
-/// Loads native addons in `deno compile`.
+/// Loads native addons in `edno compile`.
 ///
 /// The implementation should provide the bytes from the binary
 /// of the native file.
-pub trait DenoRtNativeAddonLoader: Send + Sync {
+pub trait EdnoRtNativeAddonLoader: Send + Sync {
   fn load_if_in_vfs(&self, path: &Path) -> Option<Cow<'static, [u8]>>;
 
   fn load_and_resolve_path<'a>(
@@ -58,7 +58,7 @@ pub trait DenoRtNativeAddonLoader: Send + Sync {
           .as_ref()
           .and_then(|p| p.file_stem())
           .map(|s| s.to_string_lossy())
-          .unwrap_or("denort".into());
+          .unwrap_or("ednort".into());
         let cache_dir = native_addon_cache_dir().map_err(LoadError::Io)?;
         let real_path =
           resolve_temp_file_name(cache_dir, &exe_name, path, &bytes);
@@ -196,7 +196,7 @@ fn create_native_addon_cache_dir(temp_dir: &Path) -> std::io::Result<PathBuf> {
   }
 
   let mut builder = tempfile::Builder::new();
-  builder.prefix("deno-native-addons-");
+  builder.prefix("edno-native-addons-");
   #[cfg(unix)]
   {
     use std::os::unix::fs::PermissionsExt;
@@ -351,7 +351,7 @@ mod test {
         .file_name()
         .unwrap()
         .to_string_lossy()
-        .starts_with("deno-native-addons-")
+        .starts_with("edno-native-addons-")
     );
     let metadata = std::fs::symlink_metadata(&cache_dir).unwrap();
     assert!(metadata.is_dir());

@@ -6,10 +6,10 @@ use std::path::Path;
 use std::path::PathBuf;
 
 use capacity_builder::StringBuilder;
-use deno_core::anyhow;
-use deno_core::error::AnyError;
-use deno_runtime::deno_permissions::OpenAccessKind;
-use deno_runtime::deno_permissions::PermissionsContainer;
+use edno_core::anyhow;
+use edno_core::error::AnyError;
+use edno_runtime::edno_permissions::OpenAccessKind;
+use edno_runtime::edno_permissions::PermissionsContainer;
 
 use crate::tools::bundle::OutputFile;
 
@@ -285,7 +285,7 @@ fn collect_scripts(doc: &str) -> Result<Vec<Script>, AnyError> {
   while let Some(tag) = find_next_tag(doc, pos) {
     if !tag.is_end && tag.name.eq_ignore_ascii_case("script") {
       if let Some(src) = attr_value(tag.attrs, "src").flatten()
-        && !has_attr(tag.attrs, "deno-ignore")
+        && !has_attr(tag.attrs, "edno-ignore")
         && !has_attr(tag.attrs, "vite-ignore")
       {
         let typ = attr_value(tag.attrs, "type").flatten();
@@ -318,7 +318,7 @@ pub struct HtmlEntrypoint {
   pub virtual_module_path: PathBuf,
 }
 
-const VIRTUAL_ENTRY_SUFFIX: &str = ".deno-bundle-html.entry";
+const VIRTUAL_ENTRY_SUFFIX: &str = ".edno-bundle-html.entry";
 
 // Helper to create a filesystem-friendly name based on a path
 fn sanitize_entry_name(cwd: &Path, path: &Path) -> String {
@@ -383,7 +383,7 @@ pub fn load_html_entrypoint(
       permissions.check_open(
         Cow::Borrowed(path),
         OpenAccessKind::Read,
-        Some("Deno.bundle()"),
+        Some("Edno.bundle()"),
       )
     })
     .transpose()?;
@@ -409,7 +409,7 @@ pub struct HtmlOutputFiles<'a, 'f> {
 impl<'a, 'f> HtmlOutputFiles<'a, 'f> {
   pub fn new(output_files: &'f mut Vec<OutputFile<'a>>) -> Self {
     let re =
-      lazy_regex::regex!(r"(^.+\.deno-bundle-html.entry)-([^.]+)(\..+)$");
+      lazy_regex::regex!(r"(^.+\.edno-bundle-html.entry)-([^.]+)(\..+)$");
     let mut index = std::collections::HashMap::new();
     for (i, f) in output_files.iter().enumerate() {
       if let Some(name) = f.path.file_name().map(|s| s.to_string_lossy()) {
@@ -518,7 +518,7 @@ impl HtmlEntrypoint {
     // esbuild emits the external/linked sourcemap (`*.js.map`) for the entry
     // under the internal virtual-entry name. Rename it to match the renamed JS
     // bundle (e.g. `index-HASH.js.map`) and fix the JS `sourceMappingURL`
-    // reference so the emitted output doesn't leak the `deno-bundle-html.entry`
+    // reference so the emitted output doesn't leak the `edno-bundle-html.entry`
     // implementation detail. See denoland/deno#30750.
     let map_entry_name = format!("{}.js.map", entry_name);
     let mut old_map_name = None;
@@ -718,8 +718,8 @@ fn inject_scripts_and_css(
 mod tests {
   use std::sync::Arc;
 
-  use deno_runtime::deno_permissions::Permissions;
-  use deno_runtime::permissions::RuntimePermissionDescriptorParser;
+  use edno_runtime::edno_permissions::Permissions;
+  use edno_runtime::permissions::RuntimePermissionDescriptorParser;
 
   use super::*;
 
@@ -803,7 +803,7 @@ mod tests {
       <SCRIPT SRC='./case.ts' async></SCRIPT>
       <script type=module src=./unquoted.ts></script>
       <script type="text/javascript" src="./classic.js"></script>
-      <script deno-ignore src="./ignored.ts"></script>
+      <script edno-ignore src="./ignored.ts"></script>
       <script vite-ignore src="./vite.ts"></script>
       <script>const nested = '<script src="./nested.ts">';</script>
       <script src="./plain.ts"></script>

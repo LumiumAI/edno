@@ -3,19 +3,19 @@
 // run with the real request port, not the placeholder 0 that hyper-util's
 // DNS service receives.
 
-const server = Deno.serve(
+const server = Edno.serve(
   { hostname: "0.0.0.0", port: 0, onListen: () => {} },
   () => new Response("hello"),
 );
-const denyPort = (server.addr as Deno.NetAddr).port;
+const denyPort = (server.addr as Edno.NetAddr).port;
 
 // A second server on a different port so we can prove the deny rule is
 // port-scoped — fetching this one through `localhost` must still succeed.
-const allowedServer = Deno.serve(
+const allowedServer = Edno.serve(
   { hostname: "0.0.0.0", port: 0, onListen: () => {} },
   () => new Response("allowed"),
 );
-const allowedPort = (allowedServer.addr as Deno.NetAddr).port;
+const allowedPort = (allowedServer.addr as Edno.NetAddr).port;
 
 const script = `
 try {
@@ -41,7 +41,7 @@ try {
 }
 `;
 
-const child = new Deno.Command(Deno.execPath(), {
+const child = new Edno.Command(Edno.execPath(), {
   args: [
     "run",
     "--allow-net",
@@ -57,7 +57,7 @@ await writer.write(new TextEncoder().encode(script));
 await writer.close();
 
 const { stdout } = await child.output();
-await Deno.stdout.write(stdout);
+await Edno.stdout.write(stdout);
 
 await server.shutdown();
 await allowedServer.shutdown();

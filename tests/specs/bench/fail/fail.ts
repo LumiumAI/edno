@@ -1,30 +1,30 @@
-Deno.bench("bench0", () => {
+Edno.bench("bench0", () => {
   throw new Error();
 });
-Deno.bench("bench1", () => {
+Edno.bench("bench1", () => {
   throw new Error();
 });
-Deno.bench("bench2", () => {
+Edno.bench("bench2", () => {
   throw new Error();
 });
-Deno.bench("bench3", () => {
+Edno.bench("bench3", () => {
   throw new Error();
 });
-Deno.bench("bench4", () => {
+Edno.bench("bench4", () => {
   throw new Error();
 });
-Deno.bench("bench5", () => {
+Edno.bench("bench5", () => {
   throw new Error();
 });
-Deno.bench("bench6", () => {
+Edno.bench("bench6", () => {
   throw new Error();
 });
-Deno.bench("bench7", () => {
+Edno.bench("bench7", () => {
   throw new Error();
 });
-Deno.bench("bench8", () => {
+Edno.bench("bench8", () => {
   throw new Error();
 });
-Deno.bench("bench9", () => {
+Edno.bench("bench9", () => {
   throw new Error();
 });

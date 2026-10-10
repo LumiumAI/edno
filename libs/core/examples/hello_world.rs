@@ -2,7 +2,7 @@
 //!  This example shows you how to define ops in Rust and then call them from
 //!  JavaScript.
 
-use deno_core::*;
+use edno_core::*;
 
 /// An op for summing an array of numbers. The op-layer automatically
 /// deserializes inputs and serializes the returned Result & value.
@@ -15,7 +15,7 @@ fn op_sum(#[serde] nums: Vec<f64>) -> Result<f64, deno_error::JsErrorBox> {
 }
 
 fn main() {
-  // Build a deno_core::Extension providing custom ops
+  // Build a edno_core::Extension providing custom ops
   const DECL: OpDecl = op_sum();
   let ext = Extension {
     name: "my_ext",
@@ -30,26 +30,26 @@ fn main() {
   });
 
   // Now we see how to invoke the op we just defined. The runtime automatically
-  // contains a Deno.core object with several functions for interacting with it.
+  // contains a Edno.core object with several functions for interacting with it.
   // You can find its definition in core.js.
   runtime
     .execute_script(
       "<usage>",
       r#"
-// Print helper function, calling Deno.core.print()
+// Print helper function, calling Edno.core.print()
 function print(value) {
-  Deno.core.print(value.toString()+"\n");
+  Edno.core.print(value.toString()+"\n");
 }
 
 const arr = [1, 2, 3];
 print("The sum of");
 print(arr);
 print("is");
-print(Deno.core.ops.op_sum(arr));
+print(Edno.core.ops.op_sum(arr));
 
 // And incorrect usage
 try {
-  print(Deno.core.ops.op_sum(0));
+  print(Edno.core.ops.op_sum(0));
 } catch(e) {
   print('Exception:');
   print(e);

@@ -14,10 +14,10 @@ type _TestHasProcessGlobal = AssertTrue<
 
 // Regression test for https://github.com/denoland/deno/issues/32682.
 // Inside an npm package, references to web-standard globals like
-// `RequestInit`, `ResponseInit`, and `Response` must resolve to Deno's
+// `RequestInit`, `ResponseInit`, and `Response` must resolve to Edno's
 // versions (with `body`/`status`/etc.) instead of `@types/node`'s
 // conditional interfaces, which can degrade to `{}` when the @types/node
-// declarations are processed alongside Deno's libs.
+// declarations are processed alongside Edno's libs.
 type _TestRequestInitHasBody = AssertTrue<
   "body" extends keyof RequestInit ? true : false
 >;

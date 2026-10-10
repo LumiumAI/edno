@@ -1,2 +1,2 @@
-@denotest/add file:///[WILDLINE]/node_modules/.deno/@denotest+add@1.0.0/node_modules/@denotest/add/index.js
-@denotest/add/non-existent file:///[WILDLINE]/node_modules/.deno/@denotest+add@1.0.0/node_modules/@denotest/add/non-existent
+@ednotest/add file:///[WILDLINE]/node_modules/.edno/@ednotest+add@1.0.0/node_modules/@ednotest/add/index.js
+@ednotest/add/non-existent file:///[WILDLINE]/node_modules/.edno/@ednotest+add@1.0.0/node_modules/@ednotest/add/non-existent

@@ -4,14 +4,14 @@ import { assertEquals, assertRejects, loadTestLibrary } from "./common.js";
 
 const promise = loadTestLibrary();
 
-Deno.test("napi new promise and resolve", async () => {
+Edno.test("napi new promise and resolve", async () => {
   const p = promise.test_promise_new();
   promise.test_promise_resolve(69);
 
   assertEquals(await p, 69);
 });
 
-Deno.test("napi new promise and reject", () => {
+Edno.test("napi new promise and reject", () => {
   const p = promise.test_promise_new();
 
   assertRejects(async () => {
@@ -20,7 +20,7 @@ Deno.test("napi new promise and reject", () => {
   }, TypeError);
 });
 
-Deno.test("napi new promise and reject", async () => {
+Edno.test("napi new promise and reject", async () => {
   const p = promise.test_promise_new();
   const is = promise.test_promise_is(p);
   assertEquals(typeof is, "boolean");

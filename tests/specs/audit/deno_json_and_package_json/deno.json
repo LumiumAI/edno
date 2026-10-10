@@ -1,5 +1,5 @@
 {
   "imports": {
-    "@denotest/with-vuln1": "npm:@denotest/with-vuln1@1.0.0"
+    "@ednotest/with-vuln1": "npm:@ednotest/with-vuln1@1.0.0"
   }
 }

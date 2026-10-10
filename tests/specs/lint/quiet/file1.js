@@ -1,2 +1,2 @@
-// deno-lint-ignore
+// edno-lint-ignore
 while (false) {}

@@ -3,8 +3,8 @@
 // while the per-version `scripts` map is dropped in favor of a
 // `hasInstallScript` flag, matching the abbreviated install manifest shape.
 const registryJson = JSON.parse(
-  Deno.readTextFileSync(
-    "deno_dir/npm/localhost_4260/@denotest/scripts-with-publish-date/registry.json",
+  Edno.readTextFileSync(
+    "edno_dir/npm/localhost_4260/@ednotest/scripts-with-publish-date/registry.json",
   ),
 );
 

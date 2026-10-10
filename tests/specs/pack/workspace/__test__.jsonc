@@ -8,7 +8,7 @@
       }, {
         "args": [
           "eval",
-          "console.log(Deno.readFileSync('./test-pkg-a-1.0.0.tgz').length > 0); console.log(Deno.readFileSync('./test-pkg-b-2.0.0.tgz').length > 0);"
+          "console.log(Edno.readFileSync('./test-pkg-a-1.0.0.tgz').length > 0); console.log(Edno.readFileSync('./test-pkg-b-2.0.0.tgz').length > 0);"
         ],
         "output": "true\ntrue\n"
       }]

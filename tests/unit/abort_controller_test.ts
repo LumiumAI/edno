@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from "./test_util.ts";
 
-Deno.test(function basicAbortController() {
+Edno.test(function basicAbortController() {
   const controller = new AbortController();
   assert(controller);
   const { signal } = controller;
@@ -12,7 +12,7 @@ Deno.test(function basicAbortController() {
   assertEquals(signal.aborted, true);
 });
 
-Deno.test(function signalCallsOnabort() {
+Edno.test(function signalCallsOnabort() {
   const controller = new AbortController();
   const { signal } = controller;
   let called = false;
@@ -25,7 +25,7 @@ Deno.test(function signalCallsOnabort() {
   assert(called);
 });
 
-Deno.test(function signalEventListener() {
+Edno.test(function signalEventListener() {
   const controller = new AbortController();
   const { signal } = controller;
   let called = false;
@@ -38,7 +38,7 @@ Deno.test(function signalEventListener() {
   assert(called);
 });
 
-Deno.test(function onlyAbortsOnce() {
+Edno.test(function onlyAbortsOnce() {
   const controller = new AbortController();
   const { signal } = controller;
   let called = 0;
@@ -52,12 +52,12 @@ Deno.test(function onlyAbortsOnce() {
   assertEquals(called, 2);
 });
 
-Deno.test(function controllerHasProperToString() {
+Edno.test(function controllerHasProperToString() {
   const actual = Object.prototype.toString.call(new AbortController());
   assertEquals(actual, "[object AbortController]");
 });
 
-Deno.test(function abortReason() {
+Edno.test(function abortReason() {
   const signal = AbortSignal.abort("hey!");
   assertEquals(signal.aborted, true);
   assertEquals(signal.reason, "hey!");

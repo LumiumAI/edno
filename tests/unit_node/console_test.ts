@@ -12,16 +12,16 @@ import {
 import { Console } from "node:console";
 import process from "node:process";
 
-Deno.test(function inspectCrossRealmObjects() {
+Edno.test(function inspectCrossRealmObjects() {
   assertStringIncludes(
     stripAnsiCode(
-      Deno.inspect(vm.runInNewContext(`new Error("This is an error")`)),
+      Edno.inspect(vm.runInNewContext(`new Error("This is an error")`)),
     ),
     "Error: This is an error",
   );
   assertStringIncludes(
     stripAnsiCode(
-      Deno.inspect(
+      Edno.inspect(
         vm.runInNewContext(`new AggregateError([], "This is an error")`),
       ),
     ),
@@ -29,13 +29,13 @@ Deno.test(function inspectCrossRealmObjects() {
   );
   assertStringIncludes(
     stripAnsiCode(
-      Deno.inspect(vm.runInNewContext(`new Date("2018-12-10T02:26:59.002Z")`)),
+      Edno.inspect(vm.runInNewContext(`new Date("2018-12-10T02:26:59.002Z")`)),
     ),
     "2018-12-10T02:26:59.002Z",
   );
 });
 
-Deno.test("Console time and count methods don't throw when called with missing labels", () => {
+Edno.test("Console time and count methods don't throw when called with missing labels", () => {
   const console = new Console({
     stdout: process.stdout,
     stderr: process.stderr,
@@ -46,7 +46,7 @@ Deno.test("Console time and count methods don't throw when called with missing l
   console.countReset();
 });
 
-Deno.test("global console exposes lazy Node stdio streams", () => {
+Edno.test("global console exposes lazy Node stdio streams", () => {
   const globalConsole = console as typeof console & {
     _stdout: typeof process.stdout;
     _stderr: typeof process.stderr;

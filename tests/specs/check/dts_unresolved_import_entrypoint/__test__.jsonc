@@ -23,7 +23,7 @@
       "exitCode": 1
     },
     "skip_lib_check_dependency": {
-      "args": "check --quiet --config deno.json main.ts",
+      "args": "check --quiet --config edno.json main.ts",
       "output": ""
     }
   }

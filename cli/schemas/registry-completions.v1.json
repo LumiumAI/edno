@@ -55,8 +55,8 @@
       }
     }
   },
-  "title": "Deno Registry Completion Schema",
-  "description": "A definition of meta data that allows a Deno language server form auto completion suggestions for modules within a module registry.",
+  "title": "Edno Registry Completion Schema",
+  "description": "A definition of meta data that allows a Edno language server form auto completion suggestions for modules within a module registry.",
   "type": "object",
   "required": [
     "version",

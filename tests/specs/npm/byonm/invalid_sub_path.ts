@@ -1,1 +1,1 @@
-import "npm:@denotest/conditional-exports-strict/test";
+import "npm:@ednotest/conditional-exports-strict/test";

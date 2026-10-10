@@ -1,15 +1,15 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent and Node contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 (function () {
 const { core, primordials } = __bootstrap;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const {
   getOwnNonIndexProperties,
   ONLY_ENUMERABLE,
   SKIP_SYMBOLS,
-} = core.loadExtScript("ext:deno_node/internal_binding/util.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/util.ts");
 const lazyAssert = core.createLazyLoader("node:assert");
 const {
   isAnyArrayBuffer,
@@ -32,12 +32,12 @@ const {
   isSymbolObject,
   isWeakMap,
   isWeakSet,
-} = core.loadExtScript("ext:deno_node/internal/util/types.ts");
+} = core.loadExtScript("ext:edno_node/internal/util/types.ts");
 const { kKeyObject } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/constants.ts",
+  "ext:edno_node/internal/crypto/constants.ts",
 );
-const { isError } = core.loadExtScript("ext:deno_node/internal/util.mjs");
-const lazyUrl = () => core.loadExtScript("ext:deno_node/internal/url.ts");
+const { isError } = core.loadExtScript("ext:edno_node/internal/util.mjs");
+const lazyUrl = () => core.loadExtScript("ext:edno_node/internal/url.ts");
 
 const {
   Array,

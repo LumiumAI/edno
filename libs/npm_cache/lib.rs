@@ -7,13 +7,13 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_cache_dir::file_fetcher::CacheSetting;
-use deno_cache_dir::npm::NpmCacheDir;
+use edno_cache_dir::file_fetcher::CacheSetting;
+use edno_cache_dir::npm::NpmCacheDir;
 use deno_error::JsErrorBox;
-use deno_npm::NpmPackageCacheFolderId;
-use deno_npm::fast_registry_json;
-use deno_npmrc::RegistryConfig;
-use deno_npmrc::ResolvedNpmRc;
+use edno_npm::NpmPackageCacheFolderId;
+use edno_npm::fast_registry_json;
+use edno_npmrc::RegistryConfig;
+use edno_npmrc::ResolvedNpmRc;
 use deno_path_util::fs::atomic_write_file_with_retries;
 use deno_semver::StackString;
 use deno_semver::Version;
@@ -99,7 +99,7 @@ impl NpmPackumentFormat {
   ) -> Self {
     // the `no-downgrade` trust policy reads `_npmUser`/`attestations`, which
     // are only present in the full packument
-    if npmrc.trust_policy != deno_npmrc::TrustPolicyConfig::Off {
+    if npmrc.trust_policy != edno_npmrc::TrustPolicyConfig::Off {
       NpmPackumentFormat::Full
     } else if let Some(date) = newest_dependency_date {
       NpmPackumentFormat::AbbreviatedUnlessModifiedSince(date)
@@ -422,7 +422,7 @@ impl<TSys: NpmCacheSys> NpmCache<TSys> {
 
     spawn_blocking(move || {
       let (info, cache_metadata) =
-        deno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
+        edno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
           file_bytes.into_owned(),
         )
         .map_err(|err| serde_json::Error::io(std::io::Error::other(err)))?;
@@ -768,7 +768,7 @@ fn write_json_property_name(
   Ok(())
 }
 
-const NPM_PACKAGE_SYNC_LOCK_FILENAME: &str = ".deno_sync_lock";
+const NPM_PACKAGE_SYNC_LOCK_FILENAME: &str = ".edno_sync_lock";
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
 pub enum WithFolderSyncLockError {
@@ -907,10 +907,10 @@ mod tests {
     }"#;
 
     let original =
-      deno_npm::registry::NpmPackageInfo::from_packument_slice(input).unwrap();
+      edno_npm::registry::NpmPackageInfo::from_packument_slice(input).unwrap();
     let output = slim_package_info_bytes(input, Some("etag"), true).unwrap();
     let reparsed =
-      deno_npm::registry::NpmPackageInfo::from_packument_slice(&output)
+      edno_npm::registry::NpmPackageInfo::from_packument_slice(&output)
         .unwrap();
     let version = Version::parse_from_npm("1.0.0").unwrap();
     let mut expected = original.versions.get(&version).unwrap().clone();
@@ -950,7 +950,7 @@ mod tests {
     let value: serde_json::Value = serde_json::from_slice(&output).unwrap();
     assert!(value.get("_deno.packumentFormat").is_none());
     let (_, cache_metadata) =
-      deno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
+      edno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
         output,
       )
       .unwrap();
@@ -963,7 +963,7 @@ mod tests {
     let value: serde_json::Value = serde_json::from_slice(&output).unwrap();
     assert_eq!(value["_deno.packumentFormat"], "full");
     let (info, cache_metadata) =
-      deno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
+      edno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
         output,
       )
       .unwrap();
@@ -980,7 +980,7 @@ mod tests {
     }"#;
     let output = slim_package_info_bytes(full, None, false).unwrap();
     let (info, cache_metadata) =
-      deno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
+      edno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
         output,
       )
       .unwrap();
@@ -997,7 +997,7 @@ mod tests {
     let output =
       slim_package_info_bytes(no_versions_time, None, false).unwrap();
     let (_, cache_metadata) =
-      deno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
+      edno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
         output,
       )
       .unwrap();
@@ -1010,7 +1010,7 @@ mod tests {
       "versions":{"1.0.0":{"version":"1.0.0","_deno.packumentFormat":"full"}}
     }"#;
     let (_, cache_metadata) =
-      deno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
+      edno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
         nested.to_vec(),
       )
       .unwrap();
@@ -1070,7 +1070,7 @@ mod tests {
     let value: serde_json::Value = serde_json::from_slice(&output).unwrap();
     assert_eq!(value["modified"], "2024-01-03T00:00:00.000Z");
     let (_, cache_metadata) =
-      deno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
+      edno_npm::registry::NpmPackageInfo::from_packument_bytes_with_cache_info(
         output,
       )
       .unwrap();
@@ -1110,6 +1110,6 @@ mod tests {
     assert_eq!(value["versions"]["1.0.2"]["hasInstallScript"], true);
 
     // the whole packument still parses back into an NpmPackageInfo
-    deno_npm::registry::NpmPackageInfo::from_packument_bytes(output).unwrap();
+    edno_npm::registry::NpmPackageInfo::from_packument_bytes(output).unwrap();
   }
 }

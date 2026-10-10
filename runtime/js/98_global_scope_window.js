@@ -14,13 +14,13 @@ const {
   StringPrototypeSlice,
 } = primordials;
 
-const location = core.loadExtScript("ext:deno_web/12_location.js");
-const console = core.loadExtScript("ext:deno_web/01_console.js");
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const location = core.loadExtScript("ext:edno_web/12_location.js");
+const console = core.loadExtScript("ext:edno_web/01_console.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const globalInterfaces = core.loadExtScript(
-  "ext:deno_web/04_global_interfaces.js",
+  "ext:edno_web/04_global_interfaces.js",
 );
-const loadLocks = core.createLazyLoader("ext:deno_web/locks.js");
+const loadLocks = core.createLazyLoader("ext:edno_web/locks.js");
 import {
   NavigatorUAData,
   navigatorUAData,
@@ -33,14 +33,14 @@ import {
 let _webStorage;
 const lazyWebStorage = () =>
   _webStorage ??
-    (_webStorage = core.loadExtScript("ext:deno_webstorage/01_webstorage.js"));
+    (_webStorage = core.loadExtScript("ext:edno_webstorage/01_webstorage.js"));
 let _prompt;
 const lazyPrompt = () =>
   _prompt ?? (_prompt = core.loadExtScript("ext:runtime/41_prompt.js"));
 let _webgpu;
 const lazyWebGPU = () =>
   (_webgpu ??
-    (_webgpu = core.loadExtScript("ext:deno_webgpu/00_init.js"))).loadWebGPU();
+    (_webgpu = core.loadExtScript("ext:edno_webgpu/00_init.js"))).loadWebGPU();
 function loadWebGPU() {
   return lazyWebGPU();
 }
@@ -88,7 +88,7 @@ class Navigator {
     webidl.illegalConstructor();
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       console.createFilteredInspectProxy({
         object: this,

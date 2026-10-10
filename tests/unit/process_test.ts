@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-deprecated-deno-api
+// edno-lint-ignore-file no-deprecated-edno-api
 // Copyright 2018-2026 the Deno authors. MIT license.
 import {
   assert,
@@ -8,26 +8,26 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, run: false } },
   function runPermissions() {
     assertThrows(() => {
-      // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-      Deno.run({
-        cmd: [Deno.execPath(), "eval", "console.log('hello world')"],
+      // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+      Edno.run({
+        cmd: [Edno.execPath(), "eval", "console.log('hello world')"],
       });
-    }, Deno.errors.NotCapable);
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runSuccess() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       // freeze the array to ensure it's not modified
       cmd: Object.freeze([
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
         "console.log('hello world')",
       ]),
@@ -43,13 +43,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runUrl() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        new URL(`file:///${Deno.execPath()}`),
+        new URL(`file:///${Edno.execPath()}`),
         "eval",
         "console.log('hello world')",
       ],
@@ -65,14 +65,14 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runStdinRid0(): Promise<
     void
   > {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
-      cmd: [Deno.execPath(), "eval", "console.log('hello world')"],
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
+      cmd: [Edno.execPath(), "eval", "console.log('hello world')"],
       stdin: 0,
       stdout: "piped",
       stderr: "null",
@@ -86,39 +86,39 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function runInvalidStdio() {
     assertThrows(() =>
-      // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-      Deno.run({
-        cmd: [Deno.execPath(), "eval", "console.log('hello world')"],
+      // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+      Edno.run({
+        cmd: [Edno.execPath(), "eval", "console.log('hello world')"],
         stdin: "a",
       })
     );
     assertThrows(() =>
-      // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-      Deno.run({
-        cmd: [Deno.execPath(), "eval", "console.log('hello world')"],
+      // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+      Edno.run({
+        cmd: [Edno.execPath(), "eval", "console.log('hello world')"],
         stdout: "b",
       })
     );
     assertThrows(() =>
-      // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-      Deno.run({
-        cmd: [Deno.execPath(), "eval", "console.log('hello world')"],
+      // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+      Edno.run({
+        cmd: [Edno.execPath(), "eval", "console.log('hello world')"],
         stderr: "c",
       })
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runCommandFailedWithCode() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
-      cmd: [Deno.execPath(), "eval", "Deno.exit(41 + 1)"],
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
+      cmd: [Edno.execPath(), "eval", "Edno.exit(41 + 1)"],
     });
     const status = await p.status();
     assertEquals(status.success, false);
@@ -128,22 +128,22 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
   },
   async function runCommandFailedWithSignal() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "Deno.kill(Deno.pid, 'SIGKILL')",
+        "Edno.kill(Edno.pid, 'SIGKILL')",
       ],
     });
     const status = await p.status();
     assertEquals(status.success, false);
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       assertEquals(status.code, 1);
       assertEquals(status.signal, undefined);
     } else {
@@ -154,33 +154,33 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { run: true } }, function runNotFound() {
+Edno.test({ permissions: { run: true } }, function runNotFound() {
   let error;
   try {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    Deno.run({ cmd: ["this file hopefully doesn't exist"] });
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    Edno.run({ cmd: ["this file hopefully doesn't exist"] });
   } catch (e) {
     error = e;
   }
   assert(error !== undefined);
-  assert(error instanceof Deno.errors.NotFound);
+  assert(error instanceof Edno.errors.NotFound);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, run: true, read: true } },
   async function runWithCwdIsAsync() {
     const enc = new TextEncoder();
-    const cwd = await Deno.makeTempDir({ prefix: "deno_command_test" });
+    const cwd = await Edno.makeTempDir({ prefix: "edno_command_test" });
 
-    const exitCodeFile = "deno_was_here";
+    const exitCodeFile = "edno_was_here";
     const programFile = "poll_exit.ts";
     const program = `
 async function tryExit() {
   try {
-    const code = parseInt(await Deno.readTextFile("${exitCodeFile}"));
-    Deno.exit(code);
+    const code = parseInt(await Edno.readTextFile("${exitCodeFile}"));
+    Edno.exit(code);
   } catch {
-    // Retry if we got here before deno wrote the file.
+    // Retry if we got here before edno wrote the file.
     setTimeout(tryExit, 0.01);
   }
 }
@@ -188,17 +188,17 @@ async function tryExit() {
 tryExit();
 `;
 
-    Deno.writeFileSync(`${cwd}/${programFile}`, enc.encode(program));
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    Edno.writeFileSync(`${cwd}/${programFile}`, enc.encode(program));
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cwd,
-      cmd: [Deno.execPath(), "run", "--allow-read", programFile],
+      cmd: [Edno.execPath(), "run", "--allow-read", programFile],
     });
 
-    // Write the expected exit code *after* starting deno.
+    // Write the expected exit code *after* starting edno.
     // This is how we verify that `run()` is actually asynchronous.
     const code = 84;
-    Deno.writeFileSync(`${cwd}/${exitCodeFile}`, enc.encode(`${code}`));
+    Edno.writeFileSync(`${cwd}/${exitCodeFile}`, enc.encode(`${code}`));
 
     const status = await p.status();
     assertEquals(status.success, false);
@@ -208,19 +208,19 @@ tryExit();
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runStdinPiped(): Promise<
     void
   > {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
         `
         const buffer = new Uint8Array(5);
-        await Deno.stdin.read(buffer);
+        await Edno.stdin.read(buffer);
         if (new TextDecoder().decode(buffer) !== "hello") {
           throw new Error('Expected \\'hello\\'')
         }
@@ -246,17 +246,17 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runStdoutPiped(): Promise<
     void
   > {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "await Deno.stdout.write(new TextEncoder().encode('hello'))",
+        "await Edno.stdout.write(new TextEncoder().encode('hello'))",
       ],
       stdout: "piped",
     });
@@ -283,17 +283,17 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runStderrPiped(): Promise<
     void
   > {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "await Deno.stderr.write(new TextEncoder().encode('hello'))",
+        "await Edno.stderr.write(new TextEncoder().encode('hello'))",
       ],
       stderr: "piped",
     });
@@ -320,15 +320,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runOutput() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "await Deno.stdout.write(new TextEncoder().encode('hello'))",
+        "await Edno.stdout.write(new TextEncoder().encode('hello'))",
       ],
       stdout: "piped",
     });
@@ -339,17 +339,17 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runStderrOutput(): Promise<
     void
   > {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "await Deno.stderr.write(new TextEncoder().encode('error'))",
+        "await Edno.stderr.write(new TextEncoder().encode('error'))",
       ],
       stderr: "piped",
     });
@@ -360,24 +360,24 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, write: true, read: true },
   },
   async function runRedirectStdoutStderr() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fileName = tempDir + "/redirected_stdio.txt";
-    using file = await Deno.open(fileName, {
+    using file = await Edno.open(fileName, {
       create: true,
       write: true,
     });
 
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "Deno.stderr.write(new TextEncoder().encode('error\\n')); Deno.stdout.write(new TextEncoder().encode('output\\n'));",
+        "Edno.stderr.write(new TextEncoder().encode('error\\n')); Edno.stdout.write(new TextEncoder().encode('output\\n'));",
       ],
       stdout: "piped",
       stderr: "piped",
@@ -388,35 +388,35 @@ Deno.test(
     await p.status();
     p.close();
 
-    const fileContents = await Deno.readFile(fileName);
+    const fileContents = await Edno.readFile(fileName);
     const decoder = new TextDecoder();
     const text = decoder.decode(fileContents);
 
     assertStringIncludes(text, "error");
     assertStringIncludes(text, "output");
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     console.log("finished tgis test");
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, write: true, read: true },
   },
   async function runRedirectStdin() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fileName = tempDir + "/redirected_stdio.txt";
-    await Deno.writeTextFile(fileName, "hello");
-    using file = await Deno.open(fileName);
+    await Edno.writeTextFile(fileName, "hello");
+    using file = await Edno.open(fileName);
 
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
         `
         const buffer = new Uint8Array(5);
-        await Deno.stdin.read(buffer);
+        await Edno.stdin.read(buffer);
         if (new TextDecoder().decode(buffer) !== "hello") {
           throw new Error('Expected \\'hello\\'')
         }
@@ -432,15 +432,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runEnv() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "Deno.stdout.write(new TextEncoder().encode(Deno.env.get('FOO') + Deno.env.get('BAR')))",
+        "Edno.stdout.write(new TextEncoder().encode(Edno.env.get('FOO') + Edno.env.get('BAR')))",
       ],
       env: {
         FOO: "0123",
@@ -455,15 +455,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runClose() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        "setTimeout(() => Deno.stdout.write(new TextEncoder().encode('error')), 10000)",
+        "setTimeout(() => Edno.stdout.write(new TextEncoder().encode('error')), 10000)",
       ],
       stderr: "piped",
     });
@@ -479,12 +479,12 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function runKillAfterStatus() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
-      cmd: [Deno.execPath(), "eval", 'console.log("hello")'],
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
+      cmd: [Edno.execPath(), "eval", 'console.log("hello")'],
     });
     await p.status();
 
@@ -496,68 +496,68 @@ Deno.test(
     }
 
     assert(
-      error instanceof Deno.errors.NotFound ||
+      error instanceof Edno.errors.NotFound ||
         // On Windows, the underlying Windows API may return
         // `ERROR_ACCESS_DENIED` when the process has exited, but hasn't been
         // completely cleaned up yet and its `pid` is still valid.
-        (Deno.build.os === "windows" &&
-          error instanceof Deno.errors.PermissionDenied),
+        (Edno.build.os === "windows" &&
+          error instanceof Edno.errors.PermissionDenied),
     );
 
     p.close();
   },
 );
 
-Deno.test({ permissions: { run: false } }, function killPermissions() {
+Edno.test({ permissions: { run: false } }, function killPermissions() {
   assertThrows(() => {
     // Signalling a process other than the current one still requires
     // --allow-run. We use a pid that is not our own; the permission check
     // happens before the signal is delivered, so it does not matter whether
     // the pid refers to a live process.
-    Deno.kill(Deno.pid + 1, "SIGCONT");
-  }, Deno.errors.NotCapable);
+    Edno.kill(Edno.pid + 1, "SIGCONT");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { run: false } }, function killSelfNoPermissions() {
+Edno.test({ permissions: { run: false } }, function killSelfNoPermissions() {
   // Sending a signal to the current process is functionally equivalent to
   // terminating yourself, which never required permissions. Signal 0 is a
   // liveness check that does not deliver a signal, so it works cross-platform
   // without requiring --allow-run.
-  Deno.kill(Deno.pid, 0);
+  Edno.kill(Edno.pid, 0);
 });
 
-Deno.test(
-  { ignore: Deno.build.os !== "windows", permissions: { run: true } },
+Edno.test(
+  { ignore: Edno.build.os !== "windows", permissions: { run: true } },
   function negativePidInvalidWindows() {
     assertThrows(() => {
-      Deno.kill(-1, "SIGTERM");
+      Edno.kill(-1, "SIGTERM");
     }, TypeError);
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "windows", permissions: { run: true } },
+Edno.test(
+  { ignore: Edno.build.os !== "windows", permissions: { run: true } },
   function invalidSignalNameWindows() {
     assertThrows(() => {
-      Deno.kill(Deno.pid, "SIGUSR1");
+      Edno.kill(Edno.pid, "SIGUSR1");
     }, TypeError);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function killSuccess() {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
-      cmd: [Deno.execPath(), "eval", "setTimeout(() => {}, 10000)"],
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
+      cmd: [Edno.execPath(), "eval", "setTimeout(() => {}, 10000)"],
     });
 
     try {
-      Deno.kill(p.pid, "SIGKILL");
+      Edno.kill(p.pid, "SIGKILL");
       const status = await p.status();
 
       assertEquals(status.success, false);
-      if (Deno.build.os === "windows") {
+      if (Edno.build.os === "windows") {
         assertEquals(status.code, 1);
         assertEquals(status.signal, undefined);
       } else {
@@ -570,40 +570,40 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { run: true, read: true } }, function killFailed() {
-  // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-  const p = Deno.run({
-    cmd: [Deno.execPath(), "eval", "setTimeout(() => {}, 10000)"],
+Edno.test({ permissions: { run: true, read: true } }, function killFailed() {
+  // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+  const p = Edno.run({
+    cmd: [Edno.execPath(), "eval", "setTimeout(() => {}, 10000)"],
   });
   assert(!p.stdin);
   assert(!p.stdout);
 
   assertThrows(() => {
     // @ts-expect-error testing runtime error of bad signal
-    Deno.kill(p.pid, "foobar");
+    Edno.kill(p.pid, "foobar");
   }, TypeError);
 
   p.close();
 });
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true, write: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function nonExistentCwd(): Promise<void> {
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
       cmd: [
-        Deno.execPath(),
+        Edno.execPath(),
         "eval",
-        `const dir = Deno.makeTempDirSync();
-        Deno.chdir(dir);
-        Deno.removeSync(dir);
-        const p = Deno.run({cmd:[Deno.execPath(), "eval", "console.log(1);"]});
+        `const dir = Edno.makeTempDirSync();
+        Edno.chdir(dir);
+        Edno.removeSync(dir);
+        const p = Edno.run({cmd:[Edno.execPath(), "eval", "console.log(1);"]});
         const { code } = await p.status();
         p.close();
-        Deno.exit(code);
+        Edno.exit(code);
         `,
       ],
       stdout: "piped",
@@ -619,79 +619,79 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true, write: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function runWatchAndSigint(): Promise<void> {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const tempFile = `${tempDir}/temp_watch_file.ts`;
-    await Deno.writeTextFile(tempFile, "console.log('watch test');");
+    await Edno.writeTextFile(tempFile, "console.log('watch test');");
 
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
-      cmd: [Deno.execPath(), "run", "--watch", tempFile],
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
+      cmd: [Edno.execPath(), "run", "--watch", tempFile],
       stdout: "piped",
       stderr: "null",
     });
 
-    Deno.kill(p.pid, "SIGINT");
+    Edno.kill(p.pid, "SIGINT");
     const data = new Uint8Array(10);
     const out = await p.stdout.read(data);
     assertEquals(out, null);
     p.stdout.close();
     p.close();
 
-    await Deno.remove(tempFile);
-    await Deno.remove(tempDir);
+    await Edno.remove(tempFile);
+    await Edno.remove(tempDir);
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true, write: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function runWatchWaitForSigint(): Promise<void> {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const tempFile = `${tempDir}/temp_watch_file.ts`;
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       tempFile,
-      `Deno.addSignalListener("SIGINT", () => {
+      `Edno.addSignalListener("SIGINT", () => {
   console.log("SIGINT");
   ac.abort();
 });
 
-Deno.serve({ signal: ac.signal }, () => new Response("Hello World"));
+Edno.serve({ signal: ac.signal }, () => new Response("Hello World"));
 `,
     );
 
-    // @ts-ignore `Deno.run()` was soft-removed in Deno 2.
-    const p = Deno.run({
-      cmd: [Deno.execPath(), "run", "--watch", tempFile],
+    // @ts-ignore `Edno.run()` was soft-removed in Edno 2.
+    const p = Edno.run({
+      cmd: [Edno.execPath(), "run", "--watch", tempFile],
       stdout: "piped",
       stderr: "null",
     });
 
-    Deno.kill(p.pid, "SIGINT");
+    Edno.kill(p.pid, "SIGINT");
     const data = new Uint8Array(10);
     const out = await p.stdout.read(data);
     assertEquals(out, null);
     p.stdout.close();
     p.close();
 
-    await Deno.remove(tempFile);
-    await Deno.remove(tempDir);
+    await Edno.remove(tempFile);
+    await Edno.remove(tempDir);
   },
 );
 
-Deno.test({
+Edno.test({
   name: "process.ppid matches parent process",
   permissions: { run: true, read: true },
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   async fn() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         "import { ppid } from 'node:process'; console.log(ppid);",
@@ -704,6 +704,6 @@ Deno.test({
       new TextDecoder().decode(stdout).trim(),
     );
 
-    assertEquals(stdoutPpid, Deno.pid);
+    assertEquals(stdoutPpid, Edno.pid);
   },
 });

@@ -7,12 +7,12 @@ use std::borrow::Cow;
 use std::path::PathBuf;
 
 use boxed_error::Boxed;
-use deno_cache_dir::npm::NpmCacheDir;
+use edno_cache_dir::npm::NpmCacheDir;
 use deno_error::JsError;
-use deno_package_json::PackageJsonDepValue;
-use deno_package_json::PackageJsonDepValueParseError;
+use edno_package_json::PackageJsonDepValue;
+use edno_package_json::PackageJsonDepValueParseError;
 use deno_semver::npm::NpmPackageReqReference;
-pub use node_resolver::DenoIsBuiltInNodeModuleChecker;
+pub use node_resolver::EdnoIsBuiltInNodeModuleChecker;
 use node_resolver::InNpmPackageChecker;
 use node_resolver::IsBuiltInNodeModuleChecker;
 use node_resolver::NodeResolutionKind;
@@ -46,7 +46,7 @@ pub mod bun_lockfile_import;
 pub mod cache;
 pub mod cjs;
 pub mod collections;
-pub mod deno_json;
+pub mod edno_json;
 pub mod display;
 #[cfg(feature = "deno_ast")]
 pub mod emit;
@@ -69,28 +69,28 @@ pub mod yarn_lockfile_import;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type WorkspaceResolverRc<TSys> =
-  deno_maybe_sync::MaybeArc<WorkspaceResolver<TSys>>;
+  edno_maybe_sync::MaybeArc<WorkspaceResolver<TSys>>;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub(crate) type NpmCacheDirRc = deno_maybe_sync::MaybeArc<NpmCacheDir>;
+pub(crate) type NpmCacheDirRc = edno_maybe_sync::MaybeArc<NpmCacheDir>;
 
 #[derive(Debug, Clone)]
-pub struct DenoResolution {
+pub struct EdnoResolution {
   pub url: Url,
   pub maybe_diagnostic: Option<Box<MappedResolutionDiagnostic>>,
   pub found_package_json_dep: bool,
 }
 
 #[derive(Debug, Boxed, JsError)]
-pub struct DenoResolveError(pub Box<DenoResolveErrorKind>);
+pub struct EdnoResolveError(pub Box<EdnoResolveErrorKind>);
 
-impl DenoResolveError {
+impl EdnoResolveError {
   #[cfg(feature = "graph")]
   pub fn into_deno_graph_error(self) -> deno_graph::source::ResolveError {
     use deno_graph::source::ResolveError;
 
     match self.into_kind() {
-      DenoResolveErrorKind::MappedResolution(mapped_resolution_error) => {
+      EdnoResolveErrorKind::MappedResolution(mapped_resolution_error) => {
         match mapped_resolution_error {
           MappedResolutionError::Specifier(e) => ResolveError::Specifier(e),
           // deno_graph checks specifically for an ImportMapError
@@ -107,26 +107,26 @@ impl DenoResolveError {
 
   pub fn maybe_specifier(&self) -> Option<Cow<'_, UrlOrPath>> {
     match self.as_kind() {
-      DenoResolveErrorKind::Node(err) => err.maybe_specifier(),
-      DenoResolveErrorKind::PathToUrl(err) => {
+      EdnoResolveErrorKind::Node(err) => err.maybe_specifier(),
+      EdnoResolveErrorKind::PathToUrl(err) => {
         Some(Cow::Owned(UrlOrPath::Path(err.0.clone())))
       }
-      DenoResolveErrorKind::ResolveNpmReqRef(err) => err.err.maybe_specifier(),
-      DenoResolveErrorKind::MappedResolution(_)
-      | DenoResolveErrorKind::WorkspaceResolvePkgJsonFolder(_)
-      | DenoResolveErrorKind::ResolvePkgFolderFromDenoReq(_)
-      | DenoResolveErrorKind::InvalidVendorFolderImport
-      | DenoResolveErrorKind::UnsupportedPackageJsonFileSpecifier
-      | DenoResolveErrorKind::NodeModulesOutOfDate(_)
-      | DenoResolveErrorKind::CatalogPackageNotFound(_)
-      | DenoResolveErrorKind::PackageJsonDepValueParse(_)
-      | DenoResolveErrorKind::PackageJsonDepValueUrlParse(_) => None,
+      EdnoResolveErrorKind::ResolveNpmReqRef(err) => err.err.maybe_specifier(),
+      EdnoResolveErrorKind::MappedResolution(_)
+      | EdnoResolveErrorKind::WorkspaceResolvePkgJsonFolder(_)
+      | EdnoResolveErrorKind::ResolvePkgFolderFromDenoReq(_)
+      | EdnoResolveErrorKind::InvalidVendorFolderImport
+      | EdnoResolveErrorKind::UnsupportedPackageJsonFileSpecifier
+      | EdnoResolveErrorKind::NodeModulesOutOfDate(_)
+      | EdnoResolveErrorKind::CatalogPackageNotFound(_)
+      | EdnoResolveErrorKind::PackageJsonDepValueParse(_)
+      | EdnoResolveErrorKind::PackageJsonDepValueUrlParse(_) => None,
     }
   }
 }
 
 #[derive(Debug, Error, JsError)]
-pub enum DenoResolveErrorKind {
+pub enum EdnoResolveErrorKind {
   #[class(type)]
   #[error(
     "Importing from the vendor directory is not permitted. Use a remote specifier instead or disable vendoring."
@@ -169,23 +169,23 @@ pub enum DenoResolveErrorKind {
   WorkspaceResolvePkgJsonFolder(#[from] WorkspaceResolvePkgJsonFolderError),
 }
 
-impl DenoResolveErrorKind {
+impl EdnoResolveErrorKind {
   pub fn maybe_node_code(&self) -> Option<NodeJsErrorCode> {
     match self {
-      DenoResolveErrorKind::InvalidVendorFolderImport
-      | DenoResolveErrorKind::UnsupportedPackageJsonFileSpecifier
-      | DenoResolveErrorKind::CatalogPackageNotFound { .. }
-      | DenoResolveErrorKind::MappedResolution { .. }
-      | DenoResolveErrorKind::NodeModulesOutOfDate { .. }
-      | DenoResolveErrorKind::PackageJsonDepValueParse { .. }
-      | DenoResolveErrorKind::PackageJsonDepValueUrlParse { .. }
-      | DenoResolveErrorKind::PathToUrl { .. }
-      | DenoResolveErrorKind::ResolvePkgFolderFromDenoReq { .. }
-      | DenoResolveErrorKind::WorkspaceResolvePkgJsonFolder { .. } => None,
-      DenoResolveErrorKind::ResolveNpmReqRef(err) => {
+      EdnoResolveErrorKind::InvalidVendorFolderImport
+      | EdnoResolveErrorKind::UnsupportedPackageJsonFileSpecifier
+      | EdnoResolveErrorKind::CatalogPackageNotFound { .. }
+      | EdnoResolveErrorKind::MappedResolution { .. }
+      | EdnoResolveErrorKind::NodeModulesOutOfDate { .. }
+      | EdnoResolveErrorKind::PackageJsonDepValueParse { .. }
+      | EdnoResolveErrorKind::PackageJsonDepValueUrlParse { .. }
+      | EdnoResolveErrorKind::PathToUrl { .. }
+      | EdnoResolveErrorKind::ResolvePkgFolderFromDenoReq { .. }
+      | EdnoResolveErrorKind::WorkspaceResolvePkgJsonFolder { .. } => None,
+      EdnoResolveErrorKind::ResolveNpmReqRef(err) => {
         err.err.as_kind().maybe_code()
       }
-      DenoResolveErrorKind::Node(err) => err.as_kind().maybe_code(),
+      EdnoResolveErrorKind::Node(err) => err.as_kind().maybe_code(),
     }
   }
 }
@@ -213,14 +213,14 @@ pub struct NodeAndNpmResolvers<
 }
 
 #[sys_traits::auto_impl]
-pub trait DenoResolverSys: NpmResolverSys {}
+pub trait EdnoResolverSys: NpmResolverSys {}
 
-pub struct DenoResolverOptions<
+pub struct EdnoResolverOptions<
   'a,
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 > {
   pub in_npm_pkg_checker: TInNpmPackageChecker,
   pub node_and_req_resolver: Option<
@@ -232,7 +232,7 @@ pub struct DenoResolverOptions<
     >,
   >,
   pub workspace_resolver: WorkspaceResolverRc<TSys>,
-  /// Whether "bring your own node_modules" is enabled where Deno does not
+  /// Whether "bring your own node_modules" is enabled where Edno does not
   /// setup the node_modules directories automatically, but instead uses
   /// what already exists on the file system.
   pub is_byonm: bool,
@@ -245,7 +245,7 @@ pub type RawDenoResolverRc<
   TIsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver,
   TSys,
-> = deno_maybe_sync::MaybeArc<
+> = edno_maybe_sync::MaybeArc<
   RawDenoResolver<
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
@@ -255,10 +255,10 @@ pub type RawDenoResolverRc<
 >;
 
 /// Helper type for a RawDenoResolverRc that has the implementations
-/// used by the Deno CLI.
+/// used by the Edno CLI.
 pub type DefaultRawDenoResolverRc<TSys> = RawDenoResolverRc<
-  npm::DenoInNpmPackageChecker,
-  DenoIsBuiltInNodeModuleChecker,
+  npm::EdnoInNpmPackageChecker,
+  EdnoIsBuiltInNodeModuleChecker,
   npm::NpmResolver<TSys>,
   TSys,
 >;
@@ -270,7 +270,7 @@ pub struct RawDenoResolver<
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 > {
   in_npm_pkg_checker: TInNpmPackageChecker,
   node_and_npm_resolver: Option<
@@ -290,7 +290,7 @@ impl<
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 >
   RawDenoResolver<
     TInNpmPackageChecker,
@@ -300,7 +300,7 @@ impl<
   >
 {
   pub fn new(
-    options: DenoResolverOptions<
+    options: EdnoResolverOptions<
       TInNpmPackageChecker,
       TIsBuiltInNodeModuleChecker,
       TNpmPackageFolderResolver,
@@ -324,7 +324,7 @@ impl<
     referrer: &Url,
     resolution_mode: ResolutionMode,
     resolution_kind: NodeResolutionKind,
-  ) -> Result<DenoResolution, DenoResolveError> {
+  ) -> Result<EdnoResolution, EdnoResolveError> {
     let mut found_package_json_dep = false;
     let mut maybe_diagnostic = None;
     // Use node resolution if we're in an npm package
@@ -344,7 +344,7 @@ impl<
         return node_resolver
           .resolve(raw_specifier, referrer, resolution_mode, resolution_kind)
           .and_then(|res| {
-            Ok(DenoResolution {
+            Ok(EdnoResolution {
               url: res.into_url()?,
               found_package_json_dep,
               maybe_diagnostic,
@@ -390,7 +390,7 @@ impl<
             resolution_kind,
           )
           .map_err(|e| {
-            DenoResolveErrorKind::Node(e.into_node_resolve_error()).into_box()
+            EdnoResolveErrorKind::Node(e.into_node_resolve_error()).into_box()
           })
           .and_then(|r| Ok(r.into_url()?)),
         MappedResolution::PackageJson {
@@ -406,7 +406,7 @@ impl<
           dep_result
             .as_ref()
             .map_err(|e| {
-              DenoResolveErrorKind::PackageJsonDepValueParse(e.clone())
+              EdnoResolveErrorKind::PackageJsonDepValueParse(e.clone())
                 .into_box()
             })
             .and_then(|dep| match dep {
@@ -416,7 +416,7 @@ impl<
                 // multiple managed node_modules directories to work. If someone wants
                 // to do this, then they need to use the default (manual)
                 Err(
-                  DenoResolveErrorKind::UnsupportedPackageJsonFileSpecifier
+                  EdnoResolveErrorKind::UnsupportedPackageJsonFileSpecifier
                     .into_box(),
                 )
               }
@@ -428,7 +428,7 @@ impl<
                 sub_path.map(|s| format!("/{}", s)).unwrap_or_default()
               ))
               .map_err(|e| {
-                DenoResolveErrorKind::PackageJsonDepValueUrlParse(e).into_box()
+                EdnoResolveErrorKind::PackageJsonDepValueUrlParse(e).into_box()
               }),
               PackageJsonDepValue::Workspace { name, version_req } => self
                 .workspace_resolver
@@ -437,7 +437,7 @@ impl<
                   version_req,
                 )
                 .map_err(|e| {
-                  DenoResolveErrorKind::WorkspaceResolvePkgJsonFolder(e)
+                  EdnoResolveErrorKind::WorkspaceResolvePkgJsonFolder(e)
                     .into_box()
                 })
                 .and_then(|pkg_folder| {
@@ -454,7 +454,7 @@ impl<
                       resolution_kind,
                     )
                     .map_err(|e| {
-                      DenoResolveErrorKind::Node(e.into_node_resolve_error())
+                      EdnoResolveErrorKind::Node(e.into_node_resolve_error())
                         .into_box()
                     })
                 })
@@ -463,7 +463,7 @@ impl<
                 .workspace_resolver
                 .resolve_catalog_dep(alias, catalog_name)
                 .ok_or_else(|| {
-                  DenoResolveErrorKind::CatalogPackageNotFound(
+                  EdnoResolveErrorKind::CatalogPackageNotFound(
                     alias.to_string(),
                   )
                   .into_box()
@@ -475,7 +475,7 @@ impl<
                     sub_path.map(|s| format!("/{}", s)).unwrap_or_default()
                   ))
                   .map_err(|e| {
-                    DenoResolveErrorKind::PackageJsonDepValueUrlParse(e)
+                    EdnoResolveErrorKind::PackageJsonDepValueUrlParse(e)
                       .into_box()
                   })
                 }),
@@ -494,7 +494,7 @@ impl<
             resolution_kind,
           )
           .map_err(|e| {
-            DenoResolveErrorKind::Node(
+            EdnoResolveErrorKind::Node(
               NodeResolveErrorKind::PackageImportsResolve(e).into_box(),
             )
             .into_box()
@@ -512,7 +512,7 @@ impl<
       && let Ok(specifier) = &result
       && specifier.as_str().starts_with(vendor_specifier.as_str())
     {
-      return Err(DenoResolveErrorKind::InvalidVendorFolderImport.into_box());
+      return Err(EdnoResolveErrorKind::InvalidVendorFolderImport.into_box());
     }
 
     let Some(NodeAndNpmResolvers {
@@ -521,7 +521,7 @@ impl<
       ..
     }) = &self.node_and_npm_resolver
     else {
-      return Ok(DenoResolution {
+      return Ok(EdnoResolution {
         url: result?,
         maybe_diagnostic,
         found_package_json_dep,
@@ -533,7 +533,7 @@ impl<
         if specifier.scheme() == "node" {
           let module_name = specifier.path();
           return if node_resolver.is_builtin_node_module(module_name) {
-            Ok(DenoResolution {
+            Ok(EdnoResolution {
               url: specifier,
               maybe_diagnostic,
               found_package_json_dep,
@@ -570,14 +570,14 @@ impl<
                 resolution_kind,
               )
               .map_err(|err| {
-                DenoResolveErrorKind::ResolveNpmReqRef(ResolveNpmReqRefError {
+                EdnoResolveErrorKind::ResolveNpmReqRef(ResolveNpmReqRefError {
                   npm_req_ref: npm_req_ref.clone(),
                   err: err.into(),
                 })
                 .into_box()
               })
               .and_then(|url_or_path| {
-                Ok(DenoResolution {
+                Ok(EdnoResolution {
                   url: url_or_path.into_url()?,
                   maybe_diagnostic,
                   found_package_json_dep,
@@ -594,10 +594,10 @@ impl<
                 resolution_kind,
               )
               .map_err(|err| {
-                DenoResolveErrorKind::ResolveNpmReqRef(err).into_box()
+                EdnoResolveErrorKind::ResolveNpmReqRef(err).into_box()
               })
               .and_then(|url_or_path| {
-                Ok(DenoResolution {
+                Ok(EdnoResolution {
                   url: url_or_path.into_url()?,
                   maybe_diagnostic,
                   found_package_json_dep,
@@ -606,7 +606,7 @@ impl<
           }
         }
 
-        Ok(DenoResolution {
+        Ok(EdnoResolution {
           url: node_resolver
             .handle_if_in_node_modules(&specifier)
             .unwrap_or(specifier),
@@ -619,7 +619,7 @@ impl<
         // Built-ins always take priority, matching Node.js behavior where
         // built-in modules cannot be shadowed by node_modules packages.
         if node_resolver.is_builtin_node_module(raw_specifier) {
-          return Ok(DenoResolution {
+          return Ok(EdnoResolution {
             url: Url::parse(&format!("node:{}", raw_specifier)).unwrap(),
             maybe_diagnostic,
             found_package_json_dep,
@@ -637,14 +637,14 @@ impl<
             )
             .map_err(|e| match e.into_kind() {
               ResolveIfForNpmPackageErrorKind::NodeResolve(e) => {
-                DenoResolveErrorKind::Node(e).into_box()
+                EdnoResolveErrorKind::Node(e).into_box()
               }
               ResolveIfForNpmPackageErrorKind::NodeModulesOutOfDate(e) => {
                 e.into()
               }
             })?;
           if let Some(res) = maybe_resolution {
-            return Ok(DenoResolution {
+            return Ok(EdnoResolution {
               url: res.into_url()?,
               maybe_diagnostic,
               found_package_json_dep,
@@ -685,17 +685,17 @@ impl<
 }
 
 /// Whether the React CVE source patches are enabled. Opt in by setting the
-/// `DENO_PATCH_REACT_CVE` environment variable to a non-empty value other than
+/// `EDNO_PATCH_REACT_CVE` environment variable to a non-empty value other than
 /// `0`.
 ///
 /// The variable is read exactly once (via `sys`) and cached. Module loading
 /// happens before any user code runs, so the value is effectively snapshotted
-/// at startup and cannot be toggled later via `Deno.env.set`.
+/// at startup and cannot be toggled later via `Edno.env.set`.
 pub fn is_react_cve_patch_enabled(sys: &impl sys_traits::EnvVar) -> bool {
   static ENABLED: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
   *ENABLED.get_or_init(|| {
     sys
-      .env_var("DENO_PATCH_REACT_CVE")
+      .env_var("EDNO_PATCH_REACT_CVE")
       .map(|v| !v.is_empty() && v != "0")
       .unwrap_or(false)
   })
@@ -710,7 +710,7 @@ pub fn is_react_cve_patch_enabled(sys: &impl sys_traits::EnvVar) -> bool {
 ///   forever.
 ///
 /// Callers must gate this behind [`is_react_cve_patch_enabled`] (the patches
-/// are opt-in via the `DENO_PATCH_REACT_CVE` environment variable) and only
+/// are opt-in via the `EDNO_PATCH_REACT_CVE` environment variable) and only
 /// apply it to JavaScript source.
 pub fn patch_react_cves<'a>(
   filename: &str,

@@ -1,3 +1,3 @@
 export function sayBetterHello() {
-  return '@denotest/better-say-hello says hello (but better)!';
+  return '@ednotest/better-say-hello says hello (but better)!';
 }

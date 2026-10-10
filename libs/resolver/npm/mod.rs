@@ -7,9 +7,9 @@ use std::path::PathBuf;
 
 use boxed_error::Boxed;
 use deno_error::JsError;
-use deno_maybe_sync::MaybeSend;
-use deno_maybe_sync::MaybeSync;
-use deno_maybe_sync::new_rc;
+use edno_maybe_sync::MaybeSend;
+use edno_maybe_sync::MaybeSync;
+use edno_maybe_sync::new_rc;
 use deno_semver::Version;
 use deno_semver::npm::NpmPackageReqReference;
 use deno_semver::package::PackageReq;
@@ -61,41 +61,41 @@ pub enum CreateInNpmPkgCheckerOptions<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub enum DenoInNpmPackageChecker {
+pub enum EdnoInNpmPackageChecker {
   Managed(ManagedInNpmPackageChecker),
   Byonm(ByonmInNpmPackageChecker),
 }
 
-impl DenoInNpmPackageChecker {
+impl EdnoInNpmPackageChecker {
   pub fn new(options: CreateInNpmPkgCheckerOptions) -> Self {
     match options {
       CreateInNpmPkgCheckerOptions::Managed(options) => {
-        DenoInNpmPackageChecker::Managed(create_managed_in_npm_pkg_checker(
+        EdnoInNpmPackageChecker::Managed(create_managed_in_npm_pkg_checker(
           options,
         ))
       }
       CreateInNpmPkgCheckerOptions::Byonm => {
-        DenoInNpmPackageChecker::Byonm(ByonmInNpmPackageChecker)
+        EdnoInNpmPackageChecker::Byonm(ByonmInNpmPackageChecker)
       }
     }
   }
 }
 
-impl InNpmPackageChecker for DenoInNpmPackageChecker {
+impl InNpmPackageChecker for EdnoInNpmPackageChecker {
   fn in_npm_package(&self, specifier: &Url) -> bool {
     if is_synthetic_module(specifier) {
       return false;
     }
     match self {
-      DenoInNpmPackageChecker::Managed(c) => c.in_npm_package(specifier),
-      DenoInNpmPackageChecker::Byonm(c) => c.in_npm_package(specifier),
+      EdnoInNpmPackageChecker::Managed(c) => c.in_npm_package(specifier),
+      EdnoInNpmPackageChecker::Byonm(c) => c.in_npm_package(specifier),
     }
   }
 }
 
-/// Whether `specifier` names one of the synthetic modules Deno uses for code
-/// that has no file on disk, such as `deno eval` (`$deno$eval.mts`) or piped
-/// stdin (`$deno$stdin.mts`).
+/// Whether `specifier` names one of the synthetic modules Edno uses for code
+/// that has no file on disk, such as `edno eval` (`$edno$eval.mts`) or piped
+/// stdin (`$edno$stdin.mts`).
 ///
 /// These are resolved against the cwd so that imports and the closest
 /// `package.json` resolve as if the code were a file sitting there, which means
@@ -113,13 +113,13 @@ pub fn is_synthetic_module(specifier: &Url) -> bool {
     Some(index) => &path[index + 1..],
     None => path,
   };
-  file_name.starts_with("$deno$")
+  file_name.starts_with("$edno$")
 }
 
 #[derive(Debug, Error, JsError)]
 #[class(generic)]
 #[error(
-  "Could not resolve \"{}\", but found it in a package.json. Deno expects the node_modules/ directory to be up to date. Did you forget to run `deno install`?",
+  "Could not resolve \"{}\", but found it in a package.json. Edno expects the node_modules/ directory to be up to date. Did you forget to run `edno install`?",
   specifier
 )]
 pub struct NodeModulesOutOfDateError {
@@ -128,7 +128,7 @@ pub struct NodeModulesOutOfDateError {
 
 #[derive(Debug, Error, JsError)]
 #[class(generic)]
-#[error("Could not find '{}'. Deno expects the node_modules/ directory to be up to date. Did you forget to run `deno install`?", package_json_path.display())]
+#[error("Could not find '{}'. Edno expects the node_modules/ directory to be up to date. Did you forget to run `edno install`?", package_json_path.display())]
 pub struct MissingPackageNodeModulesFolderError {
   pub package_json_path: PathBuf,
   // Don't bother displaying this error, so don't name it "source"
@@ -289,7 +289,7 @@ pub trait NpmResolverSys:
 
 #[derive(Debug, Clone)]
 pub enum NpmResolver<TSys: NpmResolverSys> {
-  /// The resolver when "bring your own node_modules" is enabled where Deno
+  /// The resolver when "bring your own node_modules" is enabled where Edno
   /// does not setup the node_modules directories automatically, but instead
   /// uses what already exists on the file system.
   Byonm(ByonmNpmResolverRc<TSys>),
@@ -411,7 +411,7 @@ pub type NpmReqResolverRc<
   TIsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver,
   TSys,
-> = deno_maybe_sync::MaybeArc<
+> = edno_maybe_sync::MaybeArc<
   NpmReqResolver<
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
@@ -717,6 +717,6 @@ pub(crate) fn join_package_name_to_path(
 
 // Matching a locally installed (e.g. pnpm/npm workspace) package against a
 // requirement is prerelease-inclusive. The canonical implementation lives in
-// `deno_config` so it can be shared with `NpmPackageConfig` matching; re-export
+// `edno_config` so it can be shared with `NpmPackageConfig` matching; re-export
 // it here for the byonm and cache_deps callers.
-pub use deno_config::workspace::version_req_matches_including_pre;
+pub use edno_config::workspace::version_req_matches_including_pre;

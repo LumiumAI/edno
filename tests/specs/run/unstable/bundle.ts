@@ -1,1 +1,1 @@
-Deno.bundle();
+Edno.bundle();

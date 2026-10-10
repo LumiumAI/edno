@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::error::AnyError;
+use edno_core::error::AnyError;
 use deno_graph::fast_check::FastCheckCacheItem;
 use deno_graph::fast_check::FastCheckCacheKey;
-use deno_runtime::deno_webstorage::rusqlite::params;
+use edno_runtime::edno_webstorage::rusqlite::params;
 
 use super::cache_db::CacheDB;
 use super::cache_db::CacheDBConfiguration;

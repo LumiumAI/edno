@@ -1,6 +1,6 @@
 [UNORDERED_START]
-Task dev (@deno/bar) echo '@deno/bar'
-Task dev (@deno/foo) echo '@deno/foo'
-[@deno/bar#dev] @deno/bar
-[@deno/foo#dev] @deno/foo
+Task dev (@edno/bar) echo '@edno/bar'
+Task dev (@edno/foo) echo '@edno/foo'
+[@edno/bar#dev] @edno/bar
+[@edno/foo#dev] @edno/foo
 [UNORDERED_END]

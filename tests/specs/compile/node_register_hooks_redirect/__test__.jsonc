@@ -11,7 +11,7 @@
   }, {
     // Remove the on-disk target so the only source left is the copy embedded
     // in the binary's VFS, forcing the Rust default loader fallthrough path.
-    "args": "eval Deno.removeSync('target.mjs')",
+    "args": "eval Edno.removeSync('target.mjs')",
     "output": "[WILDCARD]"
   }, {
     "if": "unix",

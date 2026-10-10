@@ -16,7 +16,7 @@
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync('src/in.ts', 'console.log(2)')"
+            "Edno.writeTextFileSync('src/in.ts', 'console.log(2)')"
           ],
           "output": ""
         },
@@ -36,19 +36,19 @@
       "steps": [
         {
           "args": "task build foo",
-          "output": "Task build deno run src/in.ts 'foo'\n1\n"
+          "output": "Task build edno run src/in.ts 'foo'\n1\n"
         },
         {
           "args": "task build foo",
-          "output": "Task build deno run src/in.ts 'foo' (cached, inputs unchanged)\n"
+          "output": "Task build edno run src/in.ts 'foo' (cached, inputs unchanged)\n"
         },
         {
           "args": "task build bar",
-          "output": "Task build deno run src/in.ts 'bar'\n1\n"
+          "output": "Task build edno run src/in.ts 'bar'\n1\n"
         },
         {
           "args": "task build bar",
-          "output": "Task build deno run src/in.ts 'bar' (cached, inputs unchanged)\n"
+          "output": "Task build edno run src/in.ts 'bar' (cached, inputs unchanged)\n"
         }
       ]
     },
@@ -59,17 +59,17 @@
         {
           "args": "task with_env",
           "envs": { "MY_VAR": "a" },
-          "output": "Task with_env deno run src/in.ts\n1\n"
+          "output": "Task with_env edno run src/in.ts\n1\n"
         },
         {
           "args": "task with_env",
           "envs": { "MY_VAR": "a" },
-          "output": "Task with_env deno run src/in.ts (cached, inputs unchanged)\n"
+          "output": "Task with_env edno run src/in.ts (cached, inputs unchanged)\n"
         },
         {
           "args": "task with_env",
           "envs": { "MY_VAR": "b" },
-          "output": "Task with_env deno run src/in.ts\n1\n"
+          "output": "Task with_env edno run src/in.ts\n1\n"
         }
       ]
     },
@@ -84,13 +84,13 @@
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync('deno.json', JSON.stringify({tasks:{build:{command:'deno run -q src/in.ts',files:['src/**/*.ts']}}}))"
+            "Edno.writeTextFileSync('edno.json', JSON.stringify({tasks:{build:{command:'edno run -q src/in.ts',files:['src/**/*.ts']}}}))"
           ],
           "output": ""
         },
         {
           "args": "task build",
-          "output": "Task build deno run -q src/in.ts\n1\n"
+          "output": "Task build edno run -q src/in.ts\n1\n"
         }
       ]
     },
@@ -100,11 +100,11 @@
       "steps": [
         {
           "args": "task no_inputs",
-          "output": "Task no_inputs deno run src/in.ts\n1\n"
+          "output": "Task no_inputs edno run src/in.ts\n1\n"
         },
         {
           "args": "task no_inputs",
-          "output": "Task no_inputs deno run src/in.ts\n1\n"
+          "output": "Task no_inputs edno run src/in.ts\n1\n"
         }
       ]
     },
@@ -115,28 +115,28 @@
       "steps": [
         {
           "args": "task build_out",
-          "output": "Task build_out deno run -A src/gen.ts\ngenerated\n"
+          "output": "Task build_out edno run -A src/gen.ts\ngenerated\n"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('dist/out.txt'))"
+            "console.log(Edno.readTextFileSync('dist/out.txt'))"
           ],
           "output": "artifact\n"
         },
         {
-          "args": ["eval", "Deno.removeSync('dist', { recursive: true })"],
+          "args": ["eval", "Edno.removeSync('dist', { recursive: true })"],
           "output": ""
         },
         {
           "args": "task build_out",
-          "output": "Task build_out deno run -A src/gen.ts (cached, inputs unchanged)\n"
+          "output": "Task build_out edno run -A src/gen.ts (cached, inputs unchanged)\n"
         },
         // The deleted output is back, restored from the cache.
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('dist/out.txt'))"
+            "console.log(Edno.readTextFileSync('dist/out.txt'))"
           ],
           "output": "artifact\n"
         }
@@ -148,16 +148,16 @@
       "steps": [
         {
           "args": "task downstream",
-          "output": "Task dep deno run src/dep_in.ts\ndep\nTask downstream deno run src/down_in.ts\ndown\n"
+          "output": "Task dep edno run src/dep_in.ts\ndep\nTask downstream edno run src/down_in.ts\ndown\n"
         },
         {
           "args": "task downstream",
-          "output": "Task dep deno run src/dep_in.ts (cached, inputs unchanged)\nTask downstream deno run src/down_in.ts (cached, inputs unchanged)\n"
+          "output": "Task dep edno run src/dep_in.ts (cached, inputs unchanged)\nTask downstream edno run src/down_in.ts (cached, inputs unchanged)\n"
         },
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync('src/dep_in.ts', 'console.log(\"dep2\")')"
+            "Edno.writeTextFileSync('src/dep_in.ts', 'console.log(\"dep2\")')"
           ],
           "output": ""
         },
@@ -166,11 +166,11 @@
         // fingerprint is part of `downstream`'s cache key.
         {
           "args": "task downstream",
-          "output": "Task dep deno run src/dep_in.ts\ndep2\nTask downstream deno run src/down_in.ts\ndown\n"
+          "output": "Task dep edno run src/dep_in.ts\ndep2\nTask downstream edno run src/down_in.ts\ndown\n"
         },
         {
           "args": "task downstream",
-          "output": "Task dep deno run src/dep_in.ts (cached, inputs unchanged)\nTask downstream deno run src/down_in.ts (cached, inputs unchanged)\n"
+          "output": "Task dep edno run src/dep_in.ts (cached, inputs unchanged)\nTask downstream edno run src/down_in.ts (cached, inputs unchanged)\n"
         }
       ]
     }

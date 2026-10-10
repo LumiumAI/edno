@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 //! Discovery of npm packages that need to ship in the binary built by
-//! `deno compile --bundle`. Two complementary signals:
+//! `edno compile --bundle`. Two complementary signals:
 //!
 //! 1. Packages with `.node` native addons can't be tree-shaken into the
 //!    bundle, so we mark them for inclusion eagerly. For managed npm we
@@ -18,9 +18,9 @@ use std::ffi::OsStr;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_core::error::AnyError;
-use deno_npm::NpmPackageId;
-use deno_npm::NpmSystemInfo;
+use edno_core::error::AnyError;
+use edno_npm::NpmPackageId;
+use edno_npm::NpmSystemInfo;
 
 use crate::npm::CliNpmResolver;
 
@@ -65,7 +65,7 @@ pub fn find_native_addon_packages(
           // Skip packages that aren't actually present on disk (e.g.
           // platform-specific optional deps for other systems).
           Err(
-            deno_resolver::npm::managed::ResolvePkgFolderFromPkgIdError::NotFound(_),
+            edno_resolver::npm::managed::ResolvePkgFolderFromPkgIdError::NotFound(_),
           ) => continue,
           Err(err) => return Err(err.into()),
         };
@@ -95,7 +95,7 @@ pub fn find_native_addon_packages(
 }
 
 /// Compute the set of npm packages whose folders must ship in the binary
-/// produced by `deno compile --bundle`.
+/// produced by `edno compile --bundle`.
 ///
 /// Seeds the set with:
 /// - every native-addon package (always needed; bundle can't inline a

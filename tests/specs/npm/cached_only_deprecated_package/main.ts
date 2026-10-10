@@ -1,3 +1,3 @@
-import { getValue } from "@denotest/deprecated-package-with-bin";
+import { getValue } from "@ednotest/deprecated-package-with-bin";
 
 console.log(getValue());

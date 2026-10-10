@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// Support for DENO_SERVE_ADDRESS override in Node.js http.Server.
+// Support for EDNO_SERVE_ADDRESS override in Node.js http.Server.
 //
-// When DENO_SERVE_ADDRESS is set, node:http servers behave like the
-// top-level Deno.serve(): the first server to call `listen()` consumes
+// When EDNO_SERVE_ADDRESS is set, node:http servers behave like the
+// top-level Edno.serve(): the first server to call `listen()` consumes
 // the override.
 //
 // - Without the `duplicate` flag, the server listens on the override
@@ -12,9 +12,9 @@
 //
 // TCP overrides are applied by mutating the listen() options so the
 // normal net.Server path handles them. Non-TCP overrides (unix, vsock,
-// tunnel) open a Deno listener directly and feed each accepted
+// tunnel) open a Edno listener directly and feed each accepted
 // connection to the server's connection listener via a lightweight
-// Duplex wrapper around the Deno.Conn.
+// Duplex wrapper around the Edno.Conn.
 
 import { core, primordials } from "ext:core/mod.js";
 import {
@@ -42,10 +42,10 @@ const {
   Uint8Array,
 } = primordials;
 
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
-const { listen: denoListen } = core.loadExtScript("ext:deno_net/01_net.js");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
+const { listen: ednoListen } = core.loadExtScript("ext:edno_net/01_net.js");
 const { ERR_SOCKET_CLOSED } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 
 // Has the process-global override been consumed by some server yet?
@@ -82,7 +82,7 @@ function notifyAddressOverrideServing(kind = SERVER_KIND_NODE_HTTP) {
   op_http_notify_serving(kind);
 }
 
-// Translate an override record into the argument for denoListen().
+// Translate an override record into the argument for ednoListen().
 function overrideToListenArgs(override) {
   switch (override.kind) {
     case KIND_TCP:
@@ -102,7 +102,7 @@ function overrideToListenArgs(override) {
   }
 }
 
-// Minimal Socket-like Duplex wrapping a Deno.Conn. It exposes the
+// Minimal Socket-like Duplex wrapping a Edno.Conn. It exposes the
 // subset of the net.Socket interface that connectionListener in
 // _http_server.js actually uses.
 class OverrideSocket extends Duplex {
@@ -161,7 +161,7 @@ class OverrideSocket extends Duplex {
       if (this.#initialChunk !== null && this.#initialChunk.length > 0) {
         const chunk = Buffer.from(this.#initialChunk);
         this.#initialChunk = null;
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         if (!this.push(chunk)) {
           await new Promise((resolve) => {
             this._readResume = resolve;
@@ -180,7 +180,7 @@ class OverrideSocket extends Duplex {
           return;
         }
         if (n === null) {
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           this.push(null);
           return;
         }
@@ -189,7 +189,7 @@ class OverrideSocket extends Duplex {
         // Copy into a Buffer so the caller owns it independently of
         // our reusable read buffer.
         const chunk = Buffer.from(this.#readBuf.subarray(0, n));
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         if (!this.push(chunk)) {
           // Backpressure: wait until _read() is called before reading
           // more from the connection.
@@ -212,7 +212,7 @@ class OverrideSocket extends Duplex {
     }
   }
 
-  // Deno.Conn.write() is a single syscall-like write: it may write fewer
+  // Edno.Conn.write() is a single syscall-like write: it may write fewer
   // bytes than provided (e.g. when the transport send buffer is full --
   // vsock buffers are 64 KiB). Loop until the whole chunk is flushed.
   async #writeAll(bytes) {
@@ -310,10 +310,10 @@ class OverrideSocket extends Duplex {
 }
 
 // The HTTP/2 client connection preface: "PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n".
-// Control planes (e.g. Deno Deploy's deployd) forward HTTP/2 requests to the
+// Control planes (e.g. Edno Deploy's deployd) forward HTTP/2 requests to the
 // override listener with prior knowledge, so node:http servers must accept
-// both HTTP/1.1 and HTTP/2 connections here, like Deno.serve() does.
-// deno-fmt-ignore
+// both HTTP/1.1 and HTTP/2 connections here, like Edno.serve() does.
+// edno-fmt-ignore
 const H2_PREFACE = [
   0x50, 0x52, 0x49, 0x20, 0x2a, 0x20, 0x48, 0x54, 0x54, 0x50, 0x2f, 0x32,
   0x2e, 0x30, 0x0d, 0x0a, 0x0d, 0x0a, 0x53, 0x4d, 0x0d, 0x0a, 0x0d, 0x0a,
@@ -387,7 +387,7 @@ async function sniffConnection(conn) {
 // node:http internals).
 let lazyHttp2;
 function loadHttp2() {
-  lazyHttp2 ??= core.loadExtScript("ext:deno_node/http2.ts");
+  lazyHttp2 ??= core.loadExtScript("ext:edno_node/http2.ts");
   return lazyHttp2;
 }
 
@@ -498,11 +498,11 @@ function startH2OverrideConnection(server, conn, initialChunk) {
   shadow.emit("connection", socket);
 }
 
-// Run a Deno listener on the override address, handing each accepted
+// Run a Edno listener on the override address, handing each accepted
 // connection to `connectionListener` so the HTTP parser picks it up
 // the same way a regular net.Server connection would. For https.Server
 // the caller should pass the plain http _connectionListener so the
-// override channel stays cleartext (typical Deno Deploy / desktop
+// override channel stays cleartext (typical Edno Deploy / desktop
 // runtime use case: trusted local vsock/unix transport).
 // `alpnRouting` is used by node:http2 servers: instead of the
 // http.Server-specific dispatch (h1 parser path / shadow HTTP/2 session),
@@ -516,9 +516,9 @@ function startOverrideListener(
   connectionListener,
   alpnRouting = false,
 ) {
-  let denoListener;
+  let ednoListener;
   try {
-    denoListener = denoListen(overrideToListenArgs(override));
+    ednoListener = ednoListen(overrideToListenArgs(override));
   } catch (err) {
     // Don't bring the main listener down just because the override
     // failed to open -- surface it asynchronously.
@@ -526,16 +526,16 @@ function startOverrideListener(
     return;
   }
 
-  server[kOverrideListener] = denoListener;
+  server[kOverrideListener] = ednoListener;
   notifyAddressOverrideServing(
     alpnRouting ? SERVER_KIND_NODE_HTTP2 : SERVER_KIND_NODE_HTTP,
   );
 
   (async () => {
     try {
-      const it = denoListener[SymbolAsyncIterator]();
+      const it = ednoListener[SymbolAsyncIterator]();
       while (true) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const { done, value: conn } = await it.next();
         if (done) break;
         if (server[kOverrideClosed]) {
@@ -592,7 +592,7 @@ function startOverrideListener(
   server.once("close", () => {
     server[kOverrideClosed] = true;
     try {
-      denoListener.close();
+      ednoListener.close();
     } catch (_) {
       // already closed
     }

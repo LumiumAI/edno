@@ -1,3 +1,3 @@
-const binaryName = Deno.build.os === "windows" ? "binary.exe" : "binary";
+const binaryName = Edno.build.os === "windows" ? "binary.exe" : "binary";
 
-Deno.writeTextFileSync(binaryName, "");
+Edno.writeTextFileSync(binaryName, "");

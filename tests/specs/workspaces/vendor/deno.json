@@ -4,6 +4,6 @@
     "package-a"
   ],
   "imports": {
-    "@denotest/add": "jsr:@denotest/add"
+    "@ednotest/add": "jsr:@ednotest/add"
   }
 }

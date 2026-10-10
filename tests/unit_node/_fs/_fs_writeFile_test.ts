@@ -17,7 +17,7 @@ type TextEncodings =
 let modeAsync: number;
 let modeSync: number;
 // On Windows chmod is only able to manipulate write permission
-if (Deno.build.os === "windows") {
+if (Edno.build.os === "windows") {
   modeAsync = 0o444; // read-only
   modeSync = 0o666; // read-write
 } else {
@@ -29,7 +29,7 @@ const moduleDir = path.dirname(path.fromFileUrl(import.meta.url));
 const testDataDir = path.resolve(moduleDir, "testdata");
 const decoder = new TextDecoder("utf-8");
 
-Deno.test("Callback must be a function error", function fn() {
+Edno.test("Callback must be a function error", function fn() {
   assertThrows(
     () => {
       // @ts-expect-error Type '"made-up-encoding"' is not assignable to type
@@ -40,7 +40,7 @@ Deno.test("Callback must be a function error", function fn() {
   );
 });
 
-Deno.test("Invalid encoding results in error()", function testEncodingErrors() {
+Edno.test("Invalid encoding results in error()", function testEncodingErrors() {
   assertThrows(
     () => {
       // @ts-expect-error Type '"made-up-encoding"' is not assignable to type
@@ -87,16 +87,16 @@ Deno.test("Invalid encoding results in error()", function testEncodingErrors() {
   );
 });
 
-Deno.test(
+Edno.test(
   {
     name: "Data is written to correct rid",
-    // TODO(bartlomieju): this test is broken in Deno 2, because `file.rid` is undefined.
+    // TODO(bartlomieju): this test is broken in Edno 2, because `file.rid` is undefined.
     // The fs APIs should be rewritten to use actual FDs, not RIDs
     ignore: true,
   },
   async function testCorrectWriteUsingRid() {
-    const tempFile: string = await Deno.makeTempFile();
-    using file = await Deno.open(tempFile, {
+    const tempFile: string = await Edno.makeTempFile();
+    using file = await Edno.open(tempFile, {
       create: true,
       write: true,
       read: true,
@@ -110,27 +110,27 @@ Deno.test(
       });
     });
 
-    const data = await Deno.readFile(tempFile);
-    await Deno.remove(tempFile);
+    const data = await Edno.readFile(tempFile);
+    await Edno.remove(tempFile);
     assertEquals(decoder.decode(data), "hello world");
   },
 );
 
-Deno.test(
+Edno.test(
   "Data is written to correct file",
   async function testCorrectWriteUsingPath() {
     const res = await new Promise((resolve) => {
       writeFile("_fs_writeFile_test_file.txt", "hello world", resolve);
     });
 
-    const data = await Deno.readFile("_fs_writeFile_test_file.txt");
-    await Deno.remove("_fs_writeFile_test_file.txt");
+    const data = await Edno.readFile("_fs_writeFile_test_file.txt");
+    await Edno.remove("_fs_writeFile_test_file.txt");
     assertEquals(res, null);
     assertEquals(decoder.decode(data), "hello world");
   },
 );
 
-Deno.test(
+Edno.test(
   "Data is written to correct file encodings",
   async function testCorrectWriteUsingDifferentEncodings() {
     const encodings = [
@@ -156,17 +156,17 @@ Deno.test(
         );
       });
 
-      const data = await Deno.readFile("_fs_writeFile_test_file.txt");
-      await Deno.remove("_fs_writeFile_test_file.txt");
+      const data = await Edno.readFile("_fs_writeFile_test_file.txt");
+      await Edno.remove("_fs_writeFile_test_file.txt");
       assertEquals(res, null);
       assertEquals(decoder.decode(data), "hello world!!!!!");
     }
   },
 );
 
-Deno.test("Path can be an URL", async function testCorrectWriteUsingURL() {
+Edno.test("Path can be an URL", async function testCorrectWriteUsingURL() {
   const url = new URL(
-    Deno.build.os === "windows"
+    Edno.build.os === "windows"
       ? "file:///" +
         path
           .join(testDataDir, "_fs_writeFile_test_file_url.txt")
@@ -179,15 +179,15 @@ Deno.test("Path can be an URL", async function testCorrectWriteUsingURL() {
   });
   assert(res === null);
 
-  const data = await Deno.readFile(filePath);
-  await Deno.remove(filePath);
+  const data = await Edno.readFile(filePath);
+  await Edno.remove(filePath);
   assertEquals(res, null);
   assertEquals(decoder.decode(data), "hello world");
 });
 
-Deno.test({
+Edno.test({
   name: "Mode is correctly set",
-  // TODO(bartlomieju): this test is broken in Deno 2, because `file.rid` is undefined.
+  // TODO(bartlomieju): this test is broken in Edno 2, because `file.rid` is undefined.
   // The fs APIs should be rewritten to use actual FDs, not RIDs
   ignore: true,
 }, async function testCorrectFileMode() {
@@ -197,23 +197,23 @@ Deno.test({
     writeFile(filename, "hello world", { mode: modeAsync }, resolve);
   });
 
-  const fileInfo = await Deno.stat(filename);
-  await Deno.remove(filename);
+  const fileInfo = await Edno.stat(filename);
+  await Edno.remove(filename);
   assertEquals(res, null);
   assert(fileInfo && fileInfo.mode);
   assertEquals(fileInfo.mode & 0o777, modeAsync);
 });
 
-Deno.test(
+Edno.test(
   {
     name: "Mode is not set when rid is passed",
-    // TODO(bartlomieju): this test is broken in Deno 2, because `file.rid` is undefined.
+    // TODO(bartlomieju): this test is broken in Edno 2, because `file.rid` is undefined.
     // The fs APIs should be rewritten to use actual FDs, not RIDs
     ignore: true,
   },
   async function testCorrectFileModeRid() {
-    const filename: string = await Deno.makeTempFile();
-    using file = await Deno.open(filename, {
+    const filename: string = await Edno.makeTempFile();
+    using file = await Edno.open(filename, {
       create: true,
       write: true,
       read: true,
@@ -227,20 +227,20 @@ Deno.test(
       });
     });
 
-    const fileInfo = await Deno.stat(filename);
-    await Deno.remove(filename);
+    const fileInfo = await Edno.stat(filename);
+    await Edno.remove(filename);
     assert(fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeAsync);
   },
 );
 
-Deno.test(
+Edno.test(
   "Is cancellable with an AbortSignal",
   async function testIsCancellableWithAbortSignal() {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     const controller = new AbortController();
     // The "as any" is necessary due to https://github.com/denoland/deno/issues/19527
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const signal = controller.signal as any;
 
     const writeFilePromise = new Promise<void>((resolve, reject) => {
@@ -256,20 +256,20 @@ Deno.test(
       "AbortError",
     );
 
-    Deno.removeSync(tempFile);
+    Edno.removeSync(tempFile);
   },
 );
 
-Deno.test(
+Edno.test(
   {
     name: "Data is written synchronously to correct rid",
-    // TODO(bartlomieju): this test is broken in Deno 2, because `file.rid` is undefined.
+    // TODO(bartlomieju): this test is broken in Edno 2, because `file.rid` is undefined.
     // The fs APIs should be rewritten to use actual FDs, not RIDs
     ignore: true,
   },
   function testCorrectWriteSyncUsingRid() {
-    const tempFile: string = Deno.makeTempFileSync();
-    using file = Deno.openSync(tempFile, {
+    const tempFile: string = Edno.makeTempFileSync();
+    using file = Edno.openSync(tempFile, {
       create: true,
       write: true,
       read: true,
@@ -278,13 +278,13 @@ Deno.test(
     // @ts-ignore (iuioiua) `file.rid` should no longer be needed once FDs are used
     writeFileSync(file.rid, "hello world");
 
-    const data = Deno.readFileSync(tempFile);
-    Deno.removeSync(tempFile);
+    const data = Edno.readFileSync(tempFile);
+    Edno.removeSync(tempFile);
     assertEquals(decoder.decode(data), "hello world");
   },
 );
 
-Deno.test(
+Edno.test(
   "Data is written to correct file encodings",
   function testCorrectWriteSyncUsingDifferentEncodings() {
     const encodings = [
@@ -304,52 +304,52 @@ Deno.test(
       const file = "_fs_writeFileSync_test_file";
       writeFileSync(file, value, encoding as TextEncodings);
 
-      const data = Deno.readFileSync(file);
-      Deno.removeSync(file);
+      const data = Edno.readFileSync(file);
+      Edno.removeSync(file);
       assertEquals(decoder.decode(data), "hello world!!!!!");
     }
   },
 );
 
-Deno.test(
+Edno.test(
   "Data is written synchronously to correct file",
   function testCorrectWriteSyncUsingPath() {
     const file = "_fs_writeFileSync_test_file";
 
     writeFileSync(file, "hello world");
 
-    const data = Deno.readFileSync(file);
-    Deno.removeSync(file);
+    const data = Edno.readFileSync(file);
+    Edno.removeSync(file);
     assertEquals(decoder.decode(data), "hello world");
   },
 );
 
-Deno.test("sync: Path can be an URL", function testCorrectWriteSyncUsingURL() {
+Edno.test("sync: Path can be an URL", function testCorrectWriteSyncUsingURL() {
   const filePath = path.join(
     testDataDir,
     "_fs_writeFileSync_test_file_url.txt",
   );
   const url = new URL(
-    Deno.build.os === "windows"
+    Edno.build.os === "windows"
       ? "file:///" + filePath.replace(/\\/g, "/")
       : "file://" + filePath,
   );
   writeFileSync(url, "hello world");
 
-  const data = Deno.readFileSync(filePath);
-  Deno.removeSync(filePath);
+  const data = Edno.readFileSync(filePath);
+  Edno.removeSync(filePath);
   assertEquals(decoder.decode(data), "hello world");
 });
 
-Deno.test(
+Edno.test(
   "Mode is correctly set when writing synchronously",
   function testCorrectFileModeSync() {
     const filename = "_fs_writeFileSync_test_file.txt";
 
     writeFileSync(filename, "hello world", { mode: modeSync });
 
-    const fileInfo = Deno.statSync(filename);
-    Deno.removeSync(filename);
+    const fileInfo = Edno.statSync(filename);
+    Edno.removeSync(filename);
     assert(fileInfo && fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeSync);
   },

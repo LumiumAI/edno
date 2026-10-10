@@ -3,7 +3,7 @@
 // op_http_metric_handle_otel_error must not consume the external pointer
 // before op_http_copy_span_to_otel_info can use it.
 
-const server = Deno.serve({
+const server = Edno.serve({
   port: 0,
   async onListen({ port }) {
     try {

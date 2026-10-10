@@ -7,10 +7,10 @@ use std::collections::HashSet;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_maybe_sync::new_rc;
-use deno_package_json::PackageJson;
-use deno_package_json::PackageJsonLoadError;
-use deno_package_json::PackageJsonRc;
+use edno_maybe_sync::new_rc;
+use edno_package_json::PackageJson;
+use edno_package_json::PackageJsonLoadError;
+use edno_package_json::PackageJsonRc;
 use deno_path_util::normalize_path;
 use deno_path_util::url_from_directory_path;
 use deno_path_util::url_from_file_path;
@@ -33,8 +33,8 @@ use super::WorkspaceDiscoverErrorKind;
 use super::WorkspaceDiscoverOptions;
 use super::WorkspaceDiscoverStart;
 use super::WorkspaceRc;
-use crate::deno_json::ConfigFile;
-use crate::deno_json::ConfigFileRc;
+use crate::edno_json::ConfigFile;
+use crate::edno_json::ConfigFileRc;
 use crate::glob::FileCollector;
 use crate::glob::FilePatterns;
 use crate::glob::PathGlobMatch;
@@ -46,15 +46,15 @@ use crate::workspace::ConfigReadError;
 use crate::workspace::Workspace;
 
 #[derive(Debug)]
-pub enum DenoOrPkgJson {
-  Deno(ConfigFileRc),
+pub enum EdnoOrPkgJson {
+  Edno(ConfigFileRc),
   PkgJson(PackageJsonRc),
 }
 
-impl DenoOrPkgJson {
+impl EdnoOrPkgJson {
   pub fn specifier(&self) -> Cow<'_, Url> {
     match self {
-      Self::Deno(config) => Cow::Borrowed(&config.specifier),
+      Self::Edno(config) => Cow::Borrowed(&config.specifier),
       Self::PkgJson(pkg_json) => Cow::Owned(pkg_json.specifier()),
     }
   }
@@ -62,9 +62,9 @@ impl DenoOrPkgJson {
 
 #[derive(Debug)]
 pub enum ConfigFolder {
-  Single(DenoOrPkgJson),
+  Single(EdnoOrPkgJson),
   Both {
-    deno_json: ConfigFileRc,
+    edno_json: ConfigFileRc,
     pkg_json: PackageJsonRc,
   },
 }
@@ -72,42 +72,42 @@ pub enum ConfigFolder {
 impl ConfigFolder {
   pub fn folder_url(&self) -> Url {
     match self {
-      Self::Single(DenoOrPkgJson::Deno(config)) => {
+      Self::Single(EdnoOrPkgJson::Edno(config)) => {
         url_parent(&config.specifier)
       }
-      Self::Single(DenoOrPkgJson::PkgJson(pkg_json)) => {
+      Self::Single(EdnoOrPkgJson::PkgJson(pkg_json)) => {
         url_from_directory_path(pkg_json.path.parent().unwrap()).unwrap()
       }
-      Self::Both { deno_json, .. } => url_parent(&deno_json.specifier),
+      Self::Both { edno_json, .. } => url_parent(&edno_json.specifier),
     }
   }
 
   pub fn has_workspace_members(&self) -> bool {
     match self {
-      Self::Single(DenoOrPkgJson::Deno(config)) => {
+      Self::Single(EdnoOrPkgJson::Edno(config)) => {
         config.json.workspace.is_some()
       }
-      Self::Single(DenoOrPkgJson::PkgJson(pkg_json)) => {
+      Self::Single(EdnoOrPkgJson::PkgJson(pkg_json)) => {
         pkg_json.workspaces.is_some()
       }
       Self::Both {
-        deno_json,
+        edno_json,
         pkg_json,
-      } => deno_json.json.workspace.is_some() || pkg_json.workspaces.is_some(),
+      } => edno_json.json.workspace.is_some() || pkg_json.workspaces.is_some(),
     }
   }
 
-  pub fn deno_json(&self) -> Option<&ConfigFileRc> {
+  pub fn edno_json(&self) -> Option<&ConfigFileRc> {
     match self {
-      Self::Single(DenoOrPkgJson::Deno(deno_json)) => Some(deno_json),
-      Self::Both { deno_json, .. } => Some(deno_json),
+      Self::Single(EdnoOrPkgJson::Edno(edno_json)) => Some(edno_json),
+      Self::Both { edno_json, .. } => Some(edno_json),
       _ => None,
     }
   }
 
   pub fn pkg_json(&self) -> Option<&PackageJsonRc> {
     match self {
-      Self::Single(DenoOrPkgJson::PkgJson(pkg_json)) => Some(pkg_json),
+      Self::Single(EdnoOrPkgJson::PkgJson(pkg_json)) => Some(pkg_json),
       Self::Both { pkg_json, .. } => Some(pkg_json),
       _ => None,
     }
@@ -118,15 +118,15 @@ impl ConfigFolder {
     maybe_pkg_json: Option<PackageJsonRc>,
   ) -> Option<Self> {
     match (maybe_deno_json, maybe_pkg_json) {
-      (Some(deno_json), Some(pkg_json)) => Some(Self::Both {
-        deno_json,
+      (Some(edno_json), Some(pkg_json)) => Some(Self::Both {
+        edno_json,
         pkg_json,
       }),
-      (Some(deno_json), None) => {
-        Some(Self::Single(DenoOrPkgJson::Deno(deno_json)))
+      (Some(edno_json), None) => {
+        Some(Self::Single(EdnoOrPkgJson::Edno(edno_json)))
       }
       (None, Some(pkg_json)) => {
-        Some(Self::Single(DenoOrPkgJson::PkgJson(pkg_json)))
+        Some(Self::Single(EdnoOrPkgJson::PkgJson(pkg_json)))
       }
       (None, None) => None,
     }
@@ -145,8 +145,8 @@ impl ConfigFileDiscovery {
       Self::None { .. } => None,
       Self::Workspace { workspace, .. } => {
         let root_folder_configs = workspace.root_folder_configs();
-        if let Some(deno_json) = &root_folder_configs.deno_json {
-          return Some(Cow::Borrowed(&deno_json.specifier));
+        if let Some(edno_json) = &root_folder_configs.edno_json {
+          return Some(Cow::Borrowed(&edno_json.specifier));
         }
         if let Some(pkg_json) = &root_folder_configs.pkg_json {
           return Some(Cow::Owned(pkg_json.specifier()));
@@ -160,7 +160,7 @@ impl ConfigFileDiscovery {
 fn config_folder_config_specifier(res: &ConfigFolder) -> Cow<'_, Url> {
   match res {
     ConfigFolder::Single(config) => config.specifier(),
-    ConfigFolder::Both { deno_json, .. } => Cow::Borrowed(&deno_json.specifier),
+    ConfigFolder::Both { edno_json, .. } => Cow::Borrowed(&edno_json.specifier),
   }
 }
 
@@ -257,8 +257,8 @@ fn discover_workspace_config_files_for_single_dir<
     // caches because that would mean the configs might change between calls
     // causing strange behavior, so panic if someone does this
     assert!(
-      opts.deno_json_cache.is_some() && opts.pkg_json_cache.is_some(),
-      "Using a workspace cache requires setting the deno.json and package.json caches"
+      opts.edno_json_cache.is_some() && opts.pkg_json_cache.is_some(),
+      "Using a workspace cache requires setting the edno.json and package.json caches"
     );
   }
 
@@ -298,7 +298,7 @@ fn discover_workspace_config_files_for_single_dir<
   let load_config_folder = |folder_path: &Path| -> Result<_, ConfigReadError> {
     let maybe_config_file = ConfigFile::maybe_find_in_folder(
       sys,
-      opts.deno_json_cache,
+      opts.edno_json_cache,
       folder_path,
       &config_file_names,
     )?;
@@ -316,7 +316,7 @@ fn discover_workspace_config_files_for_single_dir<
       let specifier = url_from_file_path(file)?;
       let config_file = new_rc(
         ConfigFile::from_specifier(sys, specifier.clone())
-          .map_err(ConfigReadError::DenoJsonRead)?,
+          .map_err(ConfigReadError::EdnoJsonRead)?,
       );
 
       // see what config would be loaded if we just specified the parent directory
@@ -325,7 +325,7 @@ fn discover_workspace_config_files_for_single_dir<
       let matching_config_folder = match natural_config_folder_result {
         Ok(Some(natual_config_folder)) => {
           if natual_config_folder
-            .deno_json()
+            .edno_json()
             .is_some_and(|d| d.specifier == config_file.specifier)
           {
             Some(natual_config_folder)
@@ -344,7 +344,7 @@ fn discover_workspace_config_files_for_single_dir<
           // don't try to load a workspace and don't store this information in
           // the workspace cache
           let config_folder =
-            ConfigFolder::Single(DenoOrPkgJson::Deno(config_file));
+            ConfigFolder::Single(EdnoOrPkgJson::Edno(config_file));
 
           if config_folder.has_workspace_members() {
             return handle_workspace_folder_with_members(
@@ -358,7 +358,7 @@ fn discover_workspace_config_files_for_single_dir<
           }
 
           let maybe_vendor_dir = resolve_vendor_dir(
-            config_folder.deno_json().map(|d| d.as_ref()),
+            config_folder.edno_json().map(|d| d.as_ref()),
             opts.maybe_vendor_override.as_ref(),
           );
           let links = resolve_link_config_folders_with_auto(
@@ -383,7 +383,7 @@ fn discover_workspace_config_files_for_single_dir<
       {
         if cfg!(debug_assertions) {
           let expected_vendor_dir = resolve_vendor_dir(
-            config_folder.deno_json().map(|d| d.as_ref()),
+            config_folder.edno_json().map(|d| d.as_ref()),
             opts.maybe_vendor_override.as_ref(),
           );
           debug_assert_eq!(
@@ -477,7 +477,7 @@ fn discover_workspace_config_files_for_single_dir<
       {
         if cfg!(debug_assertions) {
           let expected_vendor_dir = resolve_vendor_dir(
-            root_config_folder.deno_json().map(|d| d.as_ref()),
+            root_config_folder.edno_json().map(|d| d.as_ref()),
             opts.maybe_vendor_override.as_ref(),
           );
           debug_assert_eq!(
@@ -500,7 +500,7 @@ fn discover_workspace_config_files_for_single_dir<
       .remove(&first_config_folder_url)
       .unwrap();
     let maybe_vendor_dir = resolve_vendor_dir(
-      config_folder.deno_json().map(|d| d.as_ref()),
+      config_folder.edno_json().map(|d| d.as_ref()),
       opts.maybe_vendor_override.as_ref(),
     );
     let link = resolve_link_config_folders_with_auto(
@@ -542,7 +542,7 @@ fn handle_workspace_folder_with_members<
   ) -> Result<Option<ConfigFolder>, ConfigReadError>,
 ) -> Result<ConfigFileDiscovery, WorkspaceDiscoverError> {
   let maybe_vendor_dir = resolve_vendor_dir(
-    root_config_folder.deno_json().map(|d| d.as_ref()),
+    root_config_folder.edno_json().map(|d| d.as_ref()),
     opts.maybe_vendor_override.as_ref(),
   );
   let raw_root_workspace = resolve_workspace_for_config_folder(
@@ -593,7 +593,7 @@ fn handle_workspace_with_members<TSys: FsRead + FsMetadata + FsReadDir>(
     .unwrap_or(false);
   // If the start config folder is not a member of the discovered workspace,
   // discard the parent workspace and resolve just the start config standalone.
-  // For npm workspaces this is silent backwards-compatible behavior; for deno
+  // For npm workspaces this is silent backwards-compatible behavior; for edno
   // workspaces with an explicit "workspace" property we warn so the user knows
   // the parent config was ignored.
   if let Some(first_config_folder) = &first_config_folder_url
@@ -611,7 +611,7 @@ fn handle_workspace_with_members<TSys: FsRead + FsMetadata + FsReadDir>(
       );
     }
     let maybe_vendor_dir = resolve_vendor_dir(
-      config_folder.deno_json().map(|d| d.as_ref()),
+      config_folder.edno_json().map(|d| d.as_ref()),
       opts.maybe_vendor_override.as_ref(),
     );
     let links = resolve_link_config_folders_with_auto(
@@ -647,23 +647,23 @@ fn handle_workspace_with_members<TSys: FsRead + FsMetadata + FsReadDir>(
     }
   }
 
-  // ensure no duplicate names in deno configuration files
+  // ensure no duplicate names in edno configuration files
   let mut seen_names: HashMap<&str, &Url> =
     HashMap::with_capacity(root_workspace.config_folders.len() + 1);
-  for deno_json in root_workspace.deno_jsons() {
-    if let Some(name) = deno_json.json.name.as_deref() {
+  for edno_json in root_workspace.edno_jsons() {
+    if let Some(name) = edno_json.json.name.as_deref() {
       if let Some(other_member_url) = seen_names.get(name) {
         return Err(
           ResolveWorkspaceMemberErrorKind::DuplicatePackageName {
             name: name.to_string(),
-            deno_json_url: deno_json.specifier.clone(),
+            edno_json_url: edno_json.specifier.clone(),
             other_deno_json_url: (*other_member_url).clone(),
           }
           .into_box()
           .into(),
         );
       } else {
-        seen_names.insert(name, &deno_json.specifier);
+        seen_names.insert(name, &edno_json.specifier);
       }
     }
   }
@@ -736,8 +736,8 @@ fn resolve_workspace_for_config_folder<
       maybe_config_folder.ok_or_else(|| {
         // it's fine this doesn't use all the possible config file names
         // as this is only used to enhance the error message
-        if member_dir_url.as_str().ends_with("/deno.json/")
-          || member_dir_url.as_str().ends_with("/deno.jsonc/")
+        if member_dir_url.as_str().ends_with("/edno.json/")
+          || member_dir_url.as_str().ends_with("/edno.jsonc/")
           || member_dir_url.as_str().ends_with("/package.json/")
         {
           ResolveWorkspaceMemberErrorKind::NotFoundMaybeSpecifiedFile {
@@ -808,35 +808,35 @@ fn resolve_workspace_for_config_folder<
       Ok(paths)
     };
 
-  if let Some(deno_json) = root_config_folder.deno_json()
-    && let Some(workspace_config) = deno_json.to_workspace_config()?
+  if let Some(edno_json) = root_config_folder.edno_json()
+    && let Some(workspace_config) = edno_json.to_workspace_config()?
   {
     let (pattern_members, path_members): (Vec<_>, Vec<_>) = workspace_config
       .members
       .iter()
       .partition(|member| is_glob_pattern(member) || member.starts_with('!'));
 
-    // Deno workspaces can discover wildcard members that use either `deno.json`, `deno.jsonc` or `package.json`.
-    // But it only works for Deno workspaces, npm workspaces don't discover `deno.json(c)` files, otherwise
+    // Edno workspaces can discover wildcard members that use either `edno.json`, `edno.jsonc` or `package.json`.
+    // But it only works for Edno workspaces, npm workspaces don't discover `edno.json(c)` files, otherwise
     // we'd be incompatible with npm workspaces if we discovered more files.
-    let deno_json_paths = collect_member_config_folders(
-      "Deno",
+    let edno_json_paths = collect_member_config_folders(
+      "Edno",
       pattern_members,
-      &deno_json.dir_path(),
-      &["deno.json", "deno.jsonc", "package.json"],
+      &edno_json.dir_path(),
+      &["edno.json", "edno.jsonc", "package.json"],
     )?;
 
     let mut member_dir_urls =
-      IndexSet::with_capacity(path_members.len() + deno_json_paths.len());
+      IndexSet::with_capacity(path_members.len() + edno_json_paths.len());
     for path_member in path_members {
       let member_dir_url = resolve_member_url(path_member)?;
       member_dir_urls.insert((path_member.clone(), member_dir_url));
     }
-    for deno_json_path in deno_json_paths {
+    for edno_json_path in edno_json_paths {
       let member_dir_url =
-        url_from_directory_path(deno_json_path.parent().unwrap()).unwrap();
+        url_from_directory_path(edno_json_path.parent().unwrap()).unwrap();
       member_dir_urls.insert((
-        deno_json_path
+        edno_json_path
           .parent()
           .unwrap()
           .to_string_lossy()
@@ -893,7 +893,7 @@ fn resolve_workspace_for_config_folder<
       .iter()
       .partition(|member| is_glob_pattern(member) || member.starts_with('!'));
 
-    // npm workspaces can discover wildcard members `package.json` files, but not `deno.json(c)` files, otherwise
+    // npm workspaces can discover wildcard members `package.json` files, but not `edno.json(c)` files, otherwise
     // we'd be incompatible with npm workspaces if we discovered more files than just `package.json`.
     let pkg_json_paths = collect_member_config_folders(
       "npm",
@@ -935,7 +935,7 @@ fn resolve_workspace_for_config_folder<
               continue;
             }
             ResolveWorkspaceMemberErrorKind::NotFound { dir_url } => {
-              // dir exists but neither deno.json nor package.json — for
+              // dir exists but neither edno.json nor package.json — for
               // an npm workspace member, surface this as the more specific
               // "package.json not found" error.
               return Err(
@@ -985,7 +985,7 @@ fn resolve_link_config_folders<TSys: FsRead + FsMetadata + FsReadDir>(
     &Path,
   ) -> Result<Option<ConfigFolder>, ConfigReadError>,
 ) -> Result<BTreeMap<UrlRc, ConfigFolder>, WorkspaceDiscoverError> {
-  let Some(workspace_deno_json) = root_config_folder.deno_json() else {
+  let Some(workspace_deno_json) = root_config_folder.edno_json() else {
     return Ok(Default::default());
   };
   let Some(link_members) = workspace_deno_json.to_link_config()? else {
@@ -1081,7 +1081,7 @@ fn collect_link_config_folders<TSys: FsRead + FsMetadata + FsReadDir>(
   let pattern_entries = raw_links
     .into_iter()
     .flat_map(|raw_link| {
-      ["deno.json", "deno.jsonc", "package.json"]
+      ["edno.json", "edno.jsonc", "package.json"]
         .into_iter()
         .map(move |config_file_name| (raw_link, config_file_name))
     })
@@ -1220,7 +1220,7 @@ fn resolve_link_member_config_folders<TSys: FsRead + FsMetadata + FsReadDir>(
   };
   if config_folder.has_workspace_members() {
     let maybe_vendor_dir =
-      resolve_vendor_dir(config_folder.deno_json().map(|d| d.as_ref()), None);
+      resolve_vendor_dir(config_folder.edno_json().map(|d| d.as_ref()), None);
     let mut raw_workspace = resolve_workspace_for_config_folder(
       sys,
       config_folder,
@@ -1241,7 +1241,7 @@ fn resolve_link_member_config_folders<TSys: FsRead + FsMetadata + FsReadDir>(
       };
       if config_folder.has_workspace_members() {
         let maybe_vendor_dir = resolve_vendor_dir(
-          config_folder.deno_json().map(|d| d.as_ref()),
+          config_folder.edno_json().map(|d| d.as_ref()),
           None,
         );
         let Ok(mut raw_workspace) = resolve_workspace_for_config_folder(
@@ -1296,7 +1296,7 @@ fn resolve_link_config_folders_with_auto<
 }
 
 /// Walks path-style import map entries to a fixpoint and registers the
-/// governing `deno.json` of each external file as an (implicit) link, so its
+/// governing `edno.json` of each external file as an (implicit) link, so its
 /// `imports`/`scopes` become a referrer-scoped entry in the synthetic import
 /// map. This is equivalent to the user manually listing those directories in
 /// the `links` field, but discovered automatically.
@@ -1371,19 +1371,19 @@ fn enqueue_import_path_values<TSys: FsRead>(
   folder: &ConfigFolder,
   worklist: &mut Vec<(Url, Vec<String>)>,
 ) {
-  let Some(deno_json) = folder.deno_json() else {
+  let Some(edno_json) = folder.edno_json() else {
     return;
   };
   // Resolve the import map, following an external `importMap` file if present.
-  // Path entries resolve against the import map's own location: the deno.json
+  // Path entries resolve against the import map's own location: the edno.json
   // for inline maps, or the external file's directory otherwise.
-  let map_value = match deno_json.to_import_map_value(sys) {
+  let map_value = match edno_json.to_import_map_value(sys) {
     Ok(Some((specifier, value))) => (url_parent(&specifier), value),
     Ok(None) => return,
     Err(err) => {
       log::debug!(
         "Skipping auto-link discovery for {}: {:#}",
-        deno_json.specifier,
+        edno_json.specifier,
         err
       );
       return;
@@ -1447,7 +1447,7 @@ fn import_value_target_url(base_dir: &Url, value: &str) -> Option<Url> {
   }
 }
 
-/// Finds the directory of the nearest `deno.json` that governs `target_url`,
+/// Finds the directory of the nearest `edno.json` that governs `target_url`,
 /// walking up from the target's directory.
 fn find_governing_config_dir(
   target_url: &Url,
@@ -1463,7 +1463,7 @@ fn find_governing_config_dir(
   };
   for ancestor in start_dir.ancestors() {
     if let Ok(Some(folder)) = load_config_folder(ancestor)
-      && folder.deno_json().is_some()
+      && folder.edno_json().is_some()
     {
       return Some(folder.folder_url());
     }
@@ -1484,9 +1484,9 @@ fn resolve_vendor_dir(
       },
     }
   } else {
-    let deno_json = maybe_deno_json?;
-    if deno_json.vendor() == Some(true) {
-      Some(deno_json.dir_path().join("vendor"))
+    let edno_json = maybe_deno_json?;
+    if edno_json.vendor() == Some(true) {
+      Some(edno_json.dir_path().join("vendor"))
     } else {
       None
     }

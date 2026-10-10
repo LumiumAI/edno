@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-explicit-any no-var
+// edno-lint-ignore-file no-explicit-any no-var
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
@@ -1543,9 +1543,9 @@ declare function structuredClone<T = any>(
  *
  * @example
  * ```ts
- * await Deno.stdin.readable
+ * await Edno.stdin.readable
  *   .pipeThrough(new CompressionStream("gzip"))
- *   .pipeTo(Deno.stdout.writable);
+ *   .pipeTo(Edno.stdout.writable);
  * ```
  *
  * @category Streams
@@ -1563,9 +1563,9 @@ type CompressionFormat = "deflate" | "deflate-raw" | "gzip" | "brotli";
  *
  * @example
  * ```ts
- * await Deno.stdin.readable
+ * await Edno.stdin.readable
  *   .pipeThrough(new CompressionStream("gzip"))
- *   .pipeTo(Deno.stdout.writable);
+ *   .pipeTo(Edno.stdout.writable);
  * ```
  *
  * @category Streams
@@ -1588,8 +1588,8 @@ declare var CompressionStream: typeof globalThis extends
  *
  * @example
  * ```ts
- * const input = await Deno.open("./file.txt.gz");
- * const output = await Deno.create("./file.txt");
+ * const input = await Edno.open("./file.txt.gz");
+ * const output = await Edno.create("./file.txt");
  *
  * await input.readable
  *   .pipeThrough(new DecompressionStream("gzip"))
@@ -1608,8 +1608,8 @@ interface DecompressionStream extends GenericTransformStream {
  *
  * @example
  * ```ts
- * const input = await Deno.open("./file.txt.gz");
- * const output = await Deno.create("./file.txt");
+ * const input = await Edno.open("./file.txt.gz");
+ * const output = await Edno.create("./file.txt");
  *
  * await input.readable
  *   .pipeThrough(new DecompressionStream("gzip"))
@@ -1644,7 +1644,7 @@ declare var DecompressionStream: typeof globalThis extends
  * });
  * reportError(new Error("foo")); // Will not be reported.
  * ```
- * In Deno, this error will terminate the process if not intercepted like above.
+ * In Edno, this error will terminate the process if not intercepted like above.
  *
  * @category Platform
  */

@@ -1,6 +1,6 @@
 {
   // Isolate the two variants: they share the fixture and would otherwise race
-  // on the generated `.deno/` config when run concurrently.
+  // on the generated `.edno/` config when run concurrently.
   "tempDir": true,
   "tests": {
     "not_all": {

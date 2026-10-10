@@ -1,7 +1,7 @@
 // Mock external cron service
-const socketPath = Deno.env.get("TEST_SOCKET_PATH");
+const socketPath = Edno.env.get("TEST_SOCKET_PATH");
 
-const listener = Deno.listen({ transport: "unix", path: socketPath });
+const listener = Edno.listen({ transport: "unix", path: socketPath });
 
 const conn = await listener.accept();
 const reader = conn.readable.pipeThrough(new TextDecoderStream()).getReader();

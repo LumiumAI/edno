@@ -12,6 +12,6 @@ function foo(a: number, b: number) {
   }
 }
 
-const [a = 0, b = 0] = Deno.args;
+const [a = 0, b = 0] = Edno.args;
 
 foo(+a, +b);

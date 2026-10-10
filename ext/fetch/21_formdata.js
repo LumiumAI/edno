@@ -2,13 +2,13 @@
 
 (function () {
 const { core, primordials } = __bootstrap;
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const {
   Blob,
   BlobPrototype,
   File,
   FilePrototype,
-} = core.loadExtScript("ext:deno_web/09_file.js");
+} = core.loadExtScript("ext:edno_web/09_file.js");
 const {
   ArrayPrototypePush,
   ArrayPrototypeSlice,
@@ -263,7 +263,7 @@ class FormData {
     }
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     if (ObjectPrototypeIsPrototypeOf(FormDataPrototype, this)) {
       return `${this.constructor.name} ${
         inspect(ObjectFromEntries(this), inspectOptions)
@@ -315,7 +315,7 @@ function formDataToBlob(formData) {
   const chunks = [];
   const prefix = `--${boundary}\r\nContent-Disposition: form-data; name="`;
 
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   for (const { 0: name, 1: value } of formData) {
     if (typeof value === "string") {
       ArrayPrototypePush(

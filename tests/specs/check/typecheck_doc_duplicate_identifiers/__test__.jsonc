@@ -3,7 +3,7 @@
   // yet supported by the native tsc backend. Tracked in
   // https://github.com/denoland/deno/issues/35946.
   "ignore": true,
-  "args": "check --doc --config ../../../config/deno.json mod.ts",
+  "args": "check --doc --config ../../../config/edno.json mod.ts",
   "exitCode": 0,
   "output": "mod.out"
 }

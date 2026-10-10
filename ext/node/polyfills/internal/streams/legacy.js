@@ -1,9 +1,9 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 (function () {
 const { core, primordials } = __bootstrap;
-const { EventEmitter: EE } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter: EE } = core.loadExtScript("ext:edno_node/_events.mjs");
 
 const {
   ArrayIsArray,

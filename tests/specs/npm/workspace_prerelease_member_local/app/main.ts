@@ -1,3 +1,3 @@
-import { hello } from "@denotest/prerelease-member";
+import { hello } from "@ednotest/prerelease-member";
 
 hello();

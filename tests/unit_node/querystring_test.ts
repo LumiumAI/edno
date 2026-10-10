@@ -2,7 +2,7 @@
 import { assertEquals } from "@std/assert";
 import { parse, stringify } from "node:querystring";
 
-Deno.test({
+Edno.test({
   name: "stringify",
   fn() {
     assertEquals(
@@ -17,7 +17,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "parse",
   fn() {
     assertEquals(parse("a=hello&b=5&c=true&d=foo&d=bar"), {
@@ -30,7 +30,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/21734
-Deno.test({
+Edno.test({
   name: "stringify options no encode",
   fn() {
     assertEquals(

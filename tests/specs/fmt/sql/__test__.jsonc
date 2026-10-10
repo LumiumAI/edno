@@ -13,7 +13,7 @@
       "steps": [{
         "args": [
           "eval",
-          "Deno.writeTextFile('deno.json', '{\\n  \"unstable\": [\"fmt-sql\"]\\n}\\n')"
+          "Edno.writeTextFile('edno.json', '{\\n  \"unstable\": [\"fmt-sql\"]\\n}\\n')"
         ],
         "output": "[WILDCARD]"
       }, {

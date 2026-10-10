@@ -1,6 +1,6 @@
 true
 hello world
-EVENT: {"Serving":{"kind":"deno-serve"}}
+EVENT: {"Serving":{"kind":"edno-serve"}}
 
 [Object: null prototype] { success: true, code: 0, signal: null }
 node listening

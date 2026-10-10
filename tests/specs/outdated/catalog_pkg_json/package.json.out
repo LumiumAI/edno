@@ -1,12 +1,12 @@
 {
   "name": "root",
   "catalog": {
-    "@denotest/has-patch-versions": "0.2.0"
+    "@ednotest/has-patch-versions": "0.2.0"
   },
   "workspaces": {
     "catalogs": {
       "testing": {
-        "@denotest/breaking-change-between-versions": "2.0.0"
+        "@ednotest/breaking-change-between-versions": "2.0.0"
       }
     }
   }

@@ -13,7 +13,7 @@ process.on("uncaughtException", (err) => {
   errors.push(err);
 });
 
-const socketPath = path.join(Deno.makeTempDirSync(), "test.sock");
+const socketPath = path.join(Edno.makeTempDirSync(), "test.sock");
 
 const server = net.createServer((conn) => {
   conn.resume();

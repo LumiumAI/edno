@@ -1,4 +1,4 @@
 {
-  "args": "run -A --quiet npm:@denotest/bin/cli-no-ext this is a test",
-  "output": "deno_run_no_ext.out"
+  "args": "run -A --quiet npm:@ednotest/bin/cli-no-ext this is a test",
+  "output": "edno_run_no_ext.out"
 }

@@ -7,16 +7,16 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test(function navigatorNumCpus() {
+Edno.test(function navigatorNumCpus() {
   assert(navigator.hardwareConcurrency > 0);
 });
 
-Deno.test(function navigatorUserAgent() {
-  const pattern = /Deno\/\d+\.\d+\.\d+/;
+Edno.test(function navigatorUserAgent() {
+  const pattern = /Edno\/\d+\.\d+\.\d+/;
   assert(pattern.test(navigator.userAgent));
 });
 
-Deno.test(function navigatorUserAgentData() {
+Edno.test(function navigatorUserAgentData() {
   const uaData = navigator.userAgentData;
   assert(uaData instanceof NavigatorUAData);
 
@@ -24,30 +24,30 @@ Deno.test(function navigatorUserAgentData() {
   assertEquals(uaData.mobile, false);
   assert(Array.isArray(uaData.brands));
   assert(uaData.brands.length > 0);
-  const deno = uaData.brands.find((b) => b.brand === "Deno");
-  assert(deno !== undefined, "expected a Deno brand");
-  assert(/^\d+$/.test(deno!.version), "brand version should be the major");
+  const edno = uaData.brands.find((b) => b.brand === "Edno");
+  assert(edno !== undefined, "expected a Edno brand");
+  assert(/^\d+$/.test(edno!.version), "brand version should be the major");
   assert(typeof uaData.platform === "string" && uaData.platform.length > 0);
 });
 
-Deno.test(function navigatorUserAgentDataIsSingleton() {
+Edno.test(function navigatorUserAgentDataIsSingleton() {
   assert(navigator.userAgentData === navigator.userAgentData);
 });
 
-Deno.test(function navigatorUserAgentDataIllegalConstructor() {
+Edno.test(function navigatorUserAgentDataIllegalConstructor() {
   assertThrows(
     () => new NavigatorUAData(),
     TypeError,
   );
 });
 
-Deno.test(function navigatorUserAgentDataToJSON() {
+Edno.test(function navigatorUserAgentDataToJSON() {
   const json = navigator.userAgentData.toJSON();
   assertEquals(Object.keys(json).sort(), ["brands", "mobile", "platform"]);
   assertEquals(json.mobile, false);
 });
 
-Deno.test(async function navigatorUserAgentDataHighEntropyValues() {
+Edno.test(async function navigatorUserAgentDataHighEntropyValues() {
   const values = await navigator.userAgentData.getHighEntropyValues([
     "architecture",
     "bitness",
@@ -69,24 +69,24 @@ Deno.test(async function navigatorUserAgentDataHighEntropyValues() {
   assertEquals(values.platformVersion, "");
   assert(/^\d+\.\d+\.\d+/.test(values.uaFullVersion!));
   assert(Array.isArray(values.fullVersionList));
-  const deno = values.fullVersionList!.find((b) => b.brand === "Deno");
-  assert(deno !== undefined);
-  assert(/^\d+\.\d+\.\d+/.test(deno!.version));
+  const edno = values.fullVersionList!.find((b) => b.brand === "Edno");
+  assert(edno !== undefined);
+  assert(/^\d+\.\d+\.\d+/.test(edno!.version));
 });
 
-Deno.test(async function navigatorUserAgentDataIgnoresUnknownHints() {
+Edno.test(async function navigatorUserAgentDataIgnoresUnknownHints() {
   const values = await navigator.userAgentData.getHighEntropyValues([
     "notARealHint",
   ]);
   assertEquals(Object.keys(values).sort(), ["brands", "mobile", "platform"]);
 });
 
-Deno.test(async function navigatorUserAgentDataEmptyHints() {
+Edno.test(async function navigatorUserAgentDataEmptyHints() {
   const values = await navigator.userAgentData.getHighEntropyValues([]);
   assertEquals(Object.keys(values).sort(), ["brands", "mobile", "platform"]);
 });
 
-Deno.test(async function navigatorUserAgentDataRequiresArgument() {
+Edno.test(async function navigatorUserAgentDataRequiresArgument() {
   await assertRejects(
     // @ts-expect-error: testing missing required argument
     () => navigator.userAgentData.getHighEntropyValues(),
@@ -94,8 +94,8 @@ Deno.test(async function navigatorUserAgentDataRequiresArgument() {
   );
 });
 
-Deno.test(function navigatorUserAgentDataInspect() {
-  const out = Deno.inspect(navigator.userAgentData);
+Edno.test(function navigatorUserAgentDataInspect() {
+  const out = Edno.inspect(navigator.userAgentData);
   assertStringIncludes(out, "NavigatorUAData");
   assertStringIncludes(out, "brands");
   assertStringIncludes(out, "platform");

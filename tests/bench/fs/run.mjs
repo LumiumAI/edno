@@ -3,7 +3,7 @@
 let total = 5;
 let current = "";
 const values = {};
-const runtime = typeof Deno !== "undefined" ? "deno" : "node";
+const runtime = typeof Edno !== "undefined" ? "edno" : "node";
 
 function bench(fun, count = 100000) {
   if (total === 5) console.log(fun.toString());
@@ -23,10 +23,10 @@ if (runtime === "node") {
   fs = await import("fs");
 }
 
-const getFunction = runtime === "deno"
+const getFunction = runtime === "edno"
   ? (name) => {
     current = name;
-    return Deno[name];
+    return Edno[name];
   }
   : (name) => {
     current = name;

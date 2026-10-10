@@ -30,28 +30,28 @@ const noFollowCases = [
   [["darwin", "linux"], "stat", /NotCapable/, "/dev/ptmx"],
 ];
 
-const os = Deno.build.os;
+const os = Edno.build.os;
 let failed = false;
 let ran = false;
 
 function runOp(op, file) {
   switch (op) {
     case "open":
-      Deno.readTextFileSync(file);
+      Edno.readTextFileSync(file);
       return;
     case "stat":
-      Deno.statSync(file);
+      Edno.statSync(file);
       return;
     case "lstat":
-      Deno.lstatSync(file);
+      Edno.lstatSync(file);
       return;
     case "readDir":
-      for (const _ of Deno.readDirSync(file)) {
+      for (const _ of Edno.readDirSync(file)) {
         // drain
       }
       return;
     case "realPath":
-      Deno.realPathSync(file);
+      Edno.realPathSync(file);
       return;
     default:
       throw new Error(`unknown op ${op}`);
@@ -110,10 +110,10 @@ for (const [oses, op, error, file] of noFollowCases) {
 }
 
 if (!ran) {
-  console.log(`Uh-oh: didn't run any tests for ${Deno.build.os}.`);
+  console.log(`Uh-oh: didn't run any tests for ${Edno.build.os}.`);
   failed = true;
 }
 if (failed) {
   console.log("One or more tests failed");
 }
-Deno.exit(failed ? 321 : 123);
+Edno.exit(failed ? 321 : 123);

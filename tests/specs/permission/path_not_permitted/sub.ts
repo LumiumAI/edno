@@ -1,14 +1,14 @@
-const binaryName = Deno.build.os === "windows" ? "binary.exe" : "binary";
-const pathSep = Deno.build.os === "windows" ? "\\" : "/";
+const binaryName = Edno.build.os === "windows" ? "binary.exe" : "binary";
+const pathSep = Edno.build.os === "windows" ? "\\" : "/";
 
-Deno.mkdirSync("subdir");
-Deno.copyFileSync(binaryName, "subdir/" + binaryName);
+Edno.mkdirSync("subdir");
+Edno.copyFileSync(binaryName, "subdir/" + binaryName);
 
 try {
-  const commandResult = new Deno.Command(
+  const commandResult = new Edno.Command(
     "binary",
     {
-      env: { "PATH": Deno.cwd() + pathSep + "subdir" },
+      env: { "PATH": Edno.cwd() + pathSep + "subdir" },
       stdout: "inherit",
       stderr: "inherit",
     },
@@ -20,10 +20,10 @@ try {
 }
 
 try {
-  const child = Deno.run(
+  const child = Edno.run(
     {
       cmd: ["binary"],
-      env: { "PATH": Deno.cwd() + pathSep + "subdir" },
+      env: { "PATH": Edno.cwd() + pathSep + "subdir" },
       stdout: "inherit",
       stderr: "inherit",
     },

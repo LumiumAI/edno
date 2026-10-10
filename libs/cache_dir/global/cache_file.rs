@@ -20,9 +20,9 @@ use crate::SerializedCachedUrlMetadata;
 use crate::cache::CacheEntry;
 
 // File format:
-// <content>\n// denoCacheMetadata=<metadata><EOF>
+// <content>\n// ednoCacheMetadata=<metadata><EOF>
 
-const LAST_LINE_PREFIX: &[u8] = b"\n// denoCacheMetadata=";
+const LAST_LINE_PREFIX: &[u8] = b"\n// ednoCacheMetadata=";
 
 pub fn write<
   TSys: FsCreateDirAll

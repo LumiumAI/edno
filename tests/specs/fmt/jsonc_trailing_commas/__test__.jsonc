@@ -6,12 +6,12 @@
       "output": "{\n  \"a\": 1,\n  \"b\": 2\n}\n"
     },
     "fmt_jsonc_trailing_commas_never": {
-      "args": "fmt --config deno.never.jsonc --ext=jsonc -",
+      "args": "fmt --config edno.never.jsonc --ext=jsonc -",
       "input": "{\n  \"a\": 1,\n  \"b\": 2\n}\n",
       "output": "{\n  \"a\": 1,\n  \"b\": 2\n}\n"
     },
     "fmt_json_trailing_commas_always": {
-      "args": "fmt --config deno.always.jsonc --ext=json -",
+      "args": "fmt --config edno.always.jsonc --ext=json -",
       "input": "{\n  \"a\": 1,\n  \"b\": 2\n}\n",
       "output": "{\n  \"a\": 1,\n  \"b\": 2,\n}\n"
     }

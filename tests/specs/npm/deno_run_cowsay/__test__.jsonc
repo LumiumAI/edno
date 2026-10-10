@@ -1,4 +1,4 @@
 {
   "args": "run -A --quiet npm:cowsay@1.5.0 Hello",
-  "output": "deno_run_cowsay.out"
+  "output": "edno_run_cowsay.out"
 }

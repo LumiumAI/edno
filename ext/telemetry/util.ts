@@ -59,7 +59,7 @@ function updateSpanFromServerResponse(
   setResponseAttributes(span, response, 500);
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function updateSpanFromError(span: Span, error: any) {
   const errorType = error.name ?? "Error";
   span.setAttribute("error.type", errorType);

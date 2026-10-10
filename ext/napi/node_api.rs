@@ -8,9 +8,9 @@ use std::sync::atomic::AtomicU8;
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 
-use deno_core::V8CrossThreadTaskSpawner;
-use deno_core::parking_lot::Condvar;
-use deno_core::parking_lot::Mutex;
+use edno_core::V8CrossThreadTaskSpawner;
+use edno_core::parking_lot::Condvar;
+use edno_core::parking_lot::Mutex;
 use napi_sym::napi_sym;
 
 use super::util::SendPtr;
@@ -33,7 +33,7 @@ fn napi_module_register(module: *const NapiModule) -> napi_status {
 }
 
 // Legacy `NODE_MODULE` (V8/nan) addons register themselves through this symbol
-// from a static constructor at `dlopen` time. Deno does not support the legacy
+// from a static constructor at `dlopen` time. Edno does not support the legacy
 // V8 native addon ABI (only Node-API is supported), but if this symbol is not
 // exported the addon crashes hard with a cryptic `dyld: missing symbol called`
 // abort before we ever get a chance to report a useful error. By accepting the
@@ -664,12 +664,12 @@ fn napi_get_node_version(
   let env = check_env!(env);
   check_arg!(env, result);
 
-  // Derive major/minor/patch at compile time from `deno_node::NODE_VERSION`,
+  // Derive major/minor/patch at compile time from `edno_node::NODE_VERSION`,
   // the single source of truth for the emulated Node.js version, so the value
   // reported to native addons via `napi_get_node_version()` stays in sync with
   // `process.version` / `process.versions.node`.
   const fn parse_part(part: usize) -> u32 {
-    let bytes = deno_node::NODE_VERSION.as_bytes();
+    let bytes = edno_node::NODE_VERSION.as_bytes();
     let mut seen_dots = 0;
     let mut value = 0;
     let mut i = 0;
@@ -692,7 +692,7 @@ fn napi_get_node_version(
     major: parse_part(0),
     minor: parse_part(1),
     patch: parse_part(2),
-    release: c"Deno".as_ptr(),
+    release: c"Edno".as_ptr(),
   };
 
   unsafe {
@@ -835,7 +835,7 @@ pub(crate) fn napi_queue_async_work(
   // deadlocks when `execute` called threadsafe functions.
   // Uses tokio's blocking threadpool to reuse threads instead of spawning a
   // new OS thread per call (which has high overhead on Linux).
-  deno_core::unsync::spawn_blocking(move || {
+  edno_core::unsync::spawn_blocking(move || {
     let work = work.take();
     let work = unsafe { &*work };
 

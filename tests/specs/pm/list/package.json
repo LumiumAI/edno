@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@denotest/esm-import-cjs-default": "1.0.0"
+    "@ednotest/esm-import-cjs-default": "1.0.0"
   },
   "devDependencies": {
-    "@denotest/esm-basic": "1.0.0"
+    "@ednotest/esm-basic": "1.0.0"
   }
 }

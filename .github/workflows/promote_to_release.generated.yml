@@ -36,10 +36,10 @@ jobs:
         with:
           token: '${{ secrets.DENOBOT_PAT }}'
           submodules: false
-      - name: Install deno
+      - name: Install edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
         with:
-          deno-version: v2.x
+          edno-version: v2.x
       - name: Download Windows binaries
         run: |-
           # LTS is cut from a release branch with no canary build, so re-stamp
@@ -51,12 +51,12 @@ jobs:
           } else {
             $SrcUrl = "https://dl.deno.land/canary/${{github.event.inputs.commitHash}}"
           }
-          Invoke-WebRequest -Uri "$SrcUrl/deno-${{ matrix.target }}.zip" -OutFile "deno-windows.zip"
-          Invoke-WebRequest -Uri "$SrcUrl/denort-${{ matrix.target }}.zip" -OutFile "denort-windows.zip"
-          Expand-Archive -Path "deno-windows.zip" -DestinationPath "."
-          Expand-Archive -Path "denort-windows.zip" -DestinationPath "."
+          Invoke-WebRequest -Uri "$SrcUrl/edno-${{ matrix.target }}.zip" -OutFile "edno-windows.zip"
+          Invoke-WebRequest -Uri "$SrcUrl/ednort-${{ matrix.target }}.zip" -OutFile "ednort-windows.zip"
+          Expand-Archive -Path "edno-windows.zip" -DestinationPath "."
+          Expand-Archive -Path "ednort-windows.zip" -DestinationPath "."
       - name: Run patchver for Windows
-        run: 'deno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release_windows.ts ${{github.event.inputs.releaseKind}}'
+        run: 'edno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release_windows.ts ${{github.event.inputs.releaseKind}}'
       - name: Authenticate with Azure
         uses: azure/login@cb79c773a3cfa27f31f25eb3f677781210c9ce3d
         with:
@@ -64,16 +64,16 @@ jobs:
           tenant-id: '${{ secrets.AZURE_TENANT_ID }}'
           subscription-id: '${{ secrets.AZURE_SUBSCRIPTION_ID }}'
           enable-AzPSSession: true
-      - name: Code sign deno.exe
+      - name: Code sign edno.exe
         uses: Azure/artifact-signing-action@1d365fec12862c4aa68fcac418143d73f0cea293
         with:
           cache-dependencies: false
           trace: true
           endpoint: 'https://eus.codesigning.azure.net/'
-          trusted-signing-account-name: deno-cli-code-signing
-          certificate-profile-name: deno-cli-code-signing-cert
+          trusted-signing-account-name: edno-cli-code-signing
+          certificate-profile-name: edno-cli-code-signing-cert
           files-folder: .
-          files-folder-filter: deno.exe
+          files-folder-filter: edno.exe
           file-digest: SHA256
           timestamp-rfc3161: 'http://timestamp.acs.microsoft.com'
           timestamp-digest: SHA256
@@ -89,18 +89,18 @@ jobs:
         run: |-
           $SignTool = Get-ChildItem -Path "C:\Program Files*\Windows Kits\*\bin\*\x64\signtool.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
           $SignToolPath = $SignTool.FullName
-          & $SignToolPath verify /pa /v "deno.exe"
+          & $SignToolPath verify /pa /v "edno.exe"
       - name: Create archives
         run: |-
-          Compress-Archive -Path "deno.exe" -DestinationPath "deno-${{ matrix.target }}.zip" -Force
-          Compress-Archive -Path "denort.exe" -DestinationPath "denort-${{ matrix.target }}.zip" -Force
+          Compress-Archive -Path "edno.exe" -DestinationPath "edno-${{ matrix.target }}.zip" -Force
+          Compress-Archive -Path "ednort.exe" -DestinationPath "ednort-${{ matrix.target }}.zip" -Force
       - name: Upload Windows archives
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: 'windows-binaries-${{ matrix.target }}'
           path: |-
-            deno-${{ matrix.target }}.zip
-            denort-${{ matrix.target }}.zip
+            edno-${{ matrix.target }}.zip
+            ednort-${{ matrix.target }}.zip
   promote-to-release:
     name: Promote to Release
     needs:
@@ -113,10 +113,10 @@ jobs:
         with:
           token: '${{ secrets.DENOBOT_PAT }}'
           submodules: recursive
-      - name: Install deno
+      - name: Install edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
         with:
-          deno-version: v2.x
+          edno-version: v2.x
       - name: Install rust-codesign
         run: |-
           ./tools/install_prebuilt.js rcodesign
@@ -125,7 +125,7 @@ jobs:
         env:
           APPLE_CODESIGN_KEY: '${{ secrets.APPLE_CODESIGN_KEY }}'
           APPLE_CODESIGN_PASSWORD: '${{ secrets.APPLE_CODESIGN_PASSWORD }}'
-        run: 'deno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release.ts ${{github.event.inputs.releaseKind}} ${{github.event.inputs.commitHash}}'
+        run: 'edno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release.ts ${{github.event.inputs.releaseKind}} ${{github.event.inputs.commitHash}}'
       - name: Download Windows binaries
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
@@ -135,10 +135,10 @@ jobs:
       - name: Create version file
         run: |-
           # Unzip a binary to get the version
-          unzip -o deno-x86_64-apple-darwin.zip
-          DENO_VERSION=$(./deno -V | cut -d ' ' -f 2 | cut -d '+' -f 1)
-          echo "v${DENO_VERSION}" > release-${{github.event.inputs.releaseKind}}-latest.txt
-          rm -f ./deno
+          unzip -o edno-x86_64-apple-darwin.zip
+          EDNO_VERSION=$(./edno -V | cut -d ' ' -f 2 | cut -d '+' -f 1)
+          echo "v${EDNO_VERSION}" > release-${{github.event.inputs.releaseKind}}-latest.txt
+          rm -f ./edno
       - name: Generate checksums
         run: |-
           # Re-stamping (patchver + re-sign) produces binaries that differ
@@ -146,11 +146,11 @@ jobs:
           # from, so the checksums change too. Regenerate the sidecars here;
           # otherwise the source release's stale *.sha256sum stays in the
           # bucket and no longer matches the promoted zip (see #36235).
-          for f in deno-*.zip denort-*.zip; do
+          for f in edno-*.zip ednort-*.zip; do
             shasum -a 256 "$f" > "$f.sha256sum"
             tmp="$(mktemp -d)"
             unzip -o -q "$f" -d "$tmp"
-            ( cd "$tmp" && shasum -a 256 deno* ) > "${f%.zip}.sha256sum"
+            ( cd "$tmp" && shasum -a 256 edno* ) > "${f%.zip}.sha256sum"
             rm -rf "$tmp"
           done
       - name: Upload archives to dl.deno.land
@@ -165,12 +165,12 @@ jobs:
           # regenerated checksums. `aws s3 sync ./` walked the whole checkout
           # (submodules included), uploading stray *.zip test fixtures and
           # tripping over a broken symlink (exit 2).
-          for f in deno-*.zip denort-*.zip; do
-            aws s3 cp "./$f" "s3://dl-deno-land/release/$VERSION/$f"
-            aws s3 cp "./$f.sha256sum" "s3://dl-deno-land/release/$VERSION/$f.sha256sum"
-            aws s3 cp "./${f%.zip}.sha256sum" "s3://dl-deno-land/release/$VERSION/${f%.zip}.sha256sum"
+          for f in edno-*.zip ednort-*.zip; do
+            aws s3 cp "./$f" "s3://dl-edno-land/release/$VERSION/$f"
+            aws s3 cp "./$f.sha256sum" "s3://dl-edno-land/release/$VERSION/$f.sha256sum"
+            aws s3 cp "./${f%.zip}.sha256sum" "s3://dl-edno-land/release/$VERSION/${f%.zip}.sha256sum"
           done
-          aws s3 cp release-${{github.event.inputs.releaseKind}}-latest.txt s3://dl-deno-land/release-${{github.event.inputs.releaseKind}}-latest.txt
+          aws s3 cp release-${{github.event.inputs.releaseKind}}-latest.txt s3://dl-edno-land/release-${{github.event.inputs.releaseKind}}-latest.txt
       - name: Purge CDN cache
         env:
           CLOUDFLARE_ZONE_ID: '${{ vars.CLOUDFLARE_ZONE_ID }}'
@@ -178,9 +178,9 @@ jobs:
         run: |-
           # The latest.txt file lives at a stable URL but changes every
           # release, so the edge has to be told to drop it. Otherwise
-          # `deno upgrade` keeps serving the previous version until the
+          # `edno upgrade` keeps serving the previous version until the
           # 4 hour TTL expires.
-          deno run -A --lock=tools/deno.lock.json tools/release/purge_cdn_cache.ts release-${{github.event.inputs.releaseKind}}-latest.txt
+          edno run -A --lock=tools/edno.lock.json tools/release/purge_cdn_cache.ts release-${{github.event.inputs.releaseKind}}-latest.txt
 
 # gagen:pin Azure/artifact-signing-action@v0 = 1d365fec12862c4aa68fcac418143d73f0cea293
 # gagen:pin actions/checkout@v6 = de0fac2e4500dabe0009e67214ff5f5447ce83dd

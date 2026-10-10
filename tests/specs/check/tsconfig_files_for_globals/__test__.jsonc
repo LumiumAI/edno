@@ -1,7 +1,7 @@
 {
-  // deferred: deno.* libs -> #35985
+  // deferred: edno.* libs -> #35985
   "ignore": true,
-  "args": "check main.deno.ts main.dom.ts --quiet",
+  "args": "check main.edno.ts main.dom.ts --quiet",
   "output": "main.out",
   "exitCode": 1
 }

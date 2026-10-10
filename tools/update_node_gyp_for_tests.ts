@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run -ERNW --allow-sys
+#!/usr/bin/env -S edno run -ERNW --allow-sys
 
 // Copyright 2018-2026 the Deno authors. MIT license.
 
@@ -11,7 +11,7 @@ import { join } from "jsr:@std/path@1.1.4";
 import { createGzip } from "node:zlib";
 import { createWriteStream } from "node:fs";
 
-let version = Deno.args[0];
+let version = Edno.args[0];
 
 if (!version) {
   throw new Error("expected node version as arg, e.g. v20.11.1");
@@ -46,19 +46,19 @@ function writeTarGz(
 // The headers tarball, minus the bundled OpenSSL headers which are large and
 // unused by the tests.
 {
-  const temp = await Deno.makeTempDir();
+  const temp = await Edno.makeTempDir();
   const body = await download(
     `https://nodejs.org/dist/${version}/node-${version}-headers.tar.gz`,
   );
 
   const extracted = Promise.withResolvers<void>();
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   Readable.fromWeb(body as any)
     .pipe(extract({ cwd: temp }))
     .once("close", () => extracted.resolve());
   await extracted.promise;
 
-  await Deno.remove(
+  await Edno.remove(
     join(temp, `node-${version}`, "include", "node", "openssl"),
     { recursive: true },
   );
@@ -72,11 +72,11 @@ function writeTarGz(
 
 // `node.lib` for the Windows targets, which node-gyp links against.
 for (const platform of ["win-x64", "win-arm64"]) {
-  const temp = await Deno.makeTempDir();
+  const temp = await Edno.makeTempDir();
   const body = await download(
     `https://nodejs.org/dist/${version}/${platform}/node.lib`,
   );
-  using file = await Deno.create(join(temp, "node.lib"));
+  using file = await Edno.create(join(temp, "node.lib"));
   await body.pipeTo(file.writable, { preventClose: true });
 
   await writeTarGz(

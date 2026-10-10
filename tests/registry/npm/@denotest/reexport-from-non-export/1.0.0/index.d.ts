@@ -1,1 +1,1 @@
-export { getValue } from "@denotest/types-exports-import-types";
+export { getValue } from "@ednotest/types-exports-import-types";

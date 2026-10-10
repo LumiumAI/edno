@@ -6,12 +6,12 @@
       "exitCode": 1
     },
     "module_esnext": {
-      "args": "check -c deno_module_esnext.jsonc --quiet",
+      "args": "check -c edno_module_esnext.jsonc --quiet",
       "output": "main.out",
       "exitCode": 1
     },
     "module_preserve": {
-      "args": "check -c deno_module_preserve.jsonc --quiet",
+      "args": "check -c edno_module_preserve.jsonc --quiet",
       "output": "main.out",
       "exitCode": 1
     }

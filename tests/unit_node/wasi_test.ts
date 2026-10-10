@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-explicit-any camelcase
+// edno-lint-ignore-file no-explicit-any camelcase
 import { WASI } from "node:wasi";
 import { assert, assertEquals, assertThrows } from "@std/assert";
 
@@ -15,7 +15,7 @@ import { assert, assertEquals, assertThrows } from "@std/assert";
 //       (i32.store (i32.const 4) (i32.const 12))
 //       (call $fd_write (i32.const 1) (i32.const 0) (i32.const 1) (i32.const 20))
 //       drop))
-// deno-fmt-ignore
+// edno-fmt-ignore
 const HELLO_WASM = new Uint8Array([
   0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x0c, 0x02, 0x60,
   0x04, 0x7f, 0x7f, 0x7f, 0x7f, 0x01, 0x7f, 0x60, 0x00, 0x00, 0x02, 0x23,
@@ -32,44 +32,44 @@ const HELLO_WASM = new Uint8Array([
 ]);
 
 // (module (memory 1) (export "memory" (memory 0)))
-// deno-fmt-ignore
+// edno-fmt-ignore
 const MEMONLY_WASM = new Uint8Array([
   0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x05, 0x03, 0x01, 0x00,
   0x01, 0x07, 0x0a, 0x01, 0x06, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x79, 0x02,
   0x00,
 ]);
 
-Deno.test("[node/wasi] - WASI constructor validates version", () => {
+Edno.test("[node/wasi] - WASI constructor validates version", () => {
   assertThrows(
     () => new WASI({ version: "invalid" as any }),
     TypeError,
   );
 });
 
-Deno.test("[node/wasi] - WASI constructor accepts preview1", () => {
+Edno.test("[node/wasi] - WASI constructor accepts preview1", () => {
   const wasi = new WASI({ version: "preview1" });
   assert(wasi);
   assert(wasi.wasiImport);
 });
 
-Deno.test("[node/wasi] - WASI constructor accepts unstable", () => {
+Edno.test("[node/wasi] - WASI constructor accepts unstable", () => {
   const wasi = new WASI({ version: "unstable" });
   assert(wasi);
 });
 
-Deno.test("[node/wasi] - getImportObject returns correct key for preview1", () => {
+Edno.test("[node/wasi] - getImportObject returns correct key for preview1", () => {
   const wasi = new WASI({ version: "preview1" });
   const importObj = wasi.getImportObject();
   assert("wasi_snapshot_preview1" in importObj);
 });
 
-Deno.test("[node/wasi] - getImportObject returns correct key for unstable", () => {
+Edno.test("[node/wasi] - getImportObject returns correct key for unstable", () => {
   const wasi = new WASI({ version: "unstable" });
   const importObj = wasi.getImportObject();
   assert("wasi_unstable" in importObj);
 });
 
-Deno.test("[node/wasi] - start() runs hello world wasm", () => {
+Edno.test("[node/wasi] - start() runs hello world wasm", () => {
   const wasi = new WASI({ version: "preview1" });
   const module = new WebAssembly.Module(HELLO_WASM);
   const instance = new WebAssembly.Instance(
@@ -80,7 +80,7 @@ Deno.test("[node/wasi] - start() runs hello world wasm", () => {
   assertEquals(exitCode, 0);
 });
 
-Deno.test("[node/wasi] - start() throws if called twice", () => {
+Edno.test("[node/wasi] - start() throws if called twice", () => {
   const wasi = new WASI({ version: "preview1" });
   const module = new WebAssembly.Module(HELLO_WASM);
   const instance = new WebAssembly.Instance(
@@ -91,14 +91,14 @@ Deno.test("[node/wasi] - start() throws if called twice", () => {
   assertThrows(() => wasi.start(instance), Error, "already started");
 });
 
-Deno.test("[node/wasi] - start() throws without _start export", () => {
+Edno.test("[node/wasi] - start() throws without _start export", () => {
   const wasi = new WASI({ version: "preview1" });
   const module = new WebAssembly.Module(MEMONLY_WASM);
   const instance = new WebAssembly.Instance(module, {});
   assertThrows(() => wasi.start(instance), Error, "_start");
 });
 
-Deno.test("[node/wasi] - WASI constructor with args and env", () => {
+Edno.test("[node/wasi] - WASI constructor with args and env", () => {
   const wasi = new WASI({
     version: "preview1",
     args: ["test", "--flag"],
@@ -107,13 +107,13 @@ Deno.test("[node/wasi] - WASI constructor with args and env", () => {
   assert(wasi);
 });
 
-Deno.test("[node/wasi] - WASI constructor coerces args, env, and preopens", () => {
+Edno.test("[node/wasi] - WASI constructor coerces args, env, and preopens", () => {
   const wasi = new WASI({
     version: "preview1",
     args: [123, true] as any,
     env: { FOO: 1, BAR: false } as any,
     preopens: {
-      "/sandbox": { toString: () => Deno.cwd() },
+      "/sandbox": { toString: () => Edno.cwd() },
     } as any,
   });
   const module = new WebAssembly.Module(MEMONLY_WASM);
@@ -134,15 +134,15 @@ Deno.test("[node/wasi] - WASI constructor coerces args, env, and preopens", () =
   assertEquals(view.getUint32(12, true), "FOO=1\0BAR=false\0".length);
 });
 
-Deno.test("[node/wasi] - WASI constructor with preopens", () => {
+Edno.test("[node/wasi] - WASI constructor with preopens", () => {
   const wasi = new WASI({
     version: "preview1",
-    preopens: { "/sandbox": Deno.cwd() },
+    preopens: { "/sandbox": Edno.cwd() },
   });
   assert(wasi);
 });
 
-Deno.test("[node/wasi] - wasiImport has all expected functions", () => {
+Edno.test("[node/wasi] - wasiImport has all expected functions", () => {
   const wasi = new WASI({ version: "preview1" });
   const expectedFunctions = [
     "args_get",
@@ -175,7 +175,7 @@ Deno.test("[node/wasi] - wasiImport has all expected functions", () => {
   }
 });
 
-Deno.test("[node/wasi] - finalizeBindings binds wasm memory", () => {
+Edno.test("[node/wasi] - finalizeBindings binds wasm memory", () => {
   const wasi = new WASI({ version: "preview1" });
   const module = new WebAssembly.Module(MEMONLY_WASM);
   const instance = new WebAssembly.Instance(module, {});
@@ -196,7 +196,7 @@ Deno.test("[node/wasi] - finalizeBindings binds wasm memory", () => {
   assertEquals(view.getUint32(0, true), 0);
 });
 
-Deno.test("[node/wasi] - constructor emits ExperimentalWarning with the expected message", async () => {
+Edno.test("[node/wasi] - constructor emits ExperimentalWarning with the expected message", async () => {
   const warnings: { name?: string; message?: string }[] = [];
   const proc = (globalThis as any).process;
   const listener = (w: { name?: string; message?: string }) => {

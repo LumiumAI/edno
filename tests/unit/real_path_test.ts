@@ -8,10 +8,10 @@ import {
   pathToAbsoluteFileUrl,
 } from "./test_util.ts";
 
-Deno.test({ permissions: { read: true } }, function realPathSyncSuccess() {
+Edno.test({ permissions: { read: true } }, function realPathSyncSuccess() {
   const relative = "tests/testdata/assets/fixture.json";
-  const realPath = Deno.realPathSync(relative);
-  if (Deno.build.os !== "windows") {
+  const realPath = Edno.realPathSync(relative);
+  if (Edno.build.os !== "windows") {
     assert(realPath.startsWith("/"));
     assert(realPath.endsWith(relative));
   } else {
@@ -20,24 +20,24 @@ Deno.test({ permissions: { read: true } }, function realPathSyncSuccess() {
   }
 });
 
-Deno.test({ permissions: { read: true } }, function realPathSyncUrl() {
+Edno.test({ permissions: { read: true } }, function realPathSyncUrl() {
   const relative = "tests/testdata/assets/fixture.json";
   const url = pathToAbsoluteFileUrl(relative);
-  assertEquals(Deno.realPathSync(relative), Deno.realPathSync(url));
+  assertEquals(Edno.realPathSync(relative), Edno.realPathSync(url));
 });
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   function realPathSyncSymlink() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const target = testDir + "/target";
     const symlink = testDir + "/symln";
-    Deno.mkdirSync(target);
-    Deno.symlinkSync(target, symlink);
-    const realPath = Deno.realPathSync(symlink);
-    if (Deno.build.os !== "windows") {
+    Edno.mkdirSync(target);
+    Edno.symlinkSync(target, symlink);
+    const realPath = Edno.realPathSync(symlink);
+    if (Edno.build.os !== "windows") {
       assert(realPath.startsWith("/"));
       assert(realPath.endsWith("/target"));
     } else {
@@ -47,22 +47,22 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { read: false } }, function realPathSyncPerm() {
+Edno.test({ permissions: { read: false } }, function realPathSyncPerm() {
   assertThrows(() => {
-    Deno.realPathSync("some_file");
-  }, Deno.errors.NotCapable);
+    Edno.realPathSync("some_file");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, function realPathSyncNotFound() {
+Edno.test({ permissions: { read: true } }, function realPathSyncNotFound() {
   assertThrows(() => {
-    Deno.realPathSync("bad_filename");
-  }, Deno.errors.NotFound);
+    Edno.realPathSync("bad_filename");
+  }, Edno.errors.NotFound);
 });
 
-Deno.test({ permissions: { read: true } }, async function realPathSuccess() {
+Edno.test({ permissions: { read: true } }, async function realPathSuccess() {
   const relativePath = "tests/testdata/assets/fixture.json";
-  const realPath = await Deno.realPath(relativePath);
-  if (Deno.build.os !== "windows") {
+  const realPath = await Edno.realPath(relativePath);
+  if (Edno.build.os !== "windows") {
     assert(realPath.startsWith("/"));
     assert(realPath.endsWith(relativePath));
   } else {
@@ -71,27 +71,27 @@ Deno.test({ permissions: { read: true } }, async function realPathSuccess() {
   }
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function realPathUrl() {
     const relative = "tests/testdata/assets/fixture.json";
     const url = pathToAbsoluteFileUrl(relative);
-    assertEquals(await Deno.realPath(relative), await Deno.realPath(url));
+    assertEquals(await Edno.realPath(relative), await Edno.realPath(url));
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   async function realPathSymlink() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const target = testDir + "/target";
     const symlink = testDir + "/symln";
-    Deno.mkdirSync(target);
-    Deno.symlinkSync(target, symlink);
-    const realPath = await Deno.realPath(symlink);
-    if (Deno.build.os !== "windows") {
+    Edno.mkdirSync(target);
+    Edno.symlinkSync(target, symlink);
+    const realPath = await Edno.realPath(symlink);
+    if (Edno.build.os !== "windows") {
       assert(realPath.startsWith("/"));
       assert(realPath.endsWith("/target"));
     } else {
@@ -101,14 +101,14 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { read: false } }, async function realPathPerm() {
+Edno.test({ permissions: { read: false } }, async function realPathPerm() {
   await assertRejects(async () => {
-    await Deno.realPath("some_file");
-  }, Deno.errors.NotCapable);
+    await Edno.realPath("some_file");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, async function realPathNotFound() {
+Edno.test({ permissions: { read: true } }, async function realPathNotFound() {
   await assertRejects(async () => {
-    await Deno.realPath("bad_filename");
-  }, Deno.errors.NotFound);
+    await Edno.realPath("bad_filename");
+  }, Edno.errors.NotFound);
 });

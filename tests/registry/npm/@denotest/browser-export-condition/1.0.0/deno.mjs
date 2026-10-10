@@ -1,1 +1,1 @@
-export const deno = "deno";
+export const edno = "edno";

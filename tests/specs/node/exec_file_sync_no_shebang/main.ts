@@ -3,7 +3,7 @@
 // Running a script that the kernel can't exec directly (a shell script
 // without a shebang line) must fall back to running it via `/bin/sh`, matching
 // the POSIX `execvp` / Node.js behavior. On Linux, Rust's `posix_spawnp` does
-// not perform this fallback (unlike macOS libc), so Deno does it explicitly.
+// not perform this fallback (unlike macOS libc), so Edno does it explicitly.
 import { execFile, execFileSync, spawn, spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
@@ -19,11 +19,11 @@ console.log("execFileSync:", out.trim());
 const res = spawnSync(script, ["hi"], { encoding: "utf8" });
 console.log("spawnSync:", res.stdout.trim(), "status:", res.status);
 
-// 3. Deno.Command (sync)
-const denoOut = new Deno.Command(script, { args: ["deno"] }).outputSync();
+// 3. Edno.Command (sync)
+const ednoOut = new Edno.Command(script, { args: ["edno"] }).outputSync();
 console.log(
-  "Deno.Command sync:",
-  new TextDecoder().decode(denoOut.stdout).trim(),
+  "Edno.Command sync:",
+  new TextDecoder().decode(ednoOut.stdout).trim(),
 );
 
 // 4. async execFile

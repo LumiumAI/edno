@@ -2,7 +2,7 @@
 
 import { assertEquals, assertStrictEquals } from "./test_util.ts";
 
-Deno.test(function imageDataInitializedWithSourceWidthAndHeight() {
+Edno.test(function imageDataInitializedWithSourceWidthAndHeight() {
   const imageData = new ImageData(16, 9);
 
   assertStrictEquals(imageData.data.constructor, Uint8ClampedArray);
@@ -13,7 +13,7 @@ Deno.test(function imageDataInitializedWithSourceWidthAndHeight() {
   assertEquals(imageData.colorSpace, "srgb");
 });
 
-Deno.test(function imageDataInitializedWithImageDataAndWidth() {
+Edno.test(function imageDataInitializedWithImageDataAndWidth() {
   const data = new Uint8ClampedArray(16 * 9 * 4);
   const imageData = new ImageData(data, 16);
 
@@ -24,7 +24,7 @@ Deno.test(function imageDataInitializedWithImageDataAndWidth() {
   assertEquals(imageData.colorSpace, "srgb");
 });
 
-Deno.test(
+Edno.test(
   function imageDataInitializedWithImageDataAndWidthAndHeightAndColorSpace() {
     const data = new Uint8ClampedArray(16 * 9 * 4);
     const imageData = new ImageData(data, 16, 9, {
@@ -39,7 +39,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   function imageDataInitializedWithWidthAndHeightAndPixelFormatAndColorSpace() {
     const imageData = new ImageData(16, 9, {
       pixelFormat: "rgba-float16",
@@ -55,7 +55,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   function imageDataInitializedWithImageDataAndWidthAndPixelFormat() {
     const data = new Float16Array(16 * 9 * 4);
     const imageData = new ImageData(data, 16, undefined, {
@@ -70,7 +70,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   async function imageDataUsedInWorker() {
     const { promise, resolve } = Promise.withResolvers<void>();
     const url = import.meta.resolve(

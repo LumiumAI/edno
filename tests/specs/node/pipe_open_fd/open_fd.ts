@@ -19,5 +19,5 @@ if (openResult === 0) {
   console.log("PASS: Pipe.open() succeeded with valid fd");
 } else {
   console.log("FAIL: Pipe.open() should return 0 for valid fd");
-  Deno.exit(1);
+  Edno.exit(1);
 }

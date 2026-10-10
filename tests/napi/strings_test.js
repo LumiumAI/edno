@@ -4,65 +4,65 @@ import { assert, assertEquals, loadTestLibrary } from "./common.js";
 
 const strings = loadTestLibrary();
 
-Deno.test("napi string utf8", function () {
+Edno.test("napi string utf8", function () {
   assertEquals(strings.test_utf8(""), "");
   assertEquals(strings.test_utf8("🦕"), "🦕");
 });
 
 // Regression test for #36569: a NULL `result` out-pointer to the string
 // constructors must return napi_invalid_arg instead of segfaulting.
-Deno.test("napi string null result returns invalid_arg", function () {
+Edno.test("napi string null result returns invalid_arg", function () {
   assert(strings.test_null_result_string());
 });
 
-Deno.test("napi string", function () {
+Edno.test("napi string", function () {
   assertEquals(strings.test_utf16(""), "");
   assertEquals(strings.test_utf16("🦕"), "🦕");
 });
 
-Deno.test("napi string utf8 roundtrip", function () {
+Edno.test("napi string utf8 roundtrip", function () {
   assertEquals(strings.test_utf8_roundtrip(""), "");
   assertEquals(strings.test_utf8_roundtrip("hello"), "hello");
   assertEquals(strings.test_utf8_roundtrip("🦕"), "🦕");
 });
 
-Deno.test("napi property key latin1", function () {
+Edno.test("napi property key latin1", function () {
   assertEquals(strings.test_property_key_latin1(), 42);
 });
 
-Deno.test("napi property key utf8", function () {
+Edno.test("napi property key utf8", function () {
   assertEquals(strings.test_property_key_utf8(), 42);
 });
 
-Deno.test("napi property key utf16", function () {
+Edno.test("napi property key utf16", function () {
   assertEquals(strings.test_property_key_utf16(), 42);
 });
 
-Deno.test("napi string latin1 roundtrip", function () {
+Edno.test("napi string latin1 roundtrip", function () {
   assertEquals(strings.test_latin1_roundtrip("hello"), "hello");
   assertEquals(strings.test_latin1_roundtrip(""), "");
 });
 
-Deno.test("napi string utf16 roundtrip", function () {
+Edno.test("napi string utf16 roundtrip", function () {
   assertEquals(strings.test_utf16_roundtrip("hello"), "hello");
   assertEquals(strings.test_utf16_roundtrip(""), "");
 });
 
-Deno.test("napi external string latin1", function () {
+Edno.test("napi external string latin1", function () {
   // Returns true if zero-copy (not copied), false if copied
   const zeroCopy = strings.test_external_latin1();
   // Either outcome is valid -- zero-copy is preferred but copy is acceptable
   assertEquals(typeof zeroCopy, "boolean");
 });
 
-Deno.test("napi external string utf16", function () {
+Edno.test("napi external string utf16", function () {
   // Returns true if zero-copy (not copied), false if copied
   const zeroCopy = strings.test_external_utf16();
   // Either outcome is valid -- zero-copy is preferred but copy is acceptable
   assertEquals(typeof zeroCopy, "boolean");
 });
 
-Deno.test("napi external string finalizers keep per-resource state", async () => {
+Edno.test("napi external string finalizers keep per-resource state", async () => {
   if (typeof globalThis.gc !== "function") {
     return;
   }

@@ -3,13 +3,13 @@
 // A node:http server using the direct parser-consume path must be able to
 // start a nested node:http client request from its first request callback.
 // Older builds answered that first inbound request with a generated 400 under
-// `deno test`, while the outgoing proxy request never reached the target.
+// `edno test`, while the outgoing proxy request never reached the target.
 
 import { strictEqual } from "node:assert";
 import http from "node:http";
 import net from "node:net";
 
-Deno.test("first request to a node:http proxy under deno test", async () => {
+Edno.test("first request to a node:http proxy under edno test", async () => {
   let targetRequests = 0;
   const target = http.createServer((_req, res) => {
     targetRequests++;

@@ -1,5 +1,5 @@
-Download http://localhost:4260/@denotest%2fcheck-error
-Download http://localhost:4260/@denotest/check-error/1.0.0.tgz
+Download http://localhost:4260/@ednotest%2fcheck-error
+Download http://localhost:4260/@ednotest/check-error/1.0.0.tgz
 Check [WILDCARD]main.ts
 TS2339 [ERROR]: Property 'Asdf' does not exist on type 'typeof import("[WILDCARD]/index")'.
 console.log(test.Asdf); // should error

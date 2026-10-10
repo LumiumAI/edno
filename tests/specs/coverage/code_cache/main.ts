@@ -1,4 +1,4 @@
-if (Deno.args.length > 0) {
+if (Edno.args.length > 0) {
   console.log("has args");
 }
 console.log("done");

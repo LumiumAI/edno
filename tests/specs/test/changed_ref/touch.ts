@@ -1,4 +1,4 @@
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   "math.ts",
-  Deno.readTextFileSync("math.ts") + "\n// changed\n",
+  Edno.readTextFileSync("math.ts") + "\n// changed\n",
 );

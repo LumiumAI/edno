@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --check --allow-write=. --allow-read=. --lock=./tools/deno.lock.json
+#!/usr/bin/env -S edno run --check --allow-write=. --allow-read=. --lock=./tools/edno.lock.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { createWorkflow, step } from "jsr:@david/gagen@0.3.1";
 
@@ -33,9 +33,9 @@ const workflow = createWorkflow({
         },
       }),
       step({
-        name: "Install deno",
+        name: "Install edno",
         uses: "denoland/setup-deno@v2",
-        with: { "deno-version": "v2.x" },
+        with: { "edno-version": "v2.x" },
       }),
       step({
         name: "Create release tag and check forward commit to main",

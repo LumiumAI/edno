@@ -11,7 +11,7 @@ edition.workspace = true
 license.workspace = true
 publish = false
 repository.workspace = true
-description = "Node-API FFI bindings for Deno's NAPI test suite"
+description = "Node-API FFI bindings for Edno's NAPI test suite"
 
 [target.'cfg(windows)'.dependencies]
 libloading = "0.7"

@@ -1,4 +1,4 @@
-// Calling Deno.test.sanitizer() with invalid options must throw TypeError
+// Calling Edno.test.sanitizer() with invalid options must throw TypeError
 // rather than crash with "Cannot read properties of undefined".
 
 function assertThrowsTypeError(fn: () => void, label: string) {
@@ -17,9 +17,9 @@ function assertThrowsTypeError(fn: () => void, label: string) {
   throw new Error(`${label}: expected TypeError, but no error was thrown`);
 }
 
-Deno.test("sanitizer() rejects non-object arguments", () => {
-  // deno-lint-ignore no-explicit-any
-  const sanitizer = (Deno.test as any).sanitizer;
+Edno.test("sanitizer() rejects non-object arguments", () => {
+  // edno-lint-ignore no-explicit-any
+  const sanitizer = (Edno.test as any).sanitizer;
   assertThrowsTypeError(() => sanitizer(), "no arguments");
   assertThrowsTypeError(() => sanitizer(null), "null");
   assertThrowsTypeError(() => sanitizer(undefined), "undefined");

@@ -30,19 +30,19 @@ const {
   WeakMapPrototypeSet,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const {
   parseUrlEncoded,
   URLSearchParamsPrototype,
-} = core.loadExtScript("ext:deno_web/00_url.js");
+} = core.loadExtScript("ext:edno_web/00_url.js");
 const {
   formDataFromEntries,
   FormDataPrototype,
   formDataToBlob,
   parseFormData,
-} = core.loadExtScript("ext:deno_fetch/21_formdata.js");
-const mimesniff = core.loadExtScript("ext:deno_web/01_mimesniff.js");
-const { BlobPrototype } = core.loadExtScript("ext:deno_web/09_file.js");
+} = core.loadExtScript("ext:edno_fetch/21_formdata.js");
+const mimesniff = core.loadExtScript("ext:edno_web/01_mimesniff.js");
+const { BlobPrototype } = core.loadExtScript("ext:edno_web/09_file.js");
 const {
   createProxy,
   createReadableStream,
@@ -54,9 +54,9 @@ const {
   ReadableStreamPrototype,
   readableStreamTee,
   readableStreamThrowIfErrored,
-} = core.loadExtScript("ext:deno_web/06_streams.js");
+} = core.loadExtScript("ext:edno_web/06_streams.js");
 const { TextDecoderStream } = core.loadExtScript(
-  "ext:deno_web/08_text_encoding.js",
+  "ext:edno_web/08_text_encoding.js",
 );
 
 const noop = () => {};
@@ -531,7 +531,7 @@ function extractBody(object) {
     ObjectPrototypeIsPrototypeOf(URLSearchParamsPrototype, object)
   ) {
     // TODO(@satyarohith): not sure what primordial here.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     source = object.toString();
     contentType = "application/x-www-form-urlencoded;charset=UTF-8";
   } else if (ObjectPrototypeIsPrototypeOf(ReadableStreamPrototype, object)) {
@@ -581,7 +581,7 @@ function extractBody(object) {
       stream = new ReadableStream({
         type: "bytes",
         async pull(controller) {
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           const res = await iter.next();
           if (res.done) {
             controller.close();
@@ -591,7 +591,7 @@ function extractBody(object) {
         },
         async cancel(reason) {
           if (iter.return !== undefined) {
-            // deno-lint-ignore deno-internal/prefer-primordials
+            // edno-lint-ignore edno-internal/prefer-primordials
             await iter.return(reason);
           }
         },

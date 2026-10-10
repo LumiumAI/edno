@@ -3,10 +3,10 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use deno_core::OpState;
-use deno_core::error::AnyError;
-use deno_core::op2;
-use deno_core::serde_json;
+use edno_core::OpState;
+use edno_core::error::AnyError;
+use edno_core::op2;
+use edno_core::serde_json;
 use deno_error::JsErrorBox;
 use tokio::sync::mpsc;
 use tokio::sync::oneshot;
@@ -67,7 +67,7 @@ pub struct KernelIopubReceiver {
 }
 
 pub struct KernelIsolateHandle {
-  pub handle: deno_core::v8::IsolateHandle,
+  pub handle: edno_core::v8::IsolateHandle,
 }
 
 pub struct KernelConnectionInfo {
@@ -108,8 +108,8 @@ pub struct ReplInputSender {
 // Extension declarations
 // ------------------------------------------------------------------
 
-deno_core::extension!(
-  deno_jupyter_kernel,
+edno_core::extension!(
+  edno_jupyter_kernel,
   ops = [
     op_jupyter_get_connection_info,
     op_jupyter_repl_evaluate,
@@ -127,8 +127,8 @@ deno_core::extension!(
   ],
 );
 
-deno_core::extension!(
-  deno_jupyter_repl,
+edno_core::extension!(
+  edno_jupyter_repl,
   ops = [
     op_jupyter_broadcast,
     op_jupyter_input,
@@ -150,8 +150,8 @@ deno_core::extension!(
 );
 
 // Variant used when running tests (no middleware so stdout/stderr pass through).
-deno_core::extension!(
-  deno_jupyter_repl_for_test,
+edno_core::extension!(
+  edno_jupyter_repl_for_test,
   ops = [
     op_jupyter_broadcast,
     op_jupyter_input,
@@ -169,7 +169,7 @@ deno_core::extension!(
 );
 
 // Backward-compat alias used by cli/tools/test/mod.rs
-pub use deno_jupyter_repl_for_test as deno_jupyter_for_test;
+pub use edno_jupyter_repl_for_test as edno_jupyter_for_test;
 
 // ------------------------------------------------------------------
 // Kernel-side ops
@@ -368,13 +368,13 @@ pub fn op_jupyter_send_input_reply(
 #[op2]
 #[string]
 pub fn op_jupyter_deno_version(_state: &mut OpState) -> String {
-  deno_lib::version::DENO_VERSION_INFO.deno.to_string()
+  edno_lib::version::EDNO_VERSION_INFO.edno.to_string()
 }
 
 #[op2]
 #[string]
 pub fn op_jupyter_typescript_version(_state: &mut OpState) -> String {
-  deno_lib::version::DENO_VERSION_INFO.typescript.to_string()
+  edno_lib::version::EDNO_VERSION_INFO.typescript.to_string()
 }
 
 // ------------------------------------------------------------------
@@ -430,7 +430,7 @@ pub fn op_jupyter_broadcast(
   #[string] message_type: String,
   #[serde] content: serde_json::Value,
   #[serde] metadata: serde_json::Value,
-  #[serde] buffers: Vec<deno_core::JsBuffer>,
+  #[serde] buffers: Vec<edno_core::JsBuffer>,
 ) -> Result<(), JupyterBroadcastError> {
   let sender = state.borrow::<ReplIopubSender>();
   sender.tx.send(IopubMessage {
@@ -461,12 +461,12 @@ pub fn op_print(state: &mut OpState, #[string] msg: &str, is_err: bool) {
 #[op2]
 #[string]
 pub fn op_jupyter_create_png_from_texture(
-  #[cppgc] texture: &deno_runtime::deno_webgpu::texture::GPUTexture,
+  #[cppgc] texture: &edno_runtime::edno_webgpu::texture::GPUTexture,
 ) -> Result<String, JsErrorBox> {
-  use deno_runtime::deno_image::image::ExtendedColorType;
-  use deno_runtime::deno_image::image::ImageEncoder;
-  use deno_runtime::deno_webgpu::error::GPUError;
-  use deno_runtime::deno_webgpu::*;
+  use edno_runtime::edno_image::image::ExtendedColorType;
+  use edno_runtime::edno_image::image::ImageEncoder;
+  use edno_runtime::edno_webgpu::error::GPUError;
+  use edno_runtime::edno_webgpu::*;
   use texture::GPUTextureFormat;
 
   let (command_encoder, maybe_err) =
@@ -507,19 +507,19 @@ pub fn op_jupyter_create_png_from_texture(
   let mut out: Vec<u8> = vec![];
 
   let img =
-    deno_runtime::deno_image::image::codecs::png::PngEncoder::new(&mut out);
+    edno_runtime::edno_image::image::codecs::png::PngEncoder::new(&mut out);
   img
     .write_image(&data, texture.size.width, texture.size.height, color_type)
     .map_err(|e| JsErrorBox::type_error(e.to_string()))?;
 
-  Ok(deno_runtime::deno_web::forgiving_base64_encode(&out))
+  Ok(edno_runtime::edno_web::forgiving_base64_encode(&out))
 }
 
 #[op2]
 pub fn op_jupyter_get_buffer(
-  #[cppgc] buffer: &deno_runtime::deno_webgpu::buffer::GPUBuffer,
-) -> Result<Vec<u8>, deno_runtime::deno_webgpu::error::GPUError> {
-  use deno_runtime::deno_webgpu::*;
+  #[cppgc] buffer: &edno_runtime::edno_webgpu::buffer::GPUBuffer,
+) -> Result<Vec<u8>, edno_runtime::edno_webgpu::error::GPUError> {
+  use edno_runtime::edno_webgpu::*;
   let index = buffer.instance.buffer_map_async(
     buffer.id,
     0,

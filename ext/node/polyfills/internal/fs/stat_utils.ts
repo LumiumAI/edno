@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 import { core, primordials } from "ext:core/mod.js";
-import { BigIntStats, Stats } from "ext:deno_node/internal/fs/utils.mjs";
-const { isWindows } = core.loadExtScript("ext:deno_node/_util/os.ts");
+import { BigIntStats, Stats } from "ext:edno_node/internal/fs/utils.mjs";
+const { isWindows } = core.loadExtScript("ext:edno_node/_util/os.ts");
 
 const {
   BigInt,
@@ -23,7 +23,7 @@ export type statCallbackBigInt = (
 
 export type statCallback = (err: Error | null, stat?: Stats) => void;
 
-export function convertFileInfoToStats(origin: Deno.FileInfo): Stats {
+export function convertFileInfoToStats(origin: Edno.FileInfo): Stats {
   const atime = origin.atime ?? new Date(0);
   const birthtime = origin.birthtime ?? new Date(0);
   const ctime = origin.ctime ?? new Date(0);
@@ -55,7 +55,7 @@ function toBigInt(number?: number | null): bigint {
 }
 
 export function convertFileInfoToBigIntStats(
-  origin: Deno.FileInfo,
+  origin: Edno.FileInfo,
 ): BigIntStats {
   const atime = origin.atime ?? new Date(0);
   const birthtime = origin.birthtime ?? new Date(0);
@@ -84,7 +84,7 @@ export function convertFileInfoToBigIntStats(
 
 const defineStatExtraProps = <T extends Stats | BigIntStats>(
   stats: T,
-  origin: Deno.FileInfo,
+  origin: Edno.FileInfo,
 ): T => {
   ObjectDefineProperties(stats, {
     isDirectory: {
@@ -133,10 +133,10 @@ const defineStatExtraProps = <T extends Stats | BigIntStats>(
   return stats;
 };
 
-export function CFISBIS(fileInfo: Deno.FileInfo, bigInt: false): Stats;
-export function CFISBIS(fileInfo: Deno.FileInfo, bigInt: true): BigIntStats;
+export function CFISBIS(fileInfo: Edno.FileInfo, bigInt: false): Stats;
+export function CFISBIS(fileInfo: Edno.FileInfo, bigInt: true): BigIntStats;
 export function CFISBIS(
-  fileInfo: Deno.FileInfo,
+  fileInfo: Edno.FileInfo,
   bigInt: boolean,
 ): Stats | BigIntStats {
   if (bigInt) return convertFileInfoToBigIntStats(fileInfo);

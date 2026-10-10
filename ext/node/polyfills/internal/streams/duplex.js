@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -29,25 +29,25 @@
 (function () {
 const { core, primordials } = __bootstrap;
 const _mod1 =
-  core.loadExtScript("ext:deno_node/internal/streams/legacy.js").default;
+  core.loadExtScript("ext:edno_node/internal/streams/legacy.js").default;
 const Readable = core.loadExtScript(
-  "ext:deno_node/internal/streams/readable.js",
+  "ext:edno_node/internal/streams/readable.js",
 ).default;
 const Writable = core.loadExtScript(
-  "ext:deno_node/internal/streams/writable.js",
+  "ext:edno_node/internal/streams/writable.js",
 ).default;
 const { addAbortSignal } = core.loadExtScript(
-  "ext:deno_node/internal/streams/add-abort-signal.js",
+  "ext:edno_node/internal/streams/add-abort-signal.js",
 );
 const destroyImpl =
-  core.loadExtScript("ext:deno_node/internal/streams/destroy.js").default;
+  core.loadExtScript("ext:edno_node/internal/streams/destroy.js").default;
 const { kOnConstructed } = core.loadExtScript(
-  "ext:deno_node/internal/streams/utils.js",
+  "ext:edno_node/internal/streams/utils.js",
 );
 const webStreamsAdaptersSpecifier =
-  "ext:deno_node/internal/webstreams/adapters.js";
+  "ext:edno_node/internal/webstreams/adapters.js";
 const lazyDuplexify = core.createLazyLoader(
-  "ext:deno_node/internal/streams/duplexify.js",
+  "ext:edno_node/internal/streams/duplexify.js",
 );
 const Stream = _mod1.Stream;
 

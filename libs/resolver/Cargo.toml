@@ -1,28 +1,28 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_resolver"
+name = "edno_resolver"
 version = "0.90.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Deno resolution algorithm"
+description = "Edno resolution algorithm"
 
 [lib]
 path = "lib.rs"
 
 [features]
 deno_ast = ["dep:deno_ast", "deno_graph/swc"]
-graph = ["deno_graph", "node_resolver/graph", "http", "deno_permissions"]
+graph = ["deno_graph", "node_resolver/graph", "http", "edno_permissions"]
 sync = [
   "dashmap",
-  "deno_maybe_sync/sync",
-  "deno_package_json/sync",
+  "edno_maybe_sync/sync",
+  "edno_package_json/sync",
   "node_resolver/sync",
-  "deno_config/sync",
-  "deno_cache_dir/sync",
+  "edno_config/sync",
+  "edno_cache_dir/sync",
 ]
 
 [dependencies]
@@ -34,18 +34,18 @@ capacity_builder.workspace = true
 chrono.workspace = true
 dashmap = { workspace = true, optional = true }
 deno_ast = { workspace = true, features = ["cjs"], optional = true }
-deno_cache_dir.workspace = true
-deno_config.workspace = true
+edno_cache_dir.workspace = true
+edno_config.workspace = true
 deno_error.workspace = true
 deno_graph = { workspace = true, optional = true }
-deno_lockfile.workspace = true
-deno_maybe_sync.workspace = true
+edno_lockfile.workspace = true
+edno_maybe_sync.workspace = true
 deno_media_type.workspace = true
-deno_npm.workspace = true
-deno_npmrc.workspace = true
-deno_package_json.workspace = true
+edno_npm.workspace = true
+edno_npmrc.workspace = true
+edno_package_json.workspace = true
 deno_path_util.workspace = true
-deno_permissions = { workspace = true, optional = true }
+edno_permissions = { workspace = true, optional = true }
 deno_semver.workspace = true
 deno_terminal.workspace = true
 deno_unsync.workspace = true

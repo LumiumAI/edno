@@ -1,1 +1,1 @@
-console.log(Deno.readTextFileSync("deno.json").length);
+console.log(Edno.readTextFileSync("edno.json").length);

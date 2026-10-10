@@ -6,11 +6,11 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use deno_error::JsErrorBox;
-use deno_npm::registry::NpmPackageInfo;
-use deno_npm::registry::NpmPackageInfoCacheMetadata;
-use deno_npm::registry::NpmRegistryApi;
-use deno_npm::registry::NpmRegistryPackageInfoLoadError;
-use deno_npmrc::ResolvedNpmRc;
+use edno_npm::registry::NpmPackageInfo;
+use edno_npm::registry::NpmPackageInfoCacheMetadata;
+use edno_npm::registry::NpmRegistryApi;
+use edno_npm::registry::NpmRegistryPackageInfoLoadError;
+use edno_npmrc::ResolvedNpmRc;
 use deno_unsync::sync::AtomicFlag;
 use futures::FutureExt;
 use futures::future::LocalBoxFuture;
@@ -215,7 +215,7 @@ impl<THttpClient: NpmCacheHttpClient, TSys: NpmCacheSys>
           // provider, so capturing a strong `Arc<Self>` would form a reference
           // cycle (`self` -> `memory_cache` -> value creator -> `self`) that
           // keeps the whole provider — and every package's cached registry
-          // metadata — alive for the life of the process. Under `deno run
+          // metadata — alive for the life of the process. Under `edno run
           // --watch` that leaks one full registry cache per reload (see
           // denoland/deno#35664). `create_load_future` re-clones a strong
           // reference for the duration of an in-flight load, which is fine.
@@ -652,7 +652,7 @@ mod test {
     let abbreviated_new = cached_info(
       r#"{"name":"pkg","versions":{"1.0.0":{"version":"1.0.0"}},"modified":"2024-01-02T00:00:00.000Z"}"#,
     );
-    // written by an old version of deno
+    // written by an old version of edno
     let abbreviated_unknown =
       cached_info(r#"{"name":"pkg","versions":{"1.0.0":{"version":"1.0.0"}}}"#);
     let full = cached_info(

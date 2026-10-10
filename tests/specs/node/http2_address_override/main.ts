@@ -1,4 +1,4 @@
-// node:http2 servers honor the DENO_SERVE_ADDRESS override, and HTTP/2 is
+// node:http2 servers honor the EDNO_SERVE_ADDRESS override, and HTTP/2 is
 // forwarded natively (no downgrade): response trailers -- which only exist
 // in HTTP/2 framing and are what gRPC rides on -- must survive the trip.
 import http2 from "node:http2";
@@ -43,7 +43,7 @@ server.listen(0, () => {
     console.log("grpc-status:", trailers["grpc-status"]);
     console.log("grpc-message:", trailers["grpc-message"]);
     client.close();
-    server.close(() => Deno.exit(0));
+    server.close(() => Edno.exit(0));
   });
   stream.end("grpc-frame-bytes");
 });

@@ -1,23 +1,23 @@
-Deno.test("foo", () => {
+Edno.test("foo", () => {
   throw undefined;
 });
 
-Deno.test("bar", () => {
+Edno.test("bar", () => {
   throw null;
 });
 
-Deno.test("baz", () => {
+Edno.test("baz", () => {
   throw 123;
 });
 
-Deno.test("qux", () => {
+Edno.test("qux", () => {
   throw "Hello, world!";
 });
 
-Deno.test("quux", () => {
+Edno.test("quux", () => {
   throw [1, 2, 3];
 });
 
-Deno.test("quuz", () => {
+Edno.test("quuz", () => {
   throw { a: "Hello, world!", b: [1, 2, 3] };
 });

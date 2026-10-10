@@ -3,14 +3,14 @@
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 
-use deno_core::ModuleSpecifier;
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::ModuleSpecifier;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::v8;
 use deno_error::JsErrorBox;
-use deno_runtime::deno_permissions::ChildPermissionsArg;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::deno_web::StartTime;
+use edno_runtime::edno_permissions::ChildPermissionsArg;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::edno_web::StartTime;
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
@@ -22,7 +22,7 @@ pub(crate) struct BenchContainer(
   pub Vec<(BenchDescription, v8::Global<v8::Function>)>,
 );
 
-deno_core::extension!(deno_bench,
+edno_core::extension!(edno_bench,
   ops = [
     op_pledge_test_permissions,
     op_restore_test_permissions,
@@ -54,7 +54,7 @@ struct PermissionsHolder(Uuid, PermissionsContainer);
 pub fn op_pledge_test_permissions(
   state: &mut OpState,
   #[serde] args: ChildPermissionsArg,
-) -> Result<Uuid, deno_runtime::deno_permissions::ChildPermissionError> {
+) -> Result<Uuid, edno_runtime::edno_permissions::ChildPermissionError> {
   let token = Uuid::new_v4();
   let parent_permissions = state.borrow_mut::<PermissionsContainer>();
   let worker_permissions = parent_permissions.create_child_permissions(args)?;

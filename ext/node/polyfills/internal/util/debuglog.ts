@@ -60,7 +60,7 @@ function initializeDebugEnv(debugEnv: string) {
 // NODE_DEBUG=http or NODE_DEBUG=http2.
 function emitWarningIfNeeded(set: string) {
   if ("HTTP" === set || "HTTP2" === set) {
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     console.warn(
       "Setting the NODE_DEBUG environment variable " +
         "to '" + StringPrototypeToLowerCase(set) + "' can expose sensitive " +
@@ -80,11 +80,11 @@ function debuglogImpl(
     if (enabled) {
       emitWarningIfNeeded(set);
       debugImpls[set] = function debug(msg, ...args: unknown[]) {
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.error(
           "%s %s: " + msg,
           set,
-          String(Deno.pid),
+          String(Edno.pid),
           ...new SafeArrayIterator(args),
         );
       };

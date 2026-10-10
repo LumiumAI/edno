@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assertEquals, assertRejects, assertThrows } from "./test_util.ts";
 
-Deno.test(function testWrongOverloads() {
+Edno.test(function testWrongOverloads() {
   assertThrows(
     () => {
       // @ts-ignore Testing invalid overloads
-      Deno.test("some name", { fn: () => {} }, () => {});
+      Edno.test("some name", { fn: () => {} }, () => {});
     },
     TypeError,
     "Unexpected 'fn' field in options, test function is already provided as the third argument",
@@ -13,7 +13,7 @@ Deno.test(function testWrongOverloads() {
   assertThrows(
     () => {
       // @ts-ignore Testing invalid overloads
-      Deno.test("some name", { name: "some name2" }, () => {});
+      Edno.test("some name", { name: "some name2" }, () => {});
     },
     TypeError,
     "Unexpected 'name' field in options, test name is already provided as the first argument",
@@ -21,7 +21,7 @@ Deno.test(function testWrongOverloads() {
   assertThrows(
     () => {
       // @ts-ignore Testing invalid overloads
-      Deno.test(() => {});
+      Edno.test(() => {});
     },
     TypeError,
     "The test function must have a name",
@@ -29,15 +29,15 @@ Deno.test(function testWrongOverloads() {
   assertThrows(
     () => {
       // @ts-ignore Testing invalid overloads
-      Deno.test(function foo() {}, {});
+      Edno.test(function foo() {}, {});
     },
     TypeError,
-    "Unexpected second argument to Deno.test()",
+    "Unexpected second argument to Edno.test()",
   );
   assertThrows(
     () => {
       // @ts-ignore Testing invalid overloads
-      Deno.test({ fn: () => {} }, function foo() {});
+      Edno.test({ fn: () => {} }, function foo() {});
     },
     TypeError,
     "Unexpected 'fn' field in options, test function is already provided as the second argument",
@@ -45,7 +45,7 @@ Deno.test(function testWrongOverloads() {
   assertThrows(
     () => {
       // @ts-ignore Testing invalid overloads
-      Deno.test({});
+      Edno.test({});
     },
     TypeError,
     "Expected 'fn' field in the first argument to be a test function",
@@ -53,24 +53,24 @@ Deno.test(function testWrongOverloads() {
   assertThrows(
     () => {
       // @ts-ignore Testing invalid overloads
-      Deno.test({ fn: "boo!" });
+      Edno.test({ fn: "boo!" });
     },
     TypeError,
     "Expected 'fn' field in the first argument to be a test function",
   );
 });
 
-Deno.test(function nameOfTestCaseCantBeEmpty() {
+Edno.test(function nameOfTestCaseCantBeEmpty() {
   assertThrows(
     () => {
-      Deno.test("", () => {});
+      Edno.test("", () => {});
     },
     TypeError,
     "The test name can't be empty",
   );
   assertThrows(
     () => {
-      Deno.test({
+      Edno.test({
         name: "",
         fn: () => {},
       });
@@ -80,10 +80,10 @@ Deno.test(function nameOfTestCaseCantBeEmpty() {
   );
 });
 
-Deno.test(async function invalidStepArguments(t) {
+Edno.test(async function invalidStepArguments(t) {
   await assertRejects(
     async () => {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       await (t as any).step("test");
     },
     TypeError,
@@ -92,7 +92,7 @@ Deno.test(async function invalidStepArguments(t) {
 
   await assertRejects(
     async () => {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       await (t as any).step("test", "not a function");
     },
     TypeError,
@@ -101,7 +101,7 @@ Deno.test(async function invalidStepArguments(t) {
 
   await assertRejects(
     async () => {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       await (t as any).step();
     },
     TypeError,
@@ -110,7 +110,7 @@ Deno.test(async function invalidStepArguments(t) {
 
   await assertRejects(
     async () => {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       await (t as any).step(() => {});
     },
     TypeError,
@@ -118,7 +118,7 @@ Deno.test(async function invalidStepArguments(t) {
   );
 });
 
-Deno.test(async function nameOnTextContext(t1) {
+Edno.test(async function nameOnTextContext(t1) {
   await assertEquals(t1.name, "nameOnTextContext");
   await t1.step("step", async (t2) => {
     await assertEquals(t2.name, "step");
@@ -128,17 +128,17 @@ Deno.test(async function nameOnTextContext(t1) {
   });
 });
 
-Deno.test(async function originOnTextContext(t1) {
-  await assertEquals(t1.origin, Deno.mainModule);
+Edno.test(async function originOnTextContext(t1) {
+  await assertEquals(t1.origin, Edno.mainModule);
   await t1.step("step", async (t2) => {
-    await assertEquals(t2.origin, Deno.mainModule);
+    await assertEquals(t2.origin, Edno.mainModule);
     await t2.step("nested step", async (t3) => {
-      await assertEquals(t3.origin, Deno.mainModule);
+      await assertEquals(t3.origin, Edno.mainModule);
     });
   });
 });
 
-Deno.test(async function parentOnTextContext(t1) {
+Edno.test(async function parentOnTextContext(t1) {
   await assertEquals(t1.parent, undefined);
   await t1.step("step", async (t2) => {
     await assertEquals(t1, t2.parent);
@@ -148,7 +148,7 @@ Deno.test(async function parentOnTextContext(t1) {
   });
 });
 
-Deno.test("explicit undefined for boolean options", {
+Edno.test("explicit undefined for boolean options", {
   ignore: undefined,
   only: undefined,
 }, () => {});

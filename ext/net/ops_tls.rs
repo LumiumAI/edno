@@ -13,36 +13,36 @@ use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use deno_core::AsyncRefCell;
-use deno_core::AsyncResult;
-use deno_core::CancelHandle;
-use deno_core::CancelTryFuture;
-use deno_core::FromV8;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::futures::TryFutureExt;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::AsyncRefCell;
+use edno_core::AsyncResult;
+use edno_core::CancelHandle;
+use edno_core::CancelTryFuture;
+use edno_core::FromV8;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::futures::TryFutureExt;
+use edno_core::op2;
+use edno_core::v8;
 use deno_error::JsErrorBox;
-use deno_permissions::OpenAccessKind;
-use deno_permissions::PermissionsContainer;
-use deno_tls::ServerConfigProvider;
-use deno_tls::SocketUse;
-use deno_tls::TlsClientConfigOptions;
-use deno_tls::TlsKey;
-use deno_tls::TlsKeyLookup;
-use deno_tls::TlsKeys;
-use deno_tls::TlsKeysHolder;
-use deno_tls::create_client_config;
-use deno_tls::get_ssl_key_log;
-use deno_tls::load_certs;
-use deno_tls::load_private_keys;
-use deno_tls::new_resolver;
-use deno_tls::rustls::ClientConnection;
-use deno_tls::rustls::ServerConfig;
-use deno_tls::rustls::pki_types::ServerName;
+use edno_permissions::OpenAccessKind;
+use edno_permissions::PermissionsContainer;
+use edno_tls::ServerConfigProvider;
+use edno_tls::SocketUse;
+use edno_tls::TlsClientConfigOptions;
+use edno_tls::TlsKey;
+use edno_tls::TlsKeyLookup;
+use edno_tls::TlsKeys;
+use edno_tls::TlsKeysHolder;
+use edno_tls::create_client_config;
+use edno_tls::get_ssl_key_log;
+use edno_tls::load_certs;
+use edno_tls::load_private_keys;
+use edno_tls::new_resolver;
+use edno_tls::rustls::ClientConnection;
+use edno_tls::rustls::ServerConfig;
+use edno_tls::rustls::pki_types::ServerName;
 pub use rustls_tokio_stream::TlsStream;
 pub use rustls_tokio_stream::TlsStreamRead;
 pub use rustls_tokio_stream::TlsStreamWrite;
@@ -224,8 +224,8 @@ impl TlsStreamResource {
 }
 
 impl Resource for TlsStreamResource {
-  deno_core::impl_readable_byob!();
-  deno_core::impl_writable!();
+  edno_core::impl_readable_byob!();
+  edno_core::impl_writable!();
 
   fn name(&self) -> Cow<'_, str> {
     "tlsStream".into()
@@ -271,7 +271,7 @@ pub fn op_tls_key_null() -> TlsKeysHolder {
 pub fn op_tls_key_static(
   #[string] cert: &str,
   #[string] key: &str,
-) -> Result<TlsKeysHolder, deno_tls::TlsError> {
+) -> Result<TlsKeysHolder, edno_tls::TlsError> {
   let cert = load_certs(&mut BufReader::new(cert.as_bytes()))?;
   let key = load_private_keys(key.as_bytes())?
     .into_iter()
@@ -285,11 +285,11 @@ pub fn op_tls_cert_resolver_create<'s>(
   scope: &mut v8::PinScope<'s, '_>,
 ) -> v8::Local<'s, v8::Array> {
   let (resolver, lookup) = new_resolver();
-  let resolver = deno_core::cppgc::make_cppgc_object(
+  let resolver = edno_core::cppgc::make_cppgc_object(
     scope,
     TlsKeysHolder::from(TlsKeys::Resolver(resolver)),
   );
-  let lookup = deno_core::cppgc::make_cppgc_object(scope, lookup);
+  let lookup = edno_core::cppgc::make_cppgc_object(scope, lookup);
   v8::Array::new_with_elements(scope, &[resolver.into(), lookup.into()])
 }
 
@@ -433,7 +433,7 @@ pub async fn op_net_connect_tls(
     let mut s = state.borrow_mut();
     let permissions = s.borrow_mut::<PermissionsContainer>();
     permissions
-      .check_net(&(&addr.hostname, Some(addr.port)), "Deno.connectTls()")
+      .check_net(&(&addr.hostname, Some(addr.port)), "Edno.connectTls()")
       .map_err(NetError::Permission)?;
     if let Some(path) = cert_file {
       Some(
@@ -441,7 +441,7 @@ pub async fn op_net_connect_tls(
           .check_open(
             Cow::Borrowed(Path::new(path)),
             OpenAccessKind::ReadNoFollow,
-            Some("Deno.connectTls()"),
+            Some("Edno.connectTls()"),
           )
           .map_err(NetError::Permission)?,
       )
@@ -503,7 +503,7 @@ pub async fn op_net_connect_tls(
       permissions.check_net_resolved(
         &addr.ip(),
         addr.port(),
-        "Deno.connectTls()",
+        "Edno.connectTls()",
       )?;
     }
   }
@@ -574,13 +574,13 @@ pub fn op_net_listen_tls(
   #[cppgc] keys: &TlsKeysHolder,
 ) -> Result<(ResourceId, IpAddr), NetError> {
   if args.reuse_port {
-    super::check_unstable(state, "Deno.listenTls({ reusePort: true })");
+    super::check_unstable(state, "Edno.listenTls({ reusePort: true })");
   }
 
   {
     let permissions = state.borrow_mut::<PermissionsContainer>();
     permissions
-      .check_net(&(&addr.hostname, Some(addr.port)), "Deno.listenTls()")
+      .check_net(&(&addr.hostname, Some(addr.port)), "Edno.listenTls()")
       .map_err(NetError::Permission)?;
   }
 
@@ -592,7 +592,7 @@ pub fn op_net_listen_tls(
     .check_net_resolved(
       &bind_addr.ip(),
       bind_addr.port(),
-      "Deno.listenTls()",
+      "Edno.listenTls()",
     )?;
 
   let tcp_listener = if args.load_balanced {

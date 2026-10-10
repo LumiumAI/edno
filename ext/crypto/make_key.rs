@@ -12,8 +12,8 @@
 
 use std::cell::RefCell;
 
-use deno_core::cppgc::make_cppgc_object;
-use deno_core::v8;
+use edno_core::cppgc::make_cppgc_object;
+use edno_core::v8;
 
 use crate::crypto_key::CryptoKey;
 use crate::crypto_key::CryptoKeyType;
@@ -255,7 +255,7 @@ fn stamp_symbols<'s>(
   // `DONT_ENUM` the cppgc instance exposes them as plain own properties,
   // which breaks `assert.deepStrictEqual` of two distinct keys with the
   // same material (test/parallel/test-assert-deep.js Crypto subtest) and
-  // shows up as `[Symbol(...)]` slots in `Deno.inspect()` output.
+  // shows up as `[Symbol(...)]` slots in `Edno.inspect()` output.
   let _ = key.define_own_property(
     scope,
     brand.into(),
@@ -458,7 +458,7 @@ pub fn register_symbols<'s>(
     return false;
   };
   let host_obj = {
-    let name = v8::String::new(scope, "Deno.core.hostObject").unwrap();
+    let name = v8::String::new(scope, "Edno.core.hostObject").unwrap();
     v8::Symbol::for_key(scope, name)
   };
   set_symbols(CryptoSymbols {

@@ -6,8 +6,8 @@ use std::borrow::Cow;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_npm::NpmPackageCacheFolderId;
-use deno_npm::NpmPackageId;
+use edno_npm::NpmPackageCacheFolderId;
+use edno_npm::NpmPackageId;
 use deno_path_util::fs::canonicalize_path_maybe_not_exists;
 use deno_path_util::url_from_directory_path;
 use deno_semver::Version;
@@ -61,11 +61,11 @@ impl<TSys: FsCanonicalize + FsMetadata> LocalNpmPackageResolver<TSys> {
       .resolution
       .resolve_pkg_cache_folder_copy_index_from_pkg_id(id)?;
     // package is stored at:
-    // node_modules/.deno/<package_cache_folder_id_folder_name>/node_modules/<package_name>
+    // node_modules/.edno/<package_cache_folder_id_folder_name>/node_modules/<package_name>
     Some(
       self
         .root_node_modules_path
-        .join(".deno")
+        .join(".edno")
         .join(get_package_folder_id_folder_name_from_parts(
           &id.nv,
           folder_copy_index,
@@ -84,7 +84,7 @@ impl<TSys: FsCanonicalize + FsMetadata> LocalNpmPackageResolver<TSys> {
     else {
       return Ok(None);
     };
-    // ex. project/node_modules/.deno/preact@10.24.3/node_modules/preact/
+    // ex. project/node_modules/.edno/preact@10.24.3/node_modules/preact/
     let Some(node_modules_ancestor) = folder_path
       .ancestors()
       .find(|ancestor| ancestor.ends_with("node_modules"))

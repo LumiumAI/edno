@@ -1,6 +1,6 @@
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 console.log("Worker: bundling module");
-const allowed = await Deno.bundle({
+const allowed = await Edno.bundle({
   entrypoints: ["./worker.ts"],
   write: false,
 });
@@ -10,7 +10,7 @@ console.log("Worker: allowed bundle result.success:", allowed.success);
 // bundle reads (and would return) module source, which requires read access.
 let readDenied = false;
 try {
-  const denied = await Deno.bundle({
+  const denied = await Edno.bundle({
     entrypoints: ["./main.ts"],
     write: false,
   });

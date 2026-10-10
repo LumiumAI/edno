@@ -5,10 +5,10 @@ Run these commands to get started
   cd project
 
   # Run the tests
-  deno test
+  edno test
 
   # Run the tests and watch for file changes
-  deno task dev
+  edno task dev
 
   # Publish to JSR (dry run)
-  deno publish --dry-run
+  edno publish --dry-run

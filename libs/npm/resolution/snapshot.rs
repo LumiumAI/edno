@@ -9,7 +9,7 @@ use std::collections::hash_map;
 use std::sync::Arc;
 
 use deno_error::JsError;
-use deno_lockfile::Lockfile;
+use edno_lockfile::Lockfile;
 use deno_semver::StackString;
 use deno_semver::VersionReq;
 use deno_semver::package::PackageName;
@@ -197,7 +197,7 @@ impl SerializedNpmResolutionSnapshot {
   /// strings differ only in cycle-unrolling depth. Without merging them,
   /// each variant becomes a separate `Module._cache` entry at install
   /// time and identity comparisons across require chains fail (e.g.
-  /// NestJS DI comparing `ModuleRef` constructors). See deno#26427.
+  /// NestJS DI comparing `ModuleRef` constructors). See edno#26427.
   ///
   /// Equivalent variants are remapped to a single canonical id and the
   /// duplicate entries are dropped. Acts iteratively because merging one
@@ -750,7 +750,7 @@ impl NpmResolutionSnapshot {
       })
   }
 
-  /// Resolve a package id from a deno module.
+  /// Resolve a package id from a edno module.
   pub fn resolve_package_id_from_deno_module(
     &self,
     nv: &PackageNv,
@@ -761,7 +761,7 @@ impl NpmResolutionSnapshot {
     }
   }
 
-  /// Resolve a package from a deno module.
+  /// Resolve a package from a edno module.
   pub fn resolve_package_from_deno_module(
     &self,
     nv: &PackageNv,
@@ -1062,7 +1062,7 @@ pub struct SnapshotFromLockfileParams<'a> {
   /// [`SerializedNpmResolutionSnapshot::dedup_equivalent_peer_variants`]).
   /// This is a purely in-memory normalization of the loaded snapshot; it
   /// does not by itself rewrite the lockfile. It is safe to enable on the
-  /// `deno run` path: it lets lockfiles written by an older deno (whose
+  /// `edno run` path: it lets lockfiles written by an older edno (whose
   /// peer-dep id encoding differs) still satisfy the requirements, so the
   /// graph isn't needlessly re-resolved against the registry (which would
   /// fail under `--cached-only`).
@@ -1287,11 +1287,11 @@ pub fn snapshot_from_lockfile(
     // unrolling depth. Merge them so install produces a single physical
     // copy per nv (matches pnpm) — preserving class identity for
     // libraries that rely on decorator metadata (NestJS DI). See
-    // deno#26427.
+    // edno#26427.
     //
-    // This also lets a lockfile written by an older deno (whose peer-dep
+    // This also lets a lockfile written by an older edno (whose peer-dep
     // encoding differs from the current one) still satisfy the
-    // requirements, so `deno run` doesn't re-resolve the whole graph
+    // requirements, so `edno run` doesn't re-resolve the whole graph
     // against the registry — which would fail offline under
     // `--cached-only`. The merge is in-memory only and doesn't rewrite the
     // lockfile unless a real resolution subsequently runs.
@@ -1305,7 +1305,7 @@ pub fn snapshot_from_lockfile(
 mod tests {
   use std::path::PathBuf;
 
-  use deno_lockfile::NewLockfileOptions;
+  use edno_lockfile::NewLockfileOptions;
   use deno_semver::Version;
   use pretty_assertions::assert_eq;
 
@@ -1747,7 +1747,7 @@ mod tests {
     let api = TestNpmRegistryApi::default();
     let lockfile = Lockfile::new(
       NewLockfileOptions {
-        file_path: PathBuf::from("/deno.lock"),
+        file_path: PathBuf::from("/edno.lock"),
         content,
         overwrite: false,
       },
@@ -1779,7 +1779,7 @@ mod tests {
 
     let lockfile = Lockfile::new(
       NewLockfileOptions {
-        file_path: PathBuf::from("/deno.lock"),
+        file_path: PathBuf::from("/edno.lock"),
         content: r#"{
         "version": "2",
         "remote": {},
@@ -1834,7 +1834,7 @@ mod tests {
 
     let lockfile = Lockfile::new(
       NewLockfileOptions {
-        file_path: PathBuf::from("/deno.lock"),
+        file_path: PathBuf::from("/edno.lock"),
         content: r#"{
         "version": "4",
         "specifiers": {
@@ -2169,7 +2169,7 @@ mod tests {
     let api = TestNpmRegistryApi::default();
     let lockfile = Lockfile::new(
       NewLockfileOptions {
-        file_path: PathBuf::from("/deno.lock"),
+        file_path: PathBuf::from("/edno.lock"),
         content: r#"{
           "version": "5",
           "specifiers": {
@@ -2232,7 +2232,7 @@ mod tests {
     let api = TestNpmRegistryApi::default();
     let lockfile = Lockfile::new(
       NewLockfileOptions {
-        file_path: PathBuf::from("/deno.lock"),
+        file_path: PathBuf::from("/edno.lock"),
         content: r#"{
           "version": "5",
           "specifiers": {
@@ -2293,14 +2293,14 @@ mod tests {
   }
 
   // Regression test for offline `--cached-only` isolates booting from a
-  // lockfile written by an older deno: the peer-dep id encoding changed
+  // lockfile written by an older edno: the peer-dep id encoding changed
   // (cycle unrolling depth), so a complete older lockfile contains
   // redundant peer variants of the same name+version. Loading it on the
   // run path with `dedup_equivalent_peer_variants: true` must collapse the
   // variants so the requirement still resolves and the snapshot stays
-  // valid — otherwise deno treats the lockfile as stale and re-resolves
+  // valid — otherwise edno treats the lockfile as stale and re-resolves
   // against the registry, which fails under `--cached-only`. See the
-  // denoland/deno-private#77 investigation and deno#26427.
+  // denoland/deno-private#77 investigation and edno#26427.
   #[tokio::test]
   async fn test_snapshot_from_lockfile_dedups_old_peer_encoding() {
     let api = TestNpmRegistryApi::default();
@@ -2328,7 +2328,7 @@ mod tests {
     let make_lockfile = || async {
       Lockfile::new(
         NewLockfileOptions {
-          file_path: PathBuf::from("/deno.lock"),
+          file_path: PathBuf::from("/edno.lock"),
           content,
           overwrite: false,
         },

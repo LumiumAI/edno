@@ -22,7 +22,7 @@
 (function () {
 const { core, primordials } = __bootstrap;
 const { getExecArgvOptions, getOptions } = core.loadExtScript(
-  "ext:deno_node/internal_binding/node_options.ts",
+  "ext:edno_node/internal_binding/node_options.ts",
 );
 const {
   MapPrototypeGet,
@@ -34,11 +34,11 @@ const {
 const dummyOptions = new SafeMap<string, { value: string | boolean }>();
 
 function isWarmupPhase() {
-  return !Deno.build;
+  return !Edno.build;
 }
 
 function getOptionsFromBinding() {
-  // If Deno.build is not defined, this is in warmup phase.
+  // If Edno.build is not defined, this is in warmup phase.
   if (isWarmupPhase()) {
     return dummyOptions;
   }

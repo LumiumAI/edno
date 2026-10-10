@@ -1,4 +1,4 @@
-import cjsBuiltin from "npm:@denotest/cjs-require-node-builtin@1.0.0";
+import cjsBuiltin from "npm:@ednotest/cjs-require-node-builtin@1.0.0";
 
 if (cjsBuiltin.format("%s %s", "node", "builtins") !== "node builtins") {
   throw new Error('require("util") did not resolve from npm package');

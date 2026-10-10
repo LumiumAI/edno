@@ -28,9 +28,9 @@
 
 (function () {
 const { core, primordials } = __bootstrap;
-const { osType } = core.loadExtScript("ext:deno_node/_util/os.ts");
+const { osType } = core.loadExtScript("ext:edno_node/_util/os.ts");
 const { uvTranslateSysError } = core.loadExtScript(
-  "ext:deno_node/internal_binding/_libuv_winerror.ts",
+  "ext:edno_node/internal_binding/_libuv_winerror.ts",
 );
 const {
   ArrayPrototypeMap,
@@ -504,7 +504,7 @@ const unreachable = () => {
 // Must be a real Map (not SafeMap): it is returned to userland via
 // getErrorMap() / process.binding("uv").getErrorMap() and must pass
 // `instanceof Map` (SafeMap's prototype chain does not include Map).
-// deno-lint-ignore deno-internal/prefer-primordials
+// edno-lint-ignore edno-internal/prefer-primordials
 const errorMap = new Map<number, [string, string]>(
   osType === "windows"
     ? codeToErrorWindows
@@ -523,7 +523,7 @@ const errorMap = new Map<number, [string, string]>(
 
 // Real Map (not SafeMap): returned to userland via getCodeMap() /
 // process.binding("uv").getCodeMap(); must pass `instanceof Map`.
-// deno-lint-ignore deno-internal/prefer-primordials
+// edno-lint-ignore edno-internal/prefer-primordials
 const codeMap = new Map<string, number>(
   osType === "windows"
     ? errorToCodeWindows

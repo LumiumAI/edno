@@ -63,7 +63,7 @@ FROM baz;
 ```
 
 ```sql
--- deno-fmt-ignore-file
+-- edno-fmt-ignore-file
   seLect * , biz, buz
 from baz;
 ```

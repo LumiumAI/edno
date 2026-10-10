@@ -26,17 +26,17 @@ const {
   Uint8Array,
 } = primordials;
 const { ERR_TRACE_EVENTS_CATEGORY_REQUIRED } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const { validateObject, validateStringArray } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const lazyBindingMod = core.createLazyLoader(
-  "ext:deno_node/internal_binding/mod.ts",
+  "ext:edno_node/internal_binding/mod.ts",
 );
 
 function getProc() {
-  // deno-lint-ignore no-process-global
+  // edno-lint-ignore no-process-global
   return typeof process !== "undefined" ? process : undefined;
 }
 
@@ -51,7 +51,7 @@ let _wtExports = null;
 function getWorkerThreadsExports() {
   if (_wtExports !== null) return _wtExports;
   try {
-    _wtExports = core.loadExtScript("ext:deno_node/worker_threads.ts");
+    _wtExports = core.loadExtScript("ext:edno_node/worker_threads.ts");
   } catch {
     _wtExports = {};
   }
@@ -72,7 +72,7 @@ function isMainThreadProc() {
 }
 
 function workerSliceFilename(pid, tid) {
-  return `.deno_trace_events_${pid}_t${tid}.json`;
+  return `.edno_trace_events_${pid}_t${tid}.json`;
 }
 
 const kCategories = Symbol("categories");
@@ -240,7 +240,7 @@ let _fsExports = null;
 function getFs() {
   if (_fsExports !== null) return _fsExports;
   try {
-    _fsExports = core.loadExtScript("ext:deno_node/fs.ts");
+    _fsExports = core.loadExtScript("ext:edno_node/fs.ts");
   } catch {
     _fsExports = {};
   }
@@ -257,7 +257,7 @@ function writeMainTraceFile(pid) {
   } catch {
     entries = [];
   }
-  const prefix = `.deno_trace_events_${pid}_t`;
+  const prefix = `.edno_trace_events_${pid}_t`;
   for (const entryName of new SafeArrayIterator(entries)) {
     if (typeof entryName !== "string") continue;
     if (

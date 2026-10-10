@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/needs-different-nested-dep-child-v2",
+  "name": "@ednotest/needs-different-nested-dep-child-v2",
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@denotest/different-nested-dep-child": "2.0.0"
+    "@ednotest/different-nested-dep-child": "2.0.0"
   }
 }

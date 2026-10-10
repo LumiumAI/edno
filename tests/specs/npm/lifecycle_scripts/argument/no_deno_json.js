@@ -1,1 +1,1 @@
-import {} from "npm:@denotest/lifecycle-scripts-cjs@1.0.0";
+import {} from "npm:@ednotest/lifecycle-scripts-cjs@1.0.0";

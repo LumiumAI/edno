@@ -12,7 +12,7 @@ const { Pipe, constants: PipeConstants } = require("internal/test/binding")
   .internalBinding("pipe_wrap");
 
 // Create a temp file and open it via fs.openSync (registers in NodeFsState)
-const tmpFile = path.join(os.tmpdir(), `deno-pipe-dup-test-${process.pid}`);
+const tmpFile = path.join(os.tmpdir(), `edno-pipe-dup-test-${process.pid}`);
 fs.writeFileSync(tmpFile, "test data");
 const fd = fs.openSync(tmpFile, "r");
 console.log(`fs.openSync returned fd: ${fd}`);

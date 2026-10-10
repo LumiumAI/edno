@@ -2,8 +2,8 @@
 
 use std::process::Command;
 
-use test_util::deno_cmd;
-use test_util::deno_config_path;
+use test_util::edno_cmd;
+use test_util::edno_config_path;
 use test_util::env_vars_for_npm_tests;
 use test_util::eprintln;
 use test_util::http_server;
@@ -76,7 +76,7 @@ fn napi_tests() {
   napi_build();
 
   let _http_guard = http_server();
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(napi_tests_path())
     .env("RUST_BACKTRACE", "1")
     .arg("test")
@@ -87,7 +87,7 @@ fn napi_tests() {
     .arg("--allow-run")
     .arg("--v8-flags=--expose-gc")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg(".")
     .envs(env_vars_for_npm_tests())
@@ -112,14 +112,14 @@ fn napi_tests() {
 fn napi_wrap_leak_pointers_finalizer_on_shutdown() {
   napi_build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(napi_tests_path())
     .arg("run")
     .arg("--allow-read")
     .arg("--allow-env")
     .arg("--allow-ffi")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("wrap_leak.js")
     .envs(env_vars_for_npm_tests())
@@ -150,7 +150,7 @@ fn napi_wrap_leak_pointers_finalizer_on_shutdown() {
 fn napi_shared_data_finalizers_run_once() {
   napi_build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(napi_tests_path())
     .arg("run")
     .arg("--allow-read")
@@ -158,7 +158,7 @@ fn napi_shared_data_finalizers_run_once() {
     .arg("--allow-ffi")
     .arg("--v8-flags=--expose-gc")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("finalizer_shared_data.js")
     .envs(env_vars_for_npm_tests())
@@ -181,21 +181,21 @@ fn napi_shared_data_finalizers_run_once() {
 }
 
 /// Test that NAPI wrap finalizers are also called at shutdown when the
-/// wrapping happens inside a `Deno.test`. Regression test for #35692, where
-/// the `deno test` worker was torn down without draining the NAPI finalizer
-/// queue (unlike the `deno run` path).
+/// wrapping happens inside a `Edno.test`. Regression test for #35692, where
+/// the `edno test` worker was torn down without draining the NAPI finalizer
+/// queue (unlike the `edno run` path).
 #[test_util::test]
 fn napi_wrap_leak_finalizer_on_test_shutdown() {
   napi_build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(napi_tests_path())
     .arg("test")
     .arg("--allow-read")
     .arg("--allow-env")
     .arg("--allow-ffi")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("wrap_leak_test.js")
     .envs(env_vars_for_npm_tests())
@@ -223,14 +223,14 @@ fn napi_wrap_leak_finalizer_on_test_shutdown() {
 fn napi_fatal_error() {
   napi_build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(napi_tests_path())
     .arg("run")
     .arg("--allow-read")
     .arg("--allow-env")
     .arg("--allow-ffi")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("fatal_error.js")
     .envs(env_vars_for_npm_tests())
@@ -256,14 +256,14 @@ fn napi_fatal_error() {
 fn napi_fatal_exception() {
   napi_build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(napi_tests_path())
     .arg("run")
     .arg("--allow-read")
     .arg("--allow-env")
     .arg("--allow-ffi")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("fatal_exception.js")
     .envs(env_vars_for_npm_tests())

@@ -6,9 +6,9 @@ use std::env;
 use std::fs;
 use std::path::PathBuf;
 
-use deno_core::extension;
-use deno_core::snapshot::CreateSnapshotOptions;
-use deno_core::snapshot::create_snapshot;
+use edno_core::extension;
+use edno_core::snapshot::CreateSnapshotOptions;
+use edno_core::snapshot::create_snapshot;
 
 fn main() {
   extension!(

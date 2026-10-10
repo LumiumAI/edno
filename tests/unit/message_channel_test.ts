@@ -3,7 +3,7 @@
 // provided by WPT.
 import { assert, assertEquals } from "@std/assert";
 
-Deno.test("messagechannel", async () => {
+Edno.test("messagechannel", async () => {
   const mc = new MessageChannel();
   const mc2 = new MessageChannel();
   assert(mc.port1);
@@ -28,7 +28,7 @@ Deno.test("messagechannel", async () => {
   mc2.port2.close();
 });
 
-Deno.test("messagechannel no-transferables ports is empty frozen array", async () => {
+Edno.test("messagechannel no-transferables ports is empty frozen array", async () => {
   // Covers the dispatch fast path (no transferables -> the MessageEvent
   // `ports` is a single frozen empty array, with no per-message filter) and
   // the recv op returning its payload without the serde object round-trip.
@@ -53,7 +53,7 @@ Deno.test("messagechannel no-transferables ports is empty frozen array", async (
   mc.port2.close();
 });
 
-Deno.test("message port resource is not mutable through own symbols", () => {
+Edno.test("message port resource is not mutable through own symbols", () => {
   const { port1, port2 } = new MessageChannel();
   const other = new MessageChannel();
 
@@ -80,7 +80,7 @@ Deno.test("message port resource is not mutable through own symbols", () => {
   }
 });
 
-Deno.test("message port transfer keeps the original resource", async () => {
+Edno.test("message port transfer keeps the original resource", async () => {
   const workerSource = encodeURIComponent(`
     onmessage = ({ data: port }) => {
       port.postMessage("worker");
@@ -133,7 +133,7 @@ Deno.test("message port transfer keeps the original resource", async () => {
   }
 });
 
-Deno.test("messagechannel primitive fast path", async () => {
+Edno.test("messagechannel primitive fast path", async () => {
   // Primitives take a custom encoding that bypasses V8's structured-clone
   // serializer; verify a representative spread round-trips exactly, including
   // the tricky cases (-0, NaN, +/-Infinity, int32 boundaries, lone surrogates),
@@ -186,7 +186,7 @@ Deno.test("messagechannel primitive fast path", async () => {
   // { data })`, and a WebIDL dictionary member whose value is `undefined`
   // falls back to its default, which for `MessageEvent.data` is `null`. So
   // posting `undefined` is observably delivered as `null` -- this is
-  // pre-existing Deno behavior, independent of the fast path, and the fast
+  // pre-existing Edno behavior, independent of the fast path, and the fast
   // path must preserve it.
   const expected = values.map((v) => v === undefined ? null : v);
 
@@ -216,7 +216,7 @@ Deno.test("messagechannel primitive fast path", async () => {
   mc.port2.close();
 });
 
-Deno.test("messagechannel clone port", async () => {
+Edno.test("messagechannel clone port", async () => {
   const mc = new MessageChannel();
   const mc2 = new MessageChannel();
   assert(mc.port1);

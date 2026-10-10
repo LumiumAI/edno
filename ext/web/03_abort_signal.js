@@ -23,10 +23,10 @@ const {
   WeakRefPrototypeDeref,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
-const { assert } = core.loadExtScript("ext:deno_web/00_infra.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
+const { assert } = core.loadExtScript("ext:edno_web/00_infra.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 const {
   defineEventHandler,
@@ -34,7 +34,7 @@ const {
   EventTarget,
   listenerCount,
   setIsTrusted,
-} = core.loadExtScript("ext:deno_web/02_event.js");
+} = core.loadExtScript("ext:edno_web/02_event.js");
 
 const add = Symbol("[[add]]");
 const signalAbort = Symbol("[[signalAbort]]");
@@ -247,7 +247,7 @@ class AbortSignal extends EventTarget {
   // `addEventListener` and `removeEventListener` have to be overridden in
   // order to have the timer block the event loop while there are listeners.
   // `[add]` and `[remove]` don't ref and unref the timer because they can
-  // only be used by Deno internals, which use it to essentially cancel async
+  // only be used by Edno internals, which use it to essentially cancel async
   // ops which would block the event loop.
   addEventListener() {
     FunctionPrototypeApply(super.addEventListener, this, arguments);
@@ -318,7 +318,7 @@ class AbortSignal extends EventTarget {
     }
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -355,7 +355,7 @@ class AbortController {
     this[signal][signalAbort](reason);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,

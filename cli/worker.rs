@@ -6,28 +6,28 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use deno_ast::ModuleSpecifier;
-use deno_core::Extension;
-use deno_core::OpState;
-use deno_core::error::CoreError;
-use deno_core::error::JsError;
-use deno_core::futures::FutureExt;
-use deno_core::v8;
+use edno_core::Extension;
+use edno_core::OpState;
+use edno_core::error::CoreError;
+use edno_core::error::JsError;
+use edno_core::futures::FutureExt;
+use edno_core::v8;
 use deno_error::JsErrorBox;
-use deno_lib::worker::LibMainWorker;
-use deno_lib::worker::LibMainWorkerFactory;
-use deno_lib::worker::ResolveNpmBinaryEntrypointError;
-use deno_npm_installer::PackageCaching;
-use deno_npm_installer::graph::NpmCachingStrategy;
-use deno_runtime::CpuProfilerConfig;
-use deno_runtime::WorkerExecutionMode;
-use deno_runtime::coverage::CoverageCollector;
-use deno_runtime::cpu_prof_filename;
-use deno_runtime::cpu_profiler::CpuProfiler;
-use deno_runtime::deno_os::OpExitCallbacks;
-use deno_runtime::deno_os::WatcherExitHandle;
-use deno_runtime::deno_os::WatcherExited;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::worker::MainWorker;
+use edno_lib::worker::LibMainWorker;
+use edno_lib::worker::LibMainWorkerFactory;
+use edno_lib::worker::ResolveNpmBinaryEntrypointError;
+use edno_npm_installer::PackageCaching;
+use edno_npm_installer::graph::NpmCachingStrategy;
+use edno_runtime::CpuProfilerConfig;
+use edno_runtime::WorkerExecutionMode;
+use edno_runtime::coverage::CoverageCollector;
+use edno_runtime::cpu_prof_filename;
+use edno_runtime::cpu_profiler::CpuProfiler;
+use edno_runtime::edno_os::OpExitCallbacks;
+use edno_runtime::edno_os::WatcherExitHandle;
+use edno_runtime::edno_os::WatcherExited;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::worker::MainWorker;
 use deno_semver::npm::NpmPackageReqReference;
 use tokio::select;
 
@@ -83,7 +83,7 @@ impl CliMainWorker {
     let mut maybe_hmr_runner = self.maybe_setup_hmr_runner();
 
     // Wrap profiler and coverage in Rc<RefCell<Option<...>>> so that
-    // both the normal cleanup path and the Deno.exit() op_exit path
+    // both the normal cleanup path and the Edno.exit() op_exit path
     // can stop them. Whichever runs first takes the value; the other
     // finds None and skips.
     let coverage_cell: Rc<RefCell<Option<CoverageCollector>>> =
@@ -91,7 +91,7 @@ impl CliMainWorker {
     let profiler_cell: Rc<RefCell<Option<CpuProfiler>>> =
       Rc::new(RefCell::new(maybe_cpu_profiler));
 
-    // Register exit callbacks so Deno.exit() flushes profiling/coverage
+    // Register exit callbacks so Edno.exit() flushes profiling/coverage
     // data before calling std::process::exit().
     {
       let coverage_for_exit = coverage_cell.clone();
@@ -133,10 +133,10 @@ impl CliMainWorker {
     let has_coverage = coverage_cell.borrow().is_some();
 
     // WARNING: Remember to update cli/lib/worker.rs to align with
-    // changes made here so that they affect deno_compile as well.
+    // changes made here so that they affect edno_compile as well.
 
-    // Under `deno run --watch-hmr` / `deno serve --watch`, install the isolate
-    // handle so a script calling `Deno.exit()` terminates this isolate instead
+    // Under `edno run --watch-hmr` / `edno serve --watch`, install the isolate
+    // handle so a script calling `Edno.exit()` terminates this isolate instead
     // of the whole process, allowing the file watcher to survive and restart on
     // the next change. The regular `--watch` path uses `run_for_watcher`, which
     // installs it separately. See issue #7590.
@@ -154,10 +154,10 @@ impl CliMainWorker {
       .run_to_completion(&mut maybe_hmr_runner, has_coverage)
       .await;
 
-    // If the script called `Deno.exit()` under a watcher, `op_exit` terminated
+    // If the script called `Edno.exit()` under a watcher, `op_exit` terminated
     // the isolate instead of the process. Treat it as a normal end of run:
     // clear V8's termination flag so the worker can be dropped cleanly. The
-    // exit code recorded by `Deno.exit()` is reported below. See issue #7590.
+    // exit code recorded by `Edno.exit()` is reported below. See issue #7590.
     if result.is_err() && under_watcher && self.exited_via_watcher() {
       self.cancel_terminate_execution();
       result = Ok(());
@@ -183,7 +183,7 @@ impl CliMainWorker {
   /// cost of installing a process-wide signal handler.
   #[cfg(unix)]
   fn spawn_sigusr1_inspector_listener(&mut self) {
-    use deno_runtime::deno_inspector_server::activate_default_inspector_server;
+    use edno_runtime::edno_inspector_server::activate_default_inspector_server;
 
     const GRACE_PERIOD: std::time::Duration =
       std::time::Duration::from_millis(500);
@@ -196,9 +196,9 @@ impl CliMainWorker {
     let op_state = self.worker.js_runtime().op_state();
     let main_module = self.worker.main_module().to_string();
 
-    deno_core::unsync::spawn(async move {
+    edno_core::unsync::spawn(async move {
       tokio::time::sleep(GRACE_PERIOD).await;
-      let Ok(mut sigusr1) = deno_signals::signal_stream(libc::SIGUSR1) else {
+      let Ok(mut sigusr1) = edno_signals::signal_stream(libc::SIGUSR1) else {
         return;
       };
       while sigusr1.recv().await.is_some() {
@@ -207,7 +207,7 @@ impl CliMainWorker {
           return;
         };
         if let Some(url) = activate_default_inspector_server(
-          deno_lib::version::DENO_VERSION_INFO.user_agent,
+          edno_lib::version::EDNO_VERSION_INFO.user_agent,
           main_module.clone(),
           inspector,
           false,
@@ -278,7 +278,7 @@ impl CliMainWorker {
   }
 
   pub async fn run_for_watcher(mut self) -> Result<i32, CoreError> {
-    // Install the isolate handle so that a script calling `Deno.exit()`
+    // Install the isolate handle so that a script calling `Edno.exit()`
     // terminates this isolate instead of the whole process, allowing the file
     // watcher to survive and restart on the next change. See issue #7590.
     self.install_watcher_exit_handle();
@@ -357,7 +357,7 @@ impl CliMainWorker {
     let mut executor = FileWatcherModuleExecutor::new(self);
     let result = executor.execute().await;
 
-    // If the script called `Deno.exit()`, `op_exit` terminated the isolate
+    // If the script called `Edno.exit()`, `op_exit` terminated the isolate
     // instead of the process. Treat it as a normal end of run: clear V8's
     // termination flag so the worker can be dropped cleanly, and report the
     // requested exit code rather than propagating the termination as an error.
@@ -399,7 +399,7 @@ impl CliMainWorker {
 
   /// Reset the V8 "terminating" flag. Called after the test runner detects
   /// that the isolate's termination was caused by user code calling
-  /// `Deno.exit()`; this lets us cleanly tear down the worker.
+  /// `Edno.exit()`; this lets us cleanly tear down the worker.
   pub fn cancel_terminate_execution(&mut self) {
     self
       .worker
@@ -408,10 +408,10 @@ impl CliMainWorker {
       .cancel_terminate_execution();
   }
 
-  /// Install the isolate handle so that a script calling `Deno.exit()`
+  /// Install the isolate handle so that a script calling `Edno.exit()`
   /// terminates this isolate instead of the whole process. Used by the file
-  /// watcher paths (`deno run --watch[-hmr]`, `deno serve --watch`) so a script
-  /// calling `Deno.exit()` ends the current run without killing the watcher.
+  /// watcher paths (`edno run --watch[-hmr]`, `edno serve --watch`) so a script
+  /// calling `Edno.exit()` ends the current run without killing the watcher.
   /// See issue #7590.
   fn install_watcher_exit_handle(&mut self) {
     let isolate_handle = self.v8_isolate_handle();
@@ -421,7 +421,7 @@ impl CliMainWorker {
       .put(WatcherExitHandle(isolate_handle));
   }
 
-  /// Whether the current run ended because the script called `Deno.exit()` while
+  /// Whether the current run ended because the script called `Edno.exit()` while
   /// a [`WatcherExitHandle`] was installed, i.e. `op_exit` terminated the
   /// isolate instead of the process. See [`install_watcher_exit_handle`].
   fn exited_via_watcher(&mut self) -> bool {
@@ -490,11 +490,11 @@ pub enum CreateCustomWorkerError {
   #[class(inherit)]
   #[error(transparent)]
   ResolvePkgFolderFromDenoReq(
-    #[from] deno_resolver::npm::ResolvePkgFolderFromDenoReqError,
+    #[from] edno_resolver::npm::ResolvePkgFolderFromDenoReqError,
   ),
   #[class(inherit)]
   #[error(transparent)]
-  UrlParse(#[from] deno_core::url::ParseError),
+  UrlParse(#[from] edno_core::url::ParseError),
   #[class(inherit)]
   #[error(transparent)]
   ResolveNpmBinaryEntrypoint(#[from] ResolveNpmBinaryEntrypointError),
@@ -503,7 +503,7 @@ pub enum CreateCustomWorkerError {
   NpmPackageReq(JsErrorBox),
   #[class(inherit)]
   #[error(transparent)]
-  LockfileWrite(#[from] deno_resolver::lockfile::LockfileWriteError),
+  LockfileWrite(#[from] edno_resolver::lockfile::LockfileWriteError),
 }
 
 pub struct CliMainWorkerFactory {
@@ -576,7 +576,7 @@ impl CliMainWorkerFactory {
     main_module: ModuleSpecifier,
     preload_modules: Vec<ModuleSpecifier>,
     require_modules: Vec<ModuleSpecifier>,
-    unconfigured_runtime: Option<deno_runtime::UnconfiguredRuntime>,
+    unconfigured_runtime: Option<edno_runtime::UnconfiguredRuntime>,
   ) -> Result<CliMainWorker, CreateCustomWorkerError> {
     self
       .create_custom_worker(
@@ -601,8 +601,8 @@ impl CliMainWorkerFactory {
     require_modules: Vec<ModuleSpecifier>,
     permissions: PermissionsContainer,
     custom_extensions: Vec<Extension>,
-    stdio: deno_runtime::deno_io::Stdio,
-    unconfigured_runtime: Option<deno_runtime::UnconfiguredRuntime>,
+    stdio: edno_runtime::edno_io::Stdio,
+    unconfigured_runtime: Option<edno_runtime::UnconfiguredRuntime>,
   ) -> Result<CliMainWorker, CreateCustomWorkerError> {
     let main_module_npm_ref =
       NpmPackageReqReference::from_specifier(&main_module).ok();
@@ -680,7 +680,7 @@ impl CliMainWorkerFactory {
         ($($file:literal),*) => {
           $(worker.js_runtime().lazy_load_es_module_with_code(
             concat!("ext:cli/", $file),
-            deno_core::ascii_str_include!(concat!("js/", $file)),
+            edno_core::ascii_str_include!(concat!("js/", $file)),
           )?;)*
         }
       }
@@ -698,7 +698,7 @@ impl CliMainWorkerFactory {
     }
 
     let op_state = worker.js_runtime().op_state();
-    op_state.borrow_mut().put(deno_core::error::InitialCwd(
+    op_state.borrow_mut().put(edno_core::error::InitialCwd(
       self.shared.initial_cwd.clone(),
     ));
 
@@ -715,14 +715,14 @@ impl CliMainWorkerFactory {
 mod tests {
   use std::rc::Rc;
 
-  use deno_core::FsModuleLoader;
-  use deno_core::resolve_path;
-  use deno_resolver::npm::DenoInNpmPackageChecker;
-  use deno_runtime::deno_fs::RealFs;
-  use deno_runtime::deno_permissions::Permissions;
-  use deno_runtime::permissions::RuntimePermissionDescriptorParser;
-  use deno_runtime::worker::WorkerOptions;
-  use deno_runtime::worker::WorkerServiceOptions;
+  use edno_core::FsModuleLoader;
+  use edno_core::resolve_path;
+  use edno_resolver::npm::EdnoInNpmPackageChecker;
+  use edno_runtime::edno_fs::RealFs;
+  use edno_runtime::edno_permissions::Permissions;
+  use edno_runtime::permissions::RuntimePermissionDescriptorParser;
+  use edno_runtime::worker::WorkerOptions;
+  use edno_runtime::worker::WorkerServiceOptions;
 
   use super::*;
   use crate::util::env::resolve_cwd;
@@ -735,25 +735,25 @@ mod tests {
       RuntimePermissionDescriptorParser::new(crate::sys::CliSys::default()),
     );
     let options = WorkerOptions {
-      startup_snapshot: deno_snapshots::CLI_SNAPSHOT,
+      startup_snapshot: edno_snapshots::CLI_SNAPSHOT,
       ..Default::default()
     };
 
     MainWorker::bootstrap_from_options::<
-      DenoInNpmPackageChecker,
+      EdnoInNpmPackageChecker,
       CliNpmResolver,
       CliSys,
     >(
       &main_module,
       WorkerServiceOptions {
-        deno_rt_native_addon_loader: None,
+        edno_rt_native_addon_loader: None,
         module_loader: Rc::new(FsModuleLoader),
         permissions: PermissionsContainer::new(
           permission_desc_parser,
           Permissions::none_without_prompt(),
         ),
-        blob_store: Arc::new(deno_runtime::deno_web::BlobStore::default())
-          as Arc<dyn deno_runtime::deno_web::BlobStoreTrait>,
+        blob_store: Arc::new(edno_runtime::edno_web::BlobStore::default())
+          as Arc<dyn edno_runtime::edno_web::BlobStoreTrait>,
         broadcast_channel: Default::default(),
         feature_checker: Default::default(),
         node_services: Default::default(),

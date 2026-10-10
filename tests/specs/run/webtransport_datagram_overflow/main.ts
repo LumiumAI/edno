@@ -5,15 +5,15 @@
 
 import { decodeBase64 } from "@std/encoding/base64";
 
-const cert = Deno.readTextFileSync("../../../testdata/tls/localhost.crt");
-const key = Deno.readTextFileSync("../../../testdata/tls/localhost.key");
+const cert = Edno.readTextFileSync("../../../testdata/tls/localhost.crt");
+const key = Edno.readTextFileSync("../../../testdata/tls/localhost.key");
 const certHash = await crypto.subtle.digest(
   "SHA-256",
   decodeBase64(cert.split("\n").slice(1, -2).join("")),
 );
 
-Deno.test("datagram overflow does not hang", async () => {
-  const server = new Deno.QuicEndpoint({
+Edno.test("datagram overflow does not hang", async () => {
+  const server = new Edno.QuicEndpoint({
     hostname: "localhost",
     port: 0,
   });
@@ -28,7 +28,7 @@ Deno.test("datagram overflow does not hang", async () => {
   (async () => {
     for await (const incoming of listener) {
       const conn = await incoming.accept();
-      const wt = await Deno.upgradeWebTransport(conn);
+      const wt = await Edno.upgradeWebTransport(conn);
       await wt.ready;
       serverReady.resolve();
       // Intentionally do NOT drain wt.datagrams.readable,

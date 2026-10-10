@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/types-ambient",
+  "name": "@ednotest/types-ambient",
   "version": "1.0.0",
   "types": "./index.d.ts"
 }

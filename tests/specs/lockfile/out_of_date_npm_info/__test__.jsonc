@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [
     {
@@ -9,11 +9,11 @@
       "output": "[WILDCARD]"
     },
     {
-      "args": "run -A --no-lock ./rm-version.ts $PWD/deno_dir/npm/localhost_4260/@denotest/add/registry.json 1.0.0",
+      "args": "run -A --no-lock ./rm-version.ts $PWD/edno_dir/npm/localhost_4260/@ednotest/add/registry.json 1.0.0",
       "output": "[WILDCARD]"
     },
     {
-      "args": "run -A --no-lock ./mv.ts ./deno.lock.old ./deno.lock",
+      "args": "run -A --no-lock ./mv.ts ./edno.lock.old ./edno.lock",
       "output": ""
     },
     // trigger a lockfile update
@@ -29,9 +29,9 @@
       "args": [
         "eval",
         "--no-lock",
-        "console.log(Deno.readTextFileSync('./deno.lock').trim())"
+        "console.log(Edno.readTextFileSync('./edno.lock').trim())"
       ],
-      "output": "deno.lock.out"
+      "output": "edno.lock.out"
     }
   ]
 }

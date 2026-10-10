@@ -1,6 +1,6 @@
 import { setTimeout } from "node:timers/promises";
 
-const echoServer = Deno.serve(
+const echoServer = Edno.serve(
   { hostname: "127.0.0.1", port: 0, onListen() {} },
   async (req: Request) => {
     const path = new URL(req.url).pathname;
@@ -23,7 +23,7 @@ const { promise: splitStartedPromise, resolve: resolveSplitStarted } = Promise
   .withResolvers<void>();
 const { promise: splitForwardedPromise, resolve: resolveSplitForwarded } =
   Promise.withResolvers<{ contentLength: string | null; body: string }>();
-const proxyServer = Deno.serve(
+const proxyServer = Edno.serve(
   { hostname: "127.0.0.1", port: 0, onListen() {} },
   (req: Request) => {
     const path = new URL(req.url).pathname;
@@ -56,7 +56,7 @@ console.log(
 );
 
 // Scenario 2: forwarding an arbitrary user-created ReadableStream should not
-// synthesize a Content-Length. Only Deno-created static streams are known-length.
+// synthesize a Content-Length. Only Edno-created static streams are known-length.
 const streamResp = await fetch(proxyUrl, {
   method: "POST",
   body: new ReadableStream({
@@ -84,7 +84,7 @@ const splitBody = JSON.stringify({
 });
 const splitExpectedLength = String(encoder.encode(splitBody).byteLength);
 const splitAt = splitBody.length - 3;
-const conn = await Deno.connect({
+const conn = await Edno.connect({
   hostname: "127.0.0.1",
   port: proxyServer.addr.port,
 });

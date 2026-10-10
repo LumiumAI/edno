@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/subtract",
+  "name": "@ednotest/subtract",
   "version": "1.0.0",
   "license": "MIT",
   "exports": "./mod.ts"

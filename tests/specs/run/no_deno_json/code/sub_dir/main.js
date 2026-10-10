@@ -1,3 +1,3 @@
 import "chalk";
-console.log(Deno.cwd());
-console.log(Deno.statSync("../node_modules"));
+console.log(Edno.cwd());
+console.log(Edno.statSync("../node_modules"));

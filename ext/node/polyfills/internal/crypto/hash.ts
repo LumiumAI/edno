@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and Node.js contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -19,29 +19,29 @@ const {
   op_node_hash_update_str,
 } = core.ops;
 
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 
 const lazyStream = core.createLazyLoader("node:stream");
 
 const {
   forgivingBase64Encode: encodeToBase64,
-} = core.loadExtScript("ext:deno_web/00_infra.js");
+} = core.loadExtScript("ext:edno_web/00_infra.js");
 const {
   validateEncoding,
   validateString,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const {
   prepareSecretKey,
-} = core.loadExtScript("ext:deno_node/internal/crypto/keys.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/keys.ts");
 const {
   ERR_CRYPTO_HASH_FINALIZED,
   ERR_INVALID_ARG_TYPE,
   NodeError,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const lazyLazyTransform = core.createLazyLoader(
-  "ext:deno_node/internal/streams/lazy_transform.js",
+  "ext:edno_node/internal/streams/lazy_transform.js",
 );
 const lazyProcess = core.createLazyLoader("node:process");
 
@@ -49,11 +49,11 @@ const {
   getDefaultEncoding,
   getHashBlockSize,
   toBuf,
-} = core.loadExtScript("ext:deno_node/internal/crypto/util.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/util.ts");
 const {
   isAnyArrayBuffer,
   isArrayBufferView,
-} = core.loadExtScript("ext:deno_node/internal/util/types.ts");
+} = core.loadExtScript("ext:edno_node/internal/util/types.ts");
 
 const {
   FunctionPrototypeCall,
@@ -172,7 +172,7 @@ Hash.prototype._transform = function _transform(
 
 Hash.prototype._flush = function _flush(callback: () => void) {
   const digest = op_node_hash_digest(this[kHandle]);
-  // deno-lint-ignore deno-internal/prefer-primordials -- `this` is a Node stream (Transform)
+  // edno-lint-ignore edno-internal/prefer-primordials -- `this` is a Node stream (Transform)
   this.push(digest === null ? Buffer.alloc(0) : Buffer.from(digest));
   callback();
 };
@@ -202,11 +202,11 @@ Hash.prototype.update = function update(
     const u8 = ObjectPrototypeIsPrototypeOf(Uint8ArrayPrototype, buf)
       ? buf as Uint8Array
       : new Uint8Array(
-        // deno-lint-ignore deno-internal/prefer-primordials -- ArrayBufferView accessor, receiver may be a DataView
+        // edno-lint-ignore edno-internal/prefer-primordials -- ArrayBufferView accessor, receiver may be a DataView
         (buf as ArrayBufferView).buffer,
-        // deno-lint-ignore deno-internal/prefer-primordials -- ArrayBufferView accessor, receiver may be a DataView
+        // edno-lint-ignore edno-internal/prefer-primordials -- ArrayBufferView accessor, receiver may be a DataView
         (buf as ArrayBufferView).byteOffset,
-        // deno-lint-ignore deno-internal/prefer-primordials -- ArrayBufferView accessor, receiver may be a DataView
+        // edno-lint-ignore edno-internal/prefer-primordials -- ArrayBufferView accessor, receiver may be a DataView
         (buf as ArrayBufferView).byteLength,
       );
     unwrapErr(op_node_hash_update(this[kHandle], u8));
@@ -248,7 +248,7 @@ Hash.prototype.digest = function digest(outputEncoding: any) {
     case "buffer":
       return Buffer.from(digest);
     default:
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding), not String.prototype.toString
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding), not String.prototype.toString
       return Buffer.from(digest).toString(outputEncoding);
   }
 };
@@ -284,7 +284,7 @@ class HmacImpl {
   ) {
     ensureHmacProtoSetup();
     const T = getTransform();
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const self = this;
     FunctionPrototypeCall(T, this, {
       transform(chunk: string, encoding: string, callback: () => void) {
@@ -292,7 +292,7 @@ class HmacImpl {
         callback();
       },
       flush(callback: () => void) {
-        // deno-lint-ignore deno-internal/prefer-primordials -- `this` is a Node stream (Transform)
+        // edno-lint-ignore edno-internal/prefer-primordials -- `this` is a Node stream (Transform)
         this.push(self.digest());
         callback();
       },
@@ -321,7 +321,7 @@ class HmacImpl {
       const hash = new Hash(alg, options);
       bufKey = hash.update(keyData).digest() as Buffer;
     } else {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.concat, not Array.prototype.concat
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.concat, not Array.prototype.concat
       bufKey = Buffer.concat([keyData, this.#ZEROES], blockSize);
     }
 

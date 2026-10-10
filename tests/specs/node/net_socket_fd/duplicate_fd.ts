@@ -1,7 +1,7 @@
 // Regression test: opening a file with fs.openSync() and then trying to
 // TCP.open() the same fd should be rejected by the FdTable guard, matching
 // Pipe.open(). Without the guard, TCPWrap.open() would blindly adopt any
-// descriptor already tracked by Deno.
+// descriptor already tracked by Edno.
 import { createRequire } from "node:module";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -12,7 +12,7 @@ const { TCP, constants: TCPConstants } = require("internal/test/binding")
   .internalBinding("tcp_wrap");
 
 // Create a temp file and open it via fs.openSync (registers in the FdTable)
-const tmpFile = path.join(os.tmpdir(), `deno-tcp-dup-test-${process.pid}`);
+const tmpFile = path.join(os.tmpdir(), `edno-tcp-dup-test-${process.pid}`);
 fs.writeFileSync(tmpFile, "test data");
 const fd = fs.openSync(tmpFile, "r");
 console.log(`fs.openSync returned fd: ${fd}`);

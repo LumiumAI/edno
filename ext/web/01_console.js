@@ -212,7 +212,7 @@ defineColorAlias("doubleunderline", "doubleUnderline");
 // stylize helpers
 
 // Marker recognized by the Rust engine so the table lookup runs natively.
-const stylizeMarker = SymbolFor("Deno.privateConsoleStylize");
+const stylizeMarker = SymbolFor("Edno.privateConsoleStylize");
 
 function stylizeNoColor(str) {
   return str;
@@ -249,14 +249,14 @@ function createStylizeWithColor(styles, colors) {
 let _URLPrototype;
 function getURLPrototype() {
   if (!_URLPrototype) {
-    _URLPrototype = core.loadExtScript("ext:deno_web/00_url.js").URLPrototype;
+    _URLPrototype = core.loadExtScript("ext:edno_web/00_url.js").URLPrototype;
   }
   return _URLPrototype;
 }
 
 function getCwd() {
   try {
-    return Deno.cwd();
+    return Edno.cwd();
   } catch {
     return undefined;
   }
@@ -385,7 +385,7 @@ const intrinsics = {
 // ---------------------------------------------------------------------------
 // inspect entry points
 
-const denoInspectDefaultOptions = {
+const ednoInspectDefaultOptions = {
   indentationLvl: 0,
   currentDepth: 0,
   stylize: stylizeNoColor,
@@ -402,10 +402,10 @@ const denoInspectDefaultOptions = {
 
   // node only
   maxArrayLength: 100,
-  maxStringLength: 10_000, // deno: strAbbreviateSize: 10_000
+  maxStringLength: 10_000, // edno: strAbbreviateSize: 10_000
   customInspect: true,
 
-  // deno only
+  // edno only
   quotes: ['"', "'", "`"],
   iterableLimit: 100, // similar to node's maxArrayLength
   trailingComma: false,
@@ -419,7 +419,7 @@ function getDefaultInspectOptions() {
   return {
     budget: {},
     seen: [],
-    ...denoInspectDefaultOptions,
+    ...ednoInspectDefaultOptions,
   };
 }
 
@@ -674,7 +674,7 @@ class Console {
   }
 }
 
-const customInspect = SymbolFor("Deno.customInspect");
+const customInspect = SymbolFor("Edno.customInspect");
 
 /** Creates an object that represents a subset of the properties of the
  * original object, suitable for handing to `inspect()`. The returned value

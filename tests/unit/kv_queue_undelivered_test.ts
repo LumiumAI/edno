@@ -6,19 +6,19 @@ const sleep = (time: number) => new Promise((r) => setTimeout(r, time));
 // TODO(igorzi): https://github.com/denoland/deno/issues/21437
 // let isCI: boolean;
 // try {
-//   isCI = Deno.env.get("CI") !== undefined;
+//   isCI = Edno.env.get("CI") !== undefined;
 // } catch {
 //   isCI = true;
 // }
 
-function queueTest(name: string, fn: (db: Deno.Kv) => Promise<void>) {
+function queueTest(name: string, fn: (db: Edno.Kv) => Promise<void>) {
   // TODO(igorzi): https://github.com/denoland/deno/issues/21437
-  Deno.test.ignore({
+  Edno.test.ignore({
     name,
     // https://github.com/denoland/deno/issues/18363
-    // ignore: Deno.build.os === "darwin" && isCI,
+    // ignore: Edno.build.os === "darwin" && isCI,
     async fn() {
-      const db: Deno.Kv = await Deno.openKv(
+      const db: Edno.Kv = await Edno.openKv(
         ":memory:",
       );
       await fn(db);
@@ -27,9 +27,9 @@ function queueTest(name: string, fn: (db: Deno.Kv) => Promise<void>) {
 }
 
 async function collect<T>(
-  iter: Deno.KvListIterator<T>,
-): Promise<Deno.KvEntry<T>[]> {
-  const entries: Deno.KvEntry<T>[] = [];
+  iter: Edno.KvListIterator<T>,
+): Promise<Edno.KvEntry<T>[]> {
+  const entries: Edno.KvEntry<T>[] = [];
   for await (const entry of iter) {
     entries.push(entry);
   }

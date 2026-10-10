@@ -5,14 +5,14 @@ use std::io::ErrorKind;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_config::glob::FileCollector;
-use deno_config::glob::FilePatterns;
-use deno_config::glob::PathOrPattern;
-use deno_config::glob::PathOrPatternSet;
-use deno_config::glob::WalkEntry;
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
+use edno_config::glob::FileCollector;
+use edno_config::glob::FilePatterns;
+use edno_config::glob::PathOrPattern;
+use edno_config::glob::PathOrPatternSet;
+use edno_config::glob::WalkEntry;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
 use sys_traits::FsMetadataValue;
 use sys_traits::PathsInErrorsExt;
 
@@ -186,7 +186,7 @@ pub struct FsCleaner {
   pub bytes_removed: u64,
   /// Paths that could not be removed, along with the error encountered. The
   /// cleaner is best-effort: a single locked or read-only file (for example a
-  /// cache database held open by a running Deno process) should not abort the
+  /// cache database held open by a running Edno process) should not abort the
   /// entire clean, so failures are collected here and reported afterwards.
   pub failed: Vec<(PathBuf, std::io::Error)>,
   pub progress_guard: Option<UpdateGuard>,

@@ -13,15 +13,15 @@
       "exitCode": 0
     },
     "member_bare_specifier": {
-      "args": "info @denotest/workspace-member",
+      "args": "info @ednotest/workspace-member",
       "output": "info_bare_specifier.out"
     },
     "member_package_json_specifier": {
-      "args": "info @denotest/workspace-member-package-json",
+      "args": "info @ednotest/workspace-member-package-json",
       "output": "info_bare_specifier_package_json.out"
     },
     "member_package_json_specifier_subpath": {
-      "args": "info @denotest/workspace-member-package-json/foo",
+      "args": "info @ednotest/workspace-member-package-json/foo",
       "output": "info_bare_specifier_package_json_subpath.out"
     }
   }

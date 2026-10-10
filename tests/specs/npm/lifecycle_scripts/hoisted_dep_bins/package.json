@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@denotest/node-lifecycle-scripts": "1.0.0"
+    "@ednotest/node-lifecycle-scripts": "1.0.0"
   }
 }

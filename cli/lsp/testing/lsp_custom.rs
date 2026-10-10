@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::serde::Deserialize;
-use deno_core::serde::Serialize;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Serialize;
 use tower_lsp::lsp_types as lsp;
 
-pub const TEST_RUN_CANCEL_REQUEST: &str = "deno/testRunCancel";
-pub const TEST_RUN_REQUEST: &str = "deno/testRun";
+pub const TEST_RUN_CANCEL_REQUEST: &str = "edno/testRunCancel";
+pub const TEST_RUN_REQUEST: &str = "edno/testRun";
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -58,7 +58,7 @@ pub enum TestModuleNotification {}
 impl lsp::notification::Notification for TestModuleNotification {
   type Params = TestModuleNotificationParams;
 
-  const METHOD: &'static str = "deno/testModule";
+  const METHOD: &'static str = "edno/testModule";
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -73,7 +73,7 @@ pub enum TestModuleDeleteNotification {}
 impl lsp::notification::Notification for TestModuleDeleteNotification {
   type Params = TestModuleDeleteNotificationParams;
 
-  const METHOD: &'static str = "deno/testModuleDelete";
+  const METHOD: &'static str = "edno/testModuleDelete";
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
@@ -184,5 +184,5 @@ pub enum TestRunProgressNotification {}
 impl lsp::notification::Notification for TestRunProgressNotification {
   type Params = TestRunProgressParams;
 
-  const METHOD: &'static str = "deno/testRunProgress";
+  const METHOD: &'static str = "edno/testRunProgress";
 }

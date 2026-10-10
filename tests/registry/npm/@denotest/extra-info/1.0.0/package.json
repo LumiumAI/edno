@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/extra-info",
+  "name": "@ednotest/extra-info",
   "version": "1.0.0",
   "bin": {
-    "denotest-extra-info": "./bin/main.js"
+    "ednotest-extra-info": "./bin/main.js"
   },
   "scripts": {
     "postinstall": "echo 'postinstall'"

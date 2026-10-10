@@ -1,1 +1,1 @@
-console.log(Deno.readTextFileSync(Deno.args[0]));
+console.log(Edno.readTextFileSync(Edno.args[0]));

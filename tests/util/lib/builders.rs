@@ -30,8 +30,8 @@ use crate::HttpServerGuard;
 use crate::TempDir;
 use crate::assertions::assert_wildcard_match;
 use crate::assertions::assert_wildcard_match_with_logger;
-use crate::deno_exe_path;
-use crate::denort_exe_path;
+use crate::edno_exe_path;
+use crate::ednort_exe_path;
 use crate::env_vars_for_jsr_tests;
 use crate::env_vars_for_npm_tests;
 use crate::eprintln;
@@ -49,24 +49,24 @@ use crate::strip_ansi_codes;
 use crate::testdata_path;
 use crate::tests_path;
 
-// Gives the developer a nice error message if they have a deno configuration
+// Gives the developer a nice error message if they have a edno configuration
 // file that will be auto-discovered by the tests and cause a lot of failures.
 static HAS_DENO_JSON_IN_WORKING_DIR_ERR: once_cell::sync::Lazy<Option<String>> =
   once_cell::sync::Lazy::new(|| {
     let testdata_path = testdata_path();
     let mut current_dir = testdata_path.as_path();
-    let deno_json_names = ["deno.json", "deno.jsonc"];
+    let edno_json_names = ["edno.json", "edno.jsonc"];
     loop {
-      for name in deno_json_names {
-        let deno_json_path = current_dir.join(name);
-        if deno_json_path.exists() {
+      for name in edno_json_names {
+        let edno_json_path = current_dir.join(name);
+        if edno_json_path.exists() {
           return Some(format!(
             concat!(
-              "Found deno configuration file at {}. The test suite relies on ",
-              "a deno.json not existing in any ancestor directory. Please ",
+              "Found edno configuration file at {}. The test suite relies on ",
+              "a edno.json not existing in any ancestor directory. Please ",
               "delete this file so the tests won't auto-discover it.",
             ),
-            deno_json_path.display(),
+            edno_json_path.display(),
           ));
         }
       }
@@ -173,7 +173,7 @@ impl TestContextBuilder {
   /// it. You better have a good reason other than being lazy!
   ///
   /// If your tests are failing because the temp dir is symlinked on the CI,
-  /// then it likely means your code doesn't properly handle when Deno is running
+  /// then it likely means your code doesn't properly handle when Edno is running
   /// in a symlinked directory. That's a bug and you should fix it without using
   /// this.
   #[deprecated]
@@ -223,9 +223,9 @@ impl TestContextBuilder {
   }
 
   pub fn add_compile_env_vars(mut self) -> Self {
-    // The `denort` binary is in the same artifact directory as the `deno` binary.
-    let denort_bin = denort_exe_path();
-    self = self.env("DENORT_BIN", denort_bin.to_string());
+    // The `ednort` binary is in the same artifact directory as the `edno` binary.
+    let ednort_bin = ednort_exe_path();
+    self = self.env("DENORT_BIN", ednort_bin.to_string());
     self
   }
 
@@ -252,7 +252,7 @@ impl TestContextBuilder {
     } else {
       temp_dir_path
     };
-    let deno_dir = TempDir::new_in(temp_dir_path.as_path());
+    let edno_dir = TempDir::new_in(temp_dir_path.as_path());
     let temp_dir = TempDir::new_in(temp_dir_path.as_path());
     let temp_dir = if self.use_symlinked_temp_dir {
       assert!(!self.use_canonicalized_temp_dir); // code doesn't handle using both of these
@@ -267,7 +267,7 @@ impl TestContextBuilder {
       test_data_path.copy_to_recursive(&temp_copy_dir);
     }
 
-    let deno_exe = deno_exe_path();
+    let edno_exe = edno_exe_path();
 
     let http_server_guard = if self.use_http_server {
       Some(Rc::new(http_server()))
@@ -285,32 +285,32 @@ impl TestContextBuilder {
       None => cwd,
     };
 
-    // Point `deno check` at a pre-downloaded native compiler so each test's
-    // fresh temp `DENO_DIR` doesn't re-download it. `tools/download_tsc.ts`
-    // materializes it under `<target>/.native_tsc/deno_dir`; the harness resolves
-    // that path itself and injects `DENO_TSC_BIN` per-test (like `JSR_URL`),
+    // Point `edno check` at a pre-downloaded native compiler so each test's
+    // fresh temp `EDNO_DIR` doesn't re-download it. `tools/download_tsc.ts`
+    // materializes it under `<target>/.native_tsc/edno_dir`; the harness resolves
+    // that path itself and injects `EDNO_TSC_BIN` per-test (like `JSR_URL`),
     // instead of relying on a CI script exporting it into the ambient env. An
-    // explicit ambient `DENO_TSC_BIN` (e.g. a local `export`) still wins, as does
+    // explicit ambient `EDNO_TSC_BIN` (e.g. a local `export`) still wins, as does
     // a value a test sets itself.
     let mut envs = self.envs.clone();
-    if !envs.contains_key("DENO_TSC_BIN") {
-      let tsc_bin = std::env::var_os("DENO_TSC_BIN")
+    if !envs.contains_key("EDNO_TSC_BIN") {
+      let tsc_bin = std::env::var_os("EDNO_TSC_BIN")
         .map(|v| v.to_string_lossy().into_owned())
         .or_else(|| {
           crate::native_tsc_bin_path().map(|p| p.to_string_lossy().into_owned())
         });
       if let Some(tsc_bin) = tsc_bin {
-        envs.insert("DENO_TSC_BIN".to_string(), tsc_bin);
+        envs.insert("EDNO_TSC_BIN".to_string(), tsc_bin);
       }
     }
 
     TestContext {
       cwd,
-      deno_exe,
+      edno_exe,
       envs,
       diagnostic_logger: self.diagnostic_logger.clone(),
       _http_server_guard: http_server_guard,
-      deno_dir,
+      edno_dir,
       temp_dir,
     }
   }
@@ -318,12 +318,12 @@ impl TestContextBuilder {
 
 #[derive(Clone)]
 pub struct TestContext {
-  deno_exe: PathRef,
+  edno_exe: PathRef,
   diagnostic_logger: DiagnosticLogger,
   envs: HashMap<String, String>,
   cwd: PathRef,
   _http_server_guard: Option<Rc<HttpServerGuard>>,
-  deno_dir: TempDir,
+  edno_dir: TempDir,
   temp_dir: TempDir,
 }
 
@@ -338,8 +338,8 @@ impl TestContext {
     TestContextBuilder::new().use_http_server().build()
   }
 
-  pub fn deno_dir(&self) -> &TempDir {
-    &self.deno_dir
+  pub fn edno_dir(&self) -> &TempDir {
+    &self.edno_dir
   }
 
   pub fn temp_dir(&self) -> &TempDir {
@@ -347,7 +347,7 @@ impl TestContext {
   }
 
   pub fn new_command(&self) -> TestCommandBuilder {
-    TestCommandBuilder::new(self.deno_dir.clone())
+    TestCommandBuilder::new(self.edno_dir.clone())
       .set_diagnostic_logger(self.diagnostic_logger.clone())
       .envs(self.envs.clone())
       .current_dir(&self.cwd)
@@ -355,8 +355,8 @@ impl TestContext {
 
   #[cfg(feature = "lsp")]
   pub fn new_lsp_command(&self) -> LspClientBuilder {
-    let mut builder = LspClientBuilder::new_with_dir(self.deno_dir.clone())
-      .deno_exe(&self.deno_exe)
+    let mut builder = LspClientBuilder::new_with_dir(self.edno_dir.clone())
+      .edno_exe(&self.edno_exe)
       .set_root_dir(self.temp_dir.path().clone());
     for (key, value) in &self.envs {
       builder = builder.env(key, value);
@@ -367,7 +367,7 @@ impl TestContext {
   pub fn run_deno(&self, args: impl AsRef<str>) {
     self
       .new_command()
-      .name("deno")
+      .name("edno")
       .args(args)
       .run()
       .skip_output_check();
@@ -382,8 +382,8 @@ impl TestContext {
       .skip_output_check();
   }
 
-  pub fn deno_exe(&self) -> &PathRef {
-    &self.deno_exe
+  pub fn edno_exe(&self) -> &PathRef {
+    &self.edno_exe
   }
 
   pub fn envs(&self) -> &HashMap<String, String> {
@@ -435,7 +435,7 @@ fn curl_fetch(url: &str) -> Vec<u8> {
   output.stdout
 }
 
-/// We can't clone an stdio, so if someone clones a DenoCmd,
+/// We can't clone an stdio, so if someone clones a EdnoCmd,
 /// we want to set this to `Cloned` and show the user a helpful
 /// panic message.
 enum StdioContainer {
@@ -471,7 +471,7 @@ impl StdioContainer {
 
 #[derive(Clone)]
 pub struct TestCommandBuilder {
-  deno_dir: TempDir,
+  edno_dir: TempDir,
   diagnostic_logger: DiagnosticLogger,
   stdin: Option<StdioContainer>,
   stdout: Option<StdioContainer>,
@@ -490,9 +490,9 @@ pub struct TestCommandBuilder {
 }
 
 impl TestCommandBuilder {
-  pub fn new(deno_dir: TempDir) -> Self {
+  pub fn new(edno_dir: TempDir) -> Self {
     Self {
-      deno_dir,
+      edno_dir,
       diagnostic_logger: Default::default(),
       stdin: None,
       stdout: None,
@@ -503,7 +503,7 @@ impl TestCommandBuilder {
       envs: Default::default(),
       envs_remove: Default::default(),
       env_clear: false,
-      command_name: "deno".to_string(),
+      command_name: "edno".to_string(),
       args_text: "".to_string(),
       args_vec: Default::default(),
       show_output: false,
@@ -707,10 +707,10 @@ impl TestCommandBuilder {
     self.build_command().status()
   }
 
-  pub fn spawn(&self) -> Result<DenoChild, std::io::Error> {
+  pub fn spawn(&self) -> Result<EdnoChild, std::io::Error> {
     let child = self.build_command().spawn()?;
-    let mut child = DenoChild {
-      _deno_dir: self.deno_dir.clone(),
+    let mut child = EdnoChild {
+      _deno_dir: self.edno_dir.clone(),
       child,
     };
 
@@ -722,7 +722,7 @@ impl TestCommandBuilder {
     Ok(child)
   }
 
-  pub fn spawn_with_piped_output(&self) -> DenoChild {
+  pub fn spawn_with_piped_output(&self) -> EdnoChild {
     self.clone().piped_output().spawn().unwrap()
   }
 
@@ -752,7 +752,7 @@ impl TestCommandBuilder {
 
     fn sanitize_output(text: String, args: &[OsString]) -> String {
       let mut text = strip_ansi_codes(&text).to_string();
-      // deno test's output capturing flushes with a zero-width space in order to
+      // edno test's output capturing flushes with a zero-width space in order to
       // synchronize the output pipes. Occasionally this zero width space
       // might end up in the output so strip it from the output comparison here.
       if args.first().and_then(|s| s.to_str()) == Some("test") {
@@ -860,7 +860,7 @@ impl TestCommandBuilder {
       asserted_stderr: RefCell::new(false),
       asserted_combined: RefCell::new(false),
       diagnostic_logger: self.diagnostic_logger.clone(),
-      _deno_dir: self.deno_dir.clone(),
+      _deno_dir: self.edno_dir.clone(),
     }
   }
 
@@ -904,8 +904,8 @@ impl TestCommandBuilder {
     } else {
       &self.command_name
     };
-    if command_name == "deno" {
-      deno_exe_path()
+    if command_name == "edno" {
+      edno_exe_path()
     } else if command_name.starts_with("./") && self.cwd.is_some() {
       self.cwd.as_ref().unwrap().join(command_name)
     } else {
@@ -979,14 +979,14 @@ impl TestCommandBuilder {
 
   fn build_envs(&self, cwd: &Path) -> HashMap<String, String> {
     let mut envs = self.envs.clone();
-    if !envs.contains_key("DENO_DIR") {
-      envs.insert("DENO_DIR".to_string(), self.deno_dir.path().to_string());
+    if !envs.contains_key("EDNO_DIR") {
+      envs.insert("EDNO_DIR".to_string(), self.edno_dir.path().to_string());
     }
     if !envs.contains_key("NPM_CONFIG_REGISTRY") {
       envs.insert("NPM_CONFIG_REGISTRY".to_string(), npm_registry_unset_url());
     }
-    if !envs.contains_key("DENO_NO_UPDATE_CHECK") {
-      envs.insert("DENO_NO_UPDATE_CHECK".to_string(), "1".to_string());
+    if !envs.contains_key("EDNO_NO_UPDATE_CHECK") {
+      envs.insert("EDNO_NO_UPDATE_CHECK".to_string(), "1".to_string());
     }
     if !envs.contains_key("JSR_URL") {
       envs.insert("JSR_URL".to_string(), jsr_registry_unset_url());
@@ -1000,7 +1000,7 @@ impl TestCommandBuilder {
     if !envs.contains_key("PATH") {
       let path = std::env::var_os("PATH").unwrap_or_default();
       let path = std::env::split_paths(&path);
-      let additional = deno_exe_path().parent().to_path_buf();
+      let additional = edno_exe_path().parent().to_path_buf();
       let path =
         std::env::join_paths(std::iter::once(additional).chain(path)).unwrap();
       envs.insert("PATH".to_string(), path.to_string_lossy().to_string());
@@ -1020,33 +1020,33 @@ impl TestCommandBuilder {
   fn replace_vars(&self, text: &str, cwd: &Path) -> String {
     // todo(dsherret): use monch to extract out the vars
     text
-      .replace("$DENO_DIR", &self.deno_dir.path().to_string_lossy())
+      .replace("$EDNO_DIR", &self.edno_dir.path().to_string_lossy())
       .replace("$TESTDATA", &testdata_path().to_string_lossy())
       .replace("$TESTS", &tests_path().to_string_lossy())
       .replace("$PWD", &cwd.to_string_lossy())
   }
 }
 
-pub struct DenoChild {
+pub struct EdnoChild {
   // keep alive for the duration of the use of this struct
   _deno_dir: TempDir,
   child: Child,
 }
 
-impl Deref for DenoChild {
+impl Deref for EdnoChild {
   type Target = Child;
   fn deref(&self) -> &Child {
     &self.child
   }
 }
 
-impl DerefMut for DenoChild {
+impl DerefMut for EdnoChild {
   fn deref_mut(&mut self) -> &mut Child {
     &mut self.child
   }
 }
 
-impl DenoChild {
+impl EdnoChild {
   pub fn wait_with_output_and_timeout(
     self,
     timeout: Duration,
@@ -1079,9 +1079,9 @@ impl DenoChild {
   }
 
   pub fn wait_to_test_result(self, test_name: &str) -> TestResult {
-    let mut deno = self;
+    let mut edno = self;
     let now = Instant::now();
-    let stdout = deno.stdout.take().unwrap();
+    let stdout = edno.stdout.take().unwrap();
     let no_capture = *file_test_runner::NO_CAPTURE;
     let final_output = Arc::new(Mutex::new(Vec::<String>::new()));
     let stdout = spawn_thread({
@@ -1107,7 +1107,7 @@ impl DenoChild {
     });
 
     let now = Instant::now();
-    let stderr = deno.stderr.take().unwrap();
+    let stderr = edno.stderr.take().unwrap();
     let stderr = spawn_thread({
       let final_output = final_output.clone();
       let test_name = test_name.to_string();
@@ -1142,10 +1142,10 @@ impl DenoChild {
     };
 
     // keep stdin alive instead of dropping it in wait_with_output
-    let _stdin = deno.stdin.take();
+    let _stdin = edno.stdin.take();
 
     let status = {
-      match deno.wait_with_output_and_timeout(PER_TEST_TIMEOUT) {
+      match edno.wait_with_output_and_timeout(PER_TEST_TIMEOUT) {
         Ok(output) => output.status,
         Err(err) => {
           if err.kind() == ErrorKind::TimedOut {
@@ -1173,7 +1173,7 @@ impl DenoChild {
       return get_failure_result(
         duration,
         format!(
-          "Deno should have exited cleanly (code: {:?})",
+          "Edno should have exited cleanly (code: {:?})",
           status.code(),
         ),
       );

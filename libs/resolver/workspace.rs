@@ -9,20 +9,20 @@ use std::fmt;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_config::deno_json::ConfigFileError;
-use deno_config::deno_json::ConfigFileRc;
-use deno_config::workspace::ResolverWorkspaceJsrPackage;
-use deno_config::workspace::Workspace;
+use edno_config::edno_json::ConfigFileError;
+use edno_config::edno_json::ConfigFileRc;
+use edno_config::workspace::ResolverWorkspaceJsrPackage;
+use edno_config::workspace::Workspace;
 use deno_error::JsError;
-use deno_maybe_sync::MaybeDashMap;
-use deno_maybe_sync::new_rc;
+use edno_maybe_sync::MaybeDashMap;
+use edno_maybe_sync::new_rc;
 use deno_media_type::MediaType;
-use deno_npm::registry::NpmPackageVersionInfo;
-use deno_package_json::PackageJsonDepValue;
-use deno_package_json::PackageJsonDepValueParseError;
-use deno_package_json::PackageJsonDepWorkspaceReq;
-use deno_package_json::PackageJsonDepsRc;
-use deno_package_json::PackageJsonRc;
+use edno_npm::registry::NpmPackageVersionInfo;
+use edno_package_json::PackageJsonDepValue;
+use edno_package_json::PackageJsonDepValueParseError;
+use edno_package_json::PackageJsonDepWorkspaceReq;
+use edno_package_json::PackageJsonDepsRc;
+use edno_package_json::PackageJsonRc;
 use deno_path_util::SpecifierError;
 use deno_path_util::url_from_directory_path;
 use deno_path_util::url_from_file_path;
@@ -53,12 +53,12 @@ use thiserror::Error;
 use url::Url;
 
 use crate::collections::FolderScopedMap;
-use crate::deno_json::CompilerOptionsModuleResolution;
-use crate::deno_json::CompilerOptionsPaths;
-use crate::deno_json::CompilerOptionsResolverRc;
+use crate::edno_json::CompilerOptionsModuleResolution;
+use crate::edno_json::CompilerOptionsPaths;
+use crate::edno_json::CompilerOptionsResolverRc;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-type UrlRc = deno_maybe_sync::MaybeArc<Url>;
+type UrlRc = edno_maybe_sync::MaybeArc<Url>;
 
 #[derive(Debug)]
 struct PkgJsonResolverFolderConfig {
@@ -693,7 +693,7 @@ pub fn sloppy_imports_resolve<TSys: FsMetadata>(
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 type SloppyImportsResolverRc<T> =
-  deno_maybe_sync::MaybeArc<SloppyImportsResolver<T>>;
+  edno_maybe_sync::MaybeArc<SloppyImportsResolver<T>>;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CompilerOptionsRootDirsDiagnostic {
@@ -836,7 +836,7 @@ impl fmt::Display for WorkspaceResolverDiagnostic<'_> {
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 type CompilerOptionsResolverCellRc =
-  deno_maybe_sync::MaybeArc<RwLock<CompilerOptionsResolverRc>>;
+  edno_maybe_sync::MaybeArc<RwLock<CompilerOptionsResolverRc>>;
 
 #[derive(Debug)]
 pub struct WorkspaceResolver<TSys: FsMetadata + FsRead> {
@@ -955,7 +955,7 @@ impl<TSys: FsMetadata + FsRead> WorkspaceResolver<TSys> {
       // Builds the import map scope contributed by a workspace member or linked
       // package. The member's `imports` (not its `scopes`) are layered into the
       // synthetic map; this follows an external `importMap` file when the
-      // member uses one. `to_import_map_value` already applies Deno's bare
+      // member uses one. `to_import_map_value` already applies Edno's bare
       // specifier expansion for inline maps and leaves external maps untouched,
       // matching the import map standard, so no extra expansion is done here.
       fn child_import_map_config(
@@ -1002,11 +1002,11 @@ impl<TSys: FsMetadata + FsRead> WorkspaceResolver<TSys> {
       }
 
       let root_deno_json = workspace.root_deno_json();
-      let deno_jsons = workspace.resolver_deno_jsons().collect::<Vec<_>>();
+      let edno_jsons = workspace.resolver_deno_jsons().collect::<Vec<_>>();
 
       // The base of the synthetic import map: either an explicitly specified map
       // (the `--import-map` flag or the root's external `importMap` file) or the
-      // root deno.json's own import map. Either way, workspace member and linked
+      // root edno.json's own import map. Either way, workspace member and linked
       // package scopes are layered on top so their bare specifiers resolve.
       let base_import_map_config = match specified_import_map {
         Some(SpecifiedImportMap { base_url, value }) => {
@@ -1016,8 +1016,8 @@ impl<TSys: FsMetadata + FsRead> WorkspaceResolver<TSys> {
           }
         }
         None => {
-          if !deno_jsons.iter().any(|p| p.is_package())
-            && !deno_jsons.iter().any(|c| {
+          if !edno_jsons.iter().any(|p| p.is_package())
+            && !edno_jsons.iter().any(|c| {
               c.json.import_map.is_some()
                 || c.json.scopes.is_some()
                 || c.json.imports.is_some()
@@ -1034,21 +1034,21 @@ impl<TSys: FsMetadata + FsRead> WorkspaceResolver<TSys> {
           }
 
           let (base_url, value) = match root_deno_json.as_ref() {
-            Some(deno_json) => deno_json
+            Some(edno_json) => edno_json
               .to_import_map_value(sys)
               .map_err(|source| WorkspaceResolverCreateError::ImportMapFetch {
-                referrer: deno_json.specifier.clone(),
+                referrer: edno_json.specifier.clone(),
                 source: Box::new(source),
               })?
               .map(|(specifier, value)| (specifier.into_owned(), value))
               .unwrap_or_else(|| {
                 (
-                  deno_json.specifier.clone(),
+                  edno_json.specifier.clone(),
                   serde_json::Value::Object(Default::default()),
                 )
               }),
             None => (
-              workspace.root_dir_url().join("deno.json").unwrap(),
+              workspace.root_dir_url().join("edno.json").unwrap(),
               serde_json::Value::Object(Default::default()),
             ),
           };
@@ -1069,7 +1069,7 @@ impl<TSys: FsMetadata + FsRead> WorkspaceResolver<TSys> {
         }
       };
 
-      let child_import_map_configs = deno_jsons
+      let child_import_map_configs = edno_jsons
         .iter()
         .filter(|f| {
           Some(&f.specifier) != root_deno_json.as_ref().map(|c| &c.specifier)
@@ -1107,7 +1107,7 @@ impl<TSys: FsMetadata + FsRead> WorkspaceResolver<TSys> {
       if workspace.jsr_deps_in_node_modules() == Some(true)
         && uses_node_modules_dir
       {
-        deno_config::import_map::rewrite_jsr_imports_to_npm(&mut import_map);
+        edno_config::import_map::rewrite_jsr_imports_to_npm(&mut import_map);
       }
       log::debug!(
         "Workspace config generated this import map {}",
@@ -1294,7 +1294,7 @@ impl<TSys: FsMetadata + FsRead> WorkspaceResolver<TSys> {
           url_to_file_path(&root_dir_url.join(&relative_path).unwrap())
             .unwrap();
         let pkg_json =
-          deno_package_json::PackageJson::load_from_value(path, json).unwrap();
+          edno_package_json::PackageJson::load_from_value(path, json).unwrap();
         PackageJsonRc::new(pkg_json)
       })
       .collect();
@@ -1880,11 +1880,11 @@ impl WorkspaceNpmLinkPackagesRc {
     let mut entries: HashMap<PackageName, Vec<NpmPackageVersionInfo>> =
       HashMap::new();
     for folder in workspace.link_folders().values() {
-      // A linked folder that also has a deno.json is a Deno/JSR link, not an
+      // A linked folder that also has a edno.json is a Edno/JSR link, not an
       // npm link. Some packages ship a package.json only for other runtimes
       // (e.g. Bun), so counting it as an npm link would wrongly require a
       // node_modules directory.
-      if folder.deno_json.is_some() {
+      if folder.edno_json.is_some() {
         continue;
       }
       let Some(pkg_json) = folder.pkg_json.as_ref() else {
@@ -1913,7 +1913,7 @@ impl WorkspaceNpmLinkPackagesRc {
         }
       }
     }
-    Self(deno_maybe_sync::new_arc(entries))
+    Self(edno_maybe_sync::new_arc(entries))
   }
 }
 
@@ -1933,7 +1933,7 @@ enum PkgJsonToVersionInfoError {
 }
 
 fn pkg_json_to_version_info(
-  pkg_json: &deno_package_json::PackageJson,
+  pkg_json: &edno_package_json::PackageJson,
 ) -> Result<NpmPackageVersionInfo, PkgJsonToVersionInfoError> {
   fn parse_deps(
     deps: Option<&IndexMap<String, String>>,
@@ -1966,7 +1966,7 @@ fn pkg_json_to_version_info(
     exports: pkg_json
       .exports
       .as_ref()
-      .map(deno_npm::registry::NpmPackageExportKeys::from_exports_object),
+      .map(edno_npm::registry::NpmPackageExportKeys::from_exports_object),
     dist: None,
     bin: pkg_json
       .bin
@@ -2021,15 +2021,15 @@ mod test {
   use std::path::Path;
   use std::path::PathBuf;
 
-  use deno_config::workspace::WorkspaceDirectory;
-  use deno_config::workspace::WorkspaceDirectoryRc;
-  use deno_config::workspace::WorkspaceDiscoverOptions;
-  use deno_config::workspace::WorkspaceDiscoverStart;
-  use deno_npm::registry::NpmPeerDependencyMeta;
+  use edno_config::workspace::WorkspaceDirectory;
+  use edno_config::workspace::WorkspaceDirectoryRc;
+  use edno_config::workspace::WorkspaceDiscoverOptions;
+  use edno_config::workspace::WorkspaceDiscoverStart;
+  use edno_npm::registry::NpmPeerDependencyMeta;
   use deno_path_util::url_from_directory_path;
   use deno_path_util::url_from_file_path;
   use deno_semver::VersionReq;
-  use node_resolver::DenoIsBuiltInNodeModuleChecker;
+  use node_resolver::EdnoIsBuiltInNodeModuleChecker;
   use node_resolver::NodeResolver;
   use node_resolver::NodeResolverOptions;
   use node_resolver::NpmPackageFolderResolver;
@@ -2044,10 +2044,10 @@ mod test {
   use url::Url;
 
   use super::*;
-  use crate::deno_json::CompilerOptionsResolver;
+  use crate::edno_json::CompilerOptionsResolver;
   use crate::factory::ConfigDiscoveryOption;
   use crate::npm::CreateInNpmPkgCheckerOptions;
-  use crate::npm::DenoInNpmPackageChecker;
+  use crate::npm::EdnoInNpmPackageChecker;
   use crate::npm::NpmResolverSys;
 
   pub struct UnreachableSys;
@@ -2120,13 +2120,13 @@ mod test {
   #[allow(clippy::disallowed_types, reason = "ok in tests")]
   fn setup_node_resolver<TSys: NpmResolverSys>(
     sys: &TSys,
-  ) -> crate::deno_json::TsConfigNodeResolver<TSys, TestNpmPackageFolderResolver>
+  ) -> crate::edno_json::TsConfigNodeResolver<TSys, TestNpmPackageFolderResolver>
   {
     let package_json_resolver =
       new_rc(PackageJsonResolver::new(sys.clone(), None));
     NodeResolver::new(
-      DenoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Byonm),
-      DenoIsBuiltInNodeModuleChecker,
+      EdnoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Byonm),
+      EdnoIsBuiltInNodeModuleChecker,
       TestNpmPackageFolderResolver,
       package_json_resolver,
       NodeResolutionSys::new(sys.clone(), None),
@@ -2206,7 +2206,7 @@ mod test {
   fn pkg_json_resolution() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "workspace": [
           "a",
@@ -2216,7 +2216,7 @@ mod test {
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("a/deno.json"),
+      root_dir().join("a/edno.json"),
       json!({
         "imports": {
           "b": "./index.js",
@@ -2313,7 +2313,7 @@ mod test {
   fn single_pkg_no_import_map() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "name": "@scope/pkg",
         "version": "1.0.0",
@@ -2473,7 +2473,7 @@ mod test {
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("a/deno.json"),
+      root_dir().join("a/edno.json"),
       json!({
         "name": "@scope/jsr-pkg",
         "version": "1.0.0",
@@ -2535,7 +2535,7 @@ mod test {
     let repo2 = root_dir().join("repo2");
     let repo1 = root_dir().join("repo1");
     sys.fs_insert_json(
-      repo2.join("deno.json"),
+      repo2.join("edno.json"),
       json!({
         "imports": {
           "@jpravetz/bmod": "../repo1/bmod/mod.ts",
@@ -2543,7 +2543,7 @@ mod test {
       }),
     );
     sys.fs_insert_json(
-      repo1.join("bmod/deno.json"),
+      repo1.join("bmod/edno.json"),
       json!({
         "imports": {
           "@scope/amod": "../amod/mod.ts",
@@ -2573,12 +2573,12 @@ mod test {
     // Same as the basic case, but the root project points at an external
     // `importMap` file instead of an inline `imports` map. The path entry
     // there resolves relative to the import map file, and discovery must still
-    // find repo1's deno.json (issue #26764).
+    // find repo1's edno.json (issue #26764).
     let sys = InMemorySys::default();
     let repo2 = root_dir().join("repo2");
     let repo1 = root_dir().join("repo1");
     sys.fs_insert_json(
-      repo2.join("deno.json"),
+      repo2.join("edno.json"),
       json!({
         "importMap": "./import_map.json",
       }),
@@ -2592,7 +2592,7 @@ mod test {
       }),
     );
     sys.fs_insert_json(
-      repo1.join("bmod/deno.json"),
+      repo1.join("bmod/edno.json"),
       json!({
         "imports": {
           "@scope/amod": "../amod/mod.ts",
@@ -2626,19 +2626,19 @@ mod test {
     let repo1 = root_dir().join("repo1");
     let repo3 = root_dir().join("repo3");
     sys.fs_insert_json(
-      repo2.join("deno.json"),
+      repo2.join("edno.json"),
       json!({
         "imports": { "@a/bmod": "../repo1/bmod/mod.ts" },
       }),
     );
     sys.fs_insert_json(
-      repo1.join("bmod/deno.json"),
+      repo1.join("bmod/edno.json"),
       json!({
         "imports": { "@a/cmod": "../../repo3/cmod/mod.ts" },
       }),
     );
     sys.fs_insert_json(
-      repo3.join("cmod/deno.json"),
+      repo3.join("cmod/edno.json"),
       json!({
         "imports": { "@a/dmod": "./sub/mod.ts" },
       }),
@@ -2669,19 +2669,19 @@ mod test {
     let repo2 = root_dir().join("repo2");
     let repo1 = root_dir().join("repo1");
     sys.fs_insert_json(
-      repo2.join("deno.json"),
+      repo2.join("edno.json"),
       json!({
         "imports": { "@x/bmod": "../repo1/bmod/mod.ts" },
       }),
     );
     sys.fs_insert_json(
-      repo1.join("bmod/deno.json"),
+      repo1.join("bmod/edno.json"),
       json!({
         "imports": { "@x/emod": "../emod/mod.ts" },
       }),
     );
     sys.fs_insert_json(
-      repo1.join("emod/deno.json"),
+      repo1.join("emod/edno.json"),
       json!({
         "imports": { "@x/bmod": "../bmod/mod.ts" },
       }),
@@ -2717,7 +2717,7 @@ mod test {
   fn root_member_imports_and_scopes() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "workspace": ["member"],
         "imports": {
@@ -2732,7 +2732,7 @@ mod test {
     );
     // Overrides `rootDirs` from workspace root.
     sys.fs_insert_json(
-      root_dir().join("member/deno.json"),
+      root_dir().join("member/edno.json"),
       json!({
         "imports": {
           "@scope/pkg": "jsr:@scope/pkg@3",
@@ -2962,7 +2962,7 @@ mod test {
   fn resolve_compiler_options_paths_and_sloppy_imports() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "compilerOptions": {
           "paths": {
@@ -3110,7 +3110,7 @@ mod test {
   fn resolve_compiler_options_root_dirs() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "workspace": ["member", "member2"],
         "compilerOptions": {
@@ -3120,7 +3120,7 @@ mod test {
     );
     // Overrides `rootDirs` from workspace root.
     sys.fs_insert_json(
-      root_dir().join("member/deno.json"),
+      root_dir().join("member/edno.json"),
       json!({
         "compilerOptions": {
           "rootDirs": ["foo", "foo_types"],
@@ -3128,10 +3128,10 @@ mod test {
       }),
     );
     // Use `rootDirs` from workspace root.
-    sys.fs_insert_json(root_dir().join("member2/deno.json"), json!({}));
+    sys.fs_insert_json(root_dir().join("member2/edno.json"), json!({}));
     sys.fs_insert(root_dir().join("member/foo_types/import.ts"), "");
     sys.fs_insert(root_dir().join("member2_types/import.ts"), "");
-    // This file should be ignored. It would be used if `member/deno.json` had
+    // This file should be ignored. It would be used if `member/edno.json` had
     // no `rootDirs`.
     sys.fs_insert(root_dir().join("member2_types/foo/import.ts"), "");
 
@@ -3250,7 +3250,7 @@ mod test {
   fn resolve_compiler_options_root_dirs_and_sloppy_imports() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "compilerOptions": {
           "rootDirs": ["subdir", "subdir_types"],
@@ -3311,7 +3311,7 @@ mod test {
   #[test]
   fn specified_import_map() {
     let sys = InMemorySys::default();
-    sys.fs_insert_json(root_dir().join("deno.json"), json!({}));
+    sys.fs_insert_json(root_dir().join("edno.json"), json!({}));
     let workspace_dir = workspace_at_start_dir(&sys, &root_dir());
     let resolver = WorkspaceResolver::from_workspace(
       &workspace_dir.workspace,
@@ -3357,7 +3357,7 @@ mod test {
     let repo2 = root_dir().join("repo2");
     let repo1 = root_dir().join("repo1");
     sys.fs_insert_json(
-      repo2.join("deno.json"),
+      repo2.join("edno.json"),
       json!({
         "importMap": "./import_map.json",
       }),
@@ -3371,7 +3371,7 @@ mod test {
       }),
     );
     sys.fs_insert_json(
-      repo1.join("bmod/deno.json"),
+      repo1.join("bmod/edno.json"),
       json!({
         "imports": {
           "@scope/amod": "../amod/mod.ts",
@@ -3417,12 +3417,12 @@ mod test {
   fn workspace_specified_import_map() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "workspace": ["./a"]
       }),
     );
-    sys.fs_insert_json(root_dir().join("a").join("deno.json"), json!({}));
+    sys.fs_insert_json(root_dir().join("a").join("edno.json"), json!({}));
     let workspace_dir = workspace_at_start_dir(&sys, &root_dir());
     WorkspaceResolver::from_workspace(
       &workspace_dir.workspace,
@@ -3448,13 +3448,13 @@ mod test {
   fn resolves_link_member_with_version() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "links": ["../link"]
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("../link/deno.json"),
+      root_dir().join("../link/edno.json"),
       json!({
         "name": "@scope/link",
         "version": "1.0.0",
@@ -3527,13 +3527,13 @@ mod test {
   fn resolves_link_member_no_version() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "links": ["../link"]
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("../link/deno.json"),
+      root_dir().join("../link/edno.json"),
       json!({
         "name": "@scope/link",
         "exports": "./mod.ts"
@@ -3576,13 +3576,13 @@ mod test {
   fn resolves_workspace_member() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "workspace": ["./member"]
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("./member/deno.json"),
+      root_dir().join("./member/edno.json"),
       json!({
         "name": "@scope/member",
         "version": "1.0.0",
@@ -3656,7 +3656,7 @@ mod test {
   fn resolves_link_workspace() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "imports": {
           "@std/fs": "jsr:@std/fs@0.200.0"
@@ -3665,13 +3665,13 @@ mod test {
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("../link/deno.json"),
+      root_dir().join("../link/edno.json"),
       json!({
         "workspace": ["./member"]
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("../link/member/deno.json"),
+      root_dir().join("../link/member/edno.json"),
       json!({
         "name": "@scope/link",
         "version": "1.0.0",
@@ -3731,15 +3731,15 @@ mod test {
   fn invalid_package_name_with_slashes() {
     let sys = InMemorySys::default();
     sys.fs_insert_json(
-      root_dir().join("deno.json"),
+      root_dir().join("edno.json"),
       json!({
         "workspace": ["./libs/math"]
       }),
     );
     sys.fs_insert_json(
-      root_dir().join("libs/math/deno.json"),
+      root_dir().join("libs/math/edno.json"),
       json!({
-        "name": "@deno-test/libs/math", // Invalid package name containing slashes
+        "name": "@edno-test/libs/math", // Invalid package name containing slashes
         "version": "1.0.0",
         "exports": "./mod.ts"
       }),
@@ -3747,7 +3747,7 @@ mod test {
     let workspace = workspace_at_start_dir(&sys, &root_dir());
     let resolver = create_resolver(&workspace);
     let result = resolver.resolve(
-      "@deno-test/libs/math",
+      "@edno-test/libs/math",
       &url_from_file_path(&root_dir().join("main.ts")).unwrap(),
       ResolutionKind::Execution,
     );
@@ -3759,7 +3759,7 @@ mod test {
     assert_eq!(diagnostics.len(), 1);
     assert!(
       diagnostics.first().unwrap().to_string().starts_with(
-        r#"Invalid workspace member name "@deno-test/libs/math"."#
+        r#"Invalid workspace member name "@edno-test/libs/math"."#
       )
     );
   }
@@ -3819,7 +3819,7 @@ mod test {
     fn convert(
       text: &str,
     ) -> Result<NpmPackageVersionInfo, PkgJsonToVersionInfoError> {
-      let pkg_json = deno_package_json::PackageJson::load_from_string(
+      let pkg_json = edno_package_json::PackageJson::load_from_string(
         PathBuf::from("package.json"),
         text,
       )
@@ -3865,7 +3865,7 @@ mod test {
         exports: None,
         dist: None,
         has_install_script: None,
-        bin: Some(deno_npm::registry::NpmPackageVersionBinEntry::String(
+        bin: Some(edno_npm::registry::NpmPackageVersionBinEntry::String(
           "./bin.js".to_string()
         )),
         dependencies: HashMap::from([(
@@ -3898,7 +3898,7 @@ mod test {
             "testing2".to_string(),
           )
         ]),
-        // we don't bother ever setting this because we don't store it in deno_package_json
+        // we don't bother ever setting this because we don't store it in edno_package_json
         deprecated: None,
         npm_user: None,
       }

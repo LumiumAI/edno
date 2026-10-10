@@ -1,1 +1,1 @@
-Deno.test();
+Edno.test();

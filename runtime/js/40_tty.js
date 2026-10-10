@@ -16,7 +16,7 @@ function consoleSize() {
   return { columns: size[0], rows: size[1] };
 }
 
-// Note: This function was soft-removed in Deno 2. Its types have been removed,
+// Note: This function was soft-removed in Edno 2. Its types have been removed,
 // but its implementation has been kept to avoid breaking changes.
 function isatty(rid) {
   return isTerminal(rid);

@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 
-const permissions: Deno.PermissionName[] = [
+const permissions: Edno.PermissionName[] = [
   "read",
   "write",
   "net",
@@ -10,27 +10,27 @@ const permissions: Deno.PermissionName[] = [
 ];
 
 for (const name of permissions) {
-  Deno.test({
+  Edno.test({
     name: `${name} false`,
     permissions: {
       [name]: false,
     },
     async fn() {
       for await (const n of permissions) {
-        const status = await Deno.permissions.query({ name: n });
+        const status = await Edno.permissions.query({ name: n });
         assertEquals(status.state, "prompt");
       }
     },
   });
 
-  Deno.test({
+  Edno.test({
     name: `${name} true`,
     permissions: {
       [name]: true,
     },
     async fn() {
       for await (const n of permissions) {
-        const status = await Deno.permissions.query({ name: n });
+        const status = await Edno.permissions.query({ name: n });
         if (n === name) {
           assertEquals(status.state, "granted");
         } else {

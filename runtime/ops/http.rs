@@ -2,17 +2,17 @@
 
 use std::rc::Rc;
 
-use deno_core::OpState;
-use deno_core::ResourceId;
-use deno_core::error::ResourceError;
-use deno_core::op2;
-use deno_http::http_create_conn_resource;
-use deno_net::io::TcpStreamResource;
-use deno_net::ops_tls::TlsStreamResource;
+use edno_core::OpState;
+use edno_core::ResourceId;
+use edno_core::error::ResourceError;
+use edno_core::op2;
+use edno_http::http_create_conn_resource;
+use edno_net::io::TcpStreamResource;
+use edno_net::ops_tls::TlsStreamResource;
 
 pub const UNSTABLE_FEATURE_NAME: &str = "http";
 
-deno_core::extension!(deno_http_runtime, ops = [op_http_start],);
+edno_core::extension!(edno_http_runtime, ops = [op_http_start],);
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
 pub enum HttpStartError {
@@ -82,7 +82,7 @@ fn op_http_start(
   #[cfg(unix)]
   if let Ok(resource_rc) = state
     .resource_table
-    .take::<deno_net::io::UnixStreamResource>(tcp_stream_rid)
+    .take::<edno_net::io::UnixStreamResource>(tcp_stream_rid)
   {
     // This UNIX socket might be used somewhere else. If it's the case, we cannot proceed with the
     // process of starting a HTTP server on top of this UNIX socket, so we just return a Busy error.

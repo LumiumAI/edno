@@ -2,23 +2,23 @@
 
 use std::sync::Arc;
 
-use deno_cache_dir::npm::NpmCacheDir;
-use deno_npm::resolution::PackageIdNotFoundError;
-use deno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
-use deno_npm_cache::NpmCache;
-use deno_npm_cache::NpmCacheHttpClient;
-use deno_npm_cache::NpmCacheSetting;
-use deno_npm_cache::NpmCacheSys;
-use deno_npm_cache::NpmPackumentFormat;
-use deno_npm_cache::RegistryInfoProvider;
-use deno_npm_cache::TarballCache;
-use deno_npm_cache::TarballCacheReporter;
-use deno_npmrc::ResolvedNpmRc;
-use deno_resolver::factory::ResolverFactory;
-use deno_resolver::factory::WorkspaceFactory;
-use deno_resolver::factory::WorkspaceFactorySys;
-use deno_resolver::lockfile::LockfileLock;
-use deno_resolver::lockfile::LockfileNpmPackageInfoApiAdapter;
+use edno_cache_dir::npm::NpmCacheDir;
+use edno_npm::resolution::PackageIdNotFoundError;
+use edno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
+use edno_npm_cache::NpmCache;
+use edno_npm_cache::NpmCacheHttpClient;
+use edno_npm_cache::NpmCacheSetting;
+use edno_npm_cache::NpmCacheSys;
+use edno_npm_cache::NpmPackumentFormat;
+use edno_npm_cache::RegistryInfoProvider;
+use edno_npm_cache::TarballCache;
+use edno_npm_cache::TarballCacheReporter;
+use edno_npmrc::ResolvedNpmRc;
+use edno_resolver::factory::ResolverFactory;
+use edno_resolver::factory::WorkspaceFactory;
+use edno_resolver::factory::WorkspaceFactorySys;
+use edno_resolver::lockfile::LockfileLock;
+use edno_resolver::lockfile::LockfileNpmPackageInfoApiAdapter;
 use deno_semver::jsr::JsrDepPackageReq;
 use deno_semver::package::PackageKind;
 use deno_semver::package::PackageReq;
@@ -59,7 +59,7 @@ pub struct NpmInstallerFactoryOptions {
   pub clean_on_install: bool,
   /// When loading the npm snapshot from a lockfile, merge equivalent
   /// peer-dep variants (cycle-unrolling artifacts) onto a single
-  /// canonical entry. Should be true only on install paths — `deno run`
+  /// canonical entry. Should be true only on install paths — `edno run`
   /// must not silently rewrite the user's lockfile.
   pub dedup_lockfile_peer_variants: bool,
   pub lifecycle_scripts_config: LifecycleScriptsConfig,
@@ -72,17 +72,17 @@ pub struct NpmInstallerFactoryOptions {
 }
 
 pub trait InstallReporter:
-  deno_npm::resolution::Reporter
+  edno_npm::resolution::Reporter
   + deno_graph::source::Reporter
-  + deno_npm_cache::TarballCacheReporter
+  + edno_npm_cache::TarballCacheReporter
   + crate::InstallProgressReporter
 {
 }
 
 impl<
-  T: deno_npm::resolution::Reporter
+  T: edno_npm::resolution::Reporter
     + deno_graph::source::Reporter
-    + deno_npm_cache::TarballCacheReporter
+    + edno_npm_cache::TarballCacheReporter
     + crate::InstallProgressReporter,
 > InstallReporter for T
 {
@@ -312,10 +312,10 @@ impl<
             PackagesAllowedScripts::Some(package_reqs.clone())
           }
           PackagesAllowedScripts::None => match allow_scripts.allow {
-            deno_config::deno_json::AllowScriptsValueConfig::All => {
+            edno_config::edno_json::AllowScriptsValueConfig::All => {
               PackagesAllowedScripts::All
             }
-            deno_config::deno_json::AllowScriptsValueConfig::Limited(deps) => {
+            edno_config::edno_json::AllowScriptsValueConfig::Limited(deps) => {
               let reqs = jsr_deps_to_reqs(deps);
               if reqs.is_empty() {
                 PackagesAllowedScripts::None
@@ -450,7 +450,7 @@ impl<
           self
             .install_reporter
             .as_ref()
-            .map(|r| r.clone() as Arc<dyn deno_npm::resolution::Reporter>),
+            .map(|r| r.clone() as Arc<dyn edno_npm::resolution::Reporter>),
           self.resolver_factory.npm_resolution().clone(),
           self.maybe_lockfile().await?.cloned(),
         )))
@@ -558,7 +558,7 @@ impl<
         self
           .install_reporter
           .as_ref()
-          .map(|r| r.clone() as Arc<dyn deno_npm_cache::TarballCacheReporter>),
+          .map(|r| r.clone() as Arc<dyn edno_npm_cache::TarballCacheReporter>),
       ))
     })
   }

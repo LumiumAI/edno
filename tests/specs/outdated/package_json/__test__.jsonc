@@ -10,9 +10,9 @@
         {
           "args": [
             "eval",
-            "const now = Deno.readTextFileSync('./deno.lock'); console.log(now.trim());"
+            "const now = Edno.readTextFileSync('./edno.lock'); console.log(now.trim());"
           ],
-          "output": "deno.lock.orig.out"
+          "output": "edno.lock.orig.out"
         }
       ]
     },
@@ -65,8 +65,8 @@
           "output": "./update_compatible/package.json.out"
         },
         {
-          "args": "-A ./print_file.ts ./deno.lock",
-          "output": "./update_compatible/deno.lock.out"
+          "args": "-A ./print_file.ts ./edno.lock",
+          "output": "./update_compatible/edno.lock.out"
         }
       ]
     },
@@ -85,8 +85,8 @@
           "output": "update_latest/package.json.out"
         },
         {
-          "args": "-A ./print_file.ts ./deno.lock",
-          "output": "update_latest/deno.lock.out"
+          "args": "-A ./print_file.ts ./edno.lock",
+          "output": "update_latest/edno.lock.out"
         }
       ]
     },
@@ -97,7 +97,7 @@
           "output": "[WILDCARD]"
         },
         {
-          "args": "outdated --update --latest @denotest/has-patch* aliased@0.7.0",
+          "args": "outdated --update --latest @ednotest/has-patch* aliased@0.7.0",
           "output": "filtered/update.out"
         },
         {

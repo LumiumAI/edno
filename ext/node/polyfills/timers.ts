@@ -22,30 +22,30 @@ const {
 // `enable()`. Node's MockTimers likewise intercepts the timers modules, not
 // just the globals. `null` means no mocking is active.
 let mockTimers = null;
-const kInstallMockTimers = SymbolFor("Deno.internal.node.mockTimers");
+const kInstallMockTimers = SymbolFor("Edno.internal.node.mockTimers");
 const {
   getActiveTimer,
   Immediate,
   kDestroy,
   Timeout,
-} = core.loadExtScript("ext:deno_node/internal/timers.mjs");
+} = core.loadExtScript("ext:edno_node/internal/timers.mjs");
 const {
   validateAbortSignal,
   validateBoolean,
   validateFunction,
   validateNumber,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { kEmptyObject, promisify } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const {
   AbortError,
   ERR_ILLEGAL_CONSTRUCTOR,
   ERR_INVALID_THIS,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const lazyEventTarget = core.createLazyLoader(
-  "ext:deno_node/internal/event_target.mjs",
+  "ext:edno_node/internal/event_target.mjs",
 );
 
 interface TimerOptions {

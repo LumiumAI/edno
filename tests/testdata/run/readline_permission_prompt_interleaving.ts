@@ -7,7 +7,7 @@ const rl = createInterface({
 
 setTimeout(() => {
   try {
-    Deno.readTextFileSync("/etc/npm/config");
+    Edno.readTextFileSync("/etc/npm/config");
   } catch (err) {
     console.log(`READ_ERROR:${err instanceof Error ? err.name : err}`);
   }

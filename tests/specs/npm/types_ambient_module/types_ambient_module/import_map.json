@@ -1,5 +1,5 @@
 {
   "imports": {
-    "types-ambient": "npm:@denotest/types-ambient"
+    "types-ambient": "npm:@ednotest/types-ambient"
   }
 }

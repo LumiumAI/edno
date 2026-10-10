@@ -1,13 +1,13 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [{
-    // The cwd deno.json sets a cutoff between the two publish dates, so 2.0.0
+    // The cwd edno.json sets a cutoff between the two publish dates, so 2.0.0
     // (2025-06-01) is excluded and 1.0.0 (2025-01-01) is selected — same as
-    // `deno run` would resolve with this config.
-    "args": "x -y npm:@denotest/x-min-dep-age",
+    // `edno run` would resolve with this config.
+    "args": "x -y npm:@ednotest/x-min-dep-age",
     "output": "[WILDCARD]\n1.0.0\n"
   }]
 }

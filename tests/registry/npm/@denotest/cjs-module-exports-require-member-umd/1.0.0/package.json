@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/cjs-module-exports-require-member-umd",
+  "name": "@ednotest/cjs-module-exports-require-member-umd",
   "version": "1.0.0",
   "main": "main.js"
 }

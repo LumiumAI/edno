@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/permissions-outside-package",
+  "name": "@ednotest/permissions-outside-package",
   "version": "1.0.0",
   "main": "./index.js"
 }

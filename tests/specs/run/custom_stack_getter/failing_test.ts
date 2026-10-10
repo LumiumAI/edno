@@ -1,4 +1,4 @@
-Deno.test("custom stack getter", () => {
+Edno.test("custom stack getter", () => {
   const err = new Error("boom");
   Object.defineProperty(err, "stack", {
     get() {

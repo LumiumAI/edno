@@ -1,7 +1,7 @@
-import { add } from "@denotest/add";
-import { getValue } from "@denotest/esm-basic";
+import { add } from "@ednotest/add";
+import { getValue } from "@ednotest/esm-basic";
 
-import { subtract } from "jsr:@denotest/subtract";
+import { subtract } from "jsr:@ednotest/subtract";
 
 console.log(add(3, 2));
 console.log(getValue());

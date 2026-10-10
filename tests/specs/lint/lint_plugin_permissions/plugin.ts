@@ -1,4 +1,4 @@
-const envVar = Deno.env.get("MY_ENV_VAR");
+const envVar = Edno.env.get("MY_ENV_VAR");
 console.log(`Environment Variable MY_ENV_VAR: ${envVar}`);
 
 export default {
@@ -6,7 +6,7 @@ export default {
   rules: {
     "my-rule": {
       create(context) {
-        const readmeContent = Deno.readTextFileSync("./README.md");
+        const readmeContent = Edno.readTextFileSync("./README.md");
         console.log(`Content of README.md: ${readmeContent}`);
 
         return {

@@ -1,1 +1,1 @@
-import "@denotest/dual-cjs-esm-dep";
+import "@ednotest/dual-cjs-esm-dep";

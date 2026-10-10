@@ -13,7 +13,7 @@
     op_timer_untrack,
     op_timer_now,
     op_leak_tracing_submit,
-  } = window.Deno.core.ops;
+  } = window.Edno.core.ops;
   const {
     ErrorCaptureStackTrace,
     StringPrototypeSlice,

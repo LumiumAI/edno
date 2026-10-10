@@ -1,3 +1,3 @@
-Deno.bench(function foo() {
+Edno.bench(function foo() {
   const x: string = "foo";
 });

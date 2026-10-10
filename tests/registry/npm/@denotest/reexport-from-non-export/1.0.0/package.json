@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/reexport-from-non-export",
+  "name": "@ednotest/reexport-from-non-export",
   "version": "1.0.0",
   "exports": {
     ".": {
@@ -8,6 +8,6 @@
     }
   },
   "dependencies": {
-    "@denotest/types-exports-import-types": "*"
+    "@ednotest/types-exports-import-types": "*"
   }
 }

@@ -26,7 +26,7 @@ const spanArray = [];
 Object.defineProperty(spanArray, 0, {
   get() {
     spanGetterCount++;
-    Deno.cwd();
+    Edno.cwd();
     span.end();
     return "trigger";
   },
@@ -137,7 +137,7 @@ const metricArray: string[] = [];
 Object.defineProperty(metricArray, 0, {
   get() {
     metricGetterCount++;
-    Deno.cwd();
+    Edno.cwd();
     nestedCounter.add(1);
     return "metric-trigger";
   },
@@ -187,7 +187,7 @@ const observableCallback = (result: ObservableResult) => {
     Object.defineProperty(observableArray, 0, {
       get() {
         observableGetterCount++;
-        Deno.cwd();
+        Edno.cwd();
         nestedCounter.add(1);
         return "observable-trigger";
       },

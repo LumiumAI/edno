@@ -3,7 +3,7 @@
 // @ts-check
 /// <reference path="../webidl/internal.d.ts" />
 /// <reference path="./06_streams_types.d.ts" />
-/// <reference path="../../cli/tsc/dts/lib.deno_web.d.ts" />
+/// <reference path="../../cli/tsc/dts/lib.edno_web.d.ts" />
 /// <reference lib="esnext" />
 
 (function () {
@@ -92,9 +92,9 @@ const {
   queueMicrotask,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const { structuredClone } = core.loadExtScript(
-  "ext:deno_web/02_structured_clone.js",
+  "ext:edno_web/02_structured_clone.js",
 );
 const {
   AbortSignalPrototype,
@@ -102,13 +102,13 @@ const {
   newSignal,
   remove,
   signalAbort,
-} = core.loadExtScript("ext:deno_web/03_abort_signal.js");
+} = core.loadExtScript("ext:edno_web/03_abort_signal.js");
 
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 const { assert, AssertionError } = core.loadExtScript(
-  "ext:deno_web/00_infra.js",
+  "ext:edno_web/00_infra.js",
 );
 
 /** @template T */
@@ -1052,7 +1052,7 @@ async function readableStreamReadFn(reader, sink, onError) {
       // this hook the error is otherwise swallowed: it is converted to a
       // plain message, pushed into the channel and used only to abort the
       // underlying transport, so e.g. a throwing `TransformStream` feeding a
-      // `Deno.serve` response body would fail with nothing implicating the
+      // `Edno.serve` response body would fail with nothing implicating the
       // faulty callback. See https://github.com/denoland/deno/issues/19867.
       if (onError !== undefined) {
         onError(error);
@@ -1806,7 +1806,7 @@ function readableByteStreamControllerEnqueue(controller, chunk) {
   const transferredBuffer = ArrayBufferPrototypeTransferToFixedLength(buffer);
   if (controller[_pendingPullIntos].size !== 0) {
     const firstPendingPullInto = controller[_pendingPullIntos].peek();
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     if (isDetachedBuffer(firstPendingPullInto.buffer)) {
       throw new TypeError(
         "The BYOB request's buffer has been detached and so cannot be filled with an enqueued chunk",
@@ -1814,7 +1814,7 @@ function readableByteStreamControllerEnqueue(controller, chunk) {
     }
     readableByteStreamControllerInvalidateBYOBRequest(controller);
     firstPendingPullInto.buffer = ArrayBufferPrototypeTransferToFixedLength(
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       firstPendingPullInto.buffer,
     );
     if (firstPendingPullInto.readerType === "none") {
@@ -1938,9 +1938,9 @@ function readableByteStreamControllerEnqueueDetachedPullIntoToQueue(
   if (pullIntoDescriptor.bytesFilled > 0) {
     readableByteStreamControllerEnqueueClonedChunkToQueue(
       controller,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       pullIntoDescriptor.buffer,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       pullIntoDescriptor.byteOffset,
       pullIntoDescriptor.bytesFilled,
     );
@@ -1959,11 +1959,11 @@ function readableByteStreamControllerGetBYOBRequest(controller) {
   ) {
     const firstDescriptor = controller[_pendingPullIntos].peek();
     const view = new Uint8Array(
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       firstDescriptor.buffer,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       firstDescriptor.byteOffset + firstDescriptor.bytesFilled,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       firstDescriptor.byteLength - firstDescriptor.bytesFilled,
     );
     const byobRequest = new ReadableStreamBYOBRequest(_brand);
@@ -2542,9 +2542,9 @@ function readableByteStreamControllerPullInto(
   }
   if (stream[_state] === "closed") {
     const emptyView = new ctor(
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       pullIntoDescriptor.buffer,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       pullIntoDescriptor.byteOffset,
       0,
     );
@@ -2603,14 +2603,14 @@ function readableByteStreamControllerRespond(controller, bytesWritten) {
     }
     if (
       (firstDescriptor.bytesFilled + bytesWritten) >
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         firstDescriptor.byteLength
     ) {
       throw new RangeError('"bytesWritten" out of range');
     }
   }
   firstDescriptor.buffer = ArrayBufferPrototypeTransferToFixedLength(
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     firstDescriptor.buffer,
   );
   readableByteStreamControllerRespondInternal(controller, bytesWritten);
@@ -2629,7 +2629,7 @@ function readableByteStreamControllerRespondInReadableState(
 ) {
   assert(
     (pullIntoDescriptor.bytesFilled + bytesWritten) <=
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       pullIntoDescriptor.byteLength,
   );
   readableByteStreamControllerFillHeadPullIntoDescriptor(
@@ -2654,12 +2654,12 @@ function readableByteStreamControllerRespondInReadableState(
   const remainderSize = pullIntoDescriptor.bytesFilled %
     pullIntoDescriptor.elementSize;
   if (remainderSize > 0) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const end = pullIntoDescriptor.byteOffset +
       pullIntoDescriptor.bytesFilled;
     readableByteStreamControllerEnqueueClonedChunkToQueue(
       controller,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       pullIntoDescriptor.buffer,
       end - remainderSize,
       remainderSize,
@@ -2685,7 +2685,7 @@ function readableByteStreamControllerRespondInternal(
   bytesWritten,
 ) {
   const firstDescriptor = controller[_pendingPullIntos].peek();
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   assert(canTransferArrayBuffer(firstDescriptor.buffer));
   readableByteStreamControllerInvalidateBYOBRequest(controller);
   const state = controller[_stream][_state];
@@ -2812,7 +2812,7 @@ function readableByteStreamControllerRespondWithNewView(controller, view) {
       );
     }
   }
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   if (firstDescriptor.byteOffset + firstDescriptor.bytesFilled !== byteOffset) {
     throw new RangeError(
       "The region specified by view does not match byobRequest",
@@ -2823,7 +2823,7 @@ function readableByteStreamControllerRespondWithNewView(controller, view) {
       "The buffer of view has different capacity than byobRequest",
     );
   }
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   if (firstDescriptor.bytesFilled + byteLength > firstDescriptor.byteLength) {
     throw new RangeError(
       "The region specified by view is larger than byobRequest",
@@ -2853,7 +2853,7 @@ function readableByteStreamControllerFillPullIntoDescriptorFromQueue(
 ) {
   const maxBytesToCopy = MathMin(
     controller[_queueTotalSize],
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled,
   );
   const maxBytesFilled = pullIntoDescriptor.bytesFilled + maxBytesToCopy;
@@ -2872,29 +2872,29 @@ function readableByteStreamControllerFillPullIntoDescriptorFromQueue(
     const headOfQueue = queue.peek();
     const bytesToCopy = MathMin(
       totalBytesToCopyRemaining,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       headOfQueue.byteLength,
     );
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const destStart = pullIntoDescriptor.byteOffset +
       pullIntoDescriptor.bytesFilled;
 
     const destBuffer = new Uint8Array(
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       pullIntoDescriptor.buffer,
       destStart,
       bytesToCopy,
     );
     const srcBuffer = new Uint8Array(
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       headOfQueue.buffer,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       headOfQueue.byteOffset,
       bytesToCopy,
     );
     destBuffer.set(srcBuffer);
 
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     if (headOfQueue.byteLength === bytesToCopy) {
       queue.dequeue();
     } else {
@@ -2928,15 +2928,15 @@ function readableByteStreamControllerFillReadRequestFromQueue(
 ) {
   assert(controller[_queueTotalSize] > 0);
   const entry = controller[_queue].dequeue();
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   controller[_queueTotalSize] -= entry.byteLength;
   readableByteStreamControllerHandleQueueDrain(controller);
   const view = new Uint8Array(
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     entry.buffer,
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     entry.byteOffset,
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     entry.byteLength,
   );
   readRequest.chunkSteps(view);
@@ -2970,16 +2970,16 @@ function readableByteStreamControllerConvertPullIntoDescriptor(
 ) {
   const bytesFilled = pullIntoDescriptor.bytesFilled;
   const elementSize = pullIntoDescriptor.elementSize;
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   assert(bytesFilled <= pullIntoDescriptor.byteLength);
   assert((bytesFilled % elementSize) === 0);
   const buffer = ArrayBufferPrototypeTransferToFixedLength(
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     pullIntoDescriptor.buffer,
   );
   return new pullIntoDescriptor.viewConstructor(
     buffer,
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     pullIntoDescriptor.byteOffset,
     bytesFilled / elementSize,
   );
@@ -3134,12 +3134,12 @@ function readableStreamHasDefaultReader(stream) {
 
 /**
  * Fast path for `readableStreamPipeTo` when both the source and the sink are
- * backed by a `deno_core::Resource`. The entire byte pump happens in Rust via
+ * backed by a `edno_core::Resource`. The entire byte pump happens in Rust via
  * `op_pipe`, avoiding a copy of every chunk into and back out of JavaScript.
  * Close / abort / cancel semantics are handled here to match the generic
  * algorithm.
  *
- * When a `signal` is supplied it is wired to a `deno_core` cancel handle so an
+ * When a `signal` is supplied it is wired to a `edno_core` cancel handle so an
  * abort mid-pump unblocks `op_pipe` promptly; the aborted transfer then tears
  * down both ends with `signal.reason`, honoring the prevent* flags.
  *
@@ -3737,10 +3737,10 @@ function readableStreamDefaultTee(stream, cloneForBranch2) {
   /** @type {any} */
   let reason2;
   /** @type {ReadableStream<R>} */
-  // deno-lint-ignore prefer-const
+  // edno-lint-ignore prefer-const
   let branch1;
   /** @type {ReadableStream<R>} */
-  // deno-lint-ignore prefer-const
+  // edno-lint-ignore prefer-const
   let branch2;
 
   /** @type {Deferred<void>} */
@@ -5925,7 +5925,7 @@ class ByteLengthQueuingStrategy {
     return WeakMapPrototypeGet(byteSizeFunctionWeakMap, this[_globalObject]);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -5953,7 +5953,7 @@ function initializeByteLengthSizeFunction(globalObject) {
   if (WeakMapPrototypeHas(byteSizeFunctionWeakMap, globalObject)) {
     return;
   }
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   const size = (chunk) => chunk.byteLength;
   WeakMapPrototypeSet(byteSizeFunctionWeakMap, globalObject, size);
 }
@@ -5982,7 +5982,7 @@ class CountQueuingStrategy {
     return WeakMapPrototypeGet(countSizeFunctionWeakMap, this[_globalObject]);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -6122,7 +6122,7 @@ class ReadableStream {
 
     const stream = createReadableStream(noop, async () => {
       // Let nextPromise be the result of getting the next value of iterator.
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       const res = await iter.next();
       if (res.done) {
         // end of iteration
@@ -6137,7 +6137,7 @@ class ReadableStream {
       }
     }, async (reason) => {
       // Return the result of closing iterator with reason.
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       await iter.return(reason);
     }, 0);
     return stream;
@@ -6308,7 +6308,7 @@ class ReadableStream {
     return iterator;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     const isBranded = ObjectPrototypeIsPrototypeOf(
       ReadableStreamPrototype,
       this,
@@ -6484,7 +6484,7 @@ class ReadableStreamDefaultReader {
     return readableStreamReaderGenericCancel(this, reason);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -6671,7 +6671,7 @@ class ReadableStreamBYOBReader {
     return readableStreamReaderGenericCancel(this, reason);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -6905,7 +6905,7 @@ class ReadableByteStreamController {
     readableByteStreamControllerError(this, e);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -7069,7 +7069,7 @@ class ReadableStreamDefaultController {
     readableStreamDefaultControllerError(this, e);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -7241,7 +7241,7 @@ class TransformStream {
     return this[_writable];
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -7318,7 +7318,7 @@ class TransformStreamDefaultController {
     transformStreamDefaultControllerTerminate(this);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -7471,7 +7471,7 @@ class WritableStream {
     return acquireWritableStreamDefaultWriter(this);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -7616,7 +7616,7 @@ class WritableStreamDefaultWriter {
     return writableStreamDefaultWriterWrite(this, chunk);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -7694,7 +7694,7 @@ class WritableStreamDefaultController {
     writableStreamDefaultControllerError(this, e);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -8198,7 +8198,7 @@ internals.writableStreamForRid = writableStreamForRid;
 // keeps message_port snapshot-light.
 {
   const { markNotSerializable } = core.loadExtScript(
-    "ext:deno_web/13_message_port.js",
+    "ext:edno_web/13_message_port.js",
   );
   markNotSerializable(ReadableStream.prototype);
   markNotSerializable(WritableStream.prototype);

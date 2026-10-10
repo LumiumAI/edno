@@ -1,5 +1,5 @@
-Download http://localhost:4261/@denotest%2fbasic
-error: Failed loading http://localhost:4261/@denotest%2fbasic for package "@denotest/basic"
+Download http://localhost:4261/@ednotest%2fbasic
+error: Failed loading http://localhost:4261/@ednotest%2fbasic for package "@ednotest/basic"
 
 Caused by:
     Failed to read npmrc certfile '/nonexistent/path/client.pem': [WILDCARD]

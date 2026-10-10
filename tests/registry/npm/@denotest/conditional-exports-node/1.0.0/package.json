@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/conditional-exports",
+  "name": "@ednotest/conditional-exports",
   "version": "1.0.0",
   "type": "module",
   "exports": {

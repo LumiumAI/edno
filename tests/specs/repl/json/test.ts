@@ -4,9 +4,9 @@ const {
   writableStreamForRid,
   readableStreamForRid,
   core: { close },
-} = Deno[Deno.internal];
+} = Edno[Edno.internal];
 
-const command = new Deno.Command(Deno.execPath(), {
+const command = new Edno.Command(Edno.execPath(), {
   args: [
     "repl",
     "--json",

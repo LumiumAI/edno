@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/cli-with-permissions",
+  "name": "@ednotest/cli-with-permissions",
   "version": "1.0.0",
   "bin": "./index.js"
 }

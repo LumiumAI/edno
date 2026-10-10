@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 import assert from "node:assert";
 import test, {

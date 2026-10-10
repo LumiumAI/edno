@@ -12,7 +12,7 @@ if (process.argv[3] === "child") {
   // net.Server handle"; we now reconstruct a working net.Server around the
   // inherited fd. We don't do a connect round-trip here: closing the parent's
   // server unlinks the socket path (so the path stops routing), which is an
-  // inherent property of transferring unix-socket servers, not a Deno bug.
+  // inherent property of transferring unix-socket servers, not a Edno bug.
   process.on("message", (msg, server) => {
     const ok = server instanceof net.Server &&
       typeof server.address === "function";
@@ -30,7 +30,7 @@ if (process.argv[3] === "child") {
 } else {
   const sockPath = path.join(
     os.tmpdir(),
-    `deno-ipc-pipe-${process.pid}.sock`,
+    `edno-ipc-pipe-${process.pid}.sock`,
   );
 
   const server = net.createServer();

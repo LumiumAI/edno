@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/one-bin",
+  "name": "@ednotest/one-bin",
   "version": "1.0.0",
   "bin": {
     "thing-bin": "thing-bin.js"

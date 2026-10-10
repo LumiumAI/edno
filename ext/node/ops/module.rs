@@ -8,8 +8,8 @@ use deno_ast::SourceMapOption;
 use deno_ast::TranspileModuleOptions;
 use deno_ast::TranspileOptions;
 use deno_ast::TypeStripOptions;
-use deno_core::op2;
-use deno_core::url::Url;
+use edno_core::op2;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 
 deno_error::js_error_wrapper!(

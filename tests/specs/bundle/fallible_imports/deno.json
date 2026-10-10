@@ -1,6 +1,6 @@
 {
   "nodeModulesDir": "manual",
   "imports": {
-    "@denotest/fallible-imports": "npm:@denotest/fallible-imports"
+    "@ednotest/fallible-imports": "npm:@ednotest/fallible-imports"
   }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/cjs-exportstar-reexport",
+  "name": "@ednotest/cjs-exportstar-reexport",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "@denotest/cjs-reexport-noext-main": "1.0.0"
+    "@ednotest/cjs-reexport-noext-main": "1.0.0"
   }
 }

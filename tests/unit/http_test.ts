@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// @ts-nocheck `Deno.serveHttp()` was soft-removed in Deno 2.
+// @ts-nocheck `Edno.serveHttp()` was soft-removed in Edno 2.
 
-// deno-lint-ignore-file no-deprecated-deno-api
+// edno-lint-ignore-file no-deprecated-edno-api
 
 import { Buffer, type Reader } from "@std/io";
 import { TextProtoReader } from "../testdata/run/textproto.ts";
@@ -24,9 +24,9 @@ const listenPort2 = 4508;
 const {
   buildCaseInsensitiveCommaValueFinder,
   // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-} = Deno[Deno.internal];
+} = Edno[Edno.internal];
 
-async function writeRequestAndReadResponse(conn: Deno.Conn): Promise<string> {
+async function writeRequestAndReadResponse(conn: Edno.Conn): Promise<string> {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
@@ -53,14 +53,14 @@ async function writeRequestAndReadResponse(conn: Deno.Conn): Promise<string> {
   return decoder.decode(dest.bytes());
 }
 
-Deno.test({ permissions: { net: true } }, async function httpServerBasic() {
-  // deno-lint-ignore no-explicit-any
+Edno.test({ permissions: { net: true } }, async function httpServerBasic() {
+  // edno-lint-ignore no-explicit-any
   let httpConn: any;
   const promise = (async () => {
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const conn = await listener.accept();
     listener.close();
-    httpConn = Deno.serveHttp(conn);
+    httpConn = Edno.serveHttp(conn);
     const reqEvent = await httpConn.nextRequest();
     assert(reqEvent);
     const { request, respondWith } = reqEvent;
@@ -86,15 +86,15 @@ Deno.test({ permissions: { net: true } }, async function httpServerBasic() {
 });
 
 // https://github.com/denoland/deno/issues/15107
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpLazyHeadersIssue15107() {
     let headers: Headers;
     const promise = (async () => {
-      const listener = Deno.listen({ port: 2333 });
+      const listener = Edno.listen({ port: 2333 });
       const conn = await listener.accept();
       listener.close();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request } = e;
@@ -103,7 +103,7 @@ Deno.test(
       httpConn!.close();
     })();
 
-    const conn = await Deno.connect({ port: 2333 });
+    const conn = await Edno.connect({ port: 2333 });
     // Send GET request with a body + content-length.
     const encoder = new TextEncoder();
     const body =
@@ -116,14 +116,14 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpReadHeadersAfterClose() {
     const promise = (async () => {
-      const listener = Deno.listen({ port: 2334 });
+      const listener = Edno.listen({ port: 2334 });
       const conn = await listener.accept();
       listener.close();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -135,7 +135,7 @@ Deno.test(
       httpConn!.close();
     })();
 
-    const conn = await Deno.connect({ port: 2334 });
+    const conn = await Edno.connect({ port: 2334 });
     // Send GET request with a body + content-length.
     const encoder = new TextEncoder();
     const body =
@@ -147,16 +147,16 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerGetRequestBody() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -164,7 +164,7 @@ Deno.test(
       await respondWith(new Response("", { headers: {} }));
     })();
 
-    const conn = await Deno.connect({ port: listenPort });
+    const conn = await Edno.connect({ port: listenPort });
     // Send GET request with a body + content-length.
     const encoder = new TextEncoder();
     const body =
@@ -183,7 +183,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerStreamResponse() {
     const stream = new TransformStream();
@@ -192,12 +192,12 @@ Deno.test(
     writer.write(new TextEncoder().encode("world"));
     writer.close();
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const evt = await httpConn.nextRequest();
       assert(evt);
       const { request, respondWith } = evt;
@@ -214,7 +214,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerStreamRequest() {
     const stream = new TransformStream();
@@ -223,10 +223,10 @@ Deno.test(
     writer.write(new TextEncoder().encode("world"));
     writer.close();
 
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const evt = await httpConn.nextRequest();
       assert(evt);
       const { request, respondWith } = evt;
@@ -253,15 +253,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerStreamDuplex() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const evt = await httpConn.nextRequest();
       assert(evt);
       const { request, respondWith } = evt;
@@ -295,10 +295,10 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { net: true } }, async function httpServerClose() {
-  const listener = Deno.listen({ port: listenPort });
-  const client = await Deno.connect({ port: listenPort });
-  const httpConn = Deno.serveHttp(await listener.accept());
+Edno.test({ permissions: { net: true } }, async function httpServerClose() {
+  const listener = Edno.listen({ port: listenPort });
+  const client = await Edno.connect({ port: listenPort });
+  const httpConn = Edno.serveHttp(await listener.accept());
   client.close();
   const evt = await httpConn.nextRequest();
   assertEquals(evt, null);
@@ -306,18 +306,18 @@ Deno.test({ permissions: { net: true } }, async function httpServerClose() {
   listener.close();
 });
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerInvalidMethod() {
-    const listener = Deno.listen({ port: listenPort });
-    const client = await Deno.connect({ port: listenPort });
-    const httpConn = Deno.serveHttp(await listener.accept());
+    const listener = Edno.listen({ port: listenPort });
+    const client = await Edno.connect({ port: listenPort });
+    const httpConn = Edno.serveHttp(await listener.accept());
     await client.write(new Uint8Array([1, 2, 3]));
     await assertRejects(
       async () => {
         await httpConn.nextRequest();
       },
-      Deno.errors.Http,
+      Edno.errors.Http,
       "invalid HTTP method parsed",
     );
     // Note httpConn is automatically closed when it errors.
@@ -326,21 +326,21 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, net: true } },
   async function httpServerWithTls() {
     const hostname = "localhost";
     const port = listenPort;
 
     const promise = (async () => {
-      const listener = Deno.listenTls({
+      const listener = Edno.listenTls({
         hostname,
         port,
-        cert: Deno.readTextFileSync("tests/testdata/tls/localhost.crt"),
-        key: Deno.readTextFileSync("tests/testdata/tls/localhost.key"),
+        cert: Edno.readTextFileSync("tests/testdata/tls/localhost.crt"),
+        key: Edno.readTextFileSync("tests/testdata/tls/localhost.key"),
       });
       const conn = await listener.accept();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const evt = await httpConn.nextRequest();
       assert(evt);
       const { respondWith } = evt;
@@ -354,8 +354,8 @@ Deno.test(
       listener.close();
     })();
 
-    const caCert = Deno.readTextFileSync("tests/testdata/tls/RootCA.pem");
-    const client = Deno.createHttpClient({ caCerts: [caCert] });
+    const caCert = Edno.readTextFileSync("tests/testdata/tls/RootCA.pem");
+    const client = Edno.createHttpClient({ caCerts: [caCert] });
     const resp = await fetch(`https://${hostname}:${port}/`, {
       headers: { "connection": "close" },
       client,
@@ -367,15 +367,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerRegressionHang() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const event = await httpConn.nextRequest();
       assert(event);
       const { request, respondWith } = event;
@@ -397,13 +397,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerCancelBodyOnResponseFailure() {
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const event = await httpConn.nextRequest();
       assert(event);
       const { respondWith } = event;
@@ -428,7 +428,7 @@ Deno.test(
             ),
           );
         },
-        Deno.errors.Http,
+        Edno.errors.Http,
         cancelReason!,
       );
       assert(cancelReason!);
@@ -442,13 +442,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerNextRequestErrorExposedInResponse() {
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const event = await httpConn.nextRequest();
       assert(event);
       // Start polling for the next request before awaiting response.
@@ -473,7 +473,7 @@ Deno.test(
             ),
           );
         },
-        Deno.errors.Http,
+        Edno.errors.Http,
         "connection closed",
       );
       // The error from `op_http_accept` reroutes to `respondWith()`.
@@ -487,15 +487,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerEmptyBlobResponse() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const event = await httpConn.nextRequest();
       assert(event);
       const { respondWith } = event;
@@ -511,16 +511,16 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerNextRequestResolvesOnClose() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const httpConnList: any[] = [];
 
-    async function serve(l: Deno.Listener) {
+    async function serve(l: Edno.Listener) {
       for await (const conn of l) {
         (async () => {
-          const c = Deno.serveHttp(conn);
+          const c = Edno.serveHttp(conn);
           httpConnList.push(c);
           for await (const { respondWith } of c) {
             respondWith(new Response("hello"));
@@ -529,7 +529,7 @@ Deno.test(
       }
     }
 
-    const l = Deno.listen({ port: listenPort });
+    const l = Edno.listen({ port: listenPort });
     serve(l);
 
     await delay(300);
@@ -544,7 +544,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   // Issue: https://github.com/denoland/deno/issues/10870
   async function httpServerHang() {
@@ -563,14 +563,14 @@ Deno.test(
       });
     }
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const httpConns: any[] = [];
     const promise = (async () => {
       let count = 0;
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       for await (const conn of listener) {
         (async () => {
-          const httpConn = Deno.serveHttp(conn);
+          const httpConn = Edno.serveHttp(conn);
           httpConns.push(httpConn);
           for await (const { respondWith } of httpConn) {
             respondWith(new Response(stream("hello")));
@@ -584,7 +584,7 @@ Deno.test(
       }
     })();
 
-    const clientConn = await Deno.connect({ port: listenPort });
+    const clientConn = await Edno.connect({ port: listenPort });
 
     const r1 = await writeRequestAndReadResponse(clientConn);
     assertEquals(r1, "hello");
@@ -600,7 +600,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   // Issue: https://github.com/denoland/deno/issues/10930
   async function httpServerStreamingResponse() {
@@ -618,7 +618,7 @@ Deno.test(
       Promise.withResolvers<void>(),
     ];
 
-    async function writeRequest(conn: Deno.Conn) {
+    async function writeRequest(conn: Edno.Conn) {
       const encoder = new TextEncoder();
       const decoder = new TextDecoder();
 
@@ -668,19 +668,19 @@ Deno.test(
       }).pipeThrough(new TextEncoderStream());
     }
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const finished = (async () => {
       const conn = await listener.accept();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const requestEvent = await httpConn.nextRequest();
       const { respondWith } = requestEvent!;
       await respondWith(new Response(periodicStream()));
     })();
 
     // start a client
-    const clientConn = await Deno.connect({ port: listenPort });
+    const clientConn = await Edno.connect({ port: listenPort });
 
     const r1 = await writeRequest(clientConn);
     assertEquals(r1, "0\n1\n2\n");
@@ -693,16 +693,16 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpRequestLatin1Headers() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const reqEvent = await httpConn.nextRequest();
       assert(reqEvent);
       const { request, respondWith } = reqEvent;
@@ -712,7 +712,7 @@ Deno.test(
       );
     })();
 
-    const clientConn = await Deno.connect({ port: listenPort });
+    const clientConn = await Edno.connect({ port: listenPort });
     const requestText =
       `GET / HTTP/1.1\r\nHost: 127.0.0.1:${listenPort}\r\nX-Header-Test: á\r\n\r\n`;
     const requestBytes = new Uint8Array(requestText.length);
@@ -743,16 +743,16 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerRequestWithoutPath() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const reqEvent = await httpConn.nextRequest();
       assert(reqEvent);
       const { request, respondWith } = reqEvent;
@@ -764,9 +764,9 @@ Deno.test(
       await respondWith(new Response());
     })();
 
-    const clientConn = await Deno.connect({ port: listenPort });
+    const clientConn = await Edno.connect({ port: listenPort });
 
-    async function writeRequest(conn: Deno.Conn) {
+    async function writeRequest(conn: Edno.Conn) {
       const encoder = new TextEncoder();
 
       const w = new BufWriter(conn);
@@ -794,19 +794,19 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { net: true } }, async function httpServerWebSocket() {
+Edno.test({ permissions: { net: true } }, async function httpServerWebSocket() {
   const promise = (async () => {
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const conn = await listener.accept();
     listener.close();
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
     const reqEvent = await httpConn.nextRequest();
     assert(reqEvent);
     const { request, respondWith } = reqEvent;
     const {
       response,
       socket,
-    } = Deno.upgradeWebSocket(request);
+    } = Edno.upgradeWebSocket(request);
     socket.onerror = () => fail();
     socket.onmessage = (m) => {
       socket.send(m.data);
@@ -829,7 +829,7 @@ Deno.test({ permissions: { net: true } }, async function httpServerWebSocket() {
   await promise;
 });
 
-Deno.test(function httpUpgradeWebSocket() {
+Edno.test(function httpUpgradeWebSocket() {
   const request = new Request("https://deno.land/", {
     headers: {
       connection: "Upgrade",
@@ -837,7 +837,7 @@ Deno.test(function httpUpgradeWebSocket() {
       "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==",
     },
   });
-  const { response } = Deno.upgradeWebSocket(request);
+  const { response } = Edno.upgradeWebSocket(request);
   assertEquals(response.status, 101);
   assertEquals(response.headers.get("connection"), "Upgrade");
   assertEquals(response.headers.get("upgrade"), "websocket");
@@ -848,7 +848,7 @@ Deno.test(function httpUpgradeWebSocket() {
   response.headers.set("x-new-header", "hello");
 });
 
-Deno.test(function httpUpgradeWebSocketMultipleConnectionOptions() {
+Edno.test(function httpUpgradeWebSocketMultipleConnectionOptions() {
   const request = new Request("https://deno.land/", {
     headers: {
       connection: "keep-alive, upgrade",
@@ -856,11 +856,11 @@ Deno.test(function httpUpgradeWebSocketMultipleConnectionOptions() {
       "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==",
     },
   });
-  const { response } = Deno.upgradeWebSocket(request);
+  const { response } = Edno.upgradeWebSocket(request);
   assertEquals(response.status, 101);
 });
 
-Deno.test(function httpUpgradeWebSocketMultipleUpgradeOptions() {
+Edno.test(function httpUpgradeWebSocketMultipleUpgradeOptions() {
   const request = new Request("https://deno.land/", {
     headers: {
       connection: "upgrade",
@@ -868,11 +868,11 @@ Deno.test(function httpUpgradeWebSocketMultipleUpgradeOptions() {
       "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==",
     },
   });
-  const { response } = Deno.upgradeWebSocket(request);
+  const { response } = Edno.upgradeWebSocket(request);
   assertEquals(response.status, 101);
 });
 
-Deno.test(function httpUpgradeWebSocketCaseInsensitiveUpgradeHeader() {
+Edno.test(function httpUpgradeWebSocketCaseInsensitiveUpgradeHeader() {
   const request = new Request("https://deno.land/", {
     headers: {
       connection: "upgrade",
@@ -880,11 +880,11 @@ Deno.test(function httpUpgradeWebSocketCaseInsensitiveUpgradeHeader() {
       "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==",
     },
   });
-  const { response } = Deno.upgradeWebSocket(request);
+  const { response } = Edno.upgradeWebSocket(request);
   assertEquals(response.status, 101);
 });
 
-Deno.test(function httpUpgradeWebSocketInvalidUpgradeHeader() {
+Edno.test(function httpUpgradeWebSocketInvalidUpgradeHeader() {
   assertThrows(
     () => {
       const request = new Request("https://deno.land/", {
@@ -894,14 +894,14 @@ Deno.test(function httpUpgradeWebSocketInvalidUpgradeHeader() {
           "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==",
         },
       });
-      Deno.upgradeWebSocket(request);
+      Edno.upgradeWebSocket(request);
     },
     TypeError,
     "Invalid Header: 'upgrade' header must contain 'websocket'",
   );
 });
 
-Deno.test(function httpUpgradeWebSocketWithoutUpgradeHeader() {
+Edno.test(function httpUpgradeWebSocketWithoutUpgradeHeader() {
   assertThrows(
     () => {
       const request = new Request("https://deno.land/", {
@@ -910,23 +910,23 @@ Deno.test(function httpUpgradeWebSocketWithoutUpgradeHeader() {
           "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==",
         },
       });
-      Deno.upgradeWebSocket(request);
+      Edno.upgradeWebSocket(request);
     },
     TypeError,
     "Invalid Header: 'upgrade' header must contain 'websocket'",
   );
 });
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpCookieConcatenation() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const reqEvent = await httpConn.nextRequest();
       assert(reqEvent);
       const { request, respondWith } = reqEvent;
@@ -954,11 +954,11 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/11651
-Deno.test({ permissions: { net: true } }, async function httpServerPanic() {
-  const listener = Deno.listen({ port: listenPort });
-  const client = await Deno.connect({ port: listenPort });
+Edno.test({ permissions: { net: true } }, async function httpServerPanic() {
+  const listener = Edno.listen({ port: listenPort });
+  const client = await Edno.connect({ port: listenPort });
   const conn = await listener.accept();
-  const httpConn = Deno.serveHttp(conn);
+  const httpConn = Edno.serveHttp(conn);
 
   // This message is incomplete on purpose, we'll forcefully close client connection
   // after it's flushed to cause connection to error out on the server side.
@@ -973,22 +973,22 @@ Deno.test({ permissions: { net: true } }, async function httpServerPanic() {
   listener.close();
 });
 
-Deno.test(
+Edno.test(
   { permissions: { net: true, write: true, read: true } },
   async function httpServerCorrectSizeResponse() {
-    const tmpFile = await Deno.makeTempFile();
-    using file = await Deno.open(tmpFile, { write: true, read: true });
+    const tmpFile = await Edno.makeTempFile();
+    using file = await Edno.open(tmpFile, { write: true, read: true });
     await file.write(new Uint8Array(70 * 1024).fill(1)); // 70kb sent in 64kb + 6kb chunks
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const ev = await httpConn.nextRequest();
       const { respondWith } = ev!;
-      const f = await Deno.open(tmpFile, { read: true });
+      const f = await Edno.open(tmpFile, { read: true });
       await respondWith(new Response(f.readable, { status: 200 }));
     })();
     const resp = await fetch(`http://127.0.0.1:${listenPort}/`);
@@ -1000,23 +1000,23 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true, write: true, read: true } },
   async function httpServerClosedStream() {
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
 
-    const client = await Deno.connect({ port: listenPort });
+    const client = await Edno.connect({ port: listenPort });
     await client.write(new TextEncoder().encode(
       `GET / HTTP/1.0\r\n\r\n`,
     ));
 
     const conn = await listener.accept();
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
     const ev = await httpConn.nextRequest();
     const { respondWith } = ev!;
 
-    const tmpFile = await Deno.makeTempFile();
-    const file = await Deno.open(tmpFile, { write: true, read: true });
+    const tmpFile = await Edno.makeTempFile();
+    const file = await Edno.open(tmpFile, { write: true, read: true });
     await file.write(new TextEncoder().encode("hello"));
 
     const reader = await file.readable.getReader();
@@ -1042,18 +1042,18 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/11595
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerIncompleteMessage() {
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
 
-    const client = await Deno.connect({ port: listenPort });
+    const client = await Edno.connect({ port: listenPort });
     await client.write(new TextEncoder().encode(
       `GET / HTTP/1.0\r\n\r\n`,
     ));
 
     const conn = await listener.accept();
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
     const ev = await httpConn.nextRequest();
     const { respondWith } = ev!;
 
@@ -1089,15 +1089,15 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/11743
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerDoesntLeakResources() {
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const [conn, clientConn] = await Promise.all([
       listener.accept(),
-      Deno.connect({ port: listenPort }),
+      Edno.connect({ port: listenPort }),
     ]);
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
 
     await Promise.all([
       httpConn.nextRequest(),
@@ -1116,17 +1116,17 @@ Deno.test(
 // verify that the only new resource is "httpConnection", to make
 // sure "request" resource is closed even if its body was not read
 // by server handler
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerDoesntLeakResources2() {
-    let listener: Deno.Listener;
-    // deno-lint-ignore no-explicit-any
+    let listener: Edno.Listener;
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
 
     const promise = (async () => {
-      listener = Deno.listen({ port: listenPort });
+      listener = Edno.listen({ port: listenPort });
       for await (const conn of listener) {
-        httpConn = Deno.serveHttp(conn);
+        httpConn = Edno.serveHttp(conn);
         for await (const { request, respondWith } of httpConn) {
           assertEquals(
             new URL(request.url).href,
@@ -1151,13 +1151,13 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/pull/12216
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function droppedConnSenderNoPanic() {
     async function server() {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
-      const http = Deno.serveHttp(conn);
+      const http = Edno.serveHttp(conn);
       const evt = await http.nextRequest();
       http.close();
       try {
@@ -1182,18 +1182,18 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/12193
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpConnConcurrentNextRequestCalls() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ hostname, port });
+    const listener = Edno.listen({ hostname, port });
     async function server() {
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const promises = new Array(10).fill(null).map(async (_, i) => {
         const event = await httpConn.nextRequest();
         assert(event);
@@ -1221,21 +1221,21 @@ Deno.test(
 
 // https://github.com/denoland/deno/pull/12704
 // https://github.com/denoland/deno/pull/12732
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpConnAutoCloseDelayedOnUpgrade() {
     const hostname = "localhost";
     const port = listenPort;
 
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      const httpConn = Deno.serveHttp(tcpConn);
+      const httpConn = Edno.serveHttp(tcpConn);
 
-      const event1 = await httpConn.nextRequest() as Deno.RequestEvent;
+      const event1 = await httpConn.nextRequest() as Edno.RequestEvent;
       const event2Promise = httpConn.nextRequest();
 
-      const { socket, response } = Deno.upgradeWebSocket(event1.request);
+      const { socket, response } = Edno.upgradeWebSocket(event1.request);
       socket.onmessage = (event) => socket.send(event.data);
       const socketClosed = new Promise<void>((resolve) => {
         socket.onclose = () => resolve();
@@ -1270,19 +1270,19 @@ Deno.test(
 // https://github.com/denoland/deno/issues/12741
 // https://github.com/denoland/deno/pull/12746
 // https://github.com/denoland/deno/pull/12798
-Deno.test(
+Edno.test(
   { permissions: { net: true, run: true } },
   async function httpServerDeleteRequestHasBody() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ hostname, port });
+    const listener = Edno.listen({ hostname, port });
     async function server() {
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
-      const event = await httpConn.nextRequest() as Deno.RequestEvent;
+      httpConn = Edno.serveHttp(tcpConn);
+      const event = await httpConn.nextRequest() as Edno.RequestEvent;
       assert(event.request.body);
       const response = new Response();
       await event.respondWith(response);
@@ -1291,7 +1291,7 @@ Deno.test(
     async function client() {
       const url = `http://${hostname}:${port}/`;
       const args = ["-X", "DELETE", url];
-      const { success } = await new Deno.Command("curl", {
+      const { success } = await new Edno.Command("curl", {
         args,
         stdout: "null",
         stderr: "null",
@@ -1305,16 +1305,16 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerRespondNonAsciiUint8Array() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1335,26 +1335,26 @@ Deno.test(
 );
 
 function tmpUnixSocketPath(): string {
-  const folder = Deno.makeTempDirSync();
+  const folder = Edno.makeTempDirSync();
   return join(folder, "socket");
 }
 
 // https://github.com/denoland/deno/pull/13628
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { read: true, write: true, net: true },
   },
   async function httpServerOnUnixSocket() {
     const filePath = tmpUnixSocketPath();
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const promise = (async () => {
-      const listener = Deno.listen({ path: filePath, transport: "unix" });
+      const listener = Edno.listen({ path: filePath, transport: "unix" });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const reqEvent = await httpConn.nextRequest();
       assert(reqEvent);
       const { request, respondWith } = reqEvent;
@@ -1366,7 +1366,7 @@ Deno.test(
     })();
 
     // fetch() does not supports unix domain sockets yet https://github.com/denoland/deno/issues/8821
-    const conn = await Deno.connect({ path: filePath, transport: "unix" });
+    const conn = await Edno.connect({ path: filePath, transport: "unix" });
     const encoder = new TextEncoder();
     // The Host header must be present and empty if it is not a Internet host name (RFC2616, Section 14.23)
     const body = `GET /path/name HTTP/1.1\r\nHost:\r\n\r\n`;
@@ -1389,21 +1389,21 @@ Deno.test(
 const decoder = new TextDecoder();
 const gzipPreferredAcceptEncoding = "gzip;q=1.0, deflate, br;q=0.9";
 
-Deno.test({
+Edno.test({
   name: "http server compresses body - check headers",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
-    const listener = Deno.listen({ hostname, port });
+    const listener = Edno.listen({ hostname, port });
 
-    const data = { hello: "deno", now: "with", compressed: "body" };
+    const data = { hello: "edno", now: "with", compressed: "body" };
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1429,7 +1429,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1445,21 +1445,21 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server compresses body - check body",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
-    const listener = Deno.listen({ hostname, port });
+    const listener = Edno.listen({ hostname, port });
 
-    const data = { hello: "deno", now: "with", compressed: "body" };
+    const data = { hello: "edno", now: "with", compressed: "body" };
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1484,7 +1484,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const proc = new Deno.Command("curl", {
+      const proc = new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1506,19 +1506,19 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server doesn't compress small body",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1527,7 +1527,7 @@ Deno.test({
         gzipPreferredAcceptEncoding,
       );
       const response = new Response(
-        JSON.stringify({ hello: "deno" }),
+        JSON.stringify({ hello: "edno" }),
         {
           headers: { "content-type": "application/json" },
         },
@@ -1547,7 +1547,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1563,19 +1563,19 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server respects accept-encoding weights",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1584,7 +1584,7 @@ Deno.test({
         "gzip;q=0.8, br;q=1.0, *;q=0.1",
       );
       const response = new Response(
-        JSON.stringify({ hello: "deno", now: "with", compressed: "body" }),
+        JSON.stringify({ hello: "edno", now: "with", compressed: "body" }),
         {
           headers: { "content-type": "application/json" },
         },
@@ -1604,7 +1604,7 @@ Deno.test({
         "--header",
         "Accept-Encoding: gzip;q=0.8, br;q=1.0, *;q=0.1",
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1620,19 +1620,19 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server augments vary header",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1641,7 +1641,7 @@ Deno.test({
         gzipPreferredAcceptEncoding,
       );
       const response = new Response(
-        JSON.stringify({ hello: "deno", now: "with", compressed: "body" }),
+        JSON.stringify({ hello: "edno", now: "with", compressed: "body" }),
         {
           headers: { "content-type": "application/json", vary: "Accept" },
         },
@@ -1661,7 +1661,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1677,19 +1677,19 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server weakens etag header",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1698,7 +1698,7 @@ Deno.test({
         gzipPreferredAcceptEncoding,
       );
       const response = new Response(
-        JSON.stringify({ hello: "deno", now: "with", compressed: "body" }),
+        JSON.stringify({ hello: "edno", now: "with", compressed: "body" }),
         {
           headers: {
             "content-type": "application/json",
@@ -1722,7 +1722,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1741,19 +1741,19 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server passes through weak etag header",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1762,7 +1762,7 @@ Deno.test({
         gzipPreferredAcceptEncoding,
       );
       const response = new Response(
-        JSON.stringify({ hello: "deno", now: "with", compressed: "body" }),
+        JSON.stringify({ hello: "edno", now: "with", compressed: "body" }),
         {
           headers: {
             "content-type": "application/json",
@@ -1785,7 +1785,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1804,19 +1804,19 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server doesn't compress body when no-transform is set",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1825,7 +1825,7 @@ Deno.test({
         gzipPreferredAcceptEncoding,
       );
       const response = new Response(
-        JSON.stringify({ hello: "deno", now: "with", compressed: "body" }),
+        JSON.stringify({ hello: "edno", now: "with", compressed: "body" }),
         {
           headers: {
             "content-type": "application/json",
@@ -1848,7 +1848,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1864,19 +1864,19 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server doesn't compress body when content-range is set",
   permissions: { net: true, run: true },
   async fn() {
     const hostname = "localhost";
     const port = listenPort;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1885,7 +1885,7 @@ Deno.test({
         gzipPreferredAcceptEncoding,
       );
       const response = new Response(
-        JSON.stringify({ hello: "deno", now: "with", compressed: "body" }),
+        JSON.stringify({ hello: "edno", now: "with", compressed: "body" }),
         {
           headers: {
             "content-type": "application/json",
@@ -1908,7 +1908,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1924,7 +1924,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server compresses streamed bodies - check headers",
   permissions: { net: true, run: true },
   async fn() {
@@ -1932,15 +1932,15 @@ Deno.test({
     const port = listenPort;
 
     const encoder = new TextEncoder();
-    const listener = Deno.listen({ hostname, port });
+    const listener = Edno.listen({ hostname, port });
 
-    const data = { hello: "deno", now: "with", compressed: "body" };
+    const data = { hello: "edno", now: "with", compressed: "body" };
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -1974,7 +1974,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -1990,7 +1990,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server compresses streamed bodies - check body",
   permissions: { net: true, run: true },
   async fn() {
@@ -1998,15 +1998,15 @@ Deno.test({
     const port = listenPort;
 
     const encoder = new TextEncoder();
-    const listener = Deno.listen({ hostname, port });
+    const listener = Edno.listen({ hostname, port });
 
-    const data = { hello: "deno", now: "with", compressed: "body" };
+    const data = { hello: "edno", now: "with", compressed: "body" };
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -2038,7 +2038,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const proc = new Deno.Command("curl", {
+      const proc = new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -2060,7 +2060,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server updates content-length header if compression is applied",
   permissions: { net: true, run: true },
   async fn() {
@@ -2068,12 +2068,12 @@ Deno.test({
     const port = listenPort;
     let contentLength: string;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -2082,7 +2082,7 @@ Deno.test({
         gzipPreferredAcceptEncoding,
       );
       const body = JSON.stringify({
-        hello: "deno",
+        hello: "edno",
         now: "with",
         compressed: "body",
       });
@@ -2111,7 +2111,7 @@ Deno.test({
         "--header",
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -2130,7 +2130,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server compresses when accept-encoding is deflate, gzip",
   permissions: { net: true, run: true },
   async fn() {
@@ -2138,12 +2138,12 @@ Deno.test({
     const port = listenPort;
     let contentLength: string;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -2174,7 +2174,7 @@ Deno.test({
         "--header",
         "Accept-Encoding: deflate, gzip",
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args: cmd,
         stderr: "null",
       }).output();
@@ -2192,7 +2192,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "http server custom content-encoding is left untouched",
   permissions: { net: true, run: true },
   async fn() {
@@ -2200,12 +2200,12 @@ Deno.test({
     const port = listenPort;
     let contentLength: string;
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -2237,7 +2237,7 @@ Deno.test({
         "--header",
         "Accept-Encoding: deflate, gzip",
       ];
-      const { success, stdout } = await new Deno.Command("curl", {
+      const { success, stdout } = await new Edno.Command("curl", {
         args: cmd,
         stderr: "null",
         stdout: "piped",
@@ -2253,7 +2253,7 @@ Deno.test({
   },
 });
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerReadLargeBodyWithContentLength() {
     const TLS_PACKET_SIZE = 16 * 1024 + 256;
@@ -2261,13 +2261,13 @@ Deno.test(
     const body = "aa\n" + "deno.land large body\n".repeat(TLS_PACKET_SIZE) +
       "zz";
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const reqEvent = await httpConn.nextRequest();
       assert(reqEvent);
       const { request, respondWith } = reqEvent;
@@ -2288,7 +2288,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerReadLargeBodyWithTransferChunked() {
     const TLS_PACKET_SIZE = 16 * 1024 + 256;
@@ -2309,13 +2309,13 @@ Deno.test(
     }
     writer.close();
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const reqEvent = await httpConn.nextRequest();
       assert(reqEvent);
       const { request, respondWith } = reqEvent;
@@ -2336,22 +2336,22 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { net: true },
   },
   async function httpServerWithoutExclusiveAccessToTcp() {
     const port = listenPort;
-    const listener = Deno.listen({ port });
+    const listener = Edno.listen({ port });
 
     const [clientConn, serverConn] = await Promise.all([
-      Deno.connect({ port }),
+      Edno.connect({ port }),
       listener.accept(),
     ]);
 
     const buf = new Uint8Array(128);
     const readPromise = serverConn.read(buf);
-    assertThrows(() => Deno.serveHttp(serverConn), Deno.errors.Busy);
+    assertThrows(() => Edno.serveHttp(serverConn), Edno.errors.Busy);
 
     clientConn.close();
     listener.close();
@@ -2359,32 +2359,32 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { net: true, read: true },
   },
   async function httpServerWithoutExclusiveAccessToTls() {
     const hostname = "localhost";
     const port = listenPort;
-    const listener = Deno.listenTls({
+    const listener = Edno.listenTls({
       hostname,
       port,
-      cert: await Deno.readTextFile("tests/testdata/tls/localhost.crt"),
-      key: await Deno.readTextFile("tests/testdata/tls/localhost.key"),
+      cert: await Edno.readTextFile("tests/testdata/tls/localhost.crt"),
+      key: await Edno.readTextFile("tests/testdata/tls/localhost.key"),
     });
 
     const caCerts = [
-      await Deno.readTextFile("tests/testdata/tls/RootCA.pem"),
+      await Edno.readTextFile("tests/testdata/tls/RootCA.pem"),
     ];
     const [clientConn, serverConn] = await Promise.all([
-      Deno.connectTls({ hostname, port, caCerts }),
+      Edno.connectTls({ hostname, port, caCerts }),
       listener.accept(),
     ]);
     await Promise.all([clientConn.handshake(), serverConn.handshake()]);
 
     const buf = new Uint8Array(128);
     const readPromise = serverConn.read(buf);
-    assertThrows(() => Deno.serveHttp(serverConn), Deno.errors.Busy);
+    assertThrows(() => Edno.serveHttp(serverConn), Edno.errors.Busy);
 
     clientConn.close();
     listener.close();
@@ -2392,23 +2392,23 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { read: true, write: true, net: true },
   },
   async function httpServerWithoutExclusiveAccessToUnixSocket() {
     const filePath = tmpUnixSocketPath();
-    const listener = Deno.listen({ path: filePath, transport: "unix" });
+    const listener = Edno.listen({ path: filePath, transport: "unix" });
 
     const [clientConn, serverConn] = await Promise.all([
-      Deno.connect({ path: filePath, transport: "unix" }),
+      Edno.connect({ path: filePath, transport: "unix" }),
       listener.accept(),
     ]);
 
     const buf = new Uint8Array(128);
     const readPromise = serverConn.read(buf);
-    assertThrows(() => Deno.serveHttp(serverConn), Deno.errors.Busy);
+    assertThrows(() => Edno.serveHttp(serverConn), Edno.errors.Busy);
 
     clientConn.close();
     listener.close();
@@ -2416,17 +2416,17 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerRequestResponseClone() {
-    const body = "deno".repeat(64 * 1024);
-    // deno-lint-ignore no-explicit-any
+    const body = "edno".repeat(64 * 1024);
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
-    const listener = Deno.listen({ port: listenPort });
+    const listener = Edno.listen({ port: listenPort });
     const promise = (async () => {
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const reqEvent = await httpConn.nextRequest();
       assert(reqEvent);
       const { request, respondWith } = reqEvent;
@@ -2473,7 +2473,7 @@ Deno.test(
   },
 );
 
-Deno.test({
+Edno.test({
   name: "http server compresses and flushes each chunk of a streamed resource",
   permissions: { net: true, run: true },
   async fn() {
@@ -2482,14 +2482,14 @@ Deno.test({
     const port2 = listenPort2;
 
     const encoder = new TextEncoder();
-    const listener = Deno.listen({ hostname, port });
-    const listener2 = Deno.listen({ hostname, port: port2 });
+    const listener = Edno.listen({ hostname, port });
+    const listener2 = Edno.listen({ hostname, port: port2 });
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     async function server() {
       const tcpConn = await listener.accept();
-      httpConn = Deno.serveHttp(tcpConn);
+      httpConn = Edno.serveHttp(tcpConn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { request, respondWith } = e;
@@ -2506,11 +2506,11 @@ Deno.test({
     const writer = ts.writable.getWriter();
     writer.write(encoder.encode("hello"));
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn2: any;
     async function server2() {
       const tcpConn = await listener2.accept();
-      httpConn2 = Deno.serveHttp(tcpConn);
+      httpConn2 = Edno.serveHttp(tcpConn);
       const e = await httpConn2.nextRequest();
       assert(e);
       await e.respondWith(
@@ -2532,7 +2532,7 @@ Deno.test({
         `Accept-Encoding: ${gzipPreferredAcceptEncoding}`,
         "--no-buffer",
       ];
-      const proc = new Deno.Command("curl", {
+      const proc = new Edno.Command("curl", {
         args,
         stderr: "null",
         stdout: "piped",
@@ -2559,7 +2559,7 @@ Deno.test({
   },
 });
 
-Deno.test("case insensitive comma value finder", async (t) => {
+Edno.test("case insensitive comma value finder", async (t) => {
   const cases = /** @type {[string, boolean][]} */ ([
     ["websocket", true],
     ["wEbSOcKET", true],
@@ -2584,13 +2584,13 @@ Deno.test("case insensitive comma value finder", async (t) => {
 });
 
 async function httpServerWithErrorBody(
-  listener: Deno.Listener,
+  listener: Edno.Listener,
   compression: boolean,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
 ): Promise<any> {
   const conn = await listener.accept();
   listener.close();
-  const httpConn = Deno.serveHttp(conn);
+  const httpConn = Edno.serveHttp(conn);
   const e = await httpConn.nextRequest();
   assert(e);
   const { respondWith } = e;
@@ -2610,7 +2610,7 @@ async function httpServerWithErrorBody(
 }
 
 for (const compression of [true, false]) {
-  Deno.test({
+  Edno.test({
     name: `http server errors stream if response body errors (http/1.1${
       compression ? " + compression" : ""
     })`,
@@ -2619,10 +2619,10 @@ for (const compression of [true, false]) {
       const hostname = "localhost";
       const port = listenPort;
 
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const server = httpServerWithErrorBody(listener, compression);
 
-      const conn = await Deno.connect({ hostname, port });
+      const conn = await Edno.connect({ hostname, port });
       const msg = new TextEncoder().encode(
         `GET / HTTP/1.1\r\nHost: ${hostname}:${port}\r\n\r\n`,
       );
@@ -2643,7 +2643,7 @@ for (const compression of [true, false]) {
     },
   });
 
-  Deno.test({
+  Edno.test({
     name: `http server errors stream if response body errors (http/1.1 + fetch${
       compression ? " + compression" : ""
     })`,
@@ -2652,7 +2652,7 @@ for (const compression of [true, false]) {
       const hostname = "localhost";
       const port = listenPort;
 
-      const listener = Deno.listen({ hostname, port });
+      const listener = Edno.listen({ hostname, port });
       const server = httpServerWithErrorBody(listener, compression);
 
       const resp = await fetch(`http://${hostname}:${port}/`);
@@ -2672,7 +2672,7 @@ for (const compression of [true, false]) {
     },
   });
 
-  Deno.test({
+  Edno.test({
     name: `http server errors stream if response body errors (http/2 + fetch${
       compression ? " + compression" : ""
     }))`,
@@ -2681,17 +2681,17 @@ for (const compression of [true, false]) {
       const hostname = "localhost";
       const port = listenPort;
 
-      const listener = Deno.listenTls({
+      const listener = Edno.listenTls({
         hostname,
         port,
-        cert: await Deno.readTextFile("tests/testdata/tls/localhost.crt"),
-        key: await Deno.readTextFile("tests/testdata/tls/localhost.key"),
+        cert: await Edno.readTextFile("tests/testdata/tls/localhost.crt"),
+        key: await Edno.readTextFile("tests/testdata/tls/localhost.key"),
         alpnProtocols: ["h2"],
       });
       const server = httpServerWithErrorBody(listener, compression);
 
-      const caCert = Deno.readTextFileSync("tests/testdata/tls/RootCA.pem");
-      const client = Deno.createHttpClient({ caCerts: [caCert] });
+      const caCert = Edno.readTextFileSync("tests/testdata/tls/RootCA.pem");
+      const client = Edno.createHttpClient({ caCerts: [caCert] });
       const resp = await fetch(`https://${hostname}:${port}/`, { client });
       client.close();
       assert(resp.body);
@@ -2711,17 +2711,17 @@ for (const compression of [true, false]) {
   });
 }
 
-Deno.test({
+Edno.test({
   name: "request signal is aborted when response errors",
   permissions: { net: true },
   async fn() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const promise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const ev = await httpConn.nextRequest();
       const { request, respondWith } = ev!;
 
@@ -2745,17 +2745,17 @@ Deno.test({
   },
 });
 
-Deno.test(
+Edno.test(
   async function httpConnExplicitResourceManagement() {
     let promise;
 
     {
-      const listen = Deno.listen({ port: listenPort });
+      const listen = Edno.listen({ port: listenPort });
       promise = fetch(`http://localhost:${listenPort}/`).catch(() => null);
       const serverConn = await listen.accept();
       listen.close();
 
-      using _httpConn = Deno.serveHttp(serverConn);
+      using _httpConn = Edno.serveHttp(serverConn);
     }
 
     const response = await promise;
@@ -2766,18 +2766,18 @@ Deno.test(
 // `respondWith` on a Response-like object (prototype chain matches `Response`
 // but the internal slot is missing — e.g. a subclass that skipped super(), or
 // a Response from a different realm/polyfill) must reject with a clear
-// TypeError instead of crashing on `innerResp.body`. Mirrors the Deno.serve
+// TypeError instead of crashing on `innerResp.body`. Mirrors the Edno.serve
 // guard added in https://github.com/denoland/deno/pull/34416.
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function httpServerRespondWithResponseLike() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let httpConn: any;
     const serverPromise = (async () => {
-      const listener = Deno.listen({ port: listenPort });
+      const listener = Edno.listen({ port: listenPort });
       const conn = await listener.accept();
       listener.close();
-      httpConn = Deno.serveHttp(conn);
+      httpConn = Edno.serveHttp(conn);
       const e = await httpConn.nextRequest();
       assert(e);
       const { respondWith } = e;
@@ -2800,7 +2800,7 @@ Deno.test(
       );
     })();
 
-    const conn = await Deno.connect({ port: listenPort });
+    const conn = await Edno.connect({ port: listenPort });
     const body =
       `GET / HTTP/1.1\r\nHost: 127.0.0.1:${listenPort}\r\nConnection: close\r\n\r\n`;
     await conn.write(new TextEncoder().encode(body));
@@ -2810,18 +2810,18 @@ Deno.test(
   },
 );
 
-Deno.test("proxy with fetch", async () => {
-  const listener = Deno.listen({ port: listenPort });
+Edno.test("proxy with fetch", async () => {
+  const listener = Edno.listen({ port: listenPort });
   const deferred = Promise.withResolvers<void>();
 
-  const server = Deno.serve({ port: listenPort + 1 }, (_req) => {
+  const server = Edno.serve({ port: listenPort + 1 }, (_req) => {
     return new Response("Hello world");
   });
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   let httpConn: any;
-  async function handleHttp(conn: Deno.Conn) {
-    httpConn = Deno.serveHttp(conn);
+  async function handleHttp(conn: Edno.Conn) {
+    httpConn = Edno.serveHttp(conn);
     for await (const e of httpConn) {
       await e.respondWith(serve(e.request));
       break;
@@ -2840,7 +2840,7 @@ Deno.test("proxy with fetch", async () => {
   })();
 
   const proxiedRequest = (async () => {
-    const conn = await Deno.connect({ port: listenPort });
+    const conn = await Edno.connect({ port: listenPort });
     const payload = new TextEncoder().encode(
       "POST /api/sessions HTTP/1.1\x0d\x0aConnection: keep-alive\x0d\x0aContent-Length: 2\x0d\x0a\x0d\x0a{}",
     );
@@ -2888,29 +2888,29 @@ function chunkedBodyReader(h: Headers, r: BufReader): Reader {
         chunks.shift();
         // Consume \r\n;
         if ((await tp.readLine()) === null) {
-          throw new Deno.errors.UnexpectedEof();
+          throw new Edno.errors.UnexpectedEof();
         }
       }
       return readLength;
     }
     const line = await tp.readLine();
-    if (line === null) throw new Deno.errors.UnexpectedEof();
+    if (line === null) throw new Edno.errors.UnexpectedEof();
     // TODO(bartlomieju): handle chunk extension
     const [chunkSizeString] = line.split(";");
     const chunkSize = parseInt(chunkSizeString, 16);
     if (Number.isNaN(chunkSize) || chunkSize < 0) {
-      throw new Deno.errors.InvalidData("Invalid chunk size");
+      throw new Edno.errors.InvalidData("Invalid chunk size");
     }
     if (chunkSize > 0) {
       if (chunkSize > buf.byteLength) {
         let eof = await r.readFull(buf);
         if (eof === null) {
-          throw new Deno.errors.UnexpectedEof();
+          throw new Edno.errors.UnexpectedEof();
         }
         const restChunk = new Uint8Array(chunkSize - buf.byteLength);
         eof = await r.readFull(restChunk);
         if (eof === null) {
-          throw new Deno.errors.UnexpectedEof();
+          throw new Edno.errors.UnexpectedEof();
         } else {
           chunks.push({
             offset: 0,
@@ -2922,11 +2922,11 @@ function chunkedBodyReader(h: Headers, r: BufReader): Reader {
         const bufToFill = buf.subarray(0, chunkSize);
         const eof = await r.readFull(bufToFill);
         if (eof === null) {
-          throw new Deno.errors.UnexpectedEof();
+          throw new Edno.errors.UnexpectedEof();
         }
         // Consume \r\n
         if ((await tp.readLine()) === null) {
-          throw new Deno.errors.UnexpectedEof();
+          throw new Edno.errors.UnexpectedEof();
         }
         return chunkSize;
       }
@@ -2934,7 +2934,7 @@ function chunkedBodyReader(h: Headers, r: BufReader): Reader {
       assert(chunkSize === 0);
       // Consume \r\n
       if ((await r.readLine()) === null) {
-        throw new Deno.errors.UnexpectedEof();
+        throw new Edno.errors.UnexpectedEof();
       }
       await readTrailers(h, r);
       finished = true;
@@ -2954,14 +2954,14 @@ async function readTrailers(
   const tp = new TextProtoReader(r);
   const result = await tp.readMimeHeader();
   if (result == null) {
-    throw new Deno.errors.InvalidData("Missing trailer header.");
+    throw new Edno.errors.InvalidData("Missing trailer header.");
   }
   const undeclared = [...result.keys()].filter(
     (k) => !trailerNames.includes(k),
   );
   if (undeclared.length > 0) {
-    throw new Deno.errors.InvalidData(
-      `Undeclared trailers: ${Deno.inspect(undeclared)}.`,
+    throw new Edno.errors.InvalidData(
+      `Undeclared trailers: ${Edno.inspect(undeclared)}.`,
     );
   }
   for (const [k, v] of result) {
@@ -2969,8 +2969,8 @@ async function readTrailers(
   }
   const missingTrailers = trailerNames.filter((k) => !result.has(k));
   if (missingTrailers.length > 0) {
-    throw new Deno.errors.InvalidData(
-      `Missing trailers: ${Deno.inspect(missingTrailers)}.`,
+    throw new Edno.errors.InvalidData(
+      `Missing trailers: ${Edno.inspect(missingTrailers)}.`,
     );
   }
   headers.delete("trailer");
@@ -2982,12 +2982,12 @@ function parseTrailer(field: string | null): Headers | undefined {
   }
   const trailerNames = field.split(",").map((v) => v.trim().toLowerCase());
   if (trailerNames.length === 0) {
-    throw new Deno.errors.InvalidData("Empty trailer header.");
+    throw new Edno.errors.InvalidData("Empty trailer header.");
   }
   const prohibited = trailerNames.filter((k) => isProhibitedForTrailer(k));
   if (prohibited.length > 0) {
-    throw new Deno.errors.InvalidData(
-      `Prohibited trailer names: ${Deno.inspect(prohibited)}.`,
+    throw new Edno.errors.InvalidData(
+      `Prohibited trailer names: ${Edno.inspect(prohibited)}.`,
     );
   }
   return new Headers(trailerNames.map((key) => [key, ""]));

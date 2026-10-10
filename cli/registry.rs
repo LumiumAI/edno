@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::url::Url;
-use deno_runtime::deno_fetch;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::url::Url;
+use edno_runtime::edno_fetch;
 use deno_semver::jsr::JsrPackageReqReference;
 use serde::de::DeserializeOwned;
 
@@ -79,7 +79,7 @@ impl std::fmt::Display for ApiError {
     if let Some(x_deno_ray) = &self.x_deno_ray {
       write!(
         f,
-        "[x-deno-ray: {}]",
+        "[x-edno-ray: {}]",
         escape_terminal_control_chars(x_deno_ray)
       )?;
     }
@@ -96,12 +96,12 @@ impl std::fmt::Debug for ApiError {
 impl std::error::Error for ApiError {}
 
 pub async fn parse_response<T: DeserializeOwned>(
-  response: http::Response<deno_fetch::ResBody>,
+  response: http::Response<edno_fetch::ResBody>,
 ) -> Result<T, ApiError> {
   let status = response.status();
   let x_deno_ray = response
     .headers()
-    .get("x-deno-ray")
+    .get("x-edno-ray")
     .and_then(|value| value.to_str().ok())
     .map(|s| s.to_string());
   let text = http_util::body_to_string(response).await.unwrap();
@@ -190,7 +190,7 @@ fn append_path_segments(
   url
     .path_segments_mut()
     .map_err(|_| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "Registry API URL cannot be used as a base URL"
       )
     })?
@@ -205,7 +205,7 @@ pub async fn get_package(
   scope: &str,
   package: &str,
   authorization: Option<&str>,
-) -> Result<http::Response<deno_fetch::ResBody>, AnyError> {
+) -> Result<http::Response<edno_fetch::ResBody>, AnyError> {
   let package_url = get_package_api_url(registry_api_url, scope, package)?;
   let mut request = client.get(package_url)?;
   // The registry responds with a 404 for private packages unless the request
@@ -228,7 +228,7 @@ pub fn parse_package_name(name: &str) -> Result<(&str, &str), AnyError> {
   // Keep the explicit path-safety checks below even if the JSR grammar changes.
   let reference = JsrPackageReqReference::from_str(&format!("jsr:{name}@*"))
     .map_err(|_| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "package name must use the '@<scope>/<package>' format"
       )
     })?;
@@ -342,7 +342,7 @@ mod test {
 
   #[test]
   fn test_parse_package_name() {
-    assert_eq!(parse_package_name("@deno/doc").unwrap(), ("deno", "doc"));
+    assert_eq!(parse_package_name("@edno/doc").unwrap(), ("edno", "doc"));
     assert_eq!(
       parse_package_name("@scope-1/package-2").unwrap(),
       ("scope-1", "package-2")
@@ -350,14 +350,14 @@ mod test {
     assert_eq!(parse_package_name("@a/b").unwrap(), ("a", "b"));
 
     for invalid_name in [
-      "deno/doc",
-      "@deno",
-      "@deno/../doc",
-      "@deno/doc/other",
-      "@deno/doc?other",
-      "@deno/doc#other",
-      "@deno/doc\\other",
-      "@deno/doc%2Fother",
+      "edno/doc",
+      "@edno",
+      "@edno/../doc",
+      "@edno/doc/other",
+      "@edno/doc?other",
+      "@edno/doc#other",
+      "@edno/doc\\other",
+      "@edno/doc%2Fother",
     ] {
       assert!(
         parse_package_name(invalid_name).is_err(),
@@ -380,7 +380,7 @@ mod test {
       "scope",
       "package",
       "1.2.3+build.1",
-      Some("/deno.json"),
+      Some("/edno.json"),
     )
     .unwrap();
     assert_eq!(
@@ -389,7 +389,7 @@ mod test {
     );
     assert_eq!(
       version_url.query_pairs().collect::<Vec<_>>(),
-      vec![("config".into(), "/deno.json".into())]
+      vec![("config".into(), "/edno.json".into())]
     );
 
     let provenance_url = get_package_version_provenance_api_url(
@@ -435,7 +435,7 @@ mod test {
     let display = err.to_string();
     assert_eq!(
       display,
-      r"failed\u{1b}[2J\nagain (bad\u{202e}code)[x-deno-ray: ray\u{9b}31m]"
+      r"failed\u{1b}[2J\nagain (bad\u{202e}code)[x-edno-ray: ray\u{9b}31m]"
     );
     assert_eq!(format!("{err:?}"), display);
     assert_eq!(err.code, "bad\u{202e}code");

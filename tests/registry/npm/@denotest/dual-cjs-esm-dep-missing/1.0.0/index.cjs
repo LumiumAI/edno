@@ -1,3 +1,3 @@
-import { getKind } from "@denotest/dual-cjs-esm";
+import { getKind } from "@ednotest/dual-cjs-esm";
 
 export { getKind };

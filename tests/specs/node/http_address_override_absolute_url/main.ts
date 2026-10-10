@@ -1,4 +1,4 @@
-// Connections accepted via the DENO_SERVE_ADDRESS override carry
+// Connections accepted via the EDNO_SERVE_ADDRESS override carry
 // absolute-form request targets; node:http servers must see origin-form
 // req.url.
 import { createServer } from "node:http";
@@ -8,7 +8,7 @@ const server = createServer((req, res) => {
   res.end(JSON.stringify(req.url));
 });
 server.listen(0, async () => {
-  const conn = await Deno.connect({ hostname: "127.0.0.1", port: 12470 });
+  const conn = await Edno.connect({ hostname: "127.0.0.1", port: 12470 });
   await conn.write(
     new TextEncoder().encode(
       "GET https://app.example/some/path?q=1 HTTP/1.1\r\n" +
@@ -25,5 +25,5 @@ server.listen(0, async () => {
   conn.close();
   const body = text.slice(text.indexOf("\r\n\r\n") + 4);
   console.log("node req.url:", body);
-  server.close(() => Deno.exit(0));
+  server.close(() => Edno.exit(0));
 });

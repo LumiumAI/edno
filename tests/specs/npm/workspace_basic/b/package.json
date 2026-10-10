@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/b",
+  "name": "@ednotest/b",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/a": "1",
-    "@denotest/c": "workspace:*"
+    "@ednotest/a": "1",
+    "@ednotest/c": "workspace:*"
   }
 }

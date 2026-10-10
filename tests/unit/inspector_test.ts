@@ -44,7 +44,7 @@ async function extractWsUrl(
 
 class InspectorTester {
   private socket: WebSocket;
-  private child: Deno.ChildProcess;
+  private child: Edno.ChildProcess;
   private stderrReader: ReadableStreamDefaultReader<string>;
   private stdoutReader: ReadableStreamDefaultReader<string>;
   private stderrBuffer: string = "";
@@ -59,7 +59,7 @@ class InspectorTester {
 
   private constructor(
     socket: WebSocket,
-    child: Deno.ChildProcess,
+    child: Edno.ChildProcess,
     stderrReader: ReadableStreamDefaultReader<string>,
     stdoutReader: ReadableStreamDefaultReader<string>,
     notificationFilter: (msg: CDPMessage) => boolean,
@@ -87,7 +87,7 @@ class InspectorTester {
     const notificationFilter = options?.notificationFilter ?? (() => true);
     const timeout = options?.timeout ?? DEFAULT_CDP_TIMEOUT;
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args,
       stdin: "piped",
       stdout: "piped",
@@ -371,7 +371,7 @@ class InspectorTester {
       if (newlineIdx !== -1) {
         const line = this.stderrBuffer.slice(0, newlineIdx);
         this.stderrBuffer = this.stderrBuffer.slice(newlineIdx + 1);
-        // deno-lint-ignore no-control-regex
+        // edno-lint-ignore no-control-regex
         return line.replace(/\x1b\[[0-9;]*m/g, "");
       }
 
@@ -380,7 +380,7 @@ class InspectorTester {
         if (this.stderrBuffer.length > 0) {
           const line = this.stderrBuffer;
           this.stderrBuffer = "";
-          // deno-lint-ignore no-control-regex
+          // edno-lint-ignore no-control-regex
           return line.replace(/\x1b\[[0-9;]*m/g, "");
         }
         throw new Error("Stderr closed while waiting for line");
@@ -400,7 +400,7 @@ class InspectorTester {
     const line1 = await this.nextStderrLine();
     assertEquals(line1, "Visit chrome://inspect to connect to the debugger.");
     const line2 = await this.nextStderrLine();
-    assertEquals(line2, "Deno is waiting for debugger to connect.");
+    assertEquals(line2, "Edno is waiting for debugger to connect.");
   }
 
   async close(): Promise<void> {
@@ -416,7 +416,7 @@ class InspectorTester {
     }
   }
 
-  async waitForExit(): Promise<Deno.CommandStatus> {
+  async waitForExit(): Promise<Edno.CommandStatus> {
     try {
       await this.child.stdin.close();
     } catch {
@@ -440,7 +440,7 @@ class InspectorTester {
   }
 }
 
-Deno.test("inspector_connect", async () => {
+Edno.test("inspector_connect", async () => {
   const script = `${testdataPath}/inspector1.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect=0", script],
@@ -457,7 +457,7 @@ Deno.test("inspector_connect", async () => {
   }
 });
 
-Deno.test("inspector_break_on_first_line", async () => {
+Edno.test("inspector_break_on_first_line", async () => {
   const script = `${testdataPath}/inspector2.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -485,7 +485,7 @@ Deno.test("inspector_break_on_first_line", async () => {
       method: "Runtime.evaluate",
       params: {
         expression:
-          'Deno[Deno.internal].core.print("hello from the inspector\\n")',
+          'Edno[Edno.internal].core.print("hello from the inspector\\n")',
         contextId: 1,
         includeCommandLineAPI: true,
         silent: false,
@@ -509,7 +509,7 @@ Deno.test("inspector_break_on_first_line", async () => {
   }
 });
 
-Deno.test("inspector_pause", async () => {
+Edno.test("inspector_pause", async () => {
   const script = `${testdataPath}/inspector1.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect=0", script],
@@ -531,7 +531,7 @@ Deno.test("inspector_pause", async () => {
   }
 });
 
-Deno.test("inspector_does_not_hang", async () => {
+Edno.test("inspector_does_not_hang", async () => {
   const script = `${testdataPath}/inspector3.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -588,10 +588,10 @@ Deno.test("inspector_does_not_hang", async () => {
   }
 });
 
-Deno.test("inspector_without_brk_runs_code", async () => {
+Edno.test("inspector_without_brk_runs_code", async () => {
   const script = `${testdataPath}/inspector4.js`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", "--inspect=0", script],
     stdout: "piped",
     stderr: "piped",
@@ -619,10 +619,10 @@ Deno.test("inspector_without_brk_runs_code", async () => {
   await child.status;
 });
 
-Deno.test("inspector_json", async () => {
+Edno.test("inspector_json", async () => {
   const script = `${testdataPath}/inspector1.js`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", "--inspect=0", script],
     stderr: "piped",
   });
@@ -652,10 +652,10 @@ Deno.test("inspector_json", async () => {
   await child.status;
 });
 
-Deno.test("inspector_connect_non_ws", async () => {
+Edno.test("inspector_connect_non_ws", async () => {
   const script = `${testdataPath}/inspector1.js`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", "--inspect=0", script],
     stderr: "piped",
   });
@@ -676,7 +676,7 @@ Deno.test("inspector_connect_non_ws", async () => {
   await child.status;
 });
 
-Deno.test("inspector_memory", async () => {
+Edno.test("inspector_memory", async () => {
   const script = `${testdataPath}/memory.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -726,7 +726,7 @@ Deno.test("inspector_memory", async () => {
   }
 });
 
-Deno.test("inspector_profile", async () => {
+Edno.test("inspector_profile", async () => {
   const script = `${testdataPath}/memory.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -786,10 +786,10 @@ Deno.test("inspector_profile", async () => {
 // DevTools show ~100% CPU usage for a process doing nothing. This relies on
 // the event loop telling V8's CPU profiler it is idle (Isolate::SetIdle)
 // whenever it parks waiting for external events.
-Deno.test("inspector_profile_idle", async () => {
+Edno.test("inspector_profile_idle", async () => {
   const script = `${testdataPath}/idle.js`;
   // Use --inspect (not --inspect-brk) so the program runs straight into its
-  // idle loop, matching how the issue is reproduced (`deno run --inspect`).
+  // idle loop, matching how the issue is reproduced (`edno run --inspect`).
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect=0", script],
     { notificationFilter: ignoreScriptParsed },
@@ -848,7 +848,7 @@ Deno.test("inspector_profile_idle", async () => {
   }
 });
 
-Deno.test("inspector_multiple_workers", async () => {
+Edno.test("inspector_multiple_workers", async () => {
   const script = `${testdataPath}/multi_worker_main.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -897,7 +897,7 @@ Deno.test("inspector_multiple_workers", async () => {
   }
 });
 
-Deno.test("inspector_worker_target_discovery", async () => {
+Edno.test("inspector_worker_target_discovery", async () => {
   const script = `${testdataPath}/worker_main.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -957,7 +957,7 @@ Deno.test("inspector_worker_target_discovery", async () => {
   }
 });
 
-Deno.test("inspector_worker_target_get_targets_and_attach", async () => {
+Edno.test("inspector_worker_target_get_targets_and_attach", async () => {
   const script = `${testdataPath}/worker_main.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -1034,11 +1034,11 @@ Deno.test("inspector_worker_target_get_targets_and_attach", async () => {
   }
 });
 
-Deno.test("inspector_worker_debugger_statement_not_blackboxed", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("inspector_worker_debugger_statement_not_blackboxed", async () => {
+  const tempDir = await Edno.makeTempDir();
   const mainScript = `${tempDir}/main.js`;
   const workerScript = `${tempDir}/worker.js`;
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     mainScript,
     `
 globalThis.worker = new Worker(new URL("./worker.js", import.meta.url).href, {
@@ -1050,7 +1050,7 @@ globalThis.worker.onmessage = (e) => {
 setInterval(() => {}, 1000);
 `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     workerScript,
     `
 self.onmessage = (e) => {
@@ -1154,15 +1154,15 @@ setInterval(() => {}, 1000);
     await tester.close();
     tester.kill();
     await tester.waitForExit();
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("inspector_worker_page_wait_for_debugger", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("inspector_worker_page_wait_for_debugger", async () => {
+  const tempDir = await Edno.makeTempDir();
   const mainScript = `${tempDir}/main.js`;
   const workerScript = `${tempDir}/worker.js`;
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     mainScript,
     `
 new Worker(new URL("./worker.js", import.meta.url).href, {
@@ -1171,7 +1171,7 @@ new Worker(new URL("./worker.js", import.meta.url).href, {
 setInterval(() => {}, 1000);
 `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     workerScript,
     `
 console.log("worker before debugger");
@@ -1263,15 +1263,15 @@ setInterval(() => {}, 1000);
     await tester.close();
     tester.kill();
     await tester.waitForExit();
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("inspector_worker_wait_for_debugger_on_start", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("inspector_worker_wait_for_debugger_on_start", async () => {
+  const tempDir = await Edno.makeTempDir();
   const mainScript = `${tempDir}/main.js`;
   const workerScript = `${tempDir}/worker.js`;
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     mainScript,
     `
 const worker = new Worker(new URL("./worker.js", import.meta.url).href, {
@@ -1281,7 +1281,7 @@ worker.postMessage("start");
 setInterval(() => {}, 1000);
 `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     workerScript,
     `
 self.onmessage = (e) => {
@@ -1372,15 +1372,15 @@ setInterval(() => {}, 1000);
     await tester.close();
     tester.kill();
     await tester.waitForExit();
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("inspector_worker_step_over_creation_waits_for_debugger", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("inspector_worker_step_over_creation_waits_for_debugger", async () => {
+  const tempDir = await Edno.makeTempDir();
   const mainScript = `${tempDir}/main.js`;
   const workerScript = `${tempDir}/worker.js`;
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     mainScript,
     `
 const worker = new Worker(new URL("./worker.js", import.meta.url).href, {
@@ -1391,7 +1391,7 @@ worker.postMessage("start");
 setInterval(() => {}, 1000);
 `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     workerScript,
     `
 self.onmessage = (e) => {
@@ -1480,7 +1480,7 @@ setInterval(() => {}, 1000);
     await tester.close();
     tester.kill();
     await tester.waitForExit();
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
@@ -1490,7 +1490,7 @@ setInterval(() => {}, 1000);
 // Previously these later workers were not announced — NodeWorker.enable
 // only walked existing workers, and the new-worker registration path only
 // emitted Target.* events. Now NodeWorker.attachedToWorker fires for both.
-Deno.test("inspector_node_worker_attached_after_enable", async () => {
+Edno.test("inspector_node_worker_attached_after_enable", async () => {
   const script = `${testdataPath}/worker_main.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -1536,7 +1536,7 @@ Deno.test("inspector_node_worker_attached_after_enable", async () => {
   }
 });
 
-Deno.test("inspector_node_worker_enable", async () => {
+Edno.test("inspector_node_worker_enable", async () => {
   const script = `${testdataPath}/worker_main.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -1577,7 +1577,7 @@ Deno.test("inspector_node_worker_enable", async () => {
   }
 });
 
-Deno.test("inspector_noderuntime_waiting_for_debugger", async () => {
+Edno.test("inspector_noderuntime_waiting_for_debugger", async () => {
   // Verifies that NodeRuntime.enable emits NodeRuntime.waitingForDebugger
   // when --inspect-brk is used, and that Runtime.runIfWaitingForDebugger
   // unblocks execution and triggers Debugger.paused.
@@ -1622,7 +1622,7 @@ Deno.test("inspector_noderuntime_waiting_for_debugger", async () => {
   }
 });
 
-Deno.test("inspector_runtime_evaluate_does_not_crash", async () => {
+Edno.test("inspector_runtime_evaluate_does_not_crash", async () => {
   const tester = await InspectorTester.create(
     ["repl", "-A", "--inspect=0"],
     {
@@ -1635,7 +1635,7 @@ Deno.test("inspector_runtime_evaluate_does_not_crash", async () => {
     await tester.assertStderrForInspect();
 
     const banner = await tester.nextStdoutLine();
-    assert(banner.startsWith("Deno"), `Expected Deno banner, got: ${banner}`);
+    assert(banner.startsWith("Edno"), `Expected Edno banner, got: ${banner}`);
     const exitMsg = await tester.nextStdoutLine();
     assertEquals(exitMsg, "exit using ctrl+d, ctrl+c, or close()");
 
@@ -1657,7 +1657,7 @@ Deno.test("inspector_runtime_evaluate_does_not_crash", async () => {
       id: 3,
       method: "Runtime.compileScript",
       params: {
-        expression: "Deno.cwd()",
+        expression: "Edno.cwd()",
         sourceURL: "",
         persistScript: false,
         executionContextId: 1,
@@ -1669,7 +1669,7 @@ Deno.test("inspector_runtime_evaluate_does_not_crash", async () => {
       id: 4,
       method: "Runtime.evaluate",
       params: {
-        expression: "Deno.cwd()",
+        expression: "Edno.cwd()",
         objectGroup: "console",
         includeCommandLineAPI: true,
         silent: false,
@@ -1718,13 +1718,13 @@ Deno.test("inspector_runtime_evaluate_does_not_crash", async () => {
 });
 
 // Regression test for "Promise was collected" CDP errors when an external
-// debugger sends `Runtime.evaluate({replMode: true})` to `deno repl --inspect`.
+// debugger sends `Runtime.evaluate({replMode: true})` to `edno repl --inspect`.
 // V8 inspector wraps replMode evaluations in `(async () => EXPR)()` and tracks
 // the result promise via a weak handle — without an immediate microtask drain
 // after each event-loop poll, GC can collect the promise before its resolution
 // microtask runs. `--gc-interval=100` forces a major GC every 100 allocations,
 // which deterministically exposes the race.
-Deno.test("inspector_repl_runtime_evaluate_replmode_under_gc", async () => {
+Edno.test("inspector_repl_runtime_evaluate_replmode_under_gc", async () => {
   const tester = await InspectorTester.create(
     ["repl", "-A", "--inspect=0", "--v8-flags=--gc-interval=100"],
     {
@@ -1783,8 +1783,8 @@ Deno.test("inspector_repl_runtime_evaluate_replmode_under_gc", async () => {
   }
 });
 
-Deno.test("inspector_break_on_first_line_in_test", async () => {
-  if (Deno.build.os === "windows") return;
+Edno.test("inspector_break_on_first_line_in_test", async () => {
+  if (Edno.build.os === "windows") return;
 
   const script = `${testdataPath}/inspector_test.js`;
   const tester = await InspectorTester.create(
@@ -1847,7 +1847,7 @@ Deno.test("inspector_break_on_first_line_in_test", async () => {
 });
 
 // Regression test for https://github.com/denoland/deno/issues/19289.
-// `deno test --inspect-brk` must wait for an attached debugger that opted into
+// `edno test --inspect-brk` must wait for an attached debugger that opted into
 // `NodeRuntime.notifyWhenWaitingForDisconnect` (as Chrome DevTools does)
 // before exiting; otherwise an in-progress Performance recording is dropped
 // the moment the test finishes.
@@ -1914,8 +1914,8 @@ async function assertTestWaitsForDebuggerDisconnect(args: string[]) {
   }
 }
 
-Deno.test("inspector_test_waits_for_debugger_disconnect", async () => {
-  if (Deno.build.os === "windows") return;
+Edno.test("inspector_test_waits_for_debugger_disconnect", async () => {
+  if (Edno.build.os === "windows") return;
 
   const script = `${testdataPath}/inspector_test.js`;
   await assertTestWaitsForDebuggerDisconnect([
@@ -1926,8 +1926,8 @@ Deno.test("inspector_test_waits_for_debugger_disconnect", async () => {
   ]);
 });
 
-Deno.test("inspector_test_coverage_does_not_block_shutdown", async () => {
-  const coverageDir = await Deno.makeTempDir();
+Edno.test("inspector_test_coverage_does_not_block_shutdown", async () => {
+  const coverageDir = await Edno.makeTempDir();
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
   let timedOut = false;
   try {
@@ -1937,7 +1937,7 @@ Deno.test("inspector_test_coverage_does_not_block_shutdown", async () => {
     // mutually exclusive with `--inspect-brk`, but it still exercises the
     // shutdown ordering that must stop coverage before waiting for inspector
     // sessions to disconnect.
-    const child = new Deno.Command(Deno.execPath(), {
+    const child = new Edno.Command(Edno.execPath(), {
       args: ["test", "-A", `--coverage=${coverageDir}`, script],
       stdout: "piped",
       stderr: "piped",
@@ -1958,12 +1958,12 @@ Deno.test("inspector_test_coverage_does_not_block_shutdown", async () => {
     const stderr = new TextDecoder().decode(output.stderr);
     assert(
       !timedOut,
-      `deno test --coverage did not exit cleanly.\nstdout:\n${stdout}\nstderr:\n${stderr}`,
+      `edno test --coverage did not exit cleanly.\nstdout:\n${stdout}\nstderr:\n${stderr}`,
     );
     assertEquals(output.code, 0, `stdout:\n${stdout}\nstderr:\n${stderr}`);
     assertStringIncludes(stdout, "basic test ... ok");
     const coverageFiles = [];
-    for await (const entry of Deno.readDir(coverageDir)) {
+    for await (const entry of Edno.readDir(coverageDir)) {
       if (entry.isFile) coverageFiles.push(entry.name);
     }
     assert(
@@ -1974,11 +1974,11 @@ Deno.test("inspector_test_coverage_does_not_block_shutdown", async () => {
     if (timeoutId !== undefined) {
       clearTimeout(timeoutId);
     }
-    await Deno.remove(coverageDir, { recursive: true });
+    await Edno.remove(coverageDir, { recursive: true });
   }
 });
 
-Deno.test("inspector_with_ts_files", async () => {
+Edno.test("inspector_with_ts_files", async () => {
   const script = `${testdataPath}/test.ts`;
 
   function notificationFilter(msg: CDPMessage): boolean {
@@ -2114,12 +2114,12 @@ Deno.test("inspector_with_ts_files", async () => {
   }
 });
 
-Deno.test("inspector_wait", async () => {
+Edno.test("inspector_wait", async () => {
   const script = `${testdataPath}/inspect_wait.js`;
-  const tempDir = await Deno.makeTempDir();
+  const tempDir = await Edno.makeTempDir();
   const helloPath = `${tempDir}/hello.txt`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", "--inspect-wait=0", script],
     stdin: "piped",
     stdout: "piped",
@@ -2138,7 +2138,7 @@ Deno.test("inspector_wait", async () => {
 
     let fileExists = false;
     try {
-      await Deno.stat(helloPath);
+      await Edno.stat(helloPath);
       fileExists = true;
     } catch {
       // Expected - file shouldn't exist yet
@@ -2180,7 +2180,7 @@ Deno.test("inspector_wait", async () => {
     );
 
     try {
-      await Deno.stat(helloPath);
+      await Edno.stat(helloPath);
       fileExists = true;
     } catch {
       fileExists = false;
@@ -2195,14 +2195,14 @@ Deno.test("inspector_wait", async () => {
     child.kill();
     await child.status;
     try {
-      await Deno.remove(tempDir, { recursive: true });
+      await Edno.remove(tempDir, { recursive: true });
     } catch {
       // Ignore cleanup errors
     }
   }
 });
 
-Deno.test("inspector_node_wait_for_debugger_no_pause", async () => {
+Edno.test("inspector_node_wait_for_debugger_no_pause", async () => {
   // Regression test: node:inspector waitForDebugger() must block until a
   // session sends Runtime.runIfWaitingForDebugger and then resume WITHOUT
   // scheduling a pause on the next statement. It used the --inspect-brk
@@ -2210,10 +2210,10 @@ Deno.test("inspector_node_wait_for_debugger_no_pause", async () => {
   // after attaching (VS Code stopped inside js-debug's bootloader).
   const preload = `${testdataPath}/wait_for_debugger_preload.cjs`;
   const script = `${testdataPath}/wait_for_debugger_program.js`;
-  const tempDir = await Deno.makeTempDir();
+  const tempDir = await Edno.makeTempDir();
   const helloPath = `${tempDir}/hello.txt`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", "--require", preload, script],
     stdin: "piped",
     stdout: "piped",
@@ -2257,7 +2257,7 @@ Deno.test("inspector_node_wait_for_debugger_no_pause", async () => {
 
     let fileExists = false;
     try {
-      await Deno.stat(helloPath);
+      await Edno.stat(helloPath);
       fileExists = true;
     } catch {
       // Expected - file shouldn't exist yet
@@ -2295,14 +2295,14 @@ Deno.test("inspector_node_wait_for_debugger_no_pause", async () => {
     child.kill();
     await child.status;
     try {
-      await Deno.remove(tempDir, { recursive: true });
+      await Edno.remove(tempDir, { recursive: true });
     } catch {
       // Ignore cleanup errors
     }
   }
 });
 
-Deno.test("inspector_console_api_late_open", async () => {
+Edno.test("inspector_console_api_late_open", async () => {
   // Regression test: when the inspector is activated at runtime via
   // node:inspector open() (instead of a CLI --inspect* flag), sessions must
   // still receive Runtime.consoleAPICalled for console calls. The console
@@ -2312,7 +2312,7 @@ Deno.test("inspector_console_api_late_open", async () => {
   const preload = `${testdataPath}/console_api_late_open_preload.cjs`;
   const script = `${testdataPath}/console_api_late_open_logger.js`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", "--require", preload, script],
     stdin: "piped",
     stdout: "piped",
@@ -2377,10 +2377,10 @@ Deno.test("inspector_console_api_late_open", async () => {
   }
 });
 
-Deno.test("inspector_node_runtime_api_url", async () => {
+Edno.test("inspector_node_runtime_api_url", async () => {
   const script = `${testdataPath}/node/url.js`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", "--inspect=0", script],
     stdout: "piped",
     stderr: "piped",
@@ -2406,12 +2406,12 @@ Deno.test("inspector_node_runtime_api_url", async () => {
   );
 });
 
-Deno.test("inspector_node_open_requires_sys_permission", async () => {
+Edno.test("inspector_node_open_requires_sys_permission", async () => {
   const script =
     'import inspector from "node:inspector"; inspector.open(0, "127.0.0.1", false); console.log("opened"); inspector.close();';
   const scriptUrl = `data:application/javascript,${encodeURIComponent(script)}`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "--no-config", "--quiet", "--allow-net", scriptUrl],
     stdout: "piped",
     stderr: "piped",
@@ -2430,7 +2430,7 @@ Deno.test("inspector_node_open_requires_sys_permission", async () => {
 // `console.group(label)` must emit a paired `log` event so Chrome DevTools
 // renders the label inside the group container; otherwise the group appears
 // empty and the visible nesting drifts out of alignment with the CLI.
-Deno.test("inspector_console_group_emits_label_log", async () => {
+Edno.test("inspector_console_group_emits_label_log", async () => {
   const script = `${testdataPath}/inspector_group.js`;
   // `--inspect-wait` keeps the script paused until the inspector calls
   // `Runtime.runIfWaitingForDebugger`. Avoid `--inspect-brk` here: that mode
@@ -2457,7 +2457,7 @@ Deno.test("inspector_console_group_emits_label_log", async () => {
     const events: Array<{ type: string; arg: string | undefined }> = [];
     while (true) {
       const msg = await tester.expectNotification("Runtime.consoleAPICalled");
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       const params = msg.params as any;
       const arg = params.args?.[0]?.value;
       events.push({ type: params.type, arg });
@@ -2484,7 +2484,7 @@ Deno.test("inspector_console_group_emits_label_log", async () => {
 // Piping a file stream to a WritableStream internally releases the writer,
 // rejecting its ready/closed promises. Those rejections are handled, so a
 // debugger with "pause on uncaught exceptions" enabled must not break on them.
-Deno.test("inspector_no_pause_on_handled_stream_rejection", async () => {
+Edno.test("inspector_no_pause_on_handled_stream_rejection", async () => {
   const script = `${testdataPath}/pipe_file_to_writable.js`;
   const tester = await InspectorTester.create(
     ["run", "-A", "--inspect-brk=0", script],
@@ -2515,9 +2515,9 @@ Deno.test("inspector_no_pause_on_handled_stream_rejection", async () => {
     // First pause is the --inspect-brk break on the first line.
     const firstPause = await tester.expectNotification("Debugger.paused");
     assert(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (firstPause.params as any)?.reason !== "exception" &&
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (firstPause.params as any)?.reason !== "promiseRejection",
       "first pause should be the inspect-brk break, not an exception",
     );
@@ -2539,7 +2539,7 @@ Deno.test("inspector_no_pause_on_handled_stream_rejection", async () => {
       // No second pause within the window — this is the expected outcome.
     }
     if (unexpectedPause) {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       const params = unexpectedPause.params as any;
       throw new Error(
         `debugger paused unexpectedly on a handled rejection: reason=${params?.reason} ${
@@ -2557,13 +2557,13 @@ Deno.test("inspector_no_pause_on_handled_stream_rejection", async () => {
   }
 });
 
-Deno.test({
+Edno.test({
   name: "inspector_starts_on_sigusr1",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   permissions: { run: true, read: true, net: true },
   async fn() {
     const script = testdataPath + "sigusr1.js";
-    const child = new Deno.Command(Deno.execPath(), {
+    const child = new Edno.Command(Edno.execPath(), {
       args: ["run", script],
       stdout: "piped",
       stderr: "piped",

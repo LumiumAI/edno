@@ -4,13 +4,13 @@ import { assert, assertEquals, assertStringIncludes } from "./test_util.ts";
 import { assertSnapshot } from "@std/testing/snapshot";
 
 // TODO(@marvinhagemeister) Remove once we land "official" types
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 type LintVisitor = Record<string, (node: any) => void>;
 
 function testPlugin(
   source: string,
-  rule: Deno.lint.Rule,
-): Deno.lint.Diagnostic[] {
+  rule: Edno.lint.Rule,
+): Edno.lint.Diagnostic[] {
   const plugin = {
     name: "test-plugin",
     rules: {
@@ -18,7 +18,7 @@ function testPlugin(
     },
   };
 
-  return Deno.lint.runPlugin(
+  return Edno.lint.runPlugin(
     plugin,
     "source.tsx",
     source,
@@ -28,7 +28,7 @@ function testPlugin(
 interface VisitResult {
   selector: string;
   kind: "enter" | "exit";
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   node: any;
 }
 
@@ -60,7 +60,7 @@ function testVisit(
 }
 
 async function testSnapshot(
-  t: Deno.TestContext,
+  t: Edno.TestContext,
   source: string,
   ...selectors: string[]
 ) {
@@ -72,7 +72,7 @@ async function testSnapshot(
 
       for (const s of selectors) {
         visitor[s] = (node) => {
-          log.push(node[Symbol.for("Deno.lint.toJsValue")]());
+          log.push(node[Symbol.for("Edno.lint.toJsValue")]());
         };
       }
 
@@ -84,7 +84,7 @@ async function testSnapshot(
   await assertSnapshot(t, log[0]);
 }
 
-Deno.test("Plugin - visitor enter/exit", () => {
+Edno.test("Plugin - visitor enter/exit", () => {
   const enter = testVisit(
     "foo",
     "Identifier",
@@ -102,14 +102,14 @@ Deno.test("Plugin - visitor enter/exit", () => {
 });
 
 // https://github.com/denoland/deno/issues/28227
-Deno.test("Plugin - visitor enter/exit #2", () => {
+Edno.test("Plugin - visitor enter/exit #2", () => {
   const log: string[] = [];
 
   testPlugin("{}\nfoo;", {
     create() {
       return {
-        "*": (node: Deno.lint.Node) => log.push(`-> ${node.type}`),
-        "*:exit": (node: Deno.lint.Node) => log.push(`<- ${node.type}`),
+        "*": (node: Edno.lint.Node) => log.push(`-> ${node.type}`),
+        "*:exit": (node: Edno.lint.Node) => log.push(`<- ${node.type}`),
       };
     },
   });
@@ -126,7 +126,7 @@ Deno.test("Plugin - visitor enter/exit #2", () => {
   ]);
 });
 
-Deno.test("Plugin - visitor descendant", () => {
+Edno.test("Plugin - visitor descendant", () => {
   let result = testVisit(
     "if (false) foo; if (false) bar()",
     "IfStatement CallExpression",
@@ -147,7 +147,7 @@ Deno.test("Plugin - visitor descendant", () => {
   assertEquals(result[0].node.type, "CallExpression");
 });
 
-Deno.test("Plugin - visitor child combinator", () => {
+Edno.test("Plugin - visitor child combinator", () => {
   let result = testVisit(
     "if (false) foo; if (false) { bar; }",
     "IfStatement > ExpressionStatement > Identifier",
@@ -167,7 +167,7 @@ Deno.test("Plugin - visitor child combinator", () => {
   assertEquals(result, []);
 });
 
-Deno.test("Plugin - visitor next sibling", () => {
+Edno.test("Plugin - visitor next sibling", () => {
   const result = testVisit(
     "if (false) foo; if (false) bar;",
     "IfStatement + IfStatement Identifier",
@@ -175,7 +175,7 @@ Deno.test("Plugin - visitor next sibling", () => {
   assertEquals(result[0].node.name, "bar");
 });
 
-Deno.test("Plugin - visitor subsequent sibling", () => {
+Edno.test("Plugin - visitor subsequent sibling", () => {
   const result = testVisit(
     "if (false) foo; if (false) bar; if (false) baz;",
     "IfStatement ~ IfStatement Identifier",
@@ -183,7 +183,7 @@ Deno.test("Plugin - visitor subsequent sibling", () => {
   assertEquals(result.map((r) => r.node.name), ["bar", "baz"]);
 });
 
-Deno.test("Plugin - visitor field", () => {
+Edno.test("Plugin - visitor field", () => {
   let result = testVisit(
     "if (foo()) {}",
     "IfStatement.test.callee",
@@ -206,7 +206,7 @@ Deno.test("Plugin - visitor field", () => {
   assertEquals(result[0].node.name, "bar");
 });
 
-Deno.test("Plugin - visitor attr", () => {
+Edno.test("Plugin - visitor attr", () => {
   let result = testVisit(
     "for (const a of b) {}",
     "[await]",
@@ -244,7 +244,7 @@ Deno.test("Plugin - visitor attr", () => {
   assertEquals(result[0].node.name, "foo");
 });
 
-Deno.test("Plugin - visitor attr to check type", () => {
+Edno.test("Plugin - visitor attr to check type", () => {
   let result = testVisit(
     "foo",
     "Identifier[type]",
@@ -258,7 +258,7 @@ Deno.test("Plugin - visitor attr to check type", () => {
   assertEquals(result[0].node.type, "Identifier");
 });
 
-Deno.test("Plugin - visitor attr non-existing", () => {
+Edno.test("Plugin - visitor attr non-existing", () => {
   const result = testVisit(
     "foo",
     "[non-existing]",
@@ -266,7 +266,7 @@ Deno.test("Plugin - visitor attr non-existing", () => {
   assertEquals(result, []);
 });
 
-Deno.test("Plugin - visitor attr length special case", () => {
+Edno.test("Plugin - visitor attr length special case", () => {
   let result = testVisit(
     "foo(1); foo(1, 2);",
     "CallExpression[arguments.length=2]",
@@ -300,7 +300,7 @@ Deno.test("Plugin - visitor attr length special case", () => {
   assertEquals(result[1].node.arguments.length, 2);
 });
 
-Deno.test("Plugin - visitor attr regex", () => {
+Edno.test("Plugin - visitor attr regex", () => {
   let result = testVisit(
     "class Foo { get foo() { return 1 } bar() {} }",
     "MethodDefinition[kind=/(g|s)et/]",
@@ -316,7 +316,7 @@ Deno.test("Plugin - visitor attr regex", () => {
   assertEquals(result[0].node.kind, "method");
 });
 
-Deno.test("Plugin - visitor :first-child", () => {
+Edno.test("Plugin - visitor :first-child", () => {
   const result = testVisit(
     "{ foo; bar }",
     "BlockStatement ExpressionStatement:first-child Identifier",
@@ -324,7 +324,7 @@ Deno.test("Plugin - visitor :first-child", () => {
   assertEquals(result[0].node.name, "foo");
 });
 
-Deno.test("Plugin - visitor :last-child", () => {
+Edno.test("Plugin - visitor :last-child", () => {
   const result = testVisit(
     "{ foo; bar }",
     "BlockStatement ExpressionStatement:last-child Identifier",
@@ -332,7 +332,7 @@ Deno.test("Plugin - visitor :last-child", () => {
   assertEquals(result[0].node.name, "bar");
 });
 
-Deno.test("Plugin - visitor :nth-child", () => {
+Edno.test("Plugin - visitor :nth-child", () => {
   let result = testVisit(
     "{ foo; bar; baz; foobar; }",
     "BlockStatement ExpressionStatement:nth-child(2) Identifier",
@@ -361,7 +361,7 @@ Deno.test("Plugin - visitor :nth-child", () => {
   assertEquals(result[1].node.name, "foobar");
 });
 
-Deno.test("Plugin - visitor :has()", () => {
+Edno.test("Plugin - visitor :has()", () => {
   let result = testVisit(
     "{ foo, bar }",
     "BlockStatement:has(Identifier[name='bar'])",
@@ -391,7 +391,7 @@ Deno.test("Plugin - visitor :has()", () => {
   assertEquals(result[0].node.name, "bar");
 });
 
-Deno.test("Plugin - visitor :is()/:where()/:matches()", () => {
+Edno.test("Plugin - visitor :is()/:where()/:matches()", () => {
   let result = testVisit(
     "{ foo, bar }",
     "BlockStatement :is(Identifier[name='bar'])",
@@ -414,7 +414,7 @@ Deno.test("Plugin - visitor :is()/:where()/:matches()", () => {
   assertEquals(result[0].node.name, "bar");
 });
 
-Deno.test("Plugin - visitor :not", () => {
+Edno.test("Plugin - visitor :not", () => {
   let result = testVisit(
     "{ foo, bar }",
     "BlockStatement:not(Identifier[name='baz'])",
@@ -444,8 +444,8 @@ Deno.test("Plugin - visitor :not", () => {
   assertEquals(result[0].node.name, "bar");
 });
 
-Deno.test("Plugin - parent", () => {
-  let parent: Deno.lint.Node | undefined;
+Edno.test("Plugin - parent", () => {
+  let parent: Edno.lint.Node | undefined;
 
   testPlugin("const foo = 1;", {
     create() {
@@ -460,11 +460,11 @@ Deno.test("Plugin - parent", () => {
   assertEquals(parent?.type, "Program");
 });
 
-Deno.test("Plugin - Program", async (t) => {
+Edno.test("Plugin - Program", async (t) => {
   await testSnapshot(t, "", "Program");
 });
 
-Deno.test("Plugin - FunctionDeclaration", async (t) => {
+Edno.test("Plugin - FunctionDeclaration", async (t) => {
   await testSnapshot(t, "function foo() {}", "FunctionDeclaration");
   await testSnapshot(t, "function foo(a, ...b) {}", "FunctionDeclaration");
   await testSnapshot(
@@ -485,7 +485,7 @@ Deno.test("Plugin - FunctionDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - ImportDeclaration", async (t) => {
+Edno.test("Plugin - ImportDeclaration", async (t) => {
   await testSnapshot(t, 'import "foo";', "ImportDeclaration");
   await testSnapshot(t, 'import foo from "foo";', "ImportDeclaration");
   await testSnapshot(t, 'import * as foo from "foo";', "ImportDeclaration");
@@ -501,7 +501,7 @@ Deno.test("Plugin - ImportDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - ExportNamedDeclaration", async (t) => {
+Edno.test("Plugin - ExportNamedDeclaration", async (t) => {
   await testSnapshot(t, 'export { foo } from "foo";', "ExportNamedDeclaration");
   await testSnapshot(
     t,
@@ -515,7 +515,7 @@ Deno.test("Plugin - ExportNamedDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - ExportDefaultDeclaration", async (t) => {
+Edno.test("Plugin - ExportDefaultDeclaration", async (t) => {
   await testSnapshot(
     t,
     "export default function foo() {}",
@@ -544,7 +544,7 @@ Deno.test("Plugin - ExportDefaultDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - ExportAllDeclaration", async (t) => {
+Edno.test("Plugin - ExportAllDeclaration", async (t) => {
   await testSnapshot(t, 'export * from "foo";', "ExportAllDeclaration");
   await testSnapshot(t, 'export * as foo from "foo";', "ExportAllDeclaration");
   await testSnapshot(
@@ -554,11 +554,11 @@ Deno.test("Plugin - ExportAllDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSExportAssignment", async (t) => {
+Edno.test("Plugin - TSExportAssignment", async (t) => {
   await testSnapshot(t, "export = foo;", "TSExportAssignment");
 });
 
-Deno.test("Plugin - TSNamespaceExportDeclaration", async (t) => {
+Edno.test("Plugin - TSNamespaceExportDeclaration", async (t) => {
   await testSnapshot(
     t,
     "export as namespace A;",
@@ -566,7 +566,7 @@ Deno.test("Plugin - TSNamespaceExportDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSImportEqualsDeclaration", async (t) => {
+Edno.test("Plugin - TSImportEqualsDeclaration", async (t) => {
   await testSnapshot(t, "import a = b", "TSImportEqualsDeclaration");
   await testSnapshot(
     t,
@@ -575,61 +575,61 @@ Deno.test("Plugin - TSImportEqualsDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - BlockStatement", async (t) => {
+Edno.test("Plugin - BlockStatement", async (t) => {
   await testSnapshot(t, "{ foo; }", "BlockStatement");
 });
 
-Deno.test("Plugin - BreakStatement", async (t) => {
+Edno.test("Plugin - BreakStatement", async (t) => {
   await testSnapshot(t, "while (false) break;", "BreakStatement");
   await testSnapshot(t, "foo: while (false) break foo;", "BreakStatement");
 });
 
-Deno.test("Plugin - ContinueStatement", async (t) => {
+Edno.test("Plugin - ContinueStatement", async (t) => {
   await testSnapshot(t, "continue;", "ContinueStatement");
   await testSnapshot(t, "continue foo;", "ContinueStatement");
 });
 
-Deno.test("Plugin - DebuggerStatement", async (t) => {
+Edno.test("Plugin - DebuggerStatement", async (t) => {
   await testSnapshot(t, "debugger;", "DebuggerStatement");
 });
 
-Deno.test("Plugin - DoWhileStatement", async (t) => {
+Edno.test("Plugin - DoWhileStatement", async (t) => {
   await testSnapshot(t, "do {} while (foo);", "DoWhileStatement");
 });
 
-Deno.test("Plugin - ExpressionStatement", async (t) => {
+Edno.test("Plugin - ExpressionStatement", async (t) => {
   await testSnapshot(t, "foo;", "ExpressionStatement");
 });
 
-Deno.test("Plugin - ForInStatement", async (t) => {
+Edno.test("Plugin - ForInStatement", async (t) => {
   await testSnapshot(t, "for (a in b) {}", "ForInStatement");
 });
 
-Deno.test("Plugin - ForOfStatement", async (t) => {
+Edno.test("Plugin - ForOfStatement", async (t) => {
   await testSnapshot(t, "for (a of b) {}", "ForOfStatement");
   await testSnapshot(t, "for await (a of b) {}", "ForOfStatement");
 });
 
-Deno.test("Plugin - ForStatement", async (t) => {
+Edno.test("Plugin - ForStatement", async (t) => {
   await testSnapshot(t, "for (;;) {}", "ForStatement");
   await testSnapshot(t, "for (a; b; c) {}", "ForStatement");
 });
 
-Deno.test("Plugin - IfStatement", async (t) => {
+Edno.test("Plugin - IfStatement", async (t) => {
   await testSnapshot(t, "if (foo) {}", "IfStatement");
   await testSnapshot(t, "if (foo) {} else {}", "IfStatement");
 });
 
-Deno.test("Plugin - LabeledStatement", async (t) => {
+Edno.test("Plugin - LabeledStatement", async (t) => {
   await testSnapshot(t, "foo: {};", "LabeledStatement");
 });
 
-Deno.test("Plugin - ReturnStatement", async (t) => {
+Edno.test("Plugin - ReturnStatement", async (t) => {
   await testSnapshot(t, "return", "ReturnStatement");
   await testSnapshot(t, "return foo;", "ReturnStatement");
 });
 
-Deno.test("Plugin - SwitchStatement", async (t) => {
+Edno.test("Plugin - SwitchStatement", async (t) => {
   await testSnapshot(
     t,
     `switch (foo) {
@@ -643,29 +643,29 @@ Deno.test("Plugin - SwitchStatement", async (t) => {
   );
 });
 
-Deno.test("Plugin - ThrowStatement", async (t) => {
+Edno.test("Plugin - ThrowStatement", async (t) => {
   await testSnapshot(t, "throw foo;", "ThrowStatement");
 });
 
-Deno.test("Plugin - TryStatement", async (t) => {
+Edno.test("Plugin - TryStatement", async (t) => {
   await testSnapshot(t, "try {} catch {};", "TryStatement");
   await testSnapshot(t, "try {} catch (e) {};", "TryStatement");
   await testSnapshot(t, "try {} finally {};", "TryStatement");
 });
 
-Deno.test("Plugin - WhileStatement", async (t) => {
+Edno.test("Plugin - WhileStatement", async (t) => {
   await testSnapshot(t, "while (foo) {}", "WhileStatement");
 });
 
-Deno.test("Plugin - WithStatement", async (t) => {
+Edno.test("Plugin - WithStatement", async (t) => {
   await testSnapshot(t, "with ([]) {}", "WithStatement");
 });
 
-Deno.test("Plugin - ArrayExpression", async (t) => {
+Edno.test("Plugin - ArrayExpression", async (t) => {
   await testSnapshot(t, "[[],,[]]", "ArrayExpression");
 });
 
-Deno.test("Plugin - ArrowFunctionExpression", async (t) => {
+Edno.test("Plugin - ArrowFunctionExpression", async (t) => {
   await testSnapshot(t, "() => {}", "ArrowFunctionExpression");
   await testSnapshot(t, "async () => {}", "ArrowFunctionExpression");
   await testSnapshot(
@@ -675,16 +675,16 @@ Deno.test("Plugin - ArrowFunctionExpression", async (t) => {
   );
 });
 
-Deno.test("Plugin - AssignmentExpression", async (t) => {
+Edno.test("Plugin - AssignmentExpression", async (t) => {
   await testSnapshot(t, "a = b", "AssignmentExpression");
   await testSnapshot(t, "a = a ??= b", "AssignmentExpression");
 });
 
-Deno.test("Plugin - AwaitExpression", async (t) => {
+Edno.test("Plugin - AwaitExpression", async (t) => {
   await testSnapshot(t, "await foo;", "AwaitExpression");
 });
 
-Deno.test("Plugin - BinaryExpression", async (t) => {
+Edno.test("Plugin - BinaryExpression", async (t) => {
   await testSnapshot(t, "a > b", "BinaryExpression");
   await testSnapshot(t, "a >= b", "BinaryExpression");
   await testSnapshot(t, "a < b", "BinaryExpression");
@@ -708,18 +708,18 @@ Deno.test("Plugin - BinaryExpression", async (t) => {
   await testSnapshot(t, "a ** b", "BinaryExpression");
 });
 
-Deno.test("Plugin - CallExpression", async (t) => {
+Edno.test("Plugin - CallExpression", async (t) => {
   await testSnapshot(t, "foo();", "CallExpression");
   await testSnapshot(t, "foo(a, ...b);", "CallExpression");
   await testSnapshot(t, "foo?.();", "CallExpression");
   await testSnapshot(t, "foo<T>();", "CallExpression");
 });
 
-Deno.test("Plugin - ChainExpression", async (t) => {
+Edno.test("Plugin - ChainExpression", async (t) => {
   await testSnapshot(t, "a?.b", "ChainExpression");
 });
 
-Deno.test("Plugin - ClassExpression", async (t) => {
+Edno.test("Plugin - ClassExpression", async (t) => {
   await testSnapshot(t, "a = class {}", "ClassExpression");
   await testSnapshot(t, "a = class Foo {}", "ClassExpression");
   await testSnapshot(t, "a = class Foo extends Bar {}", "ClassExpression");
@@ -752,11 +752,11 @@ Deno.test("Plugin - ClassExpression", async (t) => {
   );
 });
 
-Deno.test("Plugin - ConditionalExpression", async (t) => {
+Edno.test("Plugin - ConditionalExpression", async (t) => {
   await testSnapshot(t, "a ? b : c", "ConditionalExpression");
 });
 
-Deno.test("Plugin - FunctionExpression", async (t) => {
+Edno.test("Plugin - FunctionExpression", async (t) => {
   await testSnapshot(t, "a = function () {}", "FunctionExpression");
   await testSnapshot(t, "a = function foo() {}", "FunctionExpression");
   await testSnapshot(
@@ -767,11 +767,11 @@ Deno.test("Plugin - FunctionExpression", async (t) => {
   await testSnapshot(t, "a = async function* () {}", "FunctionExpression");
 });
 
-Deno.test("Plugin - Identifier", async (t) => {
+Edno.test("Plugin - Identifier", async (t) => {
   await testSnapshot(t, "a", "Identifier");
 });
 
-Deno.test("Plugin - ImportExpression", async (t) => {
+Edno.test("Plugin - ImportExpression", async (t) => {
   await testSnapshot(
     t,
     "import('foo', { with: { type: 'json' } })",
@@ -779,42 +779,42 @@ Deno.test("Plugin - ImportExpression", async (t) => {
   );
 });
 
-Deno.test("Plugin - LogicalExpression", async (t) => {
+Edno.test("Plugin - LogicalExpression", async (t) => {
   await testSnapshot(t, "a && b", "LogicalExpression");
   await testSnapshot(t, "a || b", "LogicalExpression");
   await testSnapshot(t, "a ?? b", "LogicalExpression");
 });
 
-Deno.test("Plugin - MemberExpression", async (t) => {
+Edno.test("Plugin - MemberExpression", async (t) => {
   await testSnapshot(t, "a.b", "MemberExpression");
   await testSnapshot(t, "a['b']", "MemberExpression");
 });
 
-Deno.test("Plugin - MetaProperty", async (t) => {
+Edno.test("Plugin - MetaProperty", async (t) => {
   await testSnapshot(t, "import.meta", "MetaProperty");
   await testSnapshot(t, "new.target", "MetaProperty");
 });
 
-Deno.test("Plugin - NewExpression", async (t) => {
+Edno.test("Plugin - NewExpression", async (t) => {
   await testSnapshot(t, "new Foo()", "NewExpression");
   await testSnapshot(t, "new Foo<T>(a, ...b)", "NewExpression");
 });
 
-Deno.test("Plugin - ObjectExpression", async (t) => {
+Edno.test("Plugin - ObjectExpression", async (t) => {
   await testSnapshot(t, "a = {}", "ObjectExpression");
   await testSnapshot(t, "a = { a }", "ObjectExpression");
   await testSnapshot(t, "a = { b: c, [c]: d }", "ObjectExpression");
 });
 
-Deno.test("Plugin - PrivateIdentifier", async (t) => {
+Edno.test("Plugin - PrivateIdentifier", async (t) => {
   await testSnapshot(t, "class Foo { #foo = foo }", "PrivateIdentifier");
 });
 
-Deno.test("Plugin - SequenceExpression", async (t) => {
+Edno.test("Plugin - SequenceExpression", async (t) => {
   await testSnapshot(t, "(a, b)", "SequenceExpression");
 });
 
-Deno.test("Plugin - Super", async (t) => {
+Edno.test("Plugin - Super", async (t) => {
   await testSnapshot(
     t,
     "class Foo extends Bar { constructor() { super(); } }",
@@ -822,50 +822,50 @@ Deno.test("Plugin - Super", async (t) => {
   );
 });
 
-Deno.test("Plugin - TaggedTemplateExpression", async (t) => {
+Edno.test("Plugin - TaggedTemplateExpression", async (t) => {
   await testSnapshot(t, "foo`foo ${bar} baz`", "TaggedTemplateExpression");
 });
 
-Deno.test("Plugin - TemplateLiteral", async (t) => {
+Edno.test("Plugin - TemplateLiteral", async (t) => {
   await testSnapshot(t, "`foo ${bar} baz`", "TemplateLiteral");
 });
 
-Deno.test("Plugin - ThisExpression", async (t) => {
+Edno.test("Plugin - ThisExpression", async (t) => {
   await testSnapshot(t, "this", "ThisExpression");
 });
 
-Deno.test("Plugin - TSAsExpression", async (t) => {
+Edno.test("Plugin - TSAsExpression", async (t) => {
   await testSnapshot(t, "a as b", "TSAsExpression");
   await testSnapshot(t, "a as const", "TSAsExpression");
 });
 
-Deno.test("Plugin - TSNonNullExpression", async (t) => {
+Edno.test("Plugin - TSNonNullExpression", async (t) => {
   await testSnapshot(t, "a!", "TSNonNullExpression");
 });
 
-Deno.test("Plugin - TSSatisfiesExpression", async (t) => {
+Edno.test("Plugin - TSSatisfiesExpression", async (t) => {
   await testSnapshot(t, "a satisfies b", "TSSatisfiesExpression");
 });
 
-Deno.test("Plugin - UnaryExpression", async (t) => {
+Edno.test("Plugin - UnaryExpression", async (t) => {
   await testSnapshot(t, "typeof a", "UnaryExpression");
   await testSnapshot(t, "void 0", "UnaryExpression");
   await testSnapshot(t, "-a", "UnaryExpression");
   await testSnapshot(t, "+a", "UnaryExpression");
 });
 
-Deno.test("Plugin - UpdateExpression", async (t) => {
+Edno.test("Plugin - UpdateExpression", async (t) => {
   await testSnapshot(t, "a++", "UpdateExpression");
   await testSnapshot(t, "++a", "UpdateExpression");
   await testSnapshot(t, "a--", "UpdateExpression");
   await testSnapshot(t, "--a", "UpdateExpression");
 });
 
-Deno.test("Plugin - YieldExpression", async (t) => {
+Edno.test("Plugin - YieldExpression", async (t) => {
   await testSnapshot(t, "function* foo() { yield bar; }", "YieldExpression");
 });
 
-Deno.test("Plugin - ObjectPattern", async (t) => {
+Edno.test("Plugin - ObjectPattern", async (t) => {
   await testSnapshot(t, "const { prop } = {}", "ObjectPattern");
   await testSnapshot(t, "const { prop: A } = {}", "ObjectPattern");
   await testSnapshot(t, "const { 'a.b': A } = {}", "ObjectPattern");
@@ -874,13 +874,13 @@ Deno.test("Plugin - ObjectPattern", async (t) => {
   await testSnapshot(t, "({ a = b } = {})", "ObjectPattern");
 });
 
-Deno.test("Plugin - ArrayPattern", async (t) => {
+Edno.test("Plugin - ArrayPattern", async (t) => {
   await testSnapshot(t, "const [a, b] = []", "ArrayPattern");
   await testSnapshot(t, "const [a = 2] = []", "ArrayPattern");
   await testSnapshot(t, "const [a, ...b] = []", "ArrayPattern");
 });
 
-Deno.test("Plugin - Literal", async (t) => {
+Edno.test("Plugin - Literal", async (t) => {
   await testSnapshot(t, "1", "Literal");
   await testSnapshot(t, "'foo'", "Literal");
   await testSnapshot(t, '"foo"', "Literal");
@@ -892,7 +892,7 @@ Deno.test("Plugin - Literal", async (t) => {
 });
 
 // Stage 1 Proposal: https://github.com/tc39/proposal-grouped-and-auto-accessors
-Deno.test.ignore(
+Edno.test.ignore(
   "Plugin - AccessorProperty + TSAbstractAccessorProperty",
   async (t) => {
     await testSnapshot(
@@ -908,7 +908,7 @@ Deno.test.ignore(
   },
 );
 
-Deno.test("Plugin - Abstract class", async (t) => {
+Edno.test("Plugin - Abstract class", async (t) => {
   await testSnapshot(
     t,
     `abstract class SomeClass { abstract prop: string; }`,
@@ -921,7 +921,7 @@ Deno.test("Plugin - Abstract class", async (t) => {
   );
 });
 
-Deno.test("Plugin - Decorators", async (t) => {
+Edno.test("Plugin - Decorators", async (t) => {
   // Class declaration
   await testSnapshot(
     t,
@@ -959,7 +959,7 @@ Deno.test("Plugin - Decorators", async (t) => {
   );
 });
 
-Deno.test("Plugin - JSXElement + JSXOpeningElement + JSXClosingElement + JSXAttr", async (t) => {
+Edno.test("Plugin - JSXElement + JSXOpeningElement + JSXClosingElement + JSXAttr", async (t) => {
   await testSnapshot(t, "<div />", "JSXElement");
   await testSnapshot(t, "<div></div>", "JSXElement");
   await testSnapshot(t, "<div a></div>", "JSXElement");
@@ -972,17 +972,17 @@ Deno.test("Plugin - JSXElement + JSXOpeningElement + JSXClosingElement + JSXAttr
   await testSnapshot(t, "<Foo<T> />", "JSXElement");
 });
 
-Deno.test("Plugin - JSXFragment + JSXOpeningFragment + JSXClosingFragment", async (t) => {
+Edno.test("Plugin - JSXFragment + JSXOpeningFragment + JSXClosingFragment", async (t) => {
   await testSnapshot(t, "<></>", "JSXFragment");
   await testSnapshot(t, "<>foo{2}</>", "JSXFragment");
 });
 
-Deno.test("Plugin - TSAsExpression", async (t) => {
+Edno.test("Plugin - TSAsExpression", async (t) => {
   await testSnapshot(t, "a as any", "TSAsExpression");
   await testSnapshot(t, '"foo" as const', "TSAsExpression");
 });
 
-Deno.test("Plugin - TSEnumDeclaration", async (t) => {
+Edno.test("Plugin - TSEnumDeclaration", async (t) => {
   await testSnapshot(t, "enum Foo {}", "TSEnumDeclaration");
   await testSnapshot(t, "const enum Foo {}", "TSEnumDeclaration");
   await testSnapshot(t, "enum Foo { A, B }", "TSEnumDeclaration");
@@ -994,7 +994,7 @@ Deno.test("Plugin - TSEnumDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSInterfaceDeclaration", async (t) => {
+Edno.test("Plugin - TSInterfaceDeclaration", async (t) => {
   await testSnapshot(t, "interface A {}", "TSInterfaceDeclaration");
   await testSnapshot(t, "interface A<T> {}", "TSInterfaceDeclaration");
   await testSnapshot(
@@ -1051,29 +1051,29 @@ Deno.test("Plugin - TSInterfaceDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSSatisfiesExpression", async (t) => {
+Edno.test("Plugin - TSSatisfiesExpression", async (t) => {
   await testSnapshot(t, "const a = {} satisfies A", "TSSatisfiesExpression");
 });
 
-Deno.test("Plugin - TSTypeAliasDeclaration", async (t) => {
+Edno.test("Plugin - TSTypeAliasDeclaration", async (t) => {
   await testSnapshot(t, "type A = any", "TSTypeAliasDeclaration");
   await testSnapshot(t, "type A<T> = any", "TSTypeAliasDeclaration");
   await testSnapshot(t, "declare type A<T> = any", "TSTypeAliasDeclaration");
 });
 
-Deno.test("Plugin - TSNonNullExpression", async (t) => {
+Edno.test("Plugin - TSNonNullExpression", async (t) => {
   await testSnapshot(t, "a!", "TSNonNullExpression");
 });
 
-Deno.test("Plugin - TSUnionType", async (t) => {
+Edno.test("Plugin - TSUnionType", async (t) => {
   await testSnapshot(t, "type A = B | C", "TSUnionType");
 });
 
-Deno.test("Plugin - TSIntersectionType", async (t) => {
+Edno.test("Plugin - TSIntersectionType", async (t) => {
   await testSnapshot(t, "type A = B & C", "TSIntersectionType");
 });
 
-Deno.test("Plugin - TSInstantiationExpression", async (t) => {
+Edno.test("Plugin - TSInstantiationExpression", async (t) => {
   await testSnapshot(t, "a<b>;", "TSInstantiationExpression");
   await testSnapshot(t, "(a<b>)<c>;", "TSInstantiationExpression");
   await testSnapshot(t, "(a<b>)<c>();", "TSInstantiationExpression");
@@ -1083,7 +1083,7 @@ Deno.test("Plugin - TSInstantiationExpression", async (t) => {
   await testSnapshot(t, "new (a<b>)<c>();", "TSInstantiationExpression");
 });
 
-Deno.test("Plugin - TSModuleDeclaration", async (t) => {
+Edno.test("Plugin - TSModuleDeclaration", async (t) => {
   await testSnapshot(t, "module A {}", "TSModuleDeclaration");
   await testSnapshot(
     t,
@@ -1092,7 +1092,7 @@ Deno.test("Plugin - TSModuleDeclaration", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSDeclareFunction", async (t) => {
+Edno.test("Plugin - TSDeclareFunction", async (t) => {
   await testSnapshot(
     t,
     `async function foo(): any;
@@ -1101,7 +1101,7 @@ async function foo(): any {}`,
   );
 });
 
-Deno.test("Plugin - TSModuleDeclaration + TSModuleBlock", async (t) => {
+Edno.test("Plugin - TSModuleDeclaration + TSModuleBlock", async (t) => {
   await testSnapshot(t, "module A {}", "TSModuleDeclaration");
   await testSnapshot(
     t,
@@ -1110,23 +1110,23 @@ Deno.test("Plugin - TSModuleDeclaration + TSModuleBlock", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSQualifiedName", async (t) => {
+Edno.test("Plugin - TSQualifiedName", async (t) => {
   await testSnapshot(t, "type A = a.b;", "TSQualifiedName");
 });
 
-Deno.test("Plugin - TSTypeLiteral", async (t) => {
+Edno.test("Plugin - TSTypeLiteral", async (t) => {
   await testSnapshot(t, "type A = { a: 1 };", "TSTypeLiteral");
 });
 
-Deno.test("Plugin - TSOptionalType", async (t) => {
+Edno.test("Plugin - TSOptionalType", async (t) => {
   await testSnapshot(t, "type A = [number?]", "TSOptionalType");
 });
 
-Deno.test("Plugin - TSRestType", async (t) => {
+Edno.test("Plugin - TSRestType", async (t) => {
   await testSnapshot(t, "type A = [...number[]]", "TSRestType");
 });
 
-Deno.test("Plugin - TSConditionalType", async (t) => {
+Edno.test("Plugin - TSConditionalType", async (t) => {
   await testSnapshot(
     t,
     "type A = B extends C ? number : string;",
@@ -1134,7 +1134,7 @@ Deno.test("Plugin - TSConditionalType", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSInferType", async (t) => {
+Edno.test("Plugin - TSInferType", async (t) => {
   await testSnapshot(
     t,
     "type A<T> = T extends Array<infer Item> ? Item : T;",
@@ -1142,13 +1142,13 @@ Deno.test("Plugin - TSInferType", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSTypeOperator", async (t) => {
+Edno.test("Plugin - TSTypeOperator", async (t) => {
   await testSnapshot(t, "type A = keyof B", "TSTypeOperator");
   await testSnapshot(t, "declare const sym1: unique symbol;", "TSTypeOperator");
   await testSnapshot(t, "type A = readonly []", "TSTypeOperator");
 });
 
-Deno.test("Plugin - TSMappedType", async (t) => {
+Edno.test("Plugin - TSMappedType", async (t) => {
   await testSnapshot(
     t,
     "type A<T> = { [P in keyof T]: boolean; };",
@@ -1186,18 +1186,18 @@ Deno.test("Plugin - TSMappedType", async (t) => {
   );
 });
 
-Deno.test("Plugin - TSLiteralType", async (t) => {
+Edno.test("Plugin - TSLiteralType", async (t) => {
   await testSnapshot(t, "type A = true", "TSLiteralType");
   await testSnapshot(t, "type A = false", "TSLiteralType");
   await testSnapshot(t, "type A = 1", "TSLiteralType");
   await testSnapshot(t, 'type A = "foo"', "TSLiteralType");
 });
 
-Deno.test("Plugin - TSTemplateLiteralType", async (t) => {
+Edno.test("Plugin - TSTemplateLiteralType", async (t) => {
   await testSnapshot(t, "type A = `a ${string}`", "TSTemplateLiteralType");
 });
 
-Deno.test("Plugin - TSTupleType + TSArrayType", async (t) => {
+Edno.test("Plugin - TSTupleType + TSArrayType", async (t) => {
   await testSnapshot(t, "type A = [number]", "TSTupleType");
   await testSnapshot(t, "type A = [x: number]", "TSTupleType");
   await testSnapshot(t, "type A = [x: number]", "TSTupleType");
@@ -1205,15 +1205,15 @@ Deno.test("Plugin - TSTupleType + TSArrayType", async (t) => {
   await testSnapshot(t, "type A = [...x: number[]]", "TSTupleType");
 });
 
-Deno.test("Plugin - TSArrayType", async (t) => {
+Edno.test("Plugin - TSArrayType", async (t) => {
   await testSnapshot(t, "type A = number[]", "TSArrayType");
 });
 
-Deno.test("Plugin - TSTypeQuery", async (t) => {
+Edno.test("Plugin - TSTypeQuery", async (t) => {
   await testSnapshot(t, "type A = typeof B", "TSTypeQuery");
 });
 
-Deno.test("Plugin - TS keywords", async (t) => {
+Edno.test("Plugin - TS keywords", async (t) => {
   await testSnapshot(t, "type A = any", "TSAnyKeyword");
   await testSnapshot(t, "type A = bigint", "TSBigIntKeyword");
   await testSnapshot(t, "type A = boolean", "TSBooleanKeyword");
@@ -1229,13 +1229,13 @@ Deno.test("Plugin - TS keywords", async (t) => {
   await testSnapshot(t, "type A = void", "TSVoidKeyword");
 });
 
-Deno.test("Plugin - enumerable properties", () => {
+Edno.test("Plugin - enumerable properties", () => {
   const keys: string[] = [];
   testPlugin(`const a = 42`, {
     create() {
       return {
         Program(node) {
-          // deno-lint-ignore guard-for-in
+          // edno-lint-ignore guard-for-in
           for (const k in node) {
             keys.push(k);
           }
@@ -1247,7 +1247,7 @@ Deno.test("Plugin - enumerable properties", () => {
   assert(keys.length > 0);
 });
 
-Deno.test("Plugin - error when reported range start > end", () => {
+Edno.test("Plugin - error when reported range start > end", () => {
   // assertThrows doesn't support checking the error message.
   try {
     testPlugin(`foo;`, {
@@ -1256,7 +1256,7 @@ Deno.test("Plugin - error when reported range start > end", () => {
           Identifier(node) {
             ctx.report({
               message: "not ok",
-              range: node.range.reverse() as Deno.lint.Range,
+              range: node.range.reverse() as Edno.lint.Range,
             });
           },
         };

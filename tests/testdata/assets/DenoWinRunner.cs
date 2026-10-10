@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 [Flags]
-public enum DenoConstraints : int
+public enum EdnoConstraints : int
 {
     None = 0,
     NoStdin = 1,
@@ -14,7 +14,7 @@ public enum DenoConstraints : int
     NoStderr = 4
 }
 
-public class DenoWinRunner
+public class EdnoWinRunner
 {
     private const int STD_INPUT_HANDLE = -10;
     private const int STD_OUTPUT_HANDLE = -11;
@@ -27,20 +27,20 @@ public class DenoWinRunner
     private static extern void SetStdHandle(int nStdHandle, IntPtr handle);
 
     /// <summary>
-    /// Runs Deno.exe under the specified constraints
+    /// Runs Edno.exe under the specified constraints
     /// </summary>
-    /// <param name="pathToDenoExe">Path to the Deno.exe file. Can be absolute or relative</param>
-    /// <param name="pathToTestScript">Path to the script file Deno should run.</param>
-    /// <param name="constraints">The constraints to apply to the Deno process</param>
-    /// <param name="timeoutMilliseconds">How long to wait for the Deno process to exit</param>
-    /// <returns>The deno.exe exit code, or an exit code provided by the test runner</returns>
-    public static int RunDenoScript(string pathToDenoExe, string pathToTestScript, DenoConstraints constraints, uint timeoutMilliseconds = 1000)
+    /// <param name="pathToDenoExe">Path to the Edno.exe file. Can be absolute or relative</param>
+    /// <param name="pathToTestScript">Path to the script file Edno should run.</param>
+    /// <param name="constraints">The constraints to apply to the Edno process</param>
+    /// <param name="timeoutMilliseconds">How long to wait for the Edno process to exit</param>
+    /// <returns>The edno.exe exit code, or an exit code provided by the test runner</returns>
+    public static int RunDenoScript(string pathToDenoExe, string pathToTestScript, EdnoConstraints constraints, uint timeoutMilliseconds = 1000)
     {
         try
         {
             if (!File.Exists(pathToDenoExe))
             {
-                Console.Error.WriteLine("Cannot find Deno.exe at " + pathToDenoExe);
+                Console.Error.WriteLine("Cannot find Edno.exe at " + pathToDenoExe);
                 return FILE_NOT_FOUND;
             }
 
@@ -55,24 +55,24 @@ public class DenoWinRunner
                 ErrorDialog = false,
                 UseShellExecute = false,
                 Arguments = @"run -A " + pathToTestScript,
-                RedirectStandardInput = !constraints.HasFlag(DenoConstraints.NoStdin),
-                RedirectStandardOutput = !constraints.HasFlag(DenoConstraints.NoStdout),
-                RedirectStandardError = !constraints.HasFlag(DenoConstraints.NoStderr)
+                RedirectStandardInput = !constraints.HasFlag(EdnoConstraints.NoStdin),
+                RedirectStandardOutput = !constraints.HasFlag(EdnoConstraints.NoStdout),
+                RedirectStandardError = !constraints.HasFlag(EdnoConstraints.NoStderr)
             };
 
             startInfo.Environment.Add("RUST_BACKTRACE", "1");
 
-            if (constraints.HasFlag(DenoConstraints.NoStdin))
+            if (constraints.HasFlag(EdnoConstraints.NoStdin))
             {
                 SetStdHandle(STD_INPUT_HANDLE, (IntPtr)null);
             }
 
-            if (constraints.HasFlag(DenoConstraints.NoStdout))
+            if (constraints.HasFlag(EdnoConstraints.NoStdout))
             {
                 SetStdHandle(STD_OUTPUT_HANDLE, (IntPtr)null);
             }
 
-            if (constraints.HasFlag(DenoConstraints.NoStderr))
+            if (constraints.HasFlag(EdnoConstraints.NoStderr))
             {
                 SetStdHandle(STD_ERROR_HANDLE, (IntPtr)null);
             }
@@ -87,7 +87,7 @@ public class DenoWinRunner
 
             if (!process.WaitForExit((int)timeoutMilliseconds))
             {
-                Console.Error.WriteLine("Timed out waiting for Deno process to exit");
+                Console.Error.WriteLine("Timed out waiting for Edno process to exit");
                 try
                 {
                     process.Kill();
@@ -95,13 +95,13 @@ public class DenoWinRunner
                 catch
                 {
                     // Kill might fail, either because the process already exited or due to some other error
-                    Console.Error.WriteLine("Failure killing the Deno process - possible Zombie Deno.exe process");
+                    Console.Error.WriteLine("Failure killing the Edno process - possible Zombie Edno.exe process");
                 }
                 return WAIT_TIMEOUT;
             }
 
-            // If the Deno process wrote to STDERR - append it to our STDERR
-            if (!constraints.HasFlag(DenoConstraints.NoStderr))
+            // If the Edno process wrote to STDERR - append it to our STDERR
+            if (!constraints.HasFlag(EdnoConstraints.NoStderr))
             {
                 string error = stdErrTask.Result;
                 if (!string.IsNullOrWhiteSpace(error))

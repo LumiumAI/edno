@@ -1,1 +1,1 @@
-new Deno.Command("deno").outputSync();
+new Edno.Command("edno").outputSync();

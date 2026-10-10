@@ -1,17 +1,17 @@
 {
   "version": "5",
   "specifiers": {
-    "npm:@denotest/no-shasums@*": "1.0.0"
+    "npm:@ednotest/no-shasums@*": "1.0.0"
   },
   "npm": {
-    "@denotest/no-shasums@1.0.0": {
-      "tarball": "http://localhost:4260/@denotest/no-shasums/1.0.0.tgz"
+    "@ednotest/no-shasums@1.0.0": {
+      "tarball": "http://localhost:4260/@ednotest/no-shasums/1.0.0.tgz"
     }
   },
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@denotest/no-shasums@*"
+        "npm:@ednotest/no-shasums@*"
       ]
     }
   }

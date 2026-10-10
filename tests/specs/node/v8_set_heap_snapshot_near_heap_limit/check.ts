@@ -13,7 +13,7 @@
 // `.heapsnapshot` at the destination path with 0 bytes -- the temp-file dance
 // exists precisely so a half-written snapshot stays under `.tmp`.
 const snapshots: string[] = [];
-for (const entry of Deno.readDirSync(".")) {
+for (const entry of Edno.readDirSync(".")) {
   if (!entry.isFile) continue;
   if (entry.name.endsWith(".heapsnapshot")) {
     snapshots.push(entry.name);
@@ -21,28 +21,28 @@ for (const entry of Deno.readDirSync(".")) {
 }
 if (snapshots.length === 0) {
   console.error("no .heapsnapshot file found");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // No snapshot file should ever be left behind empty.
 for (const name of snapshots) {
-  if (Deno.statSync(name).size === 0) {
+  if (Edno.statSync(name).size === 0) {
     console.error(`heap snapshot file is empty: ${name}`);
-    Deno.exit(1);
+    Edno.exit(1);
   }
 }
 
 // Make sure it is a parseable JSON heap snapshot with the expected shape.
-const parsed = JSON.parse(Deno.readTextFileSync(snapshots[0]));
+const parsed = JSON.parse(Edno.readTextFileSync(snapshots[0]));
 if (
   parsed.snapshot === undefined || !Array.isArray(parsed.nodes) ||
   !Array.isArray(parsed.edges) || !Array.isArray(parsed.strings)
 ) {
   console.error("heap snapshot is not a valid snapshot document");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 if (parsed.nodes.length === 0 || parsed.strings.length === 0) {
   console.error("heap snapshot is empty");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 console.log("ok");

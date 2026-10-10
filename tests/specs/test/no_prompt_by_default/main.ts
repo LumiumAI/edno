@@ -1,3 +1,3 @@
-Deno.test("no prompt", async () => {
-  await Deno.readTextFile("./some_file.txt");
+Edno.test("no prompt", async () => {
+  await Edno.readTextFile("./some_file.txt");
 });

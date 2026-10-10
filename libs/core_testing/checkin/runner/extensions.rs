@@ -13,7 +13,7 @@ pub trait SomeType {}
 
 impl SomeType for () {}
 
-deno_core::extension!(
+edno_core::extension!(
   checkin_runtime,
   parameters = [P: SomeType],
   ops = [

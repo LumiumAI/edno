@@ -2,8 +2,8 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use deno_core::GarbageCollected;
-use deno_core::op2;
+use edno_core::GarbageCollected;
+use edno_core::op2;
 use digest::Digest;
 use digest::DynDigest;
 use digest::ExtendableOutput;
@@ -21,7 +21,7 @@ pub struct Hasher {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for Hasher {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"Hasher"

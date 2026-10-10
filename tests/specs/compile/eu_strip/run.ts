@@ -11,16 +11,16 @@ const bin = "./main";
 
 let strip;
 try {
-  strip = await new Deno.Command("eu-strip", {
+  strip = await new Edno.Command("eu-strip", {
     args: [bin],
     stdout: "null",
     stderr: "piped",
   }).output();
 } catch (err) {
-  if (err instanceof Deno.errors.NotFound) {
+  if (err instanceof Edno.errors.NotFound) {
     // elfutils isn't installed on this machine; nothing to exercise.
     console.log("OK (eu-strip unavailable)");
-    Deno.exit(0);
+    Edno.exit(0);
   }
   throw err;
 }
@@ -28,15 +28,15 @@ try {
 if (!strip.success) {
   // eu-strip refused the file (e.g. already stripped); treat as a skip.
   console.log("OK (eu-strip refused the file)");
-  Deno.exit(0);
+  Edno.exit(0);
 }
 
-const res = await new Deno.Command(bin, { stdout: "piped", stderr: "piped" })
+const res = await new Edno.Command(bin, { stdout: "piped", stderr: "piped" })
   .output();
 if (!res.success) {
   console.error(new TextDecoder().decode(res.stderr));
   console.error(`stripped binary exited with ${res.code}`);
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 const out = new TextDecoder().decode(res.stdout).trim();
@@ -44,7 +44,7 @@ if (out !== "hello from compiled binary") {
   console.error(
     `unexpected output from stripped binary: ${JSON.stringify(out)}`,
   );
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 console.log("OK");

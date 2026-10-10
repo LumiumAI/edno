@@ -1,5 +1,5 @@
 import { foo } from "./main.ts";
 
-Deno.test(function fooWorks() {
+Edno.test(function fooWorks() {
   foo();
 });

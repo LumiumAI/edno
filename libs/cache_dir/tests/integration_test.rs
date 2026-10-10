@@ -5,14 +5,14 @@
 use std::collections::HashMap;
 use std::path::Path;
 
-use deno_cache_dir::CacheReadFileError;
-use deno_cache_dir::Checksum;
-use deno_cache_dir::GlobalHttpCache;
-use deno_cache_dir::GlobalToLocalCopy;
-use deno_cache_dir::HttpCache;
-use deno_cache_dir::LocalHttpCache;
-use deno_cache_dir::LocalLspHttpCache;
-use deno_maybe_sync::new_rc;
+use edno_cache_dir::CacheReadFileError;
+use edno_cache_dir::Checksum;
+use edno_cache_dir::GlobalHttpCache;
+use edno_cache_dir::GlobalToLocalCopy;
+use edno_cache_dir::HttpCache;
+use edno_cache_dir::LocalHttpCache;
+use edno_cache_dir::LocalLspHttpCache;
+use edno_maybe_sync::new_rc;
 use serde_json::json;
 use sys_traits::impls::RealSys;
 use tempfile::TempDir;
@@ -28,8 +28,8 @@ fn test_global_create_cache() {
   let cache_path = dir.path().join("foobar");
   // HttpCache should be created lazily on first use:
   // when zipping up a local project with no external dependencies
-  // "$DENO_DIR/remote" is empty. When unzipping such project
-  // "$DENO_DIR/remote" might not get restored and in situation
+  // "$EDNO_DIR/remote" is empty. When unzipping such project
+  // "$EDNO_DIR/remote" might not get restored and in situation
   // when directory is owned by root we might not be able
   // to create that directory. However if it's not needed it
   // doesn't make sense to return error in such specific scenarios.
@@ -277,7 +277,7 @@ fn test_local_global_cache() {
             "application/typescript".to_string(),
           ),
           ("x-typescript-types".to_string(), "./types.d.ts".to_string()),
-          ("x-deno-warning".to_string(), "Stop right now.".to_string()),
+          ("x-edno-warning".to_string(), "Stop right now.".to_string()),
           (
             "x-other-header".to_string(),
             "Thank you very much.".to_string(),
@@ -305,7 +305,7 @@ fn test_local_global_cache() {
         headers,
         HashMap::from([
           ("x-typescript-types".to_string(), "./types.d.ts".to_string(),),
-          ("x-deno-warning".to_string(), "Stop right now.".to_string(),)
+          ("x-edno-warning".to_string(), "Stop right now.".to_string(),)
         ])
       );
       assert_eq!(
@@ -314,7 +314,7 @@ fn test_local_global_cache() {
           "modules": {
             "https://deno.land/x/my_file.ts": {
               "headers": {
-                "x-deno-warning": "Stop right now.",
+                "x-edno-warning": "Stop right now.",
                 "x-typescript-types": "./types.d.ts"
               }
             }

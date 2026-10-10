@@ -1,7 +1,7 @@
-#!/usr/bin/env -S deno run --allow-read=. --allow-run=git --config=tests/config/deno.json
+#!/usr/bin/env -S edno run --allow-read=. --allow-run=git --config=tests/config/edno.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { getSources, ROOT_PATH } from "./util.js";
 
@@ -11,7 +11,7 @@ const buffer = new Uint8Array(1024);
 const textDecoder = new TextDecoder();
 
 async function readFirstPartOfFile(filePath) {
-  const file = await Deno.open(filePath, { read: true });
+  const file = await Edno.open(filePath, { read: true });
   try {
     const byteCount = await file.read(buffer);
     return textDecoder.decode(buffer.slice(0, byteCount ?? 0));
@@ -65,7 +65,7 @@ export async function checkCopyright() {
 
   // Acceptable content before the copyright line
   const ACCEPTABLE_LINES =
-    /^(\/\/ deno-lint-.*|\/\/ Copyright.*|\/\/ Ported.*|\s*|#!\/.*)\n/;
+    /^(\/\/ edno-lint-.*|\/\/ Copyright.*|\/\/ Ported.*|\s*|#!\/.*)\n/;
   const COPYRIGHT_LINE =
     `Copyright 2018-${copyrightYear} the Deno authors. MIT license.`;
   const TOML_COPYRIGHT_LINE = "# " + COPYRIGHT_LINE;
@@ -106,7 +106,7 @@ export async function checkCopyright() {
   }
 
   // check the main license file
-  const licenseText = Deno.readTextFileSync(ROOT_PATH + "/LICENSE.md");
+  const licenseText = Edno.readTextFileSync(ROOT_PATH + "/LICENSE.md");
   if (
     !licenseText.includes(`Copyright 2018-${copyrightYear} the Deno authors`)
   ) {

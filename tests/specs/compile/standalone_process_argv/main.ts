@@ -1,15 +1,15 @@
 import process from "node:process";
 
 // In a compiled binary, process.argv[1] should be the binary path
-// (same as Deno.execPath()), not an internal temp extraction path
-// like "deno-compile-<name>/path/to/module.ts".
+// (same as Edno.execPath()), not an internal temp extraction path
+// like "edno-compile-<name>/path/to/module.ts".
 const argv1 = process.argv[1];
-const execPath = Deno.execPath();
+const execPath = Edno.execPath();
 
 // argv[1] should equal the binary path
 if (argv1 !== execPath) {
   console.error(
-    `FAIL: process.argv[1] (${argv1}) !== Deno.execPath() (${execPath})`,
+    `FAIL: process.argv[1] (${argv1}) !== Edno.execPath() (${execPath})`,
   );
   process.exit(1);
 }

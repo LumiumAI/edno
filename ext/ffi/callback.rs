@@ -13,15 +13,15 @@ use std::sync::atomic;
 use std::sync::atomic::AtomicU32;
 use std::task::Poll;
 
-use deno_core::CancelFuture;
-use deno_core::CancelHandle;
-use deno_core::OpState;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::V8CrossThreadTaskSpawner;
-use deno_core::op2;
-use deno_core::v8;
-use deno_permissions::PermissionsContainer;
+use edno_core::CancelFuture;
+use edno_core::CancelHandle;
+use edno_core::OpState;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::V8CrossThreadTaskSpawner;
+use edno_core::op2;
+use edno_core::v8;
+use edno_permissions::PermissionsContainer;
 use libffi::middle::Cif;
 use serde::Deserialize;
 
@@ -38,10 +38,10 @@ thread_local! {
 pub enum CallbackError {
   #[class(inherit)]
   #[error(transparent)]
-  Resource(#[from] deno_core::error::ResourceError),
+  Resource(#[from] edno_core::error::ResourceError),
   #[class(inherit)]
   #[error(transparent)]
-  Permission(#[from] deno_permissions::PermissionCheckError),
+  Permission(#[from] edno_permissions::PermissionCheckError),
   #[class(inherit)]
   #[error(transparent)]
   Other(#[from] deno_error::JsErrorBox),
@@ -150,7 +150,7 @@ impl TaskArgs {
   }
 }
 
-unsafe extern "C" fn deno_ffi_callback(
+unsafe extern "C" fn edno_ffi_callback(
   cif: &libffi::low::ffi_cif,
   result: &mut c_void,
   args: *const *const c_void,
@@ -164,11 +164,11 @@ unsafe extern "C" fn deno_ffi_callback(
     LOCAL_THREAD_ID.with(|s| {
       if *s.borrow() == info.thread_id {
         // Call from main thread. If this callback is being triggered due to a
-        // function call coming from Deno itself, then this callback will build
+        // function call coming from Edno itself, then this callback will build
         // ontop of that stack.
-        // If this callback is being triggered outside of Deno (for example from a
+        // If this callback is being triggered outside of Edno (for example from a
         // signal handler) then this will either create an empty new stack if
-        // Deno currently has nothing running and is waiting for promises to resolve,
+        // Edno currently has nothing running and is waiting for promises to resolve,
         // or will (very incorrectly) build ontop of whatever stack exists.
         // The callback will even be called through from a `while (true)` liveloop, but
         // it somehow cannot change the values that the loop sees, even if they both
@@ -639,7 +639,7 @@ pub fn op_ffi_unsafe_callback_create<'scope>(
   );
 
   // SAFETY: CallbackInfo is leaked, is not null and stays valid as long as the callback exists.
-  let closure = libffi::middle::Closure::new(cif, deno_ffi_callback, unsafe {
+  let closure = libffi::middle::Closure::new(cif, edno_ffi_callback, unsafe {
     info.as_ref().unwrap()
   });
   let ptr = *closure.code_ptr() as *mut c_void;

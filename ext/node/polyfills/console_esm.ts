@@ -2,14 +2,14 @@
 
 import { core, primordials } from "ext:core/mod.js";
 import { windowOrWorkerGlobalScope } from "ext:runtime/98_global_scope_shared.js";
-const { Console } = core.loadExtScript("ext:deno_node/console.ts");
+const { Console } = core.loadExtScript("ext:edno_node/console.ts");
 
 // Don't rely on global `console` because during bootstrapping, it is pointing
 // to the native `console` object provided by V8. Read via the property
 // descriptor from `windowOrWorkerGlobalScope` so this works whether the
 // install used a data descriptor (`propNonEnumerable`) or an accessor
 // descriptor (`propNonEnumerableLazyLoaded`).
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const _consoleDesc = windowOrWorkerGlobalScope.console as any;
 const console = typeof _consoleDesc.get === "function"
   ? _consoleDesc.get()
@@ -46,5 +46,5 @@ export const {
   trace,
   warn,
 } = console;
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 export const indentLevel = (console as any)?.indentLevel;

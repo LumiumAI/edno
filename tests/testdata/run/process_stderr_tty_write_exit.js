@@ -11,8 +11,8 @@ process.stderr.write("\0".repeat(32 * 1024), () => {
   const refState = beforeHasRef === undefined && callbackHasRef === undefined
     ? "handle_has_ref=unavailable"
     : `before_has_ref=${beforeHasRef} callback_has_ref=${callbackHasRef}`;
-  Deno.writeTextFileSync(
-    Deno.args[0],
+  Edno.writeTextFileSync(
+    Edno.args[0],
     `stderr write callback ${refState}`,
   );
 });

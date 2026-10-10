@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 // Think of Resources as File Descriptors. They are integers that are allocated
-// by the privileged side of Deno which refer to various rust objects that need
+// by the privileged side of Edno which refer to various rust objects that need
 // to be persisted between various ops. For example, network sockets are
 // resources. Resources may or may not correspond to a real operating system
 // file descriptor (hence the different name).
@@ -22,7 +22,7 @@ use crate::io::BufMutView;
 use crate::io::BufView;
 use crate::io::WriteOutcome;
 
-/// Resources are Rust objects that are attached to a [deno_core::JsRuntime].
+/// Resources are Rust objects that are attached to a [edno_core::JsRuntime].
 /// They are identified in JS by a numeric ID (the resource ID, or rid).
 /// Resources can be created in ops. Resources can also be retrieved in ops by
 /// their rid. Resources are not thread-safe - they can only be accessed from
@@ -39,7 +39,7 @@ use crate::io::WriteOutcome;
 /// this are files, sockets, or HTTP streams.
 ///
 /// Readables can be read from from either JS or Rust. In JS one can use
-/// `Deno.core.read()` to read from a single chunk of data from a readable. In
+/// `Edno.core.read()` to read from a single chunk of data from a readable. In
 /// Rust one can directly call `read()` or `read_byob()`. The Rust side code is
 /// used to implement ops like `op_slice`.
 ///
@@ -55,7 +55,7 @@ use crate::io::WriteOutcome;
 /// implement `read()` as an operation that allocates a new chunk with
 /// `len == limit`, then calls `read_byob()`, and then returns a chunk sliced to
 /// the number of bytes read. Kernel backed resources can use the
-/// [deno_core::impl_readable_byob] macro to implement optimized `read_byob()`
+/// [edno_core::impl_readable_byob] macro to implement optimized `read_byob()`
 /// and `read()` implementations from a single `Self::read()` method.
 ///
 /// ### Writable
@@ -64,7 +64,7 @@ use crate::io::WriteOutcome;
 /// this are files, sockets, or HTTP streams.
 ///
 /// Writables can be written to from either JS or Rust. In JS one can use
-/// `Deno.core.write()` to write to a single chunk of data to a writable. In
+/// `Edno.core.write()` to write to a single chunk of data to a writable. In
 /// Rust one can directly call `write()`. The latter is used to implement ops
 /// like `op_slice`.
 pub trait Resource: Any + 'static {

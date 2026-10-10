@@ -12,19 +12,19 @@ use std::sync::atomic::AtomicBool;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 
-use deno_core::AsyncRefCell;
-use deno_core::CancelFuture;
-use deno_core::CancelHandle;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::ToV8;
-use deno_core::op2;
-use deno_core::parking_lot::Mutex;
+use edno_core::AsyncRefCell;
+use edno_core::CancelFuture;
+use edno_core::CancelHandle;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::ToV8;
+use edno_core::op2;
+use edno_core::parking_lot::Mutex;
 use deno_error::JsErrorClass;
 use deno_error::builtin_classes::GENERIC_ERROR;
-use deno_permissions::PermissionsContainer;
+use edno_permissions::PermissionsContainer;
 use notify::Error as NotifyError;
 use notify::EventKind;
 use notify::RecommendedWatcher;
@@ -37,8 +37,8 @@ use notify::event::ModifyKind;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::error::TrySendError;
 
-deno_core::extension!(
-  deno_fs_events,
+edno_core::extension!(
+  edno_fs_events,
   ops = [op_fs_events_open, op_fs_events_poll],
 );
 
@@ -86,7 +86,7 @@ impl Drop for FsEventsResource {
 
     // Reference-count the underlying watches: only unwatch when no other
     // resource still depends on this path. Without this, calling
-    // `Deno.watchFs(path)` repeatedly leaks watches in the shared
+    // `Edno.watchFs(path)` repeatedly leaks watches in the shared
     // `RecommendedWatcher` — on Windows each leaked watch registers a
     // separate `ReadDirectoryChangesW` request, so the next watcher created
     // for the same path receives every event N times.
@@ -152,7 +152,7 @@ impl From<NotifyEvent> for FsEvent {
 }
 
 fn is_ignored_notify_event(event: &NotifyEvent) -> bool {
-  // notify 8 added inotify OPEN events to the default watch mask. Deno did not
+  // notify 8 added inotify OPEN events to the default watch mask. Edno did not
   // expose these with notify 6, and forwarding them can self-amplify because
   // our path filtering performs filesystem reads.
   matches!(
@@ -223,7 +223,7 @@ struct WatcherInner {
   /// reference without keeping the rest of [`WatcherInner`] alive.
   senders: Arc<Mutex<Vec<WatchSender>>>,
   /// The shared `RecommendedWatcher` instance backing every
-  /// `Deno.watchFs(...)` call in this OpState.
+  /// `Edno.watchFs(...)` call in this OpState.
   watcher: Mutex<RecommendedWatcher>,
   /// Reference count per (path, recursive_mode) registered with `watcher`.
   /// When a count drops to zero, the path is unwatched.
@@ -343,16 +343,16 @@ deno_error::js_error_wrapper!(NotifyError, JsNotifyError, |err| {
 pub enum FsEventsError {
   #[class(inherit)]
   #[error(transparent)]
-  Resource(#[from] deno_core::error::ResourceError),
+  Resource(#[from] edno_core::error::ResourceError),
   #[class(inherit)]
   #[error(transparent)]
-  Permission(#[from] deno_permissions::PermissionCheckError),
+  Permission(#[from] edno_permissions::PermissionCheckError),
   #[class(inherit)]
   #[error(transparent)]
   Notify(JsNotifyError),
   #[class(inherit)]
   #[error(transparent)]
-  Canceled(#[from] deno_core::Canceled),
+  Canceled(#[from] edno_core::Canceled),
 }
 
 fn make_watch_sender(
@@ -513,8 +513,8 @@ fn op_fs_events_open(
       let checked = permissions_container
         .check_open(
           Cow::Owned(PathBuf::from(path)),
-          deno_permissions::OpenAccessKind::ReadNoFollow,
-          Some("Deno.watchFs()"),
+          edno_permissions::OpenAccessKind::ReadNoFollow,
+          Some("Edno.watchFs()"),
         )?
         .into_owned_path();
       ignore_paths.push(normalize_watch_path(checked));
@@ -523,8 +523,8 @@ fn op_fs_events_open(
       let checked = permissions_container
         .check_open(
           Cow::Owned(PathBuf::from(path)),
-          deno_permissions::OpenAccessKind::ReadNoFollow,
-          Some("Deno.watchFs()"),
+          edno_permissions::OpenAccessKind::ReadNoFollow,
+          Some("Edno.watchFs()"),
         )?
         .into_owned_path();
       resolved_paths.push(normalize_watch_path(checked));
@@ -725,7 +725,7 @@ mod tests {
     )
     .unwrap();
 
-    let missing = PathBuf::from(r"C:\deno-nonexistent\watch\target");
+    let missing = PathBuf::from(r"C:\edno-nonexistent\watch\target");
     let err = watcher
       .watch(&missing, RecursiveMode::NonRecursive)
       .expect_err("watching a nonexistent path should fail");

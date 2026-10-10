@@ -1,4 +1,4 @@
-Deno.test("ansi escape filtering", () => {
+Edno.test("ansi escape filtering", () => {
   // Destructive sequences that should be stripped
   console.log("\x1b[2J"); // clear screen
   console.log("\x1b[H"); // cursor home

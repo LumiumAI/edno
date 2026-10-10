@@ -1,19 +1,19 @@
 // Test that path permissions are case-insensitive on Windows.
 // A deny-read rule should block access regardless of the path casing.
-const dir = Deno.makeTempDirSync();
+const dir = Edno.makeTempDirSync();
 const file = dir + "\\secret.txt";
-Deno.writeTextFileSync(file, "secret");
+Edno.writeTextFileSync(file, "secret");
 
 const lowerDir = dir.toLowerCase();
 const lowerFile = lowerDir + "\\secret.txt";
 
 // Write the test script to a separate temp dir (not under the denied path).
-const scriptDir = Deno.makeTempDirSync();
+const scriptDir = Edno.makeTempDirSync();
 const scriptFile = scriptDir + "\\test_read.ts";
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   scriptFile,
   `try {
-  Deno.readTextFileSync(${JSON.stringify(lowerFile)});
+  Edno.readTextFileSync(${JSON.stringify(lowerFile)});
   console.log("BYPASSED");
 } catch (e) {
   console.log("BLOCKED:" + e.constructor.name);
@@ -23,7 +23,7 @@ Deno.writeTextFileSync(
 
 // Spawn a subprocess with --deny-read on the original-case path,
 // then run the script which reads via the lowered-case path.
-const result = new Deno.Command(Deno.execPath(), {
+const result = new Edno.Command(Edno.execPath(), {
   args: [
     "run",
     "--allow-read",
@@ -40,5 +40,5 @@ if (stdout) {
   console.log(stderr || "NO OUTPUT");
 }
 
-Deno.removeSync(dir, { recursive: true });
-Deno.removeSync(scriptDir, { recursive: true });
+Edno.removeSync(dir, { recursive: true });
+Edno.removeSync(scriptDir, { recursive: true });

@@ -3,15 +3,15 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use deno_core::AsyncRefCell;
-use deno_core::BufView;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceHandle;
-use deno_core::ResourceId;
-use deno_core::WriteOutcome;
-use deno_core::op2;
+use edno_core::AsyncRefCell;
+use edno_core::BufView;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceHandle;
+use edno_core::ResourceId;
+use edno_core::WriteOutcome;
+use edno_core::op2;
 use deno_error::JsErrorBox;
 use futures::FutureExt;
 use tokio::io::AsyncReadExt;
@@ -28,8 +28,8 @@ struct PipeResource {
 impl Resource for PipeResource {
   fn read_byob(
     self: std::rc::Rc<Self>,
-    mut buf: deno_core::BufMutView,
-  ) -> deno_core::AsyncResult<(usize, deno_core::BufMutView)> {
+    mut buf: edno_core::BufMutView,
+  ) -> edno_core::AsyncResult<(usize, edno_core::BufMutView)> {
     async {
       let mut lock = RcRef::map(self, |this| &this.rx).borrow_mut().await;
       // Note that we're holding a slice across an await point, so this code is very much not safe
@@ -42,7 +42,7 @@ impl Resource for PipeResource {
   fn write(
     self: std::rc::Rc<Self>,
     buf: BufView,
-  ) -> deno_core::AsyncResult<deno_core::WriteOutcome> {
+  ) -> edno_core::AsyncResult<edno_core::WriteOutcome> {
     async {
       let mut lock = RcRef::map(self, |this| &this.tx).borrow_mut().await;
       let nwritten = lock.write(&buf).await.map_err(JsErrorBox::from_err)?;
@@ -76,7 +76,7 @@ pub fn op_pipe_create(op_state: &mut OpState) -> (ResourceId, ResourceId) {
 pub fn op_constructable_test() {}
 
 struct FileResource {
-  handle: deno_core::ResourceHandle,
+  handle: edno_core::ResourceHandle,
 }
 
 impl FileResource {
@@ -93,8 +93,8 @@ impl Resource for FileResource {
 
   fn read_byob(
     self: std::rc::Rc<Self>,
-    buf: deno_core::BufMutView,
-  ) -> deno_core::AsyncResult<(usize, deno_core::BufMutView)> {
+    buf: edno_core::BufMutView,
+  ) -> edno_core::AsyncResult<(usize, edno_core::BufMutView)> {
     async {
       // Do something to test unrefing.
       tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;

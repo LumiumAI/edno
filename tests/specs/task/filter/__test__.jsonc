@@ -55,78 +55,78 @@
       "args": "task -r --filter foo dev",
       "output": "npm_filter_recursive.out"
     },
-    "deno_all": {
-      "cwd": "./deno",
+    "edno_all": {
+      "cwd": "./edno",
       "args": "task --filter * dev",
-      "output": "deno_all.out"
+      "output": "edno_all.out"
     },
-    "deno_exact": {
-      "cwd": "./deno",
+    "edno_exact": {
+      "cwd": "./edno",
       "args": "task --filter foo dev",
-      "output": "deno_exact.out"
+      "output": "edno_exact.out"
     },
-    "deno_scoped_exact": {
-      "cwd": "./deno_scoped",
+    "edno_scoped_exact": {
+      "cwd": "./edno_scoped",
       "args": "task --filter @foo/bar dev",
-      "output": "deno_scoped_exact.out"
+      "output": "edno_scoped_exact.out"
     },
-    "deno_scoped_multi": {
-      "cwd": "./deno_scoped",
+    "edno_scoped_multi": {
+      "cwd": "./edno_scoped",
       "args": "task --filter @foo/* dev",
-      "output": "deno_scoped_multi.out"
+      "output": "edno_scoped_multi.out"
     },
-    "deno_workspace_order": {
-      "cwd": "./deno_workspace_order",
+    "edno_workspace_order": {
+      "cwd": "./edno_workspace_order",
       "args": "task --filter @foo/* dev",
-      "output": "deno_workspace_order.out"
+      "output": "edno_workspace_order.out"
     },
-    "deno_filter_no_match_no_task": {
-      "cwd": "./deno",
+    "edno_filter_no_match_no_task": {
+      "cwd": "./edno",
       "args": "task --filter @asdf",
-      "output": "deno_filter_no_match_no_task.out"
+      "output": "edno_filter_no_match_no_task.out"
     },
-    "deno_filter_no_task": {
-      "cwd": "./deno",
+    "edno_filter_no_task": {
+      "cwd": "./edno",
       "args": "task --filter *",
-      "output": "deno_filter_no_task.out"
+      "output": "edno_filter_no_task.out"
     },
-    "deno_recursive": {
-      "cwd": "./deno",
+    "edno_recursive": {
+      "cwd": "./edno",
       "args": "task -r dev",
-      "output": "deno_recursive.out"
+      "output": "edno_recursive.out"
     },
-    "deno_recursive_no_pkg": {
-      "cwd": "./deno_recursive_no_pkg",
+    "edno_recursive_no_pkg": {
+      "cwd": "./edno_recursive_no_pkg",
       "args": "task -r dev",
-      "output": "deno_recursive_no_pkg.out"
+      "output": "edno_recursive_no_pkg.out"
     },
-    "deno_filter_recursive": {
-      "cwd": "./deno",
-      "args": "task -r --filter @deno/foo dev",
-      "output": "deno_filter_recursive.out"
+    "edno_filter_recursive": {
+      "cwd": "./edno",
+      "args": "task -r --filter @edno/foo dev",
+      "output": "edno_filter_recursive.out"
     },
     // Regression test for https://github.com/denoland/deno/issues/28620
     // `--filter` should also match the workspace member's directory name,
-    // not just the `name` field in its deno.json / package.json.
-    "deno_dir_name_match": {
-      "cwd": "./deno_dir_name_match",
+    // not just the `name` field in its edno.json / package.json.
+    "edno_dir_name_match": {
+      "cwd": "./edno_dir_name_match",
       "args": "task --filter foo-dir dev",
-      "output": "deno_dir_name_match.out"
+      "output": "edno_dir_name_match.out"
     },
     // Workspace root should not be matched by its directory name even if it
     // has a `name` field. Here the filter matches the root's directory name
     // but not its package name, so the root must not be selected.
-    "deno_root_not_matched_by_dir": {
-      "cwd": "./deno_root_with_name",
-      "args": "task --filter deno_root_with_name dev",
-      "output": "deno_root_not_matched_by_dir.out"
+    "edno_root_not_matched_by_dir": {
+      "cwd": "./edno_root_with_name",
+      "args": "task --filter edno_root_with_name dev",
+      "output": "edno_root_not_matched_by_dir.out"
     },
     // A workspace member without a `name` field should still be matchable
     // by its directory name.
-    "deno_member_no_name": {
-      "cwd": "./deno_member_no_name",
+    "edno_member_no_name": {
+      "cwd": "./edno_member_no_name",
       "args": "task --filter my-lib dev",
-      "output": "deno_member_no_name.out"
+      "output": "edno_member_no_name.out"
     }
   }
 }

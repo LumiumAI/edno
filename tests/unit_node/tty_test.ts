@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 import { assert } from "@std/assert";
 import { isatty } from "node:tty";
@@ -7,14 +7,14 @@ import tty from "node:tty";
 import process from "node:process";
 import fs from "node:fs";
 
-Deno.test("[node/tty isatty] returns true when fd is a tty, false otherwise", () => {
+Edno.test("[node/tty isatty] returns true when fd is a tty, false otherwise", () => {
   // Uses raw file descriptors: 0 = stdin, 1 = stdout, 2 = stderr
-  assert(Deno.stdin.isTerminal() === isatty(0));
-  assert(Deno.stdout.isTerminal() === isatty(1));
-  assert(Deno.stderr.isTerminal() === isatty(2));
+  assert(Edno.stdin.isTerminal() === isatty(0));
+  assert(Edno.stdout.isTerminal() === isatty(1));
+  assert(Edno.stderr.isTerminal() === isatty(2));
 });
 
-Deno.test("[node/tty isatty] returns false for irrelevant values", () => {
+Edno.test("[node/tty isatty] returns false for irrelevant values", () => {
   // invalid numeric fd
   assert(!isatty(1234567));
 
@@ -35,26 +35,26 @@ Deno.test("[node/tty isatty] returns false for irrelevant values", () => {
   assert(!isatty(undefined as any));
 });
 
-Deno.test("[node/tty WriteStream.isTTY] returns true when fd is a tty", () => {
-  assert(Deno.stdin.isTerminal() === process.stdin.isTTY);
-  assert(Deno.stdout.isTerminal() === process.stdout.isTTY);
+Edno.test("[node/tty WriteStream.isTTY] returns true when fd is a tty", () => {
+  assert(Edno.stdin.isTerminal() === process.stdin.isTTY);
+  assert(Edno.stdout.isTerminal() === process.stdout.isTTY);
 });
 
-Deno.test("[node/tty WriteStream.hasColors] returns true when colors are supported", () => {
-  const stubEnv = Deno.noColor ? { NO_COLOR: "1" } : {};
+Edno.test("[node/tty WriteStream.hasColors] returns true when colors are supported", () => {
+  const stubEnv = Edno.noColor ? { NO_COLOR: "1" } : {};
 
-  assert(tty.WriteStream.prototype.hasColors() === !Deno.noColor);
-  assert(tty.WriteStream.prototype.hasColors(stubEnv) === !Deno.noColor);
+  assert(tty.WriteStream.prototype.hasColors() === !Edno.noColor);
+  assert(tty.WriteStream.prototype.hasColors(stubEnv) === !Edno.noColor);
 
   assert(tty.WriteStream.prototype.hasColors(2));
   assert(tty.WriteStream.prototype.hasColors(2, {}));
 });
 
-Deno.test("[node/tty WriteStream.getColorDepth] returns current terminal color depth", () => {
+Edno.test("[node/tty WriteStream.getColorDepth] returns current terminal color depth", () => {
   assert([1, 4, 8, 24].includes(tty.WriteStream.prototype.getColorDepth()));
 });
 
-Deno.test("[node/tty isatty] returns false for raw file fd", () => {
+Edno.test("[node/tty isatty] returns false for raw file fd", () => {
   // Open a file and get its raw fd - files are never TTYs
   const fd = fs.openSync("README.md", "r");
   try {
@@ -64,9 +64,9 @@ Deno.test("[node/tty isatty] returns false for raw file fd", () => {
   }
 });
 
-Deno.test({
+Edno.test({
   name: "[node/tty] HandleWrap.close calls uv_close for TTY handles",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   fn: async () => {
     // Verify that destroying a TTY stream closes the underlying fd.
     // We count open fds before and after creating+destroying TTY streams.
@@ -124,29 +124,29 @@ Deno.test({
     // Write the helper to a temp file to avoid shell quoting issues.
     // macOS: script -q /dev/null command args...
     // Linux: script -q /dev/null -c "command args..."
-    const tmpScript = await Deno.makeTempFile({ suffix: ".mjs" });
-    await Deno.writeTextFile(tmpScript, helper);
-    const denoCmd =
-      `${Deno.execPath()} run --allow-read --allow-run ${tmpScript}`;
-    const scriptArgs = Deno.build.os === "linux"
-      ? ["-q", "/dev/null", "-c", denoCmd]
+    const tmpScript = await Edno.makeTempFile({ suffix: ".mjs" });
+    await Edno.writeTextFile(tmpScript, helper);
+    const ednoCmd =
+      `${Edno.execPath()} run --allow-read --allow-run ${tmpScript}`;
+    const scriptArgs = Edno.build.os === "linux"
+      ? ["-q", "/dev/null", "-c", ednoCmd]
       : [
         "-q",
         "/dev/null",
-        Deno.execPath(),
+        Edno.execPath(),
         "run",
         "--allow-read",
         "--allow-run",
         tmpScript,
       ];
-    const child = new Deno.Command("script", {
+    const child = new Edno.Command("script", {
       args: scriptArgs,
       stdout: "piped",
       stderr: "piped",
     }).spawn();
 
     const output = await child.output();
-    await Deno.remove(tmpScript);
+    await Edno.remove(tmpScript);
     const stdout = new TextDecoder().decode(output.stdout);
     const stderr = new TextDecoder().decode(output.stderr);
 

@@ -88,9 +88,9 @@
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Deno",
+   "display_name": "Edno",
    "language": "typescript",
-   "name": "deno"
+   "name": "edno"
   },
   "language_info": {
    "file_extension": ".ts",

@@ -11,9 +11,9 @@
         {
           "args": [
             "eval",
-            "const now = Deno.readTextFileSync('./deno.lock'); console.log(now.trim());"
+            "const now = Edno.readTextFileSync('./edno.lock'); console.log(now.trim());"
           ],
-          "output": "deno.lock.orig.out"
+          "output": "edno.lock.orig.out"
         }
       ]
     },
@@ -67,12 +67,12 @@
           "output": "./update_compatible/update.out"
         },
         {
-          "args": "-A print_file.ts ./deno.json",
-          "output": "./update_compatible/deno.json.out"
+          "args": "-A print_file.ts ./edno.json",
+          "output": "./update_compatible/edno.json.out"
         },
         {
-          "args": "-A print_file.ts ./deno.lock",
-          "output": "./update_compatible/deno.lock.out"
+          "args": "-A print_file.ts ./edno.lock",
+          "output": "./update_compatible/edno.lock.out"
         }
       ]
     },
@@ -87,12 +87,12 @@
           "output": "update_latest/update.out"
         },
         {
-          "args": "-A print_file.ts ./deno.json",
-          "output": "./update_latest/deno.json.out"
+          "args": "-A print_file.ts ./edno.json",
+          "output": "./update_latest/edno.json.out"
         },
         {
-          "args": "-A print_file.ts ./deno.lock",
-          "output": "./update_latest/deno.lock.out"
+          "args": "-A print_file.ts ./edno.lock",
+          "output": "./update_latest/edno.lock.out"
         }
       ]
     },
@@ -103,12 +103,12 @@
           "output": "[WILDCARD]"
         },
         {
-          "args": "outdated --update --latest @denotest/add @denotest/b* !@denotest/breaking* @denotest/with-subpath@0.5.0",
+          "args": "outdated --update --latest @ednotest/add @ednotest/b* !@ednotest/breaking* @ednotest/with-subpath@0.5.0",
           "output": "filtered/update.out"
         },
         {
-          "args": "-A print_file.ts ./deno.json",
-          "output": "filtered/deno.json.out"
+          "args": "-A print_file.ts ./edno.json",
+          "output": "filtered/edno.json.out"
         }
       ]
     },
@@ -123,13 +123,13 @@
           "output": "update_latest_lockfile_only/update.out"
         },
         {
-          // --lockfile-only must not touch deno.json.
-          "args": "-A print_file.ts ./deno.json",
-          "output": "./update_latest_lockfile_only/deno.json.out"
+          // --lockfile-only must not touch edno.json.
+          "args": "-A print_file.ts ./edno.json",
+          "output": "./update_latest_lockfile_only/edno.json.out"
         },
         {
-          "args": "-A print_file.ts ./deno.lock",
-          "output": "./update_latest_lockfile_only/deno.lock.out"
+          "args": "-A print_file.ts ./edno.lock",
+          "output": "./update_latest_lockfile_only/edno.lock.out"
         }
       ]
     }

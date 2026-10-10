@@ -10,21 +10,21 @@ use std::ops::IndexMut;
 use std::ptr;
 use std::rc::Rc;
 
-use deno_core::CppgcBase;
-use deno_core::CppgcInherits;
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::WebIDL;
-use deno_core::cppgc;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::webidl::ContextFn;
-use deno_core::webidl::SequenceLengthOneOf;
-use deno_core::webidl::UnrestrictedDouble;
-use deno_core::webidl::WebIdlConverter;
-use deno_core::webidl::WebIdlError;
-use deno_core::webidl::WebIdlErrorKind;
-use deno_core::webidl::try_convert_sequence_with_policy;
+use edno_core::CppgcBase;
+use edno_core::CppgcInherits;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::WebIDL;
+use edno_core::cppgc;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::webidl::ContextFn;
+use edno_core::webidl::SequenceLengthOneOf;
+use edno_core::webidl::UnrestrictedDouble;
+use edno_core::webidl::WebIdlConverter;
+use edno_core::webidl::WebIdlError;
+use edno_core::webidl::WebIdlErrorKind;
+use edno_core::webidl::try_convert_sequence_with_policy;
 
 use crate::css_value::CSSValueError;
 use crate::css_value::ParserInput;
@@ -523,7 +523,7 @@ pub struct DOMPointReadOnly {
 
 // SAFETY: we're sure `DOMPointReadOnly` can be GCed
 unsafe impl GarbageCollected for DOMPointReadOnly {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DOMPointReadOnly"
@@ -632,7 +632,7 @@ pub struct DOMPoint {
 
 // SAFETY: we're sure `DOMPoint` can be GCed
 unsafe impl GarbageCollected for DOMPoint {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DOMPoint"
@@ -742,7 +742,7 @@ pub struct DOMRectReadOnly {
 
 // SAFETY: we're sure `DOMRectReadOnly` can be GCed
 unsafe impl GarbageCollected for DOMRectReadOnly {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DOMRectReadOnly"
@@ -892,7 +892,7 @@ pub struct DOMRect {
 
 // SAFETY: we're sure `DOMRect` can be GCed
 unsafe impl GarbageCollected for DOMRect {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DOMRect"
@@ -994,7 +994,7 @@ pub struct DOMQuad {
 
 // SAFETY: we're sure `DOMQuad` can be GCed
 unsafe impl GarbageCollected for DOMQuad {
-  fn trace(&self, visitor: &mut deno_core::v8::cppgc::Visitor) {
+  fn trace(&self, visitor: &mut edno_core::v8::cppgc::Visitor) {
     visitor.trace(&self.p1);
     visitor.trace(&self.p2);
     visitor.trace(&self.p3);
@@ -1260,7 +1260,7 @@ pub struct DOMMatrixReadOnly {
 
 // SAFETY: we're sure `DOMMatrixReadOnly` can be GCed
 unsafe impl GarbageCollected for DOMMatrixReadOnly {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DOMMatrixReadOnly"
@@ -2416,7 +2416,7 @@ pub struct DOMMatrix {
 
 // SAFETY: we're sure `DOMMatrix` can be GCed
 unsafe impl GarbageCollected for DOMMatrix {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DOMMatrix"

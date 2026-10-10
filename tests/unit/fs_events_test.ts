@@ -4,31 +4,31 @@ import { assert, assertEquals, assertThrows, delay } from "./test_util.ts";
 
 // TODO(ry) Add more tests to specify format.
 
-Deno.test({ permissions: { read: false } }, function watchFsPermissions() {
+Edno.test({ permissions: { read: false } }, function watchFsPermissions() {
   assertThrows(() => {
-    Deno.watchFs(".");
-  }, Deno.errors.NotCapable);
+    Edno.watchFs(".");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, function watchFsInvalidPath() {
-  if (Deno.build.os === "windows") {
+Edno.test({ permissions: { read: true } }, function watchFsInvalidPath() {
+  if (Edno.build.os === "windows") {
     assertThrows(
       () => {
-        Deno.watchFs("non-existent.file");
+        Edno.watchFs("non-existent.file");
       },
       Error,
       "Input watch path is neither a file nor a directory",
     );
   } else {
     assertThrows(() => {
-      Deno.watchFs("non-existent.file");
-    }, Deno.errors.NotFound);
+      Edno.watchFs("non-existent.file");
+    }, Edno.errors.NotFound);
   }
 });
 
 async function getTwoEvents(
-  iter: Deno.FsWatcher,
-): Promise<Deno.FsEvent[]> {
+  iter: Edno.FsWatcher,
+): Promise<Edno.FsEvent[]> {
   const events = [];
   for await (const event of iter) {
     events.push(event);
@@ -38,7 +38,7 @@ async function getTwoEvents(
 }
 
 async function makeTempDir(): Promise<string> {
-  const testDir = await Deno.makeTempDir();
+  const testDir = await Edno.makeTempDir();
   // The watcher sometimes witnesses the creation of it's own root
   // directory. Delay a bit.
   await delay(100);
@@ -46,18 +46,18 @@ async function makeTempDir(): Promise<string> {
 }
 
 async function makeTempFile(): Promise<string> {
-  const testFile = await Deno.makeTempFile();
+  const testFile = await Edno.makeTempFile();
   // The watcher sometimes witnesses the creation of it's own root
   // directory. Delay a bit.
   await delay(100);
   return testFile;
 }
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsBasic() {
     const testDir = await makeTempDir();
-    const iter = Deno.watchFs(testDir);
+    const iter = Edno.watchFs(testDir);
 
     // Asynchronously capture two fs events.
     const eventsPromise = getTwoEvents(iter);
@@ -65,8 +65,8 @@ Deno.test(
     // Make some random file system activity.
     const file1 = testDir + "/file1.txt";
     const file2 = testDir + "/file2.txt";
-    Deno.writeFileSync(file1, new Uint8Array([0, 1, 2]));
-    Deno.writeFileSync(file2, new Uint8Array([0, 1, 2]));
+    Edno.writeFileSync(file1, new Uint8Array([0, 1, 2]));
+    Edno.writeFileSync(file2, new Uint8Array([0, 1, 2]));
 
     // We should have gotten two fs events.
     const events = await eventsPromise;
@@ -78,11 +78,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsRename() {
     const testDir = await makeTempDir();
-    const watcher = Deno.watchFs(testDir);
+    const watcher = Edno.watchFs(testDir);
     async function waitForRename() {
       for await (const event of watcher) {
         if (event.kind === "rename") {
@@ -92,17 +92,17 @@ Deno.test(
     }
     const eventPromise = waitForRename();
     const file = testDir + "/file.txt";
-    await Deno.writeTextFile(file, "hello");
-    await Deno.rename(file, testDir + "/file2.txt");
+    await Edno.writeTextFile(file, "hello");
+    await Edno.rename(file, testDir + "/file2.txt");
     await eventPromise;
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsReturn() {
     const testDir = await makeTempDir();
-    const iter = Deno.watchFs(testDir);
+    const iter = Edno.watchFs(testDir);
 
     // Asynchronously loop events.
     const eventsPromise = getTwoEvents(iter);
@@ -116,11 +116,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsClose() {
     const testDir = await makeTempDir();
-    const iter = Deno.watchFs(testDir);
+    const iter = Edno.watchFs(testDir);
 
     // Asynchronously loop events.
     const eventsPromise = getTwoEvents(iter);
@@ -134,11 +134,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsCloseIsIdempotent() {
     const testDir = await makeTempDir();
-    const watcher = Deno.watchFs(testDir);
+    const watcher = Edno.watchFs(testDir);
     const iterator = watcher[Symbol.asyncIterator]();
 
     watcher.close();
@@ -150,13 +150,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsExplicitResourceManagement() {
     let res;
     {
       const testDir = await makeTempDir();
-      using iter = Deno.watchFs(testDir);
+      using iter = Edno.watchFs(testDir);
 
       res = iter[Symbol.asyncIterator]().next();
     }
@@ -166,11 +166,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsExplicitResourceManagementManualClose() {
     const testDir = await makeTempDir();
-    using iter = Deno.watchFs(testDir);
+    using iter = Edno.watchFs(testDir);
 
     const res = iter[Symbol.asyncIterator]().next();
 
@@ -182,31 +182,31 @@ Deno.test(
 
 // Regression test for https://github.com/denoland/deno/issues/27558
 // Removing a file outside the watched directory should not produce events.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsNoSpuriousEventsFromSiblingDir() {
     const parentDir = await makeTempDir();
     const watchedDir = parentDir + "/watched";
     const otherDir = parentDir + "/other";
-    Deno.mkdirSync(watchedDir);
-    Deno.mkdirSync(otherDir);
+    Edno.mkdirSync(watchedDir);
+    Edno.mkdirSync(otherDir);
     await delay(100);
 
-    using watcher = Deno.watchFs(watchedDir);
+    using watcher = Edno.watchFs(watchedDir);
 
     // Create and immediately remove a file in the sibling directory.
     // Before the fix, this would send a spurious "remove" event to
     // watchers on watchedDir because the is_file_removed fallback had
     // no path filtering.
     const otherFile = otherDir + "/temp.txt";
-    Deno.writeFileSync(otherFile, new Uint8Array([1, 2, 3]));
-    Deno.removeSync(otherFile);
+    Edno.writeFileSync(otherFile, new Uint8Array([1, 2, 3]));
+    Edno.removeSync(otherFile);
 
     // Now create a real file in the watched directory so we have
     // something to observe.
     await delay(100);
     const realFile = watchedDir + "/real.txt";
-    Deno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
+    Edno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
 
     // Collect events -- the first meaningful event should be for real.txt,
     // not a spurious remove for temp.txt.
@@ -232,28 +232,28 @@ Deno.test(
 // embedded "./" segments. Previously notify joined "./" with the relative
 // portion of each event, so callers got `<cwd>/./sub/file` instead of
 // `<cwd>/sub/file`.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsRelativePathNoCurDirSegment() {
     const testDir = await makeTempDir();
     const subDir = testDir + "/sub";
-    Deno.mkdirSync(subDir);
+    Edno.mkdirSync(subDir);
     await delay(100);
 
-    const originalCwd = Deno.cwd();
-    Deno.chdir(testDir);
+    const originalCwd = Edno.cwd();
+    Edno.chdir(testDir);
     try {
-      using watcher = Deno.watchFs("./");
+      using watcher = Edno.watchFs("./");
 
       const target = subDir + "/file.txt";
       const writePromise = (async () => {
         await delay(50);
-        Deno.writeFileSync(target, new Uint8Array([1, 2, 3]));
+        Edno.writeFileSync(target, new Uint8Array([1, 2, 3]));
       })();
 
       for await (const event of watcher) {
         for (const path of event.paths) {
-          const sep = Deno.build.os === "windows" ? "\\" : "/";
+          const sep = Edno.build.os === "windows" ? "\\" : "/";
           assert(
             !path.includes(`${sep}.${sep}`),
             `event path should not contain "${sep}.${sep}": ${path}`,
@@ -269,24 +269,24 @@ Deno.test(
       }
       await writePromise;
     } finally {
-      Deno.chdir(originalCwd);
+      Edno.chdir(originalCwd);
     }
   },
 );
 
 // Regression test for https://github.com/denoland/deno/issues/27742
-// Closing a `Deno.FsWatcher` and creating a new one for the same path must
+// Closing a `Edno.FsWatcher` and creating a new one for the same path must
 // not produce duplicate events on the new watcher. Before the fix, the
 // shared `RecommendedWatcher` never had paths unwatched on close, so on
 // Windows each closed-then-recreated watcher left behind another
 // `ReadDirectoryChangesW` registration, causing N-fold duplicate events.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsCloseAndRecreateNoDuplicates() {
     const testDir = await makeTempDir();
 
     async function openClose() {
-      const w = Deno.watchFs(testDir);
+      const w = Edno.watchFs(testDir);
       const closer = setTimeout(() => w.close(), 100);
       for await (const _ of w) {
         // drain
@@ -301,13 +301,13 @@ Deno.test(
 
     // Now open a fourth watcher and trigger a single fs event. We must
     // only see events for that single change reach us once per real event.
-    using watcher = Deno.watchFs(testDir);
+    using watcher = Edno.watchFs(testDir);
 
     const target = testDir + "/probe.txt";
     const writePromise = (async () => {
       // Give the watcher a moment to settle before producing the event.
       await delay(100);
-      Deno.writeFileSync(target, new Uint8Array([1, 2, 3]));
+      Edno.writeFileSync(target, new Uint8Array([1, 2, 3]));
     })();
 
     // Collect events for a brief window after the write. Any event we
@@ -340,7 +340,7 @@ Deno.test(
         count <= 2,
         `event "${key}" was emitted ${count} times; expected at most 2 ` +
           `(create + optional modify). This indicates a leaked watch from ` +
-          `a previously-closed Deno.FsWatcher.`,
+          `a previously-closed Edno.FsWatcher.`,
       );
     }
   },
@@ -350,11 +350,11 @@ Deno.test(
 // A burst of concurrent file writes must not be silently lost: every file
 // written below must show up in at least one event, unless the loss is
 // explicitly reported via a `rescan`-flagged event.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsBurstDeliversAllEvents() {
     const testDir = await makeTempDir();
-    using watcher = Deno.watchFs(testDir);
+    using watcher = Edno.watchFs(testDir);
 
     const fileCount = 100;
     // Match events by file name: on macOS the events report canonicalized
@@ -384,7 +384,7 @@ Deno.test(
 
     await Promise.all(
       [...remaining].map((name) =>
-        Deno.writeTextFile(`${testDir}/${name}`, "content")
+        Edno.writeTextFile(`${testDir}/${name}`, "content")
       ),
     );
 
@@ -401,17 +401,17 @@ Deno.test(
 // When events arrive faster than the consumer drains them and the internal
 // queue overflows, the loss must be reported with a `rescan`-flagged event
 // instead of being silent.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsQueueOverflowEmitsRescan() {
     const testDir = await makeTempDir();
-    using watcher = Deno.watchFs(testDir);
+    using watcher = Edno.watchFs(testDir);
 
     // Produce more events than the internal queue can hold (1024 entries,
     // see FS_EVENT_QUEUE_CAPACITY in runtime/ops/fs_events.rs) while the
     // consumer is not yet polling.
     for (let i = 0; i < 1500; i++) {
-      Deno.writeFileSync(`${testDir}/file${i}.txt`, new Uint8Array([1]));
+      Edno.writeFileSync(`${testDir}/file${i}.txt`, new Uint8Array([1]));
     }
     // Give the watcher backend time to process (and overflow on) the burst
     // before we start consuming.
@@ -441,14 +441,14 @@ Deno.test(
 // unrelated events for any non-existent file to all watchers (the bug
 // behind #27558). Skip on macOS until the notify crate or our watcher
 // can detect removals of individually watched files on this platform.
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
-    ignore: Deno.build.os === "darwin",
+    ignore: Edno.build.os === "darwin",
   },
   async function watchFsRemove() {
     const testFile = await makeTempFile();
-    using watcher = Deno.watchFs(testFile);
+    using watcher = Edno.watchFs(testFile);
     async function waitForRemove() {
       for await (const event of watcher) {
         if (event.kind === "remove") {
@@ -458,7 +458,7 @@ Deno.test(
     }
     const eventPromise = waitForRemove();
 
-    await Deno.remove(testFile);
+    await Edno.remove(testFile);
 
     // Expect zero events.
     const event = await eventPromise;
@@ -468,27 +468,27 @@ Deno.test(
 
 // The `ignore` option must filter out events whose paths fall under an
 // ignored directory, while still delivering events for everything else.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsIgnore() {
     const testDir = await makeTempDir();
     const ignoredDir = testDir + "/ignored";
     const nestedDir = testDir + "/nested";
-    Deno.mkdirSync(ignoredDir);
-    Deno.mkdirSync(nestedDir);
+    Edno.mkdirSync(ignoredDir);
+    Edno.mkdirSync(nestedDir);
     await delay(100);
 
-    using watcher = Deno.watchFs(testDir, { ignore: [ignoredDir] });
+    using watcher = Edno.watchFs(testDir, { ignore: [ignoredDir] });
 
     // Activity inside the ignored directory must never surface.
-    Deno.writeFileSync(ignoredDir + "/skip.txt", new Uint8Array([1, 2, 3]));
+    Edno.writeFileSync(ignoredDir + "/skip.txt", new Uint8Array([1, 2, 3]));
 
     // A file in a non-ignored subdirectory is created afterwards and is what
     // we expect to observe. Using a nested directory also confirms that the
     // default recursive watch still applies when `ignore` is passed.
     await delay(100);
     const realFile = nestedDir + "/real.txt";
-    Deno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
+    Edno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
 
     for await (const event of watcher) {
       for (const path of event.paths) {
@@ -508,29 +508,29 @@ Deno.test(
 // Deletions inside an ignored directory must be suppressed (the removed-path
 // matching also has to consult the ignore set), while a deletion outside the
 // ignored directory still surfaces.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsIgnoreRemove() {
     const testDir = await makeTempDir();
     const ignoredDir = testDir + "/ignored";
-    Deno.mkdirSync(ignoredDir);
+    Edno.mkdirSync(ignoredDir);
 
     // Both files exist before watching starts so the only events come from
     // the removals below.
     const ignoredFile = ignoredDir + "/skip.txt";
     const realFile = testDir + "/real.txt";
-    Deno.writeFileSync(ignoredFile, new Uint8Array([1, 2, 3]));
-    Deno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
+    Edno.writeFileSync(ignoredFile, new Uint8Array([1, 2, 3]));
+    Edno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
     await delay(100);
 
-    using watcher = Deno.watchFs(testDir, { ignore: [ignoredDir] });
+    using watcher = Edno.watchFs(testDir, { ignore: [ignoredDir] });
 
     // A removal inside the ignored directory must never surface.
-    await Deno.remove(ignoredFile);
+    await Edno.remove(ignoredFile);
 
     // A removal outside the ignored directory is what we expect to observe.
     await delay(100);
-    await Deno.remove(realFile);
+    await Edno.remove(realFile);
 
     for await (const event of watcher) {
       for (const path of event.paths) {
@@ -548,21 +548,21 @@ Deno.test(
 );
 
 // A single string (not an array) is accepted for `ignore`.
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function watchFsIgnoreSingleString() {
     const testDir = await makeTempDir();
     const ignoredDir = testDir + "/ignored";
-    Deno.mkdirSync(ignoredDir);
+    Edno.mkdirSync(ignoredDir);
     await delay(100);
 
-    using watcher = Deno.watchFs(testDir, { ignore: ignoredDir });
+    using watcher = Edno.watchFs(testDir, { ignore: ignoredDir });
 
-    Deno.writeFileSync(ignoredDir + "/skip.txt", new Uint8Array([1, 2, 3]));
+    Edno.writeFileSync(ignoredDir + "/skip.txt", new Uint8Array([1, 2, 3]));
 
     await delay(100);
     const realFile = testDir + "/real.txt";
-    Deno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
+    Edno.writeFileSync(realFile, new Uint8Array([1, 2, 3]));
 
     for await (const event of watcher) {
       for (const path of event.paths) {

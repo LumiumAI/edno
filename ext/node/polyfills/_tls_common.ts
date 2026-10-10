@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent and Node contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -49,22 +49,22 @@ const {
   ERR_TLS_INVALID_PROTOCOL_METHOD,
   ERR_TLS_INVALID_PROTOCOL_VERSION,
   ERR_TLS_PROTOCOL_VERSION_CONFLICT,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { getOptionValue } = core.loadExtScript(
-  "ext:deno_node/internal/options.ts",
+  "ext:edno_node/internal/options.ts",
 );
 const { kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const { isArrayBufferView, isTypedArray } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const { validateString } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const { op_node_validate_crl, op_node_load_pfx } = core.ops;
 const { createPrivateKey } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/keys.ts",
+  "ext:edno_node/internal/crypto/keys.ts",
 );
 
 // OpenSSL cipher names are uppercase alphanumeric with hyphens/underscores
@@ -514,7 +514,7 @@ class SecureContext {
     }
     if (options.clientCertEngine != null) {
       validateString(options.clientCertEngine, "options.clientCertEngine");
-      // OpenSSL engines are not supported in Deno (which uses rustls).
+      // OpenSSL engines are not supported in Edno (which uses rustls).
       // Match Node's behaviour when OpenSSL fails to load the engine: throw
       // an Error whose message contains "could not load the shared library"
       // and carries an `opensslErrorStack` array.

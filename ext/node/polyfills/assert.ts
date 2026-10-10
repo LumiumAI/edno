@@ -1,16 +1,16 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-process-global
+// edno-lint-ignore-file no-process-global
 
 (function () {
 const { core, primordials } = __bootstrap;
 const { AssertionError } = core.loadExtScript(
-  "ext:deno_node/internal/assert/assertion_error.js",
+  "ext:edno_node/internal/assert/assertion_error.js",
 );
 const { innerFail, innerOk } = core.loadExtScript(
-  "ext:deno_node/internal/assert/utils.ts",
+  "ext:edno_node/internal/assert/utils.ts",
 );
-const { inspect } = core.loadExtScript("ext:deno_node/util.ts");
+const { inspect } = core.loadExtScript("ext:edno_node/util.ts");
 const {
   ERR_AMBIGUOUS_ARGUMENT,
   ERR_CONSTRUCT_CALL_REQUIRED,
@@ -18,24 +18,24 @@ const {
   ERR_INVALID_ARG_VALUE,
   ERR_INVALID_RETURN_VALUE,
   ERR_MISSING_ARGS,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   isDeepEqual,
   isDeepStrictEqual,
   isPartialStrictEqual,
-} = core.loadExtScript("ext:deno_node/internal/util/comparisons.ts");
+} = core.loadExtScript("ext:edno_node/internal/util/comparisons.ts");
 const { CallTracker } = core.loadExtScript(
-  "ext:deno_node/internal/assert/calltracker.js",
+  "ext:edno_node/internal/assert/calltracker.js",
 );
-const { deprecate } = core.loadExtScript("ext:deno_node/util.ts");
+const { deprecate } = core.loadExtScript("ext:edno_node/util.ts");
 const { isPromise, isRegExp } = core.loadExtScript(
-  "ext:deno_node/internal_binding/types.ts",
+  "ext:edno_node/internal_binding/types.ts",
 );
 const {
   validateFunction,
   validateOneOf,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { isError } = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { isError } = core.loadExtScript("ext:edno_node/internal/util.mjs");
 
 const {
   ArrayPrototypeForEach,

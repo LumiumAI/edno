@@ -602,7 +602,7 @@ declare module "url" {
          *
          * If that string is invalid but it begins with a number, the leading number is
          * assigned to `port`.
-         * If the number lies outside the range denoted above, it is ignored.
+         * If the number lies outside the range ednoted above, it is ignored.
          *
          * ```js
          * const myURL = new URL('https://example.org:8888');

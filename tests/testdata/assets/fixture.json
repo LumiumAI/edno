@@ -1,5 +1,5 @@
 {
-  "name": "deno",
+  "name": "edno",
   "private": true,
   "devDependencies": {
     "@types/prettier": "1.16.1",

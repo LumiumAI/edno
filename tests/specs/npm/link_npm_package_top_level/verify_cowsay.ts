@@ -1,7 +1,7 @@
 // Ensure local cowsay package is not modified.
 function compareAndLog(pathA, pathB) {
-  const contentA = Deno.readTextFileSync(pathA);
-  const contentB = Deno.readTextFileSync(pathB);
+  const contentA = Edno.readTextFileSync(pathA);
+  const contentB = Edno.readTextFileSync(pathB);
   const equals = contentA === contentB;
 
   console.log(equals);

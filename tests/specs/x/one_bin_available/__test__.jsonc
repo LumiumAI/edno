@@ -1,5 +1,5 @@
 {
   "tempDir": true,
-  "args": "x -y @denotest/one-bin",
+  "args": "x -y @ednotest/one-bin",
   "output": "[WILDCARD]thing-bin\n"
 }

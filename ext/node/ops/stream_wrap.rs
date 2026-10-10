@@ -14,19 +14,19 @@ use std::ffi::c_char;
 use std::ptr::NonNull;
 use std::rc::Rc;
 
-use deno_core::CppgcBase;
-use deno_core::CppgcInherits;
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::error::ResourceError;
-use deno_core::op2;
-use deno_core::uv_compat;
-use deno_core::uv_compat::UV_EBADF;
-use deno_core::uv_compat::uv_buf_t;
-use deno_core::uv_compat::uv_shutdown_t;
-use deno_core::uv_compat::uv_stream_t;
-use deno_core::uv_compat::uv_write_t;
-use deno_core::v8;
+use edno_core::CppgcBase;
+use edno_core::CppgcInherits;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::error::ResourceError;
+use edno_core::op2;
+use edno_core::uv_compat;
+use edno_core::uv_compat::UV_EBADF;
+use edno_core::uv_compat::uv_buf_t;
+use edno_core::uv_compat::uv_shutdown_t;
+use edno_core::uv_compat::uv_stream_t;
+use edno_core::uv_compat::uv_write_t;
+use edno_core::v8;
 
 use crate::ops::handle_wrap::AsyncWrap;
 use crate::ops::handle_wrap::GlobalHandle;
@@ -1193,7 +1193,7 @@ fn encode_string_into_uninit(
       let len_chars = string.length();
       // V8's `write_v2` writes native-endian u16, which on
       // little-endian targets is identical to UTF-16LE bytes — Node's
-      // 'ucs2' encoding. On the BE path (no current Deno target) we
+      // 'ucs2' encoding. On the BE path (no current Edno target) we
       // fall through to the temp-buffer + byte-swap path. Direct
       // write requires the destination be u16-aligned and have room
       // for `len_chars` u16 elements.

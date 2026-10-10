@@ -1,11 +1,11 @@
-const tempDirPath = await Deno.makeTempDir();
+const tempDirPath = await Edno.makeTempDir();
 
 const sockPath = `${tempDirPath}/control.sock`;
 const testPath = `${tempDirPath}/test.ts`;
 
-const command = new Deno.Command(Deno.execPath(), {
+const command = new Edno.Command(Edno.execPath(), {
   env: {
-    DENO_UNSTABLE_CONTROL_SOCK: `unix:${sockPath}`,
+    EDNO_UNSTABLE_CONTROL_SOCK: `unix:${sockPath}`,
   },
 });
 
@@ -14,7 +14,7 @@ const child = command.spawn();
 let i = 0;
 while (true) {
   try {
-    await Deno.lstat(sockPath);
+    await Edno.lstat(sockPath);
     break;
   } catch {}
 
@@ -26,17 +26,17 @@ while (true) {
   await new Promise((r) => setTimeout(r, 10));
 }
 
-const sock = await Deno.connect({
+const sock = await Edno.connect({
   transport: "unix",
   path: sockPath,
 });
 
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   testPath,
   `
-console.log(Deno[Deno.internal].isFromUnconfiguredRuntime());
-console.log(Deno.env.get('A'));
-Deno.serve({ onListen() {} }, () => {}).shutdown();
+console.log(Edno[Edno.internal].isFromUnconfiguredRuntime());
+console.log(Edno.env.get('A'));
+Edno.serve({ onListen() {} }, () => {}).shutdown();
 `,
 );
 
@@ -59,9 +59,9 @@ const nodeSockPath = `${tempDirPath}/node-control.sock`;
 const nodeOverrideSockPath = `${tempDirPath}/node-override.sock`;
 const nodeTestPath = `${tempDirPath}/node_test.ts`;
 
-const nodeCommand = new Deno.Command(Deno.execPath(), {
+const nodeCommand = new Edno.Command(Edno.execPath(), {
   env: {
-    DENO_UNSTABLE_CONTROL_SOCK: `unix:${nodeSockPath}`,
+    EDNO_UNSTABLE_CONTROL_SOCK: `unix:${nodeSockPath}`,
   },
 });
 
@@ -70,7 +70,7 @@ const nodeChild = nodeCommand.spawn();
 i = 0;
 while (true) {
   try {
-    await Deno.lstat(nodeSockPath);
+    await Edno.lstat(nodeSockPath);
     break;
   } catch {}
 
@@ -82,12 +82,12 @@ while (true) {
   await new Promise((r) => setTimeout(r, 10));
 }
 
-const nodeSock = await Deno.connect({
+const nodeSock = await Edno.connect({
   transport: "unix",
   path: nodeSockPath,
 });
 
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   nodeTestPath,
   `
 import http from "node:http";
@@ -103,8 +103,8 @@ const nodeData = JSON.stringify({
   cwd: tempDirPath,
   args: ["run", "-A", "node_test.ts"],
   env: [
-    ["DENO_AUTO_SERVE", "1"],
-    ["DENO_SERVE_ADDRESS", `duplicate,unix:${nodeOverrideSockPath}`],
+    ["EDNO_AUTO_SERVE", "1"],
+    ["EDNO_SERVE_ADDRESS", `duplicate,unix:${nodeOverrideSockPath}`],
   ],
 });
 
@@ -124,9 +124,9 @@ const h2SockPath = `${tempDirPath}/h2-control.sock`;
 const h2OverrideSockPath = `${tempDirPath}/h2-override.sock`;
 const h2TestPath = `${tempDirPath}/h2_test.ts`;
 
-const h2Command = new Deno.Command(Deno.execPath(), {
+const h2Command = new Edno.Command(Edno.execPath(), {
   env: {
-    DENO_UNSTABLE_CONTROL_SOCK: `unix:${h2SockPath}`,
+    EDNO_UNSTABLE_CONTROL_SOCK: `unix:${h2SockPath}`,
   },
 });
 
@@ -135,7 +135,7 @@ const h2Child = h2Command.spawn();
 i = 0;
 while (true) {
   try {
-    await Deno.lstat(h2SockPath);
+    await Edno.lstat(h2SockPath);
     break;
   } catch {}
 
@@ -147,12 +147,12 @@ while (true) {
   await new Promise((r) => setTimeout(r, 10));
 }
 
-const h2Sock = await Deno.connect({
+const h2Sock = await Edno.connect({
   transport: "unix",
   path: h2SockPath,
 });
 
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   h2TestPath,
   `
 import http2 from "node:http2";
@@ -168,8 +168,8 @@ const h2Data = JSON.stringify({
   cwd: tempDirPath,
   args: ["run", "-A", "h2_test.ts"],
   env: [
-    ["DENO_AUTO_SERVE", "1"],
-    ["DENO_SERVE_ADDRESS", `duplicate,unix:${h2OverrideSockPath}`],
+    ["EDNO_AUTO_SERVE", "1"],
+    ["EDNO_SERVE_ADDRESS", `duplicate,unix:${h2OverrideSockPath}`],
   ],
 });
 

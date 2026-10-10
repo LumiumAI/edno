@@ -21,27 +21,27 @@ use deno_ast::swc::common::comments::CommentKind;
 use deno_ast::swc::ecma_visit::Visit;
 use deno_ast::swc::ecma_visit::VisitWith;
 use deno_ast::swc::ecma_visit::noop_visit_type;
-use deno_core::LocalInspectorSession;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::error::CoreError;
-use deno_core::futures::FutureExt;
-use deno_core::futures::StreamExt;
-use deno_core::futures::channel::mpsc::UnboundedReceiver;
-use deno_core::futures::channel::mpsc::UnboundedSender;
-use deno_core::futures::channel::mpsc::unbounded;
-use deno_core::parking_lot::Mutex as SyncMutex;
-use deno_core::serde_json;
-use deno_core::serde_json::Value;
-use deno_core::unsync::spawn;
-use deno_core::url::Url;
+use edno_core::LocalInspectorSession;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::error::CoreError;
+use edno_core::futures::FutureExt;
+use edno_core::futures::StreamExt;
+use edno_core::futures::channel::mpsc::UnboundedReceiver;
+use edno_core::futures::channel::mpsc::UnboundedSender;
+use edno_core::futures::channel::mpsc::unbounded;
+use edno_core::parking_lot::Mutex as SyncMutex;
+use edno_core::serde_json;
+use edno_core::serde_json::Value;
+use edno_core::unsync::spawn;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 use deno_graph::Position;
 use deno_graph::PositionRange;
 use deno_graph::analysis::SpecifierWithRange;
-use deno_lib::util::result::any_and_jserrorbox_downcast_ref;
-use deno_resolver::deno_json::CompilerOptionsResolver;
-use deno_runtime::worker::MainWorker;
+use edno_lib::util::result::any_and_jserrorbox_downcast_ref;
+use edno_resolver::edno_json::CompilerOptionsResolver;
+use edno_runtime::worker::MainWorker;
 use deno_semver::npm::NpmPackageReqReference;
 use node_resolver::NodeResolutionKind;
 use node_resolver::ResolutionMode;
@@ -95,8 +95,8 @@ fn get_prelude() -> String {
     String,
     lastEvalResult: undefined,
     lastThrownError: undefined,
-    inspectArgs: Deno[Deno.internal].inspectArgs,
-    noColor: Deno.noColor,
+    inspectArgs: Edno[Edno.internal].inspectArgs,
+    noColor: Edno.noColor,
     get closed() {
       try {
         return typeof globalThis.closed === 'undefined' ? false : globalThis.closed;
@@ -215,8 +215,8 @@ impl ReplSessionState {
     })))
   }
 
-  fn callback(&self, msg: deno_core::InspectorMsg) {
-    let deno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
+  fn callback(&self, msg: edno_core::InspectorMsg) {
+    let edno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
       if let Ok(value) = serde_json::from_str(&msg.content) {
         let _ = self.0.lock().notification_tx.unbounded_send(value);
       }
@@ -346,7 +346,7 @@ impl ReplSession {
     assert_ne!(context_id, 0);
 
     let referrer =
-      deno_core::resolve_path("./$deno$repl.mts", cli_options.initial_cwd())
+      edno_core::resolve_path("./$edno$repl.mts", cli_options.initial_cwd())
         .unwrap();
 
     let cwd_url =
@@ -451,7 +451,7 @@ impl ReplSession {
     // resolution microtask drains, the weakly-held promise is collected and
     // the CDP client gets a `-32000 "Promise was collected"` error. Doing
     // the dispatch + drain pair here closes that window for external
-    // debuggers attached via `deno repl --inspect`.
+    // debuggers attached via `edno repl --inspect`.
     // (post_message_with_event_loop above handles the same race for the
     // in-process REPL session.)
     std::future::poll_fn(|cx| {
@@ -467,7 +467,7 @@ impl ReplSession {
         .perform_microtask_checkpoint();
       let poll_result = self.worker.js_runtime.poll_event_loop(
         cx,
-        deno_core::PollEventLoopOptions {
+        edno_core::PollEventLoopOptions {
           wait_for_inspector: true,
         },
       );
@@ -757,7 +757,7 @@ impl ReplSession {
   ) -> Result<String, AnyError> {
     // TODO(caspervonb) we should investigate using previews here but to keep things
     // consistent with the previous implementation we just get the preview result from
-    // Deno.inspectArgs.
+    // Edno.inspectArgs.
     let response = self
       .call_function_on_repl_internal_obj(
         r#"function (object) {
@@ -793,7 +793,7 @@ impl ReplSession {
     // `<string>x` is misread as JSX in `.tsx`).
     let needs_ts_fallback = match &tsx_result {
       Ok(parsed) => {
-        deno_resolver::emit::invalid_syntax_parse_diagnostics(parsed).is_some()
+        edno_resolver::emit::invalid_syntax_parse_diagnostics(parsed).is_some()
       }
       Err(_) => true,
     };
@@ -818,7 +818,7 @@ impl ReplSession {
     // transpiling to `<invalid>` and letting V8 report a misleading
     // `Unexpected token '<'`. See denoland/deno#19457.
     if let Some(diagnostics) =
-      deno_resolver::emit::invalid_syntax_parse_diagnostics(&parsed_source)
+      edno_resolver::emit::invalid_syntax_parse_diagnostics(&parsed_source)
     {
       return Err(diagnostics.into());
     }
@@ -849,7 +849,7 @@ impl ReplSession {
           remove_comments: false,
         },
       )
-      .map_err(deno_resolver::emit::dedupe_transpile_error)?
+      .map_err(edno_resolver::emit::dedupe_transpile_error)?
       .into_source()
       .text;
 

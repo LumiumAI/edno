@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/non-existent-optional-peer",
+  "name": "@ednotest/non-existent-optional-peer",
   "version": "1.0.0",
   "peerDependencies": {
     "uWebSockets.js": "*"

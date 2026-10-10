@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/multi-bin",
+  "name": "@ednotest/multi-bin",
   "version": "1.0.0",
   "bin": {
     "multi-bin": "./cli.mjs",

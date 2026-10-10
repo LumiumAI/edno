@@ -16,7 +16,7 @@
     {
       "args": [
         "eval",
-        "console.log(Deno.readTextFileSync('import_map.json').trim())"
+        "console.log(Edno.readTextFileSync('import_map.json').trim())"
       ],
       "output": "import_map.json.out"
     }

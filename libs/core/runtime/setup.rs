@@ -119,9 +119,9 @@ fn spawn_delayed_task(key: usize, task: v8::Task, delay_in_seconds: f64) {
 
 /// Custom V8 platform implementation that queues immediate foreground
 /// tasks for synchronous draining, and spawns delayed tasks on tokio.
-struct DenoPlatformImpl;
+struct EdnoPlatformImpl;
 
-impl v8::PlatformImpl for DenoPlatformImpl {
+impl v8::PlatformImpl for EdnoPlatformImpl {
   fn post_task(&self, isolate_ptr: *mut c_void, task: v8::Task) {
     queue_task(isolate_ptr as usize, task);
   }
@@ -213,7 +213,7 @@ fn v8_init(
       thread_pool_size,
       false,
       unprotected,
-      DenoPlatformImpl,
+      EdnoPlatformImpl,
     )
     .make_shared()
   });
@@ -226,21 +226,21 @@ pub fn init_v8(
   snapshot: bool,
   expose_natives: bool,
 ) {
-  static DENO_INIT: Once = Once::new();
-  static DENO_SNAPSHOT: AtomicBool = AtomicBool::new(false);
-  static DENO_SNAPSHOT_SET: AtomicBool = AtomicBool::new(false);
+  static EDNO_INIT: Once = Once::new();
+  static EDNO_SNAPSHOT: AtomicBool = AtomicBool::new(false);
+  static EDNO_SNAPSHOT_SET: AtomicBool = AtomicBool::new(false);
 
-  if DENO_SNAPSHOT_SET.load(Ordering::SeqCst) {
-    let current = DENO_SNAPSHOT.load(Ordering::SeqCst);
+  if EDNO_SNAPSHOT_SET.load(Ordering::SeqCst) {
+    let current = EDNO_SNAPSHOT.load(Ordering::SeqCst);
     assert_eq!(
       current, snapshot,
       "V8 may only be initialized once in either snapshotting or non-snapshotting mode. Either snapshotting or non-snapshotting mode may be used in a single process, not both."
     );
-    DENO_SNAPSHOT_SET.store(true, Ordering::SeqCst);
-    DENO_SNAPSHOT.store(snapshot, Ordering::SeqCst);
+    EDNO_SNAPSHOT_SET.store(true, Ordering::SeqCst);
+    EDNO_SNAPSHOT.store(snapshot, Ordering::SeqCst);
   }
 
-  DENO_INIT.call_once(move || v8_init(v8_platform, snapshot, expose_natives));
+  EDNO_INIT.call_once(move || v8_init(v8_platform, snapshot, expose_natives));
 }
 
 pub fn create_isolate(

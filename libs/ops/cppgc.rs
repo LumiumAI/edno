@@ -47,10 +47,10 @@ fn inherits_inner(input: DeriveInput) -> Result<TokenStream2> {
   let where_clause = impl_generics.make_where_clause();
   where_clause
     .predicates
-    .push(parse_quote!(#base: deno_core::cppgc::Inherits<__TransitiveBase>));
+    .push(parse_quote!(#base: edno_core::cppgc::Inherits<__TransitiveBase>));
   where_clause
     .predicates
-    .push(parse_quote!(__TransitiveBase: deno_core::cppgc::Base));
+    .push(parse_quote!(__TransitiveBase: edno_core::cppgc::Base));
 
   ensure_repr_c(&attrs, ident.span())?;
 
@@ -101,10 +101,10 @@ fn inherits_inner(input: DeriveInput) -> Result<TokenStream2> {
       #offset_assert
       #size_align_assert
       #[automatically_derived]
-      unsafe impl #base_impl_generics deno_core::cppgc::Inherits<#base> for #ident #base_ty_generics #base_where_clause {}
-      deno_core::_ops::inventory::submit!(deno_core::cppgc::verify_inherits::<#base, #ident #base_ty_generics>());
+      unsafe impl #base_impl_generics edno_core::cppgc::Inherits<#base> for #ident #base_ty_generics #base_where_clause {}
+      edno_core::_ops::inventory::submit!(edno_core::cppgc::verify_inherits::<#base, #ident #base_ty_generics>());
       #[automatically_derived]
-      unsafe impl #transitive_impl_generics deno_core::cppgc::Inherits<__TransitiveBase> for #ident #base_ty_generics #transitive_where_clause {}
+      unsafe impl #transitive_impl_generics edno_core::cppgc::Inherits<__TransitiveBase> for #ident #base_ty_generics #transitive_where_clause {}
   })
 }
 
@@ -133,7 +133,7 @@ fn base_inner(input: DeriveInput) -> Result<TokenStream2> {
   Ok(quote! {
     #size_assert
     #[automatically_derived]
-    unsafe impl #impl_generics deno_core::cppgc::Base for #ident #ty_generics #where_clause {
+    unsafe impl #impl_generics edno_core::cppgc::Base for #ident #ty_generics #where_clause {
       fn __cache() -> &'static std::sync::OnceLock<Vec<std::any::TypeId>> {
         static CACHE: std::sync::OnceLock<Vec<std::any::TypeId>> = std::sync::OnceLock::new();
         &CACHE

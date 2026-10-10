@@ -4,11 +4,11 @@
     "missing_bin": {
       "steps": [
         {
-          "args": "install npm:denotest-packagejson-missing-info@1.0.0-missingbin",
+          "args": "install npm:ednotest-packagejson-missing-info@1.0.0-missingbin",
           "output": "missingbin.out"
         },
         {
-          "args": "run -A ./has-bin.ts denotest",
+          "args": "run -A ./has-bin.ts ednotest",
           "output": ""
         }
       ]
@@ -16,7 +16,7 @@
     "binding_gyp_scripts": {
       "steps": [
         {
-          "args": "install npm:denotest-packagejson-missing-info@0.7.0-bindinggyp",
+          "args": "install npm:ednotest-packagejson-missing-info@0.7.0-bindinggyp",
           "output": "bindinggyp.out"
         }
       ]
@@ -24,7 +24,7 @@
     "missing_deprecated": {
       "steps": [
         {
-          "args": "install npm:denotest-packagejson-missing-info@0.2.5-missingdeprecated",
+          "args": "install npm:ednotest-packagejson-missing-info@0.2.5-missingdeprecated",
           "output": "missingdeprecated.out"
         }
       ]
@@ -32,7 +32,7 @@
     "missing_deprecated_with_lazy_caching": {
       "steps": [
         {
-          "args": "install --unstable-npm-lazy-caching npm:denotest-packagejson-missing-info@0.2.5-missingdeprecated",
+          "args": "install --unstable-npm-lazy-caching npm:ednotest-packagejson-missing-info@0.2.5-missingdeprecated",
           "output": "missingdeprecated.out"
         }
       ]

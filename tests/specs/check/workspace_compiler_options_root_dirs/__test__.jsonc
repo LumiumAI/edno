@@ -1,5 +1,5 @@
 {
-  // ignored: tsc doesn't apply compilerOptions.rootDirs the way deno does,
+  // ignored: tsc doesn't apply compilerOptions.rootDirs the way edno does,
   // so it can't resolve the cross-rootDir import.
   // https://github.com/denoland/deno/issues/36085
   "ignore": true,

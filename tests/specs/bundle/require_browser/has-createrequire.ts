@@ -1,6 +1,6 @@
-const file = Deno.args[0];
+const file = Edno.args[0];
 
-const contents = Deno.readTextFileSync(file);
+const contents = Edno.readTextFileSync(file);
 
 if (contents.includes("createRequire")) {
   console.log("true");

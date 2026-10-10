@@ -35,7 +35,7 @@ const {
 } = primordials;
 
 function registerDestroyHook(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   _target: any,
   _asyncId: number,
   _prop: { destroyed: boolean },

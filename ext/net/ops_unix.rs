@@ -20,17 +20,17 @@ use std::path::PathBuf;
 use std::ptr;
 use std::rc::Rc;
 
-use deno_core::AsyncRefCell;
-use deno_core::CancelHandle;
-use deno_core::CancelTryFuture;
-use deno_core::JsBuffer;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::op2;
-use deno_permissions::OpenAccessKind;
-use deno_permissions::PermissionsContainer;
+use edno_core::AsyncRefCell;
+use edno_core::CancelHandle;
+use edno_core::CancelTryFuture;
+use edno_core::JsBuffer;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::op2;
+use edno_permissions::OpenAccessKind;
+use edno_permissions::PermissionsContainer;
 use serde::Deserialize;
 use serde::Serialize;
 use tokio::net::UnixDatagram;
@@ -150,7 +150,7 @@ pub async fn op_net_connect_unix(
       state.borrow_mut::<PermissionsContainer>(),
       Cow::Owned(PathBuf::from(address_path)),
       OpenAccessKind::ReadWriteNoFollow,
-      Some("Deno.connect()"),
+      Some("Edno.connect()"),
     )?
   };
   let unix_stream = UnixStream::connect(address_path).await?;
@@ -199,7 +199,7 @@ pub async fn op_net_send_unixpacket(
       s.borrow_mut::<PermissionsContainer>(),
       Cow::Owned(PathBuf::from(address_path)),
       OpenAccessKind::WriteNoFollow,
-      Some("Deno.DatagramConn.send()"),
+      Some("Edno.DatagramConn.send()"),
     )?
   };
 
@@ -253,7 +253,7 @@ pub fn net_listen_unixpacket(
         permissions,
         Cow::Borrowed(Path::new(address_path)),
         OpenAccessKind::ReadWriteNoFollow,
-        Some("Deno.listenDatagram()"),
+        Some("Edno.listenDatagram()"),
       )?;
       bind_unix_datagram(address_path.as_ref())?
     }
@@ -276,7 +276,7 @@ pub fn op_net_listen_unixpacket(
   state: &mut OpState,
   #[string] path: Option<String>, // todo: Option<&str> not supported in ops yet
 ) -> Result<(ResourceId, Option<String>), NetError> {
-  super::check_unstable(state, "Deno.listenDatagram");
+  super::check_unstable(state, "Edno.listenDatagram");
   net_listen_unixpacket(state, path.as_deref())
 }
 

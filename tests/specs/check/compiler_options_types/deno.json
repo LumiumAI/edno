@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@denotest/augments-global": "npm:@denotest/augments-global@1"
+    "@ednotest/augments-global": "npm:@ednotest/augments-global@1"
   },
-  "compilerOptions": { "types": ["@denotest/augments-global"] }
+  "compilerOptions": { "types": ["@ednotest/augments-global"] }
 }

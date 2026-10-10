@@ -2,12 +2,12 @@
   "tempDir": true,
   "steps": [{
     "if": "unix",
-    "args": "install -g --root ./bins jsr:@denotest/echo-lockfile",
+    "args": "install -g --root ./bins jsr:@ednotest/echo-lockfile",
     "output": "install.out"
   }, {
     // Verify the lockfile was placed in the config directory
     "if": "unix",
-    "args": "eval console.log(Deno.readTextFileSync('./bins/bin/.echo-lockfile/deno.lock'))",
+    "args": "eval console.log(Edno.readTextFileSync('./bins/bin/.echo-lockfile/edno.lock'))",
     "output": "lockfile.out"
   }, {
     "if": "unix",
@@ -17,11 +17,11 @@
     "exitCode": 0
   }, {
     "if": "windows",
-    "args": "install -g --root ./bins jsr:@denotest/echo-lockfile",
+    "args": "install -g --root ./bins jsr:@ednotest/echo-lockfile",
     "output": "install.out"
   }, {
     "if": "windows",
-    "args": "eval console.log(Deno.readTextFileSync('./bins/bin/.echo-lockfile/deno.lock'))",
+    "args": "eval console.log(Edno.readTextFileSync('./bins/bin/.echo-lockfile/edno.lock'))",
     "output": "lockfile.out"
   }, {
     "if": "windows",

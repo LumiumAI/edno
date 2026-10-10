@@ -1,7 +1,7 @@
-const newReq = Deno.args[0]?.trim();
+const newReq = Edno.args[0]?.trim();
 if (!newReq) {
   throw new Error("Missing required argument");
 }
-const config = JSON.parse(Deno.readTextFileSync("deno.json"));
-config.imports["@denotest/esm-basic"] = `npm:@denotest/esm-basic@${newReq}`;
-Deno.writeTextFileSync("deno.json", JSON.stringify(config));
+const config = JSON.parse(Edno.readTextFileSync("edno.json"));
+config.imports["@ednotest/esm-basic"] = `npm:@ednotest/esm-basic@${newReq}`;
+Edno.writeTextFileSync("edno.json", JSON.stringify(config));

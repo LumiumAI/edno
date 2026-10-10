@@ -3,12 +3,12 @@
 use std::borrow::Cow;
 use std::rc::Rc;
 
-use deno_core::AsyncRefCell;
-use deno_core::CancelHandle;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::ResourceTable;
-use deno_core::error::ResourceError;
+use edno_core::AsyncRefCell;
+use edno_core::CancelHandle;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::ResourceTable;
+use edno_core::error::ResourceError;
 use deno_error::JsErrorBox;
 
 use crate::io::TcpStreamResource;
@@ -562,7 +562,7 @@ pub enum TakeNetworkStreamError {
   ReuniteVsock,
   #[class(inherit)]
   #[error(transparent)]
-  Resource(deno_core::error::ResourceError),
+  Resource(edno_core::error::ResourceError),
 }
 
 /// In some cases it may be more efficient to extract the resource from the resource table and use it directly (for example, an HTTP server).

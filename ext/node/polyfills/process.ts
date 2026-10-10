@@ -5,12 +5,12 @@ import { core, internals, primordials } from "ext:core/mod.js";
 // Installs `internals.__inspectorNetwork` so ext/fetch (and other
 // extensions) can emit Network.* CDP events without requiring user code
 // to import `node:inspector`. Side-effect import; no exports.
-core.loadExtScript("ext:deno_node/inspector_network_bridge.js");
+core.loadExtScript("ext:edno_node/inspector_network_bridge.js");
 const { initializeDebugEnv } = core.loadExtScript(
-  "ext:deno_node/internal/util/debuglog.ts",
+  "ext:edno_node/internal/util/debuglog.ts",
 );
 const { format } = core.loadExtScript(
-  "ext:deno_node/internal/util/inspect.mjs",
+  "ext:edno_node/internal/util/inspect.mjs",
 );
 import {
   op_current_thread_cpu_usage,
@@ -34,7 +34,7 @@ import {
   op_stream_base_register_state,
 } from "ext:core/ops";
 
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 // Lazy: a static `import ... from "node:module"` makes node:process eagerly
 // pull node:module's entire eager closure (~95 loadExtScript) at process
 // bootstrap. When node:process is itself cold-bootstrapping (node-defer path),
@@ -43,10 +43,10 @@ const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
 // are only used at call time, so load node:module lazily on first use.
 const lazyNodeModule = core.createLazyLoader("node:module");
 const { report } = core.loadExtScript(
-  "ext:deno_node/internal/process/report.ts",
+  "ext:edno_node/internal/process/report.ts",
 );
 const { onWarning } = core.loadExtScript(
-  "ext:deno_node/internal/process/warning.ts",
+  "ext:edno_node/internal/process/warning.ts",
 );
 const {
   parseFileMode,
@@ -55,9 +55,9 @@ const {
   validateObject,
   validateString,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const {
-  denoErrorToNodeError,
+  ednoErrorToNodeError,
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE_RANGE,
   ERR_OUT_OF_RANGE,
@@ -66,13 +66,13 @@ const {
   ERR_WORKER_UNSUPPORTED_OPERATION,
   errnoException,
   NodeTypeError,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { getOptionValue } = core.loadExtScript(
-  "ext:deno_node/internal/options.ts",
+  "ext:edno_node/internal/options.ts",
 );
-const { default: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+const { default: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 import { join } from "node:path";
-const { pathFromURL } = core.loadExtScript("ext:deno_web/00_infra.js");
+const { pathFromURL } = core.loadExtScript("ext:edno_web/00_infra.js");
 const {
   arch: arch_,
   chdir,
@@ -81,8 +81,8 @@ const {
   nextTick: _nextTick,
   version,
   versions,
-} = core.loadExtScript("ext:deno_node/_process/process.ts");
-const { _exiting } = core.loadExtScript("ext:deno_node/_process/exiting.ts");
+} = core.loadExtScript("ext:edno_node/_process/process.ts");
+const { _exiting } = core.loadExtScript("ext:edno_node/_process/exiting.ts");
 export { _nextTick as nextTick, chdir, cwd, env, version, versions };
 // Lazily load the stream/tty machinery. Static imports here would pin
 // `node:stream`, `node:net` and `node:tty` (TTYWriteStream extends net.Socket)
@@ -92,15 +92,15 @@ export { _nextTick as nextTick, chdir, cwd, env, version, versions };
 // the stream/net/tty closure into the heap - the single biggest chunk of node
 // snapshot-deserialization time.
 const lazyStreamsMod = core.createLazyLoader(
-  "ext:deno_node/_process/streams.mjs",
+  "ext:edno_node/_process/streams.mjs",
 );
-const lazyTtyMod = core.createLazyLoader("ext:deno_node/internal/tty.js");
-const { enableNextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
+const lazyTtyMod = core.createLazyLoader("ext:edno_node/internal/tty.js");
+const { enableNextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
 const { isAndroid, isWindows } = core.loadExtScript(
-  "ext:deno_node/_util/os.ts",
+  "ext:edno_node/_util/os.ts",
 );
-const io = core.loadExtScript("ext:deno_io/12_io.js");
-const denoOs = core.loadExtScript("ext:deno_os/30_os.js");
+const io = core.loadExtScript("ext:edno_io/12_io.js");
+const ednoOs = core.loadExtScript("ext:edno_os/30_os.js");
 
 export let argv0 = "";
 
@@ -115,29 +115,29 @@ let stdin, stdout, stderr;
 
 export { stderr, stdin, stdout };
 
-import { getBinding } from "ext:deno_node/internal_binding/mod.ts";
+import { getBinding } from "ext:edno_node/internal_binding/mod.ts";
 const constants = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
-const uv = core.loadExtScript("ext:deno_node/internal_binding/uv.ts");
-import type { BindingName } from "ext:deno_node/internal_binding/mod.ts";
+const uv = core.loadExtScript("ext:edno_node/internal_binding/uv.ts");
+import type { BindingName } from "ext:edno_node/internal_binding/mod.ts";
 const { buildAllowedFlags } = core.loadExtScript(
-  "ext:deno_node/internal/process/per_thread.mjs",
+  "ext:edno_node/internal/process/per_thread.mjs",
 );
 const {
   getActiveHandles,
   getActiveRequests,
   getActiveResourceNames,
-} = core.loadExtScript("ext:deno_node/internal/process/active_resources.ts");
+} = core.loadExtScript("ext:edno_node/internal/process/active_resources.ts");
 const {
   getActiveResourcesInfo: getTimerActiveResourcesInfo,
-} = core.loadExtScript("ext:deno_node/internal/timers.mjs");
-import type fsUtils from "ext:deno_node/internal/fs/utils.mjs";
-import type * as utilModule from "ext:deno_node/util.ts";
+} = core.loadExtScript("ext:edno_node/internal/timers.mjs");
+import type fsUtils from "ext:edno_node/internal/fs/utils.mjs";
+import type * as utilModule from "ext:edno_node/util.ts";
 
 let fsUtilsModule: typeof fsUtils;
 const lazyLoadFsUtils = core.createLazyLoader<typeof fsUtils>(
-  "ext:deno_node/internal/fs/utils.mjs",
+  "ext:edno_node/internal/fs/utils.mjs",
 );
 // Lazy-loaded to avoid a static circular import:
 //   process.ts -> util.ts -> internal/util/parse_args/parse_args.js
@@ -201,7 +201,7 @@ export const exit = (code?: number | string) => {
     process.exitCode = code;
   }
 
-  ProcessExitCode = denoOs.getExitCode();
+  ProcessExitCode = ednoOs.getExitCode();
   if (!process._exiting) {
     process._exiting = true;
     // FIXME(bartlomieju): this is wrong, we won't be using syscall to exit
@@ -210,22 +210,22 @@ export const exit = (code?: number | string) => {
     process.emit("exit", ProcessExitCode);
   }
 
-  // Any valid thing `process.exitCode` set is already held in Deno.exitCode.
+  // Any valid thing `process.exitCode` set is already held in Edno.exitCode.
   // At this point, we don't have to pass around Node's raw/string exit value.
   process.reallyExit(ProcessExitCode);
 
-  // In a worker, reallyExit() returns because Deno.exit() calls workerClose()
+  // In a worker, reallyExit() returns because Edno.exit() calls workerClose()
   // instead of std::process::exit(). workerClose() already called V8's
   // terminate_execution(). Unlike Node.js where reallyExit is a C++ binding
-  // and a single nop() call suffices to trigger the stack guard check, in Deno
-  // reallyExit goes through JS frames (Deno.exit -> exitHandler -> workerClose
+  // and a single nop() call suffices to trigger the stack guard check, in Edno
+  // reallyExit goes through JS frames (Edno.exit -> exitHandler -> workerClose
   // -> op), so we need a loop back-edge for V8 to reliably detect the pending
   // termination and throw an uncatchable TerminationException.
   // On the main thread reallyExit() normally never returns, but users can
   // override it (test-process-really-exit.js), so only spin in workers.
   // ref: https://github.com/nodejs/node/blob/9cc7fcc26d/lib/internal/process/per_thread.js#L243-L251
   if (internals.__isWorkerThread) {
-    // deno-lint-ignore no-empty
+    // edno-lint-ignore no-empty
     for (;;) {}
   }
 };
@@ -241,7 +241,7 @@ export function umask(mask?: number | string): number {
   }
   // Note: reading the umask without setting has an inherent race condition
   // (two syscalls: set to 0 then restore). Node.js has the same issue and
-  // has deprecated process.umask() with no arguments. In Deno, the underlying
+  // has deprecated process.umask() with no arguments. In Edno, the underlying
   // op requires allow-sys=umask for both reading and setting.
   return op_fs_umask(null);
 }
@@ -280,7 +280,7 @@ function previousCpuUsageValueIsValid(num) {
 }
 
 export function cpuUsage(previousValue?: CpuUsage): CpuUsage {
-  const cpuValues = Deno.cpuUsage(previousValue);
+  const cpuValues = Edno.cpuUsage(previousValue);
 
   if (previousValue) {
     if (!previousCpuUsageValueIsValid(previousValue.user)) {
@@ -354,13 +354,13 @@ function createWarningObject(
   warning: string,
   type: string,
   code?: string,
-  // deno-lint-ignore ban-types
+  // edno-lint-ignore ban-types
   ctor?: Function,
   detail?: string,
 ): Error {
   assert(typeof warning === "string");
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const warningErr: any = new Error(warning);
   warningErr.name = String(type || "Warning");
 
@@ -384,12 +384,12 @@ function doEmitWarning(warning: Error) {
 export function emitWarning(
   warning: string | Error,
   type:
-    // deno-lint-ignore ban-types
+    // edno-lint-ignore ban-types
     | { type: string; detail: string; code: string; ctor: Function }
     | string
     | null,
   code?: string,
-  // deno-lint-ignore ban-types
+  // edno-lint-ignore ban-types
   ctor?: Function,
 ) {
   let detail;
@@ -427,12 +427,12 @@ export function emitWarning(
   }
 
   if (warning.name === "DeprecationWarning") {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     if ((process as any).noDeprecation) {
       return;
     }
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     if ((process as any).throwDeprecation) {
       // Delay throwing the error to guarantee that all former warnings were
       // properly logged.
@@ -484,7 +484,7 @@ export function memoryUsage(): {
   arrayBuffers: number;
 } {
   return {
-    ...Deno.memoryUsage(),
+    ...Edno.memoryUsage(),
     arrayBuffers: 0,
   };
 }
@@ -527,7 +527,7 @@ export function getActiveResourcesInfo(): string[] {
 }
 
 export function availableMemory(): number {
-  return Deno.systemMemoryInfo().available;
+  return Edno.systemMemoryInfo().available;
 }
 
 export function constrainedMemory(): number {
@@ -646,14 +646,14 @@ function wrapIdSetter(
     try {
       fn(id);
     } catch (err) {
-      throw denoErrorToNodeError(err as Error, { syscall });
+      throw ednoErrorToNodeError(err as Error, { syscall });
     }
   };
 }
 
 if (!isWindows) {
-  getgid = () => Deno.gid();
-  getuid = () => Deno.uid();
+  getgid = () => Edno.gid();
+  getuid = () => Edno.uid();
   getegid = () => op_getegid();
   geteuid = () => op_geteuid();
 
@@ -685,17 +685,17 @@ const ALLOWED_FLAGS = buildAllowedFlags();
 // rejection (via the ESM wrapper that loads the main CJS module), the
 // unhandled-rejection fallback below uses this set to skip emitting
 // 'uncaughtExceptionMonitor' / 'uncaughtException' a second time.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const _dispatchedFatalErrors = new SafeWeakSet<any>();
 internals._dispatchedFatalErrors = _dispatchedFatalErrors;
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function uncaughtExceptionHandler(err: any, origin: string): boolean {
   // The origin parameter can be 'unhandledRejection' or 'uncaughtException'
   // depending on how the uncaught exception was created. In Node.js,
   // exceptions thrown from the top level of a CommonJS module are reported as
   // 'uncaughtException', while exceptions thrown from the top level of an ESM
-  // module are reported as 'unhandledRejection'. Deno does not have a true
+  // module are reported as 'unhandledRejection'. Edno does not have a true
   // CommonJS implementation; sync throws in the entry CJS module are
   // dispatched up-front via Module._load (see ext/node/polyfills/01_require.js)
   // so this path only fires for real unhandled promise rejections.
@@ -714,10 +714,10 @@ export let execPath: string = "";
 // #<process>", which `Object.defineProperty(F, "name", ...)` does not
 // affect. Match Node's FunctionTemplate-based binding (see
 // CreateProcessObject in src/node_process_object.cc).
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const Process = function process(this: any) {
   if (!ObjectPrototypeIsPrototypeOf(Process.prototype, this)) {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     return new (Process as any)();
   }
 
@@ -737,7 +737,7 @@ ObjectDefineProperty(Process.prototype, "constructor", {
 
 // Maps original user listeners to wrapped versions that pass the signal name.
 // Node.js calls signal listeners with the signal name as the first argument,
-// but Deno.addSignalListener calls them with no arguments.
+// but Edno.addSignalListener calls them with no arguments.
 type SignalListener = (...args: string[]) => void;
 const _signalListenerWrappers = new SafeWeakMap<
   SignalListener,
@@ -776,14 +776,14 @@ function _unwrapSignalListener(
 
 // Look up the actual registered listener for a signal event. When `once()` is
 // used, EventEmitter wraps the listener in a function with a `.listener`
-// property. We need the wrapper to pass to `Deno.removeSignalListener`.
+// property. We need the wrapper to pass to `Edno.removeSignalListener`.
 function _findSignalListener(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   target: any,
   event: string,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   listener: (...args: any[]) => void,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
 ): ((...args: any[]) => void) | undefined {
   const events = target._events;
   if (events === undefined) return undefined;
@@ -801,26 +801,26 @@ function _findSignalListener(
 
 /** https://nodejs.org/api/process.html#process_process_events */
 Process.prototype.on = function (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
   event: string,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   listener: (...args: any[]) => void,
 ) {
   if (typeof event === "string" && StringPrototypeStartsWith(event, "SIG")) {
-    if (event === "SIGBREAK" && Deno.build.os !== "windows") {
+    if (event === "SIGBREAK" && Edno.build.os !== "windows") {
       // Ignores SIGBREAK if the platform is not windows.
-    } else if (event === "SIGTERM" && Deno.build.os === "windows") {
+    } else if (event === "SIGTERM" && Edno.build.os === "windows") {
       // Ignores SIGTERM on windows.
     } else if (
       event !== "SIGBREAK" && event !== "SIGINT" &&
-      event !== "SIGWINCH" && Deno.build.os === "windows"
+      event !== "SIGWINCH" && Edno.build.os === "windows"
     ) {
       // TODO(#26331): Ignores all signals except SIGBREAK, SIGINT, and SIGWINCH on windows.
     } else {
       FunctionPrototypeCall(EventEmitter.prototype.on, this, event, listener);
-      Deno.addSignalListener(
-        event as Deno.Signal,
+      Edno.addSignalListener(
+        event as Edno.Signal,
         _wrapSignalListener(event, listener),
       );
     }
@@ -832,30 +832,30 @@ Process.prototype.on = function (
 };
 
 Process.prototype.off = function (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
   event: string,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   listener: (...args: any[]) => void,
 ) {
   if (typeof event === "string" && StringPrototypeStartsWith(event, "SIG")) {
-    if (event === "SIGBREAK" && Deno.build.os !== "windows") {
+    if (event === "SIGBREAK" && Edno.build.os !== "windows") {
       // Ignores SIGBREAK if the platform is not windows.
     } else if (
       event !== "SIGBREAK" && event !== "SIGINT" &&
-      event !== "SIGWINCH" && Deno.build.os === "windows"
+      event !== "SIGWINCH" && Edno.build.os === "windows"
     ) {
       // Ignores all signals except SIGBREAK, SIGINT, and SIGWINCH on windows.
     } else {
       // Find the actual registered listener before EventEmitter removes it.
       // When using `once()`, EventEmitter wraps the original listener in a
       // wrapper with a `.listener` property pointing to the original. We need
-      // to pass the wrapper (not the original) to Deno.removeSignalListener.
+      // to pass the wrapper (not the original) to Edno.removeSignalListener.
       const registered = _findSignalListener(this, event, listener);
       FunctionPrototypeCall(EventEmitter.prototype.off, this, event, listener);
       const unwrapped = _unwrapSignalListener(event, registered ?? listener);
-      Deno.removeSignalListener(
-        event as Deno.Signal,
+      Edno.removeSignalListener(
+        event as Edno.Signal,
         unwrapped,
       );
     }
@@ -867,10 +867,10 @@ Process.prototype.off = function (
 };
 
 Process.prototype.emit = function (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
   event: string,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   ...args: any[]
 ): boolean {
   return ReflectApply(
@@ -881,14 +881,14 @@ Process.prototype.emit = function (
 };
 
 Process.prototype.prependListener = function (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
   event: string,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   listener: (...args: any[]) => void,
 ) {
   if (typeof event === "string" && StringPrototypeStartsWith(event, "SIG")) {
-    if (event === "SIGBREAK" && Deno.build.os !== "windows") {
+    if (event === "SIGBREAK" && Edno.build.os !== "windows") {
       // Ignores SIGBREAK if the platform is not windows.
     } else {
       FunctionPrototypeCall(
@@ -897,8 +897,8 @@ Process.prototype.prependListener = function (
         event,
         listener,
       );
-      Deno.addSignalListener(
-        event as Deno.Signal,
+      Edno.addSignalListener(
+        event as Edno.Signal,
         _wrapSignalListener(event, listener),
       );
     }
@@ -915,31 +915,31 @@ Process.prototype.prependListener = function (
 };
 
 Process.prototype.addListener = function (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
   event: string,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   listener: (...args: any[]) => void,
 ) {
   return this.on(event, listener);
 };
 
 Process.prototype.removeListener = function (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
-  event: string, // deno-lint-ignore no-explicit-any
+  event: string, // edno-lint-ignore no-explicit-any
   listener: (...args: any[]) => void,
 ) {
   return this.off(event, listener);
 };
 
 Process.prototype.removeAllListeners = function (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   event?: string | any,
 ) {
   if (arguments.length === 0) {
     // Remove all listeners for all events - find all signal events and
-    // unregister their Deno signal listeners before clearing.
+    // unregister their Edno signal listeners before clearing.
     const events = this._events;
     if (events !== undefined) {
       const keys = ObjectKeys(events);
@@ -966,7 +966,7 @@ Process.prototype.removeAllListeners = function (
 };
 
 function _removeAllSignalListeners(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   target: any,
   event: string,
 ) {
@@ -976,11 +976,11 @@ function _removeAllSignalListeners(
   if (list === undefined) return;
   if (typeof list === "function") {
     const actual = list.listener ?? list;
-    Deno.removeSignalListener(event as Deno.Signal, actual);
+    Edno.removeSignalListener(event as Edno.Signal, actual);
   } else {
     for (let i = 0; i < list.length; i++) {
       const actual = list[i].listener ?? list[i];
-      Deno.removeSignalListener(event as Deno.Signal, actual);
+      Edno.removeSignalListener(event as Edno.Signal, actual);
     }
   }
 }
@@ -1182,13 +1182,13 @@ ObjectDefineProperty(process, "config", {
     if (_configCache === undefined) {
       // Internal escape hatch for the node_compat test runner: allows a
       // single test to opt into the "externally-linked OpenSSL" branch of
-      // upstream Node test fixtures, where Deno's aws-lc-rs/BoringSSL
+      // upstream Node test fixtures, where Edno's aws-lc-rs/BoringSSL
       // backend matches that branch's expectations. Not for user code; the
-      // env var is reserved (DENO_INTERNAL_*) and undocumented.
+      // env var is reserved (EDNO_INTERNAL_*) and undocumented.
       let forceSharedOpenssl = false;
       try {
         forceSharedOpenssl =
-          Deno.env.get("DENO_INTERNAL_NODE_TEST_FORCE_SHARED_OPENSSL") === "1";
+          Edno.env.get("EDNO_INTERNAL_NODE_TEST_FORCE_SHARED_OPENSSL") === "1";
       } catch {
         // Permission denied or no env access; leave forceSharedOpenssl false.
       }
@@ -1263,16 +1263,16 @@ process._getActiveHandles = getActiveHandles;
 // is used by `node-tap`. It was marked for removal a couple of years
 // ago. See https://github.com/nodejs/node/blob/6a6b3c54022104cc110ab09044a2a0cecb8988e7/lib/internal/bootstrap/node.js#L172
 process.reallyExit = (code: number) => {
-  return Deno.exit(code || 0);
+  return Edno.exit(code || 0);
 };
 
 process._exiting = _exiting;
 
 // Exception capture callback (used by node:domain)
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 let _uncaughtExceptionCaptureFn: ((err: any) => void) | null = null;
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 process.setUncaughtExceptionCaptureCallback = function (fn: any) {
   if (fn === null) {
     _uncaughtExceptionCaptureFn = null;
@@ -1293,7 +1293,7 @@ process.hasUncaughtExceptionCaptureCallback = function () {
   return _uncaughtExceptionCaptureFn !== null;
 };
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 process._fatalException = function (err: any, fromPromise?: boolean) {
   const origin = fromPromise ? "unhandledRejection" : "uncaughtException";
   process.emit("uncaughtExceptionMonitor", err, origin);
@@ -1335,7 +1335,7 @@ ObjectDefineProperty(process, "exitCode", {
       throw new ERR_INVALID_ARG_TYPE("code", "integer", code);
     }
 
-    denoOs.setExitCode(parsedCode);
+    ednoOs.setExitCode(parsedCode);
     ProcessExitCode = code;
   },
 });
@@ -1360,7 +1360,7 @@ ObjectDefineProperty(process, "pid", {
 ObjectDefineProperty(process, "ppid", {
   __proto__: null,
   get() {
-    return Deno.ppid;
+    return Edno.ppid;
   },
 });
 
@@ -1379,15 +1379,15 @@ ObjectDefineProperty(process, "platform", {
 // https://nodejs.org/api/process.html#processsetsourcemapsenabledval
 process.setSourceMapsEnabled = (val: boolean) => {
   validateBoolean(val, "val");
-  // This is a no-op in Deno. Source maps are always enabled.
+  // This is a no-op in Edno. Source maps are always enabled.
   // TODO(@satyarohith): support disabling source maps if needed.
 };
 
-// Source maps are always enabled in Deno.
+// Source maps are always enabled in Edno.
 ObjectDefineProperty(process, "sourceMapsEnabled", {
   __proto__: null,
   get() {
-    return true; // Source maps are always enabled in Deno.
+    return true; // Source maps are always enabled in Edno.
   },
   enumerable: true,
   configurable: true,
@@ -1397,7 +1397,7 @@ ObjectDefineProperty(process, "sourceMapsEnabled", {
  * Returns the current high-resolution real time in a [seconds, nanoseconds]
  * tuple.
  *
- * Note: You need to give --allow-hrtime permission to Deno to actually get
+ * Note: You need to give --allow-hrtime permission to Edno to actually get
  * nanoseconds precision values. If you don't give 'hrtime' permission, the returned
  * values only have milliseconds precision.
  *
@@ -1517,13 +1517,13 @@ export function loadEnvFile(path = ".env") {
   try {
     return op_node_load_env_file(path);
   } catch (err) {
-    if (ObjectPrototypeIsPrototypeOf(Deno.errors.InvalidData.prototype, err)) {
+    if (ObjectPrototypeIsPrototypeOf(Edno.errors.InvalidData.prototype, err)) {
       throw new NodeTypeError(
         "ERR_INVALID_ARG_TYPE",
         `Contents of '${path}' should be a valid string.`,
       );
     }
-    throw denoErrorToNodeError(err as Error, { syscall: "open", path });
+    throw ednoErrorToNodeError(err as Error, { syscall: "open", path });
   }
 }
 
@@ -1562,23 +1562,23 @@ const features = {
   debug: false,
   uv: true,
   ipv6: true,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   tls_alpn: true,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   tls_sni: true,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   tls_ocsp: true,
   tls: true,
-  // Deno uses aws-lc, which is BoringSSL-based.
-  // deno-lint-ignore camelcase
+  // Edno uses aws-lc, which is BoringSSL-based.
+  // edno-lint-ignore camelcase
   openssl_is_boringssl: true,
   quic: false,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   cached_builtins: true,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   require_module: true,
   get typescript() {
-    if (Deno.build.standalone) {
+    if (Edno.build.standalone) {
       return false;
     }
     return "transform";
@@ -1702,7 +1702,7 @@ function dispatchProcessBeforeExitEvent() {
       process.exitCode = 1;
     }
     dispatchProcessExitEvent();
-    Deno.exit(process.exitCode || 0);
+    Edno.exit(process.exitCode || 0);
   }
   core.processTicksAndRejections();
   return core.eventLoopHasMoreWork();
@@ -1735,7 +1735,7 @@ function synchronizeListeners() {
         // The synchronous Module._load path in 01_require.js already invoked
         // process._fatalException for this error. Re-firing here would
         // double-emit 'uncaughtExceptionMonitor' (and 'uncaughtException')
-        // for the same value. Skip and let Deno's default unhandled-rejection
+        // for the same value. Skip and let Edno's default unhandled-rejection
         // handling print the error and terminate the runtime.
         if (
           reason !== null && typeof reason === "object" &&
@@ -1752,9 +1752,9 @@ function synchronizeListeners() {
             "promise which was not handled with .catch(). The promise rejected with the" +
             ` reason "${reason}".`;
           const err = new Error(message);
-          // deno-lint-ignore no-explicit-any
+          // edno-lint-ignore no-explicit-any
           (err as any).code = "ERR_UNHANDLED_REJECTION";
-          // deno-lint-ignore no-explicit-any
+          // edno-lint-ignore no-explicit-any
           (err as any).reason = event.reason;
           ObjectDefineProperty(err, "name", {
             __proto__: null,
@@ -1805,16 +1805,16 @@ function synchronizeListeners() {
 internals.dispatchProcessBeforeExitEvent = dispatchProcessBeforeExitEvent;
 internals.dispatchProcessExitEvent = dispatchProcessExitEvent;
 
-// Resolves the value for `process.argv[1]` from `Deno.mainModule`. Converting a
+// Resolves the value for `process.argv[1]` from `Edno.mainModule`. Converting a
 // `file:` URL to a path can throw (e.g. `URIError: URI malformed` when the path
 // contains invalid percent-encoding), and this runs during bootstrap where an
 // uncaught throw aborts the runtime with a panic. Fall back to the raw
 // specifier so a non-decodable main module can't crash the process.
 function mainModuleArgv(
-  mainModule: string | undefined = Deno.mainModule,
+  mainModule: string | undefined = Edno.mainModule,
 ): string {
-  if (Deno.build.standalone) {
-    return Deno.execPath();
+  if (Edno.build.standalone) {
+    return Edno.execPath();
   }
   if (mainModule?.startsWith("file:")) {
     try {
@@ -1823,7 +1823,7 @@ function mainModuleArgv(
       return mainModule;
     }
   }
-  return join(Deno.cwd(), "$deno$node.mjs");
+  return join(Edno.cwd(), "$edno$node.mjs");
 }
 
 // Should be called only once, in `runtime/js/99_main.js` when the runtime is
@@ -1831,7 +1831,7 @@ function mainModuleArgv(
 internals.__bootstrapNodeProcess = function (
   argv0Val: string | undefined,
   args: string[],
-  denoVersions: Record<string, string>,
+  ednoVersions: Record<string, string>,
   nodeDebug: string,
   warmup = false,
   runningOnMainThread = true,
@@ -1852,20 +1852,20 @@ internals.__bootstrapNodeProcess = function (
     // it. It is self-contained (no node:module), so run it here as part of the
     // process bootstrap that node:process triggers on first node:* use.
     const { streamBaseState } = core.loadExtScript(
-      "ext:deno_node/internal_binding/stream_wrap.ts",
+      "ext:edno_node/internal_binding/stream_wrap.ts",
     );
     op_stream_base_register_state(streamBaseState);
     argv0 = argv0Val || "";
-    argv[0] = Deno.execPath();
+    argv[0] = Edno.execPath();
     argv[1] = mainModuleArgv();
     // Manually concatenate these arrays to avoid triggering the getter
     for (let i = 0; i < args.length; i++) {
       argv[i + 2] = args[i];
     }
 
-    const denoVersionEntries = ObjectEntries(denoVersions);
-    for (let i = 0; i < denoVersionEntries.length; i++) {
-      const entry = denoVersionEntries[i];
+    const ednoVersionEntries = ObjectEntries(ednoVersions);
+    for (let i = 0; i < ednoVersionEntries.length; i++) {
+      const entry = ednoVersionEntries[i];
       versions[entry[0]] = entry[1];
     }
 
@@ -1874,8 +1874,8 @@ internals.__bootstrapNodeProcess = function (
     // process.stdout / process.stderr are built lazily on first access.
     // Constructing them eagerly here pulls the node stream/net/tty closure
     // into the snapshot for every program (TTYWriteStream extends net.Socket;
-    // the pipe path builds a node Writable). Most `deno run` invocations never
-    // touch process.stdout (Deno's own `console` doesn't route through it), so
+    // the pipe path builds a node Writable). Most `edno run` invocations never
+    // touch process.stdout (Edno's own `console` doesn't route through it), so
     // deferring construction keeps that closure out of the deserialized heap.
     const makeStdioWriteStream = (fd, ioStream, name) => {
       let s;
@@ -1929,14 +1929,14 @@ internals.__bootstrapNodeProcess = function (
         stderr = v;
       },
     });
-    core.loadExtScript("ext:deno_node/internal/console/constructor.mjs")
+    core.loadExtScript("ext:edno_node/internal/console/constructor.mjs")
       .bindStreamsLazy(globalThis.console, process);
 
     arch = arch_();
-    platform = isWindows ? "win32" : Deno.build.os;
-    pid = Deno.pid;
-    ppid = Deno.ppid;
-    execPath = Deno.execPath();
+    platform = isWindows ? "win32" : Edno.build.os;
+    pid = Edno.pid;
+    ppid = Edno.ppid;
+    execPath = Edno.execPath();
     initializeDebugEnv(nodeDebug);
 
     const title = getOptionValue("--title");
@@ -2090,8 +2090,8 @@ if (internals.__nodeBootstrapArgs !== undefined) {
   const a = internals.__nodeBootstrapArgs;
   internals.__bootstrapNodeProcess(
     a.argv0,
-    a.denoArgs,
-    a.denoVersion,
+    a.ednoArgs,
+    a.ednoVersion,
     a.nodeDebug ?? "",
     false,
     a.runningOnMainThread,

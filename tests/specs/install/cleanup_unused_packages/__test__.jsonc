@@ -9,10 +9,10 @@
           "output": "install.out"
         },
         {
-          // Verify both packages exist in node_modules/.deno
+          // Verify both packages exist in node_modules/.edno
           "args": [
             "eval",
-            "const entries = Array.from(Deno.readDirSync('node_modules/.deno')).filter(e => !e.name.startsWith('.')).map(e => e.name); const hasChalk = entries.some(e => e.includes('chalk@5.0.1')); const hasCowsay = entries.some(e => e.includes('cowsay@1.5.0')); console.log(`chalk: ${hasChalk}, cowsay: ${hasCowsay}`);"
+            "const entries = Array.from(Edno.readDirSync('node_modules/.edno')).filter(e => !e.name.startsWith('.')).map(e => e.name); const hasChalk = entries.some(e => e.includes('chalk@5.0.1')); const hasCowsay = entries.some(e => e.includes('cowsay@1.5.0')); console.log(`chalk: ${hasChalk}, cowsay: ${hasCowsay}`);"
           ],
           "output": "initial_packages.out"
         },
@@ -20,7 +20,7 @@
           // Update package.json to remove cowsay
           "args": [
             "eval",
-            "Deno.writeTextFileSync('package.json', Deno.readTextFileSync('package_updated.json'));"
+            "Edno.writeTextFileSync('package.json', Edno.readTextFileSync('package_updated.json'));"
           ],
           "output": ""
         },
@@ -33,7 +33,7 @@
           // Verify only chalk remains, cowsay is cleaned up
           "args": [
             "eval",
-            "const entries = Array.from(Deno.readDirSync('node_modules/.deno')).filter(e => !e.name.startsWith('.')).map(e => e.name); const hasChalk = entries.some(e => e.includes('chalk@5.0.1')); const hasCowsay = entries.some(e => e.includes('cowsay@1.5.0')); console.log(`chalk: ${hasChalk}, cowsay: ${hasCowsay}`);"
+            "const entries = Array.from(Edno.readDirSync('node_modules/.edno')).filter(e => !e.name.startsWith('.')).map(e => e.name); const hasChalk = entries.some(e => e.includes('chalk@5.0.1')); const hasCowsay = entries.some(e => e.includes('cowsay@1.5.0')); console.log(`chalk: ${hasChalk}, cowsay: ${hasCowsay}`);"
           ],
           "output": "final_packages.out"
         },
@@ -41,7 +41,7 @@
           // Verify cowsay symlink is removed from root node_modules
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/cowsay'); console.log('EXISTS'); } catch { console.log('NOT_FOUND'); }"
+            "try { Edno.statSync('node_modules/cowsay'); console.log('EXISTS'); } catch { console.log('NOT_FOUND'); }"
           ],
           "output": "cowsay_removed.out"
         }

@@ -1,3 +1,3 @@
 
-// deno-fmt-ignore-file
+// edno-fmt-ignore-file
 (the following is a syntax error  ^^ ! )

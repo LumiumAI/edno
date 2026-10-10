@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/dual-cjs-esm",
+  "name": "@ednotest/dual-cjs-esm",
   "version": "1.0.0",
   "type": "module",
   "main": "./main.cjs",

@@ -1,11 +1,11 @@
-// Spawns `deno serve` and verifies that it shuts down cleanly (exit code 0)
+// Spawns `edno serve` and verifies that it shuts down cleanly (exit code 0)
 // when it receives SIGTERM/SIGINT, instead of being terminated by the OS
 // default signal handler (which would report the killing signal).
 
 const serverScript = new URL("./server.ts", import.meta.url).pathname;
 
-async function run(signal: Deno.Signal, port: number) {
-  const child = new Deno.Command(Deno.execPath(), {
+async function run(signal: Edno.Signal, port: number) {
+  const child = new Edno.Command(Edno.execPath(), {
     args: ["serve", "--allow-net", "--port", String(port), serverScript],
     stdout: "null",
     stderr: "null",
@@ -13,7 +13,7 @@ async function run(signal: Deno.Signal, port: number) {
 
   // Wait until the server is accepting connections. Once a request succeeds
   // the signal listeners have been registered, since they are added
-  // synchronously right after `Deno.serve()` returns.
+  // synchronously right after `Edno.serve()` returns.
   let ready = false;
   for (let i = 0; i < 1000; i++) {
     try {

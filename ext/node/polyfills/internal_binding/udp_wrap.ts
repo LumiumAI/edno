@@ -55,23 +55,23 @@ const osErrorRegExp = new SafeRegExp(/os error (40|90|10040)/);
 const {
   AsyncWrap,
   providerType,
-} = core.loadExtScript("ext:deno_node/internal_binding/async_wrap.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/async_wrap.ts");
 const { HandleWrap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/handle_wrap.ts",
+  "ext:edno_node/internal_binding/handle_wrap.ts",
 );
 const { ownerSymbol } = core.loadExtScript(
-  "ext:deno_node/internal_binding/symbols.ts",
+  "ext:edno_node/internal_binding/symbols.ts",
 );
 const { codeMap, errorMap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/uv.ts",
+  "ext:edno_node/internal_binding/uv.ts",
 );
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { isIP } = core.loadExtScript("ext:deno_node/internal/net.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { isIP } = core.loadExtScript("ext:edno_node/internal/net.ts");
 const { isLinux, isWindows } = core.loadExtScript(
-  "ext:deno_node/_util/os.ts",
+  "ext:edno_node/_util/os.ts",
 );
 const { os } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
 
 type MessageType = string | Uint8Array | Buffer | DataView;
@@ -159,7 +159,7 @@ class UDP extends HandleWrap {
       address: string,
       family: number,
     ) => void,
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
   ) => any;
 
   constructor() {
@@ -581,7 +581,7 @@ class UDP extends HandleWrap {
         : ("IPv4" as const);
       return 0;
     } catch (e) {
-      if (ObjectPrototypeIsPrototypeOf(Deno.errors.NotCapable.prototype, e)) {
+      if (ObjectPrototypeIsPrototypeOf(Edno.errors.NotCapable.prototype, e)) {
         throw e;
       }
       return codeMap.get(e.code ?? "UNKNOWN") ?? codeMap.get("UNKNOWN")!;
@@ -616,14 +616,14 @@ class UDP extends HandleWrap {
     }
 
     const payload = new Uint8Array(
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       Buffer.concat(
         ArrayPrototypeMap(bufs, (buf) => {
           if (typeof buf === "string") {
             return Buffer.from(buf);
           }
 
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           return Buffer.from(buf.buffer, buf.byteOffset, buf.byteLength);
         }),
       ),
@@ -642,7 +642,7 @@ class UDP extends HandleWrap {
         );
       } catch (e) {
         if (
-          ObjectPrototypeIsPrototypeOf(Deno.errors.BadResource.prototype, e)
+          ObjectPrototypeIsPrototypeOf(Edno.errors.BadResource.prototype, e)
         ) {
           err = codeMap.get("EBADF")!;
         } else if (
@@ -691,8 +691,8 @@ class UDP extends HandleWrap {
       remotePort = result.port;
     } catch (e) {
       if (
-        ObjectPrototypeIsPrototypeOf(Deno.errors.Interrupted.prototype, e) ||
-        ObjectPrototypeIsPrototypeOf(Deno.errors.BadResource.prototype, e)
+        ObjectPrototypeIsPrototypeOf(Edno.errors.Interrupted.prototype, e) ||
+        ObjectPrototypeIsPrototypeOf(Edno.errors.BadResource.prototype, e)
       ) {
         nread = 0;
       } else {
@@ -711,7 +711,7 @@ class UDP extends HandleWrap {
       : undefined;
 
     const buf = remoteHostname !== null
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       ? Buffer.from(p.buffer, p.byteOffset, nread)
       : Buffer.alloc(0);
 

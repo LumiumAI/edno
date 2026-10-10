@@ -1,12 +1,12 @@
 const readVersion = (p: string) =>
-  JSON.parse(Deno.readTextFileSync(p + "/package.json")).version;
+  JSON.parse(Edno.readTextFileSync(p + "/package.json")).version;
 
-const topX = "node_modules/@denotest/hoisted-walkup-x";
-const topChain = "node_modules/@denotest/hoisted-walkup-chain";
-const needsX2 = "node_modules/@denotest/hoisted-walkup-needs-x2";
-const nestedX2 = `${needsX2}/node_modules/@denotest/hoisted-walkup-x`;
-const nestedChain1 = `${nestedX2}/node_modules/@denotest/hoisted-walkup-chain`;
-const chainNestedX1 = `${nestedChain1}/node_modules/@denotest/hoisted-walkup-x`;
+const topX = "node_modules/@ednotest/hoisted-walkup-x";
+const topChain = "node_modules/@ednotest/hoisted-walkup-chain";
+const needsX2 = "node_modules/@ednotest/hoisted-walkup-needs-x2";
+const nestedX2 = `${needsX2}/node_modules/@ednotest/hoisted-walkup-x`;
+const nestedChain1 = `${nestedX2}/node_modules/@ednotest/hoisted-walkup-chain`;
+const chainNestedX1 = `${nestedChain1}/node_modules/@ednotest/hoisted-walkup-x`;
 
 console.log("top x:", readVersion(topX));
 console.log("top chain:", readVersion(topChain));

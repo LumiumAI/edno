@@ -26,8 +26,8 @@ const {
   TypeError,
 } = primordials;
 
-const { pathFromURL } = core.loadExtScript("ext:deno_web/00_infra.js");
-const { Event, EventTarget } = core.loadExtScript("ext:deno_web/02_event.js");
+const { pathFromURL } = core.loadExtScript("ext:edno_web/00_infra.js");
+const { Event, EventTarget } = core.loadExtScript("ext:edno_web/02_event.js");
 
 const illegalConstructorKey = Symbol("illegalConstructorKey");
 
@@ -51,37 +51,37 @@ const permissionNames = [
 ];
 
 /**
- * @param {Deno.PermissionDescriptor} desc
- * @returns {Deno.PermissionState}
+ * @param {Edno.PermissionDescriptor} desc
+ * @returns {Edno.PermissionState}
  */
 function opQuery(desc) {
   return op_query_permission(desc);
 }
 
 /**
- * @param {Deno.PermissionDescriptor} desc
- * @returns {Deno.PermissionState}
+ * @param {Edno.PermissionDescriptor} desc
+ * @returns {Edno.PermissionState}
  */
 function opRevoke(desc) {
   return op_revoke_permission(desc);
 }
 
 /**
- * @param {Deno.PermissionDescriptor} desc
- * @returns {Deno.PermissionState}
+ * @param {Edno.PermissionDescriptor} desc
+ * @returns {Edno.PermissionState}
  */
 function opRequest(desc) {
   return op_request_permission(desc);
 }
 
 class PermissionStatus extends EventTarget {
-  /** @type {{ state: Deno.PermissionState, partial: boolean }} */
+  /** @type {{ state: Edno.PermissionState, partial: boolean }} */
   #status;
 
   /** @type {((this: PermissionStatus, event: Event) => any) | null} */
   onchange = null;
 
-  /** @returns {Deno.PermissionState} */
+  /** @returns {Edno.PermissionState} */
   get state() {
     return this.#status.state;
   }
@@ -92,7 +92,7 @@ class PermissionStatus extends EventTarget {
   }
 
   /**
-   * @param {{ state: Deno.PermissionState, partial: boolean }} status
+   * @param {{ state: Edno.PermissionState, partial: boolean }} status
    * @param {unknown} key
    */
   constructor(status = null, key = null) {
@@ -116,7 +116,7 @@ class PermissionStatus extends EventTarget {
     return dispatched;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     const object = { state: this.state, onchange: this.onchange };
     if (this.partial) object.partial = this.partial;
     return `${this.constructor.name} ${inspect(object, inspectOptions)}`;
@@ -127,8 +127,8 @@ class PermissionStatus extends EventTarget {
 const statusCache = new SafeMap();
 
 /**
- * @param {Deno.PermissionDescriptor} desc
- * @param {{ state: Deno.PermissionState, partial: boolean }} rawStatus
+ * @param {Edno.PermissionDescriptor} desc
+ * @param {{ state: Edno.PermissionState, partial: boolean }} rawStatus
  * @returns {PermissionStatus}
  */
 function cache(desc, rawStatus) {
@@ -166,7 +166,7 @@ function cache(desc, rawStatus) {
     }
     return cachedObj.status;
   }
-  /** @type {{ state: Deno.PermissionState, partial: boolean, status?: PermissionStatus }} */
+  /** @type {{ state: Edno.PermissionState, partial: boolean, status?: PermissionStatus }} */
   const obj = rawStatus;
   obj.status = new PermissionStatus(obj, illegalConstructorKey);
   MapPrototypeSet(statusCache, key, obj);
@@ -175,7 +175,7 @@ function cache(desc, rawStatus) {
 
 /**
  * @param {unknown} desc
- * @returns {desc is Deno.PermissionDescriptor}
+ * @returns {desc is Edno.PermissionDescriptor}
  */
 function isValidDescriptor(desc) {
   return typeof desc === "object" && desc !== null &&
@@ -183,8 +183,8 @@ function isValidDescriptor(desc) {
 }
 
 /**
- * @param {Deno.PermissionDescriptor} desc
- * @returns {desc is Deno.PermissionDescriptor}
+ * @param {Edno.PermissionDescriptor} desc
+ * @returns {desc is Edno.PermissionDescriptor}
  */
 function formDescriptor(desc) {
   if (

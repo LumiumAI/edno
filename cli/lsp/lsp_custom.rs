@@ -1,14 +1,14 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::serde::Deserialize;
-use deno_core::serde::Serialize;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Serialize;
 use tower_lsp::lsp_types as lsp;
 
-pub const PERFORMANCE_REQUEST: &str = "deno/performance";
-pub const INFERRED_TYPE_REQUEST: &str = "deno/inferredType";
-pub const INFERRED_TYPE_COMMAND: &str = "deno.inferredType";
-pub const TASK_REQUEST: &str = "deno/taskDefinitions";
-pub const VIRTUAL_TEXT_DOCUMENT: &str = "deno/virtualTextDocument";
+pub const PERFORMANCE_REQUEST: &str = "edno/performance";
+pub const INFERRED_TYPE_REQUEST: &str = "edno/inferredType";
+pub const INFERRED_TYPE_COMMAND: &str = "edno.inferredType";
+pub const TASK_REQUEST: &str = "edno/taskDefinitions";
+pub const VIRTUAL_TEXT_DOCUMENT: &str = "edno/virtualTextDocument";
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -44,7 +44,7 @@ pub enum RegistryStateNotification {}
 impl lsp::notification::Notification for RegistryStateNotification {
   type Params = RegistryStateNotificationParams;
 
-  const METHOD: &'static str = "deno/registryState";
+  const METHOD: &'static str = "edno/registryState";
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -55,18 +55,18 @@ pub struct VirtualTextDocumentParams {
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct DenoConfigurationData {
+pub struct EdnoConfigurationData {
   pub scope_uri: lsp::Uri,
   pub workspace_root_scope_uri: Option<lsp::Uri>,
-  pub deno_json: Option<lsp::TextDocumentIdentifier>,
+  pub edno_json: Option<lsp::TextDocumentIdentifier>,
   pub package_json: Option<lsp::TextDocumentIdentifier>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DidRefreshDenoConfigurationTreeNotificationParams {
-  pub data: Vec<DenoConfigurationData>,
-  pub deno_dir_npm_folder_uri: Option<lsp::Uri>,
+  pub data: Vec<EdnoConfigurationData>,
+  pub edno_dir_npm_folder_uri: Option<lsp::Uri>,
 }
 
 pub enum DidRefreshDenoConfigurationTreeNotification {}
@@ -75,18 +75,18 @@ impl lsp::notification::Notification
   for DidRefreshDenoConfigurationTreeNotification
 {
   type Params = DidRefreshDenoConfigurationTreeNotificationParams;
-  const METHOD: &'static str = "deno/didRefreshDenoConfigurationTree";
+  const METHOD: &'static str = "edno/didRefreshDenoConfigurationTree";
 }
 
 #[derive(Debug, Eq, Hash, PartialEq, Copy, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum DenoConfigurationChangeType {
+pub enum EdnoConfigurationChangeType {
   Added,
   Changed,
   Removed,
 }
 
-impl DenoConfigurationChangeType {
+impl EdnoConfigurationChangeType {
   pub fn from_file_change_type(file_event: lsp::FileChangeType) -> Self {
     match file_event {
       lsp::FileChangeType::CREATED => Self::Added,
@@ -99,29 +99,29 @@ impl DenoConfigurationChangeType {
 
 #[derive(Debug, Eq, Hash, PartialEq, Copy, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum DenoConfigurationType {
-  DenoJson,
+pub enum EdnoConfigurationType {
+  EdnoJson,
   PackageJson,
 }
 
 #[derive(Debug, Eq, Hash, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct DenoConfigurationChangeEvent {
+pub struct EdnoConfigurationChangeEvent {
   pub scope_uri: lsp::Uri,
   pub file_uri: lsp::Uri,
   #[serde(rename = "type")]
-  pub typ: DenoConfigurationChangeType,
-  pub configuration_type: DenoConfigurationType,
+  pub typ: EdnoConfigurationChangeType,
+  pub configuration_type: EdnoConfigurationType,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DidChangeDenoConfigurationNotificationParams {
-  pub changes: Vec<DenoConfigurationChangeEvent>,
+  pub changes: Vec<EdnoConfigurationChangeEvent>,
 }
 
 // TODO(nayeemrmn): This is being replaced by
-// `DidRefreshDenoConfigurationTreeNotification` for Deno > v2.0.0. Remove it
+// `DidRefreshDenoConfigurationTreeNotification` for Edno > v2.0.0. Remove it
 // soon.
 pub enum DidChangeDenoConfigurationNotification {}
 
@@ -129,14 +129,14 @@ impl lsp::notification::Notification
   for DidChangeDenoConfigurationNotification
 {
   type Params = DidChangeDenoConfigurationNotificationParams;
-  const METHOD: &'static str = "deno/didChangeDenoConfiguration";
+  const METHOD: &'static str = "edno/didChangeDenoConfiguration";
 }
 
 pub enum DidUpgradeCheckNotification {}
 
 impl lsp::notification::Notification for DidUpgradeCheckNotification {
   type Params = DidUpgradeCheckNotificationParams;
-  const METHOD: &'static str = "deno/didUpgradeCheck";
+  const METHOD: &'static str = "edno/didUpgradeCheck";
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -158,7 +158,7 @@ pub enum DiagnosticBatchStartNotification {}
 
 impl lsp::notification::Notification for DiagnosticBatchStartNotification {
   type Params = ();
-  const METHOD: &'static str = "deno/internalTestDiagnosticBatchStart";
+  const METHOD: &'static str = "edno/internalTestDiagnosticBatchStart";
 }
 
 /// This notification is only sent for testing purposes
@@ -167,5 +167,5 @@ pub enum DiagnosticBatchEndNotification {}
 
 impl lsp::notification::Notification for DiagnosticBatchEndNotification {
   type Params = ();
-  const METHOD: &'static str = "deno/internalTestDiagnosticBatchEnd";
+  const METHOD: &'static str = "edno/internalTestDiagnosticBatchEnd";
 }

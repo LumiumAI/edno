@@ -1,4 +1,4 @@
-#!/usr/bin/env deno run --allow-read --allow-write
+#!/usr/bin/env edno run --allow-read --allow-write
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 const doNotModify =
@@ -8,7 +8,7 @@ const doNotModify =
 function __TEMPLATE__(__ARGS_PARAM__) {
   const id = nextPromiseId;
   try {
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     const maybeResult = __OP__.call(this, __ARGS__);
     if (maybeResult !== undefined) {
       return PromiseResolve(maybeResult);
@@ -26,7 +26,7 @@ function __TEMPLATE__(__ARGS_PARAM__) {
 }
 
 const infraJsPath = new URL("00_infra.js", import.meta.url);
-const infraJs = Deno.readTextFileSync(infraJsPath);
+const infraJs = Edno.readTextFileSync(infraJsPath);
 
 const infraPristine = infraJs.replaceAll(
   /\/\* BEGIN TEMPLATE ([^ ]+) \*\/.*?\/\* END TEMPLATE \*\//smg,
@@ -67,9 +67,9 @@ const infraOutput = infraPristine
     asyncStubCases.replaceAll(/^/gm, asyncStubIndent),
   );
 
-if (Deno.args[0] === "--check") {
+if (Edno.args[0] === "--check") {
   if (infraOutput !== infraJs) {
-    Deno.writeTextFileSync("/tmp/mismatch.txt", infraOutput);
+    Edno.writeTextFileSync("/tmp/mismatch.txt", infraOutput);
     throw new Error(
       "Mismatch between pristine and updated source (wrote mismatch to /tmp/mismatch.txt)",
     );
@@ -77,5 +77,5 @@ if (Deno.args[0] === "--check") {
     console.log("✅ Templated sections would not change");
   }
 } else {
-  Deno.writeTextFileSync(infraJsPath, infraOutput);
+  Edno.writeTextFileSync(infraJsPath, infraOutput);
 }

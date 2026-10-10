@@ -1,16 +1,16 @@
-#!/usr/bin/env -S deno run --allow-read --allow-write --allow-env --allow-run
-// deno-lint-ignore-file
+#!/usr/bin/env -S edno run --allow-read --allow-write --allow-env --allow-run
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 // This file is used to transform Node.js internal streams code to
-// Deno polyfills.
+// Edno polyfills.
 //
 // Run this script with `--upgrade` to upgrade the streams code. This will update
 // the code to the Node.js version specified in `tests/node_compat/runner/suite/node_version.ts`.
 //
 // This script applies the following transformations:
-//   a. Rewrite CJS-style internal Node.js modules to ESM for Deno.
-//   b. Remap internal Node.js modules to Deno equivalents.
+//   a. Rewrite CJS-style internal Node.js modules to ESM for Edno.
+//   b. Remap internal Node.js modules to Edno equivalents.
 
 // @ts-types="npm:@types/jscodeshift"
 import jscodeshift from "npm:jscodeshift@0.15.2";
@@ -45,21 +45,21 @@ const moduleMap: Record<string, string> = {
   "buffer": "node:buffer",
   "stream": "node:stream",
   "string_decoder": "node:string_decoder",
-  "internal/abort_controller": "ext:deno_web/03_abort_signal.js",
+  "internal/abort_controller": "ext:edno_web/03_abort_signal.js",
   "internal/events/abort_listener":
-    "ext:deno_node/internal/events/abort_listener.mjs",
-  "internal/assert": "ext:deno_node/internal/assert.mjs",
+    "ext:edno_node/internal/events/abort_listener.mjs",
+  "internal/assert": "ext:edno_node/internal/assert.mjs",
   "internal/webstreams/adapters":
-    "ext:deno_node/internal/webstreams/adapters.js",
-  "internal/webstreams/compression": "ext:deno_web/14_compression.js",
-  "internal/webstreams/encoding": "ext:deno_web/08_text_encoding.js",
-  "internal/errors": "ext:deno_node/internal/errors.ts",
-  "internal/event_target": "ext:deno_node/internal/event_target.mjs",
-  "internal/util": "ext:deno_node/internal/util.mjs",
-  "internal/util/debuglog": "ext:deno_node/internal/util/debuglog.ts",
-  "internal/validators": "ext:deno_node/internal/validators.mjs",
-  "internal/encoding": "ext:deno_web/08_text_encoding.js",
-  "internal/blob": "ext:deno_web/09_file.js",
+    "ext:edno_node/internal/webstreams/adapters.js",
+  "internal/webstreams/compression": "ext:edno_web/14_compression.js",
+  "internal/webstreams/encoding": "ext:edno_web/08_text_encoding.js",
+  "internal/errors": "ext:edno_node/internal/errors.ts",
+  "internal/event_target": "ext:edno_node/internal/event_target.mjs",
+  "internal/util": "ext:edno_node/internal/util.mjs",
+  "internal/util/debuglog": "ext:edno_node/internal/util/debuglog.ts",
+  "internal/validators": "ext:edno_node/internal/validators.mjs",
+  "internal/encoding": "ext:edno_web/08_text_encoding.js",
+  "internal/blob": "ext:edno_web/09_file.js",
 };
 
 // Use default export for these conditional require()
@@ -77,10 +77,10 @@ const renameForDefaultExport = ["from"];
 
 const mapping = (source: string): string => {
   if (source.startsWith("internal/webstreams")) {
-    return `ext:deno_web/06_streams.js`;
+    return `ext:edno_web/06_streams.js`;
   }
   if (source.startsWith("internal/")) {
-    return `ext:deno_node/${source}.js`;
+    return `ext:edno_node/${source}.js`;
   }
   return source;
 };
@@ -478,17 +478,17 @@ const transform = (file: FileInfo, j: JSCodeshift) => {
   }
 
   const prelude =
-    "// deno-lint-ignore-file\n// Copyright 2018-2026 the Deno authors. MIT license.\n\n";
+    "// edno-lint-ignore-file\n// Copyright 2018-2026 the Deno authors. MIT license.\n\n";
   return prelude + root.toSource({ quote: "single" });
 };
 
-const upgrade = Deno.args.includes("--upgrade");
+const upgrade = Edno.args.includes("--upgrade");
 
 // Don't run if git status is dirty
 const status = (await $`git status --porcelain`.text()).trim();
 if (status) {
   console.error("Git status is dirty. Please commit or stash your changes.");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 const tag = "v" + version;
@@ -514,14 +514,14 @@ for (const glob of globs) {
 
     const sourcePath = entry.path;
 
-    const code = await Deno.readTextFile(sourcePath);
+    const code = await Edno.readTextFile(sourcePath);
     const output = transform({ path: sourcePath, source: code }, jscodeshift);
 
     const relativePath = path.relative(fromLib, sourcePath);
     const targetPath = path.join(toLib, relativePath);
     const targetDir = path.dirname(targetPath);
-    await Deno.mkdir(targetDir, { recursive: true });
-    await Deno.writeTextFile(targetPath, output);
+    await Edno.mkdir(targetDir, { recursive: true });
+    await Edno.writeTextFile(targetPath, output);
     console.log(`${sourcePath} -> ${targetPath}`);
   }
 }

@@ -11,13 +11,13 @@ use pretty_assertions::assert_eq;
 use regex::Regex;
 use reqwest::RequestBuilder;
 use test_util as util;
-use test_util::DenoChild;
+use test_util::EdnoChild;
 use test_util::eprintln;
 use test_util::test;
 use tokio::time::timeout;
 
 struct ServeClient {
-  child: RefCell<DenoChild>,
+  child: RefCell<EdnoChild>,
   client: reqwest::Client,
   output_buf: RefCell<Vec<u8>>,
   endpoint: RefCell<Option<String>>,
@@ -59,7 +59,7 @@ impl ServeClientBuilder {
     self.map(|t| {
       let t = t.arg("--parallel");
       if let Some(n) = n {
-        t.env("DENO_JOBS", n.to_string())
+        t.env("EDNO_JOBS", n.to_string())
       } else {
         t
       }
@@ -68,7 +68,7 @@ impl ServeClientBuilder {
 
   fn new() -> Self {
     Self(
-      util::deno_cmd()
+      util::edno_cmd()
         .env("NO_COLOR", "1")
         .current_dir(util::testdata_path())
         .arg("serve")
@@ -86,7 +86,7 @@ impl ServeClient {
     ServeClientBuilder::new()
   }
 
-  fn with_child(child: DenoChild) -> Self {
+  fn with_child(child: EdnoChild) -> Self {
     Self {
       child: RefCell::new(child),
       output_buf: Default::default(),
@@ -178,7 +178,7 @@ impl ServeClient {
 }
 
 #[test]
-async fn deno_serve_port_0() {
+async fn edno_serve_port_0() {
   let client = ServeClient::builder()
     .entry_point("./serve/port_0.ts")
     .build();
@@ -186,12 +186,12 @@ async fn deno_serve_port_0() {
   assert_eq!(200, res.status());
 
   let body = res.text().await.unwrap();
-  assert_eq!(body, "deno serve --port 0 works!");
+  assert_eq!(body, "edno serve --port 0 works!");
   client.kill();
 }
 
 #[test]
-async fn deno_serve_no_args() {
+async fn edno_serve_no_args() {
   let client = ServeClient::builder()
     .entry_point("./serve/no_args.ts")
     .build();
@@ -199,11 +199,11 @@ async fn deno_serve_no_args() {
   assert_eq!(200, res.status());
 
   let body = res.text().await.unwrap();
-  assert_eq!(body, "deno serve with no args in fetch() works!");
+  assert_eq!(body, "edno serve with no args in fetch() works!");
 }
 
 #[test]
-async fn deno_serve_parallel() {
+async fn edno_serve_parallel() {
   let client = ServeClient::builder()
     .entry_point("./serve/parallel.ts")
     .worker_count(Some(4))
@@ -223,7 +223,7 @@ async fn deno_serve_parallel() {
       .unwrap();
     assert_eq!(200, response.status());
     let body = response.text().await.unwrap();
-    assert_eq!(body, "deno serve parallel");
+    assert_eq!(body, "edno serve parallel");
     tokio::time::sleep(Duration::from_millis(1)).await;
   }
 
@@ -273,20 +273,20 @@ async fn deno_serve_parallel() {
 }
 
 #[test]
-async fn deno_run_serve_with_tcp_from_env() {
-  let mut child = util::deno_cmd()
+async fn edno_run_serve_with_tcp_from_env() {
+  let mut child = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--allow-net")
     .arg("./serve/run_serve.ts")
-    .env("DENO_SERVE_ADDRESS", "tcp:127.0.0.1:0")
+    .env("EDNO_SERVE_ADDRESS", "tcp:127.0.0.1:0")
     .stderr_piped()
     .spawn()
     .unwrap();
   let stderr = BufReader::new(child.stderr.as_mut().unwrap());
   let msg = stderr.lines().next().unwrap().unwrap();
 
-  // Deno.serve() listens on 0.0.0.0 by default. This checks DENO_SERVE_ADDRESS
+  // Edno.serve() listens on 0.0.0.0 by default. This checks EDNO_SERVE_ADDRESS
   // is not ignored by ensuring it's listening on 127.0.0.1.
   let port_regex = Regex::new(r"http:\/\/127\.0\.0\.1:(\d+)").unwrap();
   let port = port_regex.captures(&msg).unwrap().get(1).unwrap().as_str();
@@ -301,7 +301,7 @@ async fn deno_run_serve_with_tcp_from_env() {
   assert_eq!(200, res.status());
 
   let body = res.text().await.unwrap();
-  assert_eq!(body, "Deno.serve() works!");
+  assert_eq!(body, "Edno.serve() works!");
 
   child.kill().unwrap();
   child.wait().unwrap();
@@ -309,21 +309,21 @@ async fn deno_run_serve_with_tcp_from_env() {
 
 #[test]
 #[cfg(unix)]
-async fn deno_run_serve_with_unix_socket_from_env() {
+async fn edno_run_serve_with_unix_socket_from_env() {
   use tokio::io::AsyncReadExt;
   use tokio::io::AsyncWriteExt;
   use tokio::net::UnixStream;
 
   let dir = tempfile::TempDir::new().unwrap();
   let sock = dir.path().join("listen.sock");
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg(format!("--allow-read={}", sock.display()))
     .arg(format!("--allow-write={}", sock.display()))
     .arg(format!("--allow-net=unix:{}", sock.display()))
     .arg("./serve/run_serve.ts")
-    .env("DENO_SERVE_ADDRESS", format!("unix:{}", sock.display()))
+    .env("EDNO_SERVE_ADDRESS", format!("unix:{}", sock.display()))
     .stderr_piped()
     .spawn()
     .unwrap();
@@ -346,14 +346,14 @@ async fn deno_run_serve_with_unix_socket_from_env() {
 
 #[test]
 #[cfg(unix)]
-async fn deno_run_serve_with_duplicate_env_addr() {
+async fn edno_run_serve_with_duplicate_env_addr() {
   use tokio::io::AsyncReadExt;
   use tokio::io::AsyncWriteExt;
   use tokio::net::UnixStream;
 
   let dir = tempfile::TempDir::new().unwrap();
   let sock = dir.path().join("listen.sock");
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--allow-net")
@@ -361,7 +361,7 @@ async fn deno_run_serve_with_duplicate_env_addr() {
     .arg(format!("--allow-write={}", sock.display()))
     .arg("./serve/run_serve.ts")
     .env(
-      "DENO_SERVE_ADDRESS",
+      "EDNO_SERVE_ADDRESS",
       format!("duplicate,unix:{}", sock.display()),
     )
     .stderr_piped()
@@ -389,7 +389,7 @@ async fn deno_run_serve_with_duplicate_env_addr() {
     assert_eq!(200, res.status());
 
     let body = res.text().await.unwrap();
-    assert_eq!(body, "Deno.serve() works!");
+    assert_eq!(body, "Edno.serve() works!");
   }
 
   {

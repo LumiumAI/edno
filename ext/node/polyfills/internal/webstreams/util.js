@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -23,14 +23,14 @@ const {
   ERR_ARG_NOT_ITERABLE,
   ERR_INVALID_ARG_VALUE,
   ERR_INVALID_STATE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { validateFunction } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
-const { inspect } = core.loadExtScript("ext:deno_node/util.ts");
-const assert = core.loadExtScript("ext:deno_node/internal/assert.mjs").default;
+const { inspect } = core.loadExtScript("ext:edno_node/util.ts");
+const assert = core.loadExtScript("ext:edno_node/internal/assert.mjs").default;
 
-const webStreams = core.loadExtScript("ext:deno_web/06_streams.js");
+const webStreams = core.loadExtScript("ext:edno_web/06_streams.js");
 
 const kState = webStreams.kNodeWebStreamsState;
 const kType = webStreams.kNodeWebStreamsType;
@@ -198,7 +198,7 @@ function nonOpFlush() {
 }
 
 function lazyTransfer() {
-  return core.loadExtScript("ext:deno_node/internal/worker/js_transferable.js");
+  return core.loadExtScript("ext:edno_node/internal/worker/js_transferable.js");
 }
 
 function createAsyncFromSyncIterator(syncIteratorRecord) {

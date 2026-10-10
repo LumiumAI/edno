@@ -1,7 +1,7 @@
 import { assertFileContains } from "./assert-helpers.ts";
 
 let jsFile: string | undefined;
-Deno.readDirSync("./dist").forEach((entry) => {
+Edno.readDirSync("./dist").forEach((entry) => {
   if (entry.name.endsWith(".js")) {
     jsFile = "./dist/" + entry.name;
   }

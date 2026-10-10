@@ -6,8 +6,8 @@
  * ERR_QUICSESSION_VERSION_NEGOTIATION
  * ERR_REQUIRE_ESM
  * ERR_QUIC_ERROR
- * ERR_SYSTEM_ERROR //System error, shouldn't ever happen inside Deno
- * ERR_TTY_INIT_FAILED //System error, shouldn't ever happen inside Deno
+ * ERR_SYSTEM_ERROR //System error, shouldn't ever happen inside Edno
+ * ERR_TTY_INIT_FAILED //System error, shouldn't ever happen inside Edno
  * ERR_INVALID_PACKAGE_CONFIG // package.json stuff, probably useless
  */
 
@@ -67,21 +67,21 @@ const {
   URIErrorPrototype,
 } = primordials;
 const { format, inspect } = core.loadExtScript(
-  "ext:deno_node/internal/util/inspect.mjs",
+  "ext:edno_node/internal/util/inspect.mjs",
 );
-const { codes } = core.loadExtScript("ext:deno_node/internal/error_codes.ts");
+const { codes } = core.loadExtScript("ext:edno_node/internal/error_codes.ts");
 const {
   codeMap,
   errorMap,
   mapSysErrnoToUvErrno,
   UV_EBADF,
-} = core.loadExtScript("ext:deno_node/internal_binding/uv.ts");
-const { isWindows } = core.loadExtScript("ext:deno_node/_util/os.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/uv.ts");
+const { isWindows } = core.loadExtScript("ext:edno_node/_util/os.ts");
 const { os: osConstants } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
 const { hideStackFrames } = core.loadExtScript(
-  "ext:deno_node/internal/hide_stack_frames.ts",
+  "ext:edno_node/internal/hide_stack_frames.ts",
 );
 
 // Lazy loader for getSystemErrorName to break circular dep with _utils.ts
@@ -89,7 +89,7 @@ let _getSystemErrorName;
 function getSystemErrorName(code) {
   if (!_getSystemErrorName) {
     _getSystemErrorName =
-      core.loadExtScript("ext:deno_node/_utils.ts").getSystemErrorName;
+      core.loadExtScript("ext:edno_node/_utils.ts").getSystemErrorName;
   }
   return _getSystemErrorName(code);
 }
@@ -149,12 +149,12 @@ let maxStackErrorMessage: string | undefined;
 function isStackOverflowError(err: Error): boolean {
   if (maxStackErrorMessage === undefined) {
     try {
-      // deno-lint-ignore no-inner-declarations
+      // edno-lint-ignore no-inner-declarations
       function overflowStack() {
         overflowStack();
       }
       overflowStack();
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
     } catch (err: any) {
       maxStackErrorMessage = err.message;
       maxStackErrorName = err.name;
@@ -222,7 +222,7 @@ const uvExceptionWithHostPort = hideStackFrames(
       details = ` ${address}`;
     }
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const ex: any = new Error(`${message}${details}`);
     ex.code = code;
     ex.errno = err;
@@ -255,7 +255,7 @@ const errnoException = hideStackFrames(function errnoException(
     ? `${syscall} ${code} ${original}`
     : `${syscall} ${code}`;
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const ex: any = new Error(message);
   ex.errno = err;
   ex.code = code;
@@ -296,7 +296,7 @@ const uvException = hideStackFrames(function uvException(ctx) {
     message += ` -> '${dest}'`;
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const err: any = new Error(message);
 
   for (const prop of new SafeArrayIterator(ObjectKeys(ctx))) {
@@ -351,7 +351,7 @@ const exceptionWithHostPort = hideStackFrames(
       details += ` - Local (${additional})`;
     }
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const ex: any = new Error(`${syscall} ${code}${details}`);
     ex.errno = err;
     ex.code = code;
@@ -374,11 +374,11 @@ const handleDnsError = hideStackFrames(
       return dnsException(err?.uv_errcode, syscall, address);
     }
 
-    if (ObjectPrototypeIsPrototypeOf(Deno.errors.NotCapable.prototype, err)) {
+    if (ObjectPrototypeIsPrototypeOf(Edno.errors.NotCapable.prototype, err)) {
       return dnsException(codeMap.get("EPERM")!, syscall, address);
     }
 
-    return denoErrorToNodeError(err, { syscall });
+    return ednoErrorToNodeError(err, { syscall });
   },
 );
 
@@ -408,7 +408,7 @@ const dnsException = hideStackFrames(function (code, syscall, hostname) {
 
   const message = `${syscall} ${code}${hostname ? ` ${hostname}` : ""}`;
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const ex: any = new Error(message);
   ex.errno = errno;
   ex.code = code;
@@ -607,7 +607,7 @@ class NodeSystemError extends Error {
     return `${this.name} [${this.code}]: ${this.message}`;
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   [SymbolFor("nodejs.util.inspect.custom")](_recurseTimes: number, ctx: any) {
     return inspect(this, {
       ...ctx,
@@ -632,7 +632,7 @@ const SystemError = NodeSystemError;
 // Mirror of Node's `messages` map: associates an error code with its message
 // template (string or function). Populated by `E()` and read by
 // `makeNodeErrorWithCode()`.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const messages = new SafeMap<string, string | ((...args: any[]) => string)>();
 
 // Builds a class that extends a non-system Error base (Error, TypeError, etc.)
@@ -640,12 +640,12 @@ const messages = new SafeMap<string, string | ((...args: any[]) => string)>();
 // Mirrors Node's `makeNodeErrorWithCode(Base, key)`.
 function makeNodeErrorWithCode(Base: typeof Error, key: string) {
   return class NodeErrorWithCode extends Base {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     constructor(...args: any[]) {
       const template = MapPrototypeGet(messages, key);
       super(
         typeof template === "function"
-          // deno-lint-ignore no-explicit-any
+          // edno-lint-ignore no-explicit-any
           ? (template as (...a: any[]) => string)(
             ...new SafeArrayIterator(args),
           )
@@ -668,11 +668,11 @@ function makeNodeErrorWithCode(Base: typeof Error, key: string) {
 // message template.
 function E(
   sym: string,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   val: string | ((...args: any[]) => string),
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   def: any,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   ...otherClasses: any[]
 ) {
   MapPrototypeSet(messages, sym, val);
@@ -871,7 +871,7 @@ class ERR_INVALID_ARG_VALUE extends NodeTypeError {
 }
 
 // A helper function to simplify checking for ERR_INVALID_ARG_TYPE output.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function invalidArgTypeHelper(input: any) {
   if (input == null) {
     return ` Received ${input}`;
@@ -2602,11 +2602,11 @@ class ERR_VM_MODULE_NOT_MODULE extends NodeError {
   }
 }
 class ERR_VM_MODULE_LINK_FAILURE extends NodeError {
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   constructor(message: string, cause?: any) {
     super("ERR_VM_MODULE_LINK_FAILURE", message);
     if (cause !== undefined) {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (this as any).cause = cause;
     }
   }
@@ -2767,7 +2767,7 @@ function _http2InvalidSettingMsg(name: string, actual: unknown) {
   return `Invalid value for setting "${name}": ${actual}`;
 }
 
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 class _ERR_HTTP2_INVALID_SETTING_VALUE_TypeError extends NodeTypeError {
   actual: unknown;
   constructor(name: string, actual: unknown) {
@@ -2779,7 +2779,7 @@ class _ERR_HTTP2_INVALID_SETTING_VALUE_TypeError extends NodeTypeError {
   }
 }
 
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 class _ERR_HTTP2_INVALID_SETTING_VALUE_RangeError extends NodeRangeError {
   actual: unknown;
   min?: number;
@@ -2804,7 +2804,7 @@ class _ERR_HTTP2_INVALID_SETTING_VALUE_RangeError extends NodeRangeError {
 //   new ERR_HTTP2_INVALID_SETTING_VALUE.RangeError(...)                      -> RangeError
 //   new ERR_HTTP2_INVALID_SETTING_VALUE.RangeError.HideStackFramesError(...) -> RangeError
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const _RangeErrorWithHSFE: any = _ERR_HTTP2_INVALID_SETTING_VALUE_RangeError;
 _RangeErrorWithHSFE.HideStackFramesError =
   _ERR_HTTP2_INVALID_SETTING_VALUE_RangeError;
@@ -2870,7 +2870,7 @@ class ERR_INVALID_RETURN_PROPERTY extends NodeTypeError {
   }
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function buildReturnPropertyType(value: any) {
   if (value && value.constructor && value.constructor.name) {
     return `instance of ${value.constructor.name}`;
@@ -2965,7 +2965,7 @@ class ERR_INVALID_PACKAGE_TARGET extends NodeError {
   constructor(
     pkgPath: string,
     key: string,
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     target: any,
     isImport?: boolean,
     base?: string,
@@ -3108,8 +3108,8 @@ interface UvExceptionContext {
   path?: string;
   dest?: string;
 }
-function denoErrorToNodeError(e: Error, ctx: UvExceptionContext) {
-  if (ObjectPrototypeIsPrototypeOf(Deno.errors.BadResource.prototype, e)) {
+function ednoErrorToNodeError(e: Error, ctx: UvExceptionContext) {
+  if (ObjectPrototypeIsPrototypeOf(Edno.errors.BadResource.prototype, e)) {
     return uvException({
       errno: UV_EBADF,
       ...ctx,
@@ -3128,11 +3128,11 @@ function denoErrorToNodeError(e: Error, ctx: UvExceptionContext) {
   return ex;
 }
 
-function denoWriteFileErrorToNodeError(
+function ednoWriteFileErrorToNodeError(
   e: Error,
   ctx: UvExceptionContext,
 ) {
-  if (ObjectPrototypeIsPrototypeOf(Deno.errors.BadResource.prototype, e)) {
+  if (ObjectPrototypeIsPrototypeOf(Edno.errors.BadResource.prototype, e)) {
     return uvException({
       errno: UV_EBADF,
       ...ctx,
@@ -3162,7 +3162,7 @@ function denoWriteFileErrorToNodeError(
   });
 }
 
-const denoErrorToNodeSystemError = hideStackFrames((
+const ednoErrorToNodeSystemError = hideStackFrames((
   e: Error,
   syscall: string,
 ): Error => {
@@ -3205,7 +3205,7 @@ function extractOsErrorNumberFromErrorMessage(e: unknown): number | undefined {
 
 function connResetException(msg: string) {
   const ex = new Error(msg);
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (ex as any).code = "ECONNRESET";
   return ex;
 }
@@ -3228,7 +3228,7 @@ function aggregateTwoErrors(
       ],
       outerError.message,
     );
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     (err as any).code = outerError.code;
     ErrorCaptureStackTrace(err, aggregateTwoErrors);
     return err;
@@ -3247,7 +3247,7 @@ class NodeAggregateError extends AggregateError {
     return true;
   }
 
-  // deno-lint-ignore adjacent-overload-signatures
+  // edno-lint-ignore adjacent-overload-signatures
   get ["constructor"]() {
     return AggregateError;
   }
@@ -3328,7 +3328,7 @@ const genericNodeError = hideStackFrames(
  * @param {*} value
  * @returns {string}
  */
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function determineSpecificType(value: any) {
   if (value == null) {
     return "" + value;
@@ -3666,9 +3666,9 @@ return {
   aggregateTwoErrors,
   codes,
   connResetException,
-  denoErrorToNodeError,
-  denoErrorToNodeSystemError,
-  denoWriteFileErrorToNodeError,
+  ednoErrorToNodeError,
+  ednoErrorToNodeSystemError,
+  ednoWriteFileErrorToNodeError,
   dnsException,
   DNSException: dnsException,
   errnoException,
@@ -3975,8 +3975,8 @@ return {
     aggregateTwoErrors,
     codes,
     connResetException,
-    denoErrorToNodeError,
-    denoErrorToNodeSystemError,
+    ednoErrorToNodeError,
+    ednoErrorToNodeSystemError,
     dnsException,
     DNSException: dnsException,
     errnoException,

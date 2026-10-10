@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// @deno-types="./_readline.d.ts"
+// @edno-types="./_readline.d.ts"
 
 import {
   clearLine,
@@ -10,7 +10,7 @@ import {
   Interface,
   moveCursor,
   promises,
-} from "ext:deno_node/_readline.mjs";
+} from "ext:edno_node/_readline.mjs";
 
 export {
   clearLine,

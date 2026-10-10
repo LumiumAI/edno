@@ -1,5 +1,5 @@
 {
-  "args": "lint --config Deno.jsonc --ignore=with_config/a.ts",
+  "args": "lint --config Edno.jsonc --ignore=with_config/a.ts",
   "output": "with_config_and_flags.out",
   "exitCode": 1
 }

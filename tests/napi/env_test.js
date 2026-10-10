@@ -4,7 +4,7 @@ import { assert, loadTestLibrary } from "./common.js";
 
 const env = loadTestLibrary();
 
-Deno.test("napi get global", function () {
+Edno.test("napi get global", function () {
   const g = env.testNodeGlobal();
   assert(g === globalThis);
 });

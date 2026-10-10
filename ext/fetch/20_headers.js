@@ -21,9 +21,9 @@ const {
   TypeError,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const { markNotSerializable } = core.loadExtScript(
-  "ext:deno_web/13_message_port.js",
+  "ext:edno_web/13_message_port.js",
 );
 const {
   byteLowerCase,
@@ -33,7 +33,7 @@ const {
   HTTP_TAB_OR_SPACE_SUFFIX_RE,
   HTTP_TOKEN_CODE_POINT_RE,
   httpTrim,
-} = core.loadExtScript("ext:deno_web/00_infra.js");
+} = core.loadExtScript("ext:edno_web/00_infra.js");
 
 const _headerList = Symbol("header list");
 const _lowerNames = Symbol("lowercase header names");
@@ -629,7 +629,7 @@ class Headers {
     }
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     if (ObjectPrototypeIsPrototypeOf(HeadersPrototype, this)) {
       const headers = {};
       for (const entry of new SafeArrayIterator(ArrayFrom(this))) {

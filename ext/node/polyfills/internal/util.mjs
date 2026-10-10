@@ -3,29 +3,29 @@
 (function () {
 const { core, primordials } = __bootstrap;
 const { normalizeEncoding } = core.loadExtScript(
-  "ext:deno_node/internal/normalize_encoding.ts",
+  "ext:edno_node/internal/normalize_encoding.ts",
 );
 const {
   ObjectCreate,
   StringPrototypeToUpperCase,
-} = core.loadExtScript("ext:deno_node/internal/primordials.mjs");
+} = core.loadExtScript("ext:edno_node/internal/primordials.mjs");
 const { ERR_UNKNOWN_SIGNAL } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const { os } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
 const { validateFunction } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const { shouldColorize } = core.loadExtScript(
-  "ext:deno_node/internal/util/colorize.mjs",
+  "ext:edno_node/internal/util/colorize.mjs",
 );
 const { isNativeError } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 
-// deno-lint-ignore deno-internal/prefer-primordials
+// edno-lint-ignore edno-internal/prefer-primordials
 const AtomicsWait = Atomics.wait;
 
 const {
@@ -280,7 +280,7 @@ let _sleepView;
 function sleep(msec) {
   if (_sleepView === undefined) {
     const buffer = new SharedArrayBuffer(4);
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     _sleepView = new Int32Array(buffer);
   }
   AtomicsWait(_sleepView, 0, 0, msec);

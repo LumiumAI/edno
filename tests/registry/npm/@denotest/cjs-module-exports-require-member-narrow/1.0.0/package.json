@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/cjs-module-exports-require-member-narrow",
+  "name": "@ednotest/cjs-module-exports-require-member-narrow",
   "version": "1.0.0",
   "main": "./main.js"
 }

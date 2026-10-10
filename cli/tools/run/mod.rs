@@ -4,16 +4,16 @@ use std::io::Read;
 use std::sync::Arc;
 
 use deno_ast::ModuleSpecifier;
-use deno_cache_dir::file_fetcher::File;
-use deno_config::deno_json::NodeModulesDirMode;
-use deno_core::anyhow::Context;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_lib::worker::LibWorkerFactoryRoots;
-use deno_npm_installer::PackageCaching;
-use deno_npm_installer::graph::NpmCachingStrategy;
+use edno_cache_dir::file_fetcher::File;
+use edno_config::edno_json::NodeModulesDirMode;
+use edno_core::anyhow::Context;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_lib::worker::LibWorkerFactoryRoots;
+use edno_npm_installer::PackageCaching;
+use edno_npm_installer::graph::NpmCachingStrategy;
 use deno_path_util::resolve_url_or_path;
-use deno_runtime::WorkerExecutionMode;
+use edno_runtime::WorkerExecutionMode;
 use deno_semver::npm::NpmPackageReqReference;
 
 use crate::args::EvalFlags;
@@ -33,7 +33,7 @@ pub fn check_permission_before_script(flags: &Flags) {
       crate::colors::yellow(
         r#"Permission flags have likely been incorrectly set after the script argument.
 To grant permissions, set them before the script argument. For example:
-    deno run --allow-read=. main.js"#
+    edno run --allow-read=. main.js"#
       )
     );
   }
@@ -139,7 +139,7 @@ async fn try_run_npm_bin_executable(
     &unstable_args,
     // This path only ever resolves to `BinValue::Executable` (native npm
     // bins); the `JsFile` re-run arm — the only consumer of these forwarded
-    // `deno run` args — is never reached here, so pass an empty set.
+    // `edno run` args — is never reached here, so pass an empty set.
     &[],
   )?;
   Ok(Some(exit_code))
@@ -171,7 +171,7 @@ pub async fn run_script(
   mode: WorkerExecutionMode,
   flags: Arc<Flags>,
   watch: Option<WatchFlagsWithPaths>,
-  unconfigured_runtime: Option<deno_runtime::UnconfiguredRuntime>,
+  unconfigured_runtime: Option<edno_runtime::UnconfiguredRuntime>,
   roots: LibWorkerFactoryRoots,
 ) -> Result<i32, AnyError> {
   check_permission_before_script(&flags);
@@ -186,18 +186,18 @@ pub async fn run_script(
   let factory = CliFactory::from_flags(flags.clone());
   let cli_options = factory.cli_options()?;
   crate::boot_phase("after cli_options");
-  let deno_dir = factory.deno_dir()?;
+  let edno_dir = factory.edno_dir()?;
   let http_client = factory.http_client_provider();
   let workspace_resolver = factory.workspace_resolver().await?;
   crate::boot_phase("after workspace_resolver");
   let node_resolver = factory.node_resolver().await?;
   crate::boot_phase("after node_resolver");
   // Run a background task that checks for available upgrades or output
-  // if an earlier run of this background task found a new version of Deno.
+  // if an earlier run of this background task found a new version of Edno.
   #[cfg(feature = "upgrade")]
   super::upgrade::check_for_upgrades(
     http_client.clone(),
-    deno_dir.upgrade_check_file_path(),
+    edno_dir.upgrade_check_file_path(),
   );
 
   let main_module_resolver = crate::args::WorkspaceMainModuleResolver::new(
@@ -237,20 +237,20 @@ pub async fn run_script(
       unconfigured_runtime,
     )
     .await
-    .inspect_err(|e| deno_telemetry::report_event("boot_failure", e))?;
+    .inspect_err(|e| edno_telemetry::report_event("boot_failure", e))?;
   crate::boot_phase("after create_main_worker");
 
   let exit_code = worker
     .run()
     .await
-    .inspect_err(|e| deno_telemetry::report_event("uncaught_exception", e))?;
+    .inspect_err(|e| edno_telemetry::report_event("uncaught_exception", e))?;
   crate::boot_phase("after worker.run (exit)");
   Ok(exit_code)
 }
 
 pub async fn run_from_stdin(
   flags: Arc<Flags>,
-  unconfigured_runtime: Option<deno_runtime::UnconfiguredRuntime>,
+  unconfigured_runtime: Option<edno_runtime::UnconfiguredRuntime>,
   roots: LibWorkerFactoryRoots,
 ) -> Result<i32, AnyError> {
   let factory = CliFactory::from_flags(flags);
@@ -274,7 +274,7 @@ pub async fn run_from_stdin(
     mtime: None,
     maybe_headers: None,
     source: source.into(),
-    loaded_from: deno_cache_dir::file_fetcher::LoadedFrom::Local,
+    loaded_from: edno_cache_dir::file_fetcher::LoadedFrom::Local,
   });
 
   let mut worker = worker_factory
@@ -324,7 +324,7 @@ async fn run_with_watch(
         maybe_npm_install(&factory).await?;
 
         if is_npm_native_bin(&factory, main_module).await? {
-          return Err(deno_core::anyhow::anyhow!(
+          return Err(edno_core::anyhow::anyhow!(
             "Cannot use --watch with an npm package whose bin entry is a native executable: {main_module}"
           ));
         }
@@ -373,7 +373,7 @@ pub async fn eval_command(
     } else {
       eval_flags.code.clone()
     };
-    let specifier = deno_core::url::Url::parse("file:///eval.js").unwrap();
+    let specifier = edno_core::url::Url::parse("file:///eval.js").unwrap();
     let is_script = deno_ast::parse_program(deno_ast::ParseParams {
       specifier,
       text: source_code.clone().into(),
@@ -386,7 +386,7 @@ pub async fn eval_command(
     .unwrap_or(true);
     // Only treat as CJS if it parses as a script AND contains CJS patterns.
     // This preserves backward compatibility: code without imports/exports
-    // defaults to ESM (the longstanding deno eval behavior).
+    // defaults to ESM (the longstanding edno eval behavior).
     let has_cjs_patterns = is_script
       && (source_code.contains("require(")
         || source_code.contains("module.exports")
@@ -431,7 +431,7 @@ pub async fn eval_command(
     mtime: None,
     maybe_headers: None,
     source: source_code.into_bytes().into(),
-    loaded_from: deno_cache_dir::file_fetcher::LoadedFrom::Local,
+    loaded_from: edno_cache_dir::file_fetcher::LoadedFrom::Local,
   });
 
   let worker_factory = factory.create_cli_main_worker_factory().await?;
@@ -475,7 +475,7 @@ pub async fn maybe_npm_install(factory: &CliFactory) -> Result<(), AnyError> {
 pub async fn run_eszip(
   flags: Arc<Flags>,
   run_flags: RunFlags,
-  unconfigured_runtime: Option<deno_runtime::UnconfiguredRuntime>,
+  unconfigured_runtime: Option<edno_runtime::UnconfiguredRuntime>,
   roots: LibWorkerFactoryRoots,
 ) -> Result<i32, AnyError> {
   // TODO(bartlomieju): actually I think it will also fail if there's an import

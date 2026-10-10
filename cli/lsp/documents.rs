@@ -21,20 +21,20 @@ use deno_ast::MediaType;
 use deno_ast::ParsedSource;
 use deno_ast::SourceTextInfo;
 use deno_ast::swc::ecma_visit::VisitWith;
-use deno_core::ModuleSpecifier;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_core::futures::future;
-use deno_core::futures::future::Shared;
-use deno_core::parking_lot::RwLock;
-use deno_core::resolve_url;
-use deno_core::url::Position;
-use deno_core::url::Url;
+use edno_core::ModuleSpecifier;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_core::futures::future;
+use edno_core::futures::future::Shared;
+use edno_core::parking_lot::RwLock;
+use edno_core::resolve_url;
+use edno_core::url::Position;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 use deno_graph::TypesDependency;
 use deno_path_util::url_to_file_path;
-use deno_resolver::deno_json::CompilerOptionsKey;
-use deno_runtime::deno_node;
+use edno_resolver::edno_json::CompilerOptionsKey;
+use edno_runtime::edno_node;
 use deno_semver::jsr::JsrPackageReqReference;
 use deno_semver::npm::NpmPackageReqReference;
 use indexmap::IndexMap;
@@ -174,7 +174,7 @@ fn remote_or_asset_url_to_uri(url: &Url) -> Option<Uri> {
     .decode_utf8_lossy(),
   );
   let uri = fluent_uri::Uri::builder()
-    .scheme(fluent_uri::component::Scheme::new_or_panic("deno"))
+    .scheme(fluent_uri::component::Scheme::new_or_panic("edno"))
     .path(encoded_path.as_ref())
     .build()
     .expect("component constraints should be met by the above")
@@ -190,7 +190,7 @@ fn data_url_to_uri(url: &Url) -> Option<Uri> {
   } else {
     media_type.as_ts_extension()
   };
-  let hash = deno_lib::util::checksum::r#gen(&[url.as_str().as_bytes()]);
+  let hash = edno_lib::util::checksum::r#gen(&[url.as_str().as_bytes()]);
   let mut encoded_path =
     fluent_uri::pct_enc::EString::<fluent_uri::pct_enc::encoder::Path>::new();
   encoded_path.encode_str::<fluent_uri::pct_enc::encoder::Path>("/");
@@ -199,7 +199,7 @@ fn data_url_to_uri(url: &Url) -> Option<Uri> {
   encoded_path.encode_str::<fluent_uri::pct_enc::encoder::Path>(&hash);
   encoded_path.encode_str::<fluent_uri::pct_enc::encoder::Path>(extension);
   let uri = fluent_uri::Uri::builder()
-    .scheme(fluent_uri::component::Scheme::new_or_panic("deno"))
+    .scheme(fluent_uri::component::Scheme::new_or_panic("edno"))
     .path(encoded_path.as_ref())
     .build()
     .expect("component constraints should be met by the above")
@@ -207,7 +207,7 @@ fn data_url_to_uri(url: &Url) -> Option<Uri> {
   Some(uri)
 }
 
-#[derive(Debug, Clone, deno_core::ToV8)]
+#[derive(Debug, Clone, edno_core::ToV8)]
 #[to_v8(untagged)]
 pub enum DocumentText {
   Static(&'static str),
@@ -384,7 +384,7 @@ impl ServerDocument {
   fn raw_import_types(uri: &Uri) -> Option<Self> {
     if uri
       .as_str()
-      .strip_prefix("deno:/text-import-types/")
+      .strip_prefix("edno:/text-import-types/")
       .and_then(|s| s.strip_suffix(".ts"))
       .is_some()
     {
@@ -397,7 +397,7 @@ impl ServerDocument {
     }
     if uri
       .as_str()
-      .strip_prefix("deno:/bytes-import-types/")
+      .strip_prefix("edno:/bytes-import-types/")
       .and_then(|s| s.strip_suffix(".ts"))
       .is_some()
     {
@@ -410,7 +410,7 @@ impl ServerDocument {
     }
     if uri
       .as_str()
-      .strip_prefix("deno:/css-import-types/")
+      .strip_prefix("edno:/css-import-types/")
       .and_then(|s| s.strip_suffix(".ts"))
       .is_some()
     {
@@ -966,7 +966,7 @@ pub struct DocumentModule {
   /// whenever the document content or the lint configuration changes, which
   /// naturally invalidates this cache.
   pub lint_diagnostics: once_cell::sync::OnceCell<Arc<Vec<lsp::Diagnostic>>>,
-  /// Cached `deno doc --lint` diagnostics. Like lint diagnostics, these are
+  /// Cached `edno doc --lint` diagnostics. Like lint diagnostics, these are
   /// derived solely from this module's own contents (a single-module graph),
   /// so they're cached per module instance.
   pub doc_diagnostics: once_cell::sync::OnceCell<Arc<Vec<lsp::Diagnostic>>>,
@@ -1763,7 +1763,7 @@ impl DocumentModules {
             && MediaType::from_specifier(type_specifier).is_declaration()
           {
             dep_info
-              .deno_types_to_code_resolutions
+              .edno_types_to_code_resolutions
               .insert(type_specifier.clone(), code_specifier.clone());
           }
         }
@@ -1812,7 +1812,7 @@ impl DocumentModules {
             )
             .ok()?;
           dep_info
-            .deno_types_to_code_resolutions
+            .edno_types_to_code_resolutions
             .insert(type_specifier, code_specifier);
           Some(())
         })();
@@ -1934,7 +1934,7 @@ impl DocumentModules {
     compiler_options_key: Option<&CompilerOptionsKey>,
   ) -> Option<(Url, MediaType, Option<Arc<Uri>>)> {
     if let Some(module_name) = specifier.as_str().strip_prefix("node:")
-      && deno_node::is_builtin_node_module(module_name)
+      && edno_node::is_builtin_node_module(module_name)
     {
       // Don't resolve node: specifiers because during type checking we resolve
       // to the ambient modules in the @types/node package.
@@ -2372,9 +2372,9 @@ fn bytes_to_content(
 
 #[cfg(test)]
 mod tests {
-  use deno_config::deno_json::ConfigFile;
-  use deno_core::serde_json;
-  use deno_core::serde_json::json;
+  use edno_config::edno_json::ConfigFile;
+  use edno_core::serde_json;
+  use edno_core::serde_json::json;
   use pretty_assertions::assert_eq;
   use test_util::TempDir;
 
@@ -2383,8 +2383,8 @@ mod tests {
 
   async fn setup() -> (DocumentModules, LspCache, TempDir) {
     let temp_dir = TempDir::new();
-    temp_dir.create_dir_all(".deno_dir");
-    let cache = LspCache::new(Some(temp_dir.url().join(".deno_dir").unwrap()));
+    temp_dir.create_dir_all(".edno_dir");
+    let cache = LspCache::new(Some(temp_dir.url().join(".edno_dir").unwrap()));
     let config = Config::default();
     let resolver =
       Arc::new(LspResolver::from_config(&config, &cache, None).await);
@@ -2463,7 +2463,7 @@ console.log(b);
             },
           }),
           range_length: None,
-          text: r#", "hello deno""#.to_string(),
+          text: r#", "hello edno""#.to_string(),
         }],
       )
       .unwrap();
@@ -2475,7 +2475,7 @@ console.log(b);
         .text()
         .as_ref() as &str,
       r#"import * as b from "./b.ts";
-console.log(b, "hello deno");
+console.log(b, "hello edno");
 "#
     );
   }
@@ -2547,7 +2547,7 @@ const Counter = () => {
               },
             })
             .to_string(),
-            config.root_url().unwrap().join("deno.json").unwrap(),
+            config.root_url().unwrap().join("edno.json").unwrap(),
           )
           .unwrap(),
         )
@@ -2593,7 +2593,7 @@ const Counter = () => {
               },
             })
             .to_string(),
-            config.root_url().unwrap().join("deno.json").unwrap(),
+            config.root_url().unwrap().join("edno.json").unwrap(),
           )
           .unwrap(),
         )

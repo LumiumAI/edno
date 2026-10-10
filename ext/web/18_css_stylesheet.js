@@ -14,9 +14,9 @@ const {
   SymbolFor,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 
 const CSSRulePrototype = CSSRule.prototype;
@@ -25,7 +25,7 @@ const CSSStyleSheetPrototype = CSSStyleSheet.prototype;
 function defineCustomInspect(prototype, keys) {
   ObjectDefineProperty(
     prototype,
-    SymbolFor("Deno.privateCustomInspect"),
+    SymbolFor("Edno.privateCustomInspect"),
     {
       __proto__: null,
       value: function customInspect(inspect, inspectOptions) {

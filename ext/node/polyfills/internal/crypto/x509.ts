@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and Node.js contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -43,26 +43,26 @@ const {
 const {
   KeyObject,
   PublicKeyObject,
-} = core.loadExtScript("ext:deno_node/internal/crypto/keys.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/keys.ts");
 const { kHandle } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/constants.ts",
+  "ext:edno_node/internal/crypto/constants.ts",
 );
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { isArrayBufferView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const {
   validateBoolean,
   validateObject,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { inspect } = core.loadExtScript("ext:deno_node/util.ts");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { inspect } = core.loadExtScript("ext:edno_node/util.ts");
 const { customInspectSymbol: kInspect, kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 
 function getFlags(options = kEmptyObject): number {
@@ -116,7 +116,7 @@ class X509Certificate {
     }
 
     this.#handle = op_node_x509_parse(buffer);
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const self = this;
     this[core.hostObjectBrand] = () => ({
       type: "X509Certificate",
@@ -287,7 +287,7 @@ class X509Certificate {
   }
 
   toJSON(): string {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     return this.toString();
   }
 

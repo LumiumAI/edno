@@ -20,9 +20,9 @@
 [![npm type definitions](https://img.shields.io/npm/types/hono)](https://www.npmjs.com/package/hono)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/honojs/hono)](https://github.com/honojs/hono/pulse)
 [![GitHub last commit](https://img.shields.io/github/last-commit/honojs/hono)](https://github.com/honojs/hono/commits/main)
-[![Deno badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Flatest-version%2Fx%2Fhono%2Fmod.ts)](https://doc.deno.land/https/deno.land/x/hono/mod.ts)
+[![Edno badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Flatest-version%2Fx%2Fhono%2Fmod.ts)](https://doc.deno.land/https/deno.land/x/hono/mod.ts)
 
-Hono - _**[炎] means flame🔥 in Japanese**_ - is a small, simple, and ultrafast web framework for Cloudflare Workers, Deno, Bun, and others.
+Hono - _**[炎] means flame🔥 in Japanese**_ - is a small, simple, and ultrafast web framework for Cloudflare Workers, Edno, Bun, and others.
 
 ```ts
 import { Hono } from 'hono'
@@ -39,7 +39,7 @@ export default app
 - **Zero-dependencies** - using only Service Worker and Web Standard API.
 - **Middleware** - built-in middleware, custom middleware, and third-party middleware.
 - **TypeScript** - first-class TypeScript support.
-- **Multi-platform** - works on Cloudflare Workers, Fastly Compute@Edge, Deno, or Bun.
+- **Multi-platform** - works on Cloudflare Workers, Fastly Compute@Edge, Edno, or Bun.
 
 ## Benchmarks
 

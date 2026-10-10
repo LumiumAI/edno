@@ -102,7 +102,7 @@ struct CustomNpmPackage {
 }
 
 /// Creates tarballs and a registry json file for npm packages
-/// in the `tests/registry/npm/@denotest` directory.
+/// in the `tests/registry/npm/@ednotest` directory.
 pub struct TestNpmRegistry {
   #[allow(unused, reason = "retained for future use")]
   kind: NpmRegistryKind,
@@ -177,9 +177,9 @@ impl TestNpmRegistry {
     uri_path: &'s str,
   ) -> Option<(&'s str, &'s str)> {
     let scope_names = [
-      "@denotest",
-      "@denotest2",
-      "@denotest3",
+      "@ednotest",
+      "@ednotest2",
+      "@ednotest3",
       "@jsr",
       "@esbuild",
       "@types",
@@ -194,7 +194,7 @@ impl TestNpmRegistry {
 
       if let Some(package_name_with_path) = maybe_package_name_with_path
         && (scope_name != "@types"
-          || package_name_with_path.starts_with("denotest"))
+          || package_name_with_path.starts_with("ednotest"))
       {
         return Some((scope_name, package_name_with_path));
       }
@@ -267,7 +267,7 @@ fn create_package_version_info(
   let tarball_bytes = create_tarball_from_dir(version_folder.as_path())?;
 
   let mut dist = serde_json::Map::new();
-  if package_name != "@denotest/no-shasums" {
+  if package_name != "@ednotest/no-shasums" {
     let tarball_checksum = get_tarball_checksum(&tarball_bytes);
     dist.insert(
       "integrity".to_string(),
@@ -492,17 +492,17 @@ fn get_npm_package(
     return Ok(Some(esbuild_package));
   }
 
-  let registry_hostname = if package_name == "@denotest/tarballs-privateserver2"
+  let registry_hostname = if package_name == "@ednotest/tarballs-privateserver2"
   {
     "http://localhost:4262"
-  } else if package_name == "@denotest/tarballs-privateserver404" {
+  } else if package_name == "@ednotest/tarballs-privateserver404" {
     // Tarball served from a registry that 404s the unauthenticated request
     // (and has no fixture there), to exercise the 404 auth-hint path.
     "http://localhost:4263"
-  } else if package_name == "@denotest/tarballs-npmjs" {
+  } else if package_name == "@ednotest/tarballs-npmjs" {
     // Packument points `dist.tarball` at the public npm registry even though the
     // package is served by a private/proxy registry (some proxies don't rewrite
-    // tarball URLs). Deno should relocate the tarball download to the configured
+    // tarball URLs). Edno should relocate the tarball download to the configured
     // registry rather than downloading it from `registry.npmjs.org`.
     "https://registry.npmjs.org"
   } else {

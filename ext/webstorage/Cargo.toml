@@ -1,20 +1,20 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_webstorage"
+name = "edno_webstorage"
 version = "0.254.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Implementation of WebStorage API for Deno"
+description = "Implementation of WebStorage API for Edno"
 
 [lib]
 path = "lib.rs"
 
 [dependencies]
-deno_core.workspace = true
+edno_core.workspace = true
 deno_error.workspace = true
 rusqlite.workspace = true
 thiserror.workspace = true

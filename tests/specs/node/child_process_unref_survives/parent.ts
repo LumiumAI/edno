@@ -1,8 +1,8 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
 
-const markerFile = join(Deno.cwd(), "marker.txt");
-const child = spawn(Deno.execPath(), [
+const markerFile = join(Edno.cwd(), "marker.txt");
+const child = spawn(Edno.execPath(), [
   "run",
   "--allow-write",
   join(import.meta.dirname!, "child.ts"),

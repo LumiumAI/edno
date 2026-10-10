@@ -1,2 +1,2 @@
-import { getValue } from "@denotest/esm-basic";
+import { getValue } from "@ednotest/esm-basic";
 console.log(getValue());

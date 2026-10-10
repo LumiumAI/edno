@@ -1,8 +1,8 @@
 import * as http from "node:http";
 
-const SOCK = "/tmp/deno-http-override-test.sock";
+const SOCK = "/tmp/edno-http-override-test.sock";
 try {
-  Deno.removeSync(SOCK);
+  Edno.removeSync(SOCK);
 } catch { /* ignore */ }
 
 // Duplicate mode with a unix-socket override: the server should answer
@@ -12,10 +12,10 @@ server.listen(9404, "127.0.0.1", async () => {
   const r1 = await fetch("http://127.0.0.1:9404/");
   console.log(`tcp: ${await r1.text()}`);
 
-  // Send a handcrafted HTTP request over the unix socket. Deno.connect
+  // Send a handcrafted HTTP request over the unix socket. Edno.connect
   // gives us a raw duplex, which exercises the override listener's
   // full data path.
-  const conn = await Deno.connect({ transport: "unix", path: SOCK });
+  const conn = await Edno.connect({ transport: "unix", path: SOCK });
   const req = "GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
   await conn.write(new TextEncoder().encode(req));
   const parts: Uint8Array[] = [];
@@ -35,6 +35,6 @@ server.listen(9404, "127.0.0.1", async () => {
 
   server.close();
   try {
-    Deno.removeSync(SOCK);
+    Edno.removeSync(SOCK);
   } catch { /* ignore */ }
 });

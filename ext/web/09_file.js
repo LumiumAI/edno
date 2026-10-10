@@ -2,11 +2,11 @@
 
 // @ts-check
 /// <reference no-default-lib="true" />
-/// <reference path="../../core/lib.deno_core.d.ts" />
+/// <reference path="../../core/lib.edno_core.d.ts" />
 /// <reference path="../../core/internal.d.ts" />
 /// <reference path="../webidl/internal.d.ts" />
 /// <reference path="../web/internal.d.ts" />
-/// <reference path="../../cli/tsc/dts/lib.deno_web.d.ts" />
+/// <reference path="../../cli/tsc/dts/lib.edno_web.d.ts" />
 /// <reference path="./internal.d.ts" />
 /// <reference lib="esnext" />
 
@@ -60,7 +60,7 @@ const {
   Uint8Array,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 // Defer loading the 208 KB `06_streams.js` polyfill: ReadableStream is
 // only constructed inside `Blob.stream()` (see usage below), so we don't
 // need to pay the parse cost at module body time.
@@ -68,7 +68,7 @@ let _readableStream;
 function ReadableStream(...args) {
   return new (_readableStream ??
     (_readableStream =
-      core.loadExtScript("ext:deno_web/06_streams.js").ReadableStream))(
+      core.loadExtScript("ext:edno_web/06_streams.js").ReadableStream))(
     ...new SafeArrayIterator(args),
   );
 }
@@ -78,14 +78,14 @@ function ReadableStream(...args) {
 let _textDecoderStream;
 function TextDecoderStream(...args) {
   return new (_textDecoderStream ??
-    (_textDecoderStream = core.loadExtScript("ext:deno_web/08_text_encoding.js")
+    (_textDecoderStream = core.loadExtScript("ext:edno_web/08_text_encoding.js")
       .TextDecoderStream))(
     ...new SafeArrayIterator(args),
   );
 }
-const { URL } = core.loadExtScript("ext:deno_web/00_url.js");
+const { URL } = core.loadExtScript("ext:edno_web/00_url.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 
 // TODO(lucacasonato): this needs to not be hardcoded and instead depend on
@@ -146,7 +146,7 @@ function convertLineEndingsToNative(s) {
 /** @param {(BlobReference | Blob)[]} parts */
 async function* toIterator(parts) {
   for (let i = 0; i < parts.length; ++i) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     yield* parts[i].stream();
   }
 }
@@ -330,7 +330,7 @@ class Blob {
       );
     }
 
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const O = this;
     /** @type {number} */
     let relativeStart;
@@ -375,7 +375,7 @@ class Blob {
         relativeStart -= size;
         relativeEnd -= size;
       } else {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const chunk = part.slice(
           relativeStart,
           MathMin(part.size, relativeEnd),
@@ -486,7 +486,7 @@ class Blob {
     return await this.#u8Array(this.size);
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -605,7 +605,7 @@ class File extends Blob {
     return this[_LastModified];
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,

@@ -4,14 +4,14 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_cache_dir::GlobalOrLocalHttpCache;
-use deno_cache_dir::file_fetcher::CacheSetting;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_core::futures::StreamExt;
-use deno_core::serde_json;
+use edno_cache_dir::GlobalOrLocalHttpCache;
+use edno_cache_dir::file_fetcher::CacheSetting;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_core::futures::StreamExt;
+use edno_core::serde_json;
 use deno_path_util::url_to_file_path;
 use deno_semver::StackString;
 use deno_semver::Version;
@@ -57,12 +57,12 @@ pub use why::why;
 
 #[derive(Debug, Copy, Clone, Hash)]
 pub(crate) enum ConfigKind {
-  DenoJson,
+  EdnoJson,
   PackageJson,
 }
 
 /// Which `package.json` section a dependency should be written to. Only
-/// meaningful for `package.json`; `deno.json` always uses `imports`.
+/// meaningful for `package.json`; `edno.json` always uses `imports`.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum DependencyKind {
   Normal,
@@ -202,7 +202,7 @@ impl ConfigUpdater {
     }
 
     match self.kind {
-      ConfigKind::DenoJson => {
+      ConfigKind::EdnoJson => {
         let imports = self.root_object.object_value_or_set("imports");
         let value =
           format!("{}@{}", selected.package_name, selected.version_req);
@@ -299,7 +299,7 @@ impl ConfigUpdater {
 
   fn remove(&mut self, package: &str) -> bool {
     let removed = match self.kind {
-      ConfigKind::DenoJson => {
+      ConfigKind::EdnoJson => {
         match self
           .root_object
           .object_value("imports")
@@ -382,9 +382,9 @@ fn create_deno_json(
   flags: &Arc<Flags>,
   options: &CliOptions,
 ) -> Result<CliFactory, AnyError> {
-  std::fs::write(options.initial_cwd().join("deno.json"), "{}\n")
-    .context("Failed to create deno.json file")?;
-  log::info!("Created deno.json configuration file.");
+  std::fs::write(options.initial_cwd().join("edno.json"), "{}\n")
+    .context("Failed to create edno.json file")?;
+  log::info!("Created edno.json configuration file.");
   let factory = CliFactory::from_flags(flags.clone());
   Ok(factory)
 }
@@ -459,7 +459,7 @@ fn load_configs(
 
   // The `--package-json` flag or the `preferPackageJson` config setting both
   // force dependencies to be managed via package.json. `link`/`unlink` opt out
-  // of the config setting because the `"links"` field lives in deno.json.
+  // of the config setting because the `"links"` field lives in edno.json.
   let force_package_json = force_package_json
     || (honor_prefer_package_json && start_dir.workspace.prefer_package_json());
 
@@ -490,15 +490,15 @@ fn load_configs(
     )?),
     None => None,
   };
-  let deno_config = match start_dir.member_deno_json() {
-    Some(deno_json) => Some(ConfigUpdater::new(
-      ConfigKind::DenoJson,
-      url_to_file_path(&deno_json.specifier)?,
+  let edno_config = match start_dir.member_deno_json() {
+    Some(edno_json) => Some(ConfigUpdater::new(
+      ConfigKind::EdnoJson,
+      url_to_file_path(&edno_json.specifier)?,
     )?),
     None => None,
   };
 
-  let (cli_factory, deno_config) = match deno_config {
+  let (cli_factory, edno_config) = match edno_config {
     Some(config) => (cli_factory, Some(config)),
     None if npm_config.is_some() && !has_jsr_specifiers() => {
       (cli_factory, None)
@@ -506,23 +506,23 @@ fn load_configs(
     _ => {
       let factory = create_deno_json(flags, options)?;
       let options = factory.cli_options()?.clone();
-      let Some(deno_json) = options.start_dir.member_or_root_deno_json() else {
+      let Some(edno_json) = options.start_dir.member_or_root_deno_json() else {
         bail!(
-          "Failed to discover the newly created deno.json at \"{}\". This can happen when the current directory is inside a node_modules directory.",
-          options.initial_cwd().join("deno.json").display(),
+          "Failed to discover the newly created edno.json at \"{}\". This can happen when the current directory is inside a node_modules directory.",
+          options.initial_cwd().join("edno.json").display(),
         );
       };
       (
         factory,
         Some(ConfigUpdater::new(
-          ConfigKind::DenoJson,
-          url_to_file_path(&deno_json.specifier)?,
+          ConfigKind::EdnoJson,
+          url_to_file_path(&edno_json.specifier)?,
         )?),
       )
     }
   };
-  assert!(deno_config.is_some() || npm_config.is_some());
-  Ok((cli_factory, force_package_json, npm_config, deno_config))
+  assert!(edno_config.is_some() || npm_config.is_some());
+  Ok((cli_factory, force_package_json, npm_config, edno_config))
 }
 
 fn path_distance(a: &Path, b: &Path) -> usize {
@@ -539,7 +539,7 @@ pub async fn add(
   cmd_name: AddCommandName,
 ) -> Result<(), AnyError> {
   let save_exact = add_flags.save_exact;
-  let (cli_factory, force_package_json, mut npm_config, mut deno_config) =
+  let (cli_factory, force_package_json, mut npm_config, mut edno_config) =
     load_configs(
       &flags,
       || add_flags.packages.iter().any(|s| s.starts_with("jsr:")),
@@ -547,30 +547,30 @@ pub async fn add(
       true,
     )?;
 
-  if let Some(deno) = &deno_config
-    && deno.obj().get("importMap").is_some()
+  if let Some(edno) = &edno_config
+    && edno.obj().get("importMap").is_some()
   {
     bail!(
       concat!(
-        "`deno {}` is not supported when configuration file contains an \"importMap\" field. ",
-        "Inline the import map into the Deno configuration file.\n",
+        "`edno {}` is not supported when configuration file contains an \"importMap\" field. ",
+        "Inline the import map into the Edno configuration file.\n",
         "    at {}",
       ),
       cmd_name,
-      deno.display_path(),
+      edno.display_path(),
     );
   }
 
   let start_dir = cli_factory.cli_options()?.start_dir.dir_path();
 
-  // only prefer to add npm deps to `package.json` if there isn't a closer deno.json.
-  // example: if deno.json is in the CWD and package.json is in the parent, we should add
-  // npm deps to deno.json, since it's closer
-  let prefer_npm_config = match (npm_config.as_ref(), deno_config.as_ref()) {
-    (Some(npm), Some(deno)) => {
+  // only prefer to add npm deps to `package.json` if there isn't a closer edno.json.
+  // example: if edno.json is in the CWD and package.json is in the parent, we should add
+  // npm deps to edno.json, since it's closer
+  let prefer_npm_config = match (npm_config.as_ref(), edno_config.as_ref()) {
+    (Some(npm), Some(edno)) => {
       let npm_distance = path_distance(&npm.path, &start_dir);
-      let deno_distance = path_distance(&deno.path, &start_dir);
-      npm_distance <= deno_distance
+      let edno_distance = path_distance(&edno.path, &start_dir);
+      npm_distance <= edno_distance
     }
     (Some(_), None) => true,
     (None, _) => false,
@@ -579,7 +579,7 @@ pub async fn add(
   let http_client = cli_factory.http_client_provider();
   let deps_http_cache = cli_factory.global_http_cache()?;
   let deps_file_fetcher = create_cli_file_fetcher(
-    deno_runtime::deno_web::BlobStore::default_arc(),
+    edno_runtime::edno_web::BlobStore::default_arc(),
     GlobalOrLocalHttpCache::Global(deps_http_cache.clone()),
     http_client.clone(),
     cli_factory.memory_files().clone(),
@@ -636,7 +636,7 @@ pub async fn add(
               add_req.package_name(),
               add_req.alias,
               crate::colors::yellow(format!(
-                "deno {cmd_name} my-alias@{}",
+                "edno {cmd_name} my-alias@{}",
                 add_req.package_name()
               )),
             );
@@ -657,7 +657,7 @@ pub async fn add(
         {
           bail!(
             "{entry_text} is missing a prefix. Did you mean `{}`?",
-            crate::colors::yellow(format!("deno {cmd_name} jsr:{package_req}"))
+            crate::colors::yellow(format!("edno {cmd_name} jsr:{package_req}"))
           )
         } else if npm_resolver
           .req_to_nv(&package_req)
@@ -668,7 +668,7 @@ pub async fn add(
         {
           bail!(
             "{entry_text} is missing a prefix. Did you mean `{}`?",
-            crate::colors::yellow(format!("deno {cmd_name} npm:{package_req}"))
+            crate::colors::yellow(format!("edno {cmd_name} npm:{package_req}"))
           )
         } else {
           bail!(
@@ -696,7 +696,7 @@ pub async fn add(
     })
     .collect::<Vec<_>>();
 
-  let stream_of_futures = deno_core::futures::stream::iter(package_futures);
+  let stream_of_futures = edno_core::futures::stream::iter(package_futures);
   let mut buffered = stream_of_futures.buffered(10);
 
   while let Some(package_and_version_result) = buffered.next().await {
@@ -712,14 +712,14 @@ pub async fn add(
           bail!(
             "{} was not found, but a matching npm package exists. Did you mean `{}`?",
             crate::colors::red(package_name),
-            crate::colors::yellow(format!("deno {cmd_name} npm:{package_req}"))
+            crate::colors::yellow(format!("edno {cmd_name} npm:{package_req}"))
           );
         }
         Some(NotFoundHelp::JsrPackage) => {
           bail!(
             "{} was not found, but a matching jsr package exists. Did you mean `{}`?",
             crate::colors::red(package_name),
-            crate::colors::yellow(format!("deno {cmd_name} jsr:{package_req}"))
+            crate::colors::yellow(format!("edno {cmd_name} jsr:{package_req}"))
           )
         }
         Some(NotFoundHelp::PreReleaseVersion(version)) => {
@@ -727,7 +727,7 @@ pub async fn add(
             "{} has only pre-release versions available. Try specifying a version: `{}`",
             crate::colors::red(&package_name),
             crate::colors::yellow(format!(
-              "deno {cmd_name} {package_name}@^{version}"
+              "edno {cmd_name} {package_name}@^{version}"
             ))
           )
         }
@@ -753,7 +753,7 @@ pub async fn add(
   //
   // * `--no-save`: the package is installed into `node_modules` (and the
   //   lockfile) but not declared as a dependency at all.
-  // * `--save-optional`: Deno's installer does not materialize
+  // * `--save-optional`: Edno's installer does not materialize
   //   `optionalDependencies` from `package.json`, so install the package
   //   directly to keep parity with `--save-dev` (which does install on add).
   let install_directly = add_flags.no_save || kind == DependencyKind::Optional;
@@ -771,7 +771,7 @@ pub async fn add(
         "{}@{}",
         selected_package.package_name, selected_package.version_req
       );
-      match deno_core::url::Url::parse(&specifier) {
+      match edno_core::url::Url::parse(&specifier) {
         Ok(url) => additional_roots.push(url),
         Err(err) => {
           bail!("Failed to parse package specifier '{specifier}': {err}")
@@ -791,10 +791,10 @@ pub async fn add(
       if let Some(npm) = &mut npm_config {
         npm.add(selected_package, kind);
       } else {
-        deno_config.as_mut().unwrap().add(selected_package, kind);
+        edno_config.as_mut().unwrap().add(selected_package, kind);
       }
-    } else if let Some(deno) = &mut deno_config {
-      deno.add(selected_package, kind);
+    } else if let Some(edno) = &mut edno_config {
+      edno.add(selected_package, kind);
     } else {
       npm_config.as_mut().unwrap().add(selected_package, kind);
     }
@@ -804,7 +804,7 @@ pub async fn add(
     if let Some(npm) = npm_config {
       npm.commit()?;
     }
-    if let Some(deno) = deno_config {
+    if let Some(edno) = edno_config {
       deno.commit()?;
     }
   }
@@ -1136,7 +1136,7 @@ impl AddRmPackageReq {
     // The reference parsers use the strict specifier version grammar, which
     // only accepts `^`, `~`, exact versions and tags. On the command line we
     // also accept the full npm range grammar (`>=4`, `>=4 <5`, `^4 || 5`,
-    // `1 - 2`, etc) by falling back to loose parsing. `deno add` resolves the
+    // `1 - 2`, etc) by falling back to loose parsing. `edno add` resolves the
     // requirement to a concrete version before writing it, so what ends up in
     // the config (and in `npm:`/`jsr:` specifiers in code) still uses the
     // strict grammar.
@@ -1185,13 +1185,13 @@ pub async fn remove(
   flags: Arc<Flags>,
   remove_flags: RemoveFlags,
 ) -> Result<(), AnyError> {
-  let (_, force_package_json, npm_config, deno_config) =
+  let (_, force_package_json, npm_config, edno_config) =
     load_configs(&flags, || false, remove_flags.package_json, true)?;
 
   let mut configs = if force_package_json {
     [npm_config, None]
   } else {
-    [npm_config, deno_config]
+    [npm_config, edno_config]
   };
 
   let mut removed_packages = vec![];
@@ -1253,7 +1253,7 @@ pub(crate) async fn create_dep_manager_and_resolvers(
   let http_client = factory.http_client_provider();
   let deps_http_cache = factory.global_http_cache()?;
   let file_fetcher = create_cli_file_fetcher(
-    deno_runtime::deno_web::BlobStore::default_arc(),
+    edno_runtime::edno_web::BlobStore::default_arc(),
     GlobalOrLocalHttpCache::Global(deps_http_cache.clone()),
     http_client.clone(),
     factory.memory_files().clone(),
@@ -1349,7 +1349,7 @@ async fn npm_install_after_modification(
 
 /// If the user-supplied `spec` looks like a path to a local JSR package
 /// directory (relative or absolute, currently exists, and contains a
-/// `deno.json`(c)), return a message suggesting `deno link` instead.
+/// `edno.json`(c)), return a message suggesting `edno link` instead.
 fn link_hint_for_spec(cwd: &Path, spec: &str) -> Option<String> {
   // Skip anything with a registry prefix.
   if spec.contains(':') {
@@ -1373,16 +1373,16 @@ fn link_hint_for_spec(cwd: &Path, spec: &str) -> Option<String> {
   if !abs.is_dir() {
     return None;
   }
-  // Only hint when the directory is actually linkable. `deno link` requires
-  // the target's deno.json(c) to exist *and* declare a "name", so check the
-  // same condition here. Otherwise the hint dead-ends: `deno add ./pkg` ->
-  // "Did you mean `deno link ./pkg`?" -> `deno link ./pkg` -> "its deno.json
+  // Only hint when the directory is actually linkable. `edno link` requires
+  // the target's edno.json(c) to exist *and* declare a "name", so check the
+  // same condition here. Otherwise the hint dead-ends: `edno add ./pkg` ->
+  // "Did you mean `edno link ./pkg`?" -> `edno link ./pkg` -> "its edno.json
   // has no name field".
   read_link_target_name(&abs)?;
   Some(format!(
     "'{}' looks like a local package directory. Did you mean `{}`?",
     spec,
-    crate::colors::yellow(format!("deno link {spec}"))
+    crate::colors::yellow(format!("edno link {spec}"))
   ))
 }
 
@@ -1397,9 +1397,9 @@ fn path_to_link_string(path: &Path) -> String {
   s.strip_prefix("./").map(|s| s.to_string()).unwrap_or(s)
 }
 
-/// Read the `"name"` field from a deno.json(c) in the given directory.
+/// Read the `"name"` field from a edno.json(c) in the given directory.
 fn read_link_target_name(dir: &Path) -> Option<String> {
-  for filename in ["deno.json", "deno.jsonc"] {
+  for filename in ["edno.json", "edno.jsonc"] {
     let path = dir.join(filename);
     let Ok(text) = std::fs::read_to_string(&path) else {
       continue;
@@ -1434,45 +1434,45 @@ fn load_deno_config_for_link(
   create_if_missing: bool,
 ) -> Result<(CliFactory, ConfigUpdater), AnyError> {
   if create_if_missing {
-    // For `link`, force creation of deno.json if missing; the `"links"` field
+    // For `link`, force creation of edno.json if missing; the `"links"` field
     // lives there. We achieve this by claiming jsr specifiers are present,
-    // which makes `load_configs` materialise a deno.json when one isn't found.
-    let (cli_factory, _force_package_json, _npm_config, deno_config) =
+    // which makes `load_configs` materialise a edno.json when one isn't found.
+    let (cli_factory, _force_package_json, _npm_config, edno_config) =
       load_configs(flags, || true, false, false)?;
-    let deno_config = deno_config.ok_or_else(|| {
-      deno_core::anyhow::anyhow!("Could not load or create deno.json")
+    let edno_config = edno_config.ok_or_else(|| {
+      edno_core::anyhow::anyhow!("Could not load or create edno.json")
     })?;
-    return Ok((cli_factory, deno_config));
+    return Ok((cli_factory, edno_config));
   }
 
-  // For `unlink`, never create a deno.json: if there isn't one, there's
+  // For `unlink`, never create a edno.json: if there isn't one, there's
   // nothing to unlink. Load only an existing config so a failed unlink can't
-  // leave an empty deno.json behind.
+  // leave an empty edno.json behind.
   let cli_factory = CliFactory::from_flags(flags.clone());
   let options = cli_factory.cli_options()?;
-  let deno_config = match options.start_dir.member_deno_json() {
-    Some(deno_json) => ConfigUpdater::new(
-      ConfigKind::DenoJson,
-      url_to_file_path(&deno_json.specifier)?,
+  let edno_config = match options.start_dir.member_deno_json() {
+    Some(edno_json) => ConfigUpdater::new(
+      ConfigKind::EdnoJson,
+      url_to_file_path(&edno_json.specifier)?,
     )?,
-    None => bail!("No deno.json found; there are no linked packages to unlink"),
+    None => bail!("No edno.json found; there are no linked packages to unlink"),
   };
-  Ok((cli_factory, deno_config))
+  Ok((cli_factory, edno_config))
 }
 
 pub async fn link(
   flags: Arc<Flags>,
   link_flags: LinkFlags,
 ) -> Result<(), AnyError> {
-  let (cli_factory, mut deno_config) = load_deno_config_for_link(&flags, true)?;
+  let (cli_factory, mut edno_config) = load_deno_config_for_link(&flags, true)?;
   let cwd = cli_factory.cli_options()?.initial_cwd().to_path_buf();
-  let config_dir = deno_config
+  let config_dir = edno_config
     .path
     .parent()
     .ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "Could not determine directory of '{}'",
-        deno_config.path.display()
+        edno_config.path.display()
       )
     })?
     .to_path_buf();
@@ -1488,17 +1488,17 @@ pub async fn link(
       bail!("Cannot link '{}': not a directory", raw_path);
     }
     let has_config =
-      abs.join("deno.json").exists() || abs.join("deno.jsonc").exists();
+      abs.join("edno.json").exists() || abs.join("edno.jsonc").exists();
     if !has_config {
       bail!(
-        "Cannot link '{}': no deno.json found in directory. \
-         A linked package must contain a deno.json with a \"name\" field.",
+        "Cannot link '{}': no edno.json found in directory. \
+         A linked package must contain a edno.json with a \"name\" field.",
         raw_path
       );
     }
     if read_link_target_name(&abs).is_none() {
       bail!(
-        "Cannot link '{}': its deno.json has no \"name\" field. \
+        "Cannot link '{}': its edno.json has no \"name\" field. \
          A linked package must declare a JSR-style \"name\" to be importable.",
         raw_path
       );
@@ -1510,7 +1510,7 @@ pub async fn link(
   // Listing the path in "links" is all that's needed: a linked package is
   // importable by its bare "name" just like a workspace member, so there's no
   // `imports` entry to wire up.
-  let links_arr = deno_config.root_object.array_value_or_set("links");
+  let links_arr = edno_config.root_object.array_value_or_set("links");
   let existing: Vec<String> = links_arr
     .elements()
     .iter()
@@ -1534,8 +1534,8 @@ pub async fn link(
   }
 
   if changed {
-    deno_config.modified = true;
-    deno_config.commit()?;
+    edno_config.modified = true;
+    edno_config.commit()?;
     npm_install_after_modification(
       flags,
       None,
@@ -1554,27 +1554,27 @@ pub async fn unlink(
   flags: Arc<Flags>,
   unlink_flags: UnlinkFlags,
 ) -> Result<(), AnyError> {
-  let (cli_factory, mut deno_config) =
+  let (cli_factory, mut edno_config) =
     load_deno_config_for_link(&flags, false)?;
   // Resolve path arguments relative to the cwd, matching how `link()` resolves
-  // them, so `deno unlink ../pkg` finds an entry created by `deno link ../pkg`
-  // from the same directory regardless of where the deno.json lives.
+  // them, so `edno unlink ../pkg` finds an entry created by `edno link ../pkg`
+  // from the same directory regardless of where the edno.json lives.
   let cwd = cli_factory.cli_options()?.initial_cwd().to_path_buf();
-  let config_dir = deno_config
+  let config_dir = edno_config
     .path
     .parent()
     .ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "Could not determine directory of '{}'",
-        deno_config.path.display()
+        edno_config.path.display()
       )
     })?
     .to_path_buf();
 
-  let Some(links_arr) = deno_config.root_object.array_value("links") else {
+  let Some(links_arr) = edno_config.root_object.array_value("links") else {
     bail!(
       "No \"links\" entries found in '{}'",
-      deno_config.display_path()
+      edno_config.display_path()
     );
   };
 
@@ -1629,7 +1629,7 @@ pub async fn unlink(
 
   // If the "links" array is now empty, remove the property entirely.
   if links_arr.elements().is_empty()
-    && let Some(prop) = deno_config.root_object.get("links")
+    && let Some(prop) = edno_config.root_object.get("links")
   {
     prop.remove();
   }
@@ -1638,8 +1638,8 @@ pub async fn unlink(
     log::info!("Unlink {}", crate::colors::green(name));
   }
 
-  deno_config.modified = true;
-  deno_config.commit()?;
+  edno_config.modified = true;
+  edno_config.commit()?;
 
   npm_install_after_modification(
     flags,

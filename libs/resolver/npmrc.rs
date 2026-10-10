@@ -6,18 +6,18 @@ use std::path::Path;
 use std::path::PathBuf;
 
 use boxed_error::Boxed;
-use deno_config::workspace::Workspace;
-use deno_npmrc::NpmRc;
-use deno_npmrc::NpmRegistryUrl;
-use deno_npmrc::RegistryConfigWithUrl;
-use deno_npmrc::ResolvedNpmRc;
+use edno_config::workspace::Workspace;
+use edno_npmrc::NpmRc;
+use edno_npmrc::NpmRegistryUrl;
+use edno_npmrc::RegistryConfigWithUrl;
+use edno_npmrc::ResolvedNpmRc;
 use sys_traits::EnvHomeDir;
 use sys_traits::EnvVar;
 use sys_traits::FsRead;
 use thiserror::Error;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type ResolvedNpmRcRc = deno_maybe_sync::MaybeArc<ResolvedNpmRc>;
+pub type ResolvedNpmRcRc = edno_maybe_sync::MaybeArc<ResolvedNpmRc>;
 
 #[derive(Debug, Boxed)]
 pub struct NpmRcDiscoverError(pub Box<NpmRcDiscoverErrorKind>);
@@ -47,7 +47,7 @@ pub struct NpmRcLoadError {
 pub struct NpmRcParseError {
   path: PathBuf,
   #[source]
-  source: deno_npmrc::NpmRcParseError,
+  source: edno_npmrc::NpmRcParseError,
 }
 
 #[derive(Debug, Error)]
@@ -55,11 +55,11 @@ pub struct NpmRcParseError {
 pub struct NpmRcOptionsResolveError {
   path: PathBuf,
   #[source]
-  source: deno_npmrc::ResolveError,
+  source: edno_npmrc::ResolveError,
 }
 
 /// Discover `.npmrc` file - currently we only support it next to `package.json`,
-/// next to `deno.json`, or in the user's home directory.
+/// next to `edno.json`, or in the user's home directory.
 ///
 /// In the future we will need to support it in the global directory
 /// as per https://docs.npmjs.com/cli/v10/configuring-npm/npmrc#files.
@@ -71,7 +71,7 @@ pub fn discover_npmrc_from_workspace<TSys: EnvVar + EnvHomeDir + FsRead>(
   discover_npmrc(
     sys,
     root_folder.pkg_json.as_ref().map(|p| p.path.clone()),
-    match &root_folder.deno_json {
+    match &root_folder.edno_json {
       Some(cf) if cf.specifier.scheme() == "file" => {
         Some(deno_path_util::url_to_file_path(&cf.specifier)?)
       }
@@ -154,7 +154,7 @@ fn discover_npmrc<TSys: EnvVar + EnvHomeDir + FsRead>(
         .min_release_age_days
         .or(home_rc.min_release_age_days),
       trust_policy: if project_rc.trust_policy
-        != deno_npmrc::TrustPolicyConfig::Off
+        != edno_npmrc::TrustPolicyConfig::Off
       {
         project_rc.trust_policy
       } else {
@@ -209,11 +209,11 @@ fn discover_npmrc<TSys: EnvVar + EnvHomeDir + FsRead>(
     project_npmrc = Some((path, npmrc));
   }
 
-  // 3. Try `.npmrc` next to `deno.json(c)` when not found `package.json`
+  // 3. Try `.npmrc` next to `edno.json(c)` when not found `package.json`
   if project_npmrc.is_none()
-    && let Some(deno_json_path) = maybe_deno_json_path
-    && let Some(deno_json_dir) = deno_json_path.parent()
-    && let Some((source, path)) = try_to_read_npmrc(sys, deno_json_dir)?
+    && let Some(edno_json_path) = maybe_deno_json_path
+    && let Some(edno_json_dir) = edno_json_path.parent()
+    && let Some((source, path)) = try_to_read_npmrc(sys, edno_json_dir)?
   {
     let npmrc = try_to_parse_npmrc(sys, &source, &path)?;
     project_npmrc = Some((path, npmrc));
@@ -261,7 +261,7 @@ fn discover_npmrc<TSys: EnvVar + EnvHomeDir + FsRead>(
 
 pub fn create_default_npmrc(sys: &impl EnvVar) -> ResolvedNpmRc {
   ResolvedNpmRc {
-    default_config: deno_npmrc::RegistryConfigWithUrl {
+    default_config: edno_npmrc::RegistryConfigWithUrl {
       registry_url: NpmRegistryUrl::for_npm(sys).url,
       config: Default::default(),
     },
@@ -273,9 +273,9 @@ pub fn create_default_npmrc(sys: &impl EnvVar) -> ResolvedNpmRc {
       },
     )]),
     registry_configs: Default::default(),
-    replace_registry_host: deno_npmrc::ReplaceRegistryHost::for_npm(sys)
+    replace_registry_host: edno_npmrc::ReplaceRegistryHost::for_npm(sys)
       .unwrap_or_default(),
-    min_release_age_days: deno_npmrc::min_release_age_days_from_env(sys),
+    min_release_age_days: edno_npmrc::min_release_age_days_from_env(sys),
     trust_policy: Default::default(),
     trust_policy_ignore_after_minutes: None,
     trust_policy_exclude: Vec::new(),
@@ -319,7 +319,7 @@ mod test {
     );
     assert_eq!(
       npmrc.trust_policy,
-      deno_npmrc::TrustPolicyConfig::NoDowngrade
+      edno_npmrc::TrustPolicyConfig::NoDowngrade
     );
   }
 }

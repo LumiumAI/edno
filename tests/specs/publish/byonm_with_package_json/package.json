@@ -3,6 +3,6 @@
   "module": "src/index.ts",
   "type": "module",
   "dependencies": {
-    "@denotest/add": "1"
+    "@ednotest/add": "1"
   }
 }

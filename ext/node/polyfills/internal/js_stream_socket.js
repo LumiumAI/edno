@@ -16,9 +16,9 @@ const {
 const lazyNet = core.createLazyLoader("node:net");
 const lazyTimers = core.createLazyLoader("node:timers");
 
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
 const { codeMap, UV_ECANCELED } = core.loadExtScript(
-  "ext:deno_node/internal_binding/uv.ts",
+  "ext:edno_node/internal_binding/uv.ts",
 );
 const {
   kArrayBufferOffset,
@@ -26,10 +26,10 @@ const {
   kLastWriteWasAsync,
   kReadBytesOrError,
   streamBaseState,
-} = core.loadExtScript("ext:deno_node/internal_binding/stream_wrap.ts");
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+} = core.loadExtScript("ext:edno_node/internal_binding/stream_wrap.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const { ERR_STREAM_WRAP } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 
 const kCurrentWriteRequest = Symbol("kCurrentWriteRequest");
@@ -91,7 +91,7 @@ class JSStreamSocket extends lazyNet().Socket {
       // Write methods - delegate to owner.doWrite which writes to the
       // underlying stream and triggers req.oncomplete via finishWrite.
       writeBuffer(req, data) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const len = data.byteLength ?? data.length ?? 0;
         streamBaseState[kBytesWritten] = len;
         streamBaseState[kLastWriteWasAsync] = 1;
@@ -103,7 +103,7 @@ class JSStreamSocket extends lazyNet().Socket {
         if (allBuffers) {
           bufs = chunks;
           for (let i = 0; i < bufs.length; i++) {
-            // deno-lint-ignore deno-internal/prefer-primordials
+            // edno-lint-ignore edno-internal/prefer-primordials
             total += bufs[i].byteLength ?? bufs[i].length ?? 0;
           }
         } else {
@@ -115,7 +115,7 @@ class JSStreamSocket extends lazyNet().Socket {
               ? Buffer.from(chunk, enc)
               : chunk;
             bufs[i >> 1] = buf;
-            // deno-lint-ignore deno-internal/prefer-primordials
+            // edno-lint-ignore edno-internal/prefer-primordials
             total += buf.byteLength ?? buf.length ?? 0;
           }
         }
@@ -145,10 +145,10 @@ class JSStreamSocket extends lazyNet().Socket {
       // the TLS engine instead.
       readBuffer(chunk) {
         if (!handle.onread) return;
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const len = chunk.byteLength ?? chunk.length ?? 0;
         if (len === 0) return;
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         streamBaseState[kArrayBufferOffset] = chunk.byteOffset ?? 0;
         streamBaseState[kReadBytesOrError] = len;
         FunctionPrototypeCall(handle.onread, handle, chunk, len);
@@ -262,7 +262,7 @@ class JSStreamSocket extends lazyNet().Socket {
     }
 
     const handle = this._handle;
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const self = this;
 
     let pending = bufs.length;

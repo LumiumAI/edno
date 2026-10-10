@@ -81,13 +81,13 @@ const {
   op_v8_gc_profiler_stop,
 } = core.ops;
 
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const lazyFs = core.createLazyLoader("node:fs");
 const lazyStream = core.createLazyLoader("node:stream");
 
-const { notImplemented } = core.loadExtScript("ext:deno_node/_utils.ts");
+const { notImplemented } = core.loadExtScript("ext:edno_node/_utils.ts");
 const { isArrayBufferView, isDataView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 
 function getViewBuffer(view: ArrayBufferView): ArrayBufferLike {
@@ -106,7 +106,7 @@ function getViewByteLength(view: ArrayBufferView): number {
     : TypedArrayPrototypeGetByteLength(view as Uint8Array);
 }
 const lazyFsUtils = core.createLazyLoader(
-  "ext:deno_node/internal/fs/utils.mjs",
+  "ext:edno_node/internal/fs/utils.mjs",
 );
 const {
   validateFunction,
@@ -116,7 +116,7 @@ const {
   validateUint32,
 } = core
   .loadExtScript(
-    "ext:deno_node/internal/validators.mjs",
+    "ext:edno_node/internal/validators.mjs",
   );
 
 function cachedDataVersionTag() {
@@ -270,7 +270,7 @@ function setHeapSnapshotNearHeapLimit(limit: number) {
 
 // https://nodejs.org/api/v8.html#v8queryobjectsctor-options
 //
-// Deno currently only supports `{ format: 'count' }`. Returning live instances
+// Edno currently only supports `{ format: 'count' }`. Returning live instances
 // would require V8's `HeapProfiler::QueryObjects`, which isn't exposed in the
 // rusty_v8 bindings; the count form is what Node's leak tests rely on.
 function queryObjects(
@@ -306,7 +306,7 @@ function queryObjects(
   return [];
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function serialize(value: any) {
   const ser = new DefaultSerializer();
   ser.writeHeader();
@@ -387,7 +387,7 @@ class Serializer {
     op_v8_write_uint64(this[kHandle], hi, lo);
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   writeValue(value: any): void {
     op_v8_write_value(this[kHandle], value);
   }
@@ -410,7 +410,7 @@ class Deserializer {
   readRawBytes(length: number): Buffer {
     const offset = this._readRawBytes(length);
     // `this.buffer` is the Deserializer's own field, not a TypedArray getter.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const view = this.buffer;
     return Buffer.from(
       getViewBuffer(view),
@@ -475,7 +475,7 @@ class DefaultSerializer extends Serializer {
     this._setTreatArrayBufferViewsAsHostObjects(true);
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   _writeHostObject(abView: any) {
     // Keep track of how to handle different ArrayBufferViews. The default
     // Serializer for Node does not use the V8 methods for serializing those
@@ -505,7 +505,7 @@ class DefaultSerializer extends Serializer {
   }
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function arrayBufferViewIndexToType(index: number): any {
   if (index === 0) return Int8Array;
   if (index === 1) return Uint8Array;
@@ -566,14 +566,14 @@ class GCProfiler {
 
 // https://nodejs.org/api/v8.html#startup-snapshot-api
 //
-// Deno does not ship `--build-snapshot` / `--snapshot-blob` for users, so this
+// Edno does not ship `--build-snapshot` / `--snapshot-blob` for users, so this
 // is an API-surface polyfill that lets modules calling `v8.startupSnapshot`
 // load without errors. `isBuildingSnapshot()` always returns false. The
 // serialize/deserialize callbacks are stored but never invoked because there
 // is no snapshot lifecycle. `setDeserializeMainFunction` invokes the callback
 // synchronously so scripts that register a deserialize main still run their
-// entry point in plain Deno runs.
-// deno-lint-ignore no-explicit-any
+// entry point in plain Edno runs.
+// edno-lint-ignore no-explicit-any
 type SnapshotCallback = (data: any) => unknown;
 const serializeCallbacks: { fn: SnapshotCallback; data: unknown }[] = [];
 const deserializeCallbacks: { fn: SnapshotCallback; data: unknown }[] = [];
@@ -633,7 +633,7 @@ class DefaultDeserializer extends Deserializer {
     const BYTES_PER_ELEMENT = ctor?.BYTES_PER_ELEMENT ?? 1;
 
     // `this.buffer` is the Deserializer's own field, not a TypedArray getter.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const view = this.buffer;
     const offset = getViewByteOffset(view) + byteOffset;
     if (offset % BYTES_PER_ELEMENT === 0) {

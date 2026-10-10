@@ -4,23 +4,23 @@
 
 interface PendingAbortRequest {
   deferred: Deferred<void>;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   reason: any;
   wasAlreadyErroring: boolean;
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 interface ReadRequest<R = any> {
   chunkSteps: (chunk: R) => void;
   closeSteps: () => void;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   errorSteps: (error: any) => void;
 }
 
 interface ReadIntoRequest {
   chunkSteps: (chunk: ArrayBufferView) => void;
   closeSteps: (chunk?: ArrayBufferView) => void;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   errorSteps: (error: any) => void;
 }
 
@@ -32,7 +32,7 @@ interface PullIntoDescriptor {
   bytesFilled: number;
   minimumFill: number;
   elementSize: number;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   viewConstructor: any;
   readerType: "default" | "byob" | "none";
 }
@@ -62,7 +62,7 @@ interface VoidFunction {
 
 interface ReadableStreamGenericReader {
   readonly closed: Promise<undefined>;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   cancel(reason?: any): Promise<void>;
 }
 
@@ -70,7 +70,7 @@ interface ReadableStreamGenericReader {
 
 declare function queueMicrotask(callback: VoidFunction): void;
 
-declare namespace Deno {
+declare namespace Edno {
   export function inspect(
     value: unknown,
     options?: Record<string, unknown>,

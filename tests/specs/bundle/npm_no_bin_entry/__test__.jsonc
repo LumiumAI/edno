@@ -2,7 +2,7 @@
   "tempDir": true,
   "steps": [
     {
-      "args": "bundle -o add.cjs --format=cjs npm:@denotest/add@1.0.0",
+      "args": "bundle -o add.cjs --format=cjs npm:@ednotest/add@1.0.0",
       "output": "bundle.out"
     },
     {

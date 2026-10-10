@@ -1,1 +1,1 @@
-export { getValue } from "@denotest/types-entry-value-not-exists";
+export { getValue } from "@ednotest/types-entry-value-not-exists";

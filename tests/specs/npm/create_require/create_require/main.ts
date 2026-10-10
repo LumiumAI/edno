@@ -1,1 +1,1 @@
-import "npm:@denotest/create-require@1.0.0";
+import "npm:@ednotest/create-require@1.0.0";

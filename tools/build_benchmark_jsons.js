@@ -9,15 +9,15 @@ const recentDataFile = "gh-pages/recent.json"; // Includes recent 20 benchmark d
 const recentDataJsonlFile = "gh-pages/recent.jsonl"; // JSONL version of recent benchmark data.
 
 function readJson(filename) {
-  return JSON.parse(Deno.readTextFileSync(filename));
+  return JSON.parse(Edno.readTextFileSync(filename));
 }
 
 function writeJson(filename, data) {
-  return Deno.writeTextFileSync(filename, JSON.stringify(data));
+  return Edno.writeTextFileSync(filename, JSON.stringify(data));
 }
 
 function writeJsonl(filename, data) {
-  return Deno.writeTextFileSync(
+  return Edno.writeTextFileSync(
     filename,
     data.map((row) => JSON.stringify(row)).join("\n") + "\n",
   );

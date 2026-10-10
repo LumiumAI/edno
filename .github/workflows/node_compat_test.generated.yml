@@ -67,10 +67,10 @@ jobs:
         run: git submodule update --init --recursive --depth=1 -- ./tests/node_compat/runner/suite
       - name: Setup Rust
         uses: dsherret/rust-toolchain-file@3551321aa44dd44a0393eb3b6bdfbc5d25ecf621
-      - name: Setup Deno
+      - name: Setup Edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
         with:
-          deno-version: canary
+          edno-version: canary
       - name: Install Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
@@ -80,7 +80,7 @@ jobs:
           CARGO_ENCODED_RUSTFLAGS: ''
           CI_SHARD_INDEX: '${{ matrix.shard_index }}'
           CI_SHARD_TOTAL: '${{ matrix.shard_total }}'
-        run: deno task --cwd tests/node_compat/runner test --report
+        run: edno task --cwd tests/node_compat/runner test --report
       - name: Gzip the report
         run: gzip tests/node_compat/report.json
       - name: Upload the report to dl.deno.land
@@ -90,7 +90,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: '${{ secrets.S3_SECRET_ACCESS_KEY }}'
           AWS_ENDPOINT_URL_S3: '${{ vars.S3_ENDPOINT }}'
           AWS_DEFAULT_REGION: '${{vars.S3_REGION }}'
-        run: 'aws s3 cp tests/node_compat/report.json.gz s3://dl-deno-land/node-compat-test/$(date +%F)/report-${{matrix.os}}-${{matrix.shard_index}}.json.gz'
+        run: 'aws s3 cp tests/node_compat/report.json.gz s3://dl-edno-land/node-compat-test/$(date +%F)/report-${{matrix.os}}-${{matrix.shard_index}}.json.gz'
   summary:
     needs:
       - test
@@ -103,14 +103,14 @@ jobs:
           submodules: false
       - name: Clone std submodule
         run: git submodule update --init --recursive --depth=1 -- ./tests/util/std
-      - name: Setup Deno
+      - name: Setup Edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
       - name: Install Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: 3.11
       - name: Add the day summary to the month summary
-        run: deno -A --config tests/config/deno.json tests/node_compat/add_day_summary_to_month_summary.ts
+        run: edno -A --config tests/config/edno.json tests/node_compat/add_day_summary_to_month_summary.ts
       - name: Gzip the month summary
         run: gzip tests/node_compat/summary.json -k
       - name: Upload the month summary
@@ -119,12 +119,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: '${{ secrets.S3_SECRET_ACCESS_KEY }}'
           AWS_ENDPOINT_URL_S3: '${{ vars.S3_ENDPOINT }}'
           AWS_DEFAULT_REGION: '${{vars.S3_REGION }}'
-        run: 'aws s3 cp tests/node_compat/summary.json.gz s3://dl-deno-land/node-compat-test/summary-$(date +%Y-%m).json.gz'
+        run: 'aws s3 cp tests/node_compat/summary.json.gz s3://dl-edno-land/node-compat-test/summary-$(date +%Y-%m).json.gz'
       - name: Post message to slack channel
         env:
           SLACK_TOKEN: '${{ secrets.NODE_COMPAT_SLACK_TOKEN }}'
           SLACK_CHANNEL: '${{ secrets.NODE_COMPAT_SLACK_CHANNEL }}'
-        run: deno -A --config tests/config/deno.json tests/node_compat/slack.ts
+        run: edno -A --config tests/config/edno.json tests/node_compat/slack.ts
 
 # gagen:pin actions/checkout@v6 = de0fac2e4500dabe0009e67214ff5f5447ce83dd
 # gagen:pin actions/setup-python@v6 = a309ff8b426b58ec0e2a45f0f869d46889d02405

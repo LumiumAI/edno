@@ -11,8 +11,8 @@
 
 import http from "node:http";
 
-const PROXY_PORT = Number(Deno.args[0] ?? 9457);
-const TARGET_PORT = Number(Deno.args[1] ?? 9458);
+const PROXY_PORT = Number(Edno.args[0] ?? 9457);
+const TARGET_PORT = Number(Edno.args[1] ?? 9458);
 const TARGET = `http://127.0.0.1:${TARGET_PORT}/test`;
 
 const proxy = http.createServer((_req, res) => res.end("hello from origin"));

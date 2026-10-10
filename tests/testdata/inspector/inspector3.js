@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 // check that console methods provided by V8 are available in the inspector
 console.timeStamp("foo");

@@ -1,3 +1,3 @@
 import "./main.ts";
 
-Deno.test("main", () => {});
+Edno.test("main", () => {});

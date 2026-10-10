@@ -3,10 +3,10 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::futures::future::Shared;
-use deno_resolver::deno_json::CompilerOptionsKey;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::futures::future::Shared;
+use edno_resolver::edno_json::CompilerOptionsKey;
 use indexmap::IndexMap;
 use indexmap::IndexSet;
 use lsp_types::Uri;
@@ -338,7 +338,7 @@ impl TsServer {
         let supported_code_fixes =
           ts_server.get_supported_code_fixes(snapshot.clone()).await?;
         let fixable_diagnostics = context.diagnostics.iter().filter(|d| {
-          d.source.as_deref() == Some("deno-ts")
+          d.source.as_deref() == Some("edno-ts")
             && match &d.code {
               Some(lsp::NumberOrString::String(code)) => {
                 supported_code_fixes.contains(code)

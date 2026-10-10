@@ -2,10 +2,10 @@
 
 // @ts-check
 /// <reference path="./compiler.d.ts" />
-// deno-lint-ignore-file no-undef
+// edno-lint-ignore-file no-undef
 
 // This module is the entry point for "compiler" isolate, ie. the one
-// that is created when Deno needs to type check TypeScript, and in some
+// that is created when Edno needs to type check TypeScript, and in some
 // instances convert TypeScript to JavaScript.
 
 // Removes the `__proto__` for security reasons.
@@ -21,8 +21,8 @@ import {
 } from "./97_ts_host.js";
 import { serverMainLoop } from "./98_lsp.js";
 
-/** @type {DenoCore} */
-const core = globalThis.Deno.core;
+/** @type {EdnoCore} */
+const core = globalThis.Edno.core;
 const ops = core.ops;
 
 /** @type {Array<[string, number]>} */
@@ -109,7 +109,7 @@ function exec({ config, debug: debugFlag, rootNames, localOnly }) {
   Object.assign(options, {
     // The `allowNonTsExtensions` is a "hidden" compiler option used in VSCode
     // which is not allowed to be passed in JSON, we need it to allow special
-    // URLs which Deno supports. So we need to either ignore the diagnostic, or
+    // URLs which Edno supports. So we need to either ignore the diagnostic, or
     // inject it ourselves.
     allowNonTsExtensions: true,
     // This is special functionality we inject into the compiler options
@@ -202,7 +202,7 @@ const libs = ops.op_libs();
 for (const lib of libs) {
   const specifier = `lib.${lib}.d.ts`;
   // we are using internal APIs here to "inject" our custom libraries into
-  // tsc, so things like `"lib": [ "deno.ns" ]` are supported.
+  // tsc, so things like `"lib": [ "edno.ns" ]` are supported.
   if (!ts.libs.includes(lib)) {
     ts.libs.push(lib);
     ts.libMap.set(lib, specifier);

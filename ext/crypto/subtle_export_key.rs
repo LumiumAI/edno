@@ -13,12 +13,12 @@ use std::borrow::Cow;
 
 use base64::Engine;
 use base64::prelude::BASE64_URL_SAFE_NO_PAD;
-use deno_core::ToV8;
-use deno_core::v8;
-use deno_core::webidl::ContextFn;
-use deno_core::webidl::WebIdlConverter;
-use deno_core::webidl::WebIdlError;
-use deno_core::webidl::WebIdlErrorKind;
+use edno_core::ToV8;
+use edno_core::v8;
+use edno_core::webidl::ContextFn;
+use edno_core::webidl::WebIdlConverter;
+use edno_core::webidl::WebIdlError;
+use edno_core::webidl::WebIdlErrorKind;
 use deno_error::JsErrorBox;
 
 use crate::CryptoError;

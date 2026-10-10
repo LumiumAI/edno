@@ -6,9 +6,9 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test(function matrixTransformPoint() {
+Edno.test(function matrixTransformPoint() {
   const point = new DOMPoint(1, 2, 3, 4);
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const matrix = DOMMatrix.fromMatrix({
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -31,8 +31,8 @@ Deno.test(function matrixTransformPoint() {
   );
 });
 
-Deno.test(function matrixTranslate() {
-  // deno-fmt-ignore
+Edno.test(function matrixTranslate() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -47,7 +47,7 @@ Deno.test(function matrixTranslate() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  2, m31:  3, m41:  1 * 1 +  2 * 2 +  3 * 3 +  4 * 1,
       m12:  5, m22:  6, m32:  7, m42:  5 * 1 +  6 * 2 +  7 * 3 +  8 * 1,
@@ -57,8 +57,8 @@ Deno.test(function matrixTranslate() {
   );
 });
 
-Deno.test(function matrixTranslateSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixTranslateSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -73,7 +73,7 @@ Deno.test(function matrixTranslateSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  2, m31:  3, m41:  1 * 1 +  2 * 2 +  3 * 3 +  4 * 1,
       m12:  5, m22:  6, m32:  7, m42:  5 * 1 +  6 * 2 +  7 * 3 +  8 * 1,
@@ -83,8 +83,8 @@ Deno.test(function matrixTranslateSelf() {
   );
 });
 
-Deno.test(function matrixScale() {
-  // deno-fmt-ignore
+Edno.test(function matrixScale() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -99,7 +99,7 @@ Deno.test(function matrixScale() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  2 * 2, m31:  3 * 3, m41:  4,
       m12:  5, m22:  6 * 2, m32:  7 * 3, m42:  8,
@@ -109,8 +109,8 @@ Deno.test(function matrixScale() {
   );
 });
 
-Deno.test(function matrixScaleSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixScaleSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -125,7 +125,7 @@ Deno.test(function matrixScaleSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  2 * 2, m31:  3 * 3, m41:  4,
       m12:  5, m22:  6 * 2, m32:  7 * 3, m42:  8,
@@ -135,8 +135,8 @@ Deno.test(function matrixScaleSelf() {
   );
 });
 
-Deno.test(function matrixScaleWithOrigin() {
-  // deno-fmt-ignore
+Edno.test(function matrixScaleWithOrigin() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -151,7 +151,7 @@ Deno.test(function matrixScaleWithOrigin() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  2 * 2, m31:  3 * 3, m41:  -42,
       m12:  5, m22:  6 * 2, m32:  7 * 3, m42: -106,
@@ -161,8 +161,8 @@ Deno.test(function matrixScaleWithOrigin() {
   );
 });
 
-Deno.test(function matrixScaleWithOriginSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixScaleWithOriginSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -177,7 +177,7 @@ Deno.test(function matrixScaleWithOriginSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  2 * 2, m31:  3 * 3, m41:  -42,
       m12:  5, m22:  6 * 2, m32:  7 * 3, m42: -106,
@@ -187,8 +187,8 @@ Deno.test(function matrixScaleWithOriginSelf() {
   );
 });
 
-Deno.test(function matrixScaleNonUniform() {
-  // deno-fmt-ignore
+Edno.test(function matrixScaleNonUniform() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -203,7 +203,7 @@ Deno.test(function matrixScaleNonUniform() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  2 * 2, m31:  3, m41:  4,
       m12:  5, m22:  6 * 2, m32:  7, m42:  8,
@@ -213,8 +213,8 @@ Deno.test(function matrixScaleNonUniform() {
   );
 });
 
-Deno.test(function matrixScale3d() {
-  // deno-fmt-ignore
+Edno.test(function matrixScale3d() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -229,7 +229,7 @@ Deno.test(function matrixScale3d() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1 * 2, m21:  2 * 2, m31:  3 * 2, m41:  4,
       m12:  5 * 2, m22:  6 * 2, m32:  7 * 2, m42:  8,
@@ -239,8 +239,8 @@ Deno.test(function matrixScale3d() {
   );
 });
 
-Deno.test(function matrixScale3dSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixScale3dSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -255,7 +255,7 @@ Deno.test(function matrixScale3dSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1 * 2, m21:  2 * 2, m31:  3 * 2, m41:  4,
       m12:  5 * 2, m22:  6 * 2, m32:  7 * 2, m42:  8,
@@ -265,8 +265,8 @@ Deno.test(function matrixScale3dSelf() {
   );
 });
 
-Deno.test(function matrixScale3dWithOrigin() {
-  // deno-fmt-ignore
+Edno.test(function matrixScale3dWithOrigin() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -281,7 +281,7 @@ Deno.test(function matrixScale3dWithOrigin() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1 * 2, m21:  2 * 2, m31:  3 * 2, m41:  -28,
       m12:  5 * 2, m22:  6 * 2, m32:  7 * 2, m42:  -84,
@@ -291,8 +291,8 @@ Deno.test(function matrixScale3dWithOrigin() {
   );
 });
 
-Deno.test(function matrixScale3dWithOriginSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixScale3dWithOriginSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -307,7 +307,7 @@ Deno.test(function matrixScale3dWithOriginSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1 * 2, m21:  2 * 2, m31:  3 * 2, m41:  -28,
       m12:  5 * 2, m22:  6 * 2, m32:  7 * 2, m42:  -84,
@@ -317,15 +317,15 @@ Deno.test(function matrixScale3dWithOriginSelf() {
   );
 });
 
-Deno.test(function matrixRotate() {
-  // deno-fmt-ignore
+Edno.test(function matrixRotate() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  -3, m21:  -2, m31:  -1, m41:  4,
     m12:  -7, m22:  -6, m32:  -5, m42:  8,
@@ -351,15 +351,15 @@ Deno.test(function matrixRotate() {
   }
 });
 
-Deno.test(function matrixRotateSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixRotateSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  -3, m21:  -2, m31:  -1, m41:  4,
     m12:  -7, m22:  -6, m32:  -5, m42:  8,
@@ -385,15 +385,15 @@ Deno.test(function matrixRotateSelf() {
   }
 });
 
-Deno.test(function matrixRotateFromVector() {
-  // deno-fmt-ignore
+Edno.test(function matrixRotateFromVector() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  2.121320343559643, m21: 0.7071067811865476, m31:  3, m41:  4,
     m12:  7.778174593052023, m22: 0.7071067811865479, m32:  7, m42:  8,
@@ -419,15 +419,15 @@ Deno.test(function matrixRotateFromVector() {
   }
 });
 
-Deno.test(function matrixRotateFromVectorSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixRotateFromVectorSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  2.121320343559643, m21: 0.7071067811865476, m31:  3, m41:  4,
     m12:  7.778174593052023, m22: 0.7071067811865479, m32:  7, m42:  8,
@@ -453,15 +453,15 @@ Deno.test(function matrixRotateFromVectorSelf() {
   }
 });
 
-Deno.test(function matrixRotateAxisAngle() {
-  // deno-fmt-ignore
+Edno.test(function matrixRotateAxisAngle() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  1,                 m21:  2,                 m31:  3,                  m41:  4,
     m12:  5.228294835332138, m22:  4.854398120227125, m32:  7.6876363080712045, m42:  8,
@@ -487,15 +487,15 @@ Deno.test(function matrixRotateAxisAngle() {
   }
 });
 
-Deno.test(function matrixRotateAxisAngleSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixRotateAxisAngleSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  1,                 m21:  2,                 m31:  3,                  m41:  4,
     m12:  5.228294835332138, m22:  4.854398120227125, m32:  7.6876363080712045, m42:  8,
@@ -521,15 +521,15 @@ Deno.test(function matrixRotateAxisAngleSelf() {
   }
 });
 
-Deno.test(function matrixSkewX() {
-  // deno-fmt-ignore
+Edno.test(function matrixSkewX() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  1, m21:  2.5773502691896257, m31:  3, m41:  4,
     m12:  5, m22:  8.8867513459481270, m32:  7, m42:  8,
@@ -555,15 +555,15 @@ Deno.test(function matrixSkewX() {
   }
 });
 
-Deno.test(function matrixSkewXSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixSkewXSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  1, m21:  2.5773502691896257, m31:  3, m41:  4,
     m12:  5, m22:  8.8867513459481270, m32:  7, m42:  8,
@@ -589,15 +589,15 @@ Deno.test(function matrixSkewXSelf() {
   }
 });
 
-Deno.test(function matrixSkewY() {
-  // deno-fmt-ignore
+Edno.test(function matrixSkewY() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  2.1547005383792515, m21:  2, m31:  3, m41:  4,
     m12:  8.4641016151377530, m22:  6, m32:  7, m42:  8,
@@ -623,15 +623,15 @@ Deno.test(function matrixSkewY() {
   }
 });
 
-Deno.test(function matrixSkewYSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixSkewYSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
     m13:  9, m23: 10, m33: 11, m43: 12,
     m14: 13, m24: 14, m34: 15, m44: 16,
   };
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expect = {
     m11:  2.1547005383792515, m21:  2, m31:  3, m41:  4,
     m12:  8.4641016151377530, m22:  6, m32:  7, m42:  8,
@@ -657,8 +657,8 @@ Deno.test(function matrixSkewYSelf() {
   }
 });
 
-Deno.test(function matrixMultiply() {
-  // deno-fmt-ignore
+Edno.test(function matrixMultiply() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -673,7 +673,7 @@ Deno.test(function matrixMultiply() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1 * 1, m21:  2 * 2, m31:  3 * 3, m41:  4 * 4,
       m12:  5 * 1, m22:  6 * 2, m32:  7 * 3, m42:  8 * 4,
@@ -683,8 +683,8 @@ Deno.test(function matrixMultiply() {
   );
 });
 
-Deno.test(function matrixMultiplySelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixMultiplySelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -699,7 +699,7 @@ Deno.test(function matrixMultiplySelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1 * 1, m21:  2 * 2, m31:  3 * 3, m41:  4 * 4,
       m12:  5 * 1, m22:  6 * 2, m32:  7 * 3, m42:  8 * 4,
@@ -709,8 +709,8 @@ Deno.test(function matrixMultiplySelf() {
   );
 });
 
-Deno.test(function matrixMultiplySelfWithSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixMultiplySelfWithSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -725,7 +725,7 @@ Deno.test(function matrixMultiplySelfWithSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  90, m21: 100, m31: 110, m41: 120,
       m12: 202, m22: 228, m32: 254, m42: 280,
@@ -735,8 +735,8 @@ Deno.test(function matrixMultiplySelfWithSelf() {
   );
 });
 
-Deno.test(function matrixPreMultiplySelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixPreMultiplySelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -751,7 +751,7 @@ Deno.test(function matrixPreMultiplySelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1 * 1, m21:  2 * 1, m31:  3 * 1, m41:  4 * 1,
       m12:  5 * 2, m22:  6 * 2, m32:  7 * 2, m42:  8 * 2,
@@ -761,8 +761,8 @@ Deno.test(function matrixPreMultiplySelf() {
   );
 });
 
-Deno.test(function matrixPreMultiplySelfWithSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixPreMultiplySelfWithSelf() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -777,7 +777,7 @@ Deno.test(function matrixPreMultiplySelfWithSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  90, m21: 100, m31: 110, m41: 120,
       m12: 202, m22: 228, m32: 254, m42: 280,
@@ -787,8 +787,8 @@ Deno.test(function matrixPreMultiplySelfWithSelf() {
   );
 });
 
-Deno.test(function matrixFlipX() {
-  // deno-fmt-ignore
+Edno.test(function matrixFlipX() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -803,7 +803,7 @@ Deno.test(function matrixFlipX() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  -1, m21:  2, m31:  3, m41:  4,
       m12:  -5, m22:  6, m32:  7, m42:  8,
@@ -813,8 +813,8 @@ Deno.test(function matrixFlipX() {
   );
 });
 
-Deno.test(function matrixFlipY() {
-  // deno-fmt-ignore
+Edno.test(function matrixFlipY() {
+  // edno-fmt-ignore
   const init = {
     m11:  1, m21:  2, m31:  3, m41:  4,
     m12:  5, m22:  6, m32:  7, m42:  8,
@@ -829,7 +829,7 @@ Deno.test(function matrixFlipY() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11:  1, m21:  -2, m31:  3, m41:  4,
       m12:  5, m22:  -6, m32:  7, m42:  8,
@@ -839,8 +839,8 @@ Deno.test(function matrixFlipY() {
   );
 });
 
-Deno.test(function matrixInverse() {
-  // deno-fmt-ignore
+Edno.test(function matrixInverse() {
+  // edno-fmt-ignore
   const init = {
     m11: 1, m21: 2, m31: 3, m41:  4,
     m12: 0, m22: 1, m32: 7, m42:  8,
@@ -855,7 +855,7 @@ Deno.test(function matrixInverse() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11: 1, m21: -2, m31: 11, m41: -120,
       m12: 0, m22:  1, m32: -7, m42:   76,
@@ -865,8 +865,8 @@ Deno.test(function matrixInverse() {
   );
 });
 
-Deno.test(function matrixInvertSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixInvertSelf() {
+  // edno-fmt-ignore
   const init = {
     m11: 1, m21: 2, m31: 3, m41:  4,
     m12: 0, m22: 1, m32: 7, m42:  8,
@@ -881,7 +881,7 @@ Deno.test(function matrixInvertSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11: 1, m21: -2, m31: 11, m41: -120,
       m12: 0, m22:  1, m32: -7, m42:   76,
@@ -891,8 +891,8 @@ Deno.test(function matrixInvertSelf() {
   );
 });
 
-Deno.test(function matrixInverse2D() {
-  // deno-fmt-ignore
+Edno.test(function matrixInverse2D() {
+  // edno-fmt-ignore
   const init = {
     m11: 1, m21: 2, m31: 0, m41: 4,
     m12: 0, m22: 1, m32: 0, m42: 8,
@@ -907,7 +907,7 @@ Deno.test(function matrixInverse2D() {
   );
   assertEquals(
     matrix2,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11: 1, m21: -2, m31: 0, m41: 12,
       m12: 0, m22:  1, m32: 0, m42: -8,
@@ -917,8 +917,8 @@ Deno.test(function matrixInverse2D() {
   );
 });
 
-Deno.test(function matrixInvert2DSelf() {
-  // deno-fmt-ignore
+Edno.test(function matrixInvert2DSelf() {
+  // edno-fmt-ignore
   const init = {
     m11: 1, m21: 2, m31: 0, m41: 4,
     m12: 0, m22: 1, m32: 0, m42: 8,
@@ -933,7 +933,7 @@ Deno.test(function matrixInvert2DSelf() {
   );
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11: 1, m21: -2, m31: 0, m41: 12,
       m12: 0, m22:  1, m32: 0, m42: -8,
@@ -943,14 +943,14 @@ Deno.test(function matrixInvert2DSelf() {
   );
 });
 
-Deno.test(function parseCSSTransfromList() {
+Edno.test(function parseCSSTransfromList() {
   const matrix = new DOMMatrix(
     "translateX(calc(1px + 2px)) rotate(atan2(3, 2))",
   );
   matrix.setMatrixValue("matrix(1, 2, 3, 4, 5, 6)");
   assertEquals(
     matrix,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     DOMMatrix.fromMatrix({
       m11: 1, m21: 3, m31: 0, m41: 5,
       m12: 2, m22: 4, m32: 0, m42: 6,
@@ -960,7 +960,7 @@ Deno.test(function parseCSSTransfromList() {
   );
 });
 
-Deno.test(function prototypeOverwrite() {
+Edno.test(function prototypeOverwrite() {
   const point = new DOMPointReadOnly();
   Object.setPrototypeOf(point, DOMPoint.prototype);
   assertThrows(

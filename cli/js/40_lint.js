@@ -16,7 +16,7 @@ const {
   op_is_cancelled,
 } = core.ops;
 
-/** @type {(id: string, message: string, hint: string | undefined, start: number, end: number, fix: Deno.lint.Fix[]) => void} */
+/** @type {(id: string, message: string, hint: string | undefined, start: number, end: number, fix: Edno.lint.Fix[]) => void} */
 let doReport = op_lint_report;
 /** @type {() => string} */
 let doGetSource = op_lint_get_source;
@@ -46,7 +46,7 @@ const AST_PROP_RANGE = 3;
 const AST_PROP_LENGTH = 4;
 
 // Keep in sync with Rust
-// Each node property is tagged with this enum to denote
+// Each node property is tagged with this enum to ednote
 // what kind of value it holds.
 /** @enum {number} */
 const PropFlags = {
@@ -107,10 +107,10 @@ class CancellationToken {
   }
 }
 
-/** @implements {Deno.lint.Fixer} */
+/** @implements {Edno.lint.Fixer} */
 class Fixer {
   /**
-   * @param {Deno.lint.Node} node
+   * @param {Edno.lint.Node} node
    * @param {string} text
    */
   insertTextAfter(node, text) {
@@ -121,7 +121,7 @@ class Fixer {
   }
 
   /**
-   * @param {Deno.lint.Node["range"]} range
+   * @param {Edno.lint.Node["range"]} range
    * @param {string} text
    */
   insertTextAfterRange(range, text) {
@@ -132,7 +132,7 @@ class Fixer {
   }
 
   /**
-   * @param {Deno.lint.Node} node
+   * @param {Edno.lint.Node} node
    * @param {string} text
    */
   insertTextBefore(node, text) {
@@ -143,7 +143,7 @@ class Fixer {
   }
 
   /**
-   * @param {Deno.lint.Node["range"]} range
+   * @param {Edno.lint.Node["range"]} range
    * @param {string} text
    */
   insertTextBeforeRange(range, text) {
@@ -154,7 +154,7 @@ class Fixer {
   }
 
   /**
-   * @param {Deno.lint.Node} node
+   * @param {Edno.lint.Node} node
    */
   remove(node) {
     return {
@@ -164,7 +164,7 @@ class Fixer {
   }
 
   /**
-   * @param {Deno.lint.Node["range"]} range
+   * @param {Edno.lint.Node["range"]} range
    */
   removeRange(range) {
     return {
@@ -174,7 +174,7 @@ class Fixer {
   }
 
   /**
-   * @param {Deno.lint.Node} node
+   * @param {Edno.lint.Node} node
    * @param {string} text
    */
   replaceText(node, text) {
@@ -185,7 +185,7 @@ class Fixer {
   }
 
   /**
-   * @param {Deno.lint.Node["range"]} range
+   * @param {Edno.lint.Node["range"]} range
    * @param {string} text
    */
   replaceTextRange(range, text) {
@@ -197,7 +197,7 @@ class Fixer {
 }
 
 /**
- * @implements {Deno.lint.SourceCode}
+ * @implements {Edno.lint.SourceCode}
  */
 export class SourceCode {
   /** @type {string | null} */
@@ -227,7 +227,7 @@ export class SourceCode {
   }
 
   /**
-   * @param {Deno.lint.Node} [node]
+   * @param {Edno.lint.Node} [node]
    * @returns {string}
    */
   getText(node) {
@@ -240,12 +240,12 @@ export class SourceCode {
   }
 
   /**
-   * @param {Deno.lint.Node} node
+   * @param {Edno.lint.Node} node
    */
   getAncestors(node) {
     const { buf } = this.#ctx;
 
-    /** @type {Deno.lint.Node[]} */
+    /** @type {Edno.lint.Node[]} */
     const ancestors = [];
 
     let parent = /** @type {*} */ (node)[INTERNAL_IDX];
@@ -264,7 +264,7 @@ export class SourceCode {
   }
 
   /**
-   * @returns {Array<Deno.lint.LineComment | Deno.lint.BlockComment>}
+   * @returns {Array<Edno.lint.LineComment | Edno.lint.BlockComment>}
    */
   getAllComments() {
     materializeComments(this.#ctx);
@@ -272,13 +272,13 @@ export class SourceCode {
   }
 
   /**
-   * @param {Deno.lint.Node} node
-   * @returns {Array<Deno.lint.LineComment | Deno.lint.BlockComment>}
+   * @param {Edno.lint.Node} node
+   * @returns {Array<Edno.lint.LineComment | Edno.lint.BlockComment>}
    */
   getCommentsBefore(node) {
     materializeComments(this.#ctx);
 
-    /** @type {Array<Deno.lint.LineComment | Deno.lint.BlockComment>} */
+    /** @type {Array<Edno.lint.LineComment | Edno.lint.BlockComment>} */
     const before = [];
 
     const { comments } = this.#ctx;
@@ -293,13 +293,13 @@ export class SourceCode {
   }
 
   /**
-   * @param {Deno.lint.Node} node
-   * @returns {Array<Deno.lint.LineComment | Deno.lint.BlockComment>}
+   * @param {Edno.lint.Node} node
+   * @returns {Array<Edno.lint.LineComment | Edno.lint.BlockComment>}
    */
   getCommentsAfter(node) {
     materializeComments(this.#ctx);
 
-    /** @type {Array<Deno.lint.LineComment | Deno.lint.BlockComment>} */
+    /** @type {Array<Edno.lint.LineComment | Edno.lint.BlockComment>} */
     const after = [];
 
     const { comments } = this.#ctx;
@@ -314,13 +314,13 @@ export class SourceCode {
   }
 
   /**
-   * @param {Deno.lint.Node} node
-   * @returns {Array<Deno.lint.LineComment | Deno.lint.BlockComment>}
+   * @param {Edno.lint.Node} node
+   * @returns {Array<Edno.lint.LineComment | Edno.lint.BlockComment>}
    */
   getCommentsInside(node) {
     materializeComments(this.#ctx);
 
-    /** @type {Array<Deno.lint.LineComment | Deno.lint.BlockComment>} */
+    /** @type {Array<Edno.lint.LineComment | Edno.lint.BlockComment>} */
     const inside = [];
 
     const { comments } = this.#ctx;
@@ -350,7 +350,7 @@ export class SourceCode {
 /**
  * Every rule gets their own instance of this class. This is the main
  * API lint rules interact with.
- * @implements {Deno.lint.RuleContext}
+ * @implements {Edno.lint.RuleContext}
  */
 export class Context {
   id;
@@ -378,7 +378,7 @@ export class Context {
   }
 
   /**
-   * @param {Deno.lint.ReportData} data
+   * @param {Edno.lint.ReportData} data
    */
   report(data) {
     const range = data.node ? data.node.range : data.range ? data.range : null;
@@ -397,7 +397,7 @@ export class Context {
       );
     }
 
-    /** @type {Deno.lint.Fix[]} */
+    /** @type {Edno.lint.Fix[]} */
     const fixes = [];
 
     if (typeof data.fix === "function") {
@@ -453,7 +453,7 @@ function materializeComments(ctx) {
 }
 
 /**
- * @param {Deno.lint.Plugin[]} plugins
+ * @param {Edno.lint.Plugin[]} plugins
  * @param {string[]} exclude
  * @param {string[]} [specifiers] The specifiers each plugin was loaded from,
  *   parallel to `plugins`, used to make error messages actionable.
@@ -469,7 +469,7 @@ export function installPlugins(plugins, exclude, specifiers) {
 }
 
 /**
- * @param {Deno.lint.Plugin} plugin
+ * @param {Edno.lint.Plugin} plugin
  * @param {string} [specifier] The specifier the plugin was loaded from, if any.
  */
 function installPlugin(plugin, specifier) {
@@ -590,15 +590,15 @@ class FacadeNode {
    *
    * This is only expected to be used during development of a rule.
    * @param {*} _
-   * @param {Deno.InspectOptions} options
+   * @param {Edno.InspectOptions} options
    * @returns {string}
    */
-  [Symbol.for("Deno.customInspect")](_, options) {
+  [Symbol.for("Edno.customInspect")](_, options) {
     const json = nodeToJson(this[INTERNAL_CTX], this[INTERNAL_IDX]);
-    return Deno.inspect(json, options);
+    return Edno.inspect(json, options);
   }
 
-  [Symbol.for("Deno.lint.toJsValue")]() {
+  [Symbol.for("Edno.lint.toJsValue")]() {
     return nodeToJson(this[INTERNAL_CTX], this[INTERNAL_IDX]);
   }
 }
@@ -689,7 +689,7 @@ function readType(buf, idx) {
 /**
  * @param {AstContext} ctx
  * @param {number} idx
- * @returns {Deno.lint.Node["range"]}
+ * @returns {Edno.lint.Node["range"]}
  */
 function readSpan(ctx, idx) {
   let offset = ctx.spansOffset + (idx * SPAN_SIZE);
@@ -1248,7 +1248,7 @@ export function runPluginsForFile(fileName, serializedAst) {
       const ruleCtx = new Context(ctx, id, fileName);
       const visitor = rule.create(ruleCtx);
 
-      // deno-lint-ignore guard-for-in
+      // edno-lint-ignore guard-for-in
       for (let key in visitor) {
         const fn = visitor[key];
         if (fn === undefined) continue;
@@ -1456,30 +1456,30 @@ function _dump(ctx) {
   const { buf, strTableOffset, strTable, strByType, strByProp } = ctx;
 
   // @ts-ignore dump fn
-  // deno-lint-ignore no-console
+  // edno-lint-ignore no-console
   console.log(strTable);
 
   for (let i = 0; i < strByType.length; i++) {
     const v = strByType[i];
     // @ts-ignore dump fn
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     if (v > 0) console.log(" > type:", i, getString(ctx.strTable, v), v);
   }
   // @ts-ignore dump fn
-  // deno-lint-ignore no-console
+  // edno-lint-ignore no-console
   console.log();
   for (let i = 0; i < strByProp.length; i++) {
     const v = strByProp[i];
     // @ts-ignore dump fn
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     if (v > 0) console.log(" > prop:", i, getString(ctx.strTable, v), v);
   }
   // @ts-ignore dump fn
-  // deno-lint-ignore no-console
+  // edno-lint-ignore no-console
   console.log();
 
   // @ts-ignore dump fn
-  // deno-lint-ignore no-console
+  // edno-lint-ignore no-console
   console.log();
 
   let idx = 0;
@@ -1496,21 +1496,21 @@ function _dump(ctx) {
       ? "<group>"
       : getString(ctx.strTable, ctx.strByType[type]);
     // @ts-ignore dump fn
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     console.log(`${name}, idx: ${idx}, type: ${type}`);
 
     // @ts-ignore dump fn
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     console.log(`  child: ${child}, next: ${next}, parent: ${parent}`);
     // @ts-ignore dump fn
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     console.log(`  range: ${range[0]}, ${range[1]}`);
 
     const rawOffset = readRawPropOffset(ctx.buf, idx);
     let propOffset = readPropOffset(ctx, idx);
     const count = buf[propOffset++];
     // @ts-ignore dump fn
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     console.log(
       `  prop count: ${count}, prop offset: ${propOffset} raw offset: ${rawOffset}`,
     );
@@ -1533,43 +1533,43 @@ function _dump(ctx) {
 
       if (kind === PropFlags.Ref) {
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: ${v} (${kindName}, ${prop})`);
       } else if (kind === PropFlags.RefArr) {
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: RefArray: ${v}, (${kindName}, ${prop})`);
       } else if (kind === PropFlags.Bool) {
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: ${v} (${kindName}, ${prop})`);
       } else if (kind === PropFlags.String) {
         const raw = getString(ctx.strTable, v);
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: ${raw} (${kindName}, ${prop})`);
       } else if (kind === PropFlags.Number) {
         const raw = getString(ctx.strTable, v);
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: ${raw} (${kindName}, ${prop})`);
       } else if (kind === PropFlags.Regex) {
         const raw = getString(ctx.strTable, v);
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: ${raw} (${kindName}, ${prop})`);
       } else if (kind === PropFlags.Null) {
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: null (${kindName}, ${prop})`);
       } else if (kind === PropFlags.Undefined) {
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: undefined (${kindName}, ${prop})`);
       } else if (kind === PropFlags.BigInt) {
         const raw = getString(ctx.strTable, v);
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(`    ${name}: ${raw} (${kindName}, ${prop})`);
       } else if (kind === PropFlags.Obj) {
         let offset = v + ctx.propsOffset;
@@ -1577,7 +1577,7 @@ function _dump(ctx) {
         offset += 4;
 
         // @ts-ignore dump fn
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(
           `    ${name}: Object (${count}) (${kindName}, ${prop}), raw offset ${v}`,
         );
@@ -1597,14 +1597,14 @@ internals.runPluginsForFile = runPluginsForFile;
 internals.resetState = resetState;
 
 /**
- * @param {Deno.lint.Plugin} plugin
+ * @param {Edno.lint.Plugin} plugin
  * @param {string} fileName
  * @param {string} sourceText
  */
 function runLintPlugin(plugin, fileName, sourceText) {
   installPlugin(plugin);
 
-  /** @type {Deno.lint.Diagnostic[]} */
+  /** @type {Edno.lint.Diagnostic[]} */
   const diagnostics = [];
   doReport = (id, message, hint, start, end, fix) => {
     diagnostics.push({
@@ -1630,10 +1630,10 @@ function runLintPlugin(plugin, fileName, sourceText) {
   return diagnostics;
 }
 
-// `op_lint_create_serialized_ast` is only available in the `deno test`
+// `op_lint_create_serialized_ast` is only available in the `edno test`
 // subcommand. In other subcommands that load this module (e.g. the REPL) the op
-// is missing, so keep the stub `Deno.lint.runPlugin` from 99_main.js which
+// is missing, so keep the stub `Edno.lint.runPlugin` from 99_main.js which
 // throws a helpful error instead of a cryptic "op is not a function".
 if (op_lint_create_serialized_ast) {
-  Deno.lint.runPlugin = runLintPlugin;
+  Edno.lint.runPlugin = runLintPlugin;
 }

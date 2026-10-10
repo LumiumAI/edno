@@ -1,10 +1,10 @@
-import type { Fizzbuzz } from "npm:@denotest/types";
-import type { SomeInterface } from "npm:@denotest/types_imported";
-import type { Foobar as FooInterface } from "npm:@denotest/types_imported/subpath";
-import { getClient } from "npm:@denotest/types-exports-subpaths/client";
-import { entryImport } from "npm:@denotest/types-exports-subpaths/entry-import";
-import { entryA } from "npm:@denotest/types-exports-subpaths/entry-a";
-import { entryTypes } from "npm:@denotest/types-exports-subpaths/entry-types-last-no-declaration-before";
+import type { Fizzbuzz } from "npm:@ednotest/types";
+import type { SomeInterface } from "npm:@ednotest/types_imported";
+import type { Foobar as FooInterface } from "npm:@ednotest/types_imported/subpath";
+import { getClient } from "npm:@ednotest/types-exports-subpaths/client";
+import { entryImport } from "npm:@ednotest/types-exports-subpaths/entry-import";
+import { entryA } from "npm:@ednotest/types-exports-subpaths/entry-a";
+import { entryTypes } from "npm:@ednotest/types-exports-subpaths/entry-types-last-no-declaration-before";
 
 const foobar: FooInterface = {
   foo: "foo",

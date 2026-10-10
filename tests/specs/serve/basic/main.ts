@@ -8,7 +8,7 @@ const { promise: listening, resolve: onListening } = Promise.withResolvers<
   const port = await listening;
   const response = await fetch(`http://localhost:${port}/`);
   console.log(await response.text());
-  Deno.exit(0);
+  Edno.exit(0);
 })();
 
 export default {
@@ -24,4 +24,4 @@ export default {
   fetch(_req) {
     return new Response("Hello world!");
   },
-} satisfies Deno.ServeDefaultExport;
+} satisfies Edno.ServeDefaultExport;

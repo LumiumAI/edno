@@ -1,3 +1,3 @@
-// should not error for deno check
+// should not error for edno check
 import "./app.css";
-import "npm:@denotest/css-export/dist/index.css";
+import "npm:@ednotest/css-export/dist/index.css";

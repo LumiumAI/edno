@@ -1,15 +1,15 @@
-Deno.test("console.log", function () {
+Edno.test("console.log", function () {
   console.log("log");
 });
 
-Deno.test("console.error", function () {
+Edno.test("console.error", function () {
   console.error("error");
 });
 
-Deno.test("console.info", function () {
+Edno.test("console.info", function () {
   console.info("info");
 });
 
-Deno.test("console.warn", function () {
+Edno.test("console.warn", function () {
   console.info("warn");
 });

@@ -11,4 +11,4 @@ await import("./sub1.ts");
 
 // If we reach here, the test is passed.
 console.log("Done.");
-Deno.exit();
+Edno.exit();

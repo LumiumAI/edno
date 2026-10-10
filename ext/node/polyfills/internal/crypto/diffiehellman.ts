@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and Node.js contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -41,7 +41,7 @@ const {
   isAnyArrayBuffer,
   isArrayBufferView,
   isTypedArray,
-} = core.loadExtScript("ext:deno_node/internal/util/types.ts");
+} = core.loadExtScript("ext:edno_node/internal/util/types.ts");
 const {
   ERR_CRYPTO_ECDH_INVALID_FORMAT,
   ERR_CRYPTO_ECDH_INVALID_PUBLIC_KEY,
@@ -50,24 +50,24 @@ const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
   NodeError,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   validateInt32,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { deprecate } = core.loadExtScript("ext:deno_node/util.ts");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { deprecate } = core.loadExtScript("ext:edno_node/util.ts");
 const {
   ellipticCurves,
   getDefaultEncoding,
   toBuf,
-} = core.loadExtScript("ext:deno_node/internal/crypto/util.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/util.ts");
 const {
   getArrayBufferOrView,
   getKeyObjectHandle,
   kConsumePrivate,
   kConsumePublic,
-} = core.loadExtScript("ext:deno_node/internal/crypto/keys.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/keys.ts");
 
 const DH_GENERATOR = 2;
 
@@ -289,7 +289,7 @@ class DiffieHellmanImpl {
       return secretBuf;
     }
 
-    // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
+    // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
     return secretBuf.toString(outputEncoding);
   }
 
@@ -327,7 +327,7 @@ class DiffieHellmanImpl {
 
   getGenerator(encoding?: any): Buffer | string {
     if (encoding !== undefined && encoding != "buffer") {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
       return this.#generator.toString(encoding);
     }
 
@@ -336,7 +336,7 @@ class DiffieHellmanImpl {
 
   getPrime(encoding?: any): Buffer | string {
     if (encoding !== undefined && encoding != "buffer") {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
       return this.#prime.toString(encoding);
     }
 
@@ -345,7 +345,7 @@ class DiffieHellmanImpl {
 
   getPrivateKey(encoding?: any): Buffer | string {
     if (encoding !== undefined && encoding != "buffer") {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
       return this.#privateKey.toString(encoding);
     }
 
@@ -354,7 +354,7 @@ class DiffieHellmanImpl {
 
   getPublicKey(encoding?: any): Buffer | string {
     if (encoding !== undefined && encoding != "buffer") {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
       return this.#publicKey.toString(encoding);
     }
 
@@ -1364,7 +1364,7 @@ function ecdhEncode(
   if (encoding === undefined || encoding === "buffer") {
     return buffer;
   }
-  // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
+  // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
   return buffer.toString(encoding);
 }
 
@@ -1434,7 +1434,7 @@ class ECDHImpl {
     }
 
     if (outputEncoding && outputEncoding !== "buffer") {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) has no primordial
       return result.toString(outputEncoding);
     }
     return result;

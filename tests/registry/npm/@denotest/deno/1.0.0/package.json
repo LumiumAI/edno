@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/deno",
+  "name": "@ednotest/edno",
   "version": "1.0.0",
   "bin": {
-    "deno": "./bin/deno"
+    "edno": "./bin/edno"
   },
   "scripts": {
     "postinstall": "node setup.js"

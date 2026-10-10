@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 (function () {
 const { core } = __bootstrap;
 
-const webStreams = core.loadExtScript("ext:deno_web/06_streams.js");
+const webStreams = core.loadExtScript("ext:edno_web/06_streams.js");
 
 const transferMode = Symbol("kTransferMode");
 const kCloneable = 1;

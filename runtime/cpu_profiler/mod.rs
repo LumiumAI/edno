@@ -55,15 +55,15 @@ pub fn cpu_prof_filename(
   }
 }
 
-use deno_core::InspectorSessionKind;
-use deno_core::JsRuntime;
-use deno_core::JsRuntimeInspector;
-use deno_core::LocalInspectorSession;
-use deno_core::SourceMapApplication;
-use deno_core::SourceMapper;
-use deno_core::error::CoreError;
-use deno_core::parking_lot::Mutex;
-use deno_core::serde_json;
+use edno_core::InspectorSessionKind;
+use edno_core::JsRuntime;
+use edno_core::JsRuntimeInspector;
+use edno_core::LocalInspectorSession;
+use edno_core::SourceMapApplication;
+use edno_core::SourceMapper;
+use edno_core::error::CoreError;
+use edno_core::parking_lot::Mutex;
+use edno_core::serde_json;
 
 static NEXT_MSG_ID: AtomicI32 = AtomicI32::new(0);
 
@@ -107,10 +107,10 @@ impl CpuProfilerState {
 
   pub fn callback(
     &self,
-    msg: deno_core::InspectorMsg,
+    msg: edno_core::InspectorMsg,
     source_mapper: &Rc<RefCell<SourceMapper>>,
   ) {
-    let deno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
+    let edno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
       return;
     };
     let maybe_profile_msg_id = self.0.lock().profile_msg_id.as_ref().cloned();
@@ -286,7 +286,7 @@ impl CpuProfiler {
     log::debug!("CPU profiler started with interval: {}us", self.interval);
   }
 
-  // fs::create_dir_all is on the Deno project's clippy disallowed list
+  // fs::create_dir_all is on the Edno project's clippy disallowed list
   // (preferring the sys_traits abstraction), but the CPU profiler runs in the
   // runtime crate where using std::fs directly is acceptable.
   pub fn stop_profiling(&mut self) -> Result<(), CoreError> {

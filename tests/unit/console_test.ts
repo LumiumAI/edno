@@ -8,7 +8,7 @@
 // std/fmt/colors auto determines whether to put colors in or not. We need
 // better infrastructure here so we can properly test the colors.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import {
   assert,
@@ -18,7 +18,7 @@ import {
 } from "./test_util.ts";
 import { stripAnsiCode } from "@std/fmt/colors";
 
-const customInspect = Symbol.for("Deno.customInspect");
+const customInspect = Symbol.for("Edno.customInspect");
 const {
   Console,
   cssToAnsi: cssToAnsi_,
@@ -26,7 +26,7 @@ const {
   parseCss: parseCss_,
   parseCssColor: parseCssColor_,
   // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-} = Deno[Deno.internal];
+} = Edno[Edno.internal];
 
 function stringify(...args: unknown[]): string {
   return stripAnsiCode(inspectArgs(args).replace(/\n$/, ""));
@@ -65,7 +65,7 @@ function cssToAnsiEsc(css: Css, prevCss: Css | null = null): string {
 
 // test cases from web-platform-tests
 // via https://github.com/web-platform-tests/wpt/blob/master/console/console-is-a-namespace.any.js
-Deno.test(function consoleShouldBeANamespace() {
+Edno.test(function consoleShouldBeANamespace() {
   const prototype1 = Object.getPrototypeOf(console);
   const prototype2 = Object.getPrototypeOf(prototype1);
 
@@ -73,12 +73,12 @@ Deno.test(function consoleShouldBeANamespace() {
   assertEquals(prototype2, Object.prototype);
 });
 
-Deno.test(function consoleHasRightInstance() {
+Edno.test(function consoleHasRightInstance() {
   assert(console instanceof Console);
   assertEquals({} instanceof Console, false);
 });
 
-Deno.test(function consoleTestAssertShouldNotThrowError() {
+Edno.test(function consoleTestAssertShouldNotThrowError() {
   mockConsole((console) => {
     console.assert(true);
     let hasThrown = undefined;
@@ -92,13 +92,13 @@ Deno.test(function consoleTestAssertShouldNotThrowError() {
   });
 });
 
-Deno.test(function consoleTestStringifyComplexObjects() {
+Edno.test(function consoleTestStringifyComplexObjects() {
   assertEquals(stringify("foo"), "foo");
   assertEquals(stringify(["foo", "bar"]), `[ "foo", "bar" ]`);
   assertEquals(stringify({ foo: "bar" }), `{ foo: "bar" }`);
 });
 
-Deno.test(
+Edno.test(
   function consoleTestStringifyComplexObjectsWithEscapedSequences() {
     assertEquals(
       stringify(
@@ -168,14 +168,14 @@ Deno.test(
   },
 );
 
-Deno.test(function consoleTestStringifyQuotes() {
+Edno.test(function consoleTestStringifyQuotes() {
   assertEquals(stringify(["\\"]), `[ "\\\\" ]`);
   assertEquals(stringify(['\\,"']), `[ '\\\\,"' ]`);
   assertEquals(stringify([`\\,",'`]), `[ \`\\\\,",'\` ]`);
   assertEquals(stringify(["\\,\",',`"]), `[ "\\\\,\\",',\`" ]`);
 });
 
-Deno.test(function consoleTestStringifyLongStrings() {
+Edno.test(function consoleTestStringifyLongStrings() {
   const veryLongString = "a".repeat(10_100);
   // If we stringify an object containing the long string, it gets abbreviated.
   let actual = stringify({ veryLongString });
@@ -186,7 +186,7 @@ Deno.test(function consoleTestStringifyLongStrings() {
   assertEquals(actual, veryLongString);
 });
 
-Deno.test(function consoleTestStringifyCircular() {
+Edno.test(function consoleTestStringifyCircular() {
   class Base {
     a = 1;
     m1() {}
@@ -197,7 +197,7 @@ Deno.test(function consoleTestStringifyCircular() {
     m2() {}
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const nestedObj: any = {
     num: 1,
     bool: true,
@@ -263,7 +263,7 @@ Deno.test(function consoleTestStringifyCircular() {
   assertEquals(stringify(new Number(-0)), "[Number: -0]");
   assertEquals(stringify(Object(1n)), "[BigInt: 1n]");
   assertEquals(stringify(new Boolean(true)), "[Boolean: true]");
-  assertEquals(stringify(new String("deno")), `[String: "deno"]`);
+  assertEquals(stringify(new String("edno")), `[String: "edno"]`);
   assertEquals(stringify(/[0-9]*/), "/[0-9]*/");
   assertEquals(
     stringify(new Date("2018-12-10T02:26:59.002Z")),
@@ -374,10 +374,10 @@ Deno.test(function consoleTestStringifyCircular() {
 }`,
   );
   // test inspect is working the same
-  assertEquals(stripAnsiCode(Deno.inspect(nestedObj)), nestedObjExpected);
+  assertEquals(stripAnsiCode(Edno.inspect(nestedObj)), nestedObjExpected);
 });
 
-Deno.test(function consoleTestStringifyToStringTagGetterThrows() {
+Edno.test(function consoleTestStringifyToStringTagGetterThrows() {
   // Symbol.toStringTag getter that throws should not crash console.log
   // https://github.com/denoland/deno/issues/32894
   class Circular {
@@ -398,7 +398,7 @@ Deno.test(function consoleTestStringifyToStringTagGetterThrows() {
   assertStringIncludes(result, "[Circular");
 });
 
-Deno.test(function consoleTestStringifyMultipleCircular() {
+Edno.test(function consoleTestStringifyMultipleCircular() {
   const y = { a: { b: {} }, foo: { bar: {} } };
   y.a.b = y.a;
   y.foo.bar = y.foo;
@@ -411,7 +411,7 @@ Deno.test(function consoleTestStringifyMultipleCircular() {
   );
 });
 
-Deno.test(function consoleTestStringifyFunctionWithPrototypeRemoved() {
+Edno.test(function consoleTestStringifyFunctionWithPrototypeRemoved() {
   const f = function f() {};
   Reflect.setPrototypeOf(f, null);
   assertEquals(stringify(f), "[Function (null prototype): f]");
@@ -429,7 +429,7 @@ Deno.test(function consoleTestStringifyFunctionWithPrototypeRemoved() {
   );
 });
 
-Deno.test(function consoleTestStringifyFunctionWithProperties() {
+Edno.test(function consoleTestStringifyFunctionWithProperties() {
   const f = () => "test";
   f.x = () => "foo";
   f.y = 3;
@@ -474,7 +474,7 @@ Deno.test(function consoleTestStringifyFunctionWithProperties() {
   );
 
   assertEquals(
-    stripAnsiCode(Deno.inspect(Array, { showHidden: true })),
+    stripAnsiCode(Edno.inspect(Array, { showHidden: true })),
     `<ref *1> [Function: Array] {
   [length]: 1,
   [name]: "Array",
@@ -548,8 +548,8 @@ Deno.test(function consoleTestStringifyFunctionWithProperties() {
   );
 });
 
-Deno.test(function consoleTestStringifyWithDepth() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(function consoleTestStringifyWithDepth() {
+  // edno-lint-ignore no-explicit-any
   const nestedObj: any = { a: { b: { c: { d: { e: { f: 42 } } } } } };
   assertEquals(
     stripAnsiCode(inspectArgs([nestedObj], { depth: 3 })),
@@ -569,12 +569,12 @@ Deno.test(function consoleTestStringifyWithDepth() {
   );
   // test inspect is working the same way
   assertEquals(
-    stripAnsiCode(Deno.inspect(nestedObj, { depth: 4 })),
+    stripAnsiCode(Edno.inspect(nestedObj, { depth: 4 })),
     "{\n  a: {\n    b: { c: { d: { e: [Object] } } }\n  }\n}",
   );
 });
 
-Deno.test(function consoleTestStringifyLargeObject() {
+Edno.test(function consoleTestStringifyLargeObject() {
   const obj = {
     a: 2,
     o: {
@@ -610,7 +610,7 @@ Deno.test(function consoleTestStringifyLargeObject() {
   );
 });
 
-Deno.test(function consoleTestStringifyIterable() {
+Edno.test(function consoleTestStringifyIterable() {
   const shortArray = [1, 2, 3, 4, 5];
   assertEquals(stringify(shortArray), "[ 1, 2, 3, 4, 5 ]");
 
@@ -966,7 +966,7 @@ Deno.test(function consoleTestStringifyIterable() {
   );
 });
 
-Deno.test(function consoleTestStringifyIterableWhenGrouped() {
+Edno.test(function consoleTestStringifyIterableWhenGrouped() {
   const withOddNumberOfEls = new Float64Array(
     [
       2.1,
@@ -1044,7 +1044,7 @@ Deno.test(function consoleTestStringifyIterableWhenGrouped() {
   );
 });
 
-Deno.test(function consoleTestIteratorValueAreNotConsumed() {
+Edno.test(function consoleTestIteratorValueAreNotConsumed() {
   const setIterator = new Set([1, 2, 3]).values();
   assertEquals(
     stringify(setIterator),
@@ -1053,20 +1053,20 @@ Deno.test(function consoleTestIteratorValueAreNotConsumed() {
   assertEquals([...setIterator], [1, 2, 3]);
 });
 
-Deno.test(function consoleTestWeakSetAndWeakMapWithShowHidden() {
+Edno.test(function consoleTestWeakSetAndWeakMapWithShowHidden() {
   assertEquals(
-    stripAnsiCode(Deno.inspect(new WeakSet([{}]), { showHidden: true })),
+    stripAnsiCode(Edno.inspect(new WeakSet([{}]), { showHidden: true })),
     "WeakSet { {} }",
   );
   assertEquals(
     stripAnsiCode(
-      Deno.inspect(new WeakMap([[{}, "foo"]]), { showHidden: true }),
+      Edno.inspect(new WeakMap([[{}, "foo"]]), { showHidden: true }),
     ),
     'WeakMap { {} => "foo" }',
   );
 });
 
-Deno.test(async function consoleTestStringifyPromises() {
+Edno.test(async function consoleTestStringifyPromises() {
   const pendingPromise = new Promise((_res, _rej) => {});
   assertEquals(stringify(pendingPromise), "Promise { <pending> }");
 
@@ -1089,7 +1089,7 @@ Deno.test(async function consoleTestStringifyPromises() {
   assertEquals(strLines[1], "  <rejected> Error: Whoops");
 });
 
-Deno.test(function consoleTestStringifyIntlLocale() {
+Edno.test(function consoleTestStringifyIntlLocale() {
   assertEquals(
     stringify(new Intl.Locale("zh-Hant-TW", { hourCycle: "h12" })),
     `Locale [Intl.Locale] {
@@ -1107,11 +1107,11 @@ Deno.test(function consoleTestStringifyIntlLocale() {
   );
 });
 
-Deno.test(function consoleTestWithCustomInspector() {
+Edno.test(function consoleTestWithCustomInspector() {
   class A {
     [customInspect](
       inspect: unknown,
-      options: Deno.InspectOptions,
+      options: Edno.InspectOptions,
     ): string {
       assertEquals(typeof inspect, "function");
       assertEquals(typeof options, "object");
@@ -1122,10 +1122,10 @@ Deno.test(function consoleTestWithCustomInspector() {
   assertEquals(stringify(new A()), "b");
 });
 
-Deno.test(function consoleTestWithCustomInspectorUsingInspectFunc() {
+Edno.test(function consoleTestWithCustomInspectorUsingInspectFunc() {
   class A {
     [customInspect](
-      inspect: (v: unknown, opts?: Deno.InspectOptions) => string,
+      inspect: (v: unknown, opts?: Edno.InspectOptions) => string,
     ): string {
       return "b " + inspect({ c: 1 });
     }
@@ -1134,7 +1134,7 @@ Deno.test(function consoleTestWithCustomInspectorUsingInspectFunc() {
   assertEquals(stringify(new A()), "b { c: 1 }");
 });
 
-Deno.test(function consoleTestWithConstructorError() {
+Edno.test(function consoleTestWithConstructorError() {
   const obj = new Proxy({}, {
     getOwnPropertyDescriptor(_target, name) {
       if (name == "constructor") {
@@ -1143,10 +1143,10 @@ Deno.test(function consoleTestWithConstructorError() {
       return undefined;
     },
   });
-  assertEquals(Deno.inspect(obj), "{}");
+  assertEquals(Edno.inspect(obj), "{}");
 });
 
-Deno.test(function consoleTestWithCustomInspectorError() {
+Edno.test(function consoleTestWithCustomInspectorError() {
   class A {
     [customInspect](): never {
       throw new Error("BOOM");
@@ -1168,7 +1168,7 @@ Deno.test(function consoleTestWithCustomInspectorError() {
   );
 });
 
-Deno.test(function consoleTestWithCustomInspectFunction() {
+Edno.test(function consoleTestWithCustomInspectFunction() {
   function a() {}
   Object.assign(a, {
     [customInspect]() {
@@ -1179,7 +1179,7 @@ Deno.test(function consoleTestWithCustomInspectFunction() {
   assertEquals(stringify(a), "b");
 });
 
-Deno.test(function consoleTestWithIntegerFormatSpecifier() {
+Edno.test(function consoleTestWithIntegerFormatSpecifier() {
   assertEquals(stringify("%i"), "%i");
   assertEquals(stringify("%i", 42.0), "42");
   assertEquals(stringify("%i", 42), "42");
@@ -1197,7 +1197,7 @@ Deno.test(function consoleTestWithIntegerFormatSpecifier() {
   );
 });
 
-Deno.test(function consoleTestWithFloatFormatSpecifier() {
+Edno.test(function consoleTestWithFloatFormatSpecifier() {
   assertEquals(stringify("%f"), "%f");
   assertEquals(stringify("%f", 42.0), "42");
   assertEquals(stringify("%f", 42), "42");
@@ -1212,7 +1212,7 @@ Deno.test(function consoleTestWithFloatFormatSpecifier() {
   assertEquals(stringify("%f %f", 42), "42 %f");
 });
 
-Deno.test(function consoleTestWithStringFormatSpecifier() {
+Edno.test(function consoleTestWithStringFormatSpecifier() {
   assertEquals(stringify("%s"), "%s");
   assertEquals(stringify("%s", undefined), "undefined");
   assertEquals(stringify("%s", "foo"), "foo");
@@ -1223,7 +1223,7 @@ Deno.test(function consoleTestWithStringFormatSpecifier() {
   assertEquals(stringify("%s", Symbol("foo")), "Symbol(foo)");
 });
 
-Deno.test(function consoleTestWithObjectFormatSpecifier() {
+Edno.test(function consoleTestWithObjectFormatSpecifier() {
   assertEquals(stringify("%o"), "%o");
   assertEquals(stringify("%o", 42), "42");
   assertEquals(stringify("%o", "foo"), `"foo"`);
@@ -1235,7 +1235,7 @@ Deno.test(function consoleTestWithObjectFormatSpecifier() {
   );
 });
 
-Deno.test(function consoleTestWithJsonFormatSpecifier() {
+Edno.test(function consoleTestWithJsonFormatSpecifier() {
   assertEquals(stringify("%j"), "%j");
   assertEquals(stringify("%j", { foo: "bar" }), `{"foo":"bar"}`);
   assertEquals(stringify("%j", 42), "42");
@@ -1255,7 +1255,7 @@ Deno.test(function consoleTestWithJsonFormatSpecifier() {
   assertThrows(() => stringify("%j", BigInt(1)));
 });
 
-Deno.test(function consoleTestWithStyleSpecifier() {
+Edno.test(function consoleTestWithStyleSpecifier() {
   assertEquals(stringify("%cfoo%cbar"), "%cfoo%cbar");
   assertEquals(stringify("%cfoo%cbar", ""), "foo%cbar");
   assertEquals(
@@ -1264,7 +1264,7 @@ Deno.test(function consoleTestWithStyleSpecifier() {
   );
 });
 
-Deno.test(function consoleParseCssColor() {
+Edno.test(function consoleParseCssColor() {
   assertEquals(parseCssColor("inherit"), null);
   assertEquals(parseCssColor("black"), [0, 0, 0]);
   assertEquals(parseCssColor("darkmagenta"), [139, 0, 139]);
@@ -1288,7 +1288,7 @@ Deno.test(function consoleParseCssColor() {
   );
 });
 
-Deno.test(function consoleParseCss() {
+Edno.test(function consoleParseCss() {
   assertEquals(
     parseCss("background-color: inherit"),
     { ...DEFAULT_CSS, backgroundColor: "inherit" },
@@ -1350,7 +1350,7 @@ Deno.test(function consoleParseCss() {
   );
 });
 
-Deno.test(function consoleCssToAnsi() {
+Edno.test(function consoleCssToAnsi() {
   assertEquals(
     cssToAnsiEsc({ ...DEFAULT_CSS, backgroundColor: "inherit" }),
     "_[49m",
@@ -1427,7 +1427,7 @@ Deno.test(function consoleCssToAnsi() {
   );
 });
 
-Deno.test(function consoleTestWithVariousOrInvalidFormatSpecifier() {
+Edno.test(function consoleTestWithVariousOrInvalidFormatSpecifier() {
   assertEquals(stringify("%s:%s"), "%s:%s");
   assertEquals(stringify("%i:%i"), "%i:%i");
   assertEquals(stringify("%d:%d"), "%d:%d");
@@ -1443,7 +1443,7 @@ Deno.test(function consoleTestWithVariousOrInvalidFormatSpecifier() {
   assertEquals(stringify("abc%", 1), "abc% 1");
 });
 
-Deno.test(function consoleTestCallToStringOnLabel() {
+Edno.test(function consoleTestCallToStringOnLabel() {
   const methods = ["count", "countReset", "time", "timeLog", "timeEnd"];
   mockConsole((console) => {
     for (const method of methods) {
@@ -1458,7 +1458,7 @@ Deno.test(function consoleTestCallToStringOnLabel() {
   });
 });
 
-Deno.test(function consoleTestError() {
+Edno.test(function consoleTestError() {
   class MyError extends Error {
     constructor(errStr: string) {
       super(errStr);
@@ -1476,7 +1476,7 @@ Deno.test(function consoleTestError() {
   }
 });
 
-Deno.test(function consoleTestClear() {
+Edno.test(function consoleTestClear() {
   mockConsole((console, out) => {
     console.clear();
     assertEquals(out.toString(), "\x1b[1;1H" + "\x1b[0J");
@@ -1484,7 +1484,7 @@ Deno.test(function consoleTestClear() {
 });
 
 // Test bound this issue
-Deno.test(function consoleDetachedLog() {
+Edno.test(function consoleDetachedLog() {
   mockConsole((console) => {
     const log = console.log;
     const dir = console.dir;
@@ -1534,7 +1534,7 @@ class StringBuffer {
 }
 
 type ConsoleExamineFunc = (
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   csl: any,
   out: StringBuffer,
   err?: StringBuffer,
@@ -1557,7 +1557,7 @@ function mockConsole(f: ConsoleExamineFunc) {
 }
 
 // console.group test
-Deno.test(function consoleGroup() {
+Edno.test(function consoleGroup() {
   mockConsole((console, out) => {
     console.group("1");
     console.log("2");
@@ -1582,7 +1582,7 @@ Deno.test(function consoleGroup() {
 });
 
 // console.group with console.dir test
-Deno.test(function consoleGroupDir() {
+Edno.test(function consoleGroupDir() {
   mockConsole((console, out) => {
     console.dir("1");
     console.group();
@@ -1608,7 +1608,7 @@ Deno.test(function consoleGroupDir() {
 });
 
 // console.group with console.warn test
-Deno.test(function consoleGroupWarn() {
+Edno.test(function consoleGroupWarn() {
   mockConsole((console, _out, _err, both) => {
     assert(both);
     console.warn("1");
@@ -1639,11 +1639,11 @@ Deno.test(function consoleGroupWarn() {
 
 // Regression test for https://github.com/denoland/deno/issues/30176.
 // When the V8 inspector wraps `console`, every method routes through both the
-// inspector binding and Deno's printer. `console.group("label")` must call the
+// inspector binding and Edno's printer. `console.group("label")` must call the
 // wrapped `log` so DevTools receives a paired `log("label")` next to the
 // `startGroup("label")` event — without it, DevTools renders an empty group
 // container and the visible nesting drifts out of alignment with the CLI.
-Deno.test(function consoleGroupForwardsLabelToWrappedLog() {
+Edno.test(function consoleGroupForwardsLabelToWrappedLog() {
   const out = new StringBuffer();
   const csl = new Console(
     (x: string, _level: number, printsNewLine: boolean) => {
@@ -1678,18 +1678,18 @@ Deno.test(function consoleGroupForwardsLabelToWrappedLog() {
 
   // Replicate the wrap that core.wrapConsole performs at inspector bootstrap.
   // We can't call core.wrapConsole directly here because it resolves
-  // `Deno.core.callConsole` from the live global, which is hidden by the
+  // `Edno.core.callConsole` from the live global, which is hidden by the
   // time test code runs.
-  // @ts-ignore: Deno[Deno.internal] allowed
-  const { callConsole } = Deno[Deno.internal].core;
+  // @ts-ignore: Edno[Edno.internal] allowed
+  const { callConsole } = Edno[Edno.internal].core;
   for (const key of Object.keys(v8Console)) {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const target = csl as any;
     if (Object.hasOwn(target, key)) {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       target[key] = (callConsole as any).bind(
         target,
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (v8Console as any)[key],
         target[key],
       );
@@ -1716,7 +1716,7 @@ Deno.test(function consoleGroupForwardsLabelToWrappedLog() {
 });
 
 // console.table test
-Deno.test(function consoleTable() {
+Edno.test(function consoleTable() {
   mockConsole((console, out) => {
     console.table({ a: "test", b: 1 });
     assertEquals(
@@ -2074,7 +2074,7 @@ Deno.test(function consoleTable() {
 });
 
 // console.log(Error) test
-Deno.test(function consoleLogShouldNotThrowError() {
+Edno.test(function consoleLogShouldNotThrowError() {
   mockConsole((console) => {
     let result = 0;
     try {
@@ -2093,7 +2093,7 @@ Deno.test(function consoleLogShouldNotThrowError() {
   });
 });
 
-Deno.test(function consoleLogShouldNotThrowErrorWhenInvalidCssColorsAreGiven() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInvalidCssColorsAreGiven() {
   mockConsole((console, out) => {
     console.log("%cfoo", "color: foo; background-color: bar;");
     assertEquals(stripAnsiCode(out.toString()), "foo\n");
@@ -2101,7 +2101,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInvalidCssColorsAreGiven() {
 });
 
 // console.log(Invalid Date) test
-Deno.test(function consoleLogShouldNotThrowErrorWhenInvalidDateIsPassed() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInvalidDateIsPassed() {
   mockConsole((console, out) => {
     const invalidDate = new Date("test");
     console.log(invalidDate);
@@ -2110,7 +2110,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInvalidDateIsPassed() {
 });
 
 // console.log(new Proxy(new Set(), {}))
-Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedSet() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedSet() {
   mockConsole((console, out) => {
     const proxiedSet = new Proxy(new Set([1, 2]), {});
     console.log(proxiedSet);
@@ -2119,7 +2119,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedSet() {
 });
 
 // console.log(new Proxy(new Map(), {}))
-Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedMap() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedMap() {
   mockConsole((console, out) => {
     const proxiedMap = new Proxy(new Map([[1, 1], [2, 2]]), {});
     console.log(proxiedMap);
@@ -2128,7 +2128,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedMap() {
 });
 
 // console.log(new Proxy(new Uint8Array(), {}))
-Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedTypedArray() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedTypedArray() {
   mockConsole((console, out) => {
     const proxiedUint8Array = new Proxy(new Uint8Array([1, 2]), {});
     console.log(proxiedUint8Array);
@@ -2136,7 +2136,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedTypedArray() {
   });
 });
 
-Deno.test(function consoleLogWhenCauseIsAssignedShouldNotPrintCauseTwice() {
+Edno.test(function consoleLogWhenCauseIsAssignedShouldNotPrintCauseTwice() {
   mockConsole((console, out) => {
     const typeError = new TypeError("Type incorrect");
     const syntaxError = new SyntaxError("Improper syntax");
@@ -2156,7 +2156,7 @@ Deno.test(function consoleLogWhenCauseIsAssignedShouldNotPrintCauseTwice() {
   });
 });
 
-Deno.test(function consoleLogCauseNotFilteredOnNonError() {
+Edno.test(function consoleLogCauseNotFilteredOnNonError() {
   mockConsole((console, out) => {
     const foo = {
       a: 1,
@@ -2172,7 +2172,7 @@ Deno.test(function consoleLogCauseNotFilteredOnNonError() {
 });
 
 // console.log(new Proxy(new RegExp(), {}))
-Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedRegExp() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedRegExp() {
   mockConsole((console, out) => {
     const proxiedRegExp = new Proxy(/aaaa/, {});
     console.log(proxiedRegExp);
@@ -2181,7 +2181,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedRegExp() {
 });
 
 // console.log(new Proxy(new Date(), {}))
-Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedDate() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedDate() {
   mockConsole((console, out) => {
     const proxiedDate = new Proxy(new Date("2022-09-24T15:59:39.529Z"), {});
     console.log(proxiedDate);
@@ -2190,7 +2190,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedDate() {
 });
 
 // console.log(new Proxy(new Error(), {}))
-Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedError() {
+Edno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedError() {
   mockConsole((console, out) => {
     const proxiedError = new Proxy(new Error("message"), {});
     console.log(proxiedError);
@@ -2199,7 +2199,7 @@ Deno.test(function consoleLogShouldNotThrowErrorWhenInputIsProxiedError() {
 });
 
 // console.dir test
-Deno.test(function consoleDir() {
+Edno.test(function consoleDir() {
   mockConsole((console, out) => {
     console.dir("DIR");
     assertEquals(out.toString(), "DIR\n");
@@ -2212,7 +2212,7 @@ Deno.test(function consoleDir() {
 
 // console.dirxml forwards to log per the WHATWG console spec; extra args
 // are passed through like log, not interpreted as dir-style options.
-Deno.test(function consoleDirXml() {
+Edno.test(function consoleDirXml() {
   mockConsole((console, out) => {
     console.dirxml("DIRXML");
     assertEquals(out.toString(), "DIRXML\n");
@@ -2224,7 +2224,7 @@ Deno.test(function consoleDirXml() {
 });
 
 // console.trace test
-Deno.test(function consoleTrace() {
+Edno.test(function consoleTrace() {
   mockConsole((console, _out, err) => {
     console.trace("%s", "custom message");
     assert(err);
@@ -2232,20 +2232,20 @@ Deno.test(function consoleTrace() {
   });
 });
 
-Deno.test(function inspectString() {
+Edno.test(function inspectString() {
   assertEquals(
-    stripAnsiCode(Deno.inspect("\0")),
+    stripAnsiCode(Edno.inspect("\0")),
     `"\\x00"`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect("\x1b[2J")),
+    stripAnsiCode(Edno.inspect("\x1b[2J")),
     `"\\x1b[2J"`,
   );
 });
 
-Deno.test(function inspectGetters() {
+Edno.test(function inspectGetters() {
   assertEquals(
-    stripAnsiCode(Deno.inspect({
+    stripAnsiCode(Edno.inspect({
       get foo() {
         return 0;
       },
@@ -2254,7 +2254,7 @@ Deno.test(function inspectGetters() {
   );
 
   assertEquals(
-    stripAnsiCode(Deno.inspect({
+    stripAnsiCode(Edno.inspect({
       get foo() {
         return 0;
       },
@@ -2263,7 +2263,7 @@ Deno.test(function inspectGetters() {
   );
 
   assertEquals(
-    Deno.inspect({
+    Edno.inspect({
       get foo() {
         throw new Error("bar");
       },
@@ -2272,22 +2272,22 @@ Deno.test(function inspectGetters() {
   );
 });
 
-Deno.test(function inspectPrototype() {
+Edno.test(function inspectPrototype() {
   class A {}
-  assertEquals(Deno.inspect(A.prototype), "{}");
+  assertEquals(Edno.inspect(A.prototype), "{}");
 });
 
-Deno.test(function inspectSorted() {
+Edno.test(function inspectSorted() {
   assertEquals(
-    stripAnsiCode(Deno.inspect({ b: 2, a: 1 }, { sorted: true })),
+    stripAnsiCode(Edno.inspect({ b: 2, a: 1 }, { sorted: true })),
     "{ a: 1, b: 2 }",
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(new Set(["b", "a"]), { sorted: true })),
+    stripAnsiCode(Edno.inspect(new Set(["b", "a"]), { sorted: true })),
     `Set(2) { "a", "b" }`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Map([
         ["b", 2],
         ["a", 1],
@@ -2298,9 +2298,9 @@ Deno.test(function inspectSorted() {
   );
 });
 
-Deno.test(function inspectTrailingComma() {
+Edno.test(function inspectTrailingComma() {
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       [
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -2313,7 +2313,7 @@ Deno.test(function inspectTrailingComma() {
 ]`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       {
         aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: 1,
         bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb: 2,
@@ -2326,7 +2326,7 @@ Deno.test(function inspectTrailingComma() {
 }`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Set([
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -2339,7 +2339,7 @@ Deno.test(function inspectTrailingComma() {
 }`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Map([
         ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 1],
         ["bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", 2],
@@ -2353,9 +2353,9 @@ Deno.test(function inspectTrailingComma() {
   );
 });
 
-Deno.test(function inspectCompact() {
+Edno.test(function inspectCompact() {
   assertEquals(
-    stripAnsiCode(Deno.inspect({ a: 1, b: 2 }, { compact: false })),
+    stripAnsiCode(Edno.inspect({ a: 1, b: 2 }, { compact: false })),
     `{
   a: 1,
   b: 2
@@ -2363,17 +2363,17 @@ Deno.test(function inspectCompact() {
   );
 });
 
-Deno.test(function inspectIterableLimit() {
+Edno.test(function inspectIterableLimit() {
   assertEquals(
-    stripAnsiCode(Deno.inspect(["a", "b", "c"], { iterableLimit: 2 })),
+    stripAnsiCode(Edno.inspect(["a", "b", "c"], { iterableLimit: 2 })),
     `[ "a", "b", ... 1 more item ]`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(new Set(["a", "b", "c"]), { iterableLimit: 2 })),
+    stripAnsiCode(Edno.inspect(new Set(["a", "b", "c"]), { iterableLimit: 2 })),
     `Set(3) { "a", "b", ... 1 more item }`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Map([
         ["a", 1],
         ["b", 2],
@@ -2385,24 +2385,24 @@ Deno.test(function inspectIterableLimit() {
   );
 });
 
-Deno.test(function inspectProxy() {
+Edno.test(function inspectProxy() {
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy([1, 2, 3], {}),
     )),
     "[ 1, 2, 3 ]",
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy({ key: "value" }, {}),
     )),
     `{ key: "value" }`,
   );
-  // When `showProxy` is false (the default), `Deno.inspect` mirrors Node.js
+  // When `showProxy` is false (the default), `Edno.inspect` mirrors Node.js
   // and inspects the proxy target directly without invoking any traps. The
   // handler below is ignored entirely; the empty target prints as `{}`.
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy({}, {
         get(_target, key) {
           if (key === Symbol.toStringTag) {
@@ -2430,8 +2430,8 @@ Deno.test(function inspectProxy() {
   // A proxy whose `ownKeys` trap violates the invariant (returns a
   // non-Object) must not throw — Node.js returns the target's inspection.
   assertEquals(
-    stripAnsiCode(Deno.inspect(
-      // deno-lint-ignore no-explicit-any
+    stripAnsiCode(Edno.inspect(
+      // edno-lint-ignore no-explicit-any
       new Proxy({ x: 1 }, { ownKeys: (() => undefined) as any }),
     )),
     `{ x: 1 }`,
@@ -2443,7 +2443,7 @@ Deno.test(function inspectProxy() {
   // formatter. With proxy unwrapping in default mode, the target is
   // inspected directly and the trap is never invoked.
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy({ x: 10 }, {
         getOwnPropertyDescriptor: () => {
           throw new Error("oops");
@@ -2453,14 +2453,14 @@ Deno.test(function inspectProxy() {
     `{ x: 10 }`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy([1, 2, 3], { get() {} }),
       { showProxy: true },
     )),
     "Proxy [ [ 1, 2, 3 ], { get: [Function: get] } ]",
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy({ a: 1 }, {
         set(): boolean {
           return false;
@@ -2471,7 +2471,7 @@ Deno.test(function inspectProxy() {
     "Proxy [ { a: 1 }, { set: [Function: set] } ]",
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy([1, 2, 3, 4, 5, 6, 7], { get() {} }),
       { showProxy: true },
     )),
@@ -2484,7 +2484,7 @@ Deno.test(function inspectProxy() {
 ]`,
   );
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy(function fn() {}, { get() {} }),
       { showProxy: true },
     )),
@@ -2493,7 +2493,7 @@ Deno.test(function inspectProxy() {
 
   // Issue: https://github.com/denoland/deno/issues/30229
   assertEquals(
-    stripAnsiCode(Deno.inspect(
+    stripAnsiCode(Edno.inspect(
       new Proxy({}, {
         get() {
           throw new Error("fail");
@@ -2504,7 +2504,7 @@ Deno.test(function inspectProxy() {
   );
 });
 
-Deno.test(function inspectProxyWithNodeCustomInspect() {
+Edno.test(function inspectProxyWithNodeCustomInspect() {
   // Proxy that hides symbols from `has`/`ownKeys` but exposes them via `get`.
   // This pattern is used by nodejs-polars DataFrames (issue #33236).
   const nodeInspect = Symbol.for("nodejs.util.inspect.custom");
@@ -2529,32 +2529,32 @@ Deno.test(function inspectProxyWithNodeCustomInspect() {
     },
   });
   assertEquals(
-    stripAnsiCode(Deno.inspect(proxy)),
+    stripAnsiCode(Edno.inspect(proxy)),
     "custom proxy output",
   );
 });
 
-Deno.test(function inspectError() {
+Edno.test(function inspectError() {
   const error1 = new Error("This is an error");
   const error2 = new Error("This is an error", {
     cause: new Error("This is a cause error"),
   });
 
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error1)),
+    stripAnsiCode(Edno.inspect(error1)),
     "Error: This is an error",
   );
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error2)),
+    stripAnsiCode(Edno.inspect(error2)),
     "Error: This is an error",
   );
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error2)),
+    stripAnsiCode(Edno.inspect(error2)),
     "[cause]: Error: This is a cause error",
   );
 });
 
-Deno.test(function inspectErrorCircular() {
+Edno.test(function inspectErrorCircular() {
   const error1 = new Error("This is an error");
   const error2 = new Error("This is an error", {
     cause: new Error("This is a cause error"),
@@ -2564,49 +2564,49 @@ Deno.test(function inspectErrorCircular() {
   error2.cause.cause = error2;
 
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error1)),
+    stripAnsiCode(Edno.inspect(error1)),
     "Error: This is an error",
   );
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error2)),
+    stripAnsiCode(Edno.inspect(error2)),
     "<ref *1> Error: This is an error",
   );
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error2)),
+    stripAnsiCode(Edno.inspect(error2)),
     "[cause]: Error: This is a cause error",
   );
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error2)),
+    stripAnsiCode(Edno.inspect(error2)),
     "cause: [Circular *1]",
   );
 });
 
-Deno.test(function inspectErrorWithCauseFormat() {
+Edno.test(function inspectErrorWithCauseFormat() {
   const error = new Error("This is an error", {
     cause: {
       code: 100500,
     },
   });
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error)),
+    stripAnsiCode(Edno.inspect(error)),
     "Error: This is an error",
   );
   assertStringIncludes(
-    stripAnsiCode(Deno.inspect(error)),
+    stripAnsiCode(Edno.inspect(error)),
     "[cause]: { code: 100500 }",
   );
 });
 
-Deno.test(function inspectColors() {
-  assertEquals(Deno.inspect(1), "1");
-  assertStringIncludes(Deno.inspect(1, { colors: true }), "\x1b[");
+Edno.test(function inspectColors() {
+  assertEquals(Edno.inspect(1), "1");
+  assertStringIncludes(Edno.inspect(1, { colors: true }), "\x1b[");
 });
 
-Deno.test(function inspectEmptyArray() {
+Edno.test(function inspectEmptyArray() {
   const arr: string[] = [];
 
   assertEquals(
-    Deno.inspect(arr, {
+    Edno.inspect(arr, {
       compact: false,
       trailingComma: true,
     }),
@@ -2614,13 +2614,13 @@ Deno.test(function inspectEmptyArray() {
   );
 });
 
-Deno.test(function inspectDeepEmptyArray() {
+Edno.test(function inspectDeepEmptyArray() {
   const obj = {
     arr: [],
   };
 
   assertEquals(
-    Deno.inspect(obj, {
+    Edno.inspect(obj, {
       compact: false,
       trailingComma: true,
     }),
@@ -2630,11 +2630,11 @@ Deno.test(function inspectDeepEmptyArray() {
   );
 });
 
-Deno.test(function inspectEmptyMap() {
+Edno.test(function inspectEmptyMap() {
   const map = new Map();
 
   assertEquals(
-    Deno.inspect(map, {
+    Edno.inspect(map, {
       compact: false,
       trailingComma: true,
     }),
@@ -2642,11 +2642,11 @@ Deno.test(function inspectEmptyMap() {
   );
 });
 
-Deno.test(function inspectEmptySet() {
+Edno.test(function inspectEmptySet() {
   const set = new Set();
 
   assertEquals(
-    Deno.inspect(set, {
+    Edno.inspect(set, {
       compact: false,
       trailingComma: true,
     }),
@@ -2654,11 +2654,11 @@ Deno.test(function inspectEmptySet() {
   );
 });
 
-Deno.test(function inspectEmptyUint8Array() {
+Edno.test(function inspectEmptyUint8Array() {
   const typedArray = new Uint8Array(0);
 
   assertEquals(
-    Deno.inspect(typedArray, {
+    Edno.inspect(typedArray, {
       compact: false,
       trailingComma: true,
     }),
@@ -2666,10 +2666,10 @@ Deno.test(function inspectEmptyUint8Array() {
   );
 });
 
-Deno.test(function inspectLargeArrayBuffer() {
+Edno.test(function inspectLargeArrayBuffer() {
   const arrayBuffer = new ArrayBuffer(2 ** 32 + 1);
   assertEquals(
-    Deno.inspect(arrayBuffer),
+    Edno.inspect(arrayBuffer),
     `ArrayBuffer {
   [Uint8Contents]: <00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ... 4294967197 more bytes>,
   byteLength: 4294967297
@@ -2677,13 +2677,13 @@ Deno.test(function inspectLargeArrayBuffer() {
   );
   structuredClone(arrayBuffer, { transfer: [arrayBuffer] });
   assertEquals(
-    Deno.inspect(arrayBuffer),
+    Edno.inspect(arrayBuffer),
     "ArrayBuffer { (detached), byteLength: 0 }",
   );
 
   const sharedArrayBuffer = new SharedArrayBuffer(2 ** 32 + 1);
   assertEquals(
-    Deno.inspect(sharedArrayBuffer),
+    Edno.inspect(sharedArrayBuffer),
     `SharedArrayBuffer {
   [Uint8Contents]: <00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ... 4294967197 more bytes>,
   byteLength: 4294967297
@@ -2691,7 +2691,7 @@ Deno.test(function inspectLargeArrayBuffer() {
   );
 });
 
-Deno.test(function inspectStringAbbreviation() {
+Edno.test(function inspectStringAbbreviation() {
   const LONG_STRING =
     "This is a really long string which will be abbreviated with ellipsis.";
   const obj = {
@@ -2700,108 +2700,108 @@ Deno.test(function inspectStringAbbreviation() {
   const arr = [LONG_STRING];
 
   assertEquals(
-    Deno.inspect(obj, { strAbbreviateSize: 10 }),
+    Edno.inspect(obj, { strAbbreviateSize: 10 }),
     '{ str: "This is a "... 59 more characters }',
   );
 
   assertEquals(
-    Deno.inspect(arr, { strAbbreviateSize: 10 }),
+    Edno.inspect(arr, { strAbbreviateSize: 10 }),
     '[ "This is a "... 59 more characters ]',
   );
 });
 
-Deno.test(async function inspectAggregateError() {
+Edno.test(async function inspectAggregateError() {
   try {
     await Promise.any([]);
   } catch (err) {
     assertEquals(
-      Deno.inspect(err).trimEnd(),
+      Edno.inspect(err).trimEnd(),
       "[AggregateError: All promises were rejected] { [errors]: [] }",
     );
   }
 });
 
-Deno.test(function inspectWithPrototypePollution() {
+Edno.test(function inspectWithPrototypePollution() {
   const originalExec = RegExp.prototype.exec;
   try {
     RegExp.prototype.exec = () => {
       throw Error();
     };
-    Deno.inspect("foo");
+    Edno.inspect("foo");
   } finally {
     RegExp.prototype.exec = originalExec;
   }
 });
 
-Deno.test(function inspectPromiseLike() {
+Edno.test(function inspectPromiseLike() {
   assertEquals(
-    Deno.inspect(Object.create(Promise.prototype)),
+    Edno.inspect(Object.create(Promise.prototype)),
     "Promise {}",
   );
 });
 
-Deno.test(function inspectorMethods() {
+Edno.test(function inspectorMethods() {
   console.timeStamp("test");
   console.profile("test");
   console.profileEnd("test");
 });
 
-Deno.test(function inspectQuotesOverride() {
+Edno.test(function inspectQuotesOverride() {
   assertEquals(
     // @ts-ignore - 'quotes' is an internal option
-    Deno.inspect("foo", { quotes: ["'", '"', "`"] }),
+    Edno.inspect("foo", { quotes: ["'", '"', "`"] }),
     "'foo'",
   );
   assertEquals(
     // @ts-ignore - 'quotes' is an internal option
-    Deno.inspect("'foo'", { quotes: ["'", '"', "`"] }),
+    Edno.inspect("'foo'", { quotes: ["'", '"', "`"] }),
     `"'foo'"`,
   );
 });
 
-Deno.test(function inspectAnonymousFunctions() {
-  assertEquals(Deno.inspect(() => {}), "[Function (anonymous)]");
-  assertEquals(Deno.inspect(function () {}), "[Function (anonymous)]");
-  assertEquals(Deno.inspect(async () => {}), "[AsyncFunction (anonymous)]");
+Edno.test(function inspectAnonymousFunctions() {
+  assertEquals(Edno.inspect(() => {}), "[Function (anonymous)]");
+  assertEquals(Edno.inspect(function () {}), "[Function (anonymous)]");
+  assertEquals(Edno.inspect(async () => {}), "[AsyncFunction (anonymous)]");
   assertEquals(
-    Deno.inspect(async function () {}),
+    Edno.inspect(async function () {}),
     "[AsyncFunction (anonymous)]",
   );
   assertEquals(
-    Deno.inspect(function* () {}),
+    Edno.inspect(function* () {}),
     "[GeneratorFunction (anonymous)]",
   );
   assertEquals(
-    Deno.inspect(async function* () {}),
+    Edno.inspect(async function* () {}),
     "[AsyncGeneratorFunction (anonymous)]",
   );
 });
 
-Deno.test(function inspectBreakLengthOption() {
+Edno.test(function inspectBreakLengthOption() {
   assertEquals(
-    Deno.inspect("123456789\n".repeat(3), { breakLength: 34 }),
+    Edno.inspect("123456789\n".repeat(3), { breakLength: 34 }),
     `"123456789\\n123456789\\n123456789\\n"`,
   );
   assertEquals(
-    Deno.inspect("123456789\n".repeat(3), { breakLength: 33 }),
+    Edno.inspect("123456789\n".repeat(3), { breakLength: 33 }),
     `"123456789\\n" +
   "123456789\\n" +
   "123456789\\n"`,
   );
 });
 
-Deno.test(function inspectEscapeSequencesFalse() {
+Edno.test(function inspectEscapeSequencesFalse() {
   assertEquals(
-    Deno.inspect("foo\nbar", { escapeSequences: true }),
+    Edno.inspect("foo\nbar", { escapeSequences: true }),
     '"foo\\nbar"',
   ); // default behavior
   assertEquals(
-    Deno.inspect("foo\nbar", { escapeSequences: false }),
+    Edno.inspect("foo\nbar", { escapeSequences: false }),
     '"foo\nbar"',
   );
 });
 
-Deno.test(function inspectProxyDoesNotTriggerGetTrap() {
+Edno.test(function inspectProxyDoesNotTriggerGetTrap() {
   // Regression test for https://github.com/denoland/deno/issues/33719
   // Proxies that return functions for any property access (e.g. grammy API
   // client) should not have their get/has traps triggered for custom inspect
@@ -2819,18 +2819,18 @@ Deno.test(function inspectProxyDoesNotTriggerGetTrap() {
   });
 
   accessed.length = 0;
-  Deno.inspect(proxy);
+  Edno.inspect(proxy);
 
   const inspectSymbols = [
     Symbol.for("nodejs.util.inspect.custom"),
-    Symbol.for("Deno.customInspect"),
-    Symbol.for("Deno.privateCustomInspect"),
+    Symbol.for("Edno.customInspect"),
+    Symbol.for("Edno.privateCustomInspect"),
   ];
   for (const sym of inspectSymbols) {
     assertEquals(
       accessed.filter((p) => p === sym).length,
       0,
-      `Deno.inspect should not trigger proxy traps for ${String(sym)}`,
+      `Edno.inspect should not trigger proxy traps for ${String(sym)}`,
     );
   }
 });

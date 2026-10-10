@@ -28,10 +28,10 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           submodules: recursive
-      - name: Install Deno
+      - name: Install Edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
         with:
-          deno-version: v2.7.1
+          edno-version: v2.7.1
       - name: Build npm packages
         run: './tools/release/npm/build.ts ${{ inputs.version || '''' }}'
       - name: Tar npm dist (preserves permissions)
@@ -81,10 +81,10 @@ jobs:
           storage: ./storage
           uplinks: {}
           packages:
-            '@deno/*':
+            '@edno/*':
               access: $all
               publish: $all
-            'deno':
+            'edno':
               access: $all
               publish: $all
             '**':
@@ -119,143 +119,143 @@ jobs:
         id: publish-verdaccio
         run: |-
           DIST_DIR="tools/release/npm/dist"
-          for pkg_dir in "$DIST_DIR"/@deno/*/; do
+          for pkg_dir in "$DIST_DIR"/@edno/*/; do
             echo "Publishing $(basename "$pkg_dir") to Verdaccio..."
             (cd "$pkg_dir" && npm publish --registry http://localhost:4873/)
           done
-          echo "Publishing deno to Verdaccio..."
-          (cd "$DIST_DIR/deno" && npm publish --registry http://localhost:4873/)
-          VERSION=$(node -p "require('./$DIST_DIR/deno/package.json').version")
+          echo "Publishing edno to Verdaccio..."
+          (cd "$DIST_DIR/edno" && npm publish --registry http://localhost:4873/)
+          VERSION=$(node -p "require('./$DIST_DIR/edno/package.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-      - name: Test npm install deno
+      - name: Test npm install edno
         run: |-
           TEST_DIR="${{ runner.temp }}/npm-test"
           mkdir -p "$TEST_DIR"
           cd "$TEST_DIR"
           npm init -y
-          EXPECTED_VERSION="deno ${{ steps.publish-verdaccio.outputs.version }}"
-          npm install deno@${{ steps.publish-verdaccio.outputs.version }}
-          ACTUAL="$(npx deno -v)"
+          EXPECTED_VERSION="edno ${{ steps.publish-verdaccio.outputs.version }}"
+          npm install edno@${{ steps.publish-verdaccio.outputs.version }}
+          ACTUAL="$(npx edno -v)"
           echo "$ACTUAL"
           [ "$ACTUAL" = "$EXPECTED_VERSION" ] || { echo "Version mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL'"; exit 1; }
-      - name: Test deno via bin.cjs fallback
+      - name: Test edno via bin.cjs fallback
         run: |-
           cd "${{ runner.temp }}/npm-test"
-          node node_modules/deno/bin.cjs eval "console.log('npm package works')"
-      - name: Test deno via simulated readonly file system
+          node node_modules/edno/bin.cjs eval "console.log('npm package works')"
+      - name: Test edno via simulated readonly file system
         run: |-
           TEST_DIR="${{ runner.temp }}/readonly-test"
           mkdir -p "$TEST_DIR"
           cd "$TEST_DIR"
           npm init -y
-          npm install deno@${{ steps.publish-verdaccio.outputs.version }}
-          rm -f node_modules/deno/deno*
-          DENO_SIMULATED_READONLY_FILE_SYSTEM=1 node node_modules/deno/bin.cjs -v
-      - name: Test npm global install deno
+          npm install edno@${{ steps.publish-verdaccio.outputs.version }}
+          rm -f node_modules/edno/edno*
+          EDNO_SIMULATED_READONLY_FILE_SYSTEM=1 node node_modules/edno/bin.cjs -v
+      - name: Test npm global install edno
         run: |-
-          EXPECTED_VERSION="deno ${{ steps.publish-verdaccio.outputs.version }}"
-          npm install -g deno@${{ steps.publish-verdaccio.outputs.version }}
-          ACTUAL="$(deno -v)"
+          EXPECTED_VERSION="edno ${{ steps.publish-verdaccio.outputs.version }}"
+          npm install -g edno@${{ steps.publish-verdaccio.outputs.version }}
+          ACTUAL="$(edno -v)"
           echo "$ACTUAL"
           [ "$ACTUAL" = "$EXPECTED_VERSION" ] || { echo "Version mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL'"; exit 1; }
-          deno eval "console.log('global npm install works')"
+          edno eval "console.log('global npm install works')"
           # Verify the global bin entry points directly at the native binary, not bin.cjs
           if [ "$RUNNER_OS" = "Windows" ]; then
-            DENO_CMD="$(npm prefix -g)/deno.cmd"
-            grep -q "bin.cjs" "$DENO_CMD" && { echo "ERROR: deno.cmd still points to bin.cjs"; exit 1; }
-            echo "deno.cmd correctly points to native binary"
+            EDNO_CMD="$(npm prefix -g)/edno.cmd"
+            grep -q "bin.cjs" "$EDNO_CMD" && { echo "ERROR: edno.cmd still points to bin.cjs"; exit 1; }
+            echo "edno.cmd correctly points to native binary"
           else
-            DENO_LINK="$(which deno)"
-            LINK_TARGET="$(readlink "$DENO_LINK")"
-            echo "deno symlink target: $LINK_TARGET"
-            echo "$LINK_TARGET" | grep -q "bin.cjs" && { echo "ERROR: deno symlink still points to bin.cjs"; exit 1; }
-            echo "deno symlink correctly points to native binary"
+            EDNO_LINK="$(which edno)"
+            LINK_TARGET="$(readlink "$EDNO_LINK")"
+            echo "edno symlink target: $LINK_TARGET"
+            echo "$LINK_TARGET" | grep -q "bin.cjs" && { echo "ERROR: edno symlink still points to bin.cjs"; exit 1; }
+            echo "edno symlink correctly points to native binary"
           fi
-          npm uninstall -g deno
-      - name: Test npm global install deno (--ignore-scripts)
+          npm uninstall -g edno
+      - name: Test npm global install edno (--ignore-scripts)
         run: |-
-          EXPECTED_VERSION="deno ${{ steps.publish-verdaccio.outputs.version }}"
-          npm install -g --ignore-scripts deno@${{ steps.publish-verdaccio.outputs.version }}
-          ACTUAL="$(deno -v)"
+          EXPECTED_VERSION="edno ${{ steps.publish-verdaccio.outputs.version }}"
+          npm install -g --ignore-scripts edno@${{ steps.publish-verdaccio.outputs.version }}
+          ACTUAL="$(edno -v)"
           echo "$ACTUAL"
           [ "$ACTUAL" = "$EXPECTED_VERSION" ] || { echo "Version mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL'"; exit 1; }
-          deno eval "console.log('global npm install works')"
-          npm uninstall -g deno
-      - name: Test pnpm local install deno (without postinstall)
+          edno eval "console.log('global npm install works')"
+          npm uninstall -g edno
+      - name: Test pnpm local install edno (without postinstall)
         run: |-
           TEST_DIR="${{ runner.temp }}/pnpm-test-no-scripts"
           mkdir -p "$TEST_DIR"
           cd "$TEST_DIR"
           npm init -y
-          EXPECTED_VERSION="deno ${{ steps.publish-verdaccio.outputs.version }}"
-          pnpm install --ignore-scripts deno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
-          ACTUAL="$(node node_modules/deno/bin.cjs -v)"
+          EXPECTED_VERSION="edno ${{ steps.publish-verdaccio.outputs.version }}"
+          pnpm install --ignore-scripts edno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
+          ACTUAL="$(node node_modules/edno/bin.cjs -v)"
           echo "$ACTUAL"
           [ "$ACTUAL" = "$EXPECTED_VERSION" ] || { echo "Version mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL'"; exit 1; }
-      - name: Test pnpm global install deno (without postinstall)
+      - name: Test pnpm global install edno (without postinstall)
         run: |-
-          EXPECTED_VERSION="deno ${{ steps.publish-verdaccio.outputs.version }}"
-          pnpm install -g --ignore-scripts deno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
-          ACTUAL="$(deno -v)"
+          EXPECTED_VERSION="edno ${{ steps.publish-verdaccio.outputs.version }}"
+          pnpm install -g --ignore-scripts edno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
+          ACTUAL="$(edno -v)"
           echo "$ACTUAL"
           [ "$ACTUAL" = "$EXPECTED_VERSION" ] || { echo "Version mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL'"; exit 1; }
-          pnpm uninstall -g deno
-      - name: Test pnpm local install deno (with postinstall)
+          pnpm uninstall -g edno
+      - name: Test pnpm local install edno (with postinstall)
         run: |-
           TEST_DIR="${{ runner.temp }}/pnpm-test"
           mkdir -p "$TEST_DIR"
           cd "$TEST_DIR"
           npm init -y
-          printf 'allowBuilds:\n  deno: true\n' > pnpm-workspace.yaml
-          EXPECTED_VERSION="deno ${{ steps.publish-verdaccio.outputs.version }}"
-          pnpm install deno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
+          printf 'allowBuilds:\n  edno: true\n' > pnpm-workspace.yaml
+          EXPECTED_VERSION="edno ${{ steps.publish-verdaccio.outputs.version }}"
+          pnpm install edno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
           # `pnpm exec` may print lockfile verification messages to stdout before
           # the command output, so only compare against the last line
-          ACTUAL="$(pnpm exec deno -v | tail -n 1)"
+          ACTUAL="$(pnpm exec edno -v | tail -n 1)"
           echo "$ACTUAL"
           [ "$ACTUAL" = "$EXPECTED_VERSION" ] || { echo "Version mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL'"; exit 1; }
-      - name: Test pnpm global install deno (with postinstall)
+      - name: Test pnpm global install edno (with postinstall)
         run: |-
           GLOBAL_DIR="$(pnpm root -g)"
           mkdir -p "$GLOBAL_DIR"
-          printf 'allowBuilds:\n  deno: true\n' > "$GLOBAL_DIR/pnpm-workspace.yaml"
-          EXPECTED_VERSION="deno ${{ steps.publish-verdaccio.outputs.version }}"
-          pnpm install -g deno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
-          ACTUAL="$(deno -v)"
+          printf 'allowBuilds:\n  edno: true\n' > "$GLOBAL_DIR/pnpm-workspace.yaml"
+          EXPECTED_VERSION="edno ${{ steps.publish-verdaccio.outputs.version }}"
+          pnpm install -g edno@${{ steps.publish-verdaccio.outputs.version }} --registry http://localhost:4873/
+          ACTUAL="$(edno -v)"
           echo "$ACTUAL"
           [ "$ACTUAL" = "$EXPECTED_VERSION" ] || { echo "Version mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL'"; exit 1; }
-          deno eval "console.log('global pnpm install works')"
-          pnpm uninstall -g deno
-      - name: Test npm local install deno (PowerShell)
+          edno eval "console.log('global pnpm install works')"
+          pnpm uninstall -g edno
+      - name: Test npm local install edno (PowerShell)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |-
           cd "${{ runner.temp }}/npm-test"
-          npx deno -v
-          npx deno eval "console.log('PowerShell npm local install works')"
-      - name: Test npm global install deno (PowerShell)
+          npx edno -v
+          npx edno eval "console.log('PowerShell npm local install works')"
+      - name: Test npm global install edno (PowerShell)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |-
-          npm install -g deno@${{ steps.publish-verdaccio.outputs.version }}
-          deno -v
-          deno eval "console.log('PowerShell npm global install works')"
-          npm uninstall -g deno
-      - name: Test npm local install deno (cmd)
+          npm install -g edno@${{ steps.publish-verdaccio.outputs.version }}
+          edno -v
+          edno eval "console.log('PowerShell npm global install works')"
+          npm uninstall -g edno
+      - name: Test npm local install edno (cmd)
         if: runner.os == 'Windows'
         shell: cmd
         run: |-
           cd "${{ runner.temp }}/npm-test"
-          npx deno -v
-          npx deno eval "console.log('cmd npm local install works')"
-      - name: Test npm global install deno (cmd)
+          npx edno -v
+          npx edno eval "console.log('cmd npm local install works')"
+      - name: Test npm global install edno (cmd)
         if: runner.os == 'Windows'
         shell: cmd
         run: |-
-          npm install -g deno@${{ steps.publish-verdaccio.outputs.version }}
-          deno -v
-          deno eval "console.log('cmd npm global install works')"
-          npm uninstall -g deno
+          npm install -g edno@${{ steps.publish-verdaccio.outputs.version }}
+          edno -v
+          edno eval "console.log('cmd npm global install works')"
+          npm uninstall -g edno
   publish:
     name: npm publish
     needs:
@@ -275,10 +275,10 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           submodules: recursive
-      - name: Install Deno
+      - name: Install Edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
         with:
-          deno-version: v2.7.1
+          edno-version: v2.7.1
       - name: Install Node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
         with:

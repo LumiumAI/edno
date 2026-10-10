@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/workspace-prerelease",
+  "name": "@ednotest/workspace-prerelease",
   "workspaces": [
     "member",
     "app"

@@ -36,9 +36,9 @@ const {
   PromisePrototypeThen,
 } = primordials;
 
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
 const { validateFunction } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 
 class NodeFalsyValueRejectionError extends Error {

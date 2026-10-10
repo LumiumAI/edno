@@ -17,7 +17,7 @@ addEventListener("unload", () => {
   clearInterval(interval);
 });
 
-Deno.test("test", () => {
+Edno.test("test", () => {
   console.log("test");
   if (!interval) {
     throw new Error("Interval was not set");

@@ -57,8 +57,8 @@ const {
 } = primordials;
 
 import net from "node:net";
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { ok: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { ok: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 import {
   _checkInvalidHeaderChar as checkInvalidHeaderChar,
   chunkExpression,
@@ -78,7 +78,7 @@ import {
   validateHeaderValue,
 } from "node:_http_outgoing";
 const { kNeedDrain, kOutHeaders } = core.loadExtScript(
-  "ext:deno_node/internal/http.ts",
+  "ext:edno_node/internal/http.ts",
 );
 import { IncomingMessage } from "node:_http_incoming";
 const {
@@ -89,42 +89,42 @@ const {
   ERR_INVALID_ARG_VALUE,
   ERR_INVALID_CHAR,
   ERR_OUT_OF_RANGE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
-const { kEmptyObject } = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
+const { kEmptyObject } = core.loadExtScript("ext:edno_node/internal/util.mjs");
 const {
   kDestroy,
   kTimeout,
   suspendTimeout,
-} = core.loadExtScript("ext:deno_node/internal/timers.mjs");
+} = core.loadExtScript("ext:edno_node/internal/timers.mjs");
 const {
   validateBoolean,
   validateFunction,
   validateInteger,
   validateLinkHeaderValue,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
 const {
   enterAsyncResourceIfActive,
   exitAsyncResourceIfActive,
-} = core.loadExtScript("ext:deno_node/internal/async_hooks.ts");
+} = core.loadExtScript("ext:edno_node/internal/async_hooks.ts");
 const { enqueueNodePerformanceEntry, hasNodeObserverForType } = core
   .loadExtScript(
-    "ext:deno_node/perf_hooks.js",
+    "ext:edno_node/perf_hooks.js",
   );
 import {
   applyAddressOverride,
   notifyAddressOverrideServing,
   SERVER_KIND_NODE_HTTP2,
   startOverrideListener,
-} from "ext:deno_node/internal/http/address_override.js";
+} from "ext:edno_node/internal/http/address_override.js";
 const {
   otelState,
   builtinTracer,
   ContextManager,
   telemetry,
-} = core.loadExtScript("ext:deno_telemetry/telemetry.ts");
-const { channel } = core.loadExtScript("ext:deno_node/diagnostics_channel.js");
+} = core.loadExtScript("ext:edno_telemetry/telemetry.ts");
+const { channel } = core.loadExtScript("ext:edno_node/diagnostics_channel.js");
 
 const onServerRequestStartChannel = channel("http.server.request.start");
 const onServerResponseCreatedChannel = channel("http.server.response.created");
@@ -145,7 +145,7 @@ let otelMetrics = null;
 
 function getOtelMetrics() {
   if (otelMetrics) return otelMetrics;
-  const meter = telemetry.meterProvider.getMeter("deno.http.server");
+  const meter = telemetry.meterProvider.getMeter("edno.http.server");
   otelMetrics = {
     activeRequests: meter.createUpDownCounter("http.server.active_requests", {
       description: "Number of active HTTP server requests.",
@@ -830,7 +830,7 @@ function onParserExecuteCommon(server, socket, parser, state, ret, d) {
     parser.finish();
     freeParser(parser, req, socket);
 
-    // deno-lint-ignore deno-internal/prefer-primordials -- d is a Node Buffer; Buffer.prototype.slice returns a Buffer view
+    // edno-lint-ignore edno-internal/prefer-primordials -- d is a Node Buffer; Buffer.prototype.slice returns a Buffer view
     const bodyHead = d.slice(bytesParsed);
 
     socket.readableFlowing = null;
@@ -948,9 +948,9 @@ function updateOutgoingData(socket, state, delta) {
 // ---- parserOnIncoming: creates ServerResponse, emits 'request' ----
 
 function parserOnIncoming(server, socket, state, req, keepAlive) {
-  // Connections accepted via the DENO_SERVE_ADDRESS override carry
+  // Connections accepted via the EDNO_SERVE_ADDRESS override carry
   // absolute-form request targets (the control plane forwards the full
-  // public URL, which is how Deno.serve() reconstructs request.url).
+  // public URL, which is how Edno.serve() reconstructs request.url).
   // Node applications expect origin-form, so strip scheme and authority.
   if (
     socket.isDenoServeAddressOverride &&
@@ -1378,7 +1378,7 @@ function Server(options, requestListener) {
   this[kUniqueHeaders] = parseUniqueHeadersOption(options.uniqueHeaders);
 }
 
-// Wraps a deno_core system interval ID so the stored handle exposes a
+// Wraps a edno_core system interval ID so the stored handle exposes a
 // Node-compatible `_destroyed` flag. Tests (and Node user code) read
 // `server[kConnectionsCheckingInterval]._destroyed` to confirm the
 // interval was cleared.
@@ -1553,11 +1553,11 @@ function storeHTTPOptions(options) {
 ObjectSetPrototypeOf(Server.prototype, net.Server.prototype);
 ObjectSetPrototypeOf(Server, net.Server);
 
-// Applies the DENO_SERVE_ADDRESS override before delegating to
+// Applies the EDNO_SERVE_ADDRESS override before delegating to
 // net.Server.prototype.listen.
 //
 // TCP overrides rewrite the address passed to listen(). Non-TCP and
-// duplicate overrides spin up a separate Deno listener that feeds
+// duplicate overrides spin up a separate Edno listener that feeds
 // synthetic "connection" events into this server.
 Server.prototype.listen = function listen(...args) {
   const applied = applyAddressOverride();

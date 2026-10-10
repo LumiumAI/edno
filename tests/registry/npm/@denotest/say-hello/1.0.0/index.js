@@ -1,3 +1,3 @@
 export function sayHello() {
-  return '@denotest/say-hello says hello!';
+  return '@ednotest/say-hello says hello!';
 }

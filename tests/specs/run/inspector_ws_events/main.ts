@@ -1,9 +1,9 @@
 // Get an open port
-const listener = Deno.listen({ port: 0 });
-const port = (listener.addr as Deno.NetAddr).port;
+const listener = Edno.listen({ port: 0 });
+const port = (listener.addr as Edno.NetAddr).port;
 listener.close();
 
-new Deno.Command(Deno.execPath(), {
+new Edno.Command(Edno.execPath(), {
   args: ["run", "--inspect=127.0.0.1:" + port, "--watch", "a.ts"],
   stdin: "null",
   stdout: "null",
@@ -16,14 +16,14 @@ await new Promise((r) => setTimeout(r, 500));
 const ws = new WebSocket(`ws://127.0.0.1:${port}/ws/events`);
 ws.onopen = async () => {
   console.log("connected");
-  await Deno.writeTextFile("a.ts", `console.log("bar");`);
+  await Edno.writeTextFile("a.ts", `console.log("bar");`);
 };
 ws.onmessage = (msg) => {
   console.log("message", msg.data);
-  Deno.exit();
+  Edno.exit();
 };
 
 ws.onerror = (e) => {
   console.log("connection_failed");
-  Deno.exit();
+  Edno.exit();
 };

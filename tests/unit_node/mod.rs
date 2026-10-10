@@ -13,7 +13,7 @@ use test_util::test_runner::FlakyTestTracker;
 use test_util::test_runner::Parallelism;
 use test_util::test_runner::flaky_test_ci;
 use test_util::tests_path;
-use util::deno_config_path;
+use util::edno_config_path;
 use util::env_vars_for_npm_tests;
 
 fn main() {
@@ -24,7 +24,7 @@ fn main() {
       .hash_dir(tests.join("util"))
       .hash_dir(tests.join("testdata"))
       .hash_dir(tests.join("registry"))
-      .hash_file(test_util::deno_exe_path())
+      .hash_file(test_util::edno_exe_path())
       .hash_file(test_util::test_server_path());
   });
   if matches!(ci_hash, test_util::hash::CiHashStatus::Skip) {
@@ -47,7 +47,7 @@ fn main() {
   let parallelism = Parallelism::default();
   let flaky_test_tracker = Arc::new(FlakyTestTracker::default());
   let _g = util::http_server();
-  // Run the crypto category tests separately without concurrency because they run in Deno with --parallel
+  // Run the crypto category tests separately without concurrency because they run in Edno with --parallel
   let (crypto_category, category) =
     category.partition(|test| test.name.contains("::crypto::"));
   let reporter = test_util::test_runner::get_test_reporter(
@@ -88,12 +88,12 @@ fn main() {
 }
 
 fn run_test(test: &CollectedTest) -> TestResult {
-  let mut deno = util::deno_cmd()
+  let mut edno = util::edno_cmd()
     .disable_diagnostic_logging()
     .current_dir(util::root_path())
     .arg("test")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("--unstable-net")
     .arg("-A");
@@ -103,15 +103,15 @@ fn run_test(test: &CollectedTest) -> TestResult {
     || test.name.ends_with("::http_test")
     || test.name.ends_with("::https_test")
   {
-    deno = deno.arg("--cert=./tests/testdata/tls/RootCA.pem");
+    edno = edno.arg("--cert=./tests/testdata/tls/RootCA.pem");
   }
 
   // Parallel tests for crypto
   if test.name.contains("::crypto::") {
-    deno = deno.arg("--parallel");
+    edno = edno.arg("--parallel");
   }
 
-  deno
+  edno
     .arg(test.path.clone())
     .envs(env_vars_for_npm_tests())
     .piped_output()

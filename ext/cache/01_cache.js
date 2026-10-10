@@ -22,22 +22,22 @@ const {
   TypeError,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const {
   Request,
   RequestPrototype,
   toInnerRequest,
-} = core.loadExtScript("ext:deno_fetch/23_request.js");
+} = core.loadExtScript("ext:edno_fetch/23_request.js");
 const { toInnerResponse, wireHeaderList } = core.loadExtScript(
-  "ext:deno_fetch/23_response.js",
+  "ext:edno_fetch/23_response.js",
 );
-const { URLPrototype } = core.loadExtScript("ext:deno_web/00_url.js");
-const { getHeader } = core.loadExtScript("ext:deno_fetch/20_headers.js");
+const { URLPrototype } = core.loadExtScript("ext:edno_web/00_url.js");
+const { getHeader } = core.loadExtScript("ext:edno_fetch/20_headers.js");
 const {
   getReadableStreamResourceBacking,
   readableStreamForRid,
   resourceForReadableStream,
-} = core.loadExtScript("ext:deno_web/06_streams.js");
+} = core.loadExtScript("ext:edno_web/06_streams.js");
 class CacheStorage {
   constructor() {
     webidl.illegalConstructor();
@@ -91,14 +91,14 @@ class CacheStorage {
       }
       const cache = await this.open(cacheName);
       // false positive: cache is a local Cache instance, not a global intrinsic
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       return await cache.match(request, options);
     }
     const names = await op_cache_storage_keys();
     for (let i = 0; i < names.length; ++i) {
       const cache = await this.open(names[i]);
       // false positive: cache is a local Cache instance, not a global intrinsic
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       const response = await cache.match(request, options);
       if (response !== undefined) {
         return response;
@@ -107,7 +107,7 @@ class CacheStorage {
     return undefined;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return `${this.constructor.name} ${inspect({}, inspectOptions)}`;
   }
 }
@@ -197,7 +197,7 @@ class Cache {
     await op_cache_put(
       {
         cacheId: this[_id],
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         requestUrl: reqUrl.toString(),
         responseHeaders: wireHeaderList(innerResponse),
         requestHeaders: innerRequest.headerList,
@@ -281,7 +281,7 @@ class Cache {
       // Remove the fragment from the request URL before matching.
       const url = new URL(r.url);
       url.hash = "";
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       requestUrl = url.toString();
     }
 
@@ -340,7 +340,7 @@ class Cache {
       const matchResult = await op_cache_match(
         {
           cacheId: this[_id],
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           requestUrl: url.toString(),
           requestHeaders: innerRequest.headerList,
         },
@@ -367,7 +367,7 @@ class Cache {
     return responses;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return `${this.constructor.name} ${inspect({}, inspectOptions)}`;
   }
 }

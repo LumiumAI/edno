@@ -15,20 +15,20 @@ use deno_terminal::colors;
 
 use crate::sys::CliSys;
 
-/// Environment variables that configure Deno's own runtime behavior and must
+/// Environment variables that configure Edno's own runtime behavior and must
 /// not be settable from an `.env` file loaded via `--env` / `--env-file`.
 ///
 /// An `.env` file ships alongside the code it accompanies, so letting it set
-/// Deno's own control variables would let that file change runtime behavior
+/// Edno's own control variables would let that file change runtime behavior
 /// the user did not opt into, for example silently enabling tunnel mode
-/// (`DENO_CONNECTED`) or overriding the tunnel control endpoint
-/// (`DENO_DEPLOY_TUNNEL_ENDPOINT`). Env files are meant to provide
-/// configuration to the user's program, not to reconfigure Deno itself, so
+/// (`EDNO_CONNECTED`) or overriding the tunnel control endpoint
+/// (`EDNO_DEPLOY_TUNNEL_ENDPOINT`). Env files are meant to provide
+/// configuration to the user's program, not to reconfigure Edno itself, so
 /// these keys are ignored when they originate from an env file.
 const ENV_FILE_DENYLIST: &[&str] =
-  &["DENO_CONNECTED", "DENO_DEPLOY_TUNNEL_ENDPOINT"];
+  &["EDNO_CONNECTED", "EDNO_DEPLOY_TUNNEL_ENDPOINT"];
 
-/// Whether `key` is a Deno-internal control variable that must not be set from
+/// Whether `key` is a Edno-internal control variable that must not be set from
 /// an env file. The comparison is ASCII case-insensitive because environment
 /// variable lookups are case-insensitive on Windows.
 fn is_denied_env_file_key(key: &OsStr) -> bool {
@@ -48,7 +48,7 @@ pub fn handle_denied_env_file_key(
   #[allow(clippy::print_stderr, reason = "can't use log crate yet")]
   if log_level.map(|l| l >= log::Level::Info).unwrap_or(true) {
     eprintln!(
-      "{} Ignoring '{}' from environment file '{}': this variable controls Deno's own runtime behavior and cannot be set from an env file.",
+      "{} Ignoring '{}' from environment file '{}': this variable controls Edno's own runtime behavior and cannot be set from an env file.",
       colors::yellow("Warning"),
       key.to_string_lossy(),
       file_path.display(),
@@ -113,7 +113,7 @@ struct WatchEnvTrackerInner {
 impl WatchEnvTrackerInner {
   fn new() -> Self {
     // Capture the original environment state
-    let process_env = deno_os::ProcessEnvGuard::lock();
+    let process_env = edno_os::ProcessEnvGuard::lock();
     let original_env: HashMap<OsString, OsString> =
       process_env.vars_os().into_iter().collect();
 
@@ -149,7 +149,7 @@ impl WatchEnvTracker {
     log_level: Option<log::Level>,
     inner: &mut WatchEnvTrackerInner,
   ) {
-    let (file_path, content) = match deno_dotenv::find_path_and_content(
+    let (file_path, content) = match edno_dotenv::find_path_and_content(
       &CliSys::default(),
       cwd,
       env_file,
@@ -167,8 +167,8 @@ impl WatchEnvTracker {
 
     // Keep substitutions and the mutations they produce consistent with each
     // other while allowing file I/O to proceed without the process-env lock.
-    let process_env = deno_os::ProcessEnvGuard::lock();
-    match deno_dotenv::from_content_sanitized_iter_with_substitution(
+    let process_env = edno_os::ProcessEnvGuard::lock();
+    match edno_dotenv::from_content_sanitized_iter_with_substitution(
       &CliSys::default(),
       &content,
     ) {
@@ -252,7 +252,7 @@ impl WatchEnvTracker {
     &self,
     inner: &mut WatchEnvTrackerInner,
     log_level: Option<log::Level>,
-    process_env: &deno_os::ProcessEnvGuard,
+    process_env: &edno_os::ProcessEnvGuard,
   ) {
     for var_name in inner.unused_variables.iter() {
       // As with loading watched env values, cleanup runs before the
@@ -301,7 +301,7 @@ impl WatchEnvTracker {
       self.load_env_file_inner(cwd, env_file_path, log_level, &mut inner);
     }
 
-    let process_env = deno_os::ProcessEnvGuard::lock();
+    let process_env = edno_os::ProcessEnvGuard::lock();
     self._cleanup_removed_variables(&mut inner, log_level, &process_env);
   }
 }
@@ -312,7 +312,7 @@ pub fn load_env_variables_from_env_files(
   flags_log_level: Option<log::Level>,
 ) {
   let original_env_keys: HashSet<OsString> = {
-    let process_env = deno_os::ProcessEnvGuard::lock();
+    let process_env = edno_os::ProcessEnvGuard::lock();
     process_env
       .vars_os()
       .into_iter()
@@ -322,7 +322,7 @@ pub fn load_env_variables_from_env_files(
   let mut loaded_keys = HashSet::new();
 
   for env_file_name in env_file_names.iter().rev() {
-    let (env_file_path, content) = match deno_dotenv::find_path_and_content(
+    let (env_file_path, content) = match edno_dotenv::find_path_and_content(
       &CliSys::default(),
       cwd,
       env_file_name,
@@ -339,8 +339,8 @@ pub fn load_env_variables_from_env_files(
     };
     // Keep substitutions and the mutations they produce consistent with each
     // other while allowing file I/O to proceed without the process-env lock.
-    let process_env = deno_os::ProcessEnvGuard::lock();
-    let iter = match deno_dotenv::from_content_sanitized_iter_with_substitution(
+    let process_env = edno_os::ProcessEnvGuard::lock();
+    let iter = match edno_dotenv::from_content_sanitized_iter_with_substitution(
       &sys_traits::impls::RealSys,
       &content,
     ) {
@@ -377,7 +377,7 @@ pub fn load_env_variables_from_env_files(
 }
 
 pub fn handle_dotenv_error(
-  error: &deno_dotenv::ParseError,
+  error: &edno_dotenv::ParseError,
   file_path: &Path,
   log_level: Option<log::Level>,
 ) {
@@ -394,7 +394,7 @@ pub fn handle_dotenv_error(
 }
 
 pub fn handle_dotenv_io_error(
-  error: &deno_dotenv::FindPathAndContentError,
+  error: &edno_dotenv::FindPathAndContentError,
   log_level: Option<log::Level>,
 ) {
   #[allow(clippy::print_stderr, reason = "can't use log crate yet")]

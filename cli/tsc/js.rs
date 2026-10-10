@@ -7,23 +7,23 @@ use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use deno_core::FastString;
-use deno_core::JsRuntime;
-use deno_core::ModuleSpecifier;
-use deno_core::OpState;
-use deno_core::RuntimeOptions;
-use deno_core::ToV8;
-use deno_core::located_script_name;
-use deno_core::op2;
-use deno_core::serde::Deserialize;
-use deno_core::serde_json::json;
-use deno_core::url::Url;
+use edno_core::FastString;
+use edno_core::JsRuntime;
+use edno_core::ModuleSpecifier;
+use edno_core::OpState;
+use edno_core::RuntimeOptions;
+use edno_core::ToV8;
+use edno_core::located_script_name;
+use edno_core::op2;
+use edno_core::serde::Deserialize;
+use edno_core::serde_json::json;
+use edno_core::url::Url;
 use deno_graph::GraphKind;
 use deno_graph::ModuleGraph;
-use deno_lib::util::hash::FastInsecureHasher;
-use deno_lib::worker::create_isolate_create_params;
+use edno_lib::util::hash::FastInsecureHasher;
+use edno_lib::worker::create_isolate_create_params;
 use deno_path_util::resolve_url_or_path;
-use deno_resolver::deno_json::JsxImportSourceConfigResolver;
+use edno_resolver::edno_json::JsxImportSourceConfigResolver;
 use node_resolver::ResolutionMode;
 
 use super::ResolveArgs;
@@ -146,7 +146,7 @@ fn op_resolve_jsx_import_source(
     .map(|s| s.to_string())
 }
 
-deno_core::extension!(deno_cli_tsc,
+edno_core::extension!(edno_cli_tsc,
   ops = [
     op_create_hash,
     op_emit,
@@ -177,13 +177,13 @@ deno_core::extension!(deno_cli_tsc,
       options.request.capture_emitted_files,
     ));
   },
-  customizer = |ext: &mut deno_core::Extension| {
-    use deno_core::ExtensionFileSource;
-    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_cli_tsc/99_main_compiler.js", crate::tsc::MAIN_COMPILER_SOURCE.as_str().into()));
-    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_cli_tsc/97_ts_host.js", crate::tsc::TS_HOST_SOURCE.as_str().into()));
-    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_cli_tsc/98_lsp.js", crate::tsc::LSP_SOURCE.as_str().into()));
-    ext.js_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_cli_tsc/00_typescript.js", crate::tsc::TYPESCRIPT_SOURCE.as_str().into()));
-    ext.esm_entry_point = Some("ext:deno_cli_tsc/99_main_compiler.js");
+  customizer = |ext: &mut edno_core::Extension| {
+    use edno_core::ExtensionFileSource;
+    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_cli_tsc/99_main_compiler.js", crate::tsc::MAIN_COMPILER_SOURCE.as_str().into()));
+    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_cli_tsc/97_ts_host.js", crate::tsc::TS_HOST_SOURCE.as_str().into()));
+    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_cli_tsc/98_lsp.js", crate::tsc::LSP_SOURCE.as_str().into()));
+    ext.js_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_cli_tsc/00_typescript.js", crate::tsc::TYPESCRIPT_SOURCE.as_str().into()));
+    ext.esm_entry_point = Some("ext:edno_cli_tsc/99_main_compiler.js");
   }
 );
 // TODO(bartlomieju): this mechanism is questionable.
@@ -349,7 +349,7 @@ pub fn exec_request(
   root_names: Vec<String>,
   root_map: HashMap<String, ModuleSpecifier>,
   remapped_specifiers: HashMap<String, ModuleSpecifier>,
-  code_cache: Option<Arc<dyn deno_runtime::code_cache::CodeCache>>,
+  code_cache: Option<Arc<dyn edno_runtime::code_cache::CodeCache>>,
 ) -> Result<Response, ExecError> {
   let request_value = json!({
     "config": request.config,
@@ -360,23 +360,23 @@ pub fn exec_request(
   let exec_source = format!("globalThis.exec({request_value})");
 
   let mut extensions =
-    deno_runtime::snapshot_info::get_extensions_in_snapshot();
-  extensions.push(deno_cli_tsc::init(request, root_map, remapped_specifiers));
+    edno_runtime::snapshot_info::get_extensions_in_snapshot();
+  extensions.push(edno_cli_tsc::init(request, root_map, remapped_specifiers));
   let extension_code_cache = code_cache.map(|cache| {
-    Rc::new(TscExtCodeCache::new(cache)) as Rc<dyn deno_core::ExtCodeCache>
+    Rc::new(TscExtCodeCache::new(cache)) as Rc<dyn edno_core::ExtCodeCache>
   });
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions,
     create_params: create_isolate_create_params(&crate::sys::CliSys::default()),
-    startup_snapshot: deno_snapshots::CLI_SNAPSHOT,
+    startup_snapshot: edno_snapshots::CLI_SNAPSHOT,
     extension_code_cache,
     // The TSC isolate shares CLI_SNAPSHOT, which under node-defer leaves
     // node:process (and the rest of node's `lazy_loaded_esm` set) outside
     // the snapshot blob. The compiler reads `process` (isNodeLikeSystem),
     // which routes through the lazy `process` accessor and would otherwise
     // fail with "Specifier \"node:process\" cannot be lazy-loaded".
-    residual_lazy_esm_sources: deno_snapshots::RESIDUAL_LAZY_ESM,
-    residual_lazy_js_sources: deno_snapshots::RESIDUAL_LAZY_JS,
+    residual_lazy_esm_sources: edno_snapshots::RESIDUAL_LAZY_ESM,
+    residual_lazy_js_sources: edno_snapshots::RESIDUAL_LAZY_JS,
     ..Default::default()
   });
 
@@ -407,23 +407,23 @@ pub fn exec_request(
 }
 
 pub struct TscExtCodeCache {
-  cache: Arc<dyn deno_runtime::code_cache::CodeCache>,
+  cache: Arc<dyn edno_runtime::code_cache::CodeCache>,
 }
 
 impl TscExtCodeCache {
-  pub fn new(cache: Arc<dyn deno_runtime::code_cache::CodeCache>) -> Self {
+  pub fn new(cache: Arc<dyn edno_runtime::code_cache::CodeCache>) -> Self {
     Self { cache }
   }
 }
 
-impl deno_core::ExtCodeCache for TscExtCodeCache {
+impl edno_core::ExtCodeCache for TscExtCodeCache {
   fn get_code_cache_info(
     &self,
     specifier: &ModuleSpecifier,
-    code: &deno_core::ModuleSourceCode,
+    code: &edno_core::ModuleSourceCode,
     esm: bool,
-  ) -> deno_core::SourceCodeCacheInfo {
-    use deno_runtime::code_cache::CodeCacheType;
+  ) -> edno_core::SourceCodeCacheInfo {
+    use edno_runtime::code_cache::CodeCacheType;
     let code_hash = FastInsecureHasher::new_deno_versioned()
       .write_hashable(code)
       .finish();
@@ -444,7 +444,7 @@ impl deno_core::ExtCodeCache for TscExtCodeCache {
           "V8 code cache hit for Extension module: {specifier}, [{code_hash:?}]"
         );
       });
-    deno_core::SourceCodeCacheInfo {
+    edno_core::SourceCodeCacheInfo {
       hash: code_hash,
       data,
     }
@@ -457,7 +457,7 @@ impl deno_core::ExtCodeCache for TscExtCodeCache {
     code_cache: &[u8],
     esm: bool,
   ) {
-    use deno_runtime::code_cache::CodeCacheType;
+    use edno_runtime::code_cache::CodeCacheType;
 
     log::debug!(
       "Updating V8 code cache for Extension module: {specifier}, [{source_hash:?}]"
@@ -554,14 +554,14 @@ impl State {
 #[cfg(test)]
 mod tests {
   use deno_ast::MediaType;
-  use deno_core::OpState;
-  use deno_core::futures::future;
-  use deno_core::parking_lot::Mutex;
-  use deno_core::serde_json;
+  use edno_core::OpState;
+  use edno_core::futures::future;
+  use edno_core::parking_lot::Mutex;
+  use edno_core::serde_json;
   use deno_error::JsErrorBox;
   use deno_graph::GraphKind;
   use deno_graph::ModuleGraph;
-  use deno_runtime::code_cache::CodeCacheType;
+  use edno_runtime::code_cache::CodeCacheType;
   use test_util::PathRef;
 
   use super::super::Diagnostic;
@@ -646,7 +646,7 @@ mod tests {
 
   async fn test_exec_with_cache(
     specifier: &ModuleSpecifier,
-    code_cache: Option<Arc<dyn deno_runtime::code_cache::CodeCache>>,
+    code_cache: Option<Arc<dyn edno_runtime::code_cache::CodeCache>>,
   ) -> Result<Response, ExecError> {
     let hash_data = 123; // something random
     let fixtures = test_util::testdata_path().join("tsc2");
@@ -669,7 +669,7 @@ mod tests {
       "jsx": "react",
       "jsxFactory": "React.createElement",
       "jsxFragmentFactory": "React.Fragment",
-      "lib": ["deno.window", "node"],
+      "lib": ["edno.window", "node"],
       "noEmit": true,
       "outDir": "internal:///",
       "strict": true,
@@ -701,7 +701,7 @@ mod tests {
 
   #[tokio::test]
   async fn test_hash_url() {
-    let specifier = deno_core::resolve_url(
+    let specifier = edno_core::resolve_url(
       "data:application/javascript,console.log(\"Hello%20Deno\");",
     )
     .unwrap();
@@ -742,7 +742,7 @@ mod tests {
     assert_eq!(
       serde_json::to_value(actual).unwrap(),
       json!({
-        "data": "console.log(\"hello deno\");\n",
+        "data": "console.log(\"hello edno\");\n",
         "version": "7821807483407828376",
         "scriptKind": 3,
         "isCjs": false,
@@ -920,7 +920,7 @@ mod tests {
   async fn fix_lib_ref() {
     let specifier = ModuleSpecifier::parse("file:///libref.ts").unwrap();
     // This test verifies that `/// <reference lib="dom" />` loads correctly.
-    // Note: loading lib.dom alongside Deno + Node types produces expected
+    // Note: loading lib.dom alongside Edno + Node types produces expected
     // type conflicts (duplicate declarations, modifier mismatches), so we
     // only assert that exec succeeds, not that diagnostics are empty.
     let _actual = test_exec(&specifier)
@@ -938,7 +938,7 @@ mod tests {
     misses: Mutex<HashMap<SpecifierWithType, usize>>,
   }
 
-  impl deno_runtime::code_cache::CodeCache for TestExtCodeCache {
+  impl edno_runtime::code_cache::CodeCache for TestExtCodeCache {
     fn get_sync(
       &self,
       specifier: &ModuleSpecifier,
@@ -995,12 +995,12 @@ mod tests {
 
     let expect = [
       (
-        "ext:deno_cli_tsc/99_main_compiler.js",
+        "ext:edno_cli_tsc/99_main_compiler.js",
         CodeCacheType::EsModule,
       ),
-      ("ext:deno_cli_tsc/98_lsp.js", CodeCacheType::EsModule),
-      ("ext:deno_cli_tsc/97_ts_host.js", CodeCacheType::EsModule),
-      ("ext:deno_cli_tsc/00_typescript.js", CodeCacheType::Script),
+      ("ext:edno_cli_tsc/98_lsp.js", CodeCacheType::EsModule),
+      ("ext:edno_cli_tsc/97_ts_host.js", CodeCacheType::EsModule),
+      ("ext:edno_cli_tsc/00_typescript.js", CodeCacheType::Script),
     ];
 
     {

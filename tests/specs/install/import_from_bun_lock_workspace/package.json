@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "workspaces": ["packages/*"],
   "dependencies": {
-    "@denotest/add": "1.0.0"
+    "@ednotest/add": "1.0.0"
   }
 }

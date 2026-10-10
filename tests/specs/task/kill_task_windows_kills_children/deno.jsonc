@@ -1,5 +1,5 @@
 {
   "tasks": {
-    "start": "deno run -A script.js"
+    "start": "edno run -A script.js"
   }
 }

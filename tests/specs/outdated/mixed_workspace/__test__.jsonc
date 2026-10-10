@@ -11,9 +11,9 @@
         {
           "args": [
             "eval",
-            "const now = Deno.readTextFileSync('./deno.lock'); console.log(now.trim());"
+            "const now = Edno.readTextFileSync('./edno.lock'); console.log(now.trim());"
           ],
-          "output": "deno.lock.orig.out"
+          "output": "edno.lock.orig.out"
         }
       ]
     },
@@ -80,8 +80,8 @@
           "output": "update_latest/root/update.out"
         },
         {
-          "args": "-A print_file.ts ./deno.json",
-          "output": "./update_latest/root/deno.json.out"
+          "args": "-A print_file.ts ./edno.json",
+          "output": "./update_latest/root/edno.json.out"
         }
       ]
     },
@@ -97,7 +97,7 @@
           "output": "update_latest/subdir/member_a.out"
         },
         {
-          "args": "-A print_file.ts ./member-a/deno.json",
+          "args": "-A print_file.ts ./member-a/edno.json",
           "output": "update_latest/subdir/member_a_deno.json.out"
         },
         {
@@ -122,11 +122,11 @@
           "output": "update_latest/recursive/update.out"
         },
         {
-          "args": "-A print_file.ts ./deno.json",
-          "output": "update_latest/root/deno.json.out"
+          "args": "-A print_file.ts ./edno.json",
+          "output": "update_latest/root/edno.json.out"
         },
         {
-          "args": "-A print_file.ts ./member-a/deno.json",
+          "args": "-A print_file.ts ./member-a/edno.json",
           "output": "update_latest/subdir/member_a_deno.json.out"
         },
         {
@@ -142,15 +142,15 @@
           "output": "[WILDCARD]"
         },
         {
-          "args": "outdated --update --latest --recursive @denotest/add @denotest/sub* !@denotest/breaking* aliased @denotest/with-subpath@0.5.0",
+          "args": "outdated --update --latest --recursive @ednotest/add @ednotest/sub* !@ednotest/breaking* aliased @ednotest/with-subpath@0.5.0",
           "output": "filtered/update.out"
         },
         {
-          "args": "-A print_file.ts ./deno.json",
-          "output": "./update_latest/root/deno.json.out"
+          "args": "-A print_file.ts ./edno.json",
+          "output": "./update_latest/root/edno.json.out"
         },
         {
-          "args": "-A print_file.ts ./member-a/deno.json",
+          "args": "-A print_file.ts ./member-a/edno.json",
           "output": "./filtered/member_a_deno.json.out"
         },
         {

@@ -4,9 +4,9 @@ use std::cmp::Ordering;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_npm::NpmPackageCacheFolderId;
-use deno_npm::NpmPackageId;
-use deno_npm::resolution::NpmResolutionSnapshot;
+use edno_npm::NpmPackageCacheFolderId;
+use edno_npm::NpmPackageId;
+use edno_npm::resolution::NpmResolutionSnapshot;
 use deno_semver::Version;
 use node_resolver::NpmPackageFolderResolver;
 use node_resolver::UrlOrPathRef;

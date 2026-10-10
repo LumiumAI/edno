@@ -1,3 +1,3 @@
-Deno.mkdirSync("dist", { recursive: true });
-Deno.writeTextFileSync("dist/out.txt", "artifact");
+Edno.mkdirSync("dist", { recursive: true });
+Edno.writeTextFileSync("dist/out.txt", "artifact");
 console.log("generated");

@@ -5,7 +5,7 @@ import { pipeline, Readable } from "node:stream";
 import { assert, assertEquals, assertThrows } from "@std/assert";
 
 // https://github.com/denoland/deno/issues/18140
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac digest",
   fn() {
     assertEquals(
@@ -15,7 +15,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac sha512-224",
   fn() {
     assertEquals(
@@ -25,7 +25,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac sha512-256",
   fn() {
     assertEquals(
@@ -35,7 +35,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHash digest",
   fn() {
     assertEquals(
@@ -45,7 +45,7 @@ Deno.test({
   },
 });
 
-Deno.test("[node/crypto.Hash] basic usage - buffer output", () => {
+Edno.test("[node/crypto.Hash] basic usage - buffer output", () => {
   const d = createHash("sha1").update("abc").update("def").digest();
   assertEquals(
     d,
@@ -74,22 +74,22 @@ Deno.test("[node/crypto.Hash] basic usage - buffer output", () => {
   );
 });
 
-Deno.test("[node/crypto.Hash] basic usage - hex output", () => {
+Edno.test("[node/crypto.Hash] basic usage - hex output", () => {
   const d = createHash("sha1").update("abc").update("def").digest("hex");
   assertEquals(d, "1f8ac10f23c5b5bc1167bda84b833e5c057a77d2");
 });
 
-Deno.test("[node/crypto.Hash] basic usage - base64 output", () => {
+Edno.test("[node/crypto.Hash] basic usage - base64 output", () => {
   const d = createHash("sha1").update("abc").update("def").digest("base64");
   assertEquals(d, "H4rBDyPFtbwRZ72oS4M+XAV6d9I=");
 });
 
-Deno.test("[node/crypto.Hash] basic usage - base64url output", () => {
+Edno.test("[node/crypto.Hash] basic usage - base64url output", () => {
   const d = createHash("sha1").update("abc").update("def").digest("base64url");
   assertEquals(d, "H4rBDyPFtbwRZ72oS4M-XAV6d9I");
 });
 
-Deno.test("[node/crypto.Hash] sha256 base64url output", () => {
+Edno.test("[node/crypto.Hash] sha256 base64url output", () => {
   // FIPS 180-2 SHA-256 test vectors, base64url-encoded.
   assertEquals(
     createHash("sha256").update("abc").digest("base64url"),
@@ -107,7 +107,7 @@ Deno.test("[node/crypto.Hash] sha256 base64url output", () => {
   );
 });
 
-Deno.test("[node/crypto.Hash] streaming usage", async () => {
+Edno.test("[node/crypto.Hash] streaming usage", async () => {
   const source = Readable.from(["abc", "def"]);
   const hash = createHash("sha1");
   const dest = source.pipe(hash);
@@ -147,7 +147,7 @@ Deno.test("[node/crypto.Hash] streaming usage", async () => {
   );
 });
 
-Deno.test("[node/crypto.getHashes]", () => {
+Edno.test("[node/crypto.getHashes]", () => {
   for (const algorithm of getHashes()) {
     const d = createHash(algorithm).update("abc").digest();
     assert(d instanceof Buffer);
@@ -155,37 +155,37 @@ Deno.test("[node/crypto.getHashes]", () => {
   }
 });
 
-Deno.test("[node/crypto.hash] supports buffer args", () => {
+Edno.test("[node/crypto.hash] supports buffer args", () => {
   const buffer = Buffer.from("abc");
   const d = createHash("sha1").update(buffer).digest("hex");
   assertEquals(d, "a9993e364706816aba3e25717850c26c9cd0d89d");
 });
 
-Deno.test("[node/crypto.hash] does not leak", () => {
+Edno.test("[node/crypto.hash] does not leak", () => {
   const hasher = createHash("sha1");
   hasher.update("abc");
 });
 
-Deno.test("[node/crypto.hash] oneshot hash API", () => {
+Edno.test("[node/crypto.hash] oneshot hash API", () => {
   const d = hash("sha1", "Node.js");
   assertEquals(d, "10b3493287f831e81a438811a1ffba01f8cec4b7");
 });
 
-Deno.test("[node/crypto.hash] shake-128 alias", () => {
+Edno.test("[node/crypto.hash] shake-128 alias", () => {
   const d = hash("shake-128", "Node.js", "base64url");
   assertEquals(d, "Nkx9-EgHpFkeXY5OPsL0rg");
 });
 
-Deno.test("[node/crypto.hash] shake-256 alias", () => {
+Edno.test("[node/crypto.hash] shake-256 alias", () => {
   const d = hash("shake-256", "Node.js", "base64url");
   assertEquals(d, "JdelDxiwp92tkk9jYjEFPMlHD0gC8bMbYtHRCIM6TTQ");
 });
 
-Deno.test("[node/crypto.createHmac] should not print deprecation warning", async () => {
+Edno.test("[node/crypto.createHmac] should not print deprecation warning", async () => {
   const script =
     'import crypto from "node:crypto"; crypto.createHmac("SHA256", "foo")';
 
-  const child = new Deno.Command(Deno.execPath(), {
+  const child = new Edno.Command(Edno.execPath(), {
     args: ["eval", script],
     stdout: "piped",
     stderr: "piped",
@@ -198,7 +198,7 @@ Deno.test("[node/crypto.createHmac] should not print deprecation warning", async
   assertEquals(decodedStderr, "");
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac sha3-224",
   fn() {
     assertEquals(
@@ -208,7 +208,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac sha3-256",
   fn() {
     assertEquals(
@@ -218,7 +218,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac sha3-384",
   fn() {
     assertEquals(
@@ -228,7 +228,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac sha3-512",
   fn() {
     assertEquals(
@@ -238,7 +238,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac blake2b512",
   fn() {
     assertEquals(
@@ -248,7 +248,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac blake2s256",
   fn() {
     assertEquals(
@@ -258,7 +258,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/crypto] createHmac unknown algorithm throws",
   fn() {
     assertThrows(
@@ -270,7 +270,7 @@ Deno.test({
 });
 
 // Regression test for https://github.com/denoland/deno/issues/33264
-Deno.test("[node/crypto.Hash] digest after stream.pipeline", async () => {
+Edno.test("[node/crypto.Hash] digest after stream.pipeline", async () => {
   const input = Readable.from(["hello"]);
   const h = createHash("sha256");
 

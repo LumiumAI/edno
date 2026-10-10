@@ -5,15 +5,15 @@ use std::ffi::c_void;
 use std::future::Future;
 use std::rc::Rc;
 
-use deno_core::OpState;
-use deno_core::ResourceId;
-use deno_core::ToV8;
-use deno_core::convert::BigInt as ConvertBigInt;
-use deno_core::convert::ExternalPointer;
-use deno_core::op2;
-use deno_core::unsync::spawn_blocking;
-use deno_core::v8;
-use deno_permissions::PermissionsContainer;
+use edno_core::OpState;
+use edno_core::ResourceId;
+use edno_core::ToV8;
+use edno_core::convert::BigInt as ConvertBigInt;
+use edno_core::convert::ExternalPointer;
+use edno_core::op2;
+use edno_core::unsync::spawn_blocking;
+use edno_core::v8;
+use edno_permissions::PermissionsContainer;
 use libffi::middle::Arg;
 use num_bigint::BigInt;
 
@@ -37,10 +37,10 @@ pub enum CallError {
   InvalidSymbol(String),
   #[class(inherit)]
   #[error(transparent)]
-  Permission(#[from] deno_permissions::PermissionCheckError),
+  Permission(#[from] edno_permissions::PermissionCheckError),
   #[class(inherit)]
   #[error(transparent)]
-  Resource(#[from] deno_core::error::ResourceError),
+  Resource(#[from] edno_core::error::ResourceError),
   #[class(inherit)]
   #[error(transparent)]
   Callback(#[from] super::CallbackError),
@@ -483,16 +483,16 @@ mod tests {
   use std::sync::atomic::AtomicUsize;
   use std::sync::atomic::Ordering;
 
-  use deno_core::JsRuntime;
-  use deno_core::RuntimeOptions;
-  use deno_permissions::PermissionsContainer;
-  use deno_permissions::RuntimePermissionDescriptorParser;
+  use edno_core::JsRuntime;
+  use edno_core::RuntimeOptions;
+  use edno_permissions::PermissionsContainer;
+  use edno_permissions::RuntimePermissionDescriptorParser;
 
   use super::op_ffi_call_ptr;
   use super::op_ffi_call_ptr_nonblocking;
   use crate::repr::op_ffi_ptr_create;
 
-  deno_core::extension!(
+  edno_core::extension!(
     test_ffi_call_ops,
     ops = [
       op_ffi_call_ptr,
@@ -545,7 +545,7 @@ mod tests {
           op_ffi_call_ptr,
           op_ffi_call_ptr_nonblocking,
           op_ffi_ptr_create,
-        } = Deno.core.ops;
+        } = Edno.core.ops;
         const pointer = op_ffi_ptr_create(__FUNCTION_POINTER__n);
         const definition = {
           parameters: ["f64", "f64", "f64", "f64"],

@@ -1,6 +1,6 @@
 {
   // ignored: native tsc resolves the npm cjs default export differently
-  // (TS2339 on `.default`) than deno's forked tsc (TS2322 type mismatch).
+  // (TS2339 on `.default`) than edno's forked tsc (TS2322 type mismatch).
   // https://github.com/denoland/deno/issues/36085
   "ignore": true,
   "args": "check main.ts",

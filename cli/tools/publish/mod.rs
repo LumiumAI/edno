@@ -12,22 +12,22 @@ use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
 use deno_ast::ModuleSpecifier;
 use deno_ast::SourceTextInfo;
-use deno_config::deno_json::ConfigFile;
-use deno_config::workspace::JsrPackageConfig;
-use deno_config::workspace::Workspace;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_core::futures::StreamExt;
-use deno_core::futures::future::LocalBoxFuture;
-use deno_core::futures::stream::FuturesUnordered;
-use deno_core::serde_json;
-use deno_core::serde_json::Value;
-use deno_core::serde_json::json;
-use deno_core::url::Url;
-use deno_resolver::collections::FolderScopedMap;
-use deno_runtime::deno_fetch;
+use edno_config::edno_json::ConfigFile;
+use edno_config::workspace::JsrPackageConfig;
+use edno_config::workspace::Workspace;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_core::futures::StreamExt;
+use edno_core::futures::future::LocalBoxFuture;
+use edno_core::futures::stream::FuturesUnordered;
+use edno_core::serde_json;
+use edno_core::serde_json::Value;
+use edno_core::serde_json::json;
+use edno_core::url::Url;
+use edno_resolver::collections::FolderScopedMap;
+use edno_runtime::edno_fetch;
 use deno_semver::Version;
 use deno_terminal::colors;
 use http_body_util::BodyExt;
@@ -86,22 +86,22 @@ pub async fn publish(
   let mut publish_configs = cli_options.start_dir.jsr_packages_for_publish();
   if publish_configs.is_empty() {
     match cli_options.start_dir.member_deno_json() {
-      Some(deno_json) => {
-        debug_assert!(!deno_json.is_package() || !deno_json.should_publish());
-        if deno_json.json.name.is_none() {
-          bail!("Missing 'name' field in '{}'.", deno_json.specifier);
+      Some(edno_json) => {
+        debug_assert!(!edno_json.is_package() || !edno_json.should_publish());
+        if edno_json.json.name.is_none() {
+          bail!("Missing 'name' field in '{}'.", edno_json.specifier);
         }
-        if !deno_json.should_publish() {
+        if !edno_json.should_publish() {
           bail!(
             "Package 'publish' field is false in '{}'.",
-            deno_json.specifier
+            edno_json.specifier
           );
         }
-        error_missing_exports_field(deno_json)?;
+        error_missing_exports_field(edno_json)?;
       }
       None => {
         bail!(
-          "Couldn't find a deno.json, deno.jsonc, jsr.json or jsr.jsonc configuration file in {}.",
+          "Couldn't find a edno.json, edno.jsonc, jsr.json or jsr.jsonc configuration file in {}.",
           directory_path.display()
         );
       }
@@ -129,7 +129,7 @@ pub async fn publish(
   // Bail out early if the version is already published, before doing the
   // expensive type checking and tarball preparation. Already-published
   // versions are skipped with a warning (rather than erroring) so that
-  // re-running `deno publish` after a partial or concurrent publish still
+  // re-running `edno publish` after a partial or concurrent publish still
   // succeeds, matching the idempotent behavior of the publish step itself.
   if !publish_flags.dry_run {
     publish_configs = filter_out_published_packages(
@@ -189,7 +189,7 @@ pub async fn publish(
     bail!("No packages to publish");
   }
 
-  if std::env::var("DENO_TESTING_DISABLE_GIT_CHECK")
+  if std::env::var("EDNO_TESTING_DISABLE_GIT_CHECK")
     .ok()
     .is_none()
     && !publish_flags.allow_dirty
@@ -242,7 +242,7 @@ fn validate_publish_configs(
 
     let version =
       config.config_file.json.version.as_deref().ok_or_else(|| {
-        deno_core::anyhow::anyhow!(
+        edno_core::anyhow::anyhow!(
           "{} is missing 'version' field",
           config.config_file.specifier
         )
@@ -284,7 +284,7 @@ async fn filter_out_published_packages(
     )
     .await
   });
-  let results = deno_core::futures::future::join_all(checks).await;
+  let results = edno_core::futures::future::join_all(checks).await;
 
   let mut remaining = Vec::with_capacity(publish_configs.len());
   for (config, already_published) in publish_configs.into_iter().zip(results) {
@@ -384,7 +384,7 @@ impl PublishPreparer {
         .boxed()
       })
       .collect::<Vec<_>>();
-    let results = deno_core::futures::future::join_all(results).await;
+    let results = edno_core::futures::future::join_all(results).await;
     for result in results {
       let (package_name, package) = result?;
       package_by_name.insert(package_name, package);
@@ -400,7 +400,7 @@ impl PublishPreparer {
     allow_slow_types: bool,
     diagnostics_collector: &PublishDiagnosticsCollector,
     package_configs: &[JsrPackageConfig],
-  ) -> Result<Arc<deno_graph::ModuleGraph>, deno_core::anyhow::Error> {
+  ) -> Result<Arc<deno_graph::ModuleGraph>, edno_core::anyhow::Error> {
     let build_fast_check_graph = !allow_slow_types;
     let graph = self
       .module_graph_creator
@@ -429,7 +429,7 @@ impl PublishPreparer {
         colors::yellow("Warning"),
       );
       Ok(Arc::new(graph))
-    } else if std::env::var("DENO_INTERNAL_FAST_CHECK_OVERWRITE").as_deref()
+    } else if std::env::var("EDNO_INTERNAL_FAST_CHECK_OVERWRITE").as_deref()
       == Ok("1")
     {
       if check_if_git_repo_dirty(self.cli_options.initial_cwd())
@@ -437,7 +437,7 @@ impl PublishPreparer {
         .is_some()
       {
         bail!(
-          "When using DENO_INTERNAL_FAST_CHECK_OVERWRITE, the git repo must be in a clean state."
+          "When using EDNO_INTERNAL_FAST_CHECK_OVERWRITE, the git repo must be in a clean state."
         );
       }
 
@@ -456,7 +456,7 @@ impl PublishPreparer {
         }
       }
 
-      bail!("Exiting due to DENO_INTERNAL_FAST_CHECK_OVERWRITE")
+      bail!("Exiting due to EDNO_INTERNAL_FAST_CHECK_OVERWRITE")
     } else {
       log::info!("Checking for slow types in the public API...");
       for package in package_configs {
@@ -498,7 +498,7 @@ impl PublishPreparer {
               concat!(
                 "Failed ensuring public API type output is valid.\n\n",
                 "{:#}\n\n",
-                "You may have discovered a bug in Deno. Please open an issue at: ",
+                "You may have discovered a bug in Edno. Please open an issue at: ",
                 "https://github.com/denoland/deno/issues/"
               ),
               check_diagnostics
@@ -516,24 +516,24 @@ impl PublishPreparer {
     graph: Arc<deno_graph::ModuleGraph>,
     diagnostics_collector: &PublishDiagnosticsCollector,
   ) -> Result<Rc<PreparedPublishPackage>, AnyError> {
-    let deno_json = &package.config_file;
-    let config_path = deno_json.specifier.to_file_path().unwrap();
+    let edno_json = &package.config_file;
+    let config_path = edno_json.specifier.to_file_path().unwrap();
     let root_dir = config_path.parent().unwrap().to_path_buf();
-    let version = deno_json.json.version.clone().ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+    let version = edno_json.json.version.clone().ok_or_else(|| {
+      edno_core::anyhow::anyhow!(
         "{} is missing 'version' field",
-        deno_json.specifier
+        edno_json.specifier
       )
     })?;
     let (scope, name_no_scope) = registry::parse_package_name(&package.name)?;
     let file_patterns = package.member_dir.to_publish_config()?.files;
 
-    let tarball = deno_core::unsync::spawn_blocking({
+    let tarball = edno_core::unsync::spawn_blocking({
       let diagnostics_collector = diagnostics_collector.clone();
       let module_content_provider = self.module_content_provider.clone();
       let cli_options = self.cli_options.clone();
       let config_path = config_path.clone();
-      let config_url = deno_json.specifier.clone();
+      let config_url = edno_json.specifier.clone();
       let has_license_field = package.license.is_some();
       let current_package_name = package.name.clone();
       move || {
@@ -604,7 +604,7 @@ impl PublishPreparer {
       package: name_no_scope.to_string(),
       version: version.to_string(),
       tarball,
-      exports: match &deno_json.json.exports {
+      exports: match &edno_json.json.exports {
         Some(Value::Object(exports)) => exports
           .into_iter()
           .map(|(k, v)| (k.to_string(), v.as_str().unwrap().to_string()))
@@ -1086,7 +1086,7 @@ fn combine_publish_errors(mut errors: Vec<AnyError>) -> AnyError {
     // "Failed to publish @scope/name: <cause>").
     message.push_str(&format!("\n\n* {:#}", err));
   }
-  deno_core::anyhow::anyhow!(message)
+  edno_core::anyhow::anyhow!(message)
 }
 
 async fn publish_package(
@@ -1114,7 +1114,7 @@ async fn publish_package(
     Some(&config_path),
   )?;
 
-  let body = deno_fetch::ReqBody::full(package.tarball.bytes.clone());
+  let body = edno_fetch::ReqBody::full(package.tarball.bytes.clone());
   let response = http_client
     .post(url, body)?
     .header(
@@ -1419,7 +1419,7 @@ async fn submit_provenance_bundle(
   // registry's own logs, which is where the reason for a rejection lives.
   let x_deno_ray = response
     .headers()
-    .get("x-deno-ray")
+    .get("x-edno-ray")
     .and_then(|value| value.to_str().ok())
     .map(|s| s.to_string());
 
@@ -1498,7 +1498,7 @@ fn verify_version_manifest(
 
   for (specifier, expected) in &manifest.exports {
     let actual = package.exports.get(specifier).ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "Export {} not found in the package",
         specifier
       )
@@ -1570,13 +1570,13 @@ fn has_license_file<'a>(
   })
 }
 
-fn error_missing_exports_field(deno_json: &ConfigFile) -> Result<(), AnyError> {
+fn error_missing_exports_field(edno_json: &ConfigFile) -> Result<(), AnyError> {
   static SUGGESTED_ENTRYPOINTS: [&str; 4] =
     ["mod.ts", "mod.js", "index.ts", "index.js"];
   let mut suggested_entrypoint = None;
 
   for entrypoint in SUGGESTED_ENTRYPOINTS {
-    if deno_json.dir_path().join(entrypoint).exists() {
+    if edno_json.dir_path().join(entrypoint).exists() {
       suggested_entrypoint = Some(entrypoint);
       break;
     }
@@ -1588,14 +1588,14 @@ fn error_missing_exports_field(deno_json: &ConfigFile) -> Result<(), AnyError> {
   "version": "{}",
   "exports": "{}"
 }}"#,
-    deno_json.json.name.as_deref().unwrap_or("@scope/name"),
-    deno_json.json.name.as_deref().unwrap_or("0.0.0"),
+    edno_json.json.name.as_deref().unwrap_or("@scope/name"),
+    edno_json.json.name.as_deref().unwrap_or("0.0.0"),
     suggested_entrypoint.unwrap_or("<path_to_entrypoint>")
   );
 
   bail!(
     "You did not specify an entrypoint in {}. Add `exports` mapping in the configuration file, eg:\n{}",
-    deno_json.specifier,
+    edno_json.specifier,
     exports_content
   );
 }
@@ -1643,7 +1643,7 @@ mod tests {
           size: 0,
         }],
       },
-      config: "deno.json".to_string(),
+      config: "edno.json".to_string(),
       exports: HashMap::new(),
     };
 
@@ -1674,7 +1674,7 @@ mod tests {
           size: 0,
         }],
       },
-      config: "deno.json".to_string(),
+      config: "edno.json".to_string(),
       exports: HashMap::new(),
     };
 
@@ -1707,7 +1707,7 @@ mod tests {
           size: 0,
         }],
       },
-      config: "deno.json".to_string(),
+      config: "edno.json".to_string(),
       exports: HashMap::new(),
     };
 

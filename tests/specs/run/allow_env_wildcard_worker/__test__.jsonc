@@ -1,7 +1,7 @@
 {
   "envs": {
-    "DENO_HELLO": "hello",
-    "DENO_BYE": "bye",
+    "EDNO_HELLO": "hello",
+    "EDNO_BYE": "bye",
     "AWS_HELLO": "aws"
   },
   "args": "run --allow-env --allow-read --unstable-worker-options main.js",

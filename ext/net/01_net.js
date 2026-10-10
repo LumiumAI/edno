@@ -65,9 +65,9 @@ const {
 let _streamsImpl;
 function lazyStreams() {
   return _streamsImpl ??
-    (_streamsImpl = core.loadExtScript("ext:deno_web/06_streams.js"));
+    (_streamsImpl = core.loadExtScript("ext:edno_web/06_streams.js"));
 }
-const abortSignal = core.loadExtScript("ext:deno_web/03_abort_signal.js");
+const abortSignal = core.loadExtScript("ext:edno_web/03_abort_signal.js");
 
 async function write(rid, data) {
   return await core.write(rid, data);
@@ -605,7 +605,7 @@ function listen(args) {
     case "unix": {
       const { 0: rid, 1: path } = op_net_listen_unix(
         args.path,
-        args[listenOptionApiName] ?? "Deno.listen",
+        args[listenOptionApiName] ?? "Edno.listen",
       );
       const addr = {
         transport: "unix",

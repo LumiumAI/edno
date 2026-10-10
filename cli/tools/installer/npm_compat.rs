@@ -4,27 +4,27 @@
 //!
 //! After dependency resolution, this module:
 //! 1. Installs jsr: compatibility packages via npm.jsr.io
-//! 2. Mirrors http(s): modules into .deno/remote/<host><path>/...
-//! 3. Generates .deno/tsconfig.json with paths mappings for npm:/jsr:/https:
+//! 2. Mirrors http(s): modules into .edno/remote/<host><path>/...
+//! 3. Generates .edno/tsconfig.json with paths mappings for npm:/jsr:/https:
 //! 4. In global-cache mode, generates per-package referenced tsconfigs so
-//!    stock TypeScript can preserve Deno's contextual npm resolution.
+//!    stock TypeScript can preserve Edno's contextual npm resolution.
 //!
 //! This enables stock TypeScript tooling (tsc, tsserver, VS Code) to work
-//! with Deno projects that use jsr:, npm:, and http(s): specifiers.
+//! with Edno projects that use jsr:, npm:, and http(s): specifiers.
 
 use std::collections::BTreeMap;
 use std::collections::VecDeque;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::serde_json::Value;
-use deno_core::serde_json::json;
-use deno_core::url::Url;
-use deno_npmrc::ResolvedNpmRc;
-use deno_runtime::deno_permissions::PermissionsContainer;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::serde_json::Value;
+use edno_core::serde_json::json;
+use edno_core::url::Url;
+use edno_npmrc::ResolvedNpmRc;
+use edno_runtime::edno_permissions::PermissionsContainer;
 use deno_semver::Version;
 use deno_semver::VersionReq;
 use flate2::read::GzDecoder;
@@ -54,7 +54,7 @@ pub struct InstalledJsrPackage {
 struct NpmCacheProjects {
   /// Exact npm: specifier/import-map target to its resolved package folder.
   package_paths: BTreeMap<String, PathBuf>,
-  /// Paths relative to `.deno/tsconfig.json` for the generated package
+  /// Paths relative to `.edno/tsconfig.json` for the generated package
   /// projects.
   references: Vec<String>,
 }
@@ -163,20 +163,20 @@ fn dependency_project_paths(
 }
 
 /// Generate a referenced TypeScript project for every resolved package copy in
-/// Deno's global npm cache.
+/// Edno's global npm cache.
 ///
 /// A package project owns the cached package's type/source files and maps every
 /// bare dependency name to the exact cache folder selected by the npm snapshot.
 /// TypeScript uses these compiler options as a "project reference redirect"
 /// while resolving imports from the package, which gives stock tsc the same
-/// per-referrer dependency context as Deno's resolver without materializing a
+/// per-referrer dependency context as Edno's resolver without materializing a
 /// node_modules tree.
 fn generate_npm_cache_projects(
   project_root: &Path,
-  deno_imports: Option<&Value>,
+  edno_imports: Option<&Value>,
   npm_resolver: &CliNpmResolver,
 ) -> Result<NpmCacheProjects, AnyError> {
-  let projects_root = project_root.join(".deno/npm");
+  let projects_root = project_root.join(".edno/npm");
   if projects_root.exists() {
     std::fs::remove_dir_all(&projects_root)?;
   }
@@ -203,7 +203,7 @@ fn generate_npm_cache_projects(
     if files.is_empty() {
       continue;
     }
-    let folder_name = deno_resolver::npm::get_package_folder_id_folder_name(
+    let folder_name = edno_resolver::npm::get_package_folder_id_folder_name(
       &package.get_package_cache_folder_id(),
     );
     let project_dir = projects_root.join(&folder_name);
@@ -250,7 +250,7 @@ fn generate_npm_cache_projects(
       .push(format!("./npm/{folder_name}/tsconfig.json"));
   }
 
-  if let Some(imports) = deno_imports.and_then(|v| v.as_object()) {
+  if let Some(imports) = edno_imports.and_then(|v| v.as_object()) {
     for target in imports.values().filter_map(|v| v.as_str()) {
       if !target.starts_with("npm:") {
         continue;
@@ -300,8 +300,8 @@ pub async fn setup_npm_compat(
   manage_root_tsconfig: bool,
   type_check_remote: bool,
 ) -> Result<Vec<InstalledJsrPackage>, AnyError> {
-  let deno_json = read_deno_json(project_root)?;
-  let deno_compiler_options = deno_json
+  let edno_json = read_deno_json(project_root)?;
+  let edno_compiler_options = edno_json
     .as_ref()
     .and_then(|d| d.get("compilerOptions"))
     .cloned();
@@ -309,7 +309,7 @@ pub async fn setup_npm_compat(
   // Workspace member aliases (`@std/assert` -> the local `./assert` member's
   // exports) shadow any published jsr mapping, so compute them up front and let
   // them win in the generated `paths`.
-  let mut member_paths = deno_json
+  let mut member_paths = edno_json
     .as_ref()
     .map(|d| workspace_member_paths(project_root, d))
     .unwrap_or_default();
@@ -318,13 +318,13 @@ pub async fn setup_npm_compat(
   // the specifiers discovered in the module graph. Graph specifiers (e.g.
   // `jsr:@std/path` written directly in source) are keyed by themselves so the
   // import-map-driven generation maps them like an alias.
-  let mut combined = deno_json
+  let mut combined = edno_json
     .as_ref()
     .and_then(|d| d.get("imports"))
     .and_then(|v| v.as_object())
     .cloned()
     .unwrap_or_default();
-  if let Some(map_imports) = deno_json
+  if let Some(map_imports) = edno_json
     .as_ref()
     .and_then(|d| read_referenced_import_map(project_root, d))
   {
@@ -365,38 +365,38 @@ pub async fn setup_npm_compat(
   }
 
   // Always generate the base config: even a project with no external deps needs
-  // the generated tsconfig + private `@types/deno` so stock tooling sees the
-  // Deno globals. There's simply nothing to map into `paths` when there are no
+  // the generated tsconfig + private `@types/edno` so stock tooling sees the
+  // Edno globals. There's simply nothing to map into `paths` when there are no
   // external specifiers or workspace members.
   let combined_imports = Value::Object(combined);
-  let deno_imports = Some(&combined_imports);
-  let deno_compiler_options = deno_compiler_options.as_ref();
+  let edno_imports = Some(&combined_imports);
+  let edno_compiler_options = edno_compiler_options.as_ref();
 
-  // Stock TypeScript has no hook into Deno's contextual global-cache npm
+  // Stock TypeScript has no hook into Edno's contextual global-cache npm
   // resolver. Model that context with project references: every resolved npm
   // package copy gets a tiny tsconfig whose `paths` point at the exact package
   // copies selected for its dependency edges. TypeScript applies the referenced
   // project's compiler options while resolving imports from files owned by that
   // project, so duplicate versions and peer-dependency copies remain distinct.
   let npm_cache_projects =
-    generate_npm_cache_projects(project_root, deno_imports, npm_resolver)?;
+    generate_npm_cache_projects(project_root, edno_imports, npm_resolver)?;
   let use_global_cache_layout = npm_resolver
     .as_managed()
     .is_some_and(|managed| managed.root_node_modules_path().is_none());
 
   let jsr_packages_dir = if use_global_cache_layout {
-    project_root.join(".deno/npm-compat/@jsr")
+    project_root.join(".edno/npm-compat/@jsr")
   } else {
     project_root.join("node_modules/@jsr")
   };
   let installed =
-    install_jsr_packages(&jsr_packages_dir, deno_imports, http_client).await?;
+    install_jsr_packages(&jsr_packages_dir, edno_imports, http_client).await?;
 
   // Mirror http(s): modules (and their transitive remote/relative imports)
-  // into .deno/remote/<host><path>/...
+  // into .edno/remote/<host><path>/...
   let http_modules = match install_http_modules(
     project_root,
-    deno_imports,
+    edno_imports,
     file_fetcher,
     permissions,
     type_check_remote,
@@ -412,9 +412,9 @@ pub async fn setup_npm_compat(
 
   // Local `.wasm` imports (`import { x } from "./foo.wasm"`) can't be checked as
   // binaries: stock tsc reports a spurious `TS2307 Cannot find module`. Mirror
-  // each wasm module's generated typed declarations into `.deno/wasm/<rel>`
+  // each wasm module's generated typed declarations into `.edno/wasm/<rel>`
   // (renamed to `.d.wasm.ts` so `allowArbitraryExtensions` picks them up) and
-  // add `.deno/wasm` as a `rootDirs` overlay of the project root so tsc resolves
+  // add `.edno/wasm` as a `rootDirs` overlay of the project root so tsc resolves
   // the relative `./foo.wasm` specifier to the mirror. Unlike remote wasm (a
   // non-relative specifier handled via `paths`), a relative specifier is never
   // matched by tsconfig `paths`, hence the `rootDirs` overlay.
@@ -446,7 +446,7 @@ pub async fn setup_npm_compat(
     log::warn!(
       "sync-types: {} npm package(s) are not present under node_modules and \
        were left unmapped ({}). Enable a node_modules directory (e.g. set \
-       \"nodeModulesDir\": \"auto\" in deno.json) so stock TypeScript can \
+       \"nodeModulesDir\": \"auto\" in edno.json) so stock TypeScript can \
        resolve them.",
       unmaterialized.len(),
       unmaterialized.join(", "),
@@ -473,10 +473,10 @@ pub async fn setup_npm_compat(
     );
   }
 
-  // The project's own `exclude` (from deno.json) tells us which paths Deno
+  // The project's own `exclude` (from edno.json) tells us which paths Edno
   // doesn't check (test fixtures, generated output); mirror it into the tsconfig
-  // so we don't surface diagnostics for files Deno itself skips.
-  let mut excludes: Vec<String> = deno_json
+  // so we don't surface diagnostics for files Edno itself skips.
+  let mut excludes: Vec<String> = edno_json
     .as_ref()
     .and_then(|d| d.get("exclude"))
     .and_then(|v| v.as_array())
@@ -488,12 +488,12 @@ pub async fn setup_npm_compat(
     })
     .unwrap_or_default();
 
-  // Exclude Deno's vendor directory. Vendored deps are third-party code Deno
-  // doesn't type-check, and their `jsr:`/`npm:` imports resolve through Deno's
+  // Exclude Edno's vendor directory. Vendored deps are third-party code Edno
+  // doesn't type-check, and their `jsr:`/`npm:` imports resolve through Edno's
   // vendor map (not ours), so type-checking them here just surfaces the deps'
   // own errors. The vendor dir is `vendor/` at the project root when `vendor`
-  // is enabled in deno.json or the directory is present.
-  let vendor_enabled = deno_json
+  // is enabled in edno.json or the directory is present.
+  let vendor_enabled = edno_json
     .as_ref()
     .and_then(|d| d.get("vendor"))
     .and_then(|v| v.as_bool())
@@ -502,12 +502,12 @@ pub async fn setup_npm_compat(
     excludes.push("vendor".to_string());
   }
 
-  // Generate .deno/tsconfig.json and ensure root tsconfig.json extends it
+  // Generate .edno/tsconfig.json and ensure root tsconfig.json extends it
   generate_deno_tsconfig(
     project_root,
-    deno_compiler_options,
+    edno_compiler_options,
     resolved_compiler_options,
-    deno_imports,
+    edno_imports,
     &http_modules,
     &member_paths,
     &jsr_packages_dir,
@@ -558,8 +558,8 @@ fn resolve_bare_against_import_map(
 ///
 /// If the project already installed `@types/node` under its `node_modules`, we
 /// reuse that in place. Otherwise we materialize a stock copy under
-/// `.deno/npm-compat` (which is gitignored) - never downloading into the
-/// project's real `node_modules`, so `deno check` doesn't mutate the user's tree
+/// `.edno/npm-compat` (which is gitignored) - never downloading into the
+/// project's real `node_modules`, so `edno check` doesn't mutate the user's tree
 /// (and doesn't dirty the working directory).
 async fn ensure_types_node(
   project_root: &Path,
@@ -581,13 +581,13 @@ async fn ensure_types_node(
       };
     }
   }
-  // Materialize under `.deno/npm-compat` (gitignored) in every other case.
-  let modules_dir = project_root.join(".deno/npm-compat");
+  // Materialize under `.edno/npm-compat` (gitignored) in every other case.
+  let modules_dir = project_root.join(".edno/npm-compat");
   let type_root = "./npm-compat/@types".to_string();
   let node_dir = modules_dir.join("@types/node");
   let undici_types_dir = modules_dir.join("undici-types");
   // Only reuse a copy at the pinned version: one left behind by an earlier
-  // Deno (back when this followed the registry's `latest`) would otherwise keep
+  // Edno (back when this followed the registry's `latest`) would otherwise keep
   // being type-checked against forever.
   if is_materialized_package_at_version(&node_dir, TYPES_NODE_VERSION) {
     return NodeTypesSetup {
@@ -642,7 +642,7 @@ async fn download_npm_package(
   // Go through the registry the project configured (`.npmrc`,
   // `NPM_CONFIG_REGISTRY`) rather than hardcoding npmjs.org, so a private
   // registry, a mirror or an offline setup is honored here too.
-  let meta_url = deno_npm_cache::get_package_url(npmrc, pkg);
+  let meta_url = edno_npm_cache::get_package_url(npmrc, pkg);
   let bytes = match http_client.download(meta_url).await {
     Ok(b) => b,
     Err(e) => {
@@ -696,13 +696,13 @@ fn resolve_version_req(meta: &Value, req: &str) -> Option<String> {
     .map(|v| v.to_string())
 }
 
-/// If `deno_json` references an external import map via `importMap`, read that
+/// If `edno_json` references an external import map via `importMap`, read that
 /// file and return its `imports` object.
 fn read_referenced_import_map(
   project_root: &Path,
-  deno_json: &Value,
+  edno_json: &Value,
 ) -> Option<serde_json::Map<String, Value>> {
-  let rel = deno_json.get("importMap").and_then(|v| v.as_str())?;
+  let rel = edno_json.get("importMap").and_then(|v| v.as_str())?;
   let content = std::fs::read_to_string(project_root.join(rel)).ok()?;
   let parsed: Value = serde_json::from_str(&content).ok()?;
   parsed.get("imports").and_then(|v| v.as_object()).cloned()
@@ -712,13 +712,13 @@ fn read_referenced_import_map(
 /// (and subpath exports) to its local source files, so stock tooling resolves
 /// e.g. `@std/assert` and `@std/assert/equals` to `../assert/mod.ts` and
 /// `../assert/equals.ts` rather than a published copy. Paths are relative to
-/// the generated `.deno/tsconfig.json`.
+/// the generated `.edno/tsconfig.json`.
 fn workspace_member_paths(
   project_root: &Path,
-  deno_json: &Value,
+  edno_json: &Value,
 ) -> serde_json::Map<String, Value> {
   let mut paths = serde_json::Map::new();
-  let Some(members) = deno_json.get("workspace").and_then(|w| w.as_array())
+  let Some(members) = edno_json.get("workspace").and_then(|w| w.as_array())
   else {
     return paths;
   };
@@ -767,8 +767,8 @@ fn workspace_member_paths(
 
 /// Expand workspace member patterns into concrete member directories (relative
 /// to the project root). A trailing `/*` (e.g. `./packages/*`) enumerates the
-/// immediate subdirectories that contain a `deno.json(c)`; everything else is
-/// treated as a literal member path. Deno's own workspace config supports this
+/// immediate subdirectories that contain a `edno.json(c)`; everything else is
+/// treated as a literal member path. Edno's own workspace config supports this
 /// glob form, and it's common in monorepos.
 fn expand_member_patterns(
   project_root: &Path,
@@ -786,7 +786,7 @@ fn expand_member_patterns(
           continue;
         }
         let dir = entry.path();
-        if (dir.join("deno.json").exists() || dir.join("deno.jsonc").exists())
+        if (dir.join("edno.json").exists() || dir.join("edno.jsonc").exists())
           && let Some(name) = entry.file_name().to_str()
         {
           out.push(format!("{parent}/{name}"));
@@ -849,14 +849,14 @@ fn add_member_alias_paths(
 }
 
 fn read_deno_json(project_root: &Path) -> Result<Option<Value>, AnyError> {
-  let deno_json_path = project_root.join("deno.json");
-  let deno_jsonc_path = project_root.join("deno.jsonc");
+  let edno_json_path = project_root.join("edno.json");
+  let edno_jsonc_path = project_root.join("edno.jsonc");
 
-  if deno_json_path.exists() {
-    let content = std::fs::read_to_string(&deno_json_path)?;
+  if edno_json_path.exists() {
+    let content = std::fs::read_to_string(&edno_json_path)?;
     Ok(Some(serde_json::from_str(&content)?))
-  } else if deno_jsonc_path.exists() {
-    let content = std::fs::read_to_string(&deno_jsonc_path)?;
+  } else if edno_jsonc_path.exists() {
+    let content = std::fs::read_to_string(&edno_jsonc_path)?;
     let parsed: Option<Value> = jsonc_parser::parse_to_serde_value(
       &content,
       &jsonc_parser::ParseOptions::default(),
@@ -867,16 +867,16 @@ fn read_deno_json(project_root: &Path) -> Result<Option<Value>, AnyError> {
   }
 }
 
-/// Generate tsconfig.deno.json at the project root with paths mappings.
+/// Generate tsconfig.edno.json at the project root with paths mappings.
 #[allow(
   clippy::too_many_arguments,
   reason = "threads the independent inputs needed to generate a tsconfig"
 )]
 fn generate_deno_tsconfig(
   project_root: &Path,
-  deno_compiler_options: Option<&Value>,
+  edno_compiler_options: Option<&Value>,
   resolved_compiler_options: Option<&Value>,
-  deno_imports: Option<&Value>,
+  edno_imports: Option<&Value>,
   http_modules: &BTreeMap<Url, String>,
   member_paths: &serde_json::Map<String, Value>,
   jsr_packages_dir: &Path,
@@ -889,9 +889,9 @@ fn generate_deno_tsconfig(
 ) -> Result<(), AnyError> {
   let generated = crate::tsc::tsconfig_gen::generate_tsconfig(
     project_root,
-    deno_compiler_options,
+    edno_compiler_options,
     resolved_compiler_options,
-    deno_imports,
+    edno_imports,
     // Command-line roots scope graph/dependency discovery only. Keep the
     // generated project open so bundlers can consume its resolver mappings for
     // any entrypoint they are asked to bundle.
@@ -917,16 +917,16 @@ fn generate_deno_tsconfig(
 ///
 /// Uses `HttpClient::download` directly (not `CliFileFetcher`) because we
 /// don't want each registry/tarball URL surfacing as a user-visible
-/// "Download …" line in `deno install` output — those are an
+/// "Download …" line in `edno install` output — those are an
 /// implementation detail of the stock-tsc compatibility setup. The
 /// fetcher's caching and redirect handling are unnecessary for npm.jsr.io.
 async fn install_jsr_packages(
   jsr_packages_dir: &Path,
-  deno_imports: Option<&Value>,
+  edno_imports: Option<&Value>,
   http_client: &HttpClient,
 ) -> Result<Vec<InstalledJsrPackage>, AnyError> {
   let mut installed = Vec::new();
-  let imports = match deno_imports.and_then(|v| v.as_object()) {
+  let imports = match edno_imports.and_then(|v| v.as_object()) {
     Some(imports) => imports,
     None => return Ok(installed),
   };
@@ -950,9 +950,9 @@ async fn install_jsr_packages(
     }
 
     let registry_name = format!("@jsr/{npm_name}");
-    // Use the same env var as the rest of Deno (`JSR_NPM_URL`, see
+    // Use the same env var as the rest of Edno (`JSR_NPM_URL`, see
     // libs/npmrc) for the npm-compat jsr registry, so a custom/test registry is
-    // honored. The previous `DENO_NPM_JSR_REGISTRY` was read by nothing else, so
+    // honored. The previous `EDNO_NPM_JSR_REGISTRY` was read by nothing else, so
     // tests (which set `JSR_NPM_URL` to the mock registry) fell through to the
     // real npm.jsr.io and the fetch failed -> the package was never installed.
     let npm_jsr_registry = std::env::var("JSR_NPM_URL")
@@ -1036,7 +1036,7 @@ async fn install_jsr_packages(
 /// `package.json` is the last thing [`extract_tarball_gz_atomic`] publishes -
 /// it only ever appears via the atomic rename of a complete staging dir - so
 /// its presence is the marker that the tree is usable. A bare `exists()` check
-/// on the destination is not: with several `deno check` processes sharing a
+/// on the destination is not: with several `edno check` processes sharing a
 /// cache, one can observe a directory the other has only started filling in,
 /// skip the download, and then fail type checking with
 /// `TS2688 Cannot find type definition file for 'node'`.
@@ -1098,7 +1098,7 @@ fn cleanup_stale_staging_dirs(
 /// half-extracted state: unpack into a sibling staging directory on the same
 /// filesystem, then `rename` it into place.
 ///
-/// Concurrent `deno check` invocations sharing a cache race to materialize the
+/// Concurrent `edno check` invocations sharing a cache race to materialize the
 /// same package. The rename makes each one either publish a complete tree or
 /// lose harmlessly to a winner that already did.
 fn extract_tarball_gz_atomic(
@@ -1158,8 +1158,8 @@ fn extract_tarball_gz_atomic(
         return Ok(());
       }
       // `dest` is stale: half-extracted by a killed process, written
-      // non-atomically by an older Deno, or a complete copy of a version we no
-      // longer want (an older pin, or whatever `latest` was when Deno still
+      // non-atomically by an older Edno, or a complete copy of a version we no
+      // longer want (an older pin, or whatever `latest` was when Edno still
       // followed it). Clearing it is what heals a cache that is already
       // poisoned - otherwise every later run skips the download and keeps type
       // checking against the wrong tree.
@@ -1232,11 +1232,11 @@ fn extract_tarball_gz(gz_bytes: &[u8], dest: &Path) -> Result<(), AnyError> {
 
 /// A resolved entry for the tsconfig `paths` table: maps a user-facing URL
 /// (whatever appears in source as `import "..."`) to the local mirror file
-/// path (relative to `.deno/`) that tsc should resolve it to.
+/// path (relative to `.edno/`) that tsc should resolve it to.
 pub type HttpModulePaths = BTreeMap<Url, String>;
 
 /// Materialize local (`file:`) `.wasm` modules' generated typed declarations
-/// under `.deno/wasm/`, mirroring their path relative to the project root and
+/// under `.edno/wasm/`, mirroring their path relative to the project root and
 /// renaming `foo.wasm` -> `foo.d.wasm.ts` so stock tsc resolves the relative
 /// `import "./foo.wasm"` via `allowArbitraryExtensions` + a `rootDirs` overlay
 /// (added by `build_tsconfig`). `dts_modules` pairs each wasm's `file:` URL with
@@ -1254,7 +1254,7 @@ fn install_local_wasm_modules(
   if dts_modules.is_empty() {
     return Ok(false);
   }
-  let wasm_root = project_root.join(".deno").join("wasm");
+  let wasm_root = project_root.join(".edno").join("wasm");
   let mut wrote_any = false;
   for (url, dts) in dts_modules {
     let Ok(path) = url.to_file_path() else {
@@ -1263,7 +1263,7 @@ fn install_local_wasm_modules(
     // Mirror the wasm file's location relative to the project root so the
     // `rootDirs` overlay resolves it to the same relative specifier the source
     // used. A wasm module outside the project root has no stable relative
-    // location under `.deno/wasm/`, so skip it (rare; tsc keeps its TS2307).
+    // location under `.edno/wasm/`, so skip it (rare; tsc keeps its TS2307).
     let Ok(rel) = path.strip_prefix(project_root) else {
       continue;
     };
@@ -1282,10 +1282,10 @@ fn install_local_wasm_modules(
   Ok(wrote_any)
 }
 
-/// Materialize http(s): modules referenced from `deno.json` `imports` (and
-/// their transitive remote/relative imports) into `.deno/remote/<host><path>`.
+/// Materialize http(s): modules referenced from `edno.json` `imports` (and
+/// their transitive remote/relative imports) into `.edno/remote/<host><path>`.
 ///
-/// Uses `CliFileFetcher`, which transparently reuses `DENO_DIR` cache, follows
+/// Uses `CliFileFetcher`, which transparently reuses `EDNO_DIR` cache, follows
 /// redirects, and exposes response headers. When a module advertises types via
 /// the `X-TypeScript-Types` header (esm.sh and friends), the types URL is
 /// fetched too and the paths entry for the original URL is pointed at the
@@ -1295,10 +1295,10 @@ fn install_local_wasm_modules(
 /// is acknowledged tech debt; a deno_graph walk is the production answer.
 ///
 /// Returns a map from user-facing URL to the local mirror path (relative to
-/// `.deno/`), suitable for direct use as tsconfig `paths` values.
+/// `.edno/`), suitable for direct use as tsconfig `paths` values.
 pub async fn install_http_modules(
   project_root: &Path,
-  deno_imports: Option<&Value>,
+  edno_imports: Option<&Value>,
   file_fetcher: &CliFileFetcher,
   permissions: &PermissionsContainer,
   type_check_remote: bool,
@@ -1306,7 +1306,7 @@ pub async fn install_http_modules(
   let mut paths: HttpModulePaths = BTreeMap::new();
   let mut queue: VecDeque<Url> = VecDeque::new();
 
-  let Some(imports) = deno_imports.and_then(|v| v.as_object()) else {
+  let Some(imports) = edno_imports.and_then(|v| v.as_object()) else {
     return Ok(paths);
   };
 
@@ -1326,7 +1326,7 @@ pub async fn install_http_modules(
     return Ok(paths);
   }
 
-  let remote_root = project_root.join(".deno").join("remote");
+  let remote_root = project_root.join(".edno").join("remote");
 
   while let Some(requested_url) = queue.pop_front() {
     if paths.contains_key(&requested_url) {
@@ -1346,7 +1346,7 @@ pub async fn install_http_modules(
       Ok(f) => f,
       Err(e) => {
         log::warn!(
-          "Skipping {requested_url}: {e} (try running `deno install --allow-import` to grant access)"
+          "Skipping {requested_url}: {e} (try running `edno install --allow-import` to grant access)"
         );
         continue;
       }
@@ -1468,7 +1468,7 @@ pub async fn install_http_modules(
 }
 
 /// Write `bytes` to the local mirror file for `url`, returning the path
-/// relative to `.deno/` (suitable for tsconfig `paths`).
+/// relative to `.edno/` (suitable for tsconfig `paths`).
 fn write_mirror(
   remote_root: &Path,
   url: &Url,
@@ -1481,12 +1481,12 @@ fn write_mirror(
     std::fs::create_dir_all(parent)?;
   }
   // Mark mirrored script modules `// @ts-nocheck`. Remote dependencies are not
-  // the user's code and Deno itself doesn't re-type-check them; without this,
+  // the user's code and Edno itself doesn't re-type-check them; without this,
   // stock tsc/tsgo would report every type error inside the dependency (which
   // dwarfs the project's own diagnostics). `@ts-nocheck` suppresses errors in
   // the file while keeping its exported and ambient types available to
   // importers, and triple-slash directives (which may follow a leading comment)
-  // still apply. Skipped under `deno check --all`, which does type-check remote
+  // still apply. Skipped under `edno check --all`, which does type-check remote
   // modules.
   let is_script = matches!(
     local_path.extension().and_then(|e| e.to_str()),
@@ -1931,7 +1931,7 @@ mod tests {
   fn test_extract_tarball_gz_atomic_replaces_other_version() {
     let dir = tempfile::tempdir().unwrap();
     let dest = dir.path().join("node");
-    // A complete copy of a version we no longer want: what an older Deno left
+    // A complete copy of a version we no longer want: what an older Edno left
     // behind when this followed the registry's `latest` instead of a pin.
     std::fs::create_dir_all(&dest).unwrap();
     std::fs::write(

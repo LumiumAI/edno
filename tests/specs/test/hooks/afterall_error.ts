@@ -1,14 +1,14 @@
 // Test file to verify error handling in afterAll hooks
 
-Deno.test.afterAll(() => {
+Edno.test.afterAll(() => {
   console.log("afterAll 2 executed");
 });
 
-Deno.test.afterAll(() => {
+Edno.test.afterAll(() => {
   console.log("afterAll 1 executed");
   throw new Error("afterAll 1 failed");
 });
 
-Deno.test("first test", () => {
+Edno.test("first test", () => {
   console.log("test executed");
 });

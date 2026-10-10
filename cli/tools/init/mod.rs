@@ -7,19 +7,19 @@ use std::path::Path;
 
 use color_print::cformat;
 use color_print::cstr;
-use deno_config::deno_json::NodeModulesDirMode;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_core::serde_json::json;
-use deno_lib::args::UnstableConfig;
-use deno_npm_installer::PackagesAllowedScripts;
-use deno_runtime::WorkerExecutionMode;
+use edno_config::edno_json::NodeModulesDirMode;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_core::serde_json::json;
+use edno_lib::args::UnstableConfig;
+use edno_npm_installer::PackagesAllowedScripts;
+use edno_runtime::WorkerExecutionMode;
 use deno_semver::jsr::JsrPackageReqReference;
 use log::info;
 
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::Flags;
 use crate::args::InitFlags;
 use crate::args::InternalFlags;
@@ -66,10 +66,10 @@ pub async fn init_project(
 
     create_json_file(
       &dir,
-      "deno.json",
+      "edno.json",
       &json!({
         "tasks": {
-          "dev": "deno run --watch main.ts"
+          "dev": "edno run --watch main.ts"
         }
       }),
     )?;
@@ -101,7 +101,7 @@ export default {
 
     return new Response("Not found", { status: 404 });
   },
-} satisfies Deno.ServeDefaultExport;
+} satisfies Edno.ServeDefaultExport;
 "#,
     )?;
     create_file(
@@ -110,25 +110,25 @@ export default {
       r#"import { assertEquals } from "@std/assert";
 import server from "./main.ts";
 
-Deno.test(async function serverFetch() {
+Edno.test(async function serverFetch() {
   const req = new Request("https://deno.land");
   const res = await server.fetch(req);
   assertEquals(await res.text(), "Home page");
 });
 
-Deno.test(async function serverFetchNotFound() {
+Edno.test(async function serverFetchNotFound() {
   const req = new Request("https://deno.land/404");
   const res = await server.fetch(req);
   assertEquals(res.status, 404);
 });
 
-Deno.test(async function serverFetchUsers() {
+Edno.test(async function serverFetchUsers() {
   const req = new Request("https://deno.land/users/123");
   const res = await server.fetch(req);
   assertEquals(await res.text(), "123");
 });
 
-Deno.test(async function serverFetchStatic() {
+Edno.test(async function serverFetchStatic() {
   const req = new Request("https://deno.land/static/hello.js");
   const res = await server.fetch(req);
   assertEquals(await res.text(), 'console.log("Hello, world!");\n');
@@ -148,10 +148,10 @@ Deno.test(async function serverFetchStatic() {
 
     create_json_file(
       &dir,
-      "deno.json",
+      "edno.json",
       &json!({
         "tasks": {
-          "dev": "deno serve --watch -R main.ts",
+          "dev": "edno serve --watch -R main.ts",
         },
         "imports": {
           "@std/assert": "jsr:@std/assert@1",
@@ -181,7 +181,7 @@ Deno.test(async function serverFetchStatic() {
       r#"import { assertEquals } from "@std/assert";
 import { add } from "./mod.ts";
 
-Deno.test(function addTest() {
+Edno.test(function addTest() {
   assertEquals(add(2, 3), 5);
 });
 "#,
@@ -189,13 +189,13 @@ Deno.test(function addTest() {
 
     create_json_file(
       &dir,
-      "deno.json",
+      "edno.json",
       &json!({
         "name": project_name,
         "version": "0.1.0",
         "exports": "./mod.ts",
         "tasks": {
-          "dev": "deno test --watch"
+          "dev": "edno test --watch"
         },
         "license": "MIT",
         "imports": {
@@ -217,13 +217,13 @@ Deno.test(function addTest() {
     });
   }
 
-  return new Response("<h1>Welcome to Deno!</h1>", {
+  return new Response("<h1>Welcome to Edno!</h1>", {
     headers: { "content-type": "text/html" },
   });
 }
 
 if (import.meta.main) {
-  Deno.serve(handler);
+  Edno.serve(handler);
 }
 "#,
     )?;
@@ -233,14 +233,14 @@ if (import.meta.main) {
       r#"import { assertEquals } from "@std/assert";
 import { handler } from "./main.ts";
 
-Deno.test("returns html on /", async () => {
+Edno.test("returns html on /", async () => {
   const res = handler(new Request("http://localhost/"));
   assertEquals(res.headers.get("content-type"), "text/html");
   const body = await res.text();
-  assertEquals(body.includes("Welcome to Deno"), true);
+  assertEquals(body.includes("Welcome to Edno"), true);
 });
 
-Deno.test("returns json on /api", async () => {
+Edno.test("returns json on /api", async () => {
   const res = handler(new Request("http://localhost/api"));
   const data = await res.json();
   assertEquals(data.message, "Hello, world!");
@@ -251,10 +251,10 @@ Deno.test("returns json on /api", async () => {
 
     create_json_file(
       &dir,
-      "deno.json",
+      "edno.json",
       &json!({
         "tasks": {
-          "dev": "deno run --watch --allow-net main.ts"
+          "dev": "edno run --watch --allow-net main.ts"
         },
         "imports": {
           "@std/assert": "jsr:@std/assert@1"
@@ -273,49 +273,49 @@ Deno.test("returns json on /api", async () => {
   }
   if init_flags.empty {
     info!("  {}", colors::gray("# Run the program"));
-    info!("  deno run main.ts");
+    info!("  edno run main.ts");
     info!("");
     info!(
       "  {}",
       colors::gray("# Run the program and watch for file changes")
     );
-    info!("  deno task dev");
+    info!("  edno task dev");
   } else if init_flags.serve {
     info!("  {}", colors::gray("# Run the server"));
-    info!("  deno serve -R main.ts");
+    info!("  edno serve -R main.ts");
     info!("");
     info!(
       "  {}",
       colors::gray("# Run the server and watch for file changes")
     );
-    info!("  deno task dev");
+    info!("  edno task dev");
     info!("");
     info!("  {}", colors::gray("# Run the tests"));
-    info!("  deno test -R");
+    info!("  edno test -R");
   } else if init_flags.lib {
     info!("  {}", colors::gray("# Run the tests"));
-    info!("  deno test");
+    info!("  edno test");
     info!("");
     info!(
       "  {}",
       colors::gray("# Run the tests and watch for file changes")
     );
-    info!("  deno task dev");
+    info!("  edno task dev");
     info!("");
     info!("  {}", colors::gray("# Publish to JSR (dry run)"));
-    info!("  deno publish --dry-run");
+    info!("  edno publish --dry-run");
   } else {
     info!("  {}", colors::gray("# Run the server"));
-    info!("  deno run --allow-net main.ts");
+    info!("  edno run --allow-net main.ts");
     info!("");
     info!(
       "  {}",
       colors::gray("# Run the server and watch for file changes")
     );
-    info!("  deno task dev");
+    info!("  edno task dev");
     info!("");
     info!("  {}", colors::gray("# Run the tests"));
-    info!("  deno test");
+    info!("  edno test");
   }
   Ok(0)
 }
@@ -342,7 +342,7 @@ async fn init_npm(
     allow_scripts: PackagesAllowedScripts::All,
     argv: args,
     node_modules_dir: Some(NodeModulesDirMode::Auto),
-    subcommand: DenoSubcommand::Run(RunFlags {
+    subcommand: EdnoSubcommand::Run(RunFlags {
       script: script_name,
       ..Default::default()
     }),
@@ -428,7 +428,7 @@ fn confirm_package_trust(
     log::info!(
       "{}",
       cformat!(
-        "You can initialize project manually by running <u>deno run {}</> and applying desired permissions.",
+        "You can initialize project manually by running <u>edno run {}</> and applying desired permissions.",
         std::iter::once(script_name)
           .chain(args.iter().map(|a| a.as_ref()))
           .collect::<Vec<_>>()
@@ -441,7 +441,7 @@ fn confirm_package_trust(
   if std::io::stdin().is_terminal() {
     log::info!(
       cstr!(
-        "⚠️  Do you fully trust <y>{}</> package? Deno will invoke code from it with all permissions. Do you want to continue? <p(245)>[y/n]</>"
+        "⚠️  Do you fully trust <y>{}</> package? Edno will invoke code from it with all permissions. Do you want to continue? <p(245)>[y/n]</>"
       ),
       script_name
     );
@@ -480,7 +480,7 @@ async fn init_jsr(
       ..Default::default()
     },
     argv: args,
-    subcommand: DenoSubcommand::Run(RunFlags {
+    subcommand: EdnoSubcommand::Run(RunFlags {
       script: script_name,
       ..Default::default()
     }),
@@ -519,9 +519,9 @@ fn jsr_name_to_create_script(name: &str) -> String {
 fn create_json_file(
   dir: &Path,
   filename: &str,
-  value: &deno_core::serde_json::Value,
+  value: &edno_core::serde_json::Value,
 ) -> Result<(), AnyError> {
-  let mut text = deno_core::serde_json::to_string_pretty(value)?;
+  let mut text = edno_core::serde_json::to_string_pretty(value)?;
   text.push('\n');
   create_file(dir, filename, &text)
 }

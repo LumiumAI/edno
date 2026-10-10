@@ -42,7 +42,7 @@ const {
   allMethods,
   HTTPParser,
   methods,
-} = core.loadExtScript("ext:deno_node/internal_binding/http_parser.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/http_parser.ts");
 import { IncomingMessage, readStart, readStop } from "node:_http_incoming";
 
 const kIncomingMessage = Symbol("IncomingMessage");
@@ -115,7 +115,7 @@ function parserOnHeadersComplete(
   upgrade,
   shouldKeepAlive,
 ) {
-  // deno-lint-ignore no-this-alias
+  // edno-lint-ignore no-this-alias
   const parser = this;
   const { socket } = parser;
 
@@ -180,7 +180,7 @@ function parserOnBody(b) {
     // Mark as consuming so resOnFinish does not auto-dump a
     // paused request that already had data delivered.
     stream._consuming = true;
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const ret = stream.push(b);
     if (!ret) {
       readStop(this.socket);
@@ -189,7 +189,7 @@ function parserOnBody(b) {
 }
 
 function parserOnMessageComplete() {
-  // deno-lint-ignore no-this-alias
+  // edno-lint-ignore no-this-alias
   const parser = this;
   const stream = parser.incoming;
 
@@ -204,7 +204,7 @@ function parserOnMessageComplete() {
     }
 
     // For emit end event
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     stream.push(null);
   }
 
@@ -253,7 +253,7 @@ function freeParser(parser, req, socket) {
 }
 
 const tokenRegExp = new SafeRegExp("^[\\^_`a-zA-Z\\-0-9!#$%&'*+.|~]+$");
-// deno-fmt-ignore
+// edno-fmt-ignore
 const validTokenChars = new Uint8Array([
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -383,7 +383,7 @@ function headerSegmentLatin1(rawPacket) {
 }
 
 function isLenient() {
-  // Deno doesn't have --insecure-http-parser flag (yet)
+  // Edno doesn't have --insecure-http-parser flag (yet)
   return false;
 }
 

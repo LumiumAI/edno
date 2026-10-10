@@ -11,7 +11,7 @@ import {
   Module,
   // @ts-ignore Our internal @types/node is at v18.16.19 which predates
   // this change. Updating it is difficult due to different types in Node
-  // for `import.meta.filename` and `import.meta.dirname` that Deno
+  // for `import.meta.filename` and `import.meta.dirname` that Edno
   // provides.
   register,
   // @ts-ignore Our internal @types/node is at v18.16.19 which predates
@@ -26,30 +26,30 @@ import process from "node:process";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
 
-Deno.test("[node/module _preloadModules] has internal require hook", () => {
+Edno.test("[node/module _preloadModules] has internal require hook", () => {
   // Check if it's there
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (Module as any)._preloadModules([
     "./tests/unit_node/testdata/add_global_property.js",
   ]);
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   assertEquals((globalThis as any).foo, "Hello");
 });
 
-Deno.test("[node/module runMain] loads module using the current process.argv", () => {
+Edno.test("[node/module runMain] loads module using the current process.argv", () => {
   process.argv = [
     process.argv[0],
     "./tests/unit_node/testdata/add_global_property_run_main.js",
   ];
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (Module as any).runMain();
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   assertEquals((globalThis as any).calledViaRunMain, true);
 });
 
-Deno.test("[node/module _nodeModulePaths] prevents duplicate /node_modules/node_modules suffix", () => {
-  // deno-lint-ignore no-explicit-any
+Edno.test("[node/module _nodeModulePaths] prevents duplicate /node_modules/node_modules suffix", () => {
+  // edno-lint-ignore no-explicit-any
   const actual: string[] = (Module as any)._nodeModulePaths(
     path.join(process.cwd(), "testdata", "node_modules", "foo"),
   );
@@ -60,8 +60,8 @@ Deno.test("[node/module _nodeModulePaths] prevents duplicate /node_modules/node_
   );
 });
 
-Deno.test("[node/module _nodeModulePaths] prevents duplicate root /node_modules", () => {
-  // deno-lint-ignore no-explicit-any
+Edno.test("[node/module _nodeModulePaths] prevents duplicate root /node_modules", () => {
+  // edno-lint-ignore no-explicit-any
   const actual: string[] = (Module as any)._nodeModulePaths(
     path.join(process.cwd(), "testdata", "node_modules", "foo"),
   );
@@ -77,7 +77,7 @@ Deno.test("[node/module _nodeModulePaths] prevents duplicate root /node_modules"
   );
 });
 
-Deno.test("Built-in Node modules have `node:` prefix", () => {
+Edno.test("Built-in Node modules have `node:` prefix", () => {
   let thrown = false;
   try {
     // @ts-ignore We want to explicitly test wrong call signature
@@ -92,7 +92,7 @@ Deno.test("Built-in Node modules have `node:` prefix", () => {
   assert(thrown);
 });
 
-Deno.test("[node/module isBuiltin] recognizes node builtins", () => {
+Edno.test("[node/module isBuiltin] recognizes node builtins", () => {
   assert(isBuiltin("node:fs"));
   assert(isBuiltin("node:test"));
   assert(isBuiltin("fs"));
@@ -101,42 +101,42 @@ Deno.test("[node/module isBuiltin] recognizes node builtins", () => {
   assert(!isBuiltin("internal/errors"));
   assert(!isBuiltin("test"));
   assert(!isBuiltin(""));
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   assert(!isBuiltin(undefined as any));
 });
 
 // https://github.com/denoland/deno/issues/22731
-Deno.test("[node/module builtinModules] has 'module' in builtins", () => {
+Edno.test("[node/module builtinModules] has 'module' in builtins", () => {
   assert(builtinModules.includes("module"));
 });
 
 // https://github.com/denoland/deno/issues/34812
-Deno.test("[node/module runMain] is exposed as a named export", () => {
+Edno.test("[node/module runMain] is exposed as a named export", () => {
   assertEquals(typeof runMain, "function");
   assertEquals(runMain, Module.runMain);
 });
 
 // https://github.com/denoland/deno/issues/18666
-Deno.test("[node/module findSourceMap] is a function", () => {
+Edno.test("[node/module findSourceMap] is a function", () => {
   assertEquals(findSourceMap("foo"), undefined);
 });
 
-Deno.test("[node/module SourceMap] is exposed as a named export", () => {
+Edno.test("[node/module SourceMap] is exposed as a named export", () => {
   assertEquals(typeof SourceMap, "function");
   // @ts-ignore Not in all supported @types/node versions.
   assertEquals(SourceMap, Module.SourceMap);
 });
 
 // https://github.com/denoland/deno/issues/31039
-Deno.test("[node/module findPackageJSON] is exported and finds package.json", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[node/module findPackageJSON] is exported and finds package.json", async () => {
+  const tempDir = await Edno.makeTempDir();
   try {
     const packageJsonPath = path.join(tempDir, "package.json");
     const entryPath = path.join(tempDir, "src", "main.js");
-    await Deno.mkdir(path.dirname(entryPath), { recursive: true });
-    await Deno.writeTextFile(packageJsonPath, '{"name":"fixture"}');
-    await Deno.writeTextFile(entryPath, "export default 1;");
-    const realPackageJsonPath = await Deno.realPath(packageJsonPath);
+    await Edno.mkdir(path.dirname(entryPath), { recursive: true });
+    await Edno.writeTextFile(packageJsonPath, '{"name":"fixture"}');
+    await Edno.writeTextFile(entryPath, "export default 1;");
+    const realPackageJsonPath = await Edno.realPath(packageJsonPath);
 
     assertEquals(typeof findPackageJSON, "function");
     assertEquals(
@@ -153,22 +153,22 @@ Deno.test("[node/module findPackageJSON] is exported and finds package.json", as
       realPackageJsonPath,
     );
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("[node/module findPackageJSON] returns package root for bare package subpaths", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[node/module findPackageJSON] returns package root for bare package subpaths", async () => {
+  const tempDir = await Edno.makeTempDir();
   try {
     const packageRoot = path.join(tempDir, "node_modules", "foo");
     const packageJsonPath = path.join(packageRoot, "package.json");
-    await Deno.mkdir(packageRoot, { recursive: true });
-    await Deno.writeTextFile(
+    await Edno.mkdir(packageRoot, { recursive: true });
+    await Edno.writeTextFile(
       packageJsonPath,
       '{"name":"foo","exports":{".":"./index.js"}}',
     );
-    await Deno.writeTextFile(path.join(packageRoot, "index.js"), "");
-    const realPackageJsonPath = await Deno.realPath(packageJsonPath);
+    await Edno.writeTextFile(path.join(packageRoot, "index.js"), "");
+    const realPackageJsonPath = await Edno.realPath(packageJsonPath);
 
     assertEquals(
       findPackageJSON(
@@ -180,27 +180,27 @@ Deno.test("[node/module findPackageJSON] returns package root for bare package s
       realPackageJsonPath,
     );
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("[node/module findPackageJSON] absolute specifiers use closest package.json", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[node/module findPackageJSON] absolute specifiers use closest package.json", async () => {
+  const tempDir = await Edno.makeTempDir();
   try {
     const packageRoot = path.join(tempDir, "node_modules", "foo");
     const nestedDir = path.join(packageRoot, "lib");
     const packageJsonPath = path.join(packageRoot, "package.json");
     const nestedPackageJsonPath = path.join(nestedDir, "package.json");
     const entryPath = path.join(nestedDir, "index.js");
-    await Deno.mkdir(nestedDir, { recursive: true });
-    await Deno.writeTextFile(
+    await Edno.mkdir(nestedDir, { recursive: true });
+    await Edno.writeTextFile(
       packageJsonPath,
       '{"name":"foo","exports":"./lib/index.js"}',
     );
-    await Deno.writeTextFile(nestedPackageJsonPath, '{"name":"nested"}');
-    await Deno.writeTextFile(entryPath, "");
-    const realPackageJsonPath = await Deno.realPath(packageJsonPath);
-    const realNestedPackageJsonPath = await Deno.realPath(
+    await Edno.writeTextFile(nestedPackageJsonPath, '{"name":"nested"}');
+    await Edno.writeTextFile(entryPath, "");
+    const realPackageJsonPath = await Edno.realPath(packageJsonPath);
+    const realNestedPackageJsonPath = await Edno.realPath(
       nestedPackageJsonPath,
     );
 
@@ -213,22 +213,22 @@ Deno.test("[node/module findPackageJSON] absolute specifiers use closest package
       realNestedPackageJsonPath,
     );
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("[node/module require.resolve] checks runtime-selected node_modules paths", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[node/module require.resolve] checks runtime-selected node_modules paths", async () => {
+  const tempDir = await Edno.makeTempDir();
   try {
     const nodeModulesDir = path.join(tempDir, "project", "node_modules");
-    await Deno.mkdir(nodeModulesDir, { recursive: true });
-    await Deno.writeTextFile(
+    await Edno.mkdir(nodeModulesDir, { recursive: true });
+    await Edno.writeTextFile(
       path.join(nodeModulesDir, "package.json"),
       '{"main":"runtime-selected-entry.js"}',
     );
 
     const childPath = path.join(tempDir, "resolve.mjs");
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       childPath,
       `
 import { createRequire } from "node:module";
@@ -237,21 +237,21 @@ const require = createRequire(import.meta.url);
 try {
   require.resolve(${JSON.stringify(nodeModulesDir + path.sep)});
   console.error("unexpected success");
-  Deno.exit(1);
+  Edno.exit(1);
 } catch (error) {
   if (!(error instanceof Error) || error.name !== "NotCapable") {
     console.error(error);
-    Deno.exit(2);
+    Edno.exit(2);
   }
   if (String(error).includes("runtime-selected-entry.js")) {
     console.error(error);
-    Deno.exit(3);
+    Edno.exit(3);
   }
 }
 `,
     );
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["run", childPath],
       stdout: "piped",
       stderr: "piped",
@@ -263,47 +263,47 @@ try {
       new TextDecoder().decode(stdout) + new TextDecoder().decode(stderr),
     );
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("[node/module findPackageJSON] checks package metadata reads", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[node/module findPackageJSON] checks package metadata reads", async () => {
+  const tempDir = await Edno.makeTempDir();
   try {
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       path.join(tempDir, "package.json"),
       '{"name":"runtime-selected-package"}',
     );
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       path.join(tempDir, "static-entry.mjs"),
       "export const value = 1;",
     );
 
     const childPath = path.join(tempDir, "find-package.mjs");
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       childPath,
       `
 import { findPackageJSON } from "node:module";
 import { value } from "./static-entry.mjs";
 
-if (value !== 1) Deno.exit(1);
+if (value !== 1) Edno.exit(1);
 try {
   findPackageJSON(import.meta.resolve("./static-entry.mjs"));
   console.error("unexpected success");
-  Deno.exit(2);
+  Edno.exit(2);
 } catch (error) {
   if (
     !(error instanceof Error) || error.name !== "NotCapable" ||
     !String(error).includes("package.json")
   ) {
     console.error(error);
-    Deno.exit(3);
+    Edno.exit(3);
   }
 }
 `,
     );
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["run", childPath],
       stdout: "piped",
       stderr: "piped",
@@ -315,16 +315,16 @@ try {
       new TextDecoder().decode(stdout) + new TextDecoder().decode(stderr),
     );
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
 // https://github.com/denoland/deno/issues/24902
-Deno.test("[node/module register] is a function", () => {
+Edno.test("[node/module register] is a function", () => {
   assertEquals(register("foo"), undefined);
 });
 
-Deno.test("[node/module stripTypeScriptTypes] strips TypeScript types", () => {
+Edno.test("[node/module stripTypeScriptTypes] strips TypeScript types", () => {
   assertEquals(
     stripTypeScriptTypes("const a: number = 1;"),
     "const a         = 1;",
@@ -335,7 +335,7 @@ Deno.test("[node/module stripTypeScriptTypes] strips TypeScript types", () => {
   );
 });
 
-Deno.test("[node/module stripTypeScriptTypes] transforms TypeScript syntax", () => {
+Edno.test("[node/module stripTypeScriptTypes] transforms TypeScript syntax", () => {
   const output = stripTypeScriptTypes("enum Color { Red }\nColor.Red;", {
     mode: "transform",
   });
@@ -343,7 +343,7 @@ Deno.test("[node/module stripTypeScriptTypes] transforms TypeScript syntax", () 
   assert(output.includes("Red"));
 });
 
-Deno.test("[node/module stripTypeScriptTypes] rejects unsupported strip-only syntax", () => {
+Edno.test("[node/module stripTypeScriptTypes] rejects unsupported strip-only syntax", () => {
   const err = assertThrows(
     () => stripTypeScriptTypes("enum Color { Red }"),
     SyntaxError,
@@ -363,26 +363,26 @@ Deno.test("[node/module stripTypeScriptTypes] rejects unsupported strip-only syn
 // With it absent they fall back to a path that works: Playwright skips the
 // loader and tsx uses `Module.registerHooks` (which we do implement) now
 // that the emulated Node version (>= 24.11.1) clears tsx's feature gate.
-Deno.test("[node/module] Module.register is not exposed, registerHooks is", () => {
+Edno.test("[node/module] Module.register is not exposed, registerHooks is", () => {
   // @ts-ignore Not in our bundled @types/node yet.
   assertEquals(Module.register, undefined);
   // @ts-ignore Not in our bundled @types/node yet.
   assertEquals(typeof Module.registerHooks, "function");
 });
 
-Deno.test("[node/module syncBuiltinESMExports] is exposed", () => {
+Edno.test("[node/module syncBuiltinESMExports] is exposed", () => {
   assertEquals(typeof syncBuiltinESMExports, "function");
   assertEquals(syncBuiltinESMExports(), undefined);
   assertEquals(Module.syncBuiltinESMExports, syncBuiltinESMExports);
 });
 
-Deno.test("[node/module] overriding Module._compile is possible and Node globals work", () => {
+Edno.test("[node/module] overriding Module._compile is possible and Node globals work", () => {
   // @ts-ignore Not documented but available
   const originalCompile = Module.prototype._compile;
 
   // @ts-ignore Not documented but available
   Module.prototype._compile = function (content: string, filename: string) {
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const mod = this;
     function require(id: string) {
       return mod.require(id);
@@ -403,7 +403,7 @@ Deno.test("[node/module] overriding Module._compile is possible and Node globals
 
     const wrapper = Module.wrap(content);
     // @ts-ignore can't index by a symbol
-    const [f, err] = Deno[Deno.internal].core.evalContext(
+    const [f, err] = Edno[Edno.internal].core.evalContext(
       wrapper,
       `file:///${filename}`,
       [true],
@@ -438,7 +438,7 @@ Deno.test("[node/module] overriding Module._compile is possible and Node globals
   Module.prototype._compile = originalCompile;
 });
 
-Deno.test("[node/module require] throws ERR_INVALID_ARG_TYPE for non-string id", () => {
+Edno.test("[node/module require] throws ERR_INVALID_ARG_TYPE for non-string id", () => {
   const require = createRequire(import.meta.url);
   const err = assertThrows(
     // @ts-expect-error testing invalid input
@@ -451,7 +451,7 @@ Deno.test("[node/module require] throws ERR_INVALID_ARG_TYPE for non-string id",
   );
 });
 
-Deno.test("[node/module require] throws ERR_INVALID_ARG_VALUE for empty string id", () => {
+Edno.test("[node/module require] throws ERR_INVALID_ARG_VALUE for empty string id", () => {
   const require = createRequire(import.meta.url);
   const err = assertThrows(
     () => require(""),
@@ -464,27 +464,27 @@ Deno.test("[node/module require] throws ERR_INVALID_ARG_VALUE for empty string i
   );
 });
 
-Deno.test("[node/module require] loads .node files through CJS addon path", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[node/module require] loads .node files through CJS addon path", async () => {
+  const tempDir = await Edno.makeTempDir();
   try {
     const addonPath = path.join(tempDir, "addon.node");
-    await Deno.writeFile(addonPath, new Uint8Array());
+    await Edno.writeFile(addonPath, new Uint8Array());
 
     const require = createRequire(import.meta.url);
     const err = assertThrows(() => require(addonPath));
     assert(err instanceof Error);
     assert(!err.message.includes("Cannot import native Node.js addon"));
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("[node/module require] loads more than 128 local TypeScript modules", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[node/module require] loads more than 128 local TypeScript modules", async () => {
+  const tempDir = await Edno.makeTempDir();
   try {
     await Promise.all(
       Array.from({ length: 200 }, (_, i) =>
-        Deno.writeTextFile(
+        Edno.writeTextFile(
           path.join(tempDir, `mod_${i}.ts`),
           `export const value = ${i};\n`,
         )),
@@ -498,18 +498,18 @@ Deno.test("[node/module require] loads more than 128 local TypeScript modules", 
       assertEquals(mod.value, i);
     }
   } finally {
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   }
 });
 
-Deno.test("[node/module Module._stat] default returns 0/1/<0 for file/dir/missing", async () => {
-  const tmpDir = await Deno.makeTempDir();
+Edno.test("[node/module Module._stat] default returns 0/1/<0 for file/dir/missing", async () => {
+  const tmpDir = await Edno.makeTempDir();
   try {
     const file = path.join(tmpDir, "exists.js");
     const dir = path.join(tmpDir, "subdir");
     const missing = path.join(tmpDir, "missing");
-    await Deno.writeTextFile(file, "module.exports = {};");
-    await Deno.mkdir(dir);
+    await Edno.writeTextFile(file, "module.exports = {};");
+    await Edno.mkdir(dir);
 
     // @ts-ignore Not documented but available
     assertEquals(Module._stat(file), 0);
@@ -518,15 +518,15 @@ Deno.test("[node/module Module._stat] default returns 0/1/<0 for file/dir/missin
     // @ts-ignore Not documented but available
     assert(Module._stat(missing) < 0);
   } finally {
-    await Deno.remove(tmpDir, { recursive: true });
+    await Edno.remove(tmpDir, { recursive: true });
   }
 });
 
-Deno.test("[node/module Module._stat] override is honored by require resolution", async () => {
-  const tmpDir = await Deno.makeTempDir();
+Edno.test("[node/module Module._stat] override is honored by require resolution", async () => {
+  const tmpDir = await Edno.makeTempDir();
   try {
     const file = path.join(tmpDir, "patched-target.cjs");
-    await Deno.writeTextFile(file, "module.exports = { value: 42 };");
+    await Edno.writeTextFile(file, "module.exports = { value: 42 };");
 
     const require = createRequire(path.join(tmpDir, "noop.js"));
 
@@ -559,6 +559,6 @@ Deno.test("[node/module Module._stat] override is honored by require resolution"
     const mod = require(file);
     assertEquals(mod.value, 42);
   } finally {
-    await Deno.remove(tmpDir, { recursive: true });
+    await Edno.remove(tmpDir, { recursive: true });
   }
 });

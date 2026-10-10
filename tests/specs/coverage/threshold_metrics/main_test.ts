@@ -1,6 +1,6 @@
 import { add, classify } from "./main.ts";
 
-Deno.test(function works() {
+Edno.test(function works() {
   if (add(1, 2) !== 3) {
     throw new Error("bad");
   }

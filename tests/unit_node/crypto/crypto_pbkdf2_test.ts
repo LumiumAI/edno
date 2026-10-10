@@ -319,7 +319,7 @@ const fixtures: Pbkdf2Fixture[] = [
   },
 ];
 
-Deno.test("pbkdf2 hashes data correctly", async () => {
+Edno.test("pbkdf2 hashes data correctly", async () => {
   const promises: Promise<void>[] = [];
   fixtures.forEach(({
     dkLen,
@@ -360,7 +360,7 @@ Deno.test("pbkdf2 hashes data correctly", async () => {
   await Promise.all(promises);
 });
 
-Deno.test("pbkdf2Sync hashes data correctly", () => {
+Edno.test("pbkdf2Sync hashes data correctly", () => {
   fixtures.forEach(({
     dkLen,
     iterations,
@@ -380,7 +380,7 @@ Deno.test("pbkdf2Sync hashes data correctly", () => {
   });
 });
 
-Deno.test("crypto.pbkdf2Sync - compare with node", async (t) => {
+Edno.test("crypto.pbkdf2Sync - compare with node", async (t) => {
   const DATA = "Hello, world!";
   const SALT = "salt";
   const ITERATIONS = 1000;
@@ -410,7 +410,7 @@ Deno.test("crypto.pbkdf2Sync - compare with node", async (t) => {
 });
 
 // TODO(@littledivy): assertCallbackErrorUncaught exits for async operations on the thread pool.
-// Deno.test("[std/node/crypto] pbkdf2 callback isn't called twice if error is thrown", async () => {
+// Edno.test("[std/node/crypto] pbkdf2 callback isn't called twice if error is thrown", async () => {
 //   const importUrl = new URL("node:crypto", import.meta.url);
 //   await assertCallbackErrorUncaught({
 //     prelude: `import { pbkdf2 } from ${JSON.stringify(importUrl)};`,

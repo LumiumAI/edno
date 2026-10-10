@@ -1,9 +1,9 @@
 /**
  * Following import uses two distinct ways to provide types:
  * - X-TypeScript-Types headers
- * - @deno-types directive
+ * - @edno-types directive
  *
- * Because "@deno-types" directive must be placed by user explicitly it
+ * Because "@edno-types" directive must be placed by user explicitly it
  * should have higher precedence than type header.
  *
  * This is verified by providing conflicting type declaration
@@ -12,7 +12,7 @@
  * header.
  */
 
-// @deno-types="http://localhost:4545/run/type_headers_deno_types.foo.d.ts"
+// @edno-types="http://localhost:4545/run/type_headers_deno_types.foo.d.ts"
 import { foo } from "http://localhost:4545/run/type_headers_deno_types.foo.js";
 
 foo("hello");

@@ -8,14 +8,14 @@ edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Node.js module resolution algorithm used in Deno"
+description = "Node.js module resolution algorithm used in Edno"
 
 [lib]
 path = "lib.rs"
 
 [features]
 graph = ["deno_graph"]
-sync = ["deno_maybe_sync/sync", "deno_package_json/sync"]
+sync = ["edno_maybe_sync/sync", "edno_package_json/sync"]
 
 [dependencies]
 anyhow.workspace = true
@@ -24,9 +24,9 @@ boxed_error.workspace = true
 capacity_builder.workspace = true
 deno_error.workspace = true
 deno_graph = { workspace = true, optional = true }
-deno_maybe_sync.workspace = true
+edno_maybe_sync.workspace = true
 deno_media_type.workspace = true
-deno_package_json.workspace = true
+edno_package_json.workspace = true
 deno_path_util.workspace = true
 deno_semver.workspace = true
 futures.workspace = true

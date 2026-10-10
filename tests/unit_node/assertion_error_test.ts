@@ -3,7 +3,7 @@ import { stripAnsiCode } from "@std/fmt/colors";
 import { assert, assertStrictEquals } from "@std/assert";
 import { AssertionError } from "node:assert";
 
-Deno.test({
+Edno.test({
   name: "construct AssertionError() with given message",
   fn() {
     const err = new AssertionError(
@@ -24,7 +24,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "construct AssertionError() with generated message",
   fn() {
     const err = new AssertionError(
@@ -40,21 +40,21 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "construct AssertionError() with stackStartFn",
   fn: function stackStartFn() {
     const expected = /node/;
     const err = new AssertionError({
-      actual: "deno",
+      actual: "edno",
       expected,
       operator: "match",
       stackStartFn,
     });
     assertStrictEquals(err.name, "AssertionError");
-    assertStrictEquals(stripAnsiCode(err.message), `'deno' match /node/`);
+    assertStrictEquals(stripAnsiCode(err.message), `'edno' match /node/`);
     assertStrictEquals(err.generatedMessage, true);
     assertStrictEquals(err.code, "ERR_ASSERTION");
-    assertStrictEquals(err.actual, "deno");
+    assertStrictEquals(err.actual, "edno");
     assertStrictEquals(err.expected, expected);
     assertStrictEquals(err.operator, "match");
     assert(err.stack, "error should have a stack");

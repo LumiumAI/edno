@@ -1,13 +1,13 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_runtime"
+name = "edno_runtime"
 version = "0.267.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Provides the deno runtime library"
+description = "Provides the edno runtime library"
 
 [features]
 # "fake" feature that allows to generate docs on docs.rs
@@ -25,7 +25,7 @@ transpile = ["deno_ast"]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tokio_unstable)'] }
 
 [lib]
-name = "deno_runtime"
+name = "edno_runtime"
 path = "lib.rs"
 
 [dependencies]
@@ -34,41 +34,41 @@ base64.workspace = true
 boxed_error.workspace = true
 color-print.workspace = true
 deno_ast = { workspace = true, optional = true }
-deno_bundle_runtime.workspace = true
-deno_cache.workspace = true
-deno_canvas.workspace = true
-deno_core.workspace = true
-deno_cron.workspace = true
-deno_crypto.workspace = true
+edno_bundle_runtime.workspace = true
+edno_cache.workspace = true
+edno_canvas.workspace = true
+edno_core.workspace = true
+edno_cron.workspace = true
+edno_crypto.workspace = true
 deno_error.workspace = true
-deno_features.workspace = true
-deno_fetch.workspace = true
-deno_ffi.workspace = true
-deno_fs = { workspace = true, features = ["sync_fs"] }
-deno_http.workspace = true
-deno_image.workspace = true
-deno_inspector_server.workspace = true
-deno_io.workspace = true
-deno_kv.workspace = true
-deno_napi.workspace = true
-deno_net.workspace = true
-deno_node.workspace = true
-deno_node_crypto.workspace = true
-deno_node_sqlite.workspace = true
-deno_os.workspace = true
+edno_features.workspace = true
+edno_fetch.workspace = true
+edno_ffi.workspace = true
+edno_fs = { workspace = true, features = ["sync_fs"] }
+edno_http.workspace = true
+edno_image.workspace = true
+edno_inspector_server.workspace = true
+edno_io.workspace = true
+edno_kv.workspace = true
+edno_napi.workspace = true
+edno_net.workspace = true
+edno_node.workspace = true
+edno_node_crypto.workspace = true
+edno_node_sqlite.workspace = true
+edno_os.workspace = true
 deno_path_util.workspace = true
-deno_permissions.workspace = true
-deno_process.workspace = true
-deno_resolver = { workspace = true, features = ["sync"] }
-deno_signals.workspace = true
-deno_telemetry.workspace = true
+edno_permissions.workspace = true
+edno_process.workspace = true
+edno_resolver = { workspace = true, features = ["sync"] }
+edno_signals.workspace = true
+edno_telemetry.workspace = true
 deno_terminal.workspace = true
-deno_tls.workspace = true
-deno_web.workspace = true
-deno_webgpu.workspace = true
-deno_webidl.workspace = true
-deno_websocket.workspace = true
-deno_webstorage.workspace = true
+edno_tls.workspace = true
+edno_web.workspace = true
+edno_webgpu.workspace = true
+edno_webidl.workspace = true
+edno_websocket.workspace = true
+edno_webstorage.workspace = true
 ed25519-dalek.workspace = true
 encoding_rs.workspace = true
 faster-hex.workspace = true

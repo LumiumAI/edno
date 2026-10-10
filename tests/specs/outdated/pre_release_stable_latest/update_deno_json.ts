@@ -1,9 +1,9 @@
-Deno.writeTextFileSync(
-  "deno.json",
+Edno.writeTextFileSync(
+  "edno.json",
   JSON.stringify({
     imports: {
-      "@denotest/pre-release-stable-latest":
-        "npm:@denotest/pre-release-stable-latest@^1.0.0-beta.13",
+      "@ednotest/pre-release-stable-latest":
+        "npm:@ednotest/pre-release-stable-latest@^1.0.0-beta.13",
     },
   }),
 );

@@ -2,6 +2,6 @@
   "name": "package-a",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/esm-basic": "catalog:my-deps"
+    "@ednotest/esm-basic": "catalog:my-deps"
   }
 }

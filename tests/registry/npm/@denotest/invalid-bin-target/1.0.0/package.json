@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/invalid-bin-target",
+  "name": "@ednotest/invalid-bin-target",
   "version": "1.0.0",
   "bin": {
     "valid-bin": "bin/valid.js",

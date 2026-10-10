@@ -1,6 +1,6 @@
 execFileSync: hello hello
 spawnSync: hi hi status: 0
-Deno.Command sync: deno deno
+Edno.Command sync: edno edno
 execFile: async async
 spawn: spawn spawn
 non-executable: rejected

@@ -1,5 +1,5 @@
 {
-    "name": "@denotest/deprecated-package",
+    "name": "@ednotest/deprecated-package",
     "version": "1.0.0",
     "type": "module",
     "main": "main.mjs",

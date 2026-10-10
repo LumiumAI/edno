@@ -6,15 +6,15 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 
-use deno_core::error::AnyError;
-use deno_core::parking_lot::Mutex;
-use deno_core::parking_lot::MutexGuard;
-use deno_core::unsync::spawn_blocking;
-use deno_lib::util::hash::FastInsecureHasher;
-use deno_runtime::deno_webstorage::rusqlite;
-use deno_runtime::deno_webstorage::rusqlite::Connection;
-use deno_runtime::deno_webstorage::rusqlite::OptionalExtension;
-use deno_runtime::deno_webstorage::rusqlite::Params;
+use edno_core::error::AnyError;
+use edno_core::parking_lot::Mutex;
+use edno_core::parking_lot::MutexGuard;
+use edno_core::unsync::spawn_blocking;
+use edno_lib::util::hash::FastInsecureHasher;
+use edno_runtime::edno_webstorage::rusqlite;
+use edno_runtime::edno_webstorage::rusqlite::Connection;
+use edno_runtime::edno_webstorage::rusqlite::OptionalExtension;
+use edno_runtime::edno_webstorage::rusqlite::Params;
 use once_cell::sync::OnceCell;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -27,8 +27,8 @@ impl CacheDBHash {
 
   pub fn from_hashable(hashable: impl std::hash::Hash) -> Self {
     Self::new(
-      // always write in the deno version just in case
-      // the clearing on deno version change doesn't work
+      // always write in the edno version just in case
+      // the clearing on edno version change doesn't work
       FastInsecureHasher::new_deno_versioned()
         .write_hashable(hashable)
         .finish(),
@@ -78,7 +78,7 @@ pub enum CacheFailure {
 pub struct CacheDBConfiguration {
   /// SQL to run for a new database.
   pub table_initializer: &'static str,
-  /// SQL to run when the version from [`crate::version::deno()`] changes.
+  /// SQL to run when the version from [`crate::version::edno()`] changes.
   pub on_version_change: &'static str,
   /// Prepared statements to pre-heat while initializing the database.
   pub preheat_queries: &'static [&'static str],
@@ -90,7 +90,7 @@ impl CacheDBConfiguration {
   fn create_combined_sql(&self) -> String {
     // WSL-1's filesystem translation layer doesn't support WAL's
     // shared-memory locking, which surfaces as `SQLITE_PROTOCOL` (error
-    // code 15: "Database lock protocol error") when two Deno processes
+    // code 15: "Database lock protocol error") when two Edno processes
     // open the same cache DB at once. Fall back to TRUNCATE journal mode
     // there. See https://github.com/denoland/deno/issues/26441.
     let journal_mode = if is_wsl1() { "TRUNCATE" } else { "WAL" };
@@ -159,7 +159,7 @@ impl Drop for CacheDB {
       _ => return,
     };
 
-    // If Deno is panicking, tokio is sometimes gone before we have a chance to shutdown. In
+    // If Edno is panicking, tokio is sometimes gone before we have a chance to shutdown. In
     // that case, we just allow the drop to happen as expected.
     if tokio::runtime::Handle::try_current().is_err() {
       return;
@@ -280,7 +280,7 @@ impl CacheDB {
       .optional()?
       .unwrap_or_default();
 
-    // If Deno has been upgraded, run the SQL to update the version
+    // If Edno has been upgraded, run the SQL to update the version
     if existing_version != version {
       conn.execute_batch(config.on_version_change)?;
       let mut stmt = conn

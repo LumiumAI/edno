@@ -1,12 +1,12 @@
-Add npm:@denotest/add@0.5.0
-Add jsr:@denotest/add@1.0.0
+Add npm:@ednotest/add@0.5.0
+Add jsr:@ednotest/add@1.0.0
 [UNORDERED_START]
-Download http://localhost:4260/@denotest%2fadd
-Download http://localhost:4260/@denotest%2fadd (full packument)
-Download http://127.0.0.1:4250/@denotest/add/1.0.0/mod.ts
-Download http://localhost:4260/@denotest/add/0.5.0.tgz
+Download http://localhost:4260/@ednotest%2fadd
+Download http://localhost:4260/@ednotest%2fadd (full packument)
+Download http://127.0.0.1:4250/@ednotest/add/1.0.0/mod.ts
+Download http://localhost:4260/@ednotest/add/0.5.0.tgz
 [UNORDERED_END]
-Initialize @denotest/add@0.5.0
+Initialize @ednotest/add@0.5.0
 Installed 1 package in [WILDLINE]
 Reused 0 packages from cache
 Downloaded 0 packages from JSR
@@ -14,5 +14,5 @@ Downloaded 1 package from npm
 +
 
 Dependencies:
-+ npm:@denotest/add 0.5.0
++ npm:@ednotest/add 0.5.0
 

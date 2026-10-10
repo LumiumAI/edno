@@ -5,20 +5,20 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_cache_dir::file_fetcher::CacheSetting;
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::serde::Deserialize;
-use deno_core::serde_json;
-use deno_core::serde_json::json;
-use deno_core::url::ParseError;
-use deno_core::url::Position;
-use deno_core::url::Url;
+use edno_cache_dir::file_fetcher::CacheSetting;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::serde::Deserialize;
+use edno_core::serde_json;
+use edno_core::serde_json::json;
+use edno_core::url::ParseError;
+use edno_core::url::Position;
+use edno_core::url::Url;
 use deno_graph::Dependency;
-use deno_resolver::file_fetcher::FetchOptions;
-use deno_resolver::file_fetcher::FetchPermissionsOptionRef;
-use deno_resolver::loader::MemoryFilesRc;
+use edno_resolver::file_fetcher::FetchOptions;
+use edno_resolver::file_fetcher::FetchPermissionsOptionRef;
+use edno_resolver::loader::MemoryFilesRc;
 use log::error;
 use once_cell::sync::Lazy;
 use serde::Serialize;
@@ -45,7 +45,7 @@ use crate::http_util::HttpClientProvider;
 use crate::lsp::completions::CompletionItemData;
 use crate::sys::CliSys;
 
-const CONFIG_PATH: &str = "/.well-known/deno-import-intellisense.json";
+const CONFIG_PATH: &str = "/.well-known/edno-import-intellisense.json";
 const COMPONENT: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
   .add(b' ')
   .add(b'"')
@@ -400,7 +400,7 @@ pub struct RegistryConfigurationVariable {
 pub struct RegistryConfiguration {
   /// A Express-like path which describes how URLs are composed for a registry.
   schema: String,
-  /// The variables denoted in the `schema` should have a variable entry.
+  /// The variables ednoted in the `schema` should have a variable entry.
   variables: Vec<RegistryConfigurationVariable>,
 }
 
@@ -470,8 +470,8 @@ impl ModuleRegistry {
     let http_cache =
       Arc::new(GlobalHttpCache::new(CliSys::default(), location.clone()));
     let file_fetcher = create_cli_file_fetcher(
-      Arc::new(deno_runtime::deno_web::BlobStore::default())
-        as Arc<dyn deno_runtime::deno_web::BlobStoreTrait>,
+      Arc::new(edno_runtime::edno_web::BlobStore::default())
+        as Arc<dyn edno_runtime::edno_web::BlobStoreTrait>,
       http_cache.clone().into(),
       http_client_provider,
       MemoryFilesRc::default(),
@@ -522,7 +522,7 @@ impl ModuleRegistry {
         FetchOptions {
           local: Default::default(),
           maybe_auth: None,
-          maybe_accept: Some("application/vnd.deno.reg.v2+json, application/vnd.deno.reg.v1+json;q=0.9, application/json;q=0.8"),
+          maybe_accept: Some("application/vnd.edno.reg.v2+json, application/vnd.edno.reg.v1+json;q=0.9, application/json;q=0.8"),
           maybe_cache_setting: None,
         }
       )
@@ -810,7 +810,7 @@ impl ModuleRegistry {
                   {
                     Some(lsp::Command {
                       title: "".to_string(),
-                      command: "deno.cache".to_string(),
+                      command: "edno.cache".to_string(),
                       arguments: Some(vec![
                         json!([item_specifier]),
                         json!(&resolved),
@@ -954,7 +954,7 @@ impl ModuleRegistry {
                     {
                       Some(lsp::Command {
                         title: "".to_string(),
-                        command: "deno.cache".to_string(),
+                        command: "edno.cache".to_string(),
                         arguments: Some(vec![
                           json!([item_specifier]),
                           json!(&resolved),
@@ -1317,7 +1317,7 @@ mod tests {
   #[test]
   fn test_registry_endpoint_schemes() {
     let base = Url::parse(
-      "https://registry.example/.well-known/deno-import-intellisense.json",
+      "https://registry.example/.well-known/edno-import-intellisense.json",
     )
     .unwrap();
 
@@ -1695,7 +1695,7 @@ mod tests {
       Arc::new(HttpClientProvider::new(None, None)),
     );
     module_registry
-      .enable_custom("http://localhost:4545/lsp/registries/deno-import-intellisense-key-first.json")
+      .enable_custom("http://localhost:4545/lsp/registries/edno-import-intellisense-key-first.json")
       .await
       .expect("could not enable");
     let range = lsp::Range {
@@ -1772,7 +1772,7 @@ mod tests {
       Arc::new(HttpClientProvider::new(None, None)),
     );
     module_registry
-      .enable_custom("http://localhost:4545/lsp/registries/deno-import-intellisense-complex.json")
+      .enable_custom("http://localhost:4545/lsp/registries/edno-import-intellisense-complex.json")
       .await
       .expect("could not enable");
     let range = lsp::Range {
@@ -1886,7 +1886,7 @@ mod tests {
     assert!(result.is_err());
     let err = result.unwrap_err().to_string();
     assert!(err.contains(
-      "https://example.com/.well-known/deno-import-intellisense.json"
+      "https://example.com/.well-known/edno-import-intellisense.json"
     ));
 
     // because we are caching an empty file when we hit an error with import

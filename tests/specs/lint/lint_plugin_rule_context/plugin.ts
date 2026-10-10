@@ -12,11 +12,11 @@ export default {
             console.log();
 
             console.log(`ctx.filename:`);
-            console.log(path.relative(Deno.cwd(), context.filename));
+            console.log(path.relative(Edno.cwd(), context.filename));
             console.log();
 
             console.log(`ctx.getFilename():`);
-            console.log(path.relative(Deno.cwd(), context.getFilename()));
+            console.log(path.relative(Edno.cwd(), context.getFilename()));
             console.log();
 
             console.log(`ctx.getSourceCode():`);
@@ -27,4 +27,4 @@ export default {
       },
     },
   },
-} satisfies Deno.lint.Plugin;
+} satisfies Edno.lint.Plugin;

@@ -1,19 +1,19 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-//! Framework detection for `deno compile .`.
+//! Framework detection for `edno compile .`.
 //!
 //! Detects web frameworks (Next.js, Astro, Remix, React Router, SvelteKit,
 //! Nuxt, Fresh, SolidStart, TanStack Start, Vite) and generates the
-//! appropriate entrypoint and include paths so that `deno compile .` just
+//! appropriate entrypoint and include paths so that `edno compile .` just
 //! works.
 
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
 
 /// Result of framework detection.
 #[derive(Debug)]
@@ -31,20 +31,20 @@ pub struct FrameworkDetection {
   pub hmr_command: Option<Vec<String>>,
 }
 
-/// Entrypoint compiled for `deno desktop --hmr` on projects whose dev command
+/// Entrypoint compiled for `edno desktop --hmr` on projects whose dev command
 /// is plain `vite dev`: it boots the project's own Vite dev server through
 /// Vite's JS API *inside* the desktop runtime, so server-side code (SvelteKit
-/// endpoints, Vite SSR handlers) keeps access to `Deno.desktop` — matching the
+/// endpoints, Vite SSR handlers) keeps access to `Edno.desktop` — matching the
 /// compiled app, where the server also runs in the desktop runtime (#35899).
 ///
-/// The runtime publishes `DENO_SERVE_ADDRESS` before user code runs and the
+/// The runtime publishes `EDNO_SERVE_ADDRESS` before user code runs and the
 /// webview polls-then-navigates to that port. Binding Vite to it explicitly
 /// (rather than relying on the node:http listen override alone) keeps the
 /// port Vite believes it serves on — `printUrls`, HMR websocket origin — in
 /// agreement with where it actually listens.
 const VITE_DEV_ENTRYPOINT: &str = r#"// @ts-nocheck
 import { createServer } from "vite";
-const addr = Deno.env.get("DENO_SERVE_ADDRESS") ?? "";
+const addr = Edno.env.get("EDNO_SERVE_ADDRESS") ?? "";
 const match = addr.match(/^tcp:(.+):(\d+)$/);
 const server = await createServer({
   server: match
@@ -57,9 +57,9 @@ server.printUrls();
 
 impl FrameworkDetection {
   /// Entrypoint that boots the framework's dev server *inside* the desktop
-  /// runtime for `deno desktop --hmr`, so server-side code keeps access to
-  /// `Deno.desktop` (#35899). `None` means `--hmr` falls back to spawning
-  /// `hmr_command` as a separate plain-Deno process, where desktop APIs are
+  /// runtime for `edno desktop --hmr`, so server-side code keeps access to
+  /// `Edno.desktop` (#35899). `None` means `--hmr` falls back to spawning
+  /// `hmr_command` as a separate plain-Edno process, where desktop APIs are
   /// unavailable to server code.
   pub fn hmr_entrypoint_code(&self) -> Option<&'static str> {
     match self.name {
@@ -119,12 +119,12 @@ pub fn find_framework_favicon(
   None
 }
 
-/// Run the framework's build step (e.g. `deno task build`) with `dir` as the
+/// Run the framework's build step (e.g. `edno task build`) with `dir` as the
 /// working directory, if the detection specifies one. This must run before the
 /// framework's `include_paths` are bundled, since they point at the build
 /// output (`dist`, `.next`, etc.) which doesn't exist until the build runs.
 ///
-/// Shared by `deno compile .` and `deno desktop .` so the two can't drift.
+/// Shared by `edno compile .` and `edno desktop .` so the two can't drift.
 pub fn run_build_command(
   detection: &FrameworkDetection,
   dir: &Path,
@@ -145,7 +145,7 @@ pub fn run_build_command(
       format!("Failed to run build command: {}", build_cmd.join(" "))
     })?;
   if !status.success() {
-    deno_core::anyhow::bail!(
+    edno_core::anyhow::bail!(
       "{} build failed (exit code: {})",
       detection.name,
       status.code().unwrap_or(-1)
@@ -159,7 +159,7 @@ pub fn run_build_command(
 /// Detection priority:
 /// 1. Config-file based detection (highest priority)
 /// 2. Package.json dependency-based detection
-/// 3. deno.json import-based detection
+/// 3. edno.json import-based detection
 pub fn detect_framework(
   dir: &Path,
 ) -> Result<Option<FrameworkDetection>, AnyError> {
@@ -191,7 +191,7 @@ pub fn detect_framework(
   // would otherwise be misdetected as a plain Vite SPA and bundle a
   // non-existent `dist/`). `detect_sveltekit` resolves the adapter's output
   // shape, or errors with an actionable hint when the configured adapter isn't
-  // one `deno desktop` can bundle. A bare `svelte.config.*` is not enough on
+  // one `edno desktop` can bundle. A bare `svelte.config.*` is not enough on
   // its own: the Vite Svelte template ships a `svelte.config.js` with only
   // `vitePreprocess()` and no SvelteKit, and such plain Svelte SPAs must keep
   // falling through to the Vite branch that bundles `dist/`.
@@ -241,7 +241,7 @@ pub fn detect_framework(
     return Ok(Some(detect_vite(dir)));
   }
 
-  // --- deno.json import-based detection ---
+  // --- edno.json import-based detection ---
   if let Some(imports) = read_deno_json_imports(dir)
     && imports
       .iter()
@@ -255,18 +255,18 @@ pub fn detect_framework(
 
 // --- Framework-specific detection ---
 
-fn deno_exe() -> String {
+fn edno_exe() -> String {
   std::env::current_exe()
     .map(|p| p.display().to_string())
-    .unwrap_or_else(|_| "deno".into())
+    .unwrap_or_else(|_| "edno".into())
 }
 
-fn deno_task_build() -> Vec<String> {
-  vec![deno_exe(), "task".into(), "build".into()]
+fn edno_task_build() -> Vec<String> {
+  vec![edno_exe(), "task".into(), "build".into()]
 }
 
-fn deno_task_dev() -> Vec<String> {
-  vec![deno_exe(), "task".into(), "dev".into()]
+fn edno_task_dev() -> Vec<String> {
+  vec![edno_exe(), "task".into(), "dev".into()]
 }
 
 fn detect_nextjs(dir: &Path) -> Result<FrameworkDetection, AnyError> {
@@ -280,7 +280,7 @@ globalThis.addEventListener("unhandledrejection", (e) => {{
 }});
 // Guard: skip for forked workers (child_process.fork sets NODE_CHANNEL_FD).
 // Workers use override_main_module to run their target script directly.
-if (!Deno.env.get("NODE_CHANNEL_FD")) {{
+if (!Edno.env.get("NODE_CHANNEL_FD")) {{
   // Use import.meta.dirname so paths resolve against the VFS in the
   // compiled binary rather than the runtime CWD.
   await nextStart({{ hostname: "0.0.0.0" }}, import.meta.dirname);
@@ -298,8 +298,8 @@ if (!Deno.env.get("NODE_CHANNEL_FD")) {{
     name: "Next.js",
     entrypoint_code: entrypoint,
     include_paths,
-    build_command: Some(deno_task_build()),
-    hmr_command: None, // TODO: add command to enable `deno desktop --hmr` for Next.js
+    build_command: Some(edno_task_build()),
+    hmr_command: None, // TODO: add command to enable `edno desktop --hmr` for Next.js
   })
 }
 
@@ -309,14 +309,14 @@ fn detect_astro(_dir: &Path) -> FrameworkDetection {
     entrypoint_code: "// @ts-nocheck\nimport \"./dist/server/entry.mjs\";\n"
       .into(),
     include_paths: vec!["dist".into()],
-    build_command: Some(deno_task_build()),
-    hmr_command: None, // TODO: add command to enable `deno desktop --hmr` for Astro
+    build_command: Some(edno_task_build()),
+    hmr_command: None, // TODO: add command to enable `edno desktop --hmr` for Astro
   }
 }
 
 fn detect_fresh(dir: &Path) -> FrameworkDetection {
   // Fresh 2.x uses _fresh/server.js (build output) or imports @fresh/core
-  // in deno.json. We intentionally do NOT use `fresh.gen.ts + deno.json`
+  // in edno.json. We intentionally do NOT use `fresh.gen.ts + edno.json`
   // as a heuristic because Fresh 1 projects also have both of those files.
   let is_fresh2 = dir.join("_fresh/server.js").exists()
     || read_deno_json_imports(dir)
@@ -338,12 +338,12 @@ fn detect_fresh(dir: &Path) -> FrameworkDetection {
       name: "Fresh",
       entrypoint_code: r#"// @ts-nocheck
 const mod = await import("./_fresh/server.js");
-Deno.serve(mod.default.fetch);
+Edno.serve(mod.default.fetch);
 "#
       .into(),
       include_paths,
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     }
   } else {
     // Fresh 1.x — no build step needed, server-rendered
@@ -369,8 +369,8 @@ fn detect_remix(dir: &Path) -> FrameworkDetection {
     entrypoint_code:
       "// @ts-nocheck\nimport \"./node_modules/.bin/remix-serve\";\n".into(),
     include_paths,
-    build_command: Some(deno_task_build()),
-    hmr_command: None, // TODO: add command to enable `deno desktop --hmr` for Remix
+    build_command: Some(edno_task_build()),
+    hmr_command: None, // TODO: add command to enable `edno desktop --hmr` for Remix
   }
 }
 
@@ -379,10 +379,10 @@ fn detect_react_router(dir: &Path) -> FrameworkDetection {
   //   * SPA (`ssr: false`): a fully static site in `build/client` with a
   //     prerendered `index.html` fallback and no server to run.
   //   * SSR (default): a server build at `build/server/index.js`. This works in
-  //     Deno when the app provides a Web Streams `app/entry.server.tsx` using
+  //     Edno when the app provides a Web Streams `app/entry.server.tsx` using
   //     `renderToReadableStream`; the default React Router Node entry uses
   //     `renderToPipeableStream` and fails during `react-router build` under
-  //     Deno before this generated entrypoint is compiled.
+  //     Edno before this generated entrypoint is compiled.
   // Detection runs *before* the build, so decide from the config file.
   let spa_mode = [
     "react-router.config.ts",
@@ -414,7 +414,7 @@ import { serveDir } from "jsr:@std/http/file-server";
 // against the VFS in the compiled binary via import.meta.dirname rather than
 // the runtime CWD.
 const fsRoot = import.meta.dirname + "/build/client";
-Deno.serve(async (req) => {
+Edno.serve(async (req) => {
   const res = await serveDir(req, { fsRoot, quiet: true });
   // SPA fallback: route unmatched HTML navigations back to index.html so
   // client-side routers keep working after a hard refresh.
@@ -433,8 +433,8 @@ Deno.serve(async (req) => {
 "#
       .into(),
       include_paths: vec!["build/client".into()],
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     }
   } else {
     // SSR: serve immutable client assets from `build/client`, then hand all
@@ -453,7 +453,7 @@ import * as build from "./build/server/index.js";
 const fsRoot = import.meta.dirname + "/build/client";
 const handler = createRequestHandler(build, "production");
 
-Deno.serve(async (req) => {
+Edno.serve(async (req) => {
   if (req.method === "GET" || req.method === "HEAD") {
     const staticRes = await serveDir(req, { fsRoot, quiet: true });
     if (staticRes.status !== 404) {
@@ -465,8 +465,8 @@ Deno.serve(async (req) => {
 "#
       .into(),
       include_paths: vec!["build".into()],
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     }
   }
 }
@@ -517,14 +517,14 @@ fn detect_nuxt(dir: &Path) -> FrameworkDetection {
 fn detect_sveltekit(dir: &Path) -> Result<FrameworkDetection, AnyError> {
   // Prefer post-build evidence of a supported output shape, since that
   // proves which adapter was actually used.
-  if dir.join(".deno-deploy/server.ts").exists() {
+  if dir.join(".edno-deploy/server.ts").exists() {
     return Ok(FrameworkDetection {
       name: "SvelteKit",
-      entrypoint_code: "// @ts-nocheck\nimport \"./.deno-deploy/server.ts\";\n"
+      entrypoint_code: "// @ts-nocheck\nimport \"./.edno-deploy/server.ts\";\n"
         .into(),
-      include_paths: vec![".deno-deploy".into()],
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      include_paths: vec![".edno-deploy".into()],
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     });
   }
   if dir.join(".output/server/index.ts").exists()
@@ -541,16 +541,16 @@ fn detect_sveltekit(dir: &Path) -> Result<FrameworkDetection, AnyError> {
         "// @ts-nocheck\nimport \"./.output/server/index.{ext}\";\n"
       ),
       include_paths: vec![".output".into()],
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     });
   }
-  // `@sveltejs/adapter-node` and `svelte-adapter-deno` both emit a `build/`
+  // `@sveltejs/adapter-node` and `svelte-adapter-edno` both emit a `build/`
   // directory whose `index.js` boots the server and whose `handler.js` serves
   // the static assets from sibling `client`/`static`/`prerendered`
   // directories. Those asset directories aren't part of the module graph, so
   // they must be included explicitly or every request 404s in the compiled
-  // binary. The adapter-node server runs under Deno via Node.js compatibility.
+  // binary. The adapter-node server runs under Edno via Node.js compatibility.
   if dir.join("build/index.js").exists()
     && dir.join("build/handler.js").exists()
   {
@@ -558,37 +558,37 @@ fn detect_sveltekit(dir: &Path) -> Result<FrameworkDetection, AnyError> {
       name: "SvelteKit",
       entrypoint_code: "// @ts-nocheck\nimport \"./build/index.js\";\n".into(),
       include_paths: sveltekit_build_includes(dir),
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     });
   }
   // No build artifacts yet — fall back to config inspection.
   let config_text = read_config_text(dir, "svelte.config");
-  if config_text.contains("@deno/svelte-adapter") {
+  if config_text.contains("@edno/svelte-adapter") {
     return Ok(FrameworkDetection {
       name: "SvelteKit",
-      entrypoint_code: "// @ts-nocheck\nimport \"./.deno-deploy/server.ts\";\n"
+      entrypoint_code: "// @ts-nocheck\nimport \"./.edno-deploy/server.ts\";\n"
         .into(),
-      include_paths: vec![".deno-deploy".into()],
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      include_paths: vec![".edno-deploy".into()],
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     });
   }
   // `@sveltejs/adapter-node` emits the same `build/index.js` shape as
-  // `svelte-adapter-deno` and runs under Deno via Node.js compatibility, so no
-  // Deno-specific adapter is required. Default `out` is `build`; only
+  // `svelte-adapter-edno` and runs under Edno via Node.js compatibility, so no
+  // Edno-specific adapter is required. Default `out` is `build`; only
   // `build/client` is guaranteed to exist after the build, so include just
   // that here — the post-build branch above picks up `static`/`prerendered`
   // when they're present.
-  if config_text.contains("svelte-adapter-deno")
+  if config_text.contains("svelte-adapter-edno")
     || config_text.contains("@sveltejs/adapter-node")
   {
     return Ok(FrameworkDetection {
       name: "SvelteKit",
       entrypoint_code: "// @ts-nocheck\nimport \"./build/index.js\";\n".into(),
       include_paths: vec!["build/client".into()],
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     });
   }
   if config_text.contains("nitro") {
@@ -597,8 +597,8 @@ fn detect_sveltekit(dir: &Path) -> Result<FrameworkDetection, AnyError> {
       entrypoint_code:
         "// @ts-nocheck\nimport \"./.output/server/index.mjs\";\n".into(),
       include_paths: vec![".output".into()],
-      build_command: Some(deno_task_build()),
-      hmr_command: Some(deno_task_dev()),
+      build_command: Some(edno_task_build()),
+      hmr_command: Some(edno_task_dev()),
     });
   }
   // SvelteKit is present but the configured adapter isn't one we can locate a
@@ -613,14 +613,14 @@ fn detect_sveltekit(dir: &Path) -> Result<FrameworkDetection, AnyError> {
     ""
   };
   bail!(
-    "SvelteKit detected, but no adapter that `deno desktop` can bundle is \
+    "SvelteKit detected, but no adapter that `edno desktop` can bundle is \
      configured.\n{auto_hint}Configure a supported adapter in your \
-     svelte.config:\n  - `@sveltejs/adapter-node` (runs under Deno via \
-     Node.js compatibility)\n  - `@deno/svelte-adapter` (for Deno Deploy)"
+     svelte.config:\n  - `@sveltejs/adapter-node` (runs under Edno via \
+     Node.js compatibility)\n  - `@edno/svelte-adapter` (for Edno Deploy)"
   );
 }
 
-/// Existing asset directories under a `svelte-adapter-deno` `build/` output
+/// Existing asset directories under a `svelte-adapter-edno` `build/` output
 /// that need to be embedded so the adapter's static file server can find them.
 fn sveltekit_build_includes(dir: &Path) -> Vec<String> {
   ["client", "static", "prerendered"]
@@ -630,7 +630,7 @@ fn sveltekit_build_includes(dir: &Path) -> Vec<String> {
     .collect()
 }
 
-/// Nuxt, SolidStart, TanStack Start all use Nitro with the `deno_server`
+/// Nuxt, SolidStart, TanStack Start all use Nitro with the `edno_server`
 /// preset, outputting to `.output/server/index.{ts,mjs}`.
 fn detect_nitro_framework(
   dir: &Path,
@@ -647,12 +647,12 @@ fn detect_nitro_framework(
       "// @ts-nocheck\nimport \"./.output/server/index.{ext}\";\n"
     ),
     include_paths: vec![".output".into()],
-    build_command: Some(deno_task_build()),
+    build_command: Some(edno_task_build()),
     // Nuxt (`nuxi dev`), SolidStart and TanStack Start (`vinxi dev`) all run a
     // Vite-based dev server that prints the `Local:   http://…` line
-    // `parse_dev_server_url` scans for, so `deno task dev` drives HMR for all
+    // `parse_dev_server_url` scans for, so `edno task dev` drives HMR for all
     // three.
-    hmr_command: Some(deno_task_dev()),
+    hmr_command: Some(edno_task_dev()),
   }
 }
 
@@ -667,11 +667,11 @@ fn detect_vite(dir: &Path) -> FrameworkDetection {
       name: "Vite",
       entrypoint_code: format!("// @ts-nocheck\nimport \"./{server_file}\";\n"),
       include_paths: vec!["dist".into()],
-      build_command: Some(deno_task_build()),
+      build_command: Some(edno_task_build()),
       // `vite` (and Vue/React SPA templates built on it) prints the
       // `Local:   http://…` line `parse_dev_server_url` scans for, so
-      // `deno task dev` drives HMR.
-      hmr_command: Some(deno_task_dev()),
+      // `edno task dev` drives HMR.
+      hmr_command: Some(edno_task_dev()),
     };
   }
 
@@ -688,7 +688,7 @@ import { serveDir } from "jsr:@std/http@^1/file-server";
 // `vite build` emits a static site into `dist/`. Resolve it against the VFS in
 // the compiled binary via import.meta.dirname rather than the runtime CWD.
 const fsRoot = import.meta.dirname + "/dist";
-Deno.serve(async (req) => {
+Edno.serve(async (req) => {
   const res = await serveDir(req, { fsRoot, quiet: true });
   // SPA fallback: route unmatched HTML navigations back to index.html so
   // client-side routers keep working after a hard refresh.
@@ -707,10 +707,10 @@ Deno.serve(async (req) => {
 "#
     .into(),
     include_paths: vec!["dist".into()],
-    build_command: Some(deno_task_build()),
+    build_command: Some(edno_task_build()),
     // See the SSR branch above: the Vite dev server prints the `Local:` URL
-    // that `parse_dev_server_url` scans for, so `deno task dev` drives HMR.
-    hmr_command: Some(deno_task_dev()),
+    // that `parse_dev_server_url` scans for, so `edno task dev` drives HMR.
+    hmr_command: Some(edno_task_dev()),
   }
 }
 
@@ -789,13 +789,13 @@ fn detect_package_version(dir: &Path, package: &str) -> Option<u32> {
     .ok()
 }
 
-/// Read the `imports` keys from deno.json / deno.jsonc.
+/// Read the `imports` keys from edno.json / edno.jsonc.
 ///
-/// Uses JSONC-aware parsing so that commented deno.jsonc files are
+/// Uses JSONC-aware parsing so that commented edno.jsonc files are
 /// handled correctly instead of silently failing detection.
 fn read_deno_json_imports(dir: &Path) -> Option<Vec<String>> {
-  let content = std::fs::read_to_string(dir.join("deno.json"))
-    .or_else(|_| std::fs::read_to_string(dir.join("deno.jsonc")))
+  let content = std::fs::read_to_string(dir.join("edno.json"))
+    .or_else(|_| std::fs::read_to_string(dir.join("edno.jsonc")))
     .ok()?;
   let config: serde_json::Value =
     jsonc_parser::parse_to_serde_value(&content, &Default::default())
@@ -935,13 +935,13 @@ mod tests {
 
   #[test]
   fn fresh1_with_deno_json_stays_fresh1() {
-    // Regression: fresh.gen.ts + deno.json (without @fresh/core import)
+    // Regression: fresh.gen.ts + edno.json (without @fresh/core import)
     // should be treated as Fresh 1, not Fresh 2.
     let dir = setup_dir();
     fs::write(dir.path().join("fresh.gen.ts"), "").unwrap();
     fs::write(
-      dir.path().join("deno.json"),
-      r#"{"tasks":{"start":"deno run -A main.ts"}}"#,
+      dir.path().join("edno.json"),
+      r#"{"tasks":{"start":"edno run -A main.ts"}}"#,
     )
     .unwrap();
     let det = detect_framework(dir.path()).unwrap().unwrap();
@@ -956,7 +956,7 @@ mod tests {
     let dir = setup_dir();
     fs::write(dir.path().join("fresh.gen.ts"), "").unwrap();
     fs::write(
-      dir.path().join("deno.json"),
+      dir.path().join("edno.json"),
       r#"{"imports":{"@fresh/core":"jsr:@fresh/core@^2"}}"#,
     )
     .unwrap();
@@ -987,7 +987,7 @@ mod tests {
     let det = detect_framework(dir.path()).unwrap().unwrap();
     assert_eq!(det.name, "Nuxt");
     assert_eq!(det.include_paths, vec![".output"]);
-    // Nuxt runs a Vite-based dev server, so `deno desktop --hmr` is
+    // Nuxt runs a Vite-based dev server, so `edno desktop --hmr` is
     // supported — but `nuxi dev` is not plain `vite dev`, so it keeps the
     // external dev-server process rather than the in-runtime dev entrypoint.
     assert!(det.hmr_entrypoint_code().is_none());
@@ -1012,12 +1012,12 @@ mod tests {
     let dir = setup_dir();
     write_sveltekit_pkg(dir.path());
     fs::write(dir.path().join("svelte.config.js"), "").unwrap();
-    fs::create_dir_all(dir.path().join(".deno-deploy")).unwrap();
-    fs::write(dir.path().join(".deno-deploy/server.ts"), "").unwrap();
+    fs::create_dir_all(dir.path().join(".edno-deploy")).unwrap();
+    fs::write(dir.path().join(".edno-deploy/server.ts"), "").unwrap();
     let det = detect_framework(dir.path()).unwrap().unwrap();
     assert_eq!(det.name, "SvelteKit");
-    assert!(det.entrypoint_code.contains(".deno-deploy/server.ts"));
-    assert_eq!(det.include_paths, vec![".deno-deploy"]);
+    assert!(det.entrypoint_code.contains(".edno-deploy/server.ts"));
+    assert_eq!(det.include_paths, vec![".edno-deploy"]);
     let cmd = det.build_command.unwrap();
     assert_eq!(cmd[1..], vec!["task", "build"]);
   }
@@ -1037,12 +1037,12 @@ mod tests {
 
   #[test]
   fn detects_sveltekit_adapter_deno_from_config() {
-    // `svelte-adapter-deno` emits a `build/` directory (not `.output`).
+    // `svelte-adapter-edno` emits a `build/` directory (not `.output`).
     let dir = setup_dir();
     write_sveltekit_pkg(dir.path());
     fs::write(
       dir.path().join("svelte.config.js"),
-      "import adapter from 'svelte-adapter-deno';\nexport default { kit: { adapter: adapter() } };\n",
+      "import adapter from 'svelte-adapter-edno';\nexport default { kit: { adapter: adapter() } };\n",
     )
     .unwrap();
     let det = detect_framework(dir.path()).unwrap().unwrap();
@@ -1054,7 +1054,7 @@ mod tests {
   #[test]
   fn detects_sveltekit_adapter_deno_from_built_output() {
     // Post-build evidence: `build/index.js` + `build/handler.js` is the
-    // `svelte-adapter-deno` output shape. Existing asset dirs are included.
+    // `svelte-adapter-edno` output shape. Existing asset dirs are included.
     let dir = setup_dir();
     write_sveltekit_pkg(dir.path());
     fs::write(dir.path().join("svelte.config.js"), "").unwrap();
@@ -1086,7 +1086,7 @@ mod tests {
   #[test]
   fn detects_sveltekit_adapter_node_from_config() {
     // `@sveltejs/adapter-node` emits the `build/index.js` shape and runs under
-    // Deno via Node.js compatibility — no Deno-specific adapter required.
+    // Edno via Node.js compatibility — no Edno-specific adapter required.
     let dir = setup_dir();
     write_sveltekit_pkg(dir.path());
     fs::write(
@@ -1100,7 +1100,7 @@ mod tests {
     assert_eq!(det.include_paths, vec!["build/client"]);
     // SvelteKit's dev command is plain `vite dev`, so `--hmr` boots the dev
     // server inside the desktop runtime and server-side endpoints keep
-    // `Deno.desktop` (#35899).
+    // `Edno.desktop` (#35899).
     assert!(
       det
         .hmr_entrypoint_code()
@@ -1415,7 +1415,7 @@ mod tests {
     assert_eq!(det.include_paths, vec!["dist"]);
     let cmd = det.build_command.unwrap();
     assert_eq!(cmd[1..], vec!["task", "build"]);
-    // The Vite dev server drives HMR for `deno desktop --hmr`.
+    // The Vite dev server drives HMR for `edno desktop --hmr`.
     let hmr = det.hmr_command.unwrap();
     assert_eq!(hmr[1..], vec!["task", "dev"]);
   }
@@ -1440,12 +1440,12 @@ mod tests {
     assert_eq!(det.name, "Vite");
     assert!(det.entrypoint_code.contains("serveDir"));
     assert!(det.entrypoint_code.contains("/dist"));
-    assert!(det.entrypoint_code.contains("Deno.serve"));
+    assert!(det.entrypoint_code.contains("Edno.serve"));
     // The remote `@std/http` dependency must be version-pinned so the compiled
     // binary is reproducible.
     assert!(det.entrypoint_code.contains("jsr:@std/http@^1/file-server"));
     assert_eq!(det.include_paths, vec!["dist"]);
-    // A plain Vite SPA (e.g. the Vue template) supports `deno desktop --hmr`.
+    // A plain Vite SPA (e.g. the Vue template) supports `edno desktop --hmr`.
     // Vite's dev command is plain `vite dev`, so `--hmr` boots the dev server
     // inside the desktop runtime and server code keeps the desktop APIs
     // (#35899).
@@ -1464,7 +1464,7 @@ mod tests {
   fn vue_vite_spa_supports_hmr() {
     // A Vue SPA scaffolded with `npm create vue@latest` is a plain Vite project
     // (`vue` + `vite` in devDependencies, a `vite.config.ts`). It must resolve
-    // to the Vite path with `deno desktop --hmr` enabled so the dev-server
+    // to the Vite path with `edno desktop --hmr` enabled so the dev-server
     // workflow from issue #35745 works.
     let dir = setup_dir();
     fs::write(dir.path().join("vite.config.ts"), "").unwrap();
@@ -1509,13 +1509,13 @@ mod tests {
     assert!(det.entrypoint_code.contains("server.ts"));
   }
 
-  // --- deno.json import-based detection ---
+  // --- edno.json import-based detection ---
 
   #[test]
   fn detects_fresh_from_deno_json_imports() {
     let dir = setup_dir();
     fs::write(
-      dir.path().join("deno.json"),
+      dir.path().join("edno.json"),
       r#"{"imports":{"fresh":"jsr:@fresh/core"}}"#,
     )
     .unwrap();
@@ -1527,7 +1527,7 @@ mod tests {
   fn detects_fresh_from_deno_json_fresh_core() {
     let dir = setup_dir();
     fs::write(
-      dir.path().join("deno.json"),
+      dir.path().join("edno.json"),
       r#"{"imports":{"@fresh/core":"jsr:@fresh/core@^2"}}"#,
     )
     .unwrap();
@@ -1539,7 +1539,7 @@ mod tests {
   fn detects_fresh_from_deno_jsonc() {
     let dir = setup_dir();
     fs::write(
-      dir.path().join("deno.jsonc"),
+      dir.path().join("edno.jsonc"),
       r#"{"imports":{"fresh":"jsr:@fresh/core"}}"#,
     )
     .unwrap();
@@ -1549,10 +1549,10 @@ mod tests {
 
   #[test]
   fn detects_fresh_from_commented_deno_jsonc() {
-    // Regression: deno.jsonc with comments should still be parsed correctly.
+    // Regression: edno.jsonc with comments should still be parsed correctly.
     let dir = setup_dir();
     fs::write(
-      dir.path().join("deno.jsonc"),
+      dir.path().join("edno.jsonc"),
       "{\n  // This is a comment\n  \"imports\": {\n    \"fresh\": \"jsr:@fresh/core\"\n  }\n}\n",
     )
     .unwrap();
@@ -1595,7 +1595,7 @@ mod tests {
     let dir = setup_dir();
     fs::write(dir.path().join("astro.config.mjs"), "").unwrap();
     fs::write(
-      dir.path().join("deno.json"),
+      dir.path().join("edno.json"),
       r#"{"imports":{"fresh":"jsr:@fresh/core"}}"#,
     )
     .unwrap();
@@ -1678,7 +1678,7 @@ mod tests {
   fn read_deno_json_imports_returns_keys() {
     let dir = setup_dir();
     fs::write(
-      dir.path().join("deno.json"),
+      dir.path().join("edno.json"),
       r#"{"imports":{"foo":"jsr:@foo/bar","baz":"npm:baz"}}"#,
     )
     .unwrap();
@@ -1696,7 +1696,7 @@ mod tests {
   #[test]
   fn read_deno_json_imports_no_imports_key() {
     let dir = setup_dir();
-    fs::write(dir.path().join("deno.json"), r#"{"tasks":{}}"#).unwrap();
+    fs::write(dir.path().join("edno.json"), r#"{"tasks":{}}"#).unwrap();
     assert!(read_deno_json_imports(dir.path()).is_none());
   }
 

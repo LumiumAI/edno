@@ -2,17 +2,17 @@
 import { assert, assertArrayEquals, assertEquals, test } from "checkin:testing";
 
 test(function testEmptyEncode() {
-  const empty = Deno.core.encode("");
+  const empty = Edno.core.encode("");
   assertEquals(empty.length, 0);
 });
 
 test(function testEmptyDecode() {
-  const emptyBuf = Deno.core.decode(new Uint8Array(0));
+  const emptyBuf = Edno.core.decode(new Uint8Array(0));
   assertEquals(emptyBuf, "");
 });
 
 test(function testFixture1() {
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const fixture1 = [
     0xf0, 0x9d, 0x93, 0xbd,
     0xf0, 0x9d, 0x93, 0xae,
@@ -20,14 +20,14 @@ test(function testFixture1() {
     0xf0, 0x9d, 0x93, 0xbd
   ];
   assertArrayEquals(
-    Array.from(Deno.core.encode("𝓽𝓮𝔁𝓽")),
+    Array.from(Edno.core.encode("𝓽𝓮𝔁𝓽")),
     fixture1,
   );
-  assertEquals(Deno.core.decode(new Uint8Array(fixture1)), "𝓽𝓮𝔁𝓽");
+  assertEquals(Edno.core.decode(new Uint8Array(fixture1)), "𝓽𝓮𝔁𝓽");
 });
 
 test(function testFixture2() {
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const fixture2 = [
     72, 101, 108, 108,
     111, 32, 239, 191,
@@ -36,11 +36,11 @@ test(function testFixture2() {
     108, 100
   ];
   assertArrayEquals(
-    Array.from(Deno.core.encode("Hello \udc12\ud834 World")),
+    Array.from(Edno.core.encode("Hello \udc12\ud834 World")),
     fixture2,
   );
   assertEquals(
-    Deno.core.decode(new Uint8Array(fixture2)),
+    Edno.core.decode(new Uint8Array(fixture2)),
     "Hello �� World",
   );
 });
@@ -49,7 +49,7 @@ test(function testStringTooLarge() {
   // See https://github.com/denoland/deno/issues/6649
   let thrown = false;
   try {
-    Deno.core.decode(new Uint8Array(2 ** 29));
+    Edno.core.decode(new Uint8Array(2 ** 29));
   } catch (e) {
     thrown = true;
     assert(e instanceof RangeError);
@@ -73,19 +73,19 @@ test(function binaryEncode() {
   // invalid utf-8 code points
   const invalid = new Uint8Array([0xC0]);
   assertEquals(
-    Deno.core.encodeBinaryString(invalid),
+    Edno.core.encodeBinaryString(invalid),
     asBinaryString(invalid),
   );
 
   const invalid2 = new Uint8Array([0xC1]);
   assertEquals(
-    Deno.core.encodeBinaryString(invalid2),
+    Edno.core.encodeBinaryString(invalid2),
     asBinaryString(invalid2),
   );
 
   for (let i = 0, j = 255; i <= 255; i++, j--) {
     const bytes = new Uint8Array([i, j]);
-    const binaryString = Deno.core.encodeBinaryString(bytes);
+    const binaryString = Edno.core.encodeBinaryString(bytes);
     assertEquals(
       binaryString,
       asBinaryString(bytes),

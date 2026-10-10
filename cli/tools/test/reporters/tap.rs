@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::serde_json::json;
-use deno_core::serde_json::{self};
-use deno_print::drop_println;
+use edno_core::serde_json::json;
+use edno_core::serde_json::{self};
+use edno_print::drop_println;
 use serde::Serialize;
 
 use super::common;
@@ -257,7 +257,7 @@ impl TestReporter for TapTestReporter {
     tests: &IndexMap<usize, TestDescription>,
     test_steps: &IndexMap<usize, TestStepDescription>,
   ) {
-    drop_println!("Bail out! Deno.exit({}) called.", exit_code);
+    drop_println!("Bail out! Edno.exit({}) called.", exit_code);
     common::report_exit(
       &mut std::io::stdout(),
       &self.cwd,

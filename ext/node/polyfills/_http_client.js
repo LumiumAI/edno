@@ -22,7 +22,7 @@
 
 // Ported from Node.js lib/_http_client.js
 
-// deno-lint-ignore-file no-this-alias no-inner-declarations
+// edno-lint-ignore-file no-this-alias no-inner-declarations
 
 import { core, internals, primordials } from "ext:core/mod.js";
 import { op_node_http_check_proxy_net } from "ext:core/ops";
@@ -59,9 +59,9 @@ const {
 } = primordials;
 
 import net from "node:net";
-const { ok: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+const { ok: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 const { kEmptyObject, once } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 import {
   _checkInvalidHeaderChar as checkInvalidHeaderChar,
@@ -80,11 +80,11 @@ import {
 } from "node:_http_outgoing";
 import httpAgent from "node:_http_agent";
 import httpProxy from "node:_http_proxy";
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const { urlToHttpOptions } = core.loadExtScript(
-  "ext:deno_node/internal/url.ts",
+  "ext:edno_node/internal/url.ts",
 );
-const { kOutHeaders } = core.loadExtScript("ext:deno_node/internal/http.ts");
+const { kOutHeaders } = core.loadExtScript("ext:edno_node/internal/http.ts");
 const {
   connResetException,
   ERR_HTTP_HEADERS_SENT,
@@ -93,23 +93,23 @@ const {
   ERR_INVALID_PROTOCOL,
   ERR_INVALID_URL,
   ERR_UNESCAPED_CHARACTERS,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   validateBoolean,
   validateInteger,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { getTimerDuration } = core.loadExtScript(
-  "ext:deno_node/internal/timers.mjs",
+  "ext:edno_node/internal/timers.mjs",
 );
 import { addAbortSignal, finished } from "node:stream";
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
 const { defaultTriggerAsyncIdScope } = core.loadExtScript(
-  "ext:deno_node/internal/async_hooks.ts",
+  "ext:edno_node/internal/async_hooks.ts",
 );
-const { kNeedDrain } = core.loadExtScript("ext:deno_node/internal/http.ts");
-const { channel } = core.loadExtScript("ext:deno_node/diagnostics_channel.js");
+const { kNeedDrain } = core.loadExtScript("ext:edno_node/internal/http.ts");
+const { channel } = core.loadExtScript("ext:edno_node/diagnostics_channel.js");
 const { enqueueNodePerformanceEntry } = core.loadExtScript(
-  "ext:deno_node/perf_hooks.js",
+  "ext:edno_node/perf_hooks.js",
 );
 
 const onClientRequestCreatedChannel = channel("http.client.request.created");
@@ -117,14 +117,14 @@ const onClientRequestStartChannel = channel("http.client.request.start");
 const onClientRequestErrorChannel = channel("http.client.request.error");
 const onClientResponseFinishChannel = channel("http.client.response.finish");
 const { updateSpanFromError } = core.loadExtScript(
-  "ext:deno_telemetry/util.ts",
+  "ext:edno_telemetry/util.ts",
 );
 const {
   otelState,
   builtinTracer,
   ContextManager,
   SPAN_KEY,
-} = core.loadExtScript("ext:deno_telemetry/telemetry.ts");
+} = core.loadExtScript("ext:edno_telemetry/telemetry.ts");
 
 const INVALID_PATH_REGEX = new SafeRegExp(/[^\u0021-\u00ff]/);
 const kError = Symbol("kError");
@@ -366,9 +366,9 @@ function inspectorEmitResponseReceived(req, res) {
       let len;
       if (typeof chunk === "string") {
         len = chunk.length;
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
       } else if (chunk.byteLength !== undefined) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         len = chunk.byteLength;
       } else {
         len = 0;
@@ -509,7 +509,7 @@ function ClientRequest(input, options, cb) {
     const urlStr = input;
     // Match Node: `new URL(...)` in ClientRequest surfaces as
     // ERR_INVALID_URL (node's internal URL constructor calls
-    // bindingUrl.parse with raiseException=true). Deno's Web URL
+    // bindingUrl.parse with raiseException=true). Edno's Web URL
     // throws a generic TypeError, so wrap it to attach the code.
     let parsed;
     try {
@@ -792,7 +792,7 @@ function ClientRequest(input, options, cb) {
     if (options.auth && !this.getHeader("Authorization")) {
       this.setHeader(
         "Authorization",
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         "Basic " + Buffer.from(options.auth).toString("base64"),
       );
     }
@@ -1011,7 +1011,7 @@ function getRetryDataSize(data, encoding) {
   if (typeof data === "string") {
     return Buffer.byteLength(data, encoding || undefined);
   }
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return data?.byteLength ?? data?.length ?? 0;
 }
 
@@ -1140,7 +1140,7 @@ function socketCloseListener() {
     req._closed = true;
     req.emit("close");
     if (!res.aborted && res.readable) {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       res.push(null);
     }
   } else {
@@ -1243,7 +1243,7 @@ function socketOnData(d) {
     parser.finish();
     freeParser(parser, req, socket);
 
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const bodyHead = d.slice(bytesParsed, d.length);
 
     const eventName = req.method === "CONNECT" ? "connect" : "upgrade";

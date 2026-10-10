@@ -3,7 +3,7 @@ import * as crypto from "node:crypto";
 import { assertEquals, assertThrows } from "@std/assert";
 import { Buffer } from "node:buffer";
 
-Deno.test("timingSafeEqual ArrayBuffer and TypedArray", async () => {
+Edno.test("timingSafeEqual ArrayBuffer and TypedArray", async () => {
   const data = new TextEncoder().encode("foo"); // Uint8Array
 
   const hash = await crypto.subtle.digest("SHA-256", data); // ArrayBuffer
@@ -14,7 +14,7 @@ Deno.test("timingSafeEqual ArrayBuffer and TypedArray", async () => {
   assertEquals(eq, true);
 });
 
-Deno.test("timingSafeEqual rejects non ArrayBuffer/TypedArray", () => {
+Edno.test("timingSafeEqual rejects non ArrayBuffer/TypedArray", () => {
   const str = "foo";
   const buf = Buffer.from(str);
   const i = 123;

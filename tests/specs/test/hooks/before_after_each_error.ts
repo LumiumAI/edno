@@ -1,14 +1,14 @@
 const logs: string[] = [];
 
-Deno.test.beforeEach(() => {
+Edno.test.beforeEach(() => {
   logs.push("beforeEach");
 });
 
-Deno.test.afterEach(() => {
+Edno.test.afterEach(() => {
   logs.push("afterEach");
 });
 
-Deno.test("first test", () => {
+Edno.test("first test", () => {
   logs.push("test executed");
   throw new Error("test threw");
 });

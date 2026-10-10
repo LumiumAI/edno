@@ -20,13 +20,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// deno-lint-ignore-file no-explicit-any deno-internal/prefer-primordials
+// edno-lint-ignore-file no-explicit-any edno-internal/prefer-primordials
 
 (function () {
 const { core } = __bootstrap;
 const { HTTPParser: NativeHTTPParser } = core.ops;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { AsyncResource } = core.loadExtScript("ext:deno_node/async_hooks.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { AsyncResource } = core.loadExtScript("ext:edno_node/async_hooks.ts");
 
 // Method names indexed by llhttp method enum values.
 // Order must match llhttp_method_t in llhttp.h.
@@ -191,7 +191,7 @@ HTTPParser.prototype.execute = function (
 
   // Wrap the kOnBody callback to convert Uint8Array to Buffer.
   // Node.js passes Buffer objects to body callbacks.
-  // deno-lint-ignore no-this-alias
+  // edno-lint-ignore no-this-alias
   const parser = this;
   const origOnBody = this[kOnBody];
   if (origOnBody) {

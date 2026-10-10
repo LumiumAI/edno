@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_cache_dir::HttpCache;
-use deno_lockfile::Lockfile;
-use deno_lockfile::NewLockfileOptions;
+use edno_cache_dir::HttpCache;
+use edno_lockfile::Lockfile;
+use edno_lockfile::NewLockfileOptions;
 use deno_semver::jsr::JsrDepPackageReq;
 use deno_semver::package::PackageNv;
 use serde_json::Value;
@@ -15,20 +15,20 @@ use util::assert_not_contains;
 use util::test;
 
 #[test]
-#[ignore = "native check delegates to tsc and does not use deno's FastCheck type-check cache (#35946)"]
+#[ignore = "native check delegates to tsc and does not use edno's FastCheck type-check cache (#35946)"]
 fn fast_check_cache() {
   let test_context = TestContextBuilder::for_jsr().use_temp_cwd().build();
-  let deno_dir = test_context.deno_dir();
+  let edno_dir = test_context.edno_dir();
   let temp_dir = test_context.temp_dir();
-  let type_check_cache_path = deno_dir.path().join("check_cache_v2");
+  let type_check_cache_path = edno_dir.path().join("check_cache_v2");
 
   temp_dir.write(
     "main.ts",
-    r#"import { add } from "jsr:@denotest/add@1";
+    r#"import { add } from "jsr:@ednotest/add@1";
     const value: number = add(1, 2);
     console.log(value);"#,
   );
-  temp_dir.path().join("deno.json").write_json(&json!({
+  temp_dir.path().join("edno.json").write_json(&json!({
     "vendor": true
   }));
 
@@ -45,13 +45,13 @@ fn fast_check_cache() {
   let output = check_debug_cmd.run();
   assert_contains!(
     output.combined_output(),
-    "Using FastCheck cache for: @denotest/add@1.0.0"
+    "Using FastCheck cache for: @ednotest/add@1.0.0"
   );
 
   // modify the file in the vendor folder
   let vendor_dir = temp_dir.path().join("vendor");
   let pkg_dir =
-    vendor_dir.join("http_127.0.0.1_port_4250/@denotest/add/1.0.0/");
+    vendor_dir.join("http_127.0.0.1_port_4250/@ednotest/add/1.0.0/");
   pkg_dir
     .join("mod.ts")
     .append("\nexport * from './other.ts';");
@@ -62,7 +62,7 @@ fn fast_check_cache() {
   let output = check_debug_cmd.run();
   assert_not_contains!(
     output.combined_output(),
-    "Using FastCheck cache for: @denotest/add@1.0.0"
+    "Using FastCheck cache for: @ednotest/add@1.0.0"
   );
 
   // ensure cache works
@@ -76,7 +76,7 @@ fn fast_check_cache() {
   assert_contains!(output.combined_output(), building_fast_check_msg);
   assert_contains!(
     output.combined_output(),
-    "Using FastCheck cache for: @denotest/add@1.0.0"
+    "Using FastCheck cache for: @ednotest/add@1.0.0"
   );
 
   // cause a fast check error in the nested package
@@ -90,7 +90,7 @@ fn fast_check_cache() {
   assert_contains!(output.combined_output(), building_fast_check_msg);
   assert_contains!(
     output.combined_output(),
-    "Using FastCheck cache for: @denotest/add@1.0.0"
+    "Using FastCheck cache for: @ednotest/add@1.0.0"
   );
 
   // see that the type checking error in the internal function gets surfaced with --all
@@ -103,7 +103,7 @@ fn fast_check_cache() {
 TS2322 [ERROR]: Type 'string' is not assignable to type 'number'.
 export function asdf(a: number) { let err: number = ''; return Math.random(); }
                                       ~~~
-    at http://127.0.0.1:4250/@denotest/add/1.0.0/other.ts:2:39
+    at http://127.0.0.1:4250/@ednotest/add/1.0.0/other.ts:2:39
 
 error: Type checking failed.
 ",
@@ -116,7 +116,7 @@ error: Type checking failed.
   assert_contains!(output.combined_output(), building_fast_check_msg);
   assert_not_contains!(
     output.combined_output(),
-    "Using FastCheck cache for: @denotest/add@1.0.0"
+    "Using FastCheck cache for: @ednotest/add@1.0.0"
   );
 
   // finally ensure it uses the cache
@@ -125,19 +125,19 @@ error: Type checking failed.
   assert_contains!(output.combined_output(), building_fast_check_msg);
   assert_contains!(
     output.combined_output(),
-    "Using FastCheck cache for: @denotest/add@1.0.0"
+    "Using FastCheck cache for: @ednotest/add@1.0.0"
   );
 }
 
 struct TestNpmPackageInfoProvider;
 
 #[async_trait::async_trait(?Send)]
-impl deno_lockfile::NpmPackageInfoProvider for TestNpmPackageInfoProvider {
+impl edno_lockfile::NpmPackageInfoProvider for TestNpmPackageInfoProvider {
   async fn get_npm_package_info(
     &self,
     values: &[deno_semver::package::PackageNv],
   ) -> Result<
-    Vec<deno_lockfile::Lockfile5NpmInfo>,
+    Vec<edno_lockfile::Lockfile5NpmInfo>,
     Box<dyn std::error::Error + Send + Sync>,
   > {
     Ok(values.iter().map(|_| Default::default()).collect())
@@ -151,11 +151,11 @@ async fn specifiers_in_lockfile() {
 
   temp_dir.write(
     "main.ts",
-    r#"import version from "jsr:@denotest/no-module-graph@0.1";
+    r#"import version from "jsr:@ednotest/no-module-graph@0.1";
 
 console.log(version);"#,
   );
-  temp_dir.write("deno.json", "{}"); // to automatically create a lockfile
+  temp_dir.write("edno.json", "{}"); // to automatically create a lockfile
 
   test_context
     .new_command()
@@ -163,7 +163,7 @@ console.log(version);"#,
     .run()
     .assert_matches_text("0.1.1\n");
 
-  let lockfile_path = temp_dir.path().join("deno.lock");
+  let lockfile_path = temp_dir.path().join("edno.lock");
   let mut lockfile = Lockfile::new(
     NewLockfileOptions {
       file_path: lockfile_path.to_path_buf(),
@@ -179,7 +179,7 @@ console.log(version);"#,
     .packages
     .specifiers
     .get_mut(
-      &JsrDepPackageReq::from_str("jsr:@denotest/no-module-graph@0.1").unwrap(),
+      &JsrDepPackageReq::from_str("jsr:@ednotest/no-module-graph@0.1").unwrap(),
     )
     .unwrap() = "0.1.0".into();
   lockfile_path.write(lockfile.as_json_string());
@@ -203,16 +203,16 @@ fn remove_version_from_meta_json(registry_json: &mut Value, version: &str) {
 }
 
 fn remove_version_for_package(
-  deno_dir: &util::TempDir,
+  edno_dir: &util::TempDir,
   package: &str,
   version: &str,
 ) {
   let specifier =
     Url::parse(&format!("http://127.0.0.1:4250/{}/meta.json", package))
       .unwrap();
-  let cache = deno_cache_dir::GlobalHttpCache::new(
+  let cache = edno_cache_dir::GlobalHttpCache::new(
     sys_traits::impls::RealSys,
-    deno_dir.path().join("remote").to_path_buf(),
+    edno_dir.path().join("remote").to_path_buf(),
   );
   let entry = cache
     .get(&cache.cache_item_key(&specifier).unwrap(), None)
@@ -235,23 +235,23 @@ fn reload_info_not_found_cache_but_exists_remote() {
   // This tests that when a local machine doesn't have a version
   // specified in a dependency that exists in the npm registry
   let test_context = TestContextBuilder::for_jsr().use_temp_cwd().build();
-  let deno_dir = test_context.deno_dir();
+  let edno_dir = test_context.edno_dir();
   let temp_dir = test_context.temp_dir();
   temp_dir.write(
     "main.ts",
-    "import { add } from 'jsr:@denotest/add@1'; console.log(add(1, 2));",
+    "import { add } from 'jsr:@ednotest/add@1'; console.log(add(1, 2));",
   );
 
-  // cache successfully to the deno_dir
+  // cache successfully to the edno_dir
   let output = test_context.new_command().args("cache main.ts").run();
   output.assert_matches_text(concat!(
-    "Download http://127.0.0.1:4250/@denotest/add/meta.json\n",
-    "Download http://127.0.0.1:4250/@denotest/add/1.0.0_meta.json\n",
-    "Download http://127.0.0.1:4250/@denotest/add/1.0.0/mod.ts\n",
+    "Download http://127.0.0.1:4250/@ednotest/add/meta.json\n",
+    "Download http://127.0.0.1:4250/@ednotest/add/1.0.0_meta.json\n",
+    "Download http://127.0.0.1:4250/@ednotest/add/1.0.0/mod.ts\n",
   ));
 
   // modify the package information in the cache to remove the latest version
-  remove_version_for_package(deno_dir, "@denotest/add", "1.0.0");
+  remove_version_for_package(edno_dir, "@ednotest/add", "1.0.0");
 
   // should error when `--cache-only` is used now because the version is not in the cache
   let output = test_context
@@ -259,7 +259,7 @@ fn reload_info_not_found_cache_but_exists_remote() {
     .args("run --cached-only main.ts")
     .run();
   output.assert_exit_code(1);
-  output.assert_matches_text("error: JSR package manifest for '@denotest/add' failed to load. Could not resolve version constraint using only cached data. Try running again without --cached-only
+  output.assert_matches_text("error: JSR package manifest for '@ednotest/add' failed to load. Could not resolve version constraint using only cached data. Try running again without --cached-only
     at file:///[WILDCARD]main.ts:1:21
 ");
 
@@ -269,8 +269,8 @@ fn reload_info_not_found_cache_but_exists_remote() {
     .args("run main.ts")
     .run()
     .assert_matches_text(concat!(
-      "Download http://127.0.0.1:4250/@denotest/add/meta.json\n",
-      "Download http://127.0.0.1:4250/@denotest/add/1.0.0_meta.json\n",
+      "Download http://127.0.0.1:4250/@ednotest/add/meta.json\n",
+      "Download http://127.0.0.1:4250/@ednotest/add/1.0.0_meta.json\n",
       "3\n",
     ))
     .assert_exit_code(0);
@@ -278,42 +278,42 @@ fn reload_info_not_found_cache_but_exists_remote() {
 
 #[test]
 fn install_cache_busts_if_version_not_found() {
-  // Tests that if you try to deno install a package, if we can't find the version in the cached
+  // Tests that if you try to edno install a package, if we can't find the version in the cached
   // meta.json, we bust the cache to .
   let test_context = TestContextBuilder::for_jsr().use_temp_cwd().build();
-  let deno_dir = test_context.deno_dir();
+  let edno_dir = test_context.edno_dir();
   let temp_dir = test_context.temp_dir();
   temp_dir.write(
-    "deno.json",
-    r#"{ "imports": { "@denotest/has-pre-release": "jsr:@denotest/has-pre-release@2.0.0-beta.1" } }"#,
+    "edno.json",
+    r#"{ "imports": { "@ednotest/has-pre-release": "jsr:@ednotest/has-pre-release@2.0.0-beta.1" } }"#,
   );
 
-  // cache successfully to the deno_dir
+  // cache successfully to the edno_dir
   let output = test_context.new_command().args("install").run();
   output.assert_matches_text(concat!(
-    "Download http://127.0.0.1:4250/@denotest/has-pre-release/meta.json\n",
-    "Download http://127.0.0.1:4250/@denotest/has-pre-release/2.0.0-beta.1_meta.json\n",
-    "Download http://127.0.0.1:4250/@denotest/has-pre-release/2.0.0-beta.1/mod.ts\n",
+    "Download http://127.0.0.1:4250/@ednotest/has-pre-release/meta.json\n",
+    "Download http://127.0.0.1:4250/@ednotest/has-pre-release/2.0.0-beta.1_meta.json\n",
+    "Download http://127.0.0.1:4250/@ednotest/has-pre-release/2.0.0-beta.1/mod.ts\n",
   ));
 
   // modify the package information in the cache to remove the latest version
   remove_version_for_package(
-    deno_dir,
-    "@denotest/has-pre-release",
+    edno_dir,
+    "@ednotest/has-pre-release",
     "2.0.0-beta.2",
   );
 
   temp_dir.write(
-    "deno.json",
-    r#"{ "imports": { "@denotest/has-pre-release": "jsr:@denotest/has-pre-release@2.0.0-beta.2" } }"#,
+    "edno.json",
+    r#"{ "imports": { "@ednotest/has-pre-release": "jsr:@ednotest/has-pre-release@2.0.0-beta.2" } }"#,
   );
 
   // should error when `--cache-only` is used now because the version is not in the cache
   let output = test_context.new_command().args("install").run();
   output.assert_matches_text(concat!(
-    "Download http://127.0.0.1:4250/@denotest/has-pre-release/meta.json\n",
-    "Download http://127.0.0.1:4250/@denotest/has-pre-release/2.0.0-beta.2_meta.json\n",
-    "Download http://127.0.0.1:4250/@denotest/has-pre-release/2.0.0-beta.2/mod.ts\n",
+    "Download http://127.0.0.1:4250/@ednotest/has-pre-release/meta.json\n",
+    "Download http://127.0.0.1:4250/@ednotest/has-pre-release/2.0.0-beta.2_meta.json\n",
+    "Download http://127.0.0.1:4250/@ednotest/has-pre-release/2.0.0-beta.2/mod.ts\n",
   ));
   output.assert_exit_code(0);
 }
@@ -325,11 +325,11 @@ async fn lockfile_bad_package_integrity() {
 
   temp_dir.write(
     "main.ts",
-    r#"import version from "jsr:@denotest/no-module-graph@0.1";
+    r#"import version from "jsr:@ednotest/no-module-graph@0.1";
 
 console.log(version);"#,
   );
-  temp_dir.write("deno.json", "{}"); // to automatically create a lockfile
+  temp_dir.write("edno.json", "{}"); // to automatically create a lockfile
 
   test_context
     .new_command()
@@ -337,7 +337,7 @@ console.log(version);"#,
     .run()
     .assert_matches_text("0.1.1\n");
 
-  let lockfile_path = temp_dir.path().join("deno.lock");
+  let lockfile_path = temp_dir.path().join("edno.lock");
   let mut lockfile = Lockfile::new(
     NewLockfileOptions {
       file_path: lockfile_path.to_path_buf(),
@@ -348,16 +348,16 @@ console.log(version);"#,
   )
   .await
   .unwrap();
-  let pkg_nv = "@denotest/no-module-graph@0.1.1";
+  let pkg_nv = "@ednotest/no-module-graph@0.1.1";
   let original_integrity = get_lockfile_pkg_integrity(&lockfile, pkg_nv);
   set_lockfile_pkg_integrity(&mut lockfile, pkg_nv, "bad_integrity");
   lockfile_path.write(lockfile.as_json_string());
 
   let actual_integrity =
-    test_context.get_jsr_package_integrity("@denotest/no-module-graph/0.1.1");
+    test_context.get_jsr_package_integrity("@ednotest/no-module-graph/0.1.1");
   let integrity_check_failed_msg = format!("[WILDCARD]Integrity check failed for package. The source code is invalid, as it does not match the expected hash in the lock file.
 
-  Package: @denotest/no-module-graph@0.1.1
+  Package: @ednotest/no-module-graph@0.1.1
   Actual: {}
   Expected: bad_integrity
 
@@ -377,7 +377,7 @@ Investigate the lockfile; delete it to regenerate the lockfile or --reload to re
   // now try with a vendor folder
   temp_dir
     .path()
-    .join("deno.json")
+    .join("edno.json")
     .write_json(&json!({ "vendor": true }));
 
   // should fail again
@@ -430,7 +430,7 @@ fn bad_manifest_checksum() {
 
   temp_dir.write(
     "main.ts",
-    r#"import { add } from "jsr:@denotest/bad-manifest-checksum@1.0.0";
+    r#"import { add } from "jsr:@ednotest/bad-manifest-checksum@1.0.0";
 console.log(add);"#,
   );
 
@@ -440,16 +440,16 @@ console.log(add);"#,
     .args("run main.ts")
     .run()
     .assert_matches_text(
-      "Download http://127.0.0.1:4250/@denotest/bad-manifest-checksum/meta.json
-Download http://127.0.0.1:4250/@denotest/bad-manifest-checksum/1.0.0_meta.json
-Download http://127.0.0.1:4250/@denotest/bad-manifest-checksum/1.0.0/mod.ts
+      "Download http://127.0.0.1:4250/@ednotest/bad-manifest-checksum/meta.json
+Download http://127.0.0.1:4250/@ednotest/bad-manifest-checksum/1.0.0_meta.json
+Download http://127.0.0.1:4250/@ednotest/bad-manifest-checksum/1.0.0/mod.ts
 error: Integrity check failed in package. The package may have been tampered with.
 
-  Specifier: http://127.0.0.1:4250/@denotest/bad-manifest-checksum/1.0.0/mod.ts
+  Specifier: http://127.0.0.1:4250/@ednotest/bad-manifest-checksum/1.0.0/mod.ts
   Actual: 9a30ac96b5d5c1b67eca69e1e2cf0798817d9578c8d7d904a81a67b983b35cba
   Expected: bad-checksum
 
-If you modified your global cache, run again with the --reload flag to restore its state. If you want to modify dependencies locally run again with the --vendor flag or specify `\"vendor\": true` in a deno.json then modify the contents of the vendor/ folder.
+If you modified your global cache, run again with the --reload flag to restore its state. If you want to modify dependencies locally run again with the --vendor flag or specify `\"vendor\": true` in a edno.json then modify the contents of the vendor/ folder.
 ",
     )
     .assert_exit_code(10);
@@ -462,11 +462,11 @@ If you modified your global cache, run again with the --reload flag to restore i
     .assert_matches_text(
       "error: Integrity check failed in package. The package may have been tampered with.
 
-  Specifier: http://127.0.0.1:4250/@denotest/bad-manifest-checksum/1.0.0/mod.ts
+  Specifier: http://127.0.0.1:4250/@ednotest/bad-manifest-checksum/1.0.0/mod.ts
   Actual: 9a30ac96b5d5c1b67eca69e1e2cf0798817d9578c8d7d904a81a67b983b35cba
   Expected: bad-checksum
 
-If you modified your global cache, run again with the --reload flag to restore its state. If you want to modify dependencies locally run again with the --vendor flag or specify `\"vendor\": true` in a deno.json then modify the contents of the vendor/ folder.
+If you modified your global cache, run again with the --reload flag to restore its state. If you want to modify dependencies locally run again with the --vendor flag or specify `\"vendor\": true` in a edno.json then modify the contents of the vendor/ folder.
 ",
     )
     .assert_exit_code(10);

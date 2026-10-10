@@ -1,5 +1,5 @@
-import * as denotestAdd from "@denotest/add";
+import * as ednotestAdd from "@ednotest/add";
 
 export function add(a: number, b: number) {
-  return denotestAdd.add(a, b);
+  return ednotestAdd.add(a, b);
 }

@@ -3,22 +3,22 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use deno_core::AsyncRefCell;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::error::ResourceError;
-use deno_core::op2;
+use edno_core::AsyncRefCell;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::error::ResourceError;
+use edno_core::op2;
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
 pub enum SignalError {
   #[class(type)]
   #[error(transparent)]
-  InvalidSignalStr(#[from] deno_signals::InvalidSignalStrError),
+  InvalidSignalStr(#[from] edno_signals::InvalidSignalStrError),
   #[class(type)]
   #[error(transparent)]
-  InvalidSignalInt(#[from] deno_signals::InvalidSignalIntError),
+  InvalidSignalInt(#[from] edno_signals::InvalidSignalIntError),
   #[class(type)]
   #[error("Binding to signal '{0}' is not allowed")]
   SignalNotAllowed(String),
@@ -39,13 +39,13 @@ impl Resource for SignalStreamResource {
   }
 
   fn close(self: Rc<Self>) {
-    deno_signals::unregister(self.signo, self.id);
+    edno_signals::unregister(self.signo, self.id);
   }
 }
 
 impl Drop for SignalStreamResource {
   fn drop(&mut self) {
-    deno_signals::unregister(self.signo, self.id);
+    edno_signals::unregister(self.signo, self.id);
   }
 }
 
@@ -55,13 +55,13 @@ pub fn op_signal_bind(
   state: &mut OpState,
   #[string] sig: &str,
 ) -> Result<ResourceId, SignalError> {
-  let signo = deno_signals::signal_str_to_int(sig)?;
-  if deno_signals::is_forbidden(signo) {
+  let signo = edno_signals::signal_str_to_int(sig)?;
+  if edno_signals::is_forbidden(signo) {
     return Err(SignalError::SignalNotAllowed(sig.to_string()));
   }
 
   let (tx, rx) = tokio::sync::watch::channel(());
-  let id = deno_signals::register(
+  let id = edno_signals::register(
     signo,
     true,
     Box::new(move || {

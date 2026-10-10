@@ -144,7 +144,7 @@ mod tests {
       ),
       (
         "//server/some/dir/file",
-        "file:///home/yeti/deno",
+        "file:///home/yeti/edno",
         "file://server/some/dir/file",
       ),
       // This test is disabled because the url crate does not follow the spec,

@@ -1,10 +1,10 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-const addr = Deno.args[1] || "localhost:4555";
+const addr = Edno.args[1] || "localhost:4555";
 
 function proxyServer() {
   const [hostname, p] = addr.split(":");
   const port = parseInt(p ?? 4555);
-  Deno.serve({ hostname, port }, handler);
+  Edno.serve({ hostname, port }, handler);
 }
 
 async function handler(req: Request): Promise<Response> {
@@ -25,7 +25,7 @@ async function handler(req: Request): Promise<Response> {
   });
 }
 
-function assertSuccessOutput(output: Deno.CommandOutput) {
+function assertSuccessOutput(output: Edno.CommandOutput) {
   if (output.code !== 0) {
     console.error("STDOUT", new TextDecoder().decode(output.stdout));
     console.error("STDERR", new TextDecoder().decode(output.stderr));
@@ -34,7 +34,7 @@ function assertSuccessOutput(output: Deno.CommandOutput) {
 }
 
 async function testFetch() {
-  const output = await new Deno.Command(Deno.execPath(), {
+  const output = await new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--quiet",
@@ -51,7 +51,7 @@ async function testFetch() {
 }
 
 async function testModuleDownload() {
-  const output = await new Deno.Command(Deno.execPath(), {
+  const output = await new Edno.Command(Edno.execPath(), {
     args: [
       "cache",
       "--reload",
@@ -67,7 +67,7 @@ async function testModuleDownload() {
 }
 
 async function testFetchNoProxy() {
-  const output = await new Deno.Command(Deno.execPath(), {
+  const output = await new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--quiet",
@@ -85,7 +85,7 @@ async function testFetchNoProxy() {
 }
 
 async function testModuleDownloadNoProxy() {
-  const output = await new Deno.Command(Deno.execPath(), {
+  const output = await new Edno.Command(Edno.execPath(), {
     args: [
       "cache",
       "--reload",
@@ -102,7 +102,7 @@ async function testModuleDownloadNoProxy() {
 }
 
 async function testFetchProgrammaticProxy() {
-  const output = await new Deno.Command(Deno.execPath(), {
+  const output = await new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--quiet",
@@ -121,4 +121,4 @@ await testModuleDownload();
 await testFetchNoProxy();
 await testModuleDownloadNoProxy();
 await testFetchProgrammaticProxy();
-Deno.exit(0);
+Edno.exit(0);

@@ -79,8 +79,8 @@ fn collect_entries_recursive(dir: &Path, out: &mut Vec<PathBuf>) {
   }
 }
 
-// repo at https://github.com/denoland/hashy
-const HASHY_URL: &str = "https://hashy.deno.deno.net";
+// repo at https://github.com/ednoland/hashy
+const HASHY_URL: &str = "https://hashy.edno.edno.net";
 
 pub enum CiHashStatus {
   /// Not on CI — always run tests.
@@ -134,7 +134,7 @@ impl CiHashPending {
 /// let ci_hash = test_util::hash::check_ci_hash("specs", |hasher| {
 ///     hasher
 ///         .hash_dir(tests.join("specs"))
-///         .hash_file(deno_exe_path());
+///         .hash_file(edno_exe_path());
 /// });
 /// if matches!(ci_hash, CiHashStatus::Skip) {
 ///     return;

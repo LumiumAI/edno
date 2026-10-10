@@ -9,15 +9,15 @@
   ],
   "scripts": {
     "test": "jest",
-    "test:deno": "deno test --allow-read deno_test",
+    "test:edno": "edno test --allow-read edno_test",
     "test:bun": "bun wiptest --jsx-import-source ../src/middleware/jsx/jsx-dev-runtime bun_test/index.test.tsx",
-    "test:all": "yarn test && yarn test:deno && yarn test:bun",
+    "test:all": "yarn test && yarn test:edno && yarn test:bun",
     "lint": "eslint --ext js,ts src .eslintrc.js",
     "lint:fix": "eslint --ext js,ts src .eslintrc.js --fix",
-    "denoify": "rimraf deno_dist && denoify && rimraf 'deno_dist/**/*.test.ts'",
+    "ednoify": "rimraf edno_dist && ednoify && rimraf 'edno_dist/**/*.test.ts'",
     "build": "rimraf dist && tsc --project tsconfig.build.esm.json && tsc --project tsconfig.build.json",
     "watch": "tsc --project tsconfig.build.json -w",
-    "prerelease": "yarn denoify && yarn test:deno && yarn build",
+    "prerelease": "yarn ednoify && yarn test:edno && yarn build",
     "release": "np"
   },
   "exports": {
@@ -133,7 +133,7 @@
     "workers",
     "fastly",
     "compute@edge",
-    "deno",
+    "edno",
     "bun"
   ],
   "devDependencies": {
@@ -144,7 +144,7 @@
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
     "crypto-js": "^4.1.1",
-    "denoify": "^0.11.1",
+    "ednoify": "^0.11.1",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.4.0",

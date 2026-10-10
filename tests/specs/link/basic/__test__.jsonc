@@ -8,9 +8,9 @@
     {
       "args": [
         "eval",
-        "console.log(Deno.readTextFileSync('deno.json').trim())"
+        "console.log(Edno.readTextFileSync('edno.json').trim())"
       ],
-      "output": "deno_after.out"
+      "output": "edno_after.out"
     },
     {
       "args": "run main.ts",

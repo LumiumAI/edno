@@ -2,9 +2,9 @@
   "tempDir": true,
   "tests": {
     // Same as ../update_lockfile_only_bumps_within_range but for a
-    // deno.json `imports` entry instead of package.json. `--lockfile-only`
+    // edno.json `imports` entry instead of package.json. `--lockfile-only`
     // must bump the lockfile to the latest in-range version (0.1.0 -> 0.1.1)
-    // while leaving the `^0.1.0` requirement in deno.json untouched and NOT
+    // while leaving the `^0.1.0` requirement in edno.json untouched and NOT
     // jumping to the out-of-range 0.2.0. See denoland/deno#35348.
     "bumps_within_range": {
       "steps": [
@@ -19,16 +19,16 @@
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./deno.json').trim());"
+            "console.log(Edno.readTextFileSync('./edno.json').trim());"
           ],
-          "output": "deno.json.out"
+          "output": "edno.json.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./deno.lock').trim());"
+            "console.log(Edno.readTextFileSync('./edno.lock').trim());"
           ],
-          "output": "deno.lock.out"
+          "output": "edno.lock.out"
         }
       ]
     }

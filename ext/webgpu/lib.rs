@@ -7,11 +7,11 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::cppgc::SameObject;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::cppgc::SameObject;
+use edno_core::op2;
+use edno_core::v8;
 use serde::Deserialize as _;
 use serde::de::IntoDeserializer;
 pub use wgpu_core;
@@ -44,7 +44,7 @@ mod webidl;
 
 pub const UNSTABLE_FEATURE_NAME: &str = "webgpu";
 
-pub const DX12_COMPILER_ENV_VAR: &str = "DENO_WEBGPU_DX12_COMPILER";
+pub const DX12_COMPILER_ENV_VAR: &str = "EDNO_WEBGPU_DX12_COMPILER";
 
 #[allow(clippy::print_stdout, reason = "prints linker flags for build scripts")]
 pub fn print_linker_flags(name: &str) {
@@ -60,7 +60,7 @@ pub fn print_linker_flags(name: &str) {
       "combase",
       // network related functions
       "iphlpapi",
-      // restart manager (only needed on the `deno clean` locked-file path)
+      // restart manager (only needed on the `edno clean` locked-file path)
       "rstrtmgr",
       // timer functions
       "winmm",
@@ -78,9 +78,9 @@ pub fn print_linker_flags(name: &str) {
 
 pub type Instance = Arc<wgpu_core::global::Global>;
 
-deno_core::extension!(
-  deno_webgpu,
-  deps = [deno_webidl, deno_web],
+edno_core::extension!(
+  edno_webgpu,
+  deps = [edno_webidl, edno_web],
   ops = [
     op_create_gpu,
     device::op_webgpu_device_start_capture,
@@ -285,7 +285,7 @@ pub fn get_or_init_instance(
   let dx12_compiler = std::env::var(DX12_COMPILER_ENV_VAR)
     .ok()
     .and_then(|s| s.parse().ok());
-  let backends = std::env::var("DENO_WEBGPU_BACKEND").map_or_else(
+  let backends = std::env::var("EDNO_WEBGPU_BACKEND").map_or_else(
     |_| wgpu_types::Backends::all(),
     |s| wgpu_types::Backends::from_comma_list(&s),
   );

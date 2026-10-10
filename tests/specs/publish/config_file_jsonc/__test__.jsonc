@@ -1,4 +1,4 @@
 {
   "args": "publish --token 'sadfasdf'",
-  "output": "deno_jsonc.out"
+  "output": "edno_jsonc.out"
 }

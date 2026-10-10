@@ -1,5 +1,5 @@
 // Libraries like Effect provide enhanced stack traces through a custom `.stack`
-// getter. Deno should display that custom stack instead of discarding it in
+// getter. Edno should display that custom stack instead of discarding it in
 // favor of internal call-site frames. See https://github.com/denoland/deno/issues/35243
 const err = new Error("boom");
 Object.defineProperty(err, "stack", {

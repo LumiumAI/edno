@@ -6,6 +6,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@denotest/add": "*"
+    "@ednotest/add": "*"
   }
 }

@@ -1,3 +1,3 @@
-Deno.test(function foo() {
+Edno.test(function foo() {
   const x: string = "foo";
 });

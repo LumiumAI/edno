@@ -7,9 +7,9 @@ use std::sync::OnceLock;
 use deno_ast::MediaType;
 use deno_ast::ParseParams;
 use deno_ast::SourceMapOption;
-use deno_core::ModuleCodeString;
-use deno_core::ModuleName;
-use deno_core::SourceMapData;
+use edno_core::ModuleCodeString;
+use edno_core::ModuleName;
+use edno_core::SourceMapData;
 use deno_error::JsErrorBox;
 
 deno_error::js_error_wrapper!(
@@ -39,7 +39,7 @@ pub fn maybe_transpile_and_minify_source(
 
 /// The `node:process` polyfill carries a `__NODE_VERSION__` placeholder so the
 /// reported `process.version` / `process.versions.node` stays bound to the
-/// single source of truth in `deno_node::NODE_VERSION` instead of duplicating
+/// single source of truth in `edno_node::NODE_VERSION` instead of duplicating
 /// the literal. Substitute it here, at snapshot build time, so the value is
 /// baked into the snapshot and no runtime work is needed.
 fn maybe_substitute_node_version(
@@ -47,7 +47,7 @@ fn maybe_substitute_node_version(
   source: ModuleCodeString,
 ) -> ModuleCodeString {
   const TOKEN: &str = "__NODE_VERSION__";
-  if !name.ends_with("deno_node/_process/process.ts") {
+  if !name.ends_with("edno_node/_process/process.ts") {
     return source;
   }
   debug_assert!(
@@ -56,7 +56,7 @@ fn maybe_substitute_node_version(
   );
   source
     .as_str()
-    .replace(TOKEN, deno_node::NODE_VERSION)
+    .replace(TOKEN, edno_node::NODE_VERSION)
     .into()
 }
 
@@ -91,7 +91,7 @@ fn maybe_transpile_source_inner(
   }
 
   let parsed = deno_ast::parse_module(ParseParams {
-    specifier: deno_core::url::Url::parse(&name).unwrap(),
+    specifier: edno_core::url::Url::parse(&name).unwrap(),
     text: source.into(),
     media_type,
     capture_tokens: false,
@@ -141,7 +141,7 @@ fn minify_source_with_rolldown(
   static MINIFIER_PATH: OnceLock<std::path::PathBuf> = OnceLock::new();
   let minifier_path = MINIFIER_PATH.get_or_init(|| {
     let path =
-      std::env::temp_dir().join("deno_snapshot_rolldown_minify_source.js");
+      std::env::temp_dir().join("edno_snapshot_rolldown_minify_source.js");
     std::fs::write(
       &path,
       // Keep this version pinned: the minifier's output ends up in release
@@ -150,8 +150,8 @@ fn minify_source_with_rolldown(
       // opt out, which breaks spec tests asserting on those frames.
       r#"import { minifySync } from "npm:rolldown@1.2.7/experimental";
 
-const filename = Deno.args[0] ?? "source.js";
-const source = await new Response(Deno.stdin.readable).text();
+const filename = Edno.args[0] ?? "source.js";
+const source = await new Response(Edno.stdin.readable).text();
 const result = minifySync(filename, source, {
   compress: false,
   mangle: {
@@ -164,7 +164,7 @@ const result = minifySync(filename, source, {
 });
 if (result.errors?.length) {
   console.error(JSON.stringify(result.errors, null, 2));
-  Deno.exit(1);
+  Edno.exit(1);
 }
 function escapeNonAscii(code) {
   let out = "";
@@ -181,7 +181,7 @@ function escapeNonAscii(code) {
 const output = new TextEncoder().encode(escapeNonAscii(result.code));
 let offset = 0;
 while (offset < output.length) {
-  offset += await Deno.stdout.write(output.subarray(offset));
+  offset += await Edno.stdout.write(output.subarray(offset));
 }
 "#,
     )
@@ -189,7 +189,7 @@ while (offset < output.length) {
     path
   });
 
-  let mut child = std::process::Command::new("deno")
+  let mut child = std::process::Command::new("edno")
     .arg("run")
     .arg("-A")
     .arg(minifier_path)

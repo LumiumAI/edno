@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore no-undef
+// edno-lint-ignore no-undef
 const processMod = require("process");
 const osMod = require("node:os");
 console.log("process.pid", processMod.pid);

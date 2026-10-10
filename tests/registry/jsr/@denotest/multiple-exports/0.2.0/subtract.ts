@@ -1,1 +1,1 @@
-export * from "jsr:@denotest/subtract@1";
+export * from "jsr:@ednotest/subtract@1";

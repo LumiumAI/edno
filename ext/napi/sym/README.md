@@ -1,18 +1,18 @@
 # napi_sym
 
-A proc_macro for Deno's Node-API implementation. It does the following things:
+A proc_macro for Edno's Node-API implementation. It does the following things:
 
 - Marks the symbol as `#[no_mangle]` and rewrites it as
   `unsafe extern "C" $name`.
 - Asserts that the function symbol is present in
   [`symbol_exports.json`](./symbol_exports.json).
-- Maps `deno_napi::Result` to raw `napi_result`.
+- Maps `edno_napi::Result` to raw `napi_result`.
 
 ```rust
-use deno_napi::Env;
-use deno_napi::Error;
-use deno_napi::Result;
-use deno_napi::napi_value;
+use edno_napi::Env;
+use edno_napi::Error;
+use edno_napi::Result;
+use edno_napi::napi_value;
 
 #[napi_sym::napi_sym]
 fn napi_get_boolean(

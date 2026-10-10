@@ -21,8 +21,8 @@ import {
   SOURCE_REF_COUNTS,
 } from "./97_ts_host.js";
 
-/** @type {DenoCore} */
-const core = globalThis.Deno.core;
+/** @type {EdnoCore} */
+const core = globalThis.Edno.core;
 const ops = core.ops;
 
 const ChangeKind = {

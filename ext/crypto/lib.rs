@@ -6,9 +6,9 @@ use aws_lc_rs::hkdf;
 use aws_lc_rs::hmac::Algorithm as HmacAlgorithm;
 use aws_lc_rs::hmac::Key as HmacKey;
 use aws_lc_rs::pbkdf2;
-use deno_core::OpState;
-use deno_core::convert::Uint8Array;
-use deno_core::op2;
+use edno_core::OpState;
+use edno_core::convert::Uint8Array;
+use edno_core::op2;
 use deno_error::JsErrorBox;
 use p256::ecdsa::Signature as P256Signature;
 use p256::ecdsa::SigningKey as P256SigningKey;
@@ -111,8 +111,8 @@ fn op_crypto_is_seeded(state: &OpState) -> bool {
 // batch. The per-algorithm helpers
 // (`subtle_*::run`, `import_key_inner`, `export_key_inner`, etc.) are
 // pure-Rust and called directly from those method bodies.
-deno_core::extension!(deno_crypto,
-  deps = [ deno_webidl, deno_web ],
+edno_core::extension!(edno_crypto,
+  deps = [ edno_webidl, edno_web ],
   ops = [
     crypto::op_crypto_random_uuid_batch,
     op_crypto_is_seeded,
@@ -276,7 +276,7 @@ impl From<&RawKeyData> for KeyData {
   }
 }
 
-#[derive(deno_core::FromV8)]
+#[derive(edno_core::FromV8)]
 pub struct SignArg {
   #[from_v8(serde)]
   algorithm: Algorithm,
@@ -489,7 +489,7 @@ fn hmac_verify<M: hmac::Mac + hmac::digest::KeyInit>(
   Ok(mac.verify_slice(signature).is_ok())
 }
 
-#[derive(deno_core::FromV8)]
+#[derive(edno_core::FromV8)]
 pub struct VerifyArg {
   #[from_v8(serde)]
   algorithm: Algorithm,

@@ -4,7 +4,7 @@
 // (otlp_proto.json) as the schema. No external dependencies.
 
 const descriptor = JSON.parse(
-  Deno.readTextFileSync(new URL("./otlp_proto.json", import.meta.url)),
+  Edno.readTextFileSync(new URL("./otlp_proto.json", import.meta.url)),
 );
 
 // Build a lookup table: fully-qualified type name -> type definition

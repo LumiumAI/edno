@@ -5,7 +5,7 @@ onmessage = function () {
       self instanceof WorkerGlobalScope,
       self instanceof EventTarget,
       // TODO(nayeemrmn): Add `WorkerNavigator` to deno_lint globals.
-      // deno-lint-ignore no-undef
+      // edno-lint-ignore no-undef
       navigator instanceof WorkerNavigator,
     ].join(", "),
   );

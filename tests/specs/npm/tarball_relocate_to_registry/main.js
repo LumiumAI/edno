@@ -1,3 +1,3 @@
-import getValue from "@denotest/tarballs-npmjs";
+import getValue from "@ednotest/tarballs-npmjs";
 
 console.log(getValue());

@@ -1,5 +1,5 @@
 {
   "imports": {
-    "@denotest/update-latest-semver": "npm:@denotest/update-latest-semver@^1.0.0"
+    "@ednotest/update-latest-semver": "npm:@ednotest/update-latest-semver@^1.0.0"
   }
 }

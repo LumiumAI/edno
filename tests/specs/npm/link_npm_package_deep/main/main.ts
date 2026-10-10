@@ -1,3 +1,3 @@
-import value from "@denotest/different-nested-dep";
+import value from "@ednotest/different-nested-dep";
 
 console.log(value);

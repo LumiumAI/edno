@@ -1,9 +1,9 @@
 {
-  "name": "@denotest/hoisted-cycle-trigger",
+  "name": "@ednotest/hoisted-cycle-trigger",
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@denotest/hoisted-cycle-a": "1.0.0",
-    "@denotest/hoisted-cycle-b": "1.0.0"
+    "@ednotest/hoisted-cycle-a": "1.0.0",
+    "@ednotest/hoisted-cycle-b": "1.0.0"
   }
 }

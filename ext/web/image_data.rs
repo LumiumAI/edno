@@ -2,15 +2,15 @@
 
 use std::borrow::Cow;
 
-use deno_core::GarbageCollected;
-use deno_core::WebIDL;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::webidl::ContextFn;
-use deno_core::webidl::IntOptions;
-use deno_core::webidl::WebIdlConverter;
-use deno_core::webidl::WebIdlError;
-use deno_core::webidl::WebIdlErrorKind;
+use edno_core::GarbageCollected;
+use edno_core::WebIDL;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::webidl::ContextFn;
+use edno_core::webidl::IntOptions;
+use edno_core::webidl::WebIdlConverter;
+use edno_core::webidl::WebIdlError;
+use edno_core::webidl::WebIdlErrorKind;
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
 pub enum ImageDataError {

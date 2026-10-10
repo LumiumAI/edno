@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/no-types-cjs",
+  "name": "@ednotest/no-types-cjs",
   "version": "1.0.0",
   "main": "./main.js"
 }

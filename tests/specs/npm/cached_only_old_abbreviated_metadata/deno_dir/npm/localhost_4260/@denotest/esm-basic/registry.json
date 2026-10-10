@@ -1,10 +1,10 @@
 {
-  "name": "@denotest/esm-basic",
+  "name": "@ednotest/esm-basic",
   "versions": {
     "1.0.0": {
       "version": "1.0.0",
       "dist": {
-        "tarball": "http://localhost:4260/@denotest/esm-basic/1.0.0.tgz",
+        "tarball": "http://localhost:4260/@ednotest/esm-basic/1.0.0.tgz",
         "shasum": "dummy-value",
         "integrity": "sha512-LvAO9tXoBq0fhrWc5PdAATOZxxrd1KTeIFhUucK8w1WNKrapcjVVjqU8s8L5fm0Ppd/tMIGXcRvbfWWmOmBgWQ=="
       }

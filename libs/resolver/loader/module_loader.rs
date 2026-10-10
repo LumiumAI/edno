@@ -15,7 +15,7 @@ use node_resolver::errors::PackageJsonLoadError;
 use url::Url;
 
 use super::AllowJsonImports;
-use super::DenoNpmModuleLoaderRc;
+use super::EdnoNpmModuleLoaderRc;
 use super::LoadedModule;
 use super::LoadedModuleOrAsset;
 use super::LoadedModuleSource;
@@ -26,11 +26,11 @@ use crate::cache::ParsedSourceCacheRc;
 use crate::cjs::CjsTrackerRc;
 use crate::emit::EmitParsedSourceHelperError;
 use crate::emit::EmitterRc;
-use crate::factory::DenoNodeCodeTranslatorRc;
+use crate::factory::EdnoNodeCodeTranslatorRc;
 use crate::graph::EnhanceGraphErrorMode;
 use crate::graph::EnhancedGraphError;
 use crate::graph::enhance_graph_error;
-use crate::npm::DenoInNpmPackageChecker;
+use crate::npm::EdnoInNpmPackageChecker;
 
 #[allow(
   clippy::disallowed_types,
@@ -124,14 +124,14 @@ pub struct LoadUnpreparedModuleError {
 }
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type ModuleLoaderRc<TSys> = deno_maybe_sync::MaybeArc<ModuleLoader<TSys>>;
+pub type ModuleLoaderRc<TSys> = edno_maybe_sync::MaybeArc<ModuleLoader<TSys>>;
 
 #[sys_traits::auto_impl]
 pub trait ModuleLoaderSys:
   super::NpmModuleLoaderSys
   + crate::emit::EmitterSys
   + node_resolver::analyze::NodeCodeTranslatorSys
-  + crate::cjs::analyzer::DenoCjsCodeAnalyzerSys
+  + crate::cjs::analyzer::EdnoCjsCodeAnalyzerSys
   + crate::npm::NpmResolverSys
 {
 }
@@ -154,8 +154,8 @@ enum CodeOrDeferredEmit<'a> {
 }
 
 pub struct ModuleLoader<TSys: ModuleLoaderSys> {
-  in_npm_pkg_checker: DenoInNpmPackageChecker,
-  npm_module_loader: DenoNpmModuleLoaderRc<TSys>,
+  in_npm_pkg_checker: EdnoInNpmPackageChecker,
+  npm_module_loader: EdnoNpmModuleLoaderRc<TSys>,
   prepared_module_loader: PreparedModuleLoader<TSys>,
   allow_json_imports: AllowJsonImports,
 }
@@ -163,11 +163,11 @@ pub struct ModuleLoader<TSys: ModuleLoaderSys> {
 impl<TSys: ModuleLoaderSys> ModuleLoader<TSys> {
   #[allow(clippy::too_many_arguments, reason = "all arguments are needed")]
   pub fn new(
-    cjs_tracker: CjsTrackerRc<DenoInNpmPackageChecker, TSys>,
-    emitter: EmitterRc<DenoInNpmPackageChecker, TSys>,
-    in_npm_pkg_checker: DenoInNpmPackageChecker,
-    node_code_translator: DenoNodeCodeTranslatorRc<TSys>,
-    npm_module_loader: DenoNpmModuleLoaderRc<TSys>,
+    cjs_tracker: CjsTrackerRc<EdnoInNpmPackageChecker, TSys>,
+    emitter: EmitterRc<EdnoInNpmPackageChecker, TSys>,
+    in_npm_pkg_checker: EdnoInNpmPackageChecker,
+    node_code_translator: EdnoNodeCodeTranslatorRc<TSys>,
+    npm_module_loader: EdnoNpmModuleLoaderRc<TSys>,
     parsed_source_cache: ParsedSourceCacheRc,
     sys: TSys,
     allow_json_imports: AllowJsonImports,
@@ -195,7 +195,7 @@ impl<TSys: ModuleLoaderSys> ModuleLoader<TSys> {
     graph: &'a ModuleGraph,
     specifier: &'a Url,
     // todo(#30074): we should remove passing the referrer in here and remove the
-    // referrer from all error messages. This should be up to deno_core to display.
+    // referrer from all error messages. This should be up to edno_core to display.
     maybe_referrer: Option<&Url>,
     requested_module_type: &RequestedModuleType<'_>,
     cjs_analysis_source_provider: Option<&dyn CjsAnalysisSourceProvider>,
@@ -336,9 +336,9 @@ impl<TSys: ModuleLoaderSys> ModuleLoader<TSys> {
 }
 
 struct PreparedModuleLoader<TSys: ModuleLoaderSys> {
-  cjs_tracker: CjsTrackerRc<DenoInNpmPackageChecker, TSys>,
-  emitter: EmitterRc<DenoInNpmPackageChecker, TSys>,
-  node_code_translator: DenoNodeCodeTranslatorRc<TSys>,
+  cjs_tracker: CjsTrackerRc<EdnoInNpmPackageChecker, TSys>,
+  emitter: EmitterRc<EdnoInNpmPackageChecker, TSys>,
+  node_code_translator: EdnoNodeCodeTranslatorRc<TSys>,
   parsed_source_cache: ParsedSourceCacheRc,
   sys: TSys,
 }
@@ -687,7 +687,7 @@ impl<TSys: ModuleLoaderSys> PreparedModuleLoader<TSys> {
       )
       .await?;
     // Apply load-time security mitigations for known React Server Components
-    // CVEs to the translated source. Opt in via `DENO_PATCH_REACT_CVE`.
+    // CVEs to the translated source. Opt in via `EDNO_PATCH_REACT_CVE`.
     let text = if crate::is_react_cve_patch_enabled(&self.sys) {
       crate::patch_react_cves(specifier.as_str(), text)
     } else {

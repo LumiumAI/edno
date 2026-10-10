@@ -354,7 +354,7 @@ extern "C" fn test_uv_async_close_after_send(
 // uv_handle_*, uv_default_loop, uv_is_active/closing, uv_ref/unref). The
 // goal is to verify that the symbols are exported from the host binary and
 // behave like their libuv counterparts to the extent that the polyfills
-// promise. Timer callbacks are bridged onto deno_core's uv_compat loop;
+// promise. Timer callbacks are bridged onto edno_core's uv_compat loop;
 // here we synchronously start+stop the timer in the same napi callback so
 // the event loop has no opportunity to fire it, matching the original
 // no-op-stub-era assertion that the user callback is not invoked.
@@ -398,7 +398,7 @@ extern "C" fn test_uv_polyfills(
     let t2 = uv_hrtime();
     assert!(t2 >= t1);
 
-    // uv_default_loop returns null (Deno does not expose a libuv loop
+    // uv_default_loop returns null (Edno does not expose a libuv loop
     // pointer to addons). uv_timer_init resolves the real backing loop
     // from a thread-local registered at op_napi_open time.
     let _loop = uv_default_loop();
@@ -496,7 +496,7 @@ extern "C" fn test_uv_polyfills(
 }
 
 // Verifies that a uv_timer scheduled by a NAPI addon actually fires on
-// the deno event loop (i.e. the uv_compat bridge is wired up). The addon
+// the edno event loop (i.e. the uv_compat bridge is wired up). The addon
 // passes a JS callback that resolves the test promise from inside the
 // libuv timer tick. The active timer holds an event-loop ref until it
 // is closed; the JS callback ref and the heap allocations are released
@@ -732,7 +732,7 @@ extern "C" fn test_uv_loop_helpers(
 
 // Exercises the libuv threading + semaphore polyfills (uv_thread_*,
 // uv_sem_*) added to the host binary in ext/napi/uv.rs. Like the other
-// uv_* symbols in this file, they are resolved from the host `deno`
+// uv_* symbols in this file, they are resolved from the host `edno`
 // process at runtime by libuv-sys-lite (dyn-symbols) — declaring them
 // directly would create static imports that fail to link on Windows. A
 // worker thread increments a counter and posts a counting semaphore three
@@ -812,7 +812,7 @@ extern "C" fn test_uv_threads(
 }
 
 // Exercises the libuv condition-variable polyfills (uv_cond_*) added to the
-// host binary in ext/napi/uv.rs, resolved from the host `deno` process at
+// host binary in ext/napi/uv.rs, resolved from the host `edno` process at
 // runtime like the other uv_* symbols here. The main thread waits on a
 // condition variable until a worker sets a predicate (guarded by the mutex)
 // and signals it; uv_cond_timedwait is then checked to report UV_ETIMEDOUT

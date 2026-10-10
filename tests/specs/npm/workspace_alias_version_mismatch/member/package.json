@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/member",
+  "name": "@ednotest/member",
   "version": "1.0.0",
   "exports": "./mod.js"
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/esm-package-no-default-export-types",
+  "name": "@ednotest/esm-package-no-default-export-types",
   "version": "1.0.0",
   "main": "index.js",
   "exports": {

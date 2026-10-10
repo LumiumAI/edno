@@ -2,7 +2,7 @@
 //! This example shows how to use swc to transpile TypeScript and JSX/TSX
 //! modules.
 //!
-//! It will only transpile, not typecheck (like Deno's `--no-check` flag).
+//! It will only transpile, not typecheck (like Edno's `--no-check` flag).
 
 // NB(bartlomieju): this is fine for example code
 #![allow(clippy::print_stdout, reason = "example code")]
@@ -17,20 +17,20 @@ use anyhow::Context;
 use deno_ast::MediaType;
 use deno_ast::ParseParams;
 use deno_ast::SourceMapOption;
-use deno_core::JsRuntime;
-use deno_core::ModuleLoadOptions;
-use deno_core::ModuleLoadReferrer;
-use deno_core::ModuleLoadResponse;
-use deno_core::ModuleLoader;
-use deno_core::ModuleSource;
-use deno_core::ModuleSourceCode;
-use deno_core::ModuleSpecifier;
-use deno_core::ModuleType;
-use deno_core::ResolutionKind;
-use deno_core::RuntimeOptions;
-use deno_core::error::ModuleLoaderError;
-use deno_core::resolve_import;
-use deno_core::resolve_path;
+use edno_core::JsRuntime;
+use edno_core::ModuleLoadOptions;
+use edno_core::ModuleLoadReferrer;
+use edno_core::ModuleLoadResponse;
+use edno_core::ModuleLoader;
+use edno_core::ModuleSource;
+use edno_core::ModuleSourceCode;
+use edno_core::ModuleSpecifier;
+use edno_core::ModuleType;
+use edno_core::ResolutionKind;
+use edno_core::RuntimeOptions;
+use edno_core::error::ModuleLoaderError;
+use edno_core::resolve_import;
+use edno_core::resolve_path;
 use deno_error::JsErrorBox;
 
 // TODO(bartlomieju): this is duplicated in `testing/checkin`

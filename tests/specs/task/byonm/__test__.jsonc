@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "tests": {
-    "deno_json": {
+    "edno_json": {
       "steps": [{
         "commandName": "npm",
         "args": "install",
@@ -10,15 +10,15 @@
         "args": "task say",
         "output": "package_json_say.out"
       }, {
-        "args": "task deno-say",
-        "output": "deno_json_say.out"
+        "args": "task edno-say",
+        "output": "edno_json_say.out"
       }]
     },
     "no_deno_json": {
       "steps": [{
         "args": [
           "eval",
-          "Deno.removeSync('deno.json')"
+          "Edno.removeSync('edno.json')"
         ],
         "output": ""
       }, {
@@ -35,7 +35,7 @@
       }, {
         "args": [
           "eval",
-          "try { Deno.statSync('node_modules/.deno'); } catch (e) { if (e instanceof Deno.errors.NotFound) { console.log('good'); } else { throw new Error('bad'); } }"
+          "try { Edno.statSync('node_modules/.edno'); } catch (e) { if (e instanceof Edno.errors.NotFound) { console.log('good'); } else { throw new Error('bad'); } }"
         ],
         "output": "good\n"
       }]

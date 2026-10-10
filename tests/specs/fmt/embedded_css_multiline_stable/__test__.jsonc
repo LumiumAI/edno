@@ -12,8 +12,8 @@
     },
     "ignored_block_is_idempotent": {
       "args": "fmt -",
-      "input": "css`\n  /* deno-fmt-ignore */\n  .a{color:red;background:blue}\n`;\n",
-      "output": "css`\n  /* deno-fmt-ignore */\n  .a{color:red;background:blue}\n`;\n"
+      "input": "css`\n  /* edno-fmt-ignore */\n  .a{color:red;background:blue}\n`;\n",
+      "output": "css`\n  /* edno-fmt-ignore */\n  .a{color:red;background:blue}\n`;\n"
     }
   }
 }

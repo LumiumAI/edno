@@ -1,7 +1,7 @@
 import * as mod from "alias";
 
 const data = JSON.parse(
-  Deno.readTextFileSync(
+  Edno.readTextFileSync(
     new URL("./node_modules/alias/package.json", import.meta.url),
   ),
 );

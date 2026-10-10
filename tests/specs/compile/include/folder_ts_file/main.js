@@ -1,6 +1,6 @@
 const mathDir = import.meta.dirname + "/math";
 const files = Array.from(
-  Deno.readDirSync(mathDir).map((entry) => mathDir + "/" + entry.name),
+  Edno.readDirSync(mathDir).map((entry) => mathDir + "/" + entry.name),
 );
 files.sort();
 for (const file of files) {

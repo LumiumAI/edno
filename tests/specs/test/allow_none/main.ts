@@ -1,6 +1,6 @@
 import { unreachable } from "@std/assert";
 
-const permissions: Deno.PermissionName[] = [
+const permissions: Edno.PermissionName[] = [
   "read",
   "write",
   "net",
@@ -10,7 +10,7 @@ const permissions: Deno.PermissionName[] = [
 ];
 
 for (const name of permissions) {
-  Deno.test({
+  Edno.test({
     name,
     permissions: {
       [name]: true,

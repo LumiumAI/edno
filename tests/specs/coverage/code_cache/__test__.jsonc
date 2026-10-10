@@ -12,7 +12,7 @@
     {
       "args": "run main.ts",
       "envs": {
-        "DENO_COVERAGE_DIR": "cov_env"
+        "EDNO_COVERAGE_DIR": "cov_env"
       },
       "output": "done\n"
     },

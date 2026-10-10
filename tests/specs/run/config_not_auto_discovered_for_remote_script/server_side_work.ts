@@ -1,2 +1,2 @@
-const _ = Deno.build.os;
+const _ = Edno.build.os;
 console.log("ok");

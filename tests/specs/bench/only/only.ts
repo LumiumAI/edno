@@ -1,15 +1,15 @@
-Deno.bench({
+Edno.bench({
   name: "before",
   fn() {},
 });
 
-Deno.bench({
+Edno.bench({
   only: true,
   name: "only",
   fn() {},
 });
 
-Deno.bench({
+Edno.bench({
   name: "after",
   fn() {},
 });

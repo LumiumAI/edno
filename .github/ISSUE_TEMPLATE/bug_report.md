@@ -1,9 +1,9 @@
 ---
 name: 🐛 Bug Report
-about: Report an issue found in the Deno CLI.
+about: Report an issue found in the Edno CLI.
 title: ''
 labels: ''
 assignees: ''
 ---
 
-Version: Deno x.x.x
+Version: Edno x.x.x

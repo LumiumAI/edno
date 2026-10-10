@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 import test from "node:test";
 

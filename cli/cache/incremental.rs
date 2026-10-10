@@ -4,11 +4,11 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_core::error::AnyError;
-use deno_core::parking_lot::Mutex;
-use deno_core::unsync::JoinHandle;
-use deno_core::unsync::spawn;
-use deno_runtime::deno_webstorage::rusqlite::params;
+use edno_core::error::AnyError;
+use edno_core::parking_lot::Mutex;
+use edno_core::unsync::JoinHandle;
+use edno_core::unsync::spawn;
+use edno_runtime::edno_webstorage::rusqlite::params;
 
 use super::cache_db::CacheDB;
 use super::cache_db::CacheDBConfiguration;

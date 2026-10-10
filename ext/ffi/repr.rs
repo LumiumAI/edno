@@ -5,10 +5,10 @@ use std::ffi::c_char;
 use std::ffi::c_void;
 use std::ptr;
 
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::v8;
-use deno_permissions::PermissionsContainer;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::v8;
+use edno_permissions::PermissionsContainer;
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
 #[class(type)]
@@ -49,7 +49,7 @@ pub enum ReprError {
   InvalidPointer,
   #[class(inherit)]
   #[error(transparent)]
-  Permission(#[from] deno_permissions::PermissionCheckError),
+  Permission(#[from] edno_permissions::PermissionCheckError),
 }
 
 #[op2(fast, stack_trace)]

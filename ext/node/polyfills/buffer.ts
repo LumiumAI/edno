@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// @deno-types="./internal/buffer.d.ts"
+// @edno-types="./internal/buffer.d.ts"
 import { core } from "ext:core/mod.js";
-const __buffer = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const __buffer = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 export const {
   atob,
   Blob,

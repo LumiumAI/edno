@@ -1,5 +1,5 @@
-const { core } = Deno[Deno.internal];
-const opPromise = core.read(Deno.stdin.rid, new Uint8Array(10));
+const { core } = Edno[Edno.internal];
+const opPromise = core.read(Edno.stdin.rid, new Uint8Array(10));
 core.unrefOpPromise(opPromise);
 
 async function main() {

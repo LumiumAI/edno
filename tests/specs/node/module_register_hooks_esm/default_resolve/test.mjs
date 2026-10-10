@@ -1,6 +1,6 @@
 // Regression test for https://github.com/denoland/deno/pull/34081
 // review-4305273060: when the resolve-hook chain calls `nextResolve()` at the
-// terminal step, it must return the URL Deno's real ESM resolver would
+// terminal step, it must return the URL Edno's real ESM resolver would
 // produce — not a stub from `new URL(spec, parentURL)` or a CJS
 // `_resolveFilename` lookup. This is what Node does, and is required for
 // hooks that wrap or inspect the default resolution of bare specifiers,
@@ -31,12 +31,12 @@ const relativeEntry = seen.find((e) => e.specifier === "./target.mjs");
 console.log("aliased value:", aliased.value);
 console.log("relative value:", relative.value);
 console.log(
-  "aliased url resolves through deno:",
+  "aliased url resolves through edno:",
   typeof aliasedEntry?.url === "string" &&
     aliasedEntry.url.endsWith("/target.mjs"),
 );
 console.log(
-  "relative url resolves through deno:",
+  "relative url resolves through edno:",
   typeof relativeEntry?.url === "string" &&
     relativeEntry.url.endsWith("/target.mjs"),
 );

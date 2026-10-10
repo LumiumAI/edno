@@ -1,33 +1,33 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 /*
  * @module mod
  * @description
- * This module provides a `display()` function for the Jupyter Deno Kernel, similar to IPython's display.
+ * This module provides a `display()` function for the Jupyter Edno Kernel, similar to IPython's display.
  * It can be used to asynchronously display objects in Jupyter frontends. There are also tagged template functions
  * for quickly creating HTML, Markdown, and SVG views.
  *
  * @example
  * Displaying objects asynchronously in Jupyter frontends.
  * ```typescript
- * import { display, html, md } from "https://deno.land/x/deno_jupyter/mod.ts";
+ * import { display, html, md } from "https://deno.land/x/edno_jupyter/mod.ts";
  *
  * await display(html`<h1>Hello, world!</h1>`);
- * await display(md`# Notebooks in TypeScript via Deno ![Deno logo](https://github.com/denoland.png?size=32)
+ * await display(md`# Notebooks in TypeScript via Edno ![Edno logo](https://github.com/ednoland.png?size=32)
  *
- * * TypeScript ${Deno.version.typescript}
- * * V8 ${Deno.version.v8}
- * * Deno ${Deno.version.deno}
+ * * TypeScript ${Edno.version.typescript}
+ * * V8 ${Edno.version.v8}
+ * * Edno ${Edno.version.edno}
  *
- * Interactive compute with Jupyter _built into Deno_!
+ * Interactive compute with Jupyter _built into Edno_!
  * `);
  * ```
  *
  * @example
  * Emitting raw MIME bundles.
  * ```typescript
- * import { display } from "https://deno.land/x/deno_jupyter/mod.ts";
+ * import { display } from "https://deno.land/x/edno_jupyter/mod.ts";
  *
  * await display({
  *  "text/plain": "Hello, world!",
@@ -247,7 +247,7 @@ function makeDisplayable(obj) {
 }
 
 /**
- * Format an object for displaying in Deno
+ * Format an object for displaying in Edno
  *
  * @param obj - The object to be displayed
  * @returns MediaBundle
@@ -258,8 +258,8 @@ async function format(obj) {
   }
   if (typeof obj !== "object") {
     return {
-      "text/plain": Deno[Deno.internal].inspectArgs(["%o", obj], {
-        colors: !Deno.noColor,
+      "text/plain": Edno[Edno.internal].inspectArgs(["%o", obj], {
+        colors: !Edno.noColor,
       }),
     };
   }
@@ -304,17 +304,17 @@ async function format(obj) {
   }
   if (obj instanceof GPUBuffer) {
     return {
-      "text/plain": Deno[Deno.internal].inspectArgs([
+      "text/plain": Edno[Edno.internal].inspectArgs([
         "%o",
         core.ops.op_jupyter_get_buffer(obj),
       ], {
-        colors: !Deno.noColor,
+        colors: !Edno.noColor,
       }),
     };
   }
   return {
-    "text/plain": Deno[Deno.internal].inspectArgs(["%o", obj], {
-      colors: !Deno.noColor,
+    "text/plain": Edno[Edno.internal].inspectArgs(["%o", obj], {
+      colors: !Edno.noColor,
     }),
   };
 }
@@ -346,13 +346,13 @@ function createTaggedTemplateDisplayable(mediatype) {
  * Create a Markdown view.
  *
  * ```typescript
- * md`# Notebooks in TypeScript via Deno ![Deno logo](https://github.com/denoland.png?size=32)
+ * md`# Notebooks in TypeScript via Edno ![Edno logo](https://github.com/ednoland.png?size=32)
  *
- * * TypeScript ${Deno.version.typescript}
- * * V8 ${Deno.version.v8}
- * * Deno ${Deno.version.deno}
+ * * TypeScript ${Edno.version.typescript}
+ * * V8 ${Edno.version.v8}
+ * * Edno ${Edno.version.edno}
  *
- * Interactive compute with Jupyter _built into Deno_!
+ * Interactive compute with Jupyter _built into Edno_!
  * `
  * ```
  */
@@ -386,7 +386,7 @@ const svg = createTaggedTemplateDisplayable("image/svg+xml");
 function image(obj) {
   if (typeof obj === "string") {
     try {
-      obj = Deno.readFileSync(obj);
+      obj = Edno.readFileSync(obj);
     } catch {
       // pass
     }
@@ -411,7 +411,7 @@ function image(obj) {
   }
 
   throw new TypeError(
-    "Object is not a valid image or a path to an image. `Deno.jupyter.image` supports displaying JPG or PNG images, or GPUTextures.",
+    "Object is not a valid image or a path to an image. `Edno.jupyter.image` supports displaying JPG or PNG images, or GPUTextures.",
   );
 }
 
@@ -504,7 +504,7 @@ function enableJupyter() {
   internals.jupyter.broadcastResult = broadcastResult;
 
   /**
-   * Display function for Jupyter Deno Kernel.
+   * Display function for Jupyter Edno Kernel.
    * Mimics the behavior of IPython's `display(obj, raw=True)` function to allow
    * asynchronous displaying of objects in Jupyter.
    *
@@ -532,7 +532,7 @@ function enableJupyter() {
   /**
    * Prompt for user confirmation (in Jupyter Notebook context)
    * Override confirm and prompt because they depend on a tty
-   * and in the Deno.jupyter environment that doesn't exist.
+   * and in the Edno.jupyter environment that doesn't exist.
    * @param {string} message - The message to display.
    * @returns {Promise<boolean>} User confirmation.
    */
@@ -568,7 +568,7 @@ function enableJupyter() {
 
   globalThis.confirm = confirm;
   globalThis.prompt = prompt;
-  globalThis.Deno.jupyter = {
+  globalThis.Edno.jupyter = {
     broadcast,
     display,
     format,

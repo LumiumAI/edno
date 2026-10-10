@@ -3,10 +3,10 @@
 (function () {
 const { core } = __bootstrap;
 const { SocketAddress } = core.loadExtScript(
-  "ext:deno_node/internal/blocklist.mjs",
+  "ext:edno_node/internal/blocklist.mjs",
 );
 const { AF_INET } = core.loadExtScript(
-  "ext:deno_node/internal_binding/block_list.ts",
+  "ext:edno_node/internal_binding/block_list.ts",
 ).default;
 
 class InternalSocketAddress extends SocketAddress {

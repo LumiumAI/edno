@@ -1,7 +1,7 @@
 // Test that setting `self` in the main thread to some other value doesn't break
 // the world, in particular for events fired on the global scope.
 
-// deno-lint-ignore no-global-assign
+// edno-lint-ignore no-global-assign
 self = null;
 
 addEventListener("load", () => {

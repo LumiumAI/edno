@@ -1,4 +1,4 @@
-const content = Deno.readTextFileSync("./docs/index.html");
+const content = Edno.readTextFileSync("./docs/index.html");
 
 if (content.includes("..")) {
   throw new Error();

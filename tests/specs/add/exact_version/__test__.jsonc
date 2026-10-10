@@ -4,13 +4,13 @@
     "npm": {
       "steps": [
         {
-          "args": "add npm:@denotest/esm-basic@1.0.0",
+          "args": "add npm:@ednotest/esm-basic@1.0.0",
           "output": "npm_add.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('deno.json').trim())"
+            "console.log(Edno.readTextFileSync('edno.json').trim())"
           ],
           "output": "npm_deno.json.out"
         }
@@ -19,13 +19,13 @@
     "jsr": {
       "steps": [
         {
-          "args": "add jsr:@denotest/add@1.0.0",
+          "args": "add jsr:@ednotest/add@1.0.0",
           "output": "jsr_add.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('deno.json').trim())"
+            "console.log(Edno.readTextFileSync('edno.json').trim())"
           ],
           "output": "jsr_deno.json.out"
         }

@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 (Error as any).prepareStackTrace = (_err: unknown, frames: any[]) => {
   return frames.map((frame) => frame.toString());
 };

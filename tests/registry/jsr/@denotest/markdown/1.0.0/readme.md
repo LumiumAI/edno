@@ -1,6 +1,6 @@
 # Markdown Test Package
 
-A package for testing `deno doc` with **markdown** files from *JSR*.
+A package for testing `edno doc` with **markdown** files from *JSR*.
 
 ## Features
 

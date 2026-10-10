@@ -11,7 +11,7 @@
           // ensure the packages were materialized into node_modules
           "args": [
             "eval",
-            "console.log(Deno.statSync('node_modules/@denotest/esm-basic').isDirectory, Deno.statSync('node_modules/@denotest/add').isDirectory)"
+            "console.log(Edno.statSync('node_modules/@ednotest/esm-basic').isDirectory, Edno.statSync('node_modules/@ednotest/add').isDirectory)"
           ],
           "output": "true true\n"
         },

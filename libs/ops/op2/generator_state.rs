@@ -70,12 +70,12 @@ pub struct GeneratorState {
 /// Quotes a set of generator_state fields, along with variables captured from
 /// the local environment.
 ///
-/// Example: this will extract `deno_core`, `info` and `scope` from `generator_state`
+/// Example: this will extract `edno_core`, `info` and `scope` from `generator_state`
 /// before invoking the [`quote!`] macro.
 ///
 /// ```nocompile
 ///  gs_quote!(generator_state(info, scope) =>
-///    (let mut #scope = unsafe { deno_core::v8::CallbackScope::new(&*#info) };)
+///    (let mut #scope = unsafe { edno_core::v8::CallbackScope::new(&*#info) };)
 ///  )
 /// ```
 macro_rules! gs_quote {
@@ -93,10 +93,10 @@ macro_rules! gs_quote {
 ///
 /// Example:
 ///
-/// Extracts `deno_core` from `generator_state` into a local variable. Equivalent to `let deno_core = &generator_state.deno_core`.
+/// Extracts `edno_core` from `generator_state` into a local variable. Equivalent to `let edno_core = &generator_state.edno_core`.
 ///
 /// ```nocompile
-/// gs_extract!(generator_state(deno_core))
+/// gs_extract!(generator_state(edno_core))
 /// ```
 macro_rules! gs_extract {
   ($generator_state:ident( $($idents:ident),* )) => {

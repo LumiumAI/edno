@@ -6,7 +6,7 @@ const data = {
   metrics: [],
 };
 
-const isGrpc = Deno.env.get("OTEL_EXPORTER_OTLP_PROTOCOL") === "grpc";
+const isGrpc = Edno.env.get("OTEL_EXPORTER_OTLP_PROTOCOL") === "grpc";
 
 let decodeGrpcBody;
 
@@ -74,16 +74,16 @@ async function handler(req) {
 let server;
 
 function onListen({ port }) {
-  const protocol = Deno.env.get("OTEL_EXPORTER_OTLP_PROTOCOL") || "http/json";
+  const protocol = Edno.env.get("OTEL_EXPORTER_OTLP_PROTOCOL") || "http/json";
   const endpoint = `https://localhost:${port}`;
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--env-file=env_file",
       "-A",
       "-q",
       "--unstable-cron",
-      Deno.args[0],
+      Edno.args[0],
     ],
     env: {
       OTEL_EXPORTER_OTLP_ENDPOINT: endpoint,
@@ -155,17 +155,17 @@ function onListen({ port }) {
     });
 }
 
-if (Deno.env.get("OTEL_DENO_VSOCK")) {
-  server = Deno.serve({
+if (Edno.env.get("OTEL_DENO_VSOCK")) {
+  server = Edno.serve({
     cid: -1,
     port: 4317,
     onListen,
     handler,
   });
 } else {
-  server = Deno.serve({
-    key: Deno.readTextFileSync("../../../testdata/tls/localhost.key"),
-    cert: Deno.readTextFileSync("../../../testdata/tls/localhost.crt"),
+  server = Edno.serve({
+    key: Edno.readTextFileSync("../../../testdata/tls/localhost.key"),
+    cert: Edno.readTextFileSync("../../../testdata/tls/localhost.crt"),
     port: 0,
     onListen,
     handler,

@@ -5,7 +5,7 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test(async function fromInit() {
+Edno.test(async function fromInit() {
   const req = new Request("http://foo/", {
     body: "ahoyhoy",
     method: "POST",
@@ -19,29 +19,29 @@ Deno.test(async function fromInit() {
   assertEquals(req.headers.get("test-header"), "value");
 });
 
-Deno.test(function requestNonString() {
+Edno.test(function requestNonString() {
   const nonString = {
     toString() {
       return "http://foo/";
     },
   };
-  // deno-lint-ignore ban-ts-comment
+  // edno-lint-ignore ban-ts-comment
   // @ts-expect-error
   assertEquals(new Request(nonString).url, "http://foo/");
 });
 
-Deno.test(function methodNonString() {
+Edno.test(function methodNonString() {
   assertEquals(new Request("http://foo/", { method: undefined }).method, "GET");
 });
 
-Deno.test(function requestRelativeUrl() {
+Edno.test(function requestRelativeUrl() {
   assertEquals(
     new Request("relative-url").url,
     "http://127.0.0.1:4545/relative-url",
   );
 });
 
-Deno.test(async function cloneRequestBodyStream() {
+Edno.test(async function cloneRequestBodyStream() {
   // hack to get a stream
   const stream =
     new Request("http://foo/", { body: "a test body", method: "POST" }).body;
@@ -58,10 +58,10 @@ Deno.test(async function cloneRequestBodyStream() {
   assertEquals(b1, b2);
 });
 
-Deno.test(function customInspectFunction() {
+Edno.test(function customInspectFunction() {
   const request = new Request("https://example.com");
   assertEquals(
-    Deno.inspect(request),
+    Edno.inspect(request),
     `Request {
   bodyUsed: false,
   headers: Headers {},
@@ -70,17 +70,17 @@ Deno.test(function customInspectFunction() {
   url: "https://example.com/"
 }`,
   );
-  assertStringIncludes(Deno.inspect(Request.prototype), "Request");
+  assertStringIncludes(Edno.inspect(Request.prototype), "Request");
 });
 
-Deno.test(function requestConstructorTakeURLObjectAsParameter() {
+Edno.test(function requestConstructorTakeURLObjectAsParameter() {
   assertEquals(
     new Request(new URL("http://foo/")).url,
     "http://foo/",
   );
 });
 
-Deno.test(function requestDefaultProperties() {
+Edno.test(function requestDefaultProperties() {
   const req = new Request("http://foo/");
   assertEquals(req.cache, "default");
   assertEquals(req.credentials, "same-origin");
@@ -91,7 +91,7 @@ Deno.test(function requestDefaultProperties() {
   assertEquals(req.referrerPolicy, "");
 });
 
-Deno.test(function requestInitProperties() {
+Edno.test(function requestInitProperties() {
   const req = new Request("http://foo/", {
     cache: "no-store",
     credentials: "include",
@@ -111,31 +111,31 @@ Deno.test(function requestInitProperties() {
   assertEquals(req.referrerPolicy, "no-referrer");
 });
 
-Deno.test(function requestInvalidPriorityThrows() {
+Edno.test(function requestInvalidPriorityThrows() {
   assertThrows(
     () => new Request("http://foo/", { priority: "bogus" as RequestPriority }),
     TypeError,
   );
 });
 
-Deno.test(function requestReferrerEmptyString() {
+Edno.test(function requestReferrerEmptyString() {
   const req = new Request("http://foo/", { referrer: "" });
   assertEquals(req.referrer, "");
 });
 
-Deno.test(function requestReferrerAboutClient() {
+Edno.test(function requestReferrerAboutClient() {
   const req = new Request("http://foo/", { referrer: "about:client" });
   assertEquals(req.referrer, "about:client");
 });
 
-Deno.test(function requestModeNavigateThrows() {
+Edno.test(function requestModeNavigateThrows() {
   assertThrows(
     () => new Request("http://foo/", { mode: "navigate" }),
     TypeError,
   );
 });
 
-Deno.test(function requestOnlyIfCachedRequiresSameOrigin() {
+Edno.test(function requestOnlyIfCachedRequiresSameOrigin() {
   assertThrows(
     () => new Request("http://foo/", { cache: "only-if-cached" }),
     TypeError,
@@ -149,7 +149,7 @@ Deno.test(function requestOnlyIfCachedRequiresSameOrigin() {
   assertEquals(req.mode, "same-origin");
 });
 
-Deno.test(function requestPropertiesInheritedFromRequest() {
+Edno.test(function requestPropertiesInheritedFromRequest() {
   const original = new Request("http://foo/", {
     cache: "no-store",
     credentials: "include",
@@ -170,7 +170,7 @@ Deno.test(function requestPropertiesInheritedFromRequest() {
   assertEquals(cloned.referrerPolicy, "origin");
 });
 
-Deno.test(function requestCloneCopiesAllProperties() {
+Edno.test(function requestCloneCopiesAllProperties() {
   const original = new Request("http://foo/", {
     cache: "force-cache",
     credentials: "omit",

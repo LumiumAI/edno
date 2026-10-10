@@ -35,7 +35,7 @@ const signals = [
 
 // SIGKILL and SIGSTOP are not stoppable, SIGBREAK is for windows, and SIGUNUSED is not defined
 type SignalsToTest = Exclude<
-  Deno.Signal,
+  Edno.Signal,
   "SIGKILL" | "SIGSTOP" | "SIGBREAK" | "SIGUNUSED"
 >;
 type EnsureAllSignalsIncluded = SignalsToTest extends typeof signals[number]
@@ -47,16 +47,16 @@ const _checkSignals: EnsureAllSignalsIncluded = true;
 const osSpecificSignals = signals.filter((s) => {
   switch (s) {
     case "SIGEMT":
-      return Deno.build.os === "darwin";
+      return Edno.build.os === "darwin";
     case "SIGINFO":
     case "SIGFPE":
     case "SIGILL":
     case "SIGSEGV":
-      return Deno.build.os === "freebsd";
+      return Edno.build.os === "freebsd";
     case "SIGPOLL":
     case "SIGPWR":
     case "SIGSTKFLT":
-      return Deno.build.os === "linux";
+      return Edno.build.os === "linux";
     default:
       return true;
   }

@@ -198,7 +198,7 @@
   }
 }
 
-# no deno.json
+# no edno.json
 {
   "packageJson": {
     "dependencies": [
@@ -207,7 +207,7 @@
   }
 }
 
-# will remove the deno.json deps
+# will remove the edno.json deps
 {
   "version": "5",
   "specifiers": {

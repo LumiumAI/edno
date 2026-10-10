@@ -78,7 +78,7 @@ server.listen(0, async () => {
     console.log("All stale retry tests passed!");
   } catch (err) {
     console.error("FAILED:", (err as Error).message);
-    Deno.exit(1);
+    Edno.exit(1);
   } finally {
     server.close();
     agent.destroy();

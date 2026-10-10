@@ -3,53 +3,53 @@
 import { join } from "@std/path";
 import { assert, assertEquals, assertRejects } from "./test_util.ts";
 
-Deno.test(function globalThisExists() {
+Edno.test(function globalThisExists() {
   assert(globalThis != null);
 });
 
-Deno.test(function noInternalGlobals() {
+Edno.test(function noInternalGlobals() {
   // globalThis.__bootstrap should not be there.
   for (const key of Object.keys(globalThis)) {
     assert(!key.startsWith("_"));
   }
 });
 
-Deno.test(function selfExists() {
+Edno.test(function selfExists() {
   assert(self != null);
 });
 
-Deno.test(function globalThisWindowEqualsUndefined() {
+Edno.test(function globalThisWindowEqualsUndefined() {
   assert(globalThis.window === undefined);
 });
 
-Deno.test(function globalThisEqualsSelf() {
+Edno.test(function globalThisEqualsSelf() {
   assert(globalThis === self);
 });
 
-Deno.test(function globalThisConstructorLength() {
+Edno.test(function globalThisConstructorLength() {
   assert(globalThis.constructor.length === 0);
 });
 
-Deno.test(function globalThisInstanceofEventTarget() {
+Edno.test(function globalThisInstanceofEventTarget() {
   assert(globalThis instanceof EventTarget);
 });
 
-Deno.test(function navigatorInstanceofNavigator() {
+Edno.test(function navigatorInstanceofNavigator() {
   // TODO(nayeemrmn): Add `Navigator` to deno_lint globals.
-  // deno-lint-ignore no-undef
+  // edno-lint-ignore no-undef
   assert(navigator instanceof Navigator);
 });
 
-Deno.test(function DenoNamespaceExists() {
-  assert(Deno != null);
+Edno.test(function EdnoNamespaceExists() {
+  assert(Edno != null);
 });
 
-Deno.test(function DenoNamespaceIsNotFrozen() {
-  assert(!Object.isFrozen(Deno));
+Edno.test(function EdnoNamespaceIsNotFrozen() {
+  assert(!Object.isFrozen(Edno));
 });
 
-Deno.test(function DenoNamespaceLazyPropertiesAreWritable() {
-  const deno = Deno as unknown as Record<string, unknown>;
+Edno.test(function EdnoNamespaceLazyPropertiesAreWritable() {
+  const edno = Edno as unknown as Record<string, unknown>;
   const lazyProperties = [
     "serve",
     "serveHttp",
@@ -58,43 +58,43 @@ Deno.test(function DenoNamespaceLazyPropertiesAreWritable() {
   ];
 
   for (const name of lazyProperties) {
-    const descriptor = Object.getOwnPropertyDescriptor(Deno, name);
+    const descriptor = Object.getOwnPropertyDescriptor(Edno, name);
     assert(descriptor);
     try {
-      const original = deno[name];
+      const original = edno[name];
       assert(typeof original === "function");
       const replacement = new Proxy(original, {});
 
-      deno[name] = replacement;
+      edno[name] = replacement;
 
-      assertEquals(deno[name], replacement);
-      const replacementDescriptor = Object.getOwnPropertyDescriptor(Deno, name);
+      assertEquals(edno[name], replacement);
+      const replacementDescriptor = Object.getOwnPropertyDescriptor(Edno, name);
       assert(replacementDescriptor);
       assertEquals(replacementDescriptor.value, replacement);
       assert(replacementDescriptor.writable);
       assert(replacementDescriptor.enumerable);
       assert(replacementDescriptor.configurable);
     } finally {
-      Object.defineProperty(Deno, name, descriptor);
+      Object.defineProperty(Edno, name, descriptor);
     }
   }
 });
 
-Deno.test(function webAssemblyExists() {
+Edno.test(function webAssemblyExists() {
   assert(typeof WebAssembly.compile === "function");
 });
 
 // @ts-ignore This is not publicly typed namespace, but it's there for sure.
-const core = Deno[Deno.internal].core;
+const core = Edno[Edno.internal].core;
 
-Deno.test(function DenoNamespaceConfigurable() {
-  const desc = Object.getOwnPropertyDescriptor(globalThis, "Deno");
+Edno.test(function EdnoNamespaceConfigurable() {
+  const desc = Object.getOwnPropertyDescriptor(globalThis, "Edno");
   assert(desc);
   assert(desc.configurable);
   assert(!desc.writable);
 });
 
-Deno.test(function DenoCoreNamespaceIsImmutable() {
+Edno.test(function EdnoCoreNamespaceIsImmutable() {
   const { print } = core;
   try {
     core.print = 1;
@@ -110,7 +110,7 @@ Deno.test(function DenoCoreNamespaceIsImmutable() {
   assert(print === core.print);
 });
 
-Deno.test(async function windowQueueMicrotask() {
+Edno.test(async function windowQueueMicrotask() {
   let resolve1: () => void | undefined;
   let resolve2: () => void | undefined;
   let microtaskDone = false;
@@ -132,7 +132,7 @@ Deno.test(async function windowQueueMicrotask() {
   await p2;
 });
 
-Deno.test(function webApiGlobalThis() {
+Edno.test(function webApiGlobalThis() {
   assert(globalThis.FormData !== null);
   assert(globalThis.TextEncoder !== null);
   assert(globalThis.TextEncoderStream !== null);
@@ -142,7 +142,7 @@ Deno.test(function webApiGlobalThis() {
   assert(globalThis.ByteLengthQueuingStrategy !== null);
 });
 
-Deno.test(function windowNameIsDefined() {
+Edno.test(function windowNameIsDefined() {
   assertEquals(typeof globalThis.name, "string");
   assertEquals(name, "");
   name = "foobar";
@@ -151,7 +151,7 @@ Deno.test(function windowNameIsDefined() {
   assertEquals(name, "");
 });
 
-Deno.test(async function promiseWithResolvers() {
+Edno.test(async function promiseWithResolvers() {
   {
     const { promise, resolve } = Promise.withResolvers();
     resolve(true);
@@ -164,7 +164,7 @@ Deno.test(async function promiseWithResolvers() {
   }
 });
 
-Deno.test(async function arrayFromAsync() {
+Edno.test(async function arrayFromAsync() {
   // Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fromAsync#examples
   // Thank you.
   const asyncIterable = (async function* () {
@@ -182,7 +182,7 @@ Deno.test(async function arrayFromAsync() {
 });
 
 // Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy#examples
-Deno.test(function objectGroupBy() {
+Edno.test(function objectGroupBy() {
   const inventory = [
     { name: "asparagus", type: "vegetables", quantity: 5 },
     { name: "bananas", type: "fruit", quantity: 0 },
@@ -206,14 +206,14 @@ Deno.test(function objectGroupBy() {
   });
 });
 
-Deno.test(function objectGroupByEmpty() {
+Edno.test(function objectGroupByEmpty() {
   const empty: string[] = [];
   const result = Object.groupBy(empty, () => "abc");
   assertEquals(result.abc, undefined);
 });
 
 // Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/groupBy#examples
-Deno.test(function mapGroupBy() {
+Edno.test(function mapGroupBy() {
   const inventory = [
     { name: "asparagus", type: "vegetables", quantity: 9 },
     { name: "bananas", type: "fruit", quantity: 5 },
@@ -235,26 +235,26 @@ Deno.test(function mapGroupBy() {
 });
 
 // Regression test for https://github.com/denoland/deno/issues/30012
-Deno.test(function globalGlobalIsWritable() {
+Edno.test(function globalGlobalIsWritable() {
   // @ts-ignore the typings here are wrong
   globalThis.global = "can write to `global`";
   // @ts-ignore the typings here are wrong
   globalThis.global = globalThis;
 });
 
-Deno.test(async function overwriteEventOnExternalModuleShouldNotCrash() {
-  const tmpDir = await Deno.makeTempDir();
+Edno.test(async function overwriteEventOnExternalModuleShouldNotCrash() {
+  const tmpDir = await Edno.makeTempDir();
 
   const externalModulePath = join(tmpDir, "overwrite_event.ts");
   const externalModuleContent =
     `globalThis.Event = class {}; export default {};`;
-  await Deno.writeTextFile(externalModulePath, externalModuleContent);
+  await Edno.writeTextFile(externalModulePath, externalModuleContent);
 
   const entrypointPath = join(tmpDir, "index.ts");
   const entrypointContent = `import("./overwrite_event.ts");`;
-  await Deno.writeTextFile(entrypointPath, entrypointContent);
+  await Edno.writeTextFile(entrypointPath, entrypointContent);
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-A", entrypointPath],
     stdout: "null",
     stderr: "null",
@@ -263,13 +263,13 @@ Deno.test(async function overwriteEventOnExternalModuleShouldNotCrash() {
 
   const status = await child.status;
   assert(status.success);
-  await Deno.remove(tmpDir, { recursive: true });
+  await Edno.remove(tmpDir, { recursive: true });
 });
 
-Deno.test(function navigatorPlatformExists() {
-  switch (Deno.build.os) {
+Edno.test(function navigatorPlatformExists() {
+  switch (Edno.build.os) {
     case "linux": {
-      assertEquals(navigator.platform, `Linux ${Deno.build.arch}`);
+      assertEquals(navigator.platform, `Linux ${Edno.build.arch}`);
       break;
     }
     case "darwin": {

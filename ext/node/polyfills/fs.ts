@@ -1,14 +1,14 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
 const { fs: fsConstants } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
 const { codeMap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/uv.ts",
+  "ext:edno_node/internal_binding/uv.ts",
 );
 type BinaryOptionsArgument = any;
 type CallbackWithError = any;
@@ -22,66 +22,66 @@ const {
   isFileOptions,
   makeCallback,
   maybeCallback,
-} = core.loadExtScript("ext:deno_node/_fs/_fs_common.ts");
+} = core.loadExtScript("ext:edno_node/_fs/_fs_common.ts");
 type Encodings = any;
 const {
   AbortError,
-  denoErrorToNodeError,
-  denoWriteFileErrorToNodeError,
+  ednoErrorToNodeError,
+  ednoWriteFileErrorToNodeError,
   ERR_FS_FILE_TOO_LARGE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
-const constants = core.loadExtScript("ext:deno_node/_fs/_fs_constants.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
+const constants = core.loadExtScript("ext:edno_node/_fs/_fs_constants.ts");
 const {
   CFISBIS,
   convertFileInfoToBigIntStats,
   convertFileInfoToStats,
-} = core.createLazyLoader("ext:deno_node/internal/fs/stat_utils.ts")();
+} = core.createLazyLoader("ext:edno_node/internal/fs/stat_utils.ts")();
 type statCallback = any;
 type statCallbackBigInt = any;
 type statOptions = any;
 const { copyFile, copyFileSync } = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_copy.ts",
+  "ext:edno_node/_fs/_fs_copy.ts",
 )();
-const { cp, cpSync } = core.loadExtScript("ext:deno_node/_fs/_fs_cp.ts");
+const { cp, cpSync } = core.loadExtScript("ext:edno_node/_fs/_fs_cp.ts");
 const { default: Dir } = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_dir.ts",
+  "ext:edno_node/_fs/_fs_dir.ts",
 )();
 const { exists, existsSync } = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_exists.ts",
+  "ext:edno_node/_fs/_fs_exists.ts",
 )();
 const { fstat, fstatSync } = core.loadExtScript(
-  "ext:deno_node/_fs/_fs_fstat.ts",
+  "ext:edno_node/_fs/_fs_fstat.ts",
 );
 const { lstat, lstatSync } = core.loadExtScript(
-  "ext:deno_node/_fs/_fs_lstat.ts",
+  "ext:edno_node/_fs/_fs_lstat.ts",
 );
 const { lutimes, lutimesSync } = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_lutimes.ts",
+  "ext:edno_node/_fs/_fs_lutimes.ts",
 )();
 const { read, readSync } = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_read.ts",
+  "ext:edno_node/_fs/_fs_read.ts",
 )();
 const { readdir, readdirSync } = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_readdir.ts",
+  "ext:edno_node/_fs/_fs_readdir.ts",
 )();
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const lazyTimers = core.createLazyLoader("node:timers");
 const { clearTimeout, setTimeout } = lazyTimers();
-const { notImplemented } = core.loadExtScript("ext:deno_node/_utils.ts");
+const { notImplemented } = core.loadExtScript("ext:edno_node/_utils.ts");
 type MaybeEmpty<T> = T | null | undefined;
-const { deprecate, promisify } = core.loadExtScript("ext:deno_node/util.ts");
+const { deprecate, promisify } = core.loadExtScript("ext:edno_node/util.ts");
 // internal/fs/{promises,streams,handle}.ts call `lazyFs()` at top-level to
 // build promisified wrappers around members of `node:fs`. Loading them
 // eagerly from inside fs.ts would re-enter the partially-loaded `node:fs`
 // namespace and hit a TDZ error. Defer to first access of `fs.promises` etc.
 const lazyInternalPromises = core.createLazyLoader(
-  "ext:deno_node/internal/fs/promises.ts",
+  "ext:edno_node/internal/fs/promises.ts",
 );
 const lazyInternalStreams = core.createLazyLoader(
-  "ext:deno_node/internal/fs/streams.mjs",
+  "ext:edno_node/internal/fs/streams.mjs",
 );
 const lazyInternalHandle = core.createLazyLoader(
-  "ext:deno_node/internal/fs/handle.ts",
+  "ext:edno_node/internal/fs/handle.ts",
 );
 // Backing storage so the lazy getters below can be paired with setters;
 // some packages monkey-patch these on the `node:fs` namespace.
@@ -91,13 +91,13 @@ let _ReadStream: any;
 let _WriteStream: any;
 let _promises: any;
 const { default: SyncWriteStream } = core.loadExtScript(
-  "ext:deno_node/internal/fs/sync_write_stream.js",
+  "ext:edno_node/internal/fs/sync_write_stream.js",
 );
 // Utf8Stream is only re-exported, never used at module body. Keep this as
 // a thunk so loading fs.ts doesn't immediately pull fast-utf8-stream.js
 // (which statically imports node:fs and triggers the whole stream subtree).
 const lazyUtf8Stream = core.createLazyLoader(
-  "ext:deno_node/internal/streams/fast-utf8-stream.js",
+  "ext:edno_node/internal/streams/fast-utf8-stream.js",
 );
 const {
   arrayBufferViewToUint8Array,
@@ -121,14 +121,14 @@ const {
   validateRmOptionsSync,
   validateStringAfterArrayBufferView,
   warnOnNonPortableTemplate,
-} = core.createLazyLoader("ext:deno_node/internal/fs/utils.mjs")();
+} = core.createLazyLoader("ext:edno_node/internal/fs/utils.mjs")();
 const { glob, globSync } = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_glob.ts",
+  "ext:edno_node/_fs/_fs_glob.ts",
 )();
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const lazyProcess = core.createLazyLoader("node:process");
 const { isIterable } = core.loadExtScript(
-  "ext:deno_node/internal/streams/utils.js",
+  "ext:edno_node/internal/streams/utils.js",
 );
 type FileHandle = any;
 type ErrnoException = any;
@@ -172,15 +172,15 @@ const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
   uvException,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { isMacOS, isWindows } = core.loadExtScript(
-  "ext:deno_node/_util/os.ts",
+  "ext:edno_node/_util/os.ts",
 );
 const {
   customPromisifyArgs,
   kEmptyObject,
   normalizeEncoding,
-} = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} = core.loadExtScript("ext:edno_node/internal/util.mjs");
 const lazyPath = core.createLazyLoader("node:path");
 const pathModule = lazyPath();
 const { basename, relative, resolve, toNamespacedPath } = pathModule;
@@ -196,19 +196,19 @@ const {
   validateObject,
   validateOneOf,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { isArrayBufferView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const { Blob, markFileBackedBlob } = core.loadExtScript(
-  "ext:deno_web/09_file.js",
+  "ext:edno_web/09_file.js",
 );
 // Re-exported under both names for tests.
 const _toUnixTimestamp = toUnixTimestamp;
 const {
   createFSReqCallback,
   unregisterActiveRequest,
-} = core.loadExtScript("ext:deno_node/internal/process/active_resources.ts");
+} = core.loadExtScript("ext:edno_node/internal/process/active_resources.ts");
 
 const {
   ArrayBufferIsView,
@@ -249,11 +249,11 @@ const {
 } = primordials;
 
 const { TextEncoder } = core.loadExtScript(
-  "ext:deno_web/08_text_encoding.js",
+  "ext:edno_web/08_text_encoding.js",
 );
-const abortSignal = core.loadExtScript("ext:deno_web/03_abort_signal.js");
-const { pathFromURL } = core.loadExtScript("ext:deno_web/00_infra.js");
-const { URLPrototype } = core.loadExtScript("ext:deno_web/00_url.js");
+const abortSignal = core.loadExtScript("ext:edno_web/03_abort_signal.js");
+const { pathFromURL } = core.loadExtScript("ext:edno_web/00_infra.js");
+const { URLPrototype } = core.loadExtScript("ext:edno_web/00_url.js");
 
 const {
   kIoMaxLength,
@@ -296,7 +296,7 @@ function stat(
   path = getValidatedPathToString(path);
 
   PromisePrototypeThen(
-    Deno.stat(path),
+    Edno.stat(path),
     (stat) => callback(null, CFISBIS(stat, options.bigint)),
     (err) => {
       // Match Node: `{ throwIfNoEntry: false }` suppresses ENOENT and yields
@@ -304,13 +304,13 @@ function stat(
       // in lib/fs.js stat().
       if (
         (options as statOptions)?.throwIfNoEntry === false &&
-        ObjectPrototypeIsPrototypeOf(Deno.errors.NotFound.prototype, err)
+        ObjectPrototypeIsPrototypeOf(Edno.errors.NotFound.prototype, err)
       ) {
         callback(null, undefined);
         return;
       }
       callback(
-        denoErrorToNodeError(err, { syscall: "stat", path }),
+        ednoErrorToNodeError(err, { syscall: "stat", path }),
       );
     },
   );
@@ -340,17 +340,17 @@ function statSync(
   path = getValidatedPathToString(path);
 
   try {
-    const origin = Deno.statSync(path);
+    const origin = Edno.statSync(path);
     return CFISBIS(origin, options.bigint);
   } catch (err) {
     if (
       options?.throwIfNoEntry === false &&
-      ObjectPrototypeIsPrototypeOf(Deno.errors.NotFound.prototype, err)
+      ObjectPrototypeIsPrototypeOf(Edno.errors.NotFound.prototype, err)
     ) {
       return;
     }
     if (ObjectPrototypeIsPrototypeOf(ErrorPrototype, err)) {
-      throw denoErrorToNodeError(err as Error, {
+      throw ednoErrorToNodeError(err as Error, {
         syscall: "stat",
         path,
       });
@@ -382,7 +382,7 @@ function encodeRealpathResult(
   if (options.encoding === "buffer") {
     return asBuffer;
   }
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return asBuffer.toString(options.encoding);
 }
 
@@ -404,12 +404,12 @@ function realpathImpl(
   const validatedPath = getValidatedPathToString(path);
 
   PromisePrototypeThen(
-    Deno.realPath(validatedPath),
+    Edno.realPath(validatedPath),
     (resolved) =>
       callback!(null, encodeRealpathResult(resolved, options as never)),
     (err) =>
       callback!(
-        denoErrorToNodeError(err as Error, {
+        ednoErrorToNodeError(err as Error, {
           syscall,
           path: validatedPath,
         }),
@@ -444,10 +444,10 @@ function realpathSyncImpl(
   options = getOptions(options) as RealpathEncodingObj;
   const validatedPath = getValidatedPathToString(path);
   try {
-    const result = Deno.realPathSync(validatedPath);
+    const result = Edno.realPathSync(validatedPath);
     return encodeRealpathResult(result, options);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall,
       path: validatedPath,
     });
@@ -565,7 +565,7 @@ function readv(
       cb(null, numRead, buffers);
     },
     (err) => {
-      cb(denoErrorToNodeError(err, { syscall: "read" }), 0, buffers);
+      cb(ednoErrorToNodeError(err, { syscall: "read" }), 0, buffers);
     },
   );
 }
@@ -613,7 +613,7 @@ function readvSync(
     }
     return numRead;
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, { syscall: "read" });
+    throw ednoErrorToNodeError(err as Error, { syscall: "read" });
   }
 }
 
@@ -643,9 +643,9 @@ function readFileMaybeDecode(
   data: Uint8Array,
   encoding: Encodings | null | undefined,
 ): string | Buffer {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   const buffer = Buffer.from(data.buffer, data.byteOffset, data.byteLength);
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   if (encoding) return buffer.toString(encoding);
   return buffer;
 }
@@ -838,7 +838,7 @@ function readFile(
       (err) =>
         cb &&
         cb(
-          denoErrorToNodeError(err, {
+          ednoErrorToNodeError(err, {
             path: typeof pathOrRid === "string" ? pathOrRid : undefined,
             syscall: "open",
           }),
@@ -884,7 +884,7 @@ function readFileSync(
     try {
       data = op_fs_read_file_sync(path, flagsNumber);
     } catch (err) {
-      throw denoErrorToNodeError(err, { path, syscall: "open" });
+      throw ednoErrorToNodeError(err, { path, syscall: "open" });
     }
   }
   const textOrBuffer = readFileMaybeDecode(data, options?.encoding);
@@ -952,14 +952,14 @@ function readlink(
   const encoding = readlinkGetEncoding(optOrCallback);
 
   PromisePrototypeThen(
-    Deno.readLink(path),
+    Edno.readLink(path),
     (data: string) => {
       const res = readlinkMaybeEncode(data, encoding);
       if (cb) cb(null, res);
     },
     (err: Error) => {
       if (cb) {
-        (cb as (e: Error) => void)(denoErrorToNodeError(err, {
+        (cb as (e: Error) => void)(ednoErrorToNodeError(err, {
           syscall: "readlink",
           path,
         }));
@@ -981,11 +981,11 @@ function readlinkSync(
 
   try {
     return readlinkMaybeEncode(
-      Deno.readLinkSync(path),
+      Edno.readLinkSync(path),
       readlinkGetEncoding(opt),
     );
   } catch (error) {
-    throw denoErrorToNodeError(error, {
+    throw ednoErrorToNodeError(error, {
       syscall: "readlink",
       path,
     });
@@ -1056,7 +1056,7 @@ function opResultToStatFs(
     return new StatFs(
       result.type,
       result.bsize,
-      // Deno's statfs op does not expose a separate fragment size; it equals
+      // Edno's statfs op does not expose a separate fragment size; it equals
       // the block size on the platforms we support (matches Node in practice).
       result.bsize,
       result.blocks,
@@ -1115,7 +1115,7 @@ function statfs(
       );
     },
     (err: Error) =>
-      callback(denoErrorToNodeError(err, {
+      callback(ednoErrorToNodeError(err, {
         syscall: "statfs",
         path,
       })),
@@ -1144,7 +1144,7 @@ function statfsSync(
     );
     return opResultToStatFs(result, bigint);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall: "statfs",
       path,
     });
@@ -1161,13 +1161,13 @@ function access(
     mode = fsConstants.F_OK;
   }
 
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   path = getValidatedPath(path).toString();
   mode = getValidMode(mode, "access");
   const cb = makeCallback(callback);
 
-  // deno-lint-ignore deno-internal/prefer-primordials
-  Deno.lstat(path).then(
+  // edno-lint-ignore edno-internal/prefer-primordials
+  Edno.lstat(path).then(
     (info) => {
       if (info.mode === null) {
         cb(null);
@@ -1176,9 +1176,9 @@ function access(
       let m = +mode || 0;
       let fileMode = +info.mode || 0;
 
-      if (Deno.build.os === "windows") {
+      if (Edno.build.os === "windows") {
         m &= ~fsConstants.X_OK;
-      } else if (info.uid === Deno.uid()) {
+      } else if (info.uid === Edno.uid()) {
         fileMode >>= 6;
       }
 
@@ -1196,8 +1196,8 @@ function access(
       }
     },
     (err) => {
-      // deno-lint-ignore deno-internal/prefer-primordials
-      if (err instanceof Deno.errors.NotFound) {
+      // edno-lint-ignore edno-internal/prefer-primordials
+      if (err instanceof Edno.errors.NotFound) {
         const e: any = new Error(
           `ENOENT: no such file or directory, access '${path}'`,
         );
@@ -1214,20 +1214,20 @@ function access(
 }
 
 function accessSync(path: string | Buffer | URL, mode?: number) {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   path = getValidatedPath(path).toString();
   mode = getValidMode(mode, "access");
   try {
-    // deno-lint-ignore deno-internal/prefer-primordials
-    const info = Deno.lstatSync(path.toString());
+    // edno-lint-ignore edno-internal/prefer-primordials
+    const info = Edno.lstatSync(path.toString());
     if (info.mode === null) {
       return;
     }
     let m = +mode! || 0;
     let fileMode = +info.mode! || 0;
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       m &= ~fsConstants.X_OK;
-    } else if (info.uid === Deno.uid()) {
+    } else if (info.uid === Edno.uid()) {
       fileMode >>= 6;
     }
     if ((m & fileMode) === m) {
@@ -1241,8 +1241,8 @@ function accessSync(path: string | Buffer | URL, mode?: number) {
       throw e;
     }
   } catch (err) {
-    // deno-lint-ignore deno-internal/prefer-primordials
-    if (err instanceof Deno.errors.NotFound) {
+    // edno-lint-ignore edno-internal/prefer-primordials
+    if (err instanceof Edno.errors.NotFound) {
       const e: any = new Error(
         `ENOENT: no such file or directory, access '${path}'`,
       );
@@ -1312,10 +1312,10 @@ function chmod(
   mode = parseFileMode(mode, "mode");
 
   PromisePrototypeThen(
-    Deno.chmod(path, mode),
+    Edno.chmod(path, mode),
     () => callback(null),
     (err: Error) =>
-      callback(denoErrorToNodeError(err, { syscall: "chmod", path })),
+      callback(ednoErrorToNodeError(err, { syscall: "chmod", path })),
   );
 }
 
@@ -1324,9 +1324,9 @@ function chmodSync(path: string | Buffer | URL, mode: string | number) {
   mode = parseFileMode(mode, "mode");
 
   try {
-    Deno.chmodSync(path, mode);
+    Edno.chmodSync(path, mode);
   } catch (error) {
-    throw denoErrorToNodeError(error as Error, { syscall: "chmod", path });
+    throw ednoErrorToNodeError(error as Error, { syscall: "chmod", path });
   }
 }
 
@@ -1337,13 +1337,13 @@ function chown(
   callback: CallbackWithError,
 ) {
   callback = makeCallback(callback);
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   path = getValidatedPath(path).toString();
   validateInteger(uid, "uid", -1, kMaxUserId);
   validateInteger(gid, "gid", -1, kMaxUserId);
 
-  // deno-lint-ignore deno-internal/prefer-primordials
-  Deno.chown(path, uid, gid).then(
+  // edno-lint-ignore edno-internal/prefer-primordials
+  Edno.chown(path, uid, gid).then(
     () => callback(null),
     callback,
   );
@@ -1354,12 +1354,12 @@ function chownSync(
   uid: number,
   gid: number,
 ) {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   path = getValidatedPath(path).toString();
   validateInteger(uid, "uid", -1, kMaxUserId);
   validateInteger(gid, "gid", -1, kMaxUserId);
 
-  Deno.chownSync(path, uid, gid);
+  Edno.chownSync(path, uid, gid);
 }
 
 function defaultCloseCallback(err: Error | null) {
@@ -1376,7 +1376,7 @@ function close(
   }
 
   // Defer to a microtask rather than a JS `setTimeout(0)`. Both make the
-  // callback asynchronous, but a real timer trips Deno's test sanitizer as a
+  // callback asynchronous, but a real timer trips Edno's test sanitizer as a
   // leaked timeout when a test ends before the timer fires. Node.js' libuv
   // libc-backed `close` is invisible to userland timer queues; a microtask
   // matches that more closely.
@@ -1494,7 +1494,7 @@ function _getValidTime(
     typeof time === "number" &&
     (NumberIsNaN(time) || !NumberIsFinite(time))
   ) {
-    throw new Deno.errors.InvalidData(
+    throw new Edno.errors.InvalidData(
       `invalid ${name}, must not be infinity or NaN`,
     );
   }
@@ -1509,7 +1509,7 @@ function futimes(
   callback: CallbackWithError,
 ) {
   if (!callback) {
-    throw new Deno.errors.InvalidData("No callback function supplied");
+    throw new Edno.errors.InvalidData("No callback function supplied");
   }
   if (typeof fd !== "number") {
     throw new ERR_INVALID_ARG_TYPE("fd", "number", fd);
@@ -1675,11 +1675,11 @@ function link(
 
   // Match Node: errors carry both `path` and `dest` (see lib/fs.js link).
   PromisePrototypeThen(
-    Deno.link(existingPath, newPath),
+    Edno.link(existingPath, newPath),
     () => callback(null),
     (err) =>
       callback(
-        denoErrorToNodeError(err as Error, {
+        ednoErrorToNodeError(err as Error, {
           syscall: "link",
           path: existingPath as string,
           dest: newPath as string,
@@ -1696,9 +1696,9 @@ function linkSync(
   newPath = getValidatedPathToString(newPath);
 
   try {
-    Deno.linkSync(existingPath, newPath);
+    Edno.linkSync(existingPath, newPath);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall: "link",
       path: existingPath as string,
       dest: newPath as string,
@@ -1714,19 +1714,19 @@ function unlink(
   validateFunction(callback, "callback");
 
   PromisePrototypeThen(
-    Deno.remove(path),
+    Edno.remove(path),
     () => callback(),
     (err: Error) =>
-      callback(denoErrorToNodeError(err, { syscall: "unlink", path })),
+      callback(ednoErrorToNodeError(err, { syscall: "unlink", path })),
   );
 }
 
 function unlinkSync(path: string | Buffer | URL): void {
   path = getValidatedPathToString(path);
   try {
-    Deno.removeSync(path);
+    Edno.removeSync(path);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, { syscall: "unlink", path });
+    throw ednoErrorToNodeError(err as Error, { syscall: "unlink", path });
   }
 }
 
@@ -1740,10 +1740,10 @@ function rename(
   validateFunction(callback, "callback");
 
   PromisePrototypeThen(
-    Deno.rename(oldPath, newPath),
+    Edno.rename(oldPath, newPath),
     () => callback(),
     (err: Error) =>
-      callback(denoErrorToNodeError(err, {
+      callback(ednoErrorToNodeError(err, {
         syscall: "rename",
         path: oldPath,
         dest: newPath,
@@ -1759,9 +1759,9 @@ function renameSync(
   newPath = getValidatedPathToString(newPath, "newPath");
 
   try {
-    Deno.renameSync(oldPath, newPath);
+    Edno.renameSync(oldPath, newPath);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall: "rename",
       path: oldPath,
       dest: newPath,
@@ -1808,17 +1808,17 @@ function rm(
       }
 
       PromisePrototypeThen(
-        Deno.remove(path, { recursive: options?.recursive }),
+        Edno.remove(path, { recursive: options?.recursive }),
         () => callback(null),
         (err) => {
           if (
             options?.force &&
-            ObjectPrototypeIsPrototypeOf(Deno.errors.NotFound.prototype, err)
+            ObjectPrototypeIsPrototypeOf(Edno.errors.NotFound.prototype, err)
           ) {
             return callback(null);
           }
 
-          callback(denoErrorToNodeError(err, { syscall: "rm" }));
+          callback(ednoErrorToNodeError(err, { syscall: "rm" }));
         },
       );
     },
@@ -1828,15 +1828,15 @@ function rm(
 function rmSync(path: string | URL, options?: rmOptions) {
   options = validateRmOptionsSync(path, options, false);
   try {
-    Deno.removeSync(path, { recursive: options?.recursive });
+    Edno.removeSync(path, { recursive: options?.recursive });
   } catch (err: unknown) {
     if (
       options?.force &&
-      ObjectPrototypeIsPrototypeOf(Deno.errors.NotFound.prototype, err)
+      ObjectPrototypeIsPrototypeOf(Edno.errors.NotFound.prototype, err)
     ) {
       return;
     }
-    throw denoErrorToNodeError(err, { syscall: "rm" });
+    throw ednoErrorToNodeError(err, { syscall: "rm" });
   }
 }
 
@@ -1886,7 +1886,7 @@ function rmdir(
     (_) => callback(),
     (err: Error) =>
       callback(
-        denoErrorToNodeError(err, { syscall: "rmdir", path }),
+        ednoErrorToNodeError(err, { syscall: "rmdir", path }),
       ),
   );
 }
@@ -1906,7 +1906,7 @@ function rmdirSync(path: string | Buffer | URL, options?: rmdirOptions) {
   try {
     op_node_rmdir_sync(path);
   } catch (err) {
-    throw (denoErrorToNodeError(err as Error, { syscall: "rmdir", path }));
+    throw (ednoErrorToNodeError(err as Error, { syscall: "rmdir", path }));
   }
 }
 
@@ -1924,13 +1924,13 @@ function fixMkdirError(
   err: Error,
   path: string,
 ): Error {
-  const nodeErr = denoErrorToNodeError(err, { syscall: "mkdir", path });
+  const nodeErr = ednoErrorToNodeError(err, { syscall: "mkdir", path });
   if (!isWindows) return nodeErr;
   if ((nodeErr as NodeJS.ErrnoException).code !== "EEXIST") return nodeErr;
   let cursor = resolve(path, "..");
   while (true) {
     try {
-      const stat = Deno.statSync(cursor);
+      const stat = Edno.statSync(cursor);
       if (!stat.isDirectory) {
         return uvException({
           errno: codeMap.get("ENOTDIR")!,
@@ -1953,7 +1953,7 @@ function findFirstNonExistent(path: string): string | undefined {
   let cursor = resolve(path);
   while (true) {
     try {
-      Deno.statSync(cursor);
+      Edno.statSync(cursor);
       return undefined;
     } catch {
       const parent = resolve(cursor, "..");
@@ -1961,7 +1961,7 @@ function findFirstNonExistent(path: string): string | undefined {
         return toNamespacedPath(cursor);
       }
       try {
-        Deno.statSync(parent);
+        Edno.statSync(parent);
         return toNamespacedPath(cursor);
       } catch {
         cursor = parent;
@@ -2007,14 +2007,14 @@ function mkdir(
   } catch (err) {
     if (typeof callback === "function") {
       callback(
-        denoErrorToNodeError(err as Error, { syscall: "mkdir", path }),
+        ednoErrorToNodeError(err as Error, { syscall: "mkdir", path }),
       );
     }
     return;
   }
 
   PromisePrototypeThen(
-    Deno.mkdir(path, { recursive, mode }),
+    Edno.mkdir(path, { recursive, mode }),
     () => {
       if (typeof callback === "function") {
         callback(null, firstNonExistent);
@@ -2025,7 +2025,7 @@ function mkdir(
         callback(
           recursive
             ? fixMkdirError(err as Error, path as string)
-            : denoErrorToNodeError(err as Error, { syscall: "mkdir", path }),
+            : ednoErrorToNodeError(err as Error, { syscall: "mkdir", path }),
         );
       }
     },
@@ -2058,11 +2058,11 @@ function mkdirSync(
   let firstNonExistent: string | undefined;
   try {
     firstNonExistent = recursive ? findFirstNonExistent(path) : undefined;
-    Deno.mkdirSync(path, { recursive, mode });
+    Edno.mkdirSync(path, { recursive, mode });
   } catch (err) {
     throw recursive
       ? fixMkdirError(err as Error, path)
-      : denoErrorToNodeError(err as Error, { syscall: "mkdir", path });
+      : ednoErrorToNodeError(err as Error, { syscall: "mkdir", path });
   }
 
   return firstNonExistent;
@@ -2112,7 +2112,7 @@ function mkdtemp(
     op_node_mkdtemp(prefix),
     (path: string) => callback(null, decodeMkdtemp(path, encoding)),
     (err: Error) =>
-      callback(denoErrorToNodeError(err, {
+      callback(ednoErrorToNodeError(err, {
         syscall: "mkdtemp",
         path: `${prefix}XXXXXX`,
       })),
@@ -2140,7 +2140,7 @@ function mkdtempSync(
     const path = op_node_mkdtemp_sync(prefix) as string;
     return decodeMkdtemp(path, encoding);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall: "mkdtemp",
       path: `${prefix}XXXXXX`,
     });
@@ -2186,7 +2186,7 @@ function decodeMkdtemp(
   if (encoding === "utf8") return str;
   const buffer = Buffer.from(str);
   if (encoding === "buffer") return buffer;
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return buffer.toString(encoding);
 }
 
@@ -2291,7 +2291,7 @@ function open(
     },
     (err: Error) => {
       unregisterActiveRequest(request);
-      callback(denoErrorToNodeError(err, { syscall: "open", path }));
+      callback(ednoErrorToNodeError(err, { syscall: "open", path }));
     },
   );
 }
@@ -2319,7 +2319,7 @@ function openSync(
   try {
     return op_node_open_sync(path, flags, mode);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, { syscall: "open", path });
+    throw ednoErrorToNodeError(err as Error, { syscall: "open", path });
   }
 }
 
@@ -2341,7 +2341,7 @@ function _opendirGetPathString(
   path: string | Buffer | URL,
 ): string {
   if (Buffer.isBuffer(path)) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     return path.toString();
   }
 
@@ -2367,11 +2367,11 @@ function opendir(
     validateInteger(bufferSize, "options.bufferSize", 1, 4294967295);
 
     /** Throws if path is invalid */
-    Deno.readDirSync(path);
+    Edno.readDirSync(path);
 
     dir = new Dir(path);
   } catch (error) {
-    err = denoErrorToNodeError(error as Error, { syscall: "opendir" });
+    err = ednoErrorToNodeError(error as Error, { syscall: "opendir" });
   }
   if (err) {
     callback(err);
@@ -2395,11 +2395,11 @@ function opendirSync(
 
   try {
     /** Throws if path is invalid */
-    Deno.readDirSync(path);
+    Edno.readDirSync(path);
 
     return new Dir(path);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, { syscall: "opendir" });
+    throw ednoErrorToNodeError(err as Error, { syscall: "opendir" });
   }
 }
 
@@ -2464,7 +2464,7 @@ function writeSync(
     if (typeof offset === "object") {
       ({
         offset = 0,
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         length = buffer.byteLength - (offset as number),
         position = null,
       } = offsetOrOptions ?? kEmptyObject);
@@ -2478,10 +2478,10 @@ function writeSync(
       validateInteger(offset, "offset", 0);
     }
     if (typeof length !== "number") {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       length = buffer.byteLength - offset;
     }
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     validateOffsetLengthWrite(offset, length, buffer.byteLength);
     return innerWriteSync(fd, buffer, offset, length, position);
   }
@@ -2528,7 +2528,7 @@ function write(
     if (typeof offset === "object") {
       ({
         offset = 0,
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         length = buffer.byteLength - (offset as number),
         position = null,
       } = offsetOrOptions ?? kEmptyObject);
@@ -2539,15 +2539,15 @@ function write(
       validateInteger(offset, "offset", 0);
     }
     if (typeof length !== "number") {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       length = buffer.byteLength - offset;
     }
     if (typeof position !== "number") {
       position = null;
     }
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     validateOffsetLengthWrite(offset, length, buffer.byteLength);
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     innerWrite(fd, buffer, offset, length, position).then(
       (nwritten) => {
         callback!(null, nwritten, buffer);
@@ -2577,7 +2577,7 @@ function write(
   callback = maybeCallback(position);
   buffer = Buffer.from(str, length);
 
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   innerWrite(fd, buffer, 0, buffer.length, offset).then(
     (nwritten) => {
       callback(null, nwritten, buffer);
@@ -2634,15 +2634,15 @@ function writev(
     const chunks: Buffer[] = [];
     for (let i = 0; i < buffers.length; i++) {
       if (Buffer.isBuffer(buffers[i])) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         chunks.push(buffers[i]);
       } else {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         chunks.push(Buffer.from(buffers[i]));
       }
     }
     const pos = typeof position === "number" ? position : -1;
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const buffer = Buffer.concat(chunks);
     return await op_node_fs_write_deferred(fd, buffer, pos);
   };
@@ -2658,7 +2658,7 @@ function writev(
 
   if (typeof position !== "number") position = null;
 
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   innerWritev(fd, buffers, position).then(
     (nwritten) => callback(null, nwritten, buffers),
     (err) => callback(err),
@@ -2680,15 +2680,15 @@ function writevSync(
     const chunks: Buffer[] = [];
     for (let i = 0; i < buffers.length; i++) {
       if (Buffer.isBuffer(buffers[i])) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         chunks.push(buffers[i]);
       } else {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         chunks.push(Buffer.from(buffers[i]));
       }
     }
     const pos = typeof position === "number" ? position : -1;
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const buffer = Buffer.concat(chunks);
     return op_node_fs_write_sync(fd, buffer, pos);
   };
@@ -2738,7 +2738,7 @@ async function _writeFileGetRid(
   try {
     return await op_node_open(pathOrRid, stringToFlags(flag), 0o666);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall: "open",
       path: pathOrRid,
     });
@@ -2755,7 +2755,7 @@ function _writeFileGetRidSync(
   try {
     return op_node_open_sync(pathOrRid, stringToFlags(flag), 0o666);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall: "open",
       path: pathOrRid,
     });
@@ -2832,7 +2832,7 @@ function writeFile(
       _checkAborted(signal);
 
       if (!isRid && mode) {
-        await Deno.chmod(pathOrRid as string, mode);
+        await Edno.chmod(pathOrRid as string, mode);
         _checkAborted(signal);
       }
 
@@ -2853,7 +2853,7 @@ function writeFile(
         });
       }
     } catch (e) {
-      error = denoWriteFileErrorToNodeError(e as Error, { syscall });
+      error = ednoWriteFileErrorToNodeError(e as Error, { syscall });
     } finally {
       // Make sure to close resource
       if (!isRid && file) file.close();
@@ -2914,7 +2914,7 @@ function writeFileSync(
     };
 
     if (!isRid && mode) {
-      Deno.chmodSync(pathOrRid as string, mode);
+      Edno.chmodSync(pathOrRid as string, mode);
     }
 
     _writeAllSync(
@@ -2928,7 +2928,7 @@ function writeFileSync(
       fsExports.fsyncSync(fd);
     }
   } catch (e) {
-    error = denoWriteFileErrorToNodeError(e as Error, { syscall });
+    error = ednoWriteFileErrorToNodeError(e as Error, { syscall });
   } finally {
     // Make sure to close resource
     if (!isRid && file) file.close();
@@ -2943,34 +2943,34 @@ function _writeAllSync(
   encoding: BufferEncoding,
 ) {
   if (!_isCustomIterable(data)) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     data = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     let remaining = data.byteLength;
     while (remaining > 0) {
       const bytesWritten = w.writeSync(
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         data.subarray(data.byteLength - remaining),
       );
       remaining -= bytesWritten;
     }
   } else {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     for (const buf of data) {
       let toWrite = ArrayBufferIsView(buf) ? buf : Buffer.from(buf, encoding);
       toWrite = new Uint8Array(
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         toWrite.buffer,
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         toWrite.byteOffset,
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         toWrite.byteLength,
       );
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       let remaining = toWrite.byteLength;
       while (remaining > 0) {
         const bytesWritten = w.writeSync(
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           toWrite.subarray(toWrite.byteLength - remaining),
         );
         remaining -= bytesWritten;
@@ -2986,13 +2986,13 @@ async function _writeAll(
   signal?: AbortSignal,
 ) {
   if (!_isCustomIterable(data)) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     data = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     let remaining = data.byteLength;
     while (remaining > 0) {
       const writeSize = MathMin(kWriteFileMaxChunkSize, remaining);
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       const offset = data.byteLength - remaining;
       const bytesWritten = await w.write(
         data.subarray(offset, offset + writeSize),
@@ -3001,23 +3001,23 @@ async function _writeAll(
       _checkAborted(signal);
     }
   } else {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     for await (const buf of data) {
       _checkAborted(signal);
       let toWrite = ArrayBufferIsView(buf) ? buf : Buffer.from(buf, encoding);
       toWrite = new Uint8Array(
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         toWrite.buffer,
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         toWrite.byteOffset,
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         toWrite.byteLength,
       );
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       let remaining = toWrite.byteLength;
       while (remaining > 0) {
         const writeSize = MathMin(kWriteFileMaxChunkSize, remaining);
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const offset = toWrite.byteLength - remaining;
         const bytesWritten = await w.write(
           toWrite.subarray(offset, offset + writeSize),
@@ -3110,7 +3110,7 @@ function getValidTime(
     typeof time === "number" &&
     (NumberIsNaN(time) || !NumberIsFinite(time))
   ) {
-    throw new Deno.errors.InvalidData(
+    throw new Edno.errors.InvalidData(
       `invalid ${name}, must not be infinity or NaN`,
     );
   }
@@ -3124,18 +3124,18 @@ function utimes(
   mtime: number | string | Date,
   callback: CallbackWithError,
 ) {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   path = getValidatedPath(path).toString();
 
   if (!callback) {
-    throw new Deno.errors.InvalidData("No callback function supplied");
+    throw new Edno.errors.InvalidData("No callback function supplied");
   }
 
   atime = getValidTime(atime, "atime");
   mtime = getValidTime(mtime, "mtime");
 
   PromisePrototypeThen(
-    Deno.utime(path, atime, mtime),
+    Edno.utime(path, atime, mtime),
     () => callback(null),
     callback,
   );
@@ -3146,12 +3146,12 @@ function utimesSync(
   atime: number | string | Date,
   mtime: number | string | Date,
 ) {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   path = getValidatedPath(path).toString();
   atime = getValidTime(atime, "atime");
   mtime = getValidTime(mtime, "mtime");
 
-  Deno.utimeSync(path, atime, mtime);
+  Edno.utimeSync(path, atime, mtime);
 }
 
 // -- symlink --
@@ -3198,7 +3198,7 @@ function symlink(
         const resolvedType = !err && stat.isDirectory() ? "dir" : "file";
 
         PromisePrototypeThen(
-          Deno.symlink(
+          Edno.symlink(
             target,
             path,
             { type: resolvedType },
@@ -3212,7 +3212,7 @@ function symlink(
   }
 
   PromisePrototypeThen(
-    Deno.symlink(
+    Edno.symlink(
       target,
       path,
       { type: linkType ?? "file" },
@@ -3241,7 +3241,7 @@ function symlinkSync(
     }
   }
 
-  Deno.symlinkSync(target, path, { type: type ?? "file" });
+  Edno.symlinkSync(target, path, { type: type ?? "file" });
 }
 
 // -- watch --
@@ -3318,7 +3318,7 @@ function asyncIterableToCallback<T>(
 ) {
   const iterator = iter[SymbolAsyncIterator]();
   function next() {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     PromisePrototypeThen(iterator.next(), (obj: IteratorResult<T>) => {
       if (obj.done) {
         callback(obj.value, true);
@@ -3345,7 +3345,7 @@ type IgnoreOption =
 
 let _lazyMinimatch: any = null;
 function getMinimatch() {
-  _lazyMinimatch ??= core.createLazyLoader("ext:deno_node/deps/minimatch.js");
+  _lazyMinimatch ??= core.createLazyLoader("ext:edno_node/deps/minimatch.js");
   return _lazyMinimatch();
 }
 
@@ -3404,7 +3404,7 @@ function createIgnoreMatcher(
       });
       ArrayPrototypePush(
         compiled,
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         (filename: string) => mm.match(filename),
       );
     } else if (ObjectPrototypeIsPrototypeOf(RegExpPrototype, matcher)) {
@@ -3453,7 +3453,7 @@ function encodeWatchFilename(
   if (encoding === "buffer") {
     return asBuffer;
   }
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return asBuffer.toString(encoding as BufferEncoding);
 }
 
@@ -3489,7 +3489,7 @@ function watch(
 
   validateIgnoreOption(options?.ignore, "options.ignore");
 
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   const watchPath = getValidatedPath(filename).toString();
 
   // Match Node: validate non-boolean `recursive`/`persistent` up front.
@@ -3505,18 +3505,18 @@ function watch(
   validateIgnoreOption(options?.ignore, "options.ignore");
   const ignoreMatcher = createIgnoreMatcher(options?.ignore);
 
-  // Open the underlying Deno.FsWatcher, but defer any failure to an
+  // Open the underlying Edno.FsWatcher, but defer any failure to an
   // 'error' event on the returned FSWatcher rather than throwing
-  // synchronously with a raw `Deno.errors.NotFound`. Editors that
+  // synchronously with a raw `Edno.errors.NotFound`. Editors that
   // atomically save (write to <file>.tmp.<pid>.<ts> then rename over
   // the original) can race the inotify watch and produce a transient
   // ENOENT here; callers using EventEmitter-style error handling
-  // (chokidar, vite) can't recover from a sync throw of a Deno error.
+  // (chokidar, vite) can't recover from a sync throw of a Edno error.
   // See denoland/deno#34396.
-  const notFoundProto = Deno.errors.NotFound.prototype;
+  const notFoundProto = Edno.errors.NotFound.prototype;
   const makeWatchNodeError = (e: unknown): Error => {
     // The notify crate's PathNotFound/WatchNotFound error messages don't
-    // include the "(os error N)" suffix that `denoErrorToNodeError` parses,
+    // include the "(os error N)" suffix that `ednoErrorToNodeError` parses,
     // so detect NotFound by class and build a Node-style ENOENT manually.
     if (ObjectPrototypeIsPrototypeOf(notFoundProto, e)) {
       return uvException({
@@ -3525,29 +3525,29 @@ function watch(
         path: watchPath,
       });
     }
-    return denoErrorToNodeError(e as Error, {
+    return ednoErrorToNodeError(e as Error, {
       syscall: "watch",
       path: watchPath,
     });
   };
 
-  let iterator: Deno.FsWatcher | undefined;
+  let iterator: Edno.FsWatcher | undefined;
   let openError: Error | undefined;
   let resolvedWatchPath = watchPath;
   try {
     // Pre-validate path existence so missing-path failures surface as a
-    // typed `Deno.errors.NotFound` consistently across platforms. The
+    // typed `Edno.errors.NotFound` consistently across platforms. The
     // notify crate's Windows backend (`add_watch` in src/windows.rs)
     // reports a missing path as a Generic error rather than a typed
     // NotFound; runtime/ops/fs_events.rs maps that message to NotFound so
     // the prototype check in makeWatchNodeError above also covers paths
     // that vanish between this check and the watch (or mid-watch), see
     // denoland/deno#35855.
-    Deno.lstatSync(watchPath);
-    iterator = Deno.watchFs(watchPath, { recursive });
+    Edno.lstatSync(watchPath);
+    iterator = Edno.watchFs(watchPath, { recursive });
     // Resolve the watched path once so we can compute relative paths.
     // Use realPathSync to resolve symlinks (e.g. macOS /var -> /private/var)
-    // since Deno.watchFs returns real (symlink-resolved) paths.
+    // since Edno.watchFs returns real (symlink-resolved) paths.
     resolvedWatchPath = realpathSync(watchPath) as string;
   } catch (e) {
     if (iterator) {
@@ -3560,7 +3560,7 @@ function watch(
   }
 
   if (iterator) {
-    asyncIterableToCallback<Deno.FsEvent>(iterator, (val, done) => {
+    asyncIterableToCallback<Edno.FsEvent>(iterator, (val, done) => {
       if (done) return;
       // Node.js returns the relative path from the watched directory for
       // recursive watches, but just the basename for non-recursive watches.
@@ -3586,7 +3586,7 @@ function watch(
       iterator.close();
     } catch (e) {
       if (
-        ObjectPrototypeIsPrototypeOf(Deno.errors.BadResource.prototype, e)
+        ObjectPrototypeIsPrototypeOf(Edno.errors.BadResource.prototype, e)
       ) {
         // already closed
         return;
@@ -3637,7 +3637,7 @@ function watchPromise(
     ignore?: IgnoreOption;
   },
 ): AsyncIterable<{ eventType: string; filename: string | Buffer | null }> {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   const watchPath = getValidatedPath(filename).toString();
 
   const recursive = options?.recursive ?? false;
@@ -3645,7 +3645,7 @@ function watchPromise(
   validateAbortSignal(signal, "options.signal");
   validateIgnoreOption(options?.ignore, "options.ignore");
   const ignoreMatcher = createIgnoreMatcher(options?.ignore);
-  const watcher = Deno.watchFs(watchPath, {
+  const watcher = Edno.watchFs(watchPath, {
     recursive,
   });
   const resolvedWatchPath = realpathSync(watchPath) as string;
@@ -3684,7 +3684,7 @@ function watchPromise(
         throw abortError();
       }
       while (true) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const iterResult = await fsIterable.next();
         if (iterResult.done) {
           cleanupAbort();
@@ -3743,7 +3743,7 @@ function watchFile(
   listenerOrOptions: WatchFileListener | WatchFileOptions,
   listener?: WatchFileListener,
 ): StatWatcher {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   const watchPath = getValidatedPath(filename).toString();
   const handler = typeof listenerOrOptions === "function"
     ? listenerOrOptions
@@ -3770,7 +3770,7 @@ function unwatchFile(
   filename: string | Buffer | URL,
   listener?: WatchFileListener,
 ) {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   const watchPath = getValidatedPath(filename).toString();
   const watcher = MapPrototypeGet(statWatchers, watchPath);
 
@@ -3896,7 +3896,7 @@ class StatWatcher extends EventEmitter {
     lazyProcess().default.nextTick(() => this.emit("stop"));
   }
   // Node's ref/unref toggle whether the StatWatcher's internal handle keeps
-  // the event loop alive (see lib/internal/fs/watchers.js). In Deno the
+  // the event loop alive (see lib/internal/fs/watchers.js). In Edno the
   // handle is the interval Timeout used between poll iterations, so we
   // ref/unref that.
   ref() {
@@ -3914,11 +3914,11 @@ class StatWatcher extends EventEmitter {
 class FSWatcher extends EventEmitter {
   #closer: () => void;
   #closed = false;
-  #watcher: () => Deno.FsWatcher | undefined;
+  #watcher: () => Edno.FsWatcher | undefined;
 
   constructor(
     closer: () => void,
-    getter: () => Deno.FsWatcher | undefined,
+    getter: () => Edno.FsWatcher | undefined,
   ) {
     super();
     this.#closer = closer;
@@ -3943,7 +3943,7 @@ class FSWatcher extends EventEmitter {
 type NodeFsEventType = "rename" | "change";
 
 function convertDenoFsEventToNodeFsEvent(
-  kind: Deno.FsEvent["kind"],
+  kind: Edno.FsEvent["kind"],
 ): NodeFsEventType {
   if (kind === "create" || kind === "remove") {
     return "rename";

@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/workspace-member",
+  "name": "@ednotest/workspace-member",
   "exports": "./mod.ts",
   "imports": {
     "foo": "./sub/file.ts"

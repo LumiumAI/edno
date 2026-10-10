@@ -3,11 +3,11 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use deno_core::anyhow::anyhow;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::serde_json::json;
-use deno_core::unsync::spawn;
+use edno_core::anyhow::anyhow;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::serde_json::json;
+use edno_core::unsync::spawn;
 use lsp_types::Uri;
 use tower_lsp::lsp_types as lsp;
 use tower_lsp::lsp_types::ConfigurationItem;
@@ -351,11 +351,11 @@ impl ClientTrait for TowerClient {
         let mut configs = configs.into_iter();
         let mut result = Vec::with_capacity(scopes.len());
         for _ in 0..scopes.len() {
-          let deno = json!(configs.next());
+          let edno = json!(configs.next());
           let javascript = json!(configs.next());
           let typescript = json!(configs.next());
           result.push(WorkspaceSettings::from_raw_settings(
-            deno, javascript, typescript,
+            edno, javascript, typescript,
           ));
         }
         Ok(result)

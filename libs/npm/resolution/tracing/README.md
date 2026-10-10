@@ -12,7 +12,7 @@ This will output something like:
 
 ```
 ==============
-Trace output ready! Please open your browser to: file:///.../deno-npm-trace.html
+Trace output ready! Please open your browser to: file:///.../edno-npm-trace.html
 ==============
 ```
 

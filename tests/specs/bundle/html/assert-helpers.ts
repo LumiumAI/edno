@@ -1,5 +1,5 @@
 export function assertFileContains(path: string, pattern: string | RegExp) {
-  const contents = Deno.readTextFileSync(path);
+  const contents = Edno.readTextFileSync(path);
   let matcher: (s: string) => boolean;
   if (typeof pattern === "string") {
     matcher = (s) => s.includes(pattern);
@@ -27,6 +27,6 @@ export function assertFileDoesNotContain(
   let message = "";
   message += "file contains the pattern: " + path + "\n";
   message += "did not want: " + pattern + "\n";
-  message += "found: " + Deno.readTextFileSync(path) + "\n";
+  message += "found: " + Edno.readTextFileSync(path) + "\n";
   throw new Error(message);
 }

@@ -12,7 +12,7 @@ use util::assert_not_contains;
 #[test]
 fn fmt_test() {
   let context = TestContext::default();
-  let t = context.deno_dir();
+  let t = context.edno_dir();
   let testdata_fmt_dir = util::testdata_path().join("fmt");
   let fixed_js = testdata_fmt_dir.join("badly_formatted_fixed.js");
   let badly_formatted_original_js =
@@ -186,7 +186,7 @@ fn fmt_test() {
 
 #[test]
 fn fmt_stdin_syntax_error() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("fmt")
     .arg("-")
@@ -238,7 +238,7 @@ fn fmt_with_glob_config() {
 
   let cmd_output = context
     .new_command()
-    .args("fmt --check --config deno.glob.json")
+    .args("fmt --check --config edno.glob.json")
     .run();
 
   cmd_output.assert_exit_code(1);
@@ -275,7 +275,7 @@ fn fmt_with_glob_config_and_flags() {
 
   let cmd_output = context
     .new_command()
-    .args("fmt --check --config deno.glob.json --ignore=glob/nested/**/bar.ts")
+    .args("fmt --check --config edno.glob.json --ignore=glob/nested/**/bar.ts")
     .run();
 
   cmd_output.assert_exit_code(1);
@@ -305,7 +305,7 @@ fn fmt_with_glob_config_and_flags() {
   assert_contains!(output, "Found 9 not formatted files in 9 files");
   let cmd_output = context
     .new_command()
-    .args("fmt --check --config deno.glob.json glob/data/test1.?s")
+    .args("fmt --check --config edno.glob.json glob/data/test1.?s")
     .run();
 
   cmd_output.assert_exit_code(1);
@@ -326,7 +326,7 @@ fn fmt_with_glob_config_and_flags() {
 fn opt_out_top_level_exclude_via_fmt_unexclude() {
   let context = TestContextBuilder::new().use_temp_cwd().build();
   let temp_dir = context.temp_dir().path();
-  temp_dir.join("deno.json").write_json(&json!({
+  temp_dir.join("edno.json").write_json(&json!({
     "fmt": {
       "exclude": [ "!excluded.ts" ]
     },
@@ -368,7 +368,7 @@ fn test_tty_non_workspace_directory() {
 #[test]
 fn fmt_check_fail_fast_stops_on_first_error() {
   let context = TestContext::default();
-  let t = context.deno_dir();
+  let t = context.edno_dir();
 
   // Create multiple badly formatted files
   let bad1 = t.path().join("bad1.ts");
@@ -406,7 +406,7 @@ fn fmt_check_fail_fast_stops_on_first_error() {
 #[test]
 fn fmt_check_fail_fast_with_no_errors() {
   let context = TestContext::default();
-  let t = context.deno_dir();
+  let t = context.edno_dir();
 
   // Create properly formatted files
   let good1 = t.path().join("good1.ts");
@@ -433,7 +433,7 @@ fn fmt_check_fail_fast_with_no_errors() {
 #[test]
 fn fmt_check_fail_fast_requires_check() {
   let context = TestContext::default();
-  let t = context.deno_dir();
+  let t = context.edno_dir();
   let file = t.path().join("file.ts");
   file.write("const a = 1;\n");
 
@@ -456,7 +456,7 @@ fn fmt_check_fail_fast_requires_check() {
 #[test]
 fn fmt_check_fail_fast_quiet() {
   let context = TestContext::default();
-  let t = context.deno_dir();
+  let t = context.edno_dir();
 
   let bad1 = t.path().join("bad1.ts");
   bad1.write("const a   =   1\n");

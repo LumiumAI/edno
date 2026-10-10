@@ -1,2 +1,2 @@
-Task main:foo deno run main.ts
+Task main:foo edno run main.ts
 main

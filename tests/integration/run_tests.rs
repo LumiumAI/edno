@@ -32,9 +32,9 @@ const CODE_CACHE_DB_FILE_NAME: &str = "v8_code_cache_v2";
 // localStorage cache based on the origin of the location URL.
 #[test]
 fn webstorage_location_shares_origin() {
-  let deno_dir = util::new_deno_dir();
+  let edno_dir = util::new_deno_dir();
 
-  let output = util::deno_cmd_with_deno_dir(&deno_dir)
+  let output = util::edno_cmd_with_deno_dir(&edno_dir)
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--location")
@@ -48,7 +48,7 @@ fn webstorage_location_shares_origin() {
   assert!(output.status.success());
   assert_eq!(output.stdout, b"Storage { length: 0 }\n");
 
-  let output = util::deno_cmd_with_deno_dir(&deno_dir)
+  let output = util::edno_cmd_with_deno_dir(&edno_dir)
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--location")
@@ -60,7 +60,7 @@ fn webstorage_location_shares_origin() {
     .wait_with_output()
     .unwrap();
   assert!(output.status.success());
-  assert_eq!(output.stdout, b"Storage { hello: \"deno\", length: 1 }\n");
+  assert_eq!(output.stdout, b"Storage { hello: \"edno\", length: 1 }\n");
 }
 
 // test to ensure that when a --config file is set, but no --location, that
@@ -87,7 +87,7 @@ fn webstorage_config_file() {
     .new_command()
     .args("run --config run/webstorage/config_a.jsonc run/webstorage/logger.ts")
     .run()
-    .assert_matches_text("Storage { hello: \"deno\", length: 1 }\n");
+    .assert_matches_text("Storage { hello: \"edno\", length: 1 }\n");
 }
 
 // tests to ensure `--config` does not effect persisted storage when a
@@ -104,7 +104,7 @@ fn webstorage_location_precedes_config() {
   context.new_command()
     .args("run --location https://example.com/b.ts --config run/webstorage/config_b.jsonc run/webstorage/logger.ts")
     .run()
-    .assert_matches_text("Storage { hello: \"deno\", length: 1 }\n");
+    .assert_matches_text("Storage { hello: \"edno\", length: 1 }\n");
 }
 
 // test to ensure that when there isn't a configuration or location, that the
@@ -129,23 +129,23 @@ fn webstorage_main_module() {
     .new_command()
     .args("run run/webstorage/fixture.ts")
     .run()
-    .assert_matches_text("Storage { hello: \"deno\", length: 1 }\n");
+    .assert_matches_text("Storage { hello: \"edno\", length: 1 }\n");
 }
 
 #[test]
 fn _083_legacy_external_source_map() {
   let _g = util::http_server();
-  let deno_dir = TempDir::new();
+  let edno_dir = TempDir::new();
   let module_url = url::Url::parse(
     "http://localhost:4545/run/083_legacy_external_source_map.ts",
   )
   .unwrap();
   // Write a faulty old external source map.
-  let faulty_map_path = deno_dir.path().join("gen/http/localhost_port_4545/9576bd5febd0587c5c4d88d57cb3ac8ebf2600c529142abe3baa9a751d20c334.js.map");
+  let faulty_map_path = edno_dir.path().join("gen/http/localhost_port_4545/9576bd5febd0587c5c4d88d57cb3ac8ebf2600c529142abe3baa9a751d20c334.js.map");
   faulty_map_path.parent().create_dir_all();
   faulty_map_path.write(r#"{\"version\":3,\"file\":\"\",\"sourceRoot\":\"\",\"sources\":[\"http://localhost:4545/083_legacy_external_source_map.ts\"],\"names\":[],\"mappings\":\";AAAA,MAAM,IAAI,KAAK,CAAC,KAAK,CAAC,CAAC\"}"#);
-  let output = Command::new(util::deno_exe_path())
-    .env("DENO_DIR", deno_dir.path())
+  let output = Command::new(util::edno_exe_path())
+    .env("EDNO_DIR", edno_dir.path())
     .current_dir(util::testdata_path())
     .arg("run")
     .arg(module_url.to_string())
@@ -167,9 +167,9 @@ fn _090_run_permissions_request() {
     .args_vec(["run", "--quiet", "run/090_run_permissions_request.ts"])
     .with_pty(|mut console| {
       console.expect(concat!(
-        "┏ ⚠️  Deno requests run access to \"ls\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests run access to \"ls\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-run\r\n",
         "┠─ Run again with --allow-run to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all run permissions)",
@@ -178,9 +178,9 @@ fn _090_run_permissions_request() {
       console.write_line_raw("y");
       console.expect("Granted run access to \"ls\".");
       console.expect(concat!(
-        "┏ ⚠️  Deno requests run access to \"cat\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests run access to \"cat\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-run\r\n",
         "┠─ Run again with --allow-run to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all run permissions)",
@@ -200,9 +200,9 @@ fn _090_run_permissions_request_sync() {
     .args_vec(["run", "--quiet", "run/090_run_permissions_request_sync.ts"])
     .with_pty(|mut console| {
       console.expect(concat!(
-        "┏ ⚠️  Deno requests run access to \"ls\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests run access to \"ls\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-run\r\n",
         "┠─ Run again with --allow-run to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all run permissions)",
@@ -211,9 +211,9 @@ fn _090_run_permissions_request_sync() {
       console.write_line_raw("y");
       console.expect("Granted run access to \"ls\".");
       console.expect(concat!(
-        "┏ ⚠️  Deno requests run access to \"cat\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests run access to \"cat\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-run\r\n",
         "┠─ Run again with --allow-run to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all run permissions)",
@@ -234,9 +234,9 @@ fn permissions_prompt_allow_all() {
     .with_pty(|mut console| {
       // "run" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests run access to \"FOO\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests run access to \"FOO\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-run\r\n",
         "┠─ Run again with --allow-run to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all run permissions)",
@@ -246,9 +246,9 @@ fn permissions_prompt_allow_all() {
       console.expect("Granted all run access.");
       // "read" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests read access to \"FOO\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests read access to \"FOO\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
         "┠─ Run again with --allow-read to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -258,9 +258,9 @@ fn permissions_prompt_allow_all() {
       console.expect("Granted all read access.");
       // "write" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests write access to \"FOO\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests write access to \"FOO\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-write\r\n",
         "┠─ Run again with --allow-write to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all write permissions)",
@@ -270,9 +270,9 @@ fn permissions_prompt_allow_all() {
       console.expect("Granted all write access.");
       // "net" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests net access to \"foo\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests net access to \"foo\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-net\r\n",
         "┠─ Run again with --allow-net to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all net permissions)",
@@ -282,9 +282,9 @@ fn permissions_prompt_allow_all() {
       console.expect("Granted all net access.");
       // "env" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests env access to \"FOO\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests env access to \"FOO\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-env\r\n",
         "┠─ Run again with --allow-env to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all env permissions)",
@@ -294,9 +294,9 @@ fn permissions_prompt_allow_all() {
       console.expect("Granted all env access.");
       // "sys" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests sys access to \"loadavg\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests sys access to \"loadavg\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-sys\r\n",
         "┠─ Run again with --allow-sys to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all sys permissions)",
@@ -306,9 +306,9 @@ fn permissions_prompt_allow_all() {
       console.expect("Granted all sys access.");
       // "ffi" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests ffi access to \"FOO\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests ffi access to \"FOO\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-ffi\r\n",
         "┠─ Run again with --allow-ffi to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all ffi permissions)",
@@ -328,8 +328,8 @@ fn permissions_prompt_allow_all_2() {
     .with_pty(|mut console| {
       // "env" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests env access to \"FOO\".\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests env access to \"FOO\".\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-env\r\n",
         "┠─ Run again with --allow-env to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all env permissions)",
@@ -340,9 +340,9 @@ fn permissions_prompt_allow_all_2() {
 
       // "sys" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests sys access to \"loadavg\".\r\n",
-        "┠─ Requested by `Deno.loadavg()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests sys access to \"loadavg\".\r\n",
+        "┠─ Requested by `Edno.loadavg()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-sys\r\n",
         "┠─ Run again with --allow-sys to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all sys permissions)",
@@ -355,9 +355,9 @@ fn permissions_prompt_allow_all_2() {
       // "read" permissions
       test_util::assertions::assert_wildcard_match(&text, concat!(
         "\r\n",
-        "┏ ⚠️  Deno requests read access to \"[WILDCARD]tests[WILDCHAR]testdata\".\r\n",
-        "┠─ Requested by `Deno.lstatSync()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests read access to \"[WILDCARD]tests[WILDCHAR]testdata\".\r\n",
+        "┠─ Requested by `Edno.lstatSync()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
         "┠─ Run again with --allow-read to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -376,9 +376,9 @@ fn permissions_prompt_allow_all_lowercase_a() {
     .with_pty(|mut console| {
       // "run" permissions
       console.expect(concat!(
-        "┏ ⚠️  Deno requests run access to \"FOO\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests run access to \"FOO\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-run\r\n",
         "┠─ Run again with --allow-run to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all run permissions)",
@@ -428,9 +428,9 @@ fn permissions_cache() {
     .with_pty(|mut console| {
       console.expect(concat!(
         "prompt\r\n",
-        "┏ ⚠️  Deno requests read access to \"foo\".\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests read access to \"foo\".\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
         "┠─ Run again with --allow-read to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -447,14 +447,14 @@ fn permissions_cache() {
 fn permissions_trace() {
   TestContext::default()
     .new_command()
-    .env("DENO_TRACE_PERMISSIONS", "1")
+    .env("EDNO_TRACE_PERMISSIONS", "1")
     .args_vec(["run", "--quiet", "run/permissions_trace.ts"])
     .with_pty(|mut console| {
       let text = console.read_until("Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all sys permissions)");
       test_util::assertions::assert_wildcard_match(&text, concat!(
-      "┏ ⚠️  Deno requests sys access to \"hostname\".\r\n",
-      "┠─ Requested by `Deno.hostname()` API.\r\n",
-      "┃  ├─ Object.hostname (ext:deno_os/30_os.js:[WILDLINE]:[WILDLINE])\r\n",
+      "┏ ⚠️  Edno requests sys access to \"hostname\".\r\n",
+      "┠─ Requested by `Edno.hostname()` API.\r\n",
+      "┃  ├─ Object.hostname (ext:edno_os/30_os.js:[WILDLINE]:[WILDLINE])\r\n",
       "┃  ├─ foo (file://[WILDCARD]/run/permissions_trace.ts:2:8)\r\n",
       "┃  ├─ bar (file://[WILDCARD]/run/permissions_trace.ts:6:3)\r\n",
       "┃  └─ file://[WILDCARD]/run/permissions_trace.ts:9:1\r\n",
@@ -477,7 +477,7 @@ fn permissions_audit() {
 
   ctx
     .new_command()
-    .env("DENO_AUDIT_PERMISSIONS", &path)
+    .env("EDNO_AUDIT_PERMISSIONS", &path)
     .args_vec(["run", "-A", "run/permissions_audit.ts"])
     .run()
     .skip_output_check();
@@ -501,8 +501,8 @@ fn permissions_audit_with_traces() {
 
   ctx
     .new_command()
-    .env("DENO_AUDIT_PERMISSIONS", &path)
-    .env("DENO_TRACE_PERMISSIONS", "1")
+    .env("EDNO_AUDIT_PERMISSIONS", &path)
+    .env("EDNO_TRACE_PERMISSIONS", "1")
     .args_vec(["run", "-A", "run/permissions_audit.ts"])
     .run()
     .skip_output_check();
@@ -526,7 +526,7 @@ fn lock_redirects() {
     .add_npm_env_vars()
     .build();
   let temp_dir = context.temp_dir();
-  temp_dir.write("deno.json", "{}"); // cause a lockfile to be created
+  temp_dir.write("edno.json", "{}"); // cause a lockfile to be created
   temp_dir.write(
     "main.ts",
     "import 'http://localhost:4546/run/001_hello.js';",
@@ -546,16 +546,16 @@ fn lock_redirects() {
   }
 }
 "#;
-  assert_eq!(temp_dir.read_to_string("deno.lock"), initial_lockfile_text);
+  assert_eq!(temp_dir.read_to_string("edno.lock"), initial_lockfile_text);
   context
     .new_command()
     .args("run --allow-import main.ts")
     .run()
     .assert_matches_text("Hello World\n");
-  assert_eq!(temp_dir.read_to_string("deno.lock"), initial_lockfile_text);
+  assert_eq!(temp_dir.read_to_string("edno.lock"), initial_lockfile_text);
 
   // now try changing where the redirect occurs in the lockfile
-  temp_dir.write("deno.lock", r#"{
+  temp_dir.write("edno.lock", r#"{
   "version": "5",
   "redirects": {
     "http://localhost:4546/run/001_hello.js": "http://localhost:4545/echo.ts"
@@ -570,7 +570,7 @@ fn lock_redirects() {
   // the redirects as they're currently stored separately
   temp_dir.write(
     "main.ts",
-    "import 'http://localhost:4546/run/001_hello.js';\n import 'npm:@denotest/esm-basic';\n",
+    "import 'http://localhost:4546/run/001_hello.js';\n import 'npm:@ednotest/esm-basic';\n",
   );
 
   // it should use the echo script instead
@@ -580,19 +580,19 @@ fn lock_redirects() {
     .run()
     .assert_matches_text(concat!(
       "Download http://localhost:4545/echo.ts\n",
-      "Download http://localhost:4260/@denotest%2fesm-basic\n",
-      "Download http://localhost:4260/@denotest/esm-basic/1.0.0.tgz\n",
+      "Download http://localhost:4260/@ednotest%2fesm-basic\n",
+      "Download http://localhost:4260/@ednotest/esm-basic/1.0.0.tgz\n",
       "Hi, there",
     ));
   util::assertions::assert_wildcard_match(
-    &temp_dir.read_to_string("deno.lock"),
+    &temp_dir.read_to_string("edno.lock"),
     r#"{
   "version": "5",
   "specifiers": {
-    "npm:@denotest/esm-basic@*": "1.0.0"
+    "npm:@ednotest/esm-basic@*": "1.0.0"
   },
   "npm": {
-    "@denotest/esm-basic@1.0.0": {
+    "@ednotest/esm-basic@1.0.0": {
       "integrity": "sha512-[WILDCARD]"
     }
   },
@@ -617,15 +617,15 @@ fn lock_deno_json_package_json_deps() {
     .add_jsr_env_vars()
     .build();
   let temp_dir = context.temp_dir().path();
-  let deno_json = temp_dir.join("deno.json");
+  let edno_json = temp_dir.join("edno.json");
   let package_json = temp_dir.join("package.json");
 
   // add a jsr and npm dependency
-  deno_json.write_json(&json!({
+  edno_json.write_json(&json!({
     "nodeModulesDir": "auto",
     "imports": {
-      "esm-basic": "npm:@denotest/esm-basic",
-      "module_graph": "jsr:@denotest/module-graph@1.4",
+      "esm-basic": "npm:@ednotest/esm-basic",
+      "module_graph": "jsr:@ednotest/module-graph@1.4",
     }
   }));
   let main_ts = temp_dir.join("main.ts");
@@ -635,45 +635,45 @@ fn lock_deno_json_package_json_deps() {
     .args("cache main.ts")
     .run()
     .skip_output_check();
-  let lockfile = temp_dir.join("deno.lock");
+  let lockfile = temp_dir.join("edno.lock");
   let esm_basic_integrity =
-    get_lockfile_npm_package_integrity(&lockfile, "@denotest/esm-basic@1.0.0");
+    get_lockfile_npm_package_integrity(&lockfile, "@ednotest/esm-basic@1.0.0");
   lockfile.assert_matches_json(json!({
     "version": "5",
     "specifiers": {
-      "jsr:@denotest/module-graph@1.4": "1.4.0",
-      "npm:@denotest/esm-basic@*": "1.0.0"
+      "jsr:@ednotest/module-graph@1.4": "1.4.0",
+      "npm:@ednotest/esm-basic@*": "1.0.0"
     },
     "jsr": {
-      "@denotest/module-graph@1.4.0": {
+      "@ednotest/module-graph@1.4.0": {
         "integrity": "32de0973c5fa55772326fcd504a757f386d2b010db3e13e78f3bcf851e69473d"
       }
     },
     "npm": {
-      "@denotest/esm-basic@1.0.0": {
+      "@ednotest/esm-basic@1.0.0": {
         "integrity": esm_basic_integrity,
-        "tarball": "http://localhost:4260/@denotest/esm-basic/1.0.0.tgz"
+        "tarball": "http://localhost:4260/@ednotest/esm-basic/1.0.0.tgz"
       }
     },
     "workspace": {
       "dependencies": [
-        "jsr:@denotest/module-graph@1.4",
-        "npm:@denotest/esm-basic@*"
+        "jsr:@ednotest/module-graph@1.4",
+        "npm:@ednotest/esm-basic@*"
       ]
     }
   }));
 
-  // now remove the npm dependency from the deno.json and move
+  // now remove the npm dependency from the edno.json and move
   // it to a package.json that uses an alias
-  deno_json.write_json(&json!({
+  edno_json.write_json(&json!({
     "nodeModulesDir": "auto",
     "imports": {
-      "module_graph": "jsr:@denotest/module-graph@1.4",
+      "module_graph": "jsr:@ednotest/module-graph@1.4",
     }
   }));
   package_json.write_json(&json!({
     "dependencies": {
-      "esm-basic": "npm:@denotest/esm-basic"
+      "esm-basic": "npm:@ednotest/esm-basic"
     }
   }));
   context
@@ -691,27 +691,27 @@ fn lock_deno_json_package_json_deps() {
   lockfile.assert_matches_json(json!({
     "version": "5",
     "specifiers": {
-      "jsr:@denotest/module-graph@1.4": "1.4.0",
-      "npm:@denotest/esm-basic@*": "1.0.0"
+      "jsr:@ednotest/module-graph@1.4": "1.4.0",
+      "npm:@ednotest/esm-basic@*": "1.0.0"
     },
     "jsr": {
-      "@denotest/module-graph@1.4.0": {
+      "@ednotest/module-graph@1.4.0": {
         "integrity": "32de0973c5fa55772326fcd504a757f386d2b010db3e13e78f3bcf851e69473d"
       }
     },
     "npm": {
-      "@denotest/esm-basic@1.0.0": {
+      "@ednotest/esm-basic@1.0.0": {
         "integrity": esm_basic_integrity,
-        "tarball": "http://localhost:4260/@denotest/esm-basic/1.0.0.tgz"
+        "tarball": "http://localhost:4260/@ednotest/esm-basic/1.0.0.tgz"
       }
     },
     "workspace": {
       "dependencies": [
-        "jsr:@denotest/module-graph@1.4"
+        "jsr:@ednotest/module-graph@1.4"
       ],
       "packageJson": {
         "dependencies": [
-          "npm:@denotest/esm-basic@*"
+          "npm:@ednotest/esm-basic@*"
         ]
       }
     }
@@ -729,22 +729,22 @@ fn lock_deno_json_package_json_deps() {
   lockfile.assert_matches_json(json!({
     "version": "5",
     "specifiers": {
-      "jsr:@denotest/module-graph@1.4": "1.4.0",
+      "jsr:@ednotest/module-graph@1.4": "1.4.0",
     },
     "jsr": {
-      "@denotest/module-graph@1.4.0": {
+      "@ednotest/module-graph@1.4.0": {
         "integrity": "32de0973c5fa55772326fcd504a757f386d2b010db3e13e78f3bcf851e69473d"
       }
     },
     "workspace": {
       "dependencies": [
-        "jsr:@denotest/module-graph@1.4"
+        "jsr:@ednotest/module-graph@1.4"
       ]
     }
   }));
 
-  // now remove the deps from the deno.json
-  deno_json.write_json(&json!({
+  // now remove the deps from the edno.json
+  edno_json.write_json(&json!({
     "nodeModulesDir": "auto"
   }));
   main_ts.write("");
@@ -769,9 +769,9 @@ fn lock_deno_json_package_json_deps_workspace() {
     .build();
   let temp_dir = context.temp_dir().path();
 
-  // deno.json
-  let deno_json = temp_dir.join("deno.json");
-  deno_json.write_json(&json!({
+  // edno.json
+  let edno_json = temp_dir.join("edno.json");
+  edno_json.write_json(&json!({
     "nodeModulesDir": "auto"
   }));
 
@@ -780,12 +780,12 @@ fn lock_deno_json_package_json_deps_workspace() {
   package_json.write_json(&json!({
     "workspaces": ["package-a"],
     "dependencies": {
-      "@denotest/cjs-default-export": "1"
+      "@ednotest/cjs-default-export": "1"
     }
   }));
   // main.ts
   let main_ts = temp_dir.join("main.ts");
-  main_ts.write("import '@denotest/cjs-default-export';");
+  main_ts.write("import '@ednotest/cjs-default-export';");
 
   // package-a/package.json
   let a_package = temp_dir.join("package-a");
@@ -793,52 +793,52 @@ fn lock_deno_json_package_json_deps_workspace() {
   let a_package_json = a_package.join("package.json");
   a_package_json.write_json(&json!({
     "dependencies": {
-      "@denotest/esm-basic": "1"
+      "@ednotest/esm-basic": "1"
     }
   }));
   // package-a/main.ts
   let main_ts = a_package.join("main.ts");
-  main_ts.write("import '@denotest/esm-basic';");
+  main_ts.write("import '@ednotest/esm-basic';");
   context
     .new_command()
     .args("run package-a/main.ts")
     .run()
     .skip_output_check();
-  let lockfile = temp_dir.join("deno.lock");
+  let lockfile = temp_dir.join("edno.lock");
   let esm_basic_integrity =
-    get_lockfile_npm_package_integrity(&lockfile, "@denotest/esm-basic@1.0.0");
+    get_lockfile_npm_package_integrity(&lockfile, "@ednotest/esm-basic@1.0.0");
   let cjs_default_export_integrity = get_lockfile_npm_package_integrity(
     &lockfile,
-    "@denotest/cjs-default-export@1.0.0",
+    "@ednotest/cjs-default-export@1.0.0",
   );
 
   lockfile.assert_matches_json(json!({
     "version": "5",
     "specifiers": {
-      "npm:@denotest/cjs-default-export@1": "1.0.0",
-      "npm:@denotest/esm-basic@1": "1.0.0"
+      "npm:@ednotest/cjs-default-export@1": "1.0.0",
+      "npm:@ednotest/esm-basic@1": "1.0.0"
     },
     "npm": {
-      "@denotest/cjs-default-export@1.0.0": {
+      "@ednotest/cjs-default-export@1.0.0": {
         "integrity": cjs_default_export_integrity,
-        "tarball": "http://localhost:4260/@denotest/cjs-default-export/1.0.0.tgz"
+        "tarball": "http://localhost:4260/@ednotest/cjs-default-export/1.0.0.tgz"
       },
-      "@denotest/esm-basic@1.0.0": {
+      "@ednotest/esm-basic@1.0.0": {
         "integrity": esm_basic_integrity,
-        "tarball": "http://localhost:4260/@denotest/esm-basic/1.0.0.tgz"
+        "tarball": "http://localhost:4260/@ednotest/esm-basic/1.0.0.tgz"
       }
     },
     "workspace": {
       "packageJson": {
         "dependencies": [
-          "npm:@denotest/cjs-default-export@1"
+          "npm:@ednotest/cjs-default-export@1"
         ]
       },
       "members": {
         "package-a": {
           "packageJson": {
             "dependencies": [
-              "npm:@denotest/esm-basic@1"
+              "npm:@ednotest/esm-basic@1"
             ]
           }
         }
@@ -855,35 +855,35 @@ fn lock_deno_json_package_json_deps_workspace() {
   // now we should see the dependencies
   let cjs_default_export_integrity = get_lockfile_npm_package_integrity(
     &lockfile,
-    "@denotest/cjs-default-export@1.0.0",
+    "@ednotest/cjs-default-export@1.0.0",
   );
   let expected_lockfile = json!({
     "version": "5",
     "specifiers": {
-      "npm:@denotest/cjs-default-export@1": "1.0.0",
-      "npm:@denotest/esm-basic@1": "1.0.0"
+      "npm:@ednotest/cjs-default-export@1": "1.0.0",
+      "npm:@ednotest/esm-basic@1": "1.0.0"
     },
     "npm": {
-      "@denotest/cjs-default-export@1.0.0": {
+      "@ednotest/cjs-default-export@1.0.0": {
         "integrity": cjs_default_export_integrity,
-        "tarball": "http://localhost:4260/@denotest/cjs-default-export/1.0.0.tgz"
+        "tarball": "http://localhost:4260/@ednotest/cjs-default-export/1.0.0.tgz"
       },
-      "@denotest/esm-basic@1.0.0": {
+      "@ednotest/esm-basic@1.0.0": {
         "integrity": esm_basic_integrity,
-        "tarball": "http://localhost:4260/@denotest/esm-basic/1.0.0.tgz"
+        "tarball": "http://localhost:4260/@ednotest/esm-basic/1.0.0.tgz"
       }
     },
     "workspace": {
       "packageJson": {
         "dependencies": [
-          "npm:@denotest/cjs-default-export@1"
+          "npm:@ednotest/cjs-default-export@1"
         ]
       },
       "members": {
         "package-a": {
           "packageJson": {
             "dependencies": [
-              "npm:@denotest/esm-basic@1"
+              "npm:@ednotest/esm-basic@1"
             ]
           }
         }
@@ -939,7 +939,7 @@ fn type_directives_js_main() {
 
 #[test]
 fn no_validate_asm() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("run/no_validate_asm.js")
@@ -955,7 +955,7 @@ fn no_validate_asm() {
 
 #[test]
 fn exec_path() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--allow-read")
@@ -968,7 +968,7 @@ fn exec_path() {
   assert!(output.status.success());
   let stdout_str = std::str::from_utf8(&output.stdout).unwrap().trim();
   let actual = PathRef::new(std::path::Path::new(stdout_str)).canonicalize();
-  let expected = util::deno_exe_path().canonicalize();
+  let expected = util::edno_exe_path().canonicalize();
   assert_eq!(expected, actual);
 }
 
@@ -981,7 +981,7 @@ interface Lollipop {
 console.log("executing typescript");
 "#;
 
-  let mut p = util::deno_cmd()
+  let mut p = util::edno_cmd()
     .arg("run")
     .arg("--check")
     .arg("-")
@@ -1005,7 +1005,7 @@ i = "hello"
 console.log("executing javascript");
 "#;
 
-  let mut p = util::deno_cmd()
+  let mut p = util::edno_cmd()
     .args("run --ext js --check -")
     .stdin(std::process::Stdio::piped())
     .stdout_piped()
@@ -1033,15 +1033,15 @@ fn run_deno_script_constrained(
   script_path: test_util::PathRef,
   constraints: WinProcConstraints,
 ) -> Result<(), i64> {
-  let file_path = "assets/DenoWinRunner.ps1";
+  let file_path = "assets/EdnoWinRunner.ps1";
   let constraints = match constraints {
     WinProcConstraints::NoStdIn => "1",
     WinProcConstraints::NoStdOut => "2",
     WinProcConstraints::NoStdErr => "4",
   };
-  let deno_exe_path = util::deno_exe_path().to_string();
-  let deno_script_path = script_path.to_string();
-  let args = vec![&deno_exe_path[..], &deno_script_path[..], constraints];
+  let edno_exe_path = util::edno_exe_path().to_string();
+  let edno_script_path = script_path.to_string();
+  let args = vec![&edno_exe_path[..], &edno_script_path[..], constraints];
   util::run_powershell_script_file(file_path, args)
 }
 
@@ -1078,7 +1078,7 @@ fn should_not_panic_on_no_stderr() {
 #[cfg(not(windows))]
 #[test]
 fn should_not_panic_on_undefined_home_environment_variable() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("echo.ts")
@@ -1092,11 +1092,11 @@ fn should_not_panic_on_undefined_home_environment_variable() {
 
 #[test]
 fn should_not_panic_on_undefined_deno_dir_environment_variable() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("echo.ts")
-    .env_remove("DENO_DIR")
+    .env_remove("EDNO_DIR")
     .spawn()
     .unwrap()
     .wait_with_output()
@@ -1107,11 +1107,11 @@ fn should_not_panic_on_undefined_deno_dir_environment_variable() {
 #[cfg(not(windows))]
 #[test]
 fn should_not_panic_on_undefined_deno_dir_and_home_environment_variables() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("echo.ts")
-    .env_remove("DENO_DIR")
+    .env_remove("EDNO_DIR")
     .env_remove("HOME")
     .spawn()
     .unwrap()
@@ -1121,9 +1121,9 @@ fn should_not_panic_on_undefined_deno_dir_and_home_environment_variables() {
 }
 
 #[test]
-fn deno_log() {
-  // Without DENO_LOG the stderr is empty.
-  let output = util::deno_cmd()
+fn edno_log() {
+  // Without EDNO_LOG the stderr is empty.
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("run/001_hello.js")
@@ -1135,12 +1135,12 @@ fn deno_log() {
   assert!(output.status.success());
   assert!(output.stderr.is_empty());
 
-  // With DENO_LOG the stderr is not empty.
-  let output = util::deno_cmd()
+  // With EDNO_LOG the stderr is not empty.
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("run/001_hello.js")
-    .env("DENO_LOG", "debug")
+    .env("EDNO_LOG", "debug")
     .stderr_piped()
     .spawn()
     .unwrap()
@@ -1180,7 +1180,7 @@ mod permissions {
   #[test]
   fn with_allow() {
     for permission in &util::PERMISSION_VARIANTS {
-      let status = util::deno_cmd()
+      let status = util::edno_cmd()
         .current_dir(util::testdata_path())
         .arg("run")
         .arg(format!("--allow-{permission}"))
@@ -1212,7 +1212,7 @@ mod permissions {
   fn rw_inside_project_dir() {
     const PERMISSION_VARIANTS: [&str; 2] = ["read", "write"];
     for permission in &PERMISSION_VARIANTS {
-      let status = util::deno_cmd()
+      let status = util::edno_cmd()
         .current_dir(util::testdata_path())
         .arg("run")
         .arg(format!(
@@ -1255,7 +1255,7 @@ mod permissions {
   fn rw_inside_test_dir() {
     const PERMISSION_VARIANTS: [&str; 2] = ["read", "write"];
     for permission in &PERMISSION_VARIANTS {
-      let status = util::deno_cmd()
+      let status = util::edno_cmd()
         .current_dir(util::testdata_path())
         .arg("run")
         .arg(format!(
@@ -1303,7 +1303,7 @@ mod permissions {
     let test_dir = util::testdata_path();
     let js_dir = util::root_path().join("js");
     for permission in &PERMISSION_VARIANTS {
-      let status = util::deno_cmd()
+      let status = util::edno_cmd()
         .current_dir(util::testdata_path())
         .arg("run")
         .arg(format!("--allow-{permission}={test_dir},{js_dir}"))
@@ -1322,7 +1322,7 @@ mod permissions {
   fn rw_relative() {
     const PERMISSION_VARIANTS: [&str; 2] = ["read", "write"];
     for permission in &PERMISSION_VARIANTS {
-      let status = util::deno_cmd()
+      let status = util::edno_cmd()
         .current_dir(util::testdata_path())
         .arg("run")
         .arg(format!("--allow-{permission}=."))
@@ -1341,7 +1341,7 @@ mod permissions {
   fn rw_no_prefix() {
     const PERMISSION_VARIANTS: [&str; 2] = ["read", "write"];
     for permission in &PERMISSION_VARIANTS {
-      let status = util::deno_cmd()
+      let status = util::edno_cmd()
         .current_dir(util::testdata_path())
         .arg("run")
         .arg(format!("--allow-{permission}=tls/../"))
@@ -1558,9 +1558,9 @@ mod permissions {
       .args_vec(["run", "--quiet", "run/061_permissions_request.ts"])
       .with_pty(|mut console| {
         console.expect(concat!(
-          "┏ ⚠️  Deno requests read access to \"foo\".\r\n",
-          "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-          "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+          "┏ ⚠️  Edno requests read access to \"foo\".\r\n",
+          "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+          "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
           "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
           "┠─ Run again with --allow-read to bypass this prompt.\r\n",
           "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -1568,9 +1568,9 @@ mod permissions {
         console.human_delay();
         console.write_line_raw("y");
         console.expect(concat!(
-          "┏ ⚠️  Deno requests read access to \"bar\".\r\n",
-          "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-          "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+          "┏ ⚠️  Edno requests read access to \"bar\".\r\n",
+          "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+          "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
           "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
           "┠─ Run again with --allow-read to bypass this prompt.\r\n",
           "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -1590,9 +1590,9 @@ mod permissions {
       .args_vec(["run", "--quiet", "run/061_permissions_request_sync.ts"])
       .with_pty(|mut console| {
         console.expect(concat!(
-          "┏ ⚠️  Deno requests read access to \"foo\".\r\n",
-          "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-          "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+          "┏ ⚠️  Edno requests read access to \"foo\".\r\n",
+          "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+          "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
           "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
           "┠─ Run again with --allow-read to bypass this prompt.\r\n",
           "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -1600,9 +1600,9 @@ mod permissions {
         console.human_delay();
         console.write_line_raw("y");
         console.expect(concat!(
-          "┏ ⚠️  Deno requests read access to \"bar\".\r\n",
-          "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-          "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+          "┏ ⚠️  Edno requests read access to \"bar\".\r\n",
+          "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+          "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
           "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
           "┠─ Run again with --allow-read to bypass this prompt.\r\n",
           "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -1622,9 +1622,9 @@ mod permissions {
       .args_vec(["run", "--quiet", "run/062_permissions_request_global.ts"])
       .with_pty(|mut console| {
         console.expect(concat!(
-          "┏ ⚠️  Deno requests read access.\r\n",
-          "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-          "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+          "┏ ⚠️  Edno requests read access.\r\n",
+          "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+          "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
           "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
           "┠─ Run again with --allow-read to bypass this prompt.\r\n",
           "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -1647,9 +1647,9 @@ mod permissions {
       .args_vec(["run", "--quiet", "run/062_permissions_request_global_sync.ts"])
       .with_pty(|mut console| {
         console.expect(concat!(
-          "┏ ⚠️  Deno requests read access.\r\n",
-          "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-          "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+          "┏ ⚠️  Edno requests read access.\r\n",
+          "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+          "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
           "┠─ Learn more at: https://docs.deno.com/go/--allow-read\r\n",
           "┠─ Run again with --allow-read to bypass this prompt.\r\n",
           "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions)",
@@ -1690,7 +1690,7 @@ mod permissions {
           console.log("asdf");
         } catch (error) {
           console.error(error);
-          Deno.exit(1);
+          Edno.exit(1);
         }"#,
       ])
       .with_pty(|mut console| {
@@ -1769,9 +1769,9 @@ fn issue9750() {
       console.expect("Enter 'yy':");
       console.write_line_raw("yy");
       console.expect(concat!(
-        "┏ ⚠️  Deno requests env access.\r\n",
-        "┠─ Requested by `Deno.permissions.request()` API.\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests env access.\r\n",
+        "┠─ Requested by `Edno.permissions.request()` API.\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-env\r\n",
         "┠─ Run again with --allow-env to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all env permissions)",
@@ -1780,8 +1780,8 @@ fn issue9750() {
       console.write_line_raw("n");
       console.expect("Denied env access.");
       console.expect(concat!(
-        "┏ ⚠️  Deno requests env access to \"SECRET\".\r\n",
-        "┠─ To see a stack trace for this prompt, set the DENO_TRACE_PERMISSIONS environmental variable.\r\n",
+        "┏ ⚠️  Edno requests env access to \"SECRET\".\r\n",
+        "┠─ To see a stack trace for this prompt, set the EDNO_TRACE_PERMISSIONS environmental variable.\r\n",
         "┠─ Learn more at: https://docs.deno.com/go/--allow-env\r\n",
         "┠─ Run again with --allow-env to bypass this prompt.\r\n",
         "┗ Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all env permissions)",
@@ -1855,7 +1855,7 @@ fn issue12740() {
   let mod1_path = mod_dir.path().join("mod1.ts");
   let mod2_path = mod_dir.path().join("mod2.ts");
   mod1_path.write("");
-  let status = util::deno_cmd()
+  let status = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg(&mod1_path)
@@ -1868,7 +1868,7 @@ fn issue12740() {
   assert!(status.success());
   mod1_path.write("export { foo } from \"./mod2.ts\";");
   mod2_path.write("(");
-  let status = util::deno_cmd()
+  let status = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg(&mod1_path)
@@ -1887,10 +1887,10 @@ fn issue12807() {
   let mod_dir = TempDir::new();
   let mod1_path = mod_dir.path().join("mod1.ts");
   let mod2_path = mod_dir.path().join("mod2.ts");
-  // With a fresh `DENO_DIR`, run a module with a dependency and a type error.
-  mod1_path.write("import './mod2.ts'; Deno.exit('0');");
+  // With a fresh `EDNO_DIR`, run a module with a dependency and a type error.
+  mod1_path.write("import './mod2.ts'; Edno.exit('0');");
   mod2_path.write("console.log('Hello, world!');");
-  let status = util::deno_cmd()
+  let status = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--check")
@@ -1903,8 +1903,8 @@ fn issue12807() {
     .unwrap();
   assert!(!status.success());
   // Fix the type error and run again.
-  std::fs::write(&mod1_path, "import './mod2.ts'; Deno.exit(0);").unwrap();
-  let status = util::deno_cmd()
+  std::fs::write(&mod1_path, "import './mod2.ts'; Edno.exit(0);").unwrap();
+  let status = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--check")
@@ -1927,7 +1927,7 @@ fn package_json_no_node_modules_dir_created() {
     .build();
   let temp_dir = context.temp_dir();
 
-  temp_dir.write("deno.json", "{}");
+  temp_dir.write("edno.json", "{}");
   temp_dir.write("package.json", "{}");
   temp_dir.write("main.ts", "");
 
@@ -1945,7 +1945,7 @@ fn node_modules_dir_no_npm_specifiers_no_dir_created() {
     .build();
   let temp_dir = context.temp_dir();
 
-  temp_dir.write("deno.json", "{}");
+  temp_dir.write("edno.json", "{}");
   temp_dir.write("main.ts", "");
 
   context
@@ -1959,8 +1959,8 @@ fn node_modules_dir_no_npm_specifiers_no_dir_created() {
 #[test]
 fn check_local_then_remote() {
   let _http_guard = util::http_server();
-  let deno_dir = util::new_deno_dir();
-  let output = util::deno_cmd_with_deno_dir(&deno_dir)
+  let edno_dir = util::new_deno_dir();
+  let output = util::edno_cmd_with_deno_dir(&edno_dir)
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--allow-import")
@@ -1971,7 +1971,7 @@ fn check_local_then_remote() {
     .wait_with_output()
     .unwrap();
   assert!(output.status.success());
-  let output = util::deno_cmd_with_deno_dir(&deno_dir)
+  let output = util::edno_cmd_with_deno_dir(&edno_dir)
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--allow-import")
@@ -2005,12 +2005,12 @@ fn permission_request_with_no_prompt() {
 }
 
 #[test]
-fn deno_no_prompt_environment_variable() {
-  let output = util::deno_cmd()
+fn edno_no_prompt_environment_variable() {
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("run/no_prompt.ts")
-    .env("DENO_NO_PROMPT", "1")
+    .env("EDNO_NO_PROMPT", "1")
     .spawn()
     .unwrap()
     .wait_with_output()
@@ -2039,11 +2039,11 @@ fn running_declaration_files() {
 #[test]
 fn cache_test() {
   let _g = util::http_server();
-  let deno_dir = TempDir::new();
+  let edno_dir = TempDir::new();
   let module_url =
     url::Url::parse("http://localhost:4545/run/006_url_imports.ts").unwrap();
-  let output = Command::new(util::deno_exe_path())
-    .env("DENO_DIR", deno_dir.path())
+  let output = Command::new(util::edno_exe_path())
+    .env("EDNO_DIR", edno_dir.path())
     .current_dir(util::testdata_path())
     .arg("cache")
     .arg("--allow-import=localhost:4545")
@@ -2055,9 +2055,9 @@ fn cache_test() {
     .expect("Failed to spawn script");
   assert!(output.status.success());
 
-  let prg = util::deno_exe_path();
+  let prg = util::edno_exe_path();
   let output = Command::new(prg)
-    .env("DENO_DIR", deno_dir.path())
+    .env("EDNO_DIR", edno_dir.path())
     .env("HTTP_PROXY", "http://nil")
     .env("NO_COLOR", "1")
     .current_dir(util::testdata_path())
@@ -2082,11 +2082,11 @@ fn cache_test() {
 
 #[test]
 fn cache_invalidation_test() {
-  let deno_dir = TempDir::new();
-  let fixture_path = deno_dir.path().join("fixture.ts");
+  let edno_dir = TempDir::new();
+  let fixture_path = edno_dir.path().join("fixture.ts");
   fixture_path.write("console.log(\"42\");");
-  let output = Command::new(util::deno_exe_path())
-    .env("DENO_DIR", deno_dir.path())
+  let output = Command::new(util::edno_exe_path())
+    .env("EDNO_DIR", edno_dir.path())
     .current_dir(util::testdata_path())
     .arg("run")
     .arg(&fixture_path)
@@ -2096,8 +2096,8 @@ fn cache_invalidation_test() {
   let actual = std::str::from_utf8(&output.stdout).unwrap();
   assert_eq!(actual, "42\n");
   fixture_path.write("console.log(\"43\");");
-  let output = Command::new(util::deno_exe_path())
-    .env("DENO_DIR", deno_dir.path())
+  let output = Command::new(util::edno_exe_path())
+    .env("EDNO_DIR", edno_dir.path())
     .current_dir(util::testdata_path())
     .arg("run")
     .arg(fixture_path)
@@ -2110,11 +2110,11 @@ fn cache_invalidation_test() {
 
 #[test]
 fn cache_invalidation_test_no_check() {
-  let deno_dir = TempDir::new();
-  let fixture_path = deno_dir.path().join("fixture.ts");
+  let edno_dir = TempDir::new();
+  let fixture_path = edno_dir.path().join("fixture.ts");
   fixture_path.write("console.log(\"42\");");
-  let output = Command::new(util::deno_exe_path())
-    .env("DENO_DIR", deno_dir.path())
+  let output = Command::new(util::edno_exe_path())
+    .env("EDNO_DIR", edno_dir.path())
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--no-check")
@@ -2125,8 +2125,8 @@ fn cache_invalidation_test_no_check() {
   let actual = std::str::from_utf8(&output.stdout).unwrap();
   assert_eq!(actual, "42\n");
   fixture_path.write("console.log(\"43\");");
-  let output = Command::new(util::deno_exe_path())
-    .env("DENO_DIR", deno_dir.path())
+  let output = Command::new(util::edno_exe_path())
+    .env("EDNO_DIR", edno_dir.path())
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--no-check")
@@ -2164,7 +2164,7 @@ fn ts_dependency_recompilation() {
   )
   .unwrap();
 
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .env("NO_COLOR", "1")
     .arg("run")
@@ -2187,7 +2187,7 @@ fn ts_dependency_recompilation() {
   )
   .expect("error writing file");
 
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .env("NO_COLOR", "1")
     .arg("run")
@@ -2209,7 +2209,7 @@ fn ts_dependency_recompilation() {
 fn basic_auth_tokens() {
   let _g = util::http_server();
 
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::root_path())
     .arg("run")
     .arg("--allow-import")
@@ -2233,12 +2233,12 @@ fn basic_auth_tokens() {
       .contains("Module not found \"http://127.0.0.1:4554/run/001_hello.js\".")
   );
 
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::root_path())
     .arg("run")
     .arg("--allow-import")
     .arg("http://127.0.0.1:4554/run/001_hello.js")
-    .env("DENO_AUTH_TOKENS", "testuser123:testpassabc@127.0.0.1:4554")
+    .env("EDNO_AUTH_TOKENS", "testuser123:testpassabc@127.0.0.1:4554")
     .piped_output()
     .spawn()
     .unwrap()
@@ -2325,7 +2325,7 @@ fn test_resolve_dns() {
 
     // Pass: `--allow-net`
     {
-      let output = util::deno_cmd()
+      let output = util::edno_cmd()
         .current_dir(util::testdata_path())
         .env("NO_COLOR", "1")
         .arg("run")
@@ -2352,7 +2352,7 @@ fn test_resolve_dns() {
 
     // Pass: `--allow-net=127.0.0.1:4553`
     {
-      let output = util::deno_cmd()
+      let output = util::edno_cmd()
         .current_dir(util::testdata_path())
         .env("NO_COLOR", "1")
         .arg("run")
@@ -2381,7 +2381,7 @@ fn test_resolve_dns() {
 
     // Permission error: `--allow-net=deno.land`
     {
-      let output = util::deno_cmd()
+      let output = util::edno_cmd()
         .current_dir(util::testdata_path())
         .env("NO_COLOR", "1")
         .arg("run")
@@ -2403,7 +2403,7 @@ fn test_resolve_dns() {
 
     // Permission error: no permission specified
     {
-      let output = util::deno_cmd()
+      let output = util::edno_cmd()
         .current_dir(util::testdata_path())
         .env("NO_COLOR", "1")
         .arg("run")
@@ -2428,7 +2428,7 @@ fn test_resolve_dns() {
 
 #[test]
 async fn http2_request_url() {
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--quiet")
@@ -2470,9 +2470,9 @@ async fn http2_request_url() {
 #[cfg(not(windows))]
 #[test]
 fn set_raw_should_not_panic_on_no_tty() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .arg("eval")
-    .arg("Deno.stdin.setRaw(true)")
+    .arg("Edno.stdin.setRaw(true)")
     // stdin set to piped so it certainly does not refer to TTY
     .stdin(std::process::Stdio::piped())
     // stderr is piped so we can capture output.
@@ -2489,9 +2489,9 @@ fn set_raw_should_not_panic_on_no_tty() {
 #[cfg(not(windows))]
 #[test]
 fn fsfile_set_raw_should_not_panic_on_no_tty() {
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .arg("eval")
-    .arg("Deno.openSync(\"/dev/stdin\").setRaw(true)")
+    .arg("Edno.openSync(\"/dev/stdin\").setRaw(true)")
     // stdin set to piped so it certainly does not refer to TTY
     .stdin(std::process::Stdio::piped())
     // stderr is piped so we can capture output.
@@ -2515,7 +2515,7 @@ fn fsfile_set_raw_should_not_panic_on_no_tty() {
 #[cfg(target_os = "macos")]
 #[test]
 fn pipe_write_no_double_callback_after_tty_write() {
-  let deno_exe = util::deno_exe_path();
+  let edno_exe = util::edno_exe_path();
   let testdata = util::testdata_path();
   let script = testdata.join("node/pipe_write_no_double_callback.mjs");
   let output = Command::new("expect")
@@ -2528,7 +2528,7 @@ fn pipe_write_no_double_callback_after_tty_write() {
         "lassign [wait] pid spawnid os_error_flag value\n",
         "exit $value\n",
       ),
-      deno_exe.to_string().replace("{", "\\{").replace("}", "\\}"),
+      edno_exe.to_string().replace("{", "\\{").replace("}", "\\}"),
       script.to_string().replace("{", "\\{").replace("}", "\\}"),
     ))
     .output()
@@ -2564,7 +2564,7 @@ clearTimeout(handle);
 console.log("finish");
 "#;
 
-  let mut p = util::deno_cmd()
+  let mut p = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("-")
@@ -2588,7 +2588,7 @@ fn stdout_early_read_drop() {
   // drop the reader to create a broken pipe
   drop(reader);
 
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("eval")
     .arg("console.log(3.14)")
@@ -2610,7 +2610,7 @@ fn broken_stdout_repl() {
   // drop the reader to create a broken pipe
   drop(reader);
 
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("repl")
     .stdout(writer)
@@ -2631,14 +2631,14 @@ fn broken_stdout_repl() {
 }
 
 // Regression test for https://github.com/denoland/deno/issues/16308 — when
-// `println!` panics on a broken stdout pipe (e.g. `deno | cls` on Windows),
+// `println!` panics on a broken stdout pipe (e.g. `edno | cls` on Windows),
 // the panic hook should exit cleanly instead of printing the bug-report banner.
 #[test]
 fn broken_stdout_no_panic_banner() {
   let (reader, writer) = os_pipe::pipe().unwrap();
   drop(reader);
 
-  let output = util::deno_cmd()
+  let output = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("info")
     .stdout(writer)
@@ -2649,7 +2649,7 @@ fn broken_stdout_no_panic_banner() {
     .unwrap();
 
   let stderr = std::str::from_utf8(output.stderr.as_ref()).unwrap();
-  assert_not_contains!(stderr, "Deno has panicked");
+  assert_not_contains!(stderr, "Edno has panicked");
   assert_not_contains!(stderr, "panicked at");
 }
 
@@ -2692,7 +2692,7 @@ async fn websocketstream_ping() {
     Ok::<_, std::convert::Infallible>(response)
   });
 
-  let child = util::deno_cmd()
+  let child = util::edno_cmd()
     .arg("test")
     .arg("--unstable-net")
     .arg("--allow-net")
@@ -2738,7 +2738,7 @@ async fn websocket_server_multi_field_connection_header() {
   let script = util::testdata_path()
     .join("run/websocket_server_multi_field_connection_header_test.ts");
   let root_ca = util::testdata_path().join("tls/RootCA.pem");
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .arg("run")
     .arg("--allow-net")
     .arg("--cert")
@@ -2789,13 +2789,13 @@ async fn websocket_server_idletimeout() {
   let script =
     util::testdata_path().join("run/websocket_server_idletimeout.ts");
   let root_ca = util::testdata_path().join("tls/RootCA.pem");
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .arg("run")
     .arg("--allow-net")
     .arg("--cert")
     .arg(root_ca)
     .arg("--config")
-    .arg(util::tests_path().join("config/deno.json"))
+    .arg(util::tests_path().join("config/edno.json"))
     .arg(script)
     .stdout_piped()
     .spawn()
@@ -2870,7 +2870,7 @@ fn stdio_streams_are_locked_in_permission_prompt() {
       console.write_line(r#"new Worker(URL.createObjectURL(new Blob(["setInterval(() => console.log('**malicious**'), 10)"])), { type: "module" });"#);
       // The worker is now spamming
       console.expect(malicious_output);
-      console.write_line(r#"Deno.readTextFileSync('../Cargo.toml');"#);
+      console.write_line(r#"Edno.readTextFileSync('../Cargo.toml');"#);
       // We will get a permission prompt
       console.expect("Allow? [y/n/A] (y = yes, allow; n = no, deny; A = allow all read permissions) > ");
       // The worker is blocked, so nothing else should get written here
@@ -2915,7 +2915,7 @@ fn stdio_streams_are_locked_in_permission_prompt() {
 fn permission_prompt_escapes_ansi_codes_and_control_chars() {
   util::with_pty(&["repl"], |mut console| {
     console.write_line(
-        r#"Deno.permissions.request({ name: "env", variable: "\rDo you like ice cream? y/n" });"#
+        r#"Edno.permissions.request({ name: "env", variable: "\rDo you like ice cream? y/n" });"#
       );
     // will be uppercase on windows
     let env_name = if cfg!(windows) {
@@ -2924,7 +2924,7 @@ fn permission_prompt_escapes_ansi_codes_and_control_chars() {
       "\\rDo you like ice cream? y/n"
     };
     console.expect(format!(
-      "\u{250f} \u{26a0}\u{fe0f}  Deno requests env access to \"{}\".",
+      "\u{250f} \u{26a0}\u{fe0f}  Edno requests env access to \"{}\".",
       env_name
     ))
   });
@@ -2944,14 +2944,14 @@ fn permission_prompt_escapes_ansi_codes_and_control_chars() {
         console.write_line_raw(r#"const unboldANSI = "\u001b[22m";"#);
         console.expect("undefined");
         console.write_line_raw(
-          r#"Deno.writeTextFileSync(`${boldANSI}cat${unboldANSI}`, "");"#,
+          r#"Edno.writeTextFileSync(`${boldANSI}cat${unboldANSI}`, "");"#,
         );
         console.expect("undefined");
         console.write_line_raw(
-          r#"new Deno.Command(`./${boldANSI}cat${unboldANSI}`).spawn();"#,
+          r#"new Edno.Command(`./${boldANSI}cat${unboldANSI}`).spawn();"#,
         );
         console
-          .expect("\u{250f} \u{26a0}\u{fe0f}  Deno requests run access to \"");
+          .expect("\u{250f} \u{26a0}\u{fe0f}  Edno requests run access to \"");
         console.expect("\\u{1b}[1mcat\\u{1b}[22m\"."); // ensure escaped
       });
   }
@@ -2967,23 +2967,23 @@ pub fn vendor_dir_config_file() {
   let vendor_dir = temp_dir.path().join("vendor");
   let rm_vendor_dir = || std::fs::remove_dir_all(&vendor_dir).unwrap();
 
-  temp_dir.write("deno.json", r#"{ "vendor": true }"#);
+  temp_dir.write("edno.json", r#"{ "vendor": true }"#);
   temp_dir.write(
     "main.ts",
     r#"import { returnsHi } from 'http://localhost:4545/subdir/mod1.ts';
 console.log(returnsHi());"#,
   );
 
-  let deno_run_cmd = test_context
+  let edno_run_cmd = test_context
     .new_command()
     .args("run --allow-import --quiet main.ts");
-  deno_run_cmd.run().assert_matches_text("Hi\n");
+  edno_run_cmd.run().assert_matches_text("Hi\n");
 
   assert!(vendor_dir.exists());
   rm_vendor_dir();
-  temp_dir.write("deno.json", r#"{ "vendor": false }"#);
+  temp_dir.write("edno.json", r#"{ "vendor": false }"#);
 
-  deno_run_cmd.run().assert_matches_text("Hi\n");
+  edno_run_cmd.run().assert_matches_text("Hi\n");
   assert!(!vendor_dir.exists());
   test_context
     .new_command()
@@ -2992,7 +2992,7 @@ console.log(returnsHi());"#,
   assert!(vendor_dir.exists());
   rm_vendor_dir();
 
-  temp_dir.write("deno.json", r#"{ "vendor": true }"#);
+  temp_dir.write("edno.json", r#"{ "vendor": true }"#);
   let cache_command = test_context
     .new_command()
     .args("cache --allow-import --quiet main.ts");
@@ -3007,16 +3007,16 @@ console.log(returnsHi());"#,
 
   // this is fine with a lockfile because users are supposed to be able
   // to modify the vendor folder
-  deno_run_cmd.run().assert_matches_text("bye bye bye\n");
+  edno_run_cmd.run().assert_matches_text("bye bye bye\n");
 
   // try updating by deleting the lockfile
-  let lockfile = temp_dir.path().join("deno.lock");
+  let lockfile = temp_dir.path().join("edno.lock");
   lockfile.remove_file();
   cache_command.run();
 
   // should still run and the lockfile should be recreated
   // (though with the checksum from the vendor folder)
-  deno_run_cmd.run().assert_matches_text("bye bye bye\n");
+  edno_run_cmd.run().assert_matches_text("bye bye bye\n");
   assert!(lockfile.exists());
 
   // ensure we can add and execute files in directories that have a hash in them
@@ -3050,7 +3050,7 @@ console.log(returnsHi());"#,
     r#"import { returnsHi } from './vendor/http_localhost_port_4545/subdir/mod1.ts';
 console.log(returnsHi());"#,
   );
-  deno_run_cmd
+  edno_run_cmd
     .run()
     .assert_matches_text("error: Importing from the vendor directory is not permitted. Use a remote specifier instead or disable vendoring.
     at [WILDCARD]/main.ts:1:27
@@ -3059,14 +3059,14 @@ console.log(returnsHi());"#,
 }
 
 #[test]
-fn deno_json_imports_expand() {
+fn edno_json_imports_expand() {
   let test_context = TestContextBuilder::for_npm().use_temp_cwd().build();
   let dir = test_context.temp_dir();
   dir.write(
-    "deno.json",
+    "edno.json",
     r#"{
     "imports": {
-      "basic": "npm:@denotest/esm-basic"
+      "basic": "npm:@ednotest/esm-basic"
     }
 }"#,
   );
@@ -3089,15 +3089,15 @@ console.log(hello());
 }
 
 #[test]
-fn deno_json_imports_expand_doesnt_overwrite_existing_entries() {
+fn edno_json_imports_expand_doesnt_overwrite_existing_entries() {
   let test_context = TestContextBuilder::for_npm().use_temp_cwd().build();
   let dir = test_context.temp_dir();
   dir.write(
-    "deno.json",
+    "edno.json",
     r#"{
     "imports": {
-      "basic": "npm:@denotest/esm-basic",
-      "basic/": "npm:/@denotest/sub-folders/folder_index_js/"
+      "basic": "npm:@ednotest/esm-basic",
+      "basic/": "npm:/@ednotest/sub-folders/folder_index_js/"
     }
 }"#,
   );
@@ -3122,7 +3122,7 @@ console.log(add(3, 4));
 #[test]
 fn code_cache_test() {
   let test_context = TestContextBuilder::new().use_temp_cwd().build();
-  let deno_dir = test_context.deno_dir();
+  let edno_dir = test_context.edno_dir();
   let temp_dir = test_context.temp_dir();
   temp_dir.write("main.js", "console.log('Hello World - A');");
 
@@ -3140,7 +3140,7 @@ fn code_cache_test() {
     assert_not_contains!(output.stderr(), "V8 code cache hit");
 
     // Check that the code cache database exists.
-    let code_cache_path = deno_dir.path().join(CODE_CACHE_DB_FILE_NAME);
+    let code_cache_path = edno_dir.path().join(CODE_CACHE_DB_FILE_NAME);
     assert!(code_cache_path.exists());
   }
 
@@ -3215,7 +3215,7 @@ console.log(require("./big.cjs").marker);
     .assert_matches_text("AAAA\n");
 
   // V8's identity hash only considers the length for strings over 16,383
-  // characters. Changing equal-length CJS source must invalidate Deno's cache.
+  // characters. Changing equal-length CJS source must invalidate Edno's cache.
   temp_dir.write("big.cjs", cjs_source("BBBB"));
   test_context
     .new_command()
@@ -3227,7 +3227,7 @@ console.log(require("./big.cjs").marker);
 #[test]
 fn code_cache_npm_test() {
   let test_context = TestContextBuilder::for_npm().use_temp_cwd().build();
-  let deno_dir = test_context.deno_dir();
+  let edno_dir = test_context.edno_dir();
   let temp_dir = test_context.temp_dir();
   temp_dir.write(
     "main.js",
@@ -3249,7 +3249,7 @@ fn code_cache_npm_test() {
     assert_not_contains!(output.stderr(), "V8 code cache hit");
 
     // Check that the code cache database exists.
-    let code_cache_path = deno_dir.path().join(CODE_CACHE_DB_FILE_NAME);
+    let code_cache_path = edno_dir.path().join(CODE_CACHE_DB_FILE_NAME);
     assert!(code_cache_path.exists());
   }
 
@@ -3272,7 +3272,7 @@ fn code_cache_npm_test() {
 #[test]
 fn code_cache_npm_with_require_test() {
   let test_context = TestContextBuilder::for_npm().use_temp_cwd().build();
-  let deno_dir = test_context.deno_dir();
+  let edno_dir = test_context.edno_dir();
   let temp_dir = test_context.temp_dir();
   temp_dir.write(
     "main.js",
@@ -3296,7 +3296,7 @@ fn code_cache_npm_with_require_test() {
     assert_not_contains!(output.stderr(), "V8 code cache hit");
 
     // Check that the code cache database exists.
-    let code_cache_path = deno_dir.path().join(CODE_CACHE_DB_FILE_NAME);
+    let code_cache_path = edno_dir.path().join(CODE_CACHE_DB_FILE_NAME);
     assert!(code_cache_path.exists());
   }
 
@@ -3327,7 +3327,7 @@ fn code_cache_npm_cjs_wrapper_module_many_exports() {
   temp_dir.write(
     "main.js",
     // this package has a few exports
-    "import { hello } from \"npm:@denotest/cjs-reexport-collision\";hello.sayHello();",
+    "import { hello } from \"npm:@ednotest/cjs-reexport-collision\";hello.sayHello();",
   );
 
   // First run with no prior cache.
@@ -3369,7 +3369,7 @@ fn code_cache_npm_cjs_wrapper_module_many_exports() {
 
 #[test]
 fn node_process_stdin_pause() {
-  util::deno_cmd()
+  util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run/node_process_stdin_pause.js")
     .spawn()
@@ -3422,7 +3422,7 @@ fn stdin_readable_cancel_with_pty() {
 async fn listen_tls_alpn() {
   let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--quiet")
@@ -3477,14 +3477,14 @@ async fn listen_tls_alpn() {
 async fn listen_tls_alpn_fail() {
   let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(util::testdata_path())
     .arg("run")
     .arg("--quiet")
     .arg("--allow-net")
     .arg("--allow-read")
     .arg("--config")
-    .arg("../config/deno.json")
+    .arg("../config/edno.json")
     .arg("./cert/listen_tls_alpn_fail.ts")
     .arg("4505")
     .stdout_piped()
@@ -3533,7 +3533,7 @@ async fn listen_tls_alpn_fail() {
 #[test]
 fn emit_failed_readonly_file_system() {
   let context = TestContextBuilder::default().use_temp_cwd().build();
-  context.deno_dir().path().canonicalize().make_dir_readonly();
+  context.edno_dir().path().canonicalize().make_dir_readonly();
   let temp_dir = context.temp_dir().path().canonicalize();
   temp_dir.join("main.ts").write("import './other.ts';");
   temp_dir.join("other.ts").write("console.log('hi');");
@@ -3549,26 +3549,26 @@ fn emit_failed_readonly_file_system() {
 #[cfg(windows)]
 #[test]
 fn handle_invalid_path_error() {
-  let deno_cmd = util::deno_cmd_with_deno_dir(&util::new_deno_dir());
-  let output = deno_cmd.arg("run").arg("file://asdf").output().unwrap();
+  let edno_cmd = util::edno_cmd_with_deno_dir(&util::new_deno_dir());
+  let output = edno_cmd.arg("run").arg("file://asdf").output().unwrap();
   assert_contains!(
     String::from_utf8_lossy(&output.stderr),
     "Invalid file path."
   );
 
-  let deno_cmd = util::deno_cmd_with_deno_dir(&util::new_deno_dir());
-  let output = deno_cmd.arg("run").arg("/a/b").output().unwrap();
+  let edno_cmd = util::edno_cmd_with_deno_dir(&util::new_deno_dir());
+  let output = edno_cmd.arg("run").arg("/a/b").output().unwrap();
   assert_contains!(String::from_utf8_lossy(&output.stderr), "Module not found");
 
-  let deno_cmd = util::deno_cmd_with_deno_dir(&util::new_deno_dir());
-  let output = deno_cmd.arg("run").arg("//a/b").output().unwrap();
+  let edno_cmd = util::edno_cmd_with_deno_dir(&util::new_deno_dir());
+  let output = edno_cmd.arg("run").arg("//a/b").output().unwrap();
   assert_contains!(
     String::from_utf8_lossy(&output.stderr),
     "Invalid file path."
   );
 
-  let deno_cmd = util::deno_cmd_with_deno_dir(&util::new_deno_dir());
-  let output = deno_cmd.arg("run").arg("///a/b").output().unwrap();
+  let edno_cmd = util::edno_cmd_with_deno_dir(&util::new_deno_dir());
+  let output = edno_cmd.arg("run").arg("///a/b").output().unwrap();
   assert_contains!(String::from_utf8_lossy(&output.stderr), "Module not found");
 }
 
@@ -3576,14 +3576,14 @@ fn handle_invalid_path_error() {
 fn test_permission_broker_doesnt_exit() {
   let context = TestContext::default();
   let socket_path = if cfg!(windows) {
-    PathRef::new(r"\\.\pipe\deno-permission-broker-nonexistent")
+    PathRef::new(r"\\.\pipe\edno-permission-broker-nonexistent")
   } else {
     context.temp_dir().path().join("broker.sock")
   };
 
   let output = context
     .new_command()
-    .env("DENO_PERMISSION_BROKER_PATH", &socket_path)
+    .env("EDNO_PERMISSION_BROKER_PATH", &socket_path)
     .args("run run/permission_broker/test1.ts")
     .run();
   output.assert_exit_code(87);
@@ -3599,7 +3599,7 @@ fn test_permission_broker() {
 
   let context = TestContext::default();
   let socket_path = if cfg!(windows) {
-    PathRef::new(r"\\.\pipe\deno-permission-broker")
+    PathRef::new(r"\\.\pipe\edno-permission-broker")
   } else {
     context.temp_dir().path().join("broker.sock")
   };
@@ -3634,7 +3634,7 @@ fn test_permission_broker() {
 
   let output = context
     .new_command()
-    .env("DENO_PERMISSION_BROKER_PATH", &socket_path)
+    .env("EDNO_PERMISSION_BROKER_PATH", &socket_path)
     .args("run run/permission_broker/test1.ts")
     .run();
   output.assert_exit_code(1);
@@ -3690,7 +3690,7 @@ fn process_stdout_destroy_undestroy_pty() {
 
 #[test]
 fn process_stderr_tty_write_exit() {
-  let deno_exe = util::deno_exe_path();
+  let edno_exe = util::edno_exe_path();
   let testdata = util::testdata_path();
   let temp_dir = TempDir::new();
   let marker_path = temp_dir.path().join("stdio-write-callback.txt");
@@ -3705,7 +3705,7 @@ fn process_stderr_tty_write_exit() {
   ];
   let env_vars = std::env::vars().collect();
   let output = util::pty::run_in_pty(
-    deno_exe.as_path(),
+    edno_exe.as_path(),
     &args,
     testdata.as_path(),
     Some(env_vars),
@@ -3752,7 +3752,7 @@ fn readline_permission_prompt_interleaving_pty() {
       console.expect("Project?");
       console.write_line("demo");
       console.expect("ANSWER:demo");
-      console.expect("Deno requests read access to");
+      console.expect("Edno requests read access to");
       console.expect("Allow?");
       console.human_delay();
       console.write_line_raw("n");

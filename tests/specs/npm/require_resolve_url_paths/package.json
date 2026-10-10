@@ -1,7 +1,7 @@
 {
-  "name": "@denotest/example",
+  "name": "@ednotest/example",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/esm-basic": "*"
+    "@ednotest/esm-basic": "*"
   }
 }

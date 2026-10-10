@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read --allow-write=.
+#!/usr/bin/env -S edno run --allow-env --allow-read --allow-write=.
 // Copyright 2018-2026 the Deno authors. MIT license.
 import {
   ModuleDeclarationKind,
@@ -57,7 +57,7 @@ for (const file of project.getSourceFiles()) {
   }
 }
 
-// deno-lint-ignore no-console
+// edno-lint-ignore no-console
 console.log(
   "Globals: ",
   Array.from(names).sort(),

@@ -1,16 +1,16 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::v8;
 
 mod bitmaprenderer;
 pub mod byow;
 mod canvas;
 
-deno_core::extension!(
-  deno_canvas,
-  deps = [deno_webidl, deno_web, deno_webgpu],
+edno_core::extension!(
+  edno_canvas,
+  deps = [edno_webidl, edno_web, edno_webgpu],
   ops = [op_init_canvas],
   objects = [
     bitmaprenderer::ImageBitmapRenderingContext,

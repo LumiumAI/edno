@@ -2,7 +2,7 @@
   "name": "lockfile_empty_pkg_json_dep_name",
   "dependencies": {
     "": ".",
-    "@denotest/esm-basic": "*"
+    "@ednotest/esm-basic": "*"
   },
   "type": "module"
 }

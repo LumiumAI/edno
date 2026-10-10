@@ -26,11 +26,11 @@ use thiserror::Error;
 use url::Url;
 
 #[allow(clippy::disallowed_types, reason = "arc wrapper type")]
-pub type PackageJsonRc = deno_maybe_sync::MaybeArc<PackageJson>;
+pub type PackageJsonRc = edno_maybe_sync::MaybeArc<PackageJson>;
 #[allow(clippy::disallowed_types, reason = "arc wrapper type")]
-pub type PackageJsonDepsRc = deno_maybe_sync::MaybeArc<PackageJsonDeps>;
+pub type PackageJsonDepsRc = edno_maybe_sync::MaybeArc<PackageJsonDeps>;
 #[allow(clippy::disallowed_types, reason = "once lock wrapper type")]
-type PackageJsonDepsRcCell = deno_maybe_sync::MaybeOnceLock<PackageJsonDepsRc>;
+type PackageJsonDepsRcCell = edno_maybe_sync::MaybeOnceLock<PackageJsonDepsRc>;
 
 pub enum PackageJsonCacheResult {
   Hit(Option<PackageJsonRc>),
@@ -58,7 +58,7 @@ pub enum EngineMismatchKind {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EngineMismatch {
-  /// The engine key from the `engines` object (e.g. "node" or "deno").
+  /// The engine key from the `engines` object (e.g. "node" or "edno").
   pub engine: String,
   /// The version requirement string as written in package.json.
   pub required: String,
@@ -437,7 +437,7 @@ impl PackageJson {
           Ok(file_text) => {
             let pkg_json =
               PackageJson::load_from_string(path.to_path_buf(), &file_text)?;
-            let pkg_json = deno_maybe_sync::new_rc(pkg_json);
+            let pkg_json = edno_maybe_sync::new_rc(pkg_json);
             if let Some(cache) = maybe_cache {
               cache.set(path.to_path_buf(), Some(pkg_json.clone()));
             }
@@ -794,12 +794,12 @@ impl PackageJson {
   /// versions. Returns one entry per declared engine that is either
   /// unsatisfied or has an unparseable version requirement.
   ///
-  /// Only the `node` and `deno` keys are checked. Other entries (`npm`,
-  /// `yarn`, `pnpm`, ...) are intentionally ignored — Deno cannot reason
+  /// Only the `node` and `edno` keys are checked. Other entries (`npm`,
+  /// `yarn`, `pnpm`, ...) are intentionally ignored — Edno cannot reason
   /// about external package manager versions.
   pub fn check_engines(
     &self,
-    deno_version: &str,
+    edno_version: &str,
     node_version: &str,
   ) -> Vec<EngineMismatch> {
     let Some(engines) = self.engines.as_ref() else {
@@ -809,7 +809,7 @@ impl PackageJson {
     for (engine, version_req) in engines {
       let actual = match engine.as_str() {
         "node" => node_version,
-        "deno" => deno_version,
+        "edno" => edno_version,
         _ => continue,
       };
       let parsed_req = match VersionReq::parse_from_npm(version_req) {
@@ -1123,21 +1123,21 @@ mod test {
       PackageJson::load_from_string(PathBuf::from("/package.json"), "{}")
         .unwrap();
     package_json.dependencies = Some(IndexMap::from([
-      ("@denotest/foo".to_string(), "jsr:^1.2".to_string()),
+      ("@ednotest/foo".to_string(), "jsr:^1.2".to_string()),
       ("@std/path2".to_string(), "jsr:@std/path@1".to_string()),
       ("@std/fs".to_string(), "jsr:@std/fs".to_string()),
       ("no-scope".to_string(), "jsr:*".to_string()),
       ("no-scope2".to_string(), "jsr:test@*".to_string()),
-      ("@denotest/tag".to_string(), "jsr:future-tag".to_string()),
+      ("@ednotest/tag".to_string(), "jsr:future-tag".to_string()),
     ]));
     let map = get_local_package_json_version_reqs_for_tests(&package_json);
     assert_eq!(
       map,
       IndexMap::from([
         (
-          "@denotest/foo".to_string(),
+          "@ednotest/foo".to_string(),
           Ok(PackageJsonDepValue::Req(PackageReq {
-            name: "@jsr/denotest__foo".into(),
+            name: "@jsr/ednotest__foo".into(),
             version_req: VersionReq::parse_from_specifier("^1.2").unwrap()
           }))
         ),
@@ -1172,9 +1172,9 @@ mod test {
           ))
         ),
         (
-          "@denotest/tag".to_string(),
+          "@ednotest/tag".to_string(),
           Ok(PackageJsonDepValue::Req(PackageReq {
-            name: "@jsr/denotest__tag".into(),
+            name: "@jsr/ednotest__tag".into(),
             version_req: VersionReq::parse_from_specifier("future-tag")
               .unwrap()
           }))
@@ -1390,7 +1390,7 @@ mod test {
       },
       "engines": {
         "node": ">=18",
-        "deno": "^2"
+        "edno": "^2"
       },
     });
     let package_json = PackageJson::load_from_value(
@@ -1424,7 +1424,7 @@ mod test {
     let json_value = serde_json::json!({
       "engines": {
         "node": ">=18.0.0",
-        "deno": "^2.0.0",
+        "edno": "^2.0.0",
         "npm": ">=9",
       },
     });
@@ -1433,7 +1433,7 @@ mod test {
         .unwrap();
     let engines = pj.engines.as_ref().unwrap();
     assert_eq!(engines.get("node").unwrap(), ">=18.0.0");
-    assert_eq!(engines.get("deno").unwrap(), "^2.0.0");
+    assert_eq!(engines.get("edno").unwrap(), "^2.0.0");
     assert_eq!(engines.get("npm").unwrap(), ">=9");
 
     // satisfied for both engines we look at
@@ -1443,7 +1443,7 @@ mod test {
       "expected no mismatches: {mismatches:?}"
     );
 
-    // node too old; deno still satisfied; npm is ignored
+    // node too old; edno still satisfied; npm is ignored
     let mismatches = pj.check_engines("2.1.0", "16.0.0");
     assert_eq!(mismatches.len(), 1);
     assert_eq!(mismatches[0].engine, "node");
@@ -1460,7 +1460,7 @@ mod test {
     let pj = PackageJson::load_from_value(
       PathBuf::from("/package.json"),
       serde_json::json!({
-        "engines": { "deno": "not-a-range" },
+        "engines": { "edno": "not-a-range" },
       }),
     )
     .unwrap();

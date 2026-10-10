@@ -9,19 +9,19 @@ import {
 
 let isCI: boolean;
 try {
-  isCI = (Deno.env.get("CI")?.length ?? 0) > 0;
+  isCI = (Edno.env.get("CI")?.length ?? 0) > 0;
 } catch {
   isCI = true;
 }
 
 // Skip these tests on linux CI, because the vulkan emulator is not good enough
 // yet, and skip on macOS x86 CI because these do not have virtual GPUs.
-const isCIWithoutGPU = (Deno.build.os === "linux" ||
-  (Deno.build.os === "darwin" && Deno.build.arch === "x86_64")) && isCI;
+const isCIWithoutGPU = (Edno.build.os === "linux" ||
+  (Edno.build.os === "darwin" && Edno.build.arch === "x86_64")) && isCI;
 // Skip these tests in WSL because it doesn't have good GPU support.
 const isWsl = await checkIsWsl();
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function offscreenCanvasWebGPURender() {
@@ -100,10 +100,10 @@ fn fs_main() -> @location(0) vec4<f32> {
     type: "image/png",
   });
   const imageBitmap = await createImageBitmap(outputBlob);
-  // @ts-ignore: Deno[Deno.internal] allowed
-  const bitmapData: Uint8Array = Deno[Deno.internal].getBitmapData(imageBitmap);
+  // @ts-ignore: Edno[Edno.internal] allowed
+  const bitmapData: Uint8Array = Edno[Edno.internal].getBitmapData(imageBitmap);
 
-  const expectedData = await Deno.readFile(
+  const expectedData = await Edno.readFile(
     "tests/testdata/webgpu/hellotriangle_canvas.out",
   );
 
@@ -121,7 +121,7 @@ fn fs_main() -> @location(0) vec4<f32> {
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function offscreenCanvasBitmapRenderer() {
@@ -166,8 +166,8 @@ Deno.test({
   assertEquals(bitmap.height, 200);
 
   // Get source data before transfer (transferFromImageBitmap detaches the bitmap)
-  // @ts-ignore: Deno[Deno.internal] allowed
-  const sourceData: Uint8Array = Deno[Deno.internal].getBitmapData(bitmap);
+  // @ts-ignore: Edno[Edno.internal] allowed
+  const sourceData: Uint8Array = Edno[Edno.internal].getBitmapData(bitmap);
 
   const canvas = new OffscreenCanvas(200, 200);
   const bitmaprenderer = canvas.getContext("bitmaprenderer");
@@ -176,8 +176,8 @@ Deno.test({
 
   const outputBlob = await canvas.convertToBlob();
   const outputBitmap = await createImageBitmap(outputBlob);
-  // @ts-ignore: Deno[Deno.internal] allowed
-  const outputData: Uint8Array = Deno[Deno.internal].getBitmapData(
+  // @ts-ignore: Edno[Edno.internal] allowed
+  const outputData: Uint8Array = Edno[Edno.internal].getBitmapData(
     outputBitmap,
   );
 
@@ -195,20 +195,20 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test(function offscreenCanvasConstructor() {
+Edno.test(function offscreenCanvasConstructor() {
   const canvas = new OffscreenCanvas(100, 50);
   assertEquals(canvas.width, 100);
   assertEquals(canvas.height, 50);
 });
 
-Deno.test(function offscreenCanvasConstructorRequiresArgs() {
+Edno.test(function offscreenCanvasConstructorRequiresArgs() {
   // @ts-expect-error: testing webidl required-arg behavior
   assertThrows(() => new OffscreenCanvas(), TypeError);
   // @ts-expect-error: testing webidl required-arg behavior
   assertThrows(() => new OffscreenCanvas(100), TypeError);
 });
 
-Deno.test(function offscreenCanvasResize() {
+Edno.test(function offscreenCanvasResize() {
   const canvas = new OffscreenCanvas(100, 100);
   canvas.width = 200;
   canvas.height = 50;
@@ -216,7 +216,7 @@ Deno.test(function offscreenCanvasResize() {
   assertEquals(canvas.height, 50);
 });
 
-Deno.test(function offscreenCanvasGetContextStickyId() {
+Edno.test(function offscreenCanvasGetContextStickyId() {
   const canvas = new OffscreenCanvas(10, 10);
   const ctx1 = canvas.getContext("bitmaprenderer");
   const ctx2 = canvas.getContext("bitmaprenderer");
@@ -224,7 +224,7 @@ Deno.test(function offscreenCanvasGetContextStickyId() {
   assertEquals(ctx1, ctx2);
 });
 
-Deno.test(function offscreenCanvasGetContextDifferentIdReturnsNull() {
+Edno.test(function offscreenCanvasGetContextDifferentIdReturnsNull() {
   const canvas = new OffscreenCanvas(10, 10);
   const bm = canvas.getContext("bitmaprenderer");
   assert(bm);
@@ -232,7 +232,7 @@ Deno.test(function offscreenCanvasGetContextDifferentIdReturnsNull() {
   assertEquals(canvas.getContext("webgpu"), null);
 });
 
-Deno.test(function offscreenCanvasGetContextUnsupportedReturnsNull() {
+Edno.test(function offscreenCanvasGetContextUnsupportedReturnsNull() {
   const canvas = new OffscreenCanvas(10, 10);
   // @ts-expect-error: testing unsupported context id
   assertEquals(canvas.getContext("not-a-real-context"), null);
@@ -240,17 +240,17 @@ Deno.test(function offscreenCanvasGetContextUnsupportedReturnsNull() {
   assert(canvas.getContext("bitmaprenderer"));
 });
 
-Deno.test(function offscreenCanvasTransferToImageBitmapWithoutContextThrows() {
+Edno.test(function offscreenCanvasTransferToImageBitmapWithoutContextThrows() {
   const canvas = new OffscreenCanvas(10, 10);
   assertThrows(() => canvas.transferToImageBitmap(), Error);
 });
 
-Deno.test(async function offscreenCanvasConvertToBlobWithoutContextRejects() {
+Edno.test(async function offscreenCanvasConvertToBlobWithoutContextRejects() {
   const canvas = new OffscreenCanvas(10, 10);
   await assertRejects(() => canvas.convertToBlob(), Error);
 });
 
-Deno.test(async function offscreenCanvasConvertToBlobReturnsPromise() {
+Edno.test(async function offscreenCanvasConvertToBlobReturnsPromise() {
   const canvas = new OffscreenCanvas(2, 2);
   canvas.getContext("bitmaprenderer");
   const ret = canvas.convertToBlob();
@@ -260,7 +260,7 @@ Deno.test(async function offscreenCanvasConvertToBlobReturnsPromise() {
   assertEquals(blob.type, "image/png");
 });
 
-Deno.test(async function offscreenCanvasConvertToBlobJpeg() {
+Edno.test(async function offscreenCanvasConvertToBlobJpeg() {
   const canvas = new OffscreenCanvas(2, 2);
   canvas.getContext("bitmaprenderer");
   const blob = await canvas.convertToBlob({ type: "image/jpeg" });
@@ -268,7 +268,7 @@ Deno.test(async function offscreenCanvasConvertToBlobJpeg() {
   assert(blob.size > 0);
 });
 
-Deno.test(async function offscreenCanvasConvertToBlobIco() {
+Edno.test(async function offscreenCanvasConvertToBlobIco() {
   const canvas = new OffscreenCanvas(2, 2);
   canvas.getContext("bitmaprenderer");
   const blob = await canvas.convertToBlob({ type: "image/x-icon" });
@@ -276,7 +276,7 @@ Deno.test(async function offscreenCanvasConvertToBlobIco() {
   assert(blob.size > 0);
 });
 
-Deno.test(async function offscreenCanvasConvertToBlobBmp() {
+Edno.test(async function offscreenCanvasConvertToBlobBmp() {
   const canvas = new OffscreenCanvas(2, 2);
   canvas.getContext("bitmaprenderer");
   const blob = await canvas.convertToBlob({ type: "image/bmp" });
@@ -284,14 +284,14 @@ Deno.test(async function offscreenCanvasConvertToBlobBmp() {
   assert(blob.size > 0);
 });
 
-Deno.test(function bitmapRendererCanvasGetter() {
+Edno.test(function bitmapRendererCanvasGetter() {
   const canvas = new OffscreenCanvas(10, 10);
   const ctx = canvas.getContext("bitmaprenderer");
   assert(ctx);
   assertEquals(ctx.canvas, canvas);
 });
 
-Deno.test(async function bitmapRendererTransferFromDetachedThrows() {
+Edno.test(async function bitmapRendererTransferFromDetachedThrows() {
   const canvas = new OffscreenCanvas(2, 2);
   const ctx = canvas.getContext("bitmaprenderer");
   assert(ctx);
@@ -307,7 +307,7 @@ Deno.test(async function bitmapRendererTransferFromDetachedThrows() {
   assertThrows(() => ctx.transferFromImageBitmap(bitmap), Error);
 });
 
-Deno.test(function bitmapRendererTransferFromNullClears() {
+Edno.test(function bitmapRendererTransferFromNullClears() {
   const canvas = new OffscreenCanvas(4, 4);
   const ctx = canvas.getContext("bitmaprenderer");
   assert(ctx);
@@ -315,7 +315,7 @@ Deno.test(function bitmapRendererTransferFromNullClears() {
   ctx.transferFromImageBitmap(null);
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, function gpuCanvasContextGetConfigurationNullByDefault() {
@@ -325,7 +325,7 @@ Deno.test({
   assertEquals(ctx.getConfiguration(), null);
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function gpuCanvasContextGetConfigurationRoundTrip() {
@@ -357,7 +357,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function gpuCanvasContextConfigureUnsupportedFormatThrows() {
@@ -383,7 +383,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, function gpuCanvasContextGetCurrentTextureRequiresConfigure() {
@@ -393,7 +393,7 @@ Deno.test({
   assertThrows(() => ctx.getCurrentTexture(), TypeError);
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function gpuCanvasContextResizeReplacesTexture() {
@@ -419,12 +419,12 @@ Deno.test({
 });
 
 async function checkIsWsl() {
-  return Deno.build.os === "linux" && await hasMicrosoftProcVersion();
+  return Edno.build.os === "linux" && await hasMicrosoftProcVersion();
 
   async function hasMicrosoftProcVersion() {
     // https://github.com/microsoft/WSL/issues/423#issuecomment-221627364
     try {
-      const procVersion = await Deno.readTextFile("/proc/version");
+      const procVersion = await Edno.readTextFile("/proc/version");
       return /microsoft/i.test(procVersion);
     } catch {
       return false;

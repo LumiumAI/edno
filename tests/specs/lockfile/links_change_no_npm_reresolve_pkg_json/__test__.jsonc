@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [
     {
@@ -9,11 +9,11 @@
       "output": "[WILDCARD]"
     },
     {
-      "args": "run -A --no-lock strip_links.ts ./deno.lock",
+      "args": "run -A --no-lock strip_links.ts ./edno.lock",
       "output": ""
     },
     {
-      "args": "run -A --no-lock rm_packument.ts ./deno_dir/npm/localhost_4260/@denotest/esm-basic/registry.json",
+      "args": "run -A --no-lock rm_packument.ts ./edno_dir/npm/localhost_4260/@ednotest/esm-basic/registry.json",
       "output": ""
     },
     {

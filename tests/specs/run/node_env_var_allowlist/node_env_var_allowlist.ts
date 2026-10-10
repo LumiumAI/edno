@@ -1,2 +1,2 @@
-console.log(Deno.env.get("NODE_DEBUG") ?? "ok");
-Deno.env.get("NOT_NODE_DEBUG");
+console.log(Edno.env.get("NODE_DEBUG") ?? "ok");
+Edno.env.get("NOT_NODE_DEBUG");

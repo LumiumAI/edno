@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/types-no-types-entry",
+  "name": "@ednotest/types-no-types-entry",
   "version": "1.0.0",
   "main": "./dist/main.js",
   "dependencies": {
-    "@denotest/types-entry-value-not-exists": "^1.0"
+    "@ednotest/types-entry-value-not-exists": "^1.0"
   }
 }

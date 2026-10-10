@@ -1,13 +1,13 @@
-import { url } from "npm:@denotest/esm-basic";
+import { url } from "npm:@ednotest/esm-basic";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import assert from "node:assert/strict";
 
-// will be at node_modules\.deno\@denotest+esm-basic@1.0.0\node_modules\@denotest\esm-basic
+// will be at node_modules\.edno\@ednotest+esm-basic@1.0.0\node_modules\@ednotest\esm-basic
 const dirPath = path.dirname(fileURLToPath(url));
 const nodeModulesPath = path.join(dirPath, "../../../../../");
 const packageJsonText = `{
-  "name": "@denotest/esm-basic",
+  "name": "@ednotest/esm-basic",
   "version": "1.0.0",
   "type": "module",
   "main": "main.mjs",
@@ -18,55 +18,55 @@ const vfsPackageJsonPath = path.join(dirPath, "package.json");
 
 // reading a file in vfs
 {
-  const text = Deno.readTextFileSync(vfsPackageJsonPath);
+  const text = Edno.readTextFileSync(vfsPackageJsonPath);
   assert.equal(text, packageJsonText);
 }
 
 // reading a file async in vfs
 {
-  const text = await Deno.readTextFile(vfsPackageJsonPath);
+  const text = await Edno.readTextFile(vfsPackageJsonPath);
   assert.equal(text, packageJsonText);
 }
 
 // copy file from vfs to real fs
 {
-  Deno.copyFileSync(vfsPackageJsonPath, "package.json");
-  assert.equal(Deno.readTextFileSync("package.json"), packageJsonText);
+  Edno.copyFileSync(vfsPackageJsonPath, "package.json");
+  assert.equal(Edno.readTextFileSync("package.json"), packageJsonText);
 }
 
 // copy to vfs
 assert.throws(
-  () => Deno.copyFileSync("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.copyFileSync("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
-Deno.removeSync("package.json");
+Edno.removeSync("package.json");
 
 // copy file async from vfs to real fs
 {
-  await Deno.copyFile(vfsPackageJsonPath, "package.json");
-  assert.equal(Deno.readTextFileSync("package.json"), packageJsonText);
+  await Edno.copyFile(vfsPackageJsonPath, "package.json");
+  assert.equal(Edno.readTextFileSync("package.json"), packageJsonText);
 }
 
 // copy to vfs async
 await assert.rejects(
-  () => Deno.copyFile("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.copyFile("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
-Deno.removeSync("package.json");
+Edno.removeSync("package.json");
 
 // open
 {
-  const file = Deno.openSync(vfsPackageJsonPath);
+  const file = Edno.openSync(vfsPackageJsonPath);
   const bytes = new Uint8Array(10);
-  file.seekSync(2, Deno.SeekMode.Start);
+  file.seekSync(2, Edno.SeekMode.Start);
   assert.equal(file.readSync(bytes), 10);
   const text = new TextDecoder().decode(bytes);
   assert.equal(text, packageJsonText.slice(2, 12));
 }
 {
-  const file = await Deno.open(vfsPackageJsonPath);
+  const file = await Edno.open(vfsPackageJsonPath);
   const bytes = new Uint8Array(10);
-  await file.seek(2, Deno.SeekMode.Start);
+  await file.seek(2, Edno.SeekMode.Start);
   assert.equal(await file.read(bytes), 10);
   const text = new TextDecoder().decode(bytes);
   assert.equal(text, packageJsonText.slice(2, 12));
@@ -76,92 +76,92 @@ Deno.removeSync("package.json");
 // Changing into a directory inside the VFS is a no-op rather than an error,
 // so that programs that chdir into their own directory (e.g. Next.js
 // standalone builds) keep working when compiled.
-Deno.chdir(dirPath);
+Edno.chdir(dirPath);
 // chdir into a file in the VFS still fails
 assert.throws(
-  () => Deno.chdir(vfsPackageJsonPath),
-  Deno.errors.NotADirectory,
+  () => Edno.chdir(vfsPackageJsonPath),
+  Edno.errors.NotADirectory,
 );
 // chdir into a non-existent VFS path still fails
 assert.throws(
-  () => Deno.chdir(path.join(dirPath, "nonexistent")),
-  Deno.errors.NotFound,
+  () => Edno.chdir(path.join(dirPath, "nonexistent")),
+  Edno.errors.NotFound,
 );
 
 // mkdir
 assert.throws(
-  () => Deno.mkdirSync(path.join(dirPath, "subDir")),
-  Deno.errors.NotSupported,
+  () => Edno.mkdirSync(path.join(dirPath, "subDir")),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.mkdir(path.join(dirPath, "subDir")),
-  Deno.errors.NotSupported,
+  () => Edno.mkdir(path.join(dirPath, "subDir")),
+  Edno.errors.NotSupported,
 );
 
 // chmod
 assert.throws(
-  () => Deno.chmodSync(vfsPackageJsonPath, 0o777),
-  Deno.errors.NotSupported,
+  () => Edno.chmodSync(vfsPackageJsonPath, 0o777),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.chmod(vfsPackageJsonPath, 0o777),
-  Deno.errors.NotSupported,
+  () => Edno.chmod(vfsPackageJsonPath, 0o777),
+  Edno.errors.NotSupported,
 );
 
 // chown
 assert.throws(
-  () => Deno.chownSync(vfsPackageJsonPath, 1000, 1000),
-  Deno.errors.NotSupported,
+  () => Edno.chownSync(vfsPackageJsonPath, 1000, 1000),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.chown(vfsPackageJsonPath, 1000, 1000),
-  Deno.errors.NotSupported,
+  () => Edno.chown(vfsPackageJsonPath, 1000, 1000),
+  Edno.errors.NotSupported,
 );
 
 // remove
 assert.throws(
-  () => Deno.removeSync(vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.removeSync(vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.remove(vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.remove(vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 
 // stat
 {
-  const result = Deno.statSync(vfsPackageJsonPath);
+  const result = Edno.statSync(vfsPackageJsonPath);
   assert(result.isFile);
 }
 {
-  const result = await Deno.stat(vfsPackageJsonPath);
+  const result = await Edno.stat(vfsPackageJsonPath);
   assert(result.isFile);
 }
 
 // lstat
 {
-  const result = Deno.lstatSync(
-    path.join(nodeModulesPath, "@denotest", "esm-basic"),
+  const result = Edno.lstatSync(
+    path.join(nodeModulesPath, "@ednotest", "esm-basic"),
   );
   assert(result.isSymlink);
 }
 {
-  const result = await Deno.lstat(
-    path.join(nodeModulesPath, "@denotest", "esm-basic"),
+  const result = await Edno.lstat(
+    path.join(nodeModulesPath, "@ednotest", "esm-basic"),
   );
   assert(result.isSymlink);
 }
 
 // realpath
 {
-  const result = Deno.realPathSync(
-    path.join(nodeModulesPath, "@denotest", "esm-basic", "package.json"),
+  const result = Edno.realPathSync(
+    path.join(nodeModulesPath, "@ednotest", "esm-basic", "package.json"),
   );
   assert.equal(result, vfsPackageJsonPath);
 }
 {
-  const result = await Deno.realPath(
-    path.join(nodeModulesPath, "@denotest", "esm-basic", "package.json"),
+  const result = await Edno.realPath(
+    path.join(nodeModulesPath, "@ednotest", "esm-basic", "package.json"),
   );
   assert.equal(result, vfsPackageJsonPath);
 }
@@ -169,13 +169,13 @@ await assert.rejects(
 // read dir
 const readDirNames = ["main.d.mts", "main.mjs", "other.mjs", "package.json"];
 {
-  const names = Array.from(Deno.readDirSync(dirPath))
+  const names = Array.from(Edno.readDirSync(dirPath))
     .map((e) => e.name);
   assert.deepEqual(readDirNames, names);
 }
 {
   const names = [];
-  for await (const entry of Deno.readDir(dirPath)) {
+  for await (const entry of Edno.readDir(dirPath)) {
     names.push(entry.name);
   }
   assert.deepEqual(readDirNames, names);
@@ -183,90 +183,90 @@ const readDirNames = ["main.d.mts", "main.mjs", "other.mjs", "package.json"];
 
 // rename
 assert.throws(
-  () => Deno.renameSync("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.renameSync("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 assert.throws(
-  () => Deno.renameSync(vfsPackageJsonPath, "package.json"),
-  Deno.errors.NotSupported,
+  () => Edno.renameSync(vfsPackageJsonPath, "package.json"),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.rename("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.rename("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.rename(vfsPackageJsonPath, "package.json"),
-  Deno.errors.NotSupported,
+  () => Edno.rename(vfsPackageJsonPath, "package.json"),
+  Edno.errors.NotSupported,
 );
 
 // link
 assert.throws(
-  () => Deno.linkSync("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.linkSync("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 assert.throws(
-  () => Deno.linkSync(vfsPackageJsonPath, "package.json"),
-  Deno.errors.NotSupported,
+  () => Edno.linkSync(vfsPackageJsonPath, "package.json"),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.link("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.link("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.link(vfsPackageJsonPath, "package.json"),
-  Deno.errors.NotSupported,
+  () => Edno.link(vfsPackageJsonPath, "package.json"),
+  Edno.errors.NotSupported,
 );
 
 // symlink
 assert.throws(
-  () => Deno.symlinkSync("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.symlinkSync("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 assert.throws(
-  () => Deno.symlinkSync(vfsPackageJsonPath, "package.json"),
-  Deno.errors.NotSupported,
+  () => Edno.symlinkSync(vfsPackageJsonPath, "package.json"),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.symlink("package.json", vfsPackageJsonPath),
-  Deno.errors.NotSupported,
+  () => Edno.symlink("package.json", vfsPackageJsonPath),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.symlink(vfsPackageJsonPath, "package.json"),
-  Deno.errors.NotSupported,
+  () => Edno.symlink(vfsPackageJsonPath, "package.json"),
+  Edno.errors.NotSupported,
 );
 
 // read link
 {
-  const result = Deno.readLinkSync(
-    path.join(nodeModulesPath, "@denotest", "esm-basic"),
+  const result = Edno.readLinkSync(
+    path.join(nodeModulesPath, "@ednotest", "esm-basic"),
   );
   assert.equal(result, dirPath);
 }
 {
-  const result = await Deno.readLink(
-    path.join(nodeModulesPath, "@denotest", "esm-basic"),
+  const result = await Edno.readLink(
+    path.join(nodeModulesPath, "@ednotest", "esm-basic"),
   );
   assert.equal(result, dirPath);
 }
 
 // truncate
 assert.throws(
-  () => Deno.truncateSync(vfsPackageJsonPath, 0),
-  Deno.errors.NotSupported,
+  () => Edno.truncateSync(vfsPackageJsonPath, 0),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.truncate(vfsPackageJsonPath, 0),
-  Deno.errors.NotSupported,
+  () => Edno.truncate(vfsPackageJsonPath, 0),
+  Edno.errors.NotSupported,
 );
 
 // utime
 assert.throws(
-  () => Deno.utimeSync(vfsPackageJsonPath, 0, 0),
-  Deno.errors.NotSupported,
+  () => Edno.utimeSync(vfsPackageJsonPath, 0, 0),
+  Edno.errors.NotSupported,
 );
 await assert.rejects(
-  () => Deno.utime(vfsPackageJsonPath, 0, 0),
-  Deno.errors.NotSupported,
+  () => Edno.utime(vfsPackageJsonPath, 0, 0),
+  Edno.errors.NotSupported,
 );
 
 console.log("success");

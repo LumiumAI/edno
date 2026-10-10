@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-const client = Deno.createHttpClient({
+const client = Edno.createHttpClient({
   proxy: {
     url: "http://localhost:4555",
     basicAuth: { username: "username", password: "password" },

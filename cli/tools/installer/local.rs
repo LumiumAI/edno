@@ -3,11 +3,11 @@
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::url::Url;
-use deno_npm::NpmPackageId;
-use deno_resolver::workspace::WorkspaceResolver;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::url::Url;
+use edno_npm::NpmPackageId;
+use edno_resolver::workspace::WorkspaceResolver;
 
 use super::InstallReporter;
 use super::print_install_report;
@@ -73,17 +73,17 @@ pub fn categorize_installed_npm_deps(
         continue;
       };
       match s {
-        deno_package_json::PackageJsonDepValue::File(_) => {
+        edno_package_json::PackageJsonDepValue::File(_) => {
           // TODO(nathanwhit)
           // TODO(bartlomieju)
         }
-        deno_package_json::PackageJsonDepValue::Req(package_req) => {
+        edno_package_json::PackageJsonDepValue::Req(package_req) => {
           normal_deps.insert(package_req.name.to_string());
         }
-        deno_package_json::PackageJsonDepValue::Workspace { .. } => {
+        edno_package_json::PackageJsonDepValue::Workspace { .. } => {
           // ignore workspace deps
         }
-        deno_package_json::PackageJsonDepValue::Catalog(catalog_name) => {
+        edno_package_json::PackageJsonDepValue::Catalog(catalog_name) => {
           if workspace
             .resolve_catalog_dep(k.as_str(), catalog_name)
             .is_some()
@@ -99,17 +99,17 @@ pub fn categorize_installed_npm_deps(
         continue;
       };
       match s {
-        deno_package_json::PackageJsonDepValue::File(_) => {
+        edno_package_json::PackageJsonDepValue::File(_) => {
           // TODO(nathanwhit)
           // TODO(bartlomieju)
         }
-        deno_package_json::PackageJsonDepValue::Req(package_req) => {
+        edno_package_json::PackageJsonDepValue::Req(package_req) => {
           dev_deps.insert(package_req.name.to_string());
         }
-        deno_package_json::PackageJsonDepValue::Workspace { .. } => {
+        edno_package_json::PackageJsonDepValue::Workspace { .. } => {
           // ignore workspace deps
         }
-        deno_package_json::PackageJsonDepValue::Catalog(catalog_name) => {
+        edno_package_json::PackageJsonDepValue::Catalog(catalog_name) => {
           if workspace
             .resolve_catalog_dep(k.as_str(), catalog_name)
             .is_some()
@@ -201,7 +201,7 @@ pub async fn ci_command(
   let factory = CliFactory::from_flags(flags.clone());
   if factory.maybe_lockfile().await?.is_none() {
     bail!(
-      "deno ci requires a lockfile, but none was found.\n  hint: run `deno install` to create one."
+      "edno ci requires a lockfile, but none was found.\n  hint: run `edno install` to create one."
     );
   }
   if let Some(node_modules_dir) = factory.node_modules_dir_path()?
@@ -213,7 +213,7 @@ pub async fn ci_command(
       node_modules_dir.display()
     );
     std::fs::remove_dir_all(node_modules_dir).map_err(|err| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "failed to remove {}: {err}",
         node_modules_dir.display()
       )
@@ -231,20 +231,20 @@ pub async fn ci_command(
   .await
 }
 
-/// `deno sync-types`: generate a tsconfig + type mappings so stock TypeScript
+/// `edno sync-types`: generate a tsconfig + type mappings so stock TypeScript
 /// tooling can type-check the project. Assumes dependencies are already
-/// installed (run `deno install` first); materializes `jsr:`/`http(s):` types
-/// and writes `.deno/tsconfig.json`.
+/// installed (run `edno install` first); materializes `jsr:`/`http(s):` types
+/// and writes `.edno/tsconfig.json`.
 /// How `sync_types_command` should treat the root `tsconfig.json`.
 #[derive(Debug, Clone, Copy)]
 pub enum RootTsConfigMode {
-  /// Always create/update a root `tsconfig.json` extending `.deno/tsconfig.json`
-  /// (used by the standalone `deno sync-types` command, for IDE setup).
+  /// Always create/update a root `tsconfig.json` extending `.edno/tsconfig.json`
+  /// (used by the standalone `edno sync-types` command, for IDE setup).
   Always,
-  /// Only manage the root `tsconfig.json` when Deno is honoring a user's
-  /// tsconfig (a deno.json/package.json is present and config isn't disabled).
-  /// Used by `deno check`, which otherwise points tsc at `.deno/tsconfig.json`
-  /// directly and must not rewrite a tsconfig Deno is ignoring.
+  /// Only manage the root `tsconfig.json` when Edno is honoring a user's
+  /// tsconfig (a edno.json/package.json is present and config isn't disabled).
+  /// Used by `edno check`, which otherwise points tsc at `.edno/tsconfig.json`
+  /// directly and must not rewrite a tsconfig Edno is ignoring.
   CheckMode,
 }
 
@@ -263,14 +263,14 @@ pub async fn sync_types_command(
   let permissions = factory.root_permissions_container()?.clone();
 
   // Generate at the workspace/config root, not the current working directory,
-  // so running `deno sync-types` from a subdirectory still writes the config
-  // next to deno.json and picks up the root import map.
+  // so running `edno sync-types` from a subdirectory still writes the config
+  // next to edno.json and picks up the root import map.
   let project_root = cli_options
     .workspace()
     .root_dir_url()
     .to_file_path()
     .map_err(|_| {
-      deno_core::anyhow::anyhow!("workspace root is not a local directory")
+      edno_core::anyhow::anyhow!("workspace root is not a local directory")
     })?;
 
   let has_explicit_roots = !sync_types_flags.roots.is_empty();
@@ -292,32 +292,32 @@ pub async fn sync_types_command(
         include_ignored_specified: has_explicit_roots,
       },
     )?;
-    // `collect_specifiers` honors deno.json excludes and the vendor dir, but not
-    // `node_modules`, our generated `.deno/`, or the DENO_DIR cache. On a real
+    // `collect_specifiers` honors edno.json excludes and the vendor dir, but not
+    // `node_modules`, our generated `.edno/`, or the EDNO_DIR cache. On a real
     // project those trees hold tens of thousands of files; feeding them as graph
     // roots makes the build choke. Keep only the project's own source so we
     // discover the external specifiers it actually imports.
     //
-    // The `node_modules`/`.deno` check is on the path RELATIVE to the project
+    // The `node_modules`/`.edno` check is on the path RELATIVE to the project
     // root, so a project that happens to live beneath an ancestor directory
     // named `node_modules` (e.g. developed in place) isn't filtered away
-    // entirely. DENO_DIR is filtered by prefix when resolvable; it's normally
+    // entirely. EDNO_DIR is filtered by prefix when resolvable; it's normally
     // outside the project so its files aren't collected as roots regardless.
-    let deno_dir_root = factory.deno_dir().ok().map(|d| d.root.clone());
+    let edno_dir_root = factory.edno_dir().ok().map(|d| d.root.clone());
     let roots: Vec<_> = roots
       .into_iter()
       .filter(|u| {
         let Ok(path) = u.to_file_path() else {
           return true;
         };
-        if let Some(root) = &deno_dir_root
+        if let Some(root) = &edno_dir_root
           && path.starts_with(root)
         {
           return false;
         }
         let rel = path.strip_prefix(&project_root).unwrap_or(&path);
         !rel.components().any(|c| {
-          matches!(c.as_os_str().to_str(), Some("node_modules") | Some(".deno"))
+          matches!(c.as_os_str().to_str(), Some("node_modules") | Some(".edno"))
         })
       })
       .collect();
@@ -333,8 +333,8 @@ pub async fn sync_types_command(
     // *did* resolve regardless.
     let graph_creator = factory.module_graph_creator().await?;
     // Silence warn-level diagnostics during this discovery build. It's an
-    // internal step (not the user's `deno check`), and the graph the user
-    // installed was already validated by `deno install` — re-emitting e.g.
+    // internal step (not the user's `edno check`), and the graph the user
+    // installed was already validated by `edno install` — re-emitting e.g.
     // "workspace member ... was not used" warnings here is just noise.
     let prev_log_level = log::max_level();
     log::set_max_level(log::LevelFilter::Error);
@@ -419,9 +419,9 @@ pub async fn sync_types_command(
   // would normally provide.
   let npm_resolver = factory.npm_resolver().await?.clone();
 
-  // Deno's *resolved* compiler options for the project root. These fold in
-  // Deno's source-kind defaults (deno.json vs tsconfig.json) and CLI overrides
-  // like `--check-js`, which the raw deno.json read inside `setup_npm_compat`
+  // Edno's *resolved* compiler options for the project root. These fold in
+  // Edno's source-kind defaults (edno.json vs tsconfig.json) and CLI overrides
+  // like `--check-js`, which the raw edno.json read inside `setup_npm_compat`
   // can't see. Resolve against a representative file under the root so any
   // detected tsconfig `include`/`files` filter matches.
   let root_specifier = cli_options
@@ -436,24 +436,24 @@ pub async fn sync_types_command(
       .and_then(|resolver| {
         resolver
           .for_specifier(spec)
-          .compiler_options_for_lib(TsTypeLib::DenoWindow)
+          .compiler_options_for_lib(TsTypeLib::EdnoWindow)
           .ok()
       })
       .map(|opts| opts.0.clone())
   });
 
-  // Whether to manage the root `tsconfig.json`. `deno check` (CheckMode) never
+  // Whether to manage the root `tsconfig.json`. `edno check` (CheckMode) never
   // rewrites a committed tsconfig (that would dirty the working tree). When it
   // honors a user tsconfig it instead builds a throwaway overlay in a temp file
   // (see `native_check` / `build_check_root_overlay`), leaving the user's tree
-  // untouched. `deno sync-types` (Always) still sets up the root tsconfig for
+  // untouched. `edno sync-types` (Always) still sets up the root tsconfig for
   // IDEs.
   let manage_root_tsconfig = match root_tsconfig_mode {
     RootTsConfigMode::Always => true,
     RootTsConfigMode::CheckMode => false,
   };
 
-  // `deno check --all` type-checks remote modules; otherwise mirrored remote
+  // `edno check --all` type-checks remote modules; otherwise mirrored remote
   // scripts get `// @ts-nocheck` so tsc skips their internals.
   let type_check_remote =
     cli_options.type_check_mode() == crate::args::TypeCheckMode::All;
@@ -501,7 +501,7 @@ pub fn check_if_installs_a_single_package_globally(
   };
   if matches!(url.scheme(), "http" | "https") {
     bail!(
-      "Failed to install \"{}\" specifier. If you are trying to install {} globally, run again with `-g` flag:\n  deno install -g {}",
+      "Failed to install \"{}\" specifier. If you are trying to install {} globally, run again with `-g` flag:\n  edno install -g {}",
       url.scheme(),
       url.as_str(),
       url.as_str()

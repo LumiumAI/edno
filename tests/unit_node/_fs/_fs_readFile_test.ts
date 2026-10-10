@@ -15,7 +15,7 @@ import { Buffer } from "node:buffer";
 
 const moduleDir = path.dirname(path.fromFileUrl(import.meta.url));
 const testData = path.resolve(moduleDir, "testdata", "hello.txt");
-const permissionTestDir = Deno.makeTempDirSync();
+const permissionTestDir = Edno.makeTempDirSync();
 const readCreateOptions = {
   flag: O_RDONLY | O_CREAT,
 } as unknown as { flag: string };
@@ -23,7 +23,7 @@ const readOnlyOptions = {
   flag: O_RDONLY,
 } as unknown as { flag: string };
 
-Deno.test({
+Edno.test({
   name: "fs.readFileSync requires write access when flags may create",
   permissions: { read: true, write: false },
   fn() {
@@ -31,13 +31,13 @@ Deno.test({
 
     assertThrows(
       () => readFileSync(filePath, readCreateOptions),
-      Deno.errors.NotCapable,
+      Edno.errors.NotCapable,
     );
     assertEquals(existsSync(filePath), false);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.promises.readFile requires write access when flags may create",
   permissions: { read: true, write: false },
   async fn() {
@@ -45,28 +45,28 @@ Deno.test({
 
     await assertRejects(
       () => readFilePromise(filePath, readCreateOptions),
-      Deno.errors.NotCapable,
+      Edno.errors.NotCapable,
     );
     assertEquals(existsSync(filePath), false);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.readFile requires read access when flags may create",
   permissions: { read: false, write: true },
   async fn() {
     assertThrows(
       () => readFileSync(testData, readCreateOptions),
-      Deno.errors.NotCapable,
+      Edno.errors.NotCapable,
     );
     await assertRejects(
       () => readFilePromise(testData, readCreateOptions),
-      Deno.errors.NotCapable,
+      Edno.errors.NotCapable,
     );
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.readFile with read-only flags only requires read access",
   permissions: { read: true, write: false },
   async fn() {
@@ -81,11 +81,11 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.readFile can read and create when both accesses are granted",
   permissions: { read: true, write: true },
   async fn() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     try {
       const syncPath = path.join(tempDir, "sync.txt");
       const asyncPath = path.join(tempDir, "async.txt");
@@ -101,12 +101,12 @@ Deno.test({
       assertEquals(existsSync(syncPath), true);
       assertEquals(existsSync(asyncPath), true);
     } finally {
-      Deno.removeSync(tempDir, { recursive: true });
+      Edno.removeSync(tempDir, { recursive: true });
     }
   },
 });
 
-Deno.test("readFileSuccess", async function () {
+Edno.test("readFileSuccess", async function () {
   const data = await new Promise((res, rej) => {
     readFile(testData, (err, data) => {
       if (err) {
@@ -120,7 +120,7 @@ Deno.test("readFileSuccess", async function () {
   assertEquals(new TextDecoder().decode(data as Uint8Array), "hello world");
 });
 
-Deno.test("readFileEncodeUtf8Success", async function () {
+Edno.test("readFileEncodeUtf8Success", async function () {
   const data = await new Promise((res, rej) => {
     readFile(testData, { encoding: "utf8" }, (err, data) => {
       if (err) {
@@ -133,7 +133,7 @@ Deno.test("readFileEncodeUtf8Success", async function () {
   assertEquals(data as string, "hello world");
 });
 
-Deno.test("readFileEncodeHexSuccess", async function () {
+Edno.test("readFileEncodeHexSuccess", async function () {
   const data = await new Promise((res, rej) => {
     readFile(testData, { encoding: "hex" }, (err, data) => {
       if (err) {
@@ -147,7 +147,7 @@ Deno.test("readFileEncodeHexSuccess", async function () {
   assertEquals(data as string, "68656c6c6f20776f726c64");
 });
 
-Deno.test("readFileEncodeBase64Success", async function () {
+Edno.test("readFileEncodeBase64Success", async function () {
   const data = await new Promise((res, rej) => {
     readFile(testData, { encoding: "base64" }, (err, data) => {
       if (err) {
@@ -160,7 +160,7 @@ Deno.test("readFileEncodeBase64Success", async function () {
   assertEquals(data as string, "aGVsbG8gd29ybGQ=");
 });
 
-Deno.test("readFileEncodingAsString", async function () {
+Edno.test("readFileEncodingAsString", async function () {
   const data = await new Promise((res, rej) => {
     readFile(testData, "utf8", (err, data) => {
       if (err) {
@@ -174,54 +174,54 @@ Deno.test("readFileEncodingAsString", async function () {
   assertEquals(data as string, "hello world");
 });
 
-Deno.test("readFileSyncSuccess", function () {
+Edno.test("readFileSyncSuccess", function () {
   const data = readFileSync(testData);
   assert(data instanceof Uint8Array);
   assertEquals(new TextDecoder().decode(data as Uint8Array), "hello world");
 });
 
-Deno.test("readFileEncodeUtf8Success", function () {
+Edno.test("readFileEncodeUtf8Success", function () {
   const data = readFileSync(testData, { encoding: "utf8" });
   assertEquals(typeof data, "string");
   assertEquals(data as string, "hello world");
 });
 
-Deno.test("readFileEncodeHexSuccess", function () {
+Edno.test("readFileEncodeHexSuccess", function () {
   const data = readFileSync(testData, { encoding: "hex" });
   assertEquals(typeof data, "string");
   assertEquals(data as string, "68656c6c6f20776f726c64");
 });
 
-Deno.test("readFileEncodeBase64Success", function () {
+Edno.test("readFileEncodeBase64Success", function () {
   const data = readFileSync(testData, { encoding: "base64" });
   assertEquals(typeof data, "string");
   assertEquals(data as string, "aGVsbG8gd29ybGQ=");
 });
 
-Deno.test("readFileEncodeAsString", function () {
+Edno.test("readFileEncodeAsString", function () {
   const data = readFileSync(testData, "utf8");
   assertEquals(typeof data, "string");
   assertEquals(data as string, "hello world");
 });
 
-Deno.test("[std/node/fs] readFile callback isn't called twice if error is thrown", async () => {
-  const tempFile = await Deno.makeTempFile();
+Edno.test("[std/node/fs] readFile callback isn't called twice if error is thrown", async () => {
+  const tempFile = await Edno.makeTempFile();
   const importUrl = new URL("node:fs", import.meta.url);
   await assertCallbackErrorUncaught({
     prelude: `import { readFile } from ${JSON.stringify(importUrl)}`,
     invocation: `readFile(${JSON.stringify(tempFile)}, `,
     async cleanup() {
-      await Deno.remove(tempFile);
+      await Edno.remove(tempFile);
     },
   });
 });
 
-Deno.test("fs.promises.readFile with no arg call rejects with error correctly", async () => {
+Edno.test("fs.promises.readFile with no arg call rejects with error correctly", async () => {
   // @ts-ignore no arg call needs to be supported
   await promises.readFile().catch((_e) => {});
 });
 
-Deno.test("fs.readFile error message contains path + syscall", async () => {
+Edno.test("fs.readFile error message contains path + syscall", async () => {
   const path = "/does/not/exist";
   const err = await new Promise((resolve) => {
     readFile(path, "utf-8", (err) => resolve(err));
@@ -232,7 +232,7 @@ Deno.test("fs.readFile error message contains path + syscall", async () => {
   }
 });
 
-Deno.test("fs.readFileSync error message contains path + syscall", () => {
+Edno.test("fs.readFileSync error message contains path + syscall", () => {
   const path = "/does/not/exist";
   try {
     readFileSync(path, "utf-8");
@@ -244,7 +244,7 @@ Deno.test("fs.readFileSync error message contains path + syscall", () => {
   }
 });
 
-Deno.test("fs.readFile returns Buffer when encoding is not provided", async () => {
+Edno.test("fs.readFile returns Buffer when encoding is not provided", async () => {
   const data = await new Promise<Uint8Array>((res, rej) => {
     readFile(testData, (err, data) => {
       if (err) {
@@ -259,7 +259,7 @@ Deno.test("fs.readFile returns Buffer when encoding is not provided", async () =
   assertEquals(data.toString(), "hello world");
 });
 
-Deno.test("fs.readFile binary encoding returns string", async () => {
+Edno.test("fs.readFile binary encoding returns string", async () => {
   const data = await new Promise<string>((res, rej) => {
     readFile(testData, { encoding: "binary" }, (err, data) => {
       if (err) {
@@ -273,21 +273,21 @@ Deno.test("fs.readFile binary encoding returns string", async () => {
   assertEquals(data, "hello world");
 });
 
-Deno.test("fs.readFileSync returns Buffer when encoding is not provided", () => {
+Edno.test("fs.readFileSync returns Buffer when encoding is not provided", () => {
   const data = readFileSync(testData);
   assert(data instanceof Uint8Array);
   assertEquals(Buffer.isBuffer(data), true);
   assertEquals(data.toString(), "hello world");
 });
 
-Deno.test("fs.readFileSync binary encoding returns string", () => {
+Edno.test("fs.readFileSync binary encoding returns string", () => {
   const data = readFileSync(testData, { encoding: "binary" });
   assertEquals(typeof data, "string");
   assertEquals(data, "hello world");
 });
 
-Deno.test("fs.readFile creates new file when passed 'w+' flag", async () => {
-  const tmpDir = Deno.makeTempDirSync();
+Edno.test("fs.readFile creates new file when passed 'w+' flag", async () => {
+  const tmpDir = Edno.makeTempDirSync();
   const filePath = path.join(tmpDir, "newfile.txt");
   await new Promise((res, rej) => {
     readFile(filePath, { flag: "w+" }, (err, data) => {
@@ -299,10 +299,10 @@ Deno.test("fs.readFile creates new file when passed 'w+' flag", async () => {
   });
 
   assert(existsSync(filePath));
-  Deno.removeSync(tmpDir, { recursive: true });
+  Edno.removeSync(tmpDir, { recursive: true });
 });
 
-Deno.test(
+Edno.test(
   "fs.readFile throws ERR_INVALID_ARG_TYPE when path is undefined (e.g. fd.name)",
   async () => {
     const fh = await open(testData, "r");
@@ -326,21 +326,21 @@ Deno.test(
   },
 );
 
-Deno.test("fs.readFileSync creates new file when passed 'w+' flag", () => {
-  const tmpDir = Deno.makeTempDirSync();
+Edno.test("fs.readFileSync creates new file when passed 'w+' flag", () => {
+  const tmpDir = Edno.makeTempDirSync();
   const filePath = path.join(tmpDir, "newfile.txt");
   readFileSync(filePath, { flag: "w+" });
 
   assert(existsSync(filePath));
-  Deno.removeSync(tmpDir, { recursive: true });
+  Edno.removeSync(tmpDir, { recursive: true });
 });
 
 // Regression for https://github.com/denoland/deno/issues/34246: when fs.readFile
 // is given an fd + encoding, readFileFromFd used a shared buffer and pushed
 // aliased subarrays, so files larger than the per-read chunk size came back
 // with the right length but scrambled content.
-Deno.test("fs.promises.readFile(path, encoding) returns intact content for >512KB files", async () => {
-  const tmpDir = await Deno.makeTempDir();
+Edno.test("fs.promises.readFile(path, encoding) returns intact content for >512KB files", async () => {
+  const tmpDir = await Edno.makeTempDir();
   try {
     const filePath = path.join(tmpDir, "large.txt");
     // 600 KiB of ASCII so byte length == char length; enough to span multiple
@@ -348,7 +348,7 @@ Deno.test("fs.promises.readFile(path, encoding) returns intact content for >512K
     let chunk = "";
     for (let i = 0; i < 1024; i++) chunk += i.toString().padStart(8, "0");
     const expected = chunk.repeat(75);
-    await Deno.writeTextFile(filePath, expected);
+    await Edno.writeTextFile(filePath, expected);
 
     const viaPathUtf8 = await readFilePromise(filePath, "utf8");
     assertEquals(viaPathUtf8.length, expected.length);
@@ -362,6 +362,6 @@ Deno.test("fs.promises.readFile(path, encoding) returns intact content for >512K
       await fh.close();
     }
   } finally {
-    await Deno.remove(tmpDir, { recursive: true });
+    await Edno.remove(tmpDir, { recursive: true });
   }
 });

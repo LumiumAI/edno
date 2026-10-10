@@ -2,6 +2,6 @@
   "name": "my-package",
   "version": "1.0.0",
   "scripts": {
-    "env": "echo command:$npm_command && deno eval \"console.log('execpath_is_deno:' + (Deno.env.get('npm_execpath') === Deno.execPath())); console.log('node_execpath_is_deno:' + (Deno.env.get('npm_node_execpath') === Deno.execPath())); console.log('execpath_eq_node:' + (Deno.env.get('npm_execpath') === Deno.env.get('npm_node_execpath')))\""
+    "env": "echo command:$npm_command && edno eval \"console.log('execpath_is_deno:' + (Edno.env.get('npm_execpath') === Edno.execPath())); console.log('node_execpath_is_deno:' + (Edno.env.get('npm_node_execpath') === Edno.execPath())); console.log('execpath_eq_node:' + (Edno.env.get('npm_execpath') === Edno.env.get('npm_node_execpath')))\""
   }
 }

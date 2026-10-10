@@ -1,6 +1,6 @@
 const logs: string[] = [];
 
-Deno.test.beforeAll(async () => {
+Edno.test.beforeAll(async () => {
   logs.push("beforeAll started");
   await new Promise((resolve) => setTimeout(resolve, 10));
   logs.push("beforeAll completed");
@@ -8,7 +8,7 @@ Deno.test.beforeAll(async () => {
 
 let testCount = 0;
 
-Deno.test.beforeEach(async () => {
+Edno.test.beforeEach(async () => {
   testCount++;
   logs.push(`beforeEach started for test ${testCount}`);
 
@@ -22,7 +22,7 @@ Deno.test.beforeEach(async () => {
   logs.push(`beforeEach completed for test ${testCount}`);
 });
 
-Deno.test.afterEach(async () => {
+Edno.test.afterEach(async () => {
   logs.push(`afterEach started for test ${testCount}`);
 
   if (testCount === 3) {
@@ -33,21 +33,21 @@ Deno.test.afterEach(async () => {
   logs.push(`afterEach completed for test ${testCount}`);
 });
 
-Deno.test.afterAll(async () => {
+Edno.test.afterAll(async () => {
   logs.push("afterAll started");
   await new Promise((resolve) => setTimeout(resolve, 5));
   logs.push("afterAll completed");
 });
 
-Deno.test("first test", () => {
+Edno.test("first test", () => {
   logs.push("first test executed");
 });
 
-Deno.test("second test (beforeEach fails)", () => {
+Edno.test("second test (beforeEach fails)", () => {
   logs.push("second test executed");
 });
 
-Deno.test("third test (afterEach fails)", () => {
+Edno.test("third test (afterEach fails)", () => {
   logs.push("third test executed");
 });
 

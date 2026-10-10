@@ -7555,13 +7555,13 @@ mod test {
   #[tokio::test]
   async fn vite_tailwind_optional_peer_duplicates() {
     let api = TestNpmRegistryApi::default();
-    api.ensure_package_version("@deno/vite-plugin", "1.0.4");
+    api.ensure_package_version("@edno/vite-plugin", "1.0.4");
     api.ensure_package_version("@tailwindcss/vite", "4.0.17");
     api.ensure_package_version("lightningcss", "1.29.2");
     api.ensure_package_version("vite", "6.2.4");
 
     api.add_peer_dependency(
-      ("@deno/vite-plugin", "1.0.4"),
+      ("@edno/vite-plugin", "1.0.4"),
       ("vite", "5.x || 6.x"),
     );
 
@@ -7581,14 +7581,14 @@ mod test {
 
     let (packages, package_reqs) = run_resolver_and_get_output(
       api,
-      vec!["@deno/vite-plugin@~1.0.4", "@tailwindcss/vite@~4.0.17"],
+      vec!["@edno/vite-plugin@~1.0.4", "@tailwindcss/vite@~4.0.17"],
     )
     .await;
     assert_eq!(
       packages,
       vec![
         TestNpmResolutionPackage {
-          pkg_id: "@deno/vite-plugin@1.0.4_vite@6.2.4".to_string(),
+          pkg_id: "@edno/vite-plugin@1.0.4_vite@6.2.4".to_string(),
           copy_index: 0,
           dependencies: BTreeMap::from([(
             "vite".to_string(),
@@ -7628,8 +7628,8 @@ mod test {
       package_reqs,
       vec![
         (
-          "@deno/vite-plugin@~1.0.4".to_string(),
-          "@deno/vite-plugin@1.0.4_vite@6.2.4".to_string()
+          "@edno/vite-plugin@~1.0.4".to_string(),
+          "@edno/vite-plugin@1.0.4_vite@6.2.4".to_string()
         ),
         (
           "@tailwindcss/vite@~4.0.17".to_string(),

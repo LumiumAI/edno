@@ -1,7 +1,7 @@
-const registryPath = Deno.args[0].trim();
-const version = Deno.args[1].trim();
+const registryPath = Edno.args[0].trim();
+const version = Edno.args[1].trim();
 
-const registryJson = JSON.parse(Deno.readTextFileSync(registryPath));
+const registryJson = JSON.parse(Edno.readTextFileSync(registryPath));
 
 delete registryJson.versions[version];
 
@@ -11,5 +11,5 @@ if (registryJson["dist-tags"]["latest"] === version) {
 }
 delete registryJson["_deno.etag"];
 const registryJsonString = JSON.stringify(registryJson, null, 2);
-Deno.writeTextFileSync(registryPath, registryJsonString);
+Edno.writeTextFileSync(registryPath, registryJsonString);
 console.log(registryJsonString);

@@ -3,25 +3,25 @@
   "tempDir": true,
   "steps": [
     {
-      "args": "eval Deno.copyFileSync(Deno.execPath(),'./deno_copy');",
+      "args": "eval Edno.copyFileSync(Edno.execPath(),'./edno_copy');",
       "exitCode": 0,
       "output": ""
     },
     {
-      "commandName": "./deno_copy",
-      "args": "upgrade --force --version 1.43.2 --output ./deno_copy2",
+      "commandName": "./edno_copy",
+      "args": "upgrade --force --version 1.43.2 --output ./edno_copy2",
       "output": "upgrade.out",
       "exitCode": 0,
       "flaky": true
     },
     {
-      "commandName": "./deno_copy",
-      "args": ["eval", "if (Deno.version.deno === '1.43.2') { Deno.exit(1); }"],
+      "commandName": "./edno_copy",
+      "args": ["eval", "if (Edno.version.edno === '1.43.2') { Edno.exit(1); }"],
       "exitCode": 0,
       "output": ""
     },
     {
-      "commandName": "./deno_copy2",
+      "commandName": "./edno_copy2",
       "args": "--version",
       "exitCode": 0,
       "output": "version.out"

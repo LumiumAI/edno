@@ -1,6 +1,6 @@
-if ("Deno" in globalThis && typeof globalThis.Deno === 'object') {
+if ("Edno" in globalThis && typeof globalThis.Edno === 'object') {
   require('./helper.js');
-  console.log('deno preinstall.js');
+  console.log('edno preinstall.js');
 } else {
   console.log('node preinstall.js');
 }

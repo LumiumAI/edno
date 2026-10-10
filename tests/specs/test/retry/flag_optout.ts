@@ -2,7 +2,7 @@
 // precedence over it. With `--retry=5` this always-failing test still runs
 // only once and FAILS with no retry attempts (otherwise there would be five
 // "retrying" lines).
-Deno.test({
+Edno.test({
   name: "optout",
   retry: 0,
   fn() {

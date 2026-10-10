@@ -4,20 +4,20 @@ mod permission_checker;
 
 use std::sync::Arc;
 
-use deno_npm_installer::process_state::NpmProcessState;
-use deno_npm_installer::process_state::NpmProcessStateKind;
-use deno_npm_installer::process_state::NpmProcessStateLinkerMode;
-use deno_resolver::npm::ByonmNpmResolver;
-use deno_resolver::npm::ManagedNpmResolverRc;
-use deno_resolver::npm::NpmResolver;
-use deno_runtime::deno_process::NpmProcessStateProvider;
-use deno_runtime::deno_process::NpmProcessStateProviderRc;
+use edno_npm_installer::process_state::NpmProcessState;
+use edno_npm_installer::process_state::NpmProcessStateKind;
+use edno_npm_installer::process_state::NpmProcessStateLinkerMode;
+use edno_resolver::npm::ByonmNpmResolver;
+use edno_resolver::npm::ManagedNpmResolverRc;
+use edno_resolver::npm::NpmResolver;
+use edno_runtime::edno_process::NpmProcessStateProvider;
+use edno_runtime::edno_process::NpmProcessStateProviderRc;
 pub use permission_checker::NpmRegistryReadPermissionChecker;
 pub use permission_checker::NpmRegistryReadPermissionCheckerMode;
 
-use crate::sys::DenoLibSys;
+use crate::sys::EdnoLibSys;
 
-pub fn create_npm_process_state_provider<TSys: DenoLibSys>(
+pub fn create_npm_process_state_provider<TSys: EdnoLibSys>(
   npm_resolver: &NpmResolver<TSys>,
 ) -> NpmProcessStateProviderRc {
   match npm_resolver {
@@ -31,11 +31,11 @@ pub fn create_npm_process_state_provider<TSys: DenoLibSys>(
 }
 
 #[derive(Debug)]
-pub struct ManagedNpmProcessStateProvider<TSys: DenoLibSys>(
+pub struct ManagedNpmProcessStateProvider<TSys: EdnoLibSys>(
   pub ManagedNpmResolverRc<TSys>,
 );
 
-impl<TSys: DenoLibSys> NpmProcessStateProvider
+impl<TSys: EdnoLibSys> NpmProcessStateProvider
   for ManagedNpmProcessStateProvider<TSys>
 {
   fn get_npm_process_state(&self) -> String {
@@ -53,11 +53,11 @@ impl<TSys: DenoLibSys> NpmProcessStateProvider
 }
 
 #[derive(Debug)]
-pub struct ByonmNpmProcessStateProvider<TSys: DenoLibSys>(
+pub struct ByonmNpmProcessStateProvider<TSys: EdnoLibSys>(
   pub Arc<ByonmNpmResolver<TSys>>,
 );
 
-impl<TSys: DenoLibSys> NpmProcessStateProvider
+impl<TSys: EdnoLibSys> NpmProcessStateProvider
   for ByonmNpmProcessStateProvider<TSys>
 {
   fn get_npm_process_state(&self) -> String {

@@ -107,7 +107,7 @@ declare module "vm" {
         /**
          * Origin corresponding to the newly created context for display purposes. The origin should be formatted like a URL,
          * but with only the scheme, host, and port (if necessary), like the value of the `url.origin` property of a `URL` object.
-         * Most notably, this string should omit the trailing slash, as that denotes a path.
+         * Most notably, this string should omit the trailing slash, as that ednotes a path.
          */
         contextOrigin?: CreateContextOptions["origin"];
         contextCodeGeneration?: CreateContextOptions["codeGeneration"];
@@ -187,7 +187,7 @@ declare module "vm" {
          * Corresponds to the newly created context for display purposes.
          * The origin should be formatted like a `URL`, but with only the scheme, host, and port (if necessary),
          * like the value of the `url.origin` property of a URL object.
-         * Most notably, this string should omit the trailing slash, as that denotes a path.
+         * Most notably, this string should omit the trailing slash, as that ednotes a path.
          * @default ''
          */
         origin?: string | undefined;

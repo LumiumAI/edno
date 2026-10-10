@@ -1,6 +1,6 @@
-import "npm:@denotest/esm-basic";
-import "npm:@denotest/add";
-import "npm:@denotest/subtract";
+import "npm:@ednotest/esm-basic";
+import "npm:@ednotest/add";
+import "npm:@ednotest/subtract";
 
 console.log(2);
 self.close();

@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-//! HTTP/1.1 protocol pieces optimized for Deno's single-threaded serve path.
+//! HTTP/1.1 protocol pieces optimized for Edno's single-threaded serve path.
 //!
 //! Goals:
 //! - zero allocations in the steady-state request/response hot path

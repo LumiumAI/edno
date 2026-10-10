@@ -1,6 +1,6 @@
 // Regression test for https://github.com/denoland/deno/issues/19867
 //
-// A `Deno.serve` response whose body is a `ReadableStream`/`TransformStream`
+// A `Edno.serve` response whose body is a `ReadableStream`/`TransformStream`
 // that throws while being drained used to swallow the error completely: the
 // client saw a truncated response and nothing on the server implicated the
 // faulty callback. The error must now be surfaced through the server's error
@@ -8,7 +8,7 @@
 // and the server must stay alive for subsequent requests.
 
 const ac = new AbortController();
-const server = Deno.serve(
+const server = Edno.serve(
   { port: 0, signal: ac.signal, onListen() {} },
   (req) => {
     if (new URL(req.url).pathname === "/ok") {
@@ -36,7 +36,7 @@ const server = Deno.serve(
   },
 );
 
-const port = (server.addr as Deno.NetAddr).port;
+const port = (server.addr as Edno.NetAddr).port;
 
 const res = await fetch(`http://localhost:${port}/`);
 console.log("status:", res.status);

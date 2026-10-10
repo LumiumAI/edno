@@ -1,5 +1,5 @@
-Deno.test.sanitizer({ ops: true });
+Edno.test.sanitizer({ ops: true });
 
-Deno.test("timer leak caught by module sanitizer", () => {
+Edno.test("timer leak caught by module sanitizer", () => {
   setTimeout(() => {}, 10000);
 });

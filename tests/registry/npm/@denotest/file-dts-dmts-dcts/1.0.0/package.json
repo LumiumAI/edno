@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/dts-and-dmts-same-file",
+  "name": "@ednotest/dts-and-dmts-same-file",
   "version": "1.0.0",
   "exports": {
     ".": {

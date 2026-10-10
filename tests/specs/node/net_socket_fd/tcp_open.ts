@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url);
 const { TCP, constants: TCPConstants } = require("internal/test/binding")
   .internalBinding("tcp_wrap");
 
-const isWindows = Deno.build.os === "windows";
+const isWindows = Edno.build.os === "windows";
 
 // Test 1: TCP.open with invalid fd returns error code (not notImplemented)
 {
@@ -22,9 +22,9 @@ const isWindows = Deno.build.os === "windows";
 const net = require("net");
 
 // On Windows, initialize Winsock
-let wsaLib: Deno.DynamicLibrary<any> | null = null;
+let wsaLib: Edno.DynamicLibrary<any> | null = null;
 if (isWindows) {
-  wsaLib = Deno.dlopen("ws2_32.dll", {
+  wsaLib = Edno.dlopen("ws2_32.dll", {
     WSAStartup: { parameters: ["u16", "buffer"], result: "i32" },
   });
   const wsaData = new Uint8Array(408); // WSADATA struct
@@ -32,7 +32,7 @@ if (isWindows) {
   if (wsaResult !== 0) {
     console.log("FAIL: WSAStartup failed:", wsaResult);
     wsaLib.close();
-    Deno.exit(1);
+    Edno.exit(1);
   }
 }
 
@@ -46,19 +46,19 @@ server.listen(0, "127.0.0.1", () => {
 
   // Create a raw TCP socket and connect it using FFI.
   // On Windows, socket() returns SOCKET (usize), on Unix it returns int.
-  const libName = Deno.build.os === "darwin"
+  const libName = Edno.build.os === "darwin"
     ? "libSystem.B.dylib"
     : isWindows
     ? "ws2_32.dll"
     : "libc.so.6";
 
   const lib = isWindows
-    ? Deno.dlopen(libName, {
+    ? Edno.dlopen(libName, {
       socket: { parameters: ["i32", "i32", "i32"], result: "usize" },
       connect: { parameters: ["usize", "buffer", "i32"], result: "i32" },
       closesocket: { parameters: ["usize"], result: "i32" },
     })
-    : Deno.dlopen(libName, {
+    : Edno.dlopen(libName, {
       socket: { parameters: ["i32", "i32", "i32"], result: "i32" },
       connect: { parameters: ["i32", "buffer", "i32"], result: "i32" },
       close: { parameters: ["i32"], result: "i32" },
@@ -78,14 +78,14 @@ server.listen(0, "127.0.0.1", () => {
     server.close();
     lib.close();
     wsaLib?.close();
-    Deno.exit(1);
+    Edno.exit(1);
   }
 
   // Build sockaddr_in for 127.0.0.1:port
   const addr = new Uint8Array(16);
   const view = new DataView(addr.buffer);
   // sin_family = AF_INET
-  if (Deno.build.os === "darwin") {
+  if (Edno.build.os === "darwin") {
     addr[0] = 16; // sin_len (BSD)
     addr[1] = AF_INET; // sin_family
   } else {
@@ -109,7 +109,7 @@ server.listen(0, "127.0.0.1", () => {
     server.close();
     lib.close();
     wsaLib?.close();
-    Deno.exit(1);
+    Edno.exit(1);
   }
 
   // Now open this raw TCP socket fd in a TCP handle.
@@ -127,7 +127,7 @@ server.listen(0, "127.0.0.1", () => {
     server.close();
     lib.close();
     wsaLib?.close();
-    Deno.exit(1);
+    Edno.exit(1);
   }
 
   // Wrap in a net.Socket and read data

@@ -4,7 +4,7 @@
 const { core, primordials } = __bootstrap;
 const lazyUrl = core.createLazyLoader("node:url");
 const { validateObject } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const {
   Boolean,
@@ -32,15 +32,15 @@ const searchParams = Symbol("query");
 
 function isURL(self: unknown): self is URL {
   return Boolean(
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     (self as any)?.href && (self as any).protocol &&
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (self as any).auth === undefined && (self as any).path === undefined,
   );
 }
 
 function toPathIfFileURL(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   fileURLOrPath: any,
 ) {
   if (!(ObjectPrototypeIsPrototypeOf(URL.prototype, fileURLOrPath))) {

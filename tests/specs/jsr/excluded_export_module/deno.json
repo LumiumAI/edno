@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/excluded-export-module",
+  "name": "@ednotest/excluded-export-module",
   "version": "0.1.0",
   "exports": "./main.ts",
   "publish": {

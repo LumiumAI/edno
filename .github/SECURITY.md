@@ -1,7 +1,7 @@
 # Security Policy
 
-Thank you for taking the time to investigate the security of Deno. The security
-of Deno is our topmost priority. We appreciate investigative work into system
+Thank you for taking the time to investigate the security of Edno. The security
+of Edno is our topmost priority. We appreciate investigative work into system
 security by well-intentioned, ethical security researchers. If you discover a
 vulnerability, however small, we would like to know about it to address it with
 appropriate measures as quickly as possible. This document outlines the method
@@ -27,7 +27,7 @@ quickly address the issue.
 - Do not use attacks on physical security or applications of third parties.
 - Do provide sufficient information to reproduce the problem, so we will be able
   to resolve it as quickly as possible. Usually, a list of steps to follow, and
-  the vulnerable Deno version is enough. More complex vulnerabilities may
+  the vulnerable Edno version is enough. More complex vulnerabilities may
   require further explanation.
 
 ### Our commitment to you
@@ -39,13 +39,13 @@ quickly address the issue.
 
 ## Security Model
 
-The following paragraphs outline the rough security model for Deno. The model
+The following paragraphs outline the rough security model for Edno. The model
 may change slightly over time, but in general the model is as follows:
 
-- All JavaScript run in Deno is considered untrusted, so permissions are thus
+- All JavaScript run in Edno is considered untrusted, so permissions are thus
   never enforced in JavaScript.
-- All JavaScript run in a single Deno process is considered to be part of the
-  same program and is not isolated from itself. This means that Deno does not
+- All JavaScript run in a single Edno process is considered to be part of the
+  same program and is not isolated from itself. This means that Edno does not
   guarantee that values set by one JS module will be inaccessible to another, or
   that a value set in one web worker can not be accessed by another.
 - All runtime I/O is considered to be privileged and must always be guarded by a
@@ -59,7 +59,7 @@ may change slightly over time, but in general the model is as follows:
 - I/O required to build an initial static module graph should always follow the
   permissions of its parent. If there is no parent, all permissions are granted.
   As an example, this means that the initial static module graph that is
-  constructed when doing `deno run`, does not have any permission restrictions.
+  constructed when doing `edno run`, does not have any permission restrictions.
   However, the module graph constructed as the result of loading a web worker or
   dynamic import will be restricted to the permissions of the caller (the main
   worker most likely).

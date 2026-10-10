@@ -4,7 +4,7 @@ import { assertEquals, loadTestLibrary } from "./common.js";
 
 const asyncTask = loadTestLibrary();
 
-Deno.test("napi async task schedule", async () => {
+Edno.test("napi async task schedule", async () => {
   let called = false;
   await new Promise((resolve) => {
     asyncTask.test_async_work(() => {
@@ -15,7 +15,7 @@ Deno.test("napi async task schedule", async () => {
   assertEquals(called, true);
 });
 
-Deno.test("napi async work with threadsafe function from execute", async () => {
+Edno.test("napi async work with threadsafe function from execute", async () => {
   // This tests that the execute callback runs on a worker thread by calling
   // a threadsafe function from it. Previously this would deadlock because
   // execute ran on the main thread.
@@ -29,7 +29,7 @@ Deno.test("napi async work with threadsafe function from execute", async () => {
   assertEquals(called, true);
 });
 
-Deno.test("napi tsfn call_js_cb receives valid env after close race", async () => {
+Edno.test("napi tsfn call_js_cb receives valid env after close race", async () => {
   // Reproduces a crash seen with node-pty: when a tsfn is released while
   // calls are still pending, the call_js_cb must receive a valid env (not
   // null). The native test spawns two threads (one calling the tsfn and
@@ -42,7 +42,7 @@ Deno.test("napi tsfn call_js_cb receives valid env after close race", async () =
   });
 });
 
-Deno.test("napi tsfn call_js_cb receives valid env after abort race", async () => {
+Edno.test("napi tsfn call_js_cb receives valid env after abort race", async () => {
   // Same race as above, but uses napi_tsfn_abort mode to close the tsfn.
   // Abort forces immediate close regardless of thread_count.
   await new Promise((resolve) => {
@@ -52,7 +52,7 @@ Deno.test("napi tsfn call_js_cb receives valid env after abort race", async () =
   });
 });
 
-Deno.test("napi tsfn abort with outstanding thread does not double free", async () => {
+Edno.test("napi tsfn abort with outstanding thread does not double free", async () => {
   // With napi_tsfn_abort, a previous version freed the tsfn regardless of
   // thread_count, leaving other reference holders with a dangling pointer.
   // A subsequent release could then spawn a second drop of the same box,
@@ -66,13 +66,13 @@ Deno.test("napi tsfn abort with outstanding thread does not double free", async 
   });
 });
 
-Deno.test("napi tsfn acquire and release", async function () {
+Edno.test("napi tsfn acquire and release", async function () {
   await new Promise((resolve) => {
     asyncTask.test_tsfn_acquire_release(resolve);
   });
 });
 
-Deno.test("napi tsfn acquire racing final release does not double free", async () => {
+Edno.test("napi tsfn acquire racing final release does not double free", async () => {
   // A previous version of `acquire` did a plain `fetch_add` after a non-atomic
   // `is_closing` check, so it could resurrect a tsfn whose thread_count had
   // already reached zero (racing the final release). The resurrecting thread's
@@ -89,11 +89,11 @@ Deno.test("napi tsfn acquire racing final release does not double free", async (
   }
 });
 
-Deno.test("napi tsfn get context", function () {
+Edno.test("napi tsfn get context", function () {
   assertEquals(asyncTask.test_tsfn_get_context(), true);
 });
 
-Deno.test("napi cancel async work", async function () {
+Edno.test("napi cancel async work", async function () {
   const result = await new Promise((resolve) => {
     asyncTask.test_cancel_async_work((cancelled) => {
       resolve(cancelled);

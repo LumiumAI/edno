@@ -27,11 +27,11 @@ const {
   TypeError,
 } = primordials;
 
-// Capture `Deno.inspect` and `Deno.noColor` early so that user code mangling
-// the `Deno` global doesn't affect snapshot serialization.
-const DenoNs = globalThis.Deno;
-const inspect = DenoNs.inspect;
-const noColor = DenoNs.noColor;
+// Capture `Edno.inspect` and `Edno.noColor` early so that user code mangling
+// the `Edno` global doesn't affect snapshot serialization.
+const EdnoNs = globalThis.Edno;
+const inspect = EdnoNs.inspect;
+const noColor = EdnoNs.noColor;
 
 class AssertionError extends Error {
   name = "AssertionError";
@@ -231,7 +231,7 @@ function getSnapshotNotMatchMessage(actual, expected) {
     green("Actual")
   } / ${
     red("Expected")
-  }\n\n${diff}\n\nTo update snapshots, run\n    deno test --update-snapshots [files]...\n`;
+  }\n\n${diff}\n\nTo update snapshots, run\n    edno test --update-snapshots [files]...\n`;
 }
 
 let isUpdateMode = undefined;
@@ -305,7 +305,7 @@ function getErrorMessage(message, options) {
 }
 
 /**
- * Implementation of `Deno.TestContext.assertSnapshot()`. `tContext` is the
+ * Implementation of `Edno.TestContext.assertSnapshot()`. `tContext` is the
  * test context object the method was called on.
  */
 export function assertSnapshot(
@@ -448,5 +448,5 @@ function flushTestSnapshots(allowStaleRemoval) {
   }
 }
 
-globalThis.Deno[globalThis.Deno.internal].flushTestSnapshots =
+globalThis.Edno[globalThis.Edno.internal].flushTestSnapshots =
   flushTestSnapshots;

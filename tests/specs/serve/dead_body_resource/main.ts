@@ -7,19 +7,19 @@
 // `fastSyncResponseOrStream`. It must instead respond with a 500 and keep the
 // server alive for subsequent requests.
 
-const tempFile = Deno.makeTempFileSync();
-Deno.writeTextFileSync(tempFile, "hello from a soon-to-be-closed file");
+const tempFile = Edno.makeTempFileSync();
+Edno.writeTextFileSync(tempFile, "hello from a soon-to-be-closed file");
 
 const ac = new AbortController();
-const server = Deno.serve(
+const server = Edno.serve(
   { port: 0, signal: ac.signal, onListen() {} },
   async (_req) => {
-    using file = await Deno.open(tempFile);
+    using file = await Edno.open(tempFile);
     return new Response(file.readable);
   },
 );
 
-const port = (server.addr as Deno.NetAddr).port;
+const port = (server.addr as Edno.NetAddr).port;
 
 const res1 = await fetch(`http://localhost:${port}/`);
 await res1.body?.cancel();
@@ -32,5 +32,5 @@ console.log("second status:", res2.status);
 
 ac.abort();
 await server.finished;
-Deno.removeSync(tempFile);
+Edno.removeSync(tempFile);
 console.log("server shut down cleanly");

@@ -3,69 +3,69 @@
 use std::env;
 use std::path::PathBuf;
 
-use deno_cache_dir::DenoDirResolutionError;
-use deno_cache_dir::ResolveDenoDirSys;
+use edno_cache_dir::EdnoDirResolutionError;
+use edno_cache_dir::ResolveDenoDirSys;
 
 use super::DiskCache;
 use super::DiskCacheSys;
 
 #[derive(Debug, Clone)]
-pub struct DenoDirOptions {
+pub struct EdnoDirOptions {
   pub maybe_initial_cwd: Option<PathBuf>,
   pub maybe_custom_root: Option<PathBuf>,
 }
 
 #[sys_traits::auto_impl]
-pub trait DenoDirSys: DiskCacheSys + ResolveDenoDirSys + Clone {}
+pub trait EdnoDirSys: DiskCacheSys + ResolveDenoDirSys + Clone {}
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type DenoDirProviderRc<TSys> =
-  deno_maybe_sync::MaybeArc<DenoDirProvider<TSys>>;
+pub type EdnoDirProviderRc<TSys> =
+  edno_maybe_sync::MaybeArc<EdnoDirProvider<TSys>>;
 
-/// Lazily creates the deno dir which might be useful in scenarios
-/// where functionality wants to continue if the DENO_DIR can't be created.
-pub struct DenoDirProvider<TSys: DenoDirSys> {
-  options: DenoDirOptions,
+/// Lazily creates the edno dir which might be useful in scenarios
+/// where functionality wants to continue if the EDNO_DIR can't be created.
+pub struct EdnoDirProvider<TSys: EdnoDirSys> {
+  options: EdnoDirOptions,
   sys: TSys,
-  deno_dir_cell: once_cell::sync::OnceCell<DenoDir<TSys>>,
+  edno_dir_cell: once_cell::sync::OnceCell<EdnoDir<TSys>>,
 }
 
-impl<TSys: DenoDirSys> DenoDirProvider<TSys> {
-  pub fn new(sys: TSys, options: DenoDirOptions) -> Self {
+impl<TSys: EdnoDirSys> EdnoDirProvider<TSys> {
+  pub fn new(sys: TSys, options: EdnoDirOptions) -> Self {
     Self {
       options,
       sys,
-      deno_dir_cell: Default::default(),
+      edno_dir_cell: Default::default(),
     }
   }
 
   pub fn get_or_create(
     &self,
-  ) -> Result<&DenoDir<TSys>, DenoDirResolutionError> {
-    self.deno_dir_cell.get_or_try_init(|| {
-      let path = deno_cache_dir::resolve_deno_dir(
+  ) -> Result<&EdnoDir<TSys>, EdnoDirResolutionError> {
+    self.edno_dir_cell.get_or_try_init(|| {
+      let path = edno_cache_dir::resolve_deno_dir(
         &self.sys,
-        deno_cache_dir::ResolveDenoDirOptions {
+        edno_cache_dir::ResolveDenoDirOptions {
           maybe_custom_root: self.options.maybe_custom_root.as_deref(),
           maybe_initial_cwd: self.options.maybe_initial_cwd.as_deref(),
         },
       )?;
-      Ok(DenoDir::new(self.sys.clone(), path.into_owned()))
+      Ok(EdnoDir::new(self.sys.clone(), path.into_owned()))
     })
   }
 }
 
-/// `DenoDir` serves as coordinator for multiple `DiskCache`s containing them
-/// in single directory that can be controlled with `$DENO_DIR` env variable.
+/// `EdnoDir` serves as coordinator for multiple `DiskCache`s containing them
+/// in single directory that can be controlled with `$EDNO_DIR` env variable.
 #[derive(Debug, Clone)]
-pub struct DenoDir<TSys: DiskCacheSys> {
-  /// Example: /Users/rld/.deno/
+pub struct EdnoDir<TSys: DiskCacheSys> {
+  /// Example: /Users/rld/.edno/
   pub root: PathBuf,
   /// Used by TsCompiler to cache compiler output.
   pub gen_cache: DiskCache<TSys>,
 }
 
-impl<TSys: DiskCacheSys> DenoDir<TSys> {
+impl<TSys: DiskCacheSys> EdnoDir<TSys> {
   pub fn new(sys: TSys, root: PathBuf) -> Self {
     #[cfg(not(target_arch = "wasm32"))]
     assert!(root.is_absolute());
@@ -77,7 +77,7 @@ impl<TSys: DiskCacheSys> DenoDir<TSys> {
     }
   }
 
-  /// The root directory of the DENO_DIR for display purposes only.
+  /// The root directory of the EDNO_DIR for display purposes only.
   pub fn root_path_for_display(&self) -> std::path::Display<'_> {
     self.root.display()
   }
@@ -151,24 +151,24 @@ impl<TSys: DiskCacheSys> DenoDir<TSys> {
   }
 
   /// Path used for the REPL history file.
-  /// Can be overridden or disabled by setting `DENO_REPL_HISTORY` environment variable.
+  /// Can be overridden or disabled by setting `EDNO_REPL_HISTORY` environment variable.
   pub fn repl_history_file_path(&self) -> Option<PathBuf> {
     #[allow(
       clippy::disallowed_methods,
       reason = "needs real environment variable"
     )]
-    if let Some(deno_repl_history) = env::var_os("DENO_REPL_HISTORY") {
-      if deno_repl_history.is_empty() {
+    if let Some(edno_repl_history) = env::var_os("EDNO_REPL_HISTORY") {
+      if edno_repl_history.is_empty() {
         None
       } else {
-        Some(PathBuf::from(deno_repl_history))
+        Some(PathBuf::from(edno_repl_history))
       }
     } else {
-      Some(self.root.join("deno_history.txt"))
+      Some(self.root.join("edno_history.txt"))
     }
   }
 
-  /// Folder path used for downloading new versions of deno.
+  /// Folder path used for downloading new versions of edno.
   pub fn dl_folder_path(&self) -> PathBuf {
     self.root.join("dl")
   }

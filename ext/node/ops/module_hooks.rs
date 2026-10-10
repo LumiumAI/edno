@@ -7,9 +7,9 @@ use std::collections::VecDeque;
 use std::rc::Rc;
 use std::task::Waker;
 
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 
 /// A pending load request from the Rust module loader to JS hooks.
@@ -33,7 +33,7 @@ struct PendingLoad {
 ///   so the Rust default loader knows which URL to actually fetch from.
 type LoadResult = (Option<String>, Option<String>, Option<String>);
 type LoadSender =
-  deno_core::futures::channel::oneshot::Sender<Result<LoadResult, String>>;
+  edno_core::futures::channel::oneshot::Sender<Result<LoadResult, String>>;
 
 /// Callback used to perform the default ESM resolution from JS hooks.
 /// Installed by the embedder so that the JS terminal `nextResolve` fallback
@@ -218,11 +218,11 @@ impl LoaderHookRegistry {
     &self,
     url: String,
     import_attributes: HashMap<String, String>,
-  ) -> deno_core::futures::channel::oneshot::Receiver<Result<LoadResult, String>>
+  ) -> edno_core::futures::channel::oneshot::Receiver<Result<LoadResult, String>>
   {
     // Dedup: if there's already a pending load for this URL, piggyback.
     if self.load_waiters.borrow().contains_key(&url) {
-      let (sender, receiver) = deno_core::futures::channel::oneshot::channel();
+      let (sender, receiver) = edno_core::futures::channel::oneshot::channel();
       self
         .load_waiters
         .borrow_mut()
@@ -237,7 +237,7 @@ impl LoaderHookRegistry {
       .insert(url.clone(), Vec::new());
 
     let id = self.next_id();
-    let (sender, receiver) = deno_core::futures::channel::oneshot::channel();
+    let (sender, receiver) = edno_core::futures::channel::oneshot::channel();
     self.load_senders.borrow_mut().insert(id, sender);
     self.load_id_keys.borrow_mut().insert(id, url.clone());
     self.pending_loads.borrow_mut().push_back(PendingLoad {
@@ -294,7 +294,7 @@ pub async fn op_module_hooks_poll_load(
 
 /// Run the default module resolver. Used by the JS hook chain's terminal
 /// `nextResolve` so that hooks observing the default resolution see the real
-/// URL that Deno would have resolved (bare specifiers, package exports,
+/// URL that Edno would have resolved (bare specifiers, package exports,
 /// import maps, npm/jsr, etc.) rather than a stub.
 #[op2]
 #[string]

@@ -247,7 +247,7 @@ server.listen(0, async () => {
     console.log("PASS");
   } catch (e) {
     console.error("FAIL:", (e as Error).message);
-    Deno.exit(1);
+    Edno.exit(1);
   } finally {
     server.close();
     agent.destroy();

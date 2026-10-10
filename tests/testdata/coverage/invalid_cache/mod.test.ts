@@ -1,2 +1,2 @@
 import { test } from "./mod.ts";
-Deno.test("test", () => void test());
+Edno.test("test", () => void test());

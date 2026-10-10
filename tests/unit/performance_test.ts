@@ -8,7 +8,7 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test({ permissions: {} }, async function performanceNow() {
+Edno.test({ permissions: {} }, async function performanceNow() {
   const { promise, resolve } = Promise.withResolvers<void>();
   const start = performance.now();
   let totalTime = 0;
@@ -21,14 +21,14 @@ Deno.test({ permissions: {} }, async function performanceNow() {
   assert(totalTime >= 10);
 });
 
-Deno.test(function timeOrigin() {
+Edno.test(function timeOrigin() {
   const origin = performance.timeOrigin;
 
   assert(origin > 0);
   assert(Date.now() >= origin);
 });
 
-Deno.test(function performanceToJSON() {
+Edno.test(function performanceToJSON() {
   const json = performance.toJSON();
 
   assert("timeOrigin" in json);
@@ -37,7 +37,7 @@ Deno.test(function performanceToJSON() {
   assertEquals(Object.keys(json).length, 1);
 });
 
-Deno.test(function clearMarks() {
+Edno.test(function clearMarks() {
   performance.mark("a");
   performance.mark("a");
   performance.mark("b");
@@ -52,7 +52,7 @@ Deno.test(function clearMarks() {
   assertEquals(performance.getEntriesByType("mark").length, 0);
 });
 
-Deno.test(function clearMeasures() {
+Edno.test(function clearMeasures() {
   performance.measure("from-start");
   performance.mark("a");
   performance.measure("from-mark-a", "a");
@@ -72,17 +72,17 @@ Deno.test(function clearMeasures() {
   performance.clearMarks();
 });
 
-Deno.test(function clearResourceTimings() {
+Edno.test(function clearResourceTimings() {
   // clearResourceTimings should exist and not throw
-  // Since Deno doesn't currently track resource timings, this is effectively a no-op
+  // Since Edno doesn't currently track resource timings, this is effectively a no-op
   performance.clearResourceTimings();
   // After clearing, there should be no resource entries
   assertEquals(performance.getEntriesByType("resource").length, 0);
 });
 
-Deno.test(function setResourceTimingBufferSize() {
+Edno.test(function setResourceTimingBufferSize() {
   // setResourceTimingBufferSize should exist and not throw
-  // Since Deno doesn't currently track resource timings, this is effectively a no-op
+  // Since Edno doesn't currently track resource timings, this is effectively a no-op
   performance.setResourceTimingBufferSize(100);
   performance.setResourceTimingBufferSize(0);
   // Verify it requires an argument
@@ -95,7 +95,7 @@ Deno.test(function setResourceTimingBufferSize() {
   );
 });
 
-Deno.test(function performanceMark() {
+Edno.test(function performanceMark() {
   const mark = performance.mark("test");
   assert(mark instanceof PerformanceMark);
   assertEquals(mark.detail, null);
@@ -109,7 +109,7 @@ Deno.test(function performanceMark() {
   assert(markEntries[markEntries.length - 1] === mark);
 });
 
-Deno.test(function performanceMarkDetail() {
+Edno.test(function performanceMarkDetail() {
   const detail = { foo: "foo" };
   const mark = performance.mark("test", { detail });
   assert(mark instanceof PerformanceMark);
@@ -117,7 +117,7 @@ Deno.test(function performanceMarkDetail() {
   assertNotStrictEquals(mark.detail, detail);
 });
 
-Deno.test(function performanceMarkDetailArrayBuffer() {
+Edno.test(function performanceMarkDetailArrayBuffer() {
   const detail = new ArrayBuffer(10);
   const mark = performance.mark("test", { detail });
   assert(mark instanceof PerformanceMark);
@@ -125,7 +125,7 @@ Deno.test(function performanceMarkDetailArrayBuffer() {
   assertNotStrictEquals(mark.detail, detail);
 });
 
-Deno.test(function performanceMarkDetailSubTypedArray() {
+Edno.test(function performanceMarkDetailSubTypedArray() {
   class SubUint8Array extends Uint8Array {}
   const detail = new SubUint8Array([1, 2]);
   const mark = performance.mark("test", { detail });
@@ -134,7 +134,7 @@ Deno.test(function performanceMarkDetailSubTypedArray() {
   assertNotStrictEquals(mark.detail, detail);
 });
 
-Deno.test(function performanceMeasure() {
+Edno.test(function performanceMeasure() {
   const markName1 = "mark1";
   const measureName1 = "measure1";
   const measureName2 = "measure2";
@@ -186,7 +186,7 @@ Deno.test(function performanceMeasure() {
   });
 });
 
-Deno.test(function performanceMeasureUseMostRecentMark() {
+Edno.test(function performanceMeasureUseMostRecentMark() {
   const markName1 = "mark1";
   const measureName1 = "measure1";
   const mark1 = performance.mark(markName1);
@@ -205,43 +205,43 @@ Deno.test(function performanceMeasureUseMostRecentMark() {
   });
 });
 
-Deno.test(function performanceCustomInspectFunction() {
-  assertStringIncludes(Deno.inspect(performance), "Performance");
+Edno.test(function performanceCustomInspectFunction() {
+  assertStringIncludes(Edno.inspect(performance), "Performance");
   assertStringIncludes(
-    Deno.inspect(Performance.prototype),
+    Edno.inspect(Performance.prototype),
     "Performance",
   );
 });
 
-Deno.test(function performanceMarkCustomInspectFunction() {
+Edno.test(function performanceMarkCustomInspectFunction() {
   const mark1 = performance.mark("mark1");
-  assertStringIncludes(Deno.inspect(mark1), "PerformanceMark");
+  assertStringIncludes(Edno.inspect(mark1), "PerformanceMark");
   assertStringIncludes(
-    Deno.inspect(PerformanceMark.prototype),
+    Edno.inspect(PerformanceMark.prototype),
     "PerformanceMark",
   );
 });
 
-Deno.test(function performanceMeasureCustomInspectFunction() {
+Edno.test(function performanceMeasureCustomInspectFunction() {
   const measure1 = performance.measure("measure1");
-  assertStringIncludes(Deno.inspect(measure1), "PerformanceMeasure");
+  assertStringIncludes(Edno.inspect(measure1), "PerformanceMeasure");
   assertStringIncludes(
-    Deno.inspect(PerformanceMeasure.prototype),
+    Edno.inspect(PerformanceMeasure.prototype),
     "PerformanceMeasure",
   );
 });
 
-Deno.test(function performanceIllegalConstructor() {
+Edno.test(function performanceIllegalConstructor() {
   assertThrows(() => new Performance(), TypeError, "Illegal constructor");
   assertEquals(Performance.length, 0);
 });
 
-Deno.test(function performanceEntryIllegalConstructor() {
+Edno.test(function performanceEntryIllegalConstructor() {
   assertThrows(() => new PerformanceEntry(), TypeError, "Illegal constructor");
   assertEquals(PerformanceEntry.length, 0);
 });
 
-Deno.test(function performanceMeasureIllegalConstructor() {
+Edno.test(function performanceMeasureIllegalConstructor() {
   assertThrows(
     () => new PerformanceMeasure(),
     TypeError,
@@ -249,7 +249,7 @@ Deno.test(function performanceMeasureIllegalConstructor() {
   );
 });
 
-Deno.test(function performanceIsEventTarget() {
+Edno.test(function performanceIsEventTarget() {
   assert(performance instanceof EventTarget);
 
   return new Promise<void>((resolve) => {

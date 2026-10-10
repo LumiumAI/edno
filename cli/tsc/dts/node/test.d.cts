@@ -716,7 +716,7 @@ declare module "node:test" {
                      */
                     error?: Error;
                     /**
-                     * The type of the test, used to denote whether this is a suite.
+                     * The type of the test, used to ednote whether this is a suite.
                      */
                     type?: "suite";
                 };
@@ -785,7 +785,7 @@ declare module "node:test" {
                      */
                     error: Error;
                     /**
-                     * The type of the test, used to denote whether this is a suite.
+                     * The type of the test, used to ednote whether this is a suite.
                      * @since v20.0.0, v19.9.0, v18.17.0
                      */
                     type?: "suite";
@@ -821,7 +821,7 @@ declare module "node:test" {
                      */
                     duration_ms: number;
                     /**
-                     * The type of the test, used to denote whether this is a suite.
+                     * The type of the test, used to ednote whether this is a suite.
                      * @since 20.0.0, 19.9.0, 18.17.0
                      */
                     type?: "suite";

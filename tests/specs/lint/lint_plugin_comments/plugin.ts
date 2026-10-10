@@ -3,7 +3,7 @@ export default {
   rules: {
     foo: {
       create(ctx) {
-        let program: Array<Deno.lint.LineComment | Deno.lint.BlockComment> = [];
+        let program: Array<Edno.lint.LineComment | Edno.lint.BlockComment> = [];
         return {
           Program(node) {
             program = node.comments;
@@ -20,4 +20,4 @@ export default {
       },
     },
   },
-} satisfies Deno.lint.Plugin;
+} satisfies Edno.lint.Plugin;

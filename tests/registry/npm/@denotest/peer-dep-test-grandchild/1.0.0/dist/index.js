@@ -1,1 +1,1 @@
-module.exports = require("@denotest/peer-dep-test-peer");
+module.exports = require("@ednotest/peer-dep-test-peer");

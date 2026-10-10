@@ -32,11 +32,11 @@ import {
 } from "ext:core/ops";
 
 const { zlib: constants } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
-const { TextEncoder } = core.loadExtScript("ext:deno_web/08_text_encoding.js");
+const { TextEncoder } = core.loadExtScript("ext:edno_web/08_text_encoding.js");
 import { Transform } from "node:stream";
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 
 const enc = new TextEncoder();
 const toU8 = (input) => {
@@ -80,7 +80,7 @@ export class BrotliDecompress extends Transform {
         const input = toU8(chunk);
         const output = new Uint8Array(TypedArrayPrototypeGetByteLength(chunk));
         const avail = op_brotli_decompress_stream(context, input, output);
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         this.push(TypedArrayPrototypeSlice(output, 0, avail));
         callback();
       },
@@ -88,7 +88,7 @@ export class BrotliDecompress extends Transform {
         const output = new Uint8Array(1024);
         let avail;
         while ((avail = op_brotli_decompress_stream_end(context, output)) > 0) {
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           this.push(TypedArrayPrototypeSlice(output, 0, avail));
         }
         close(context);
@@ -112,7 +112,7 @@ export class BrotliCompress extends Transform {
         const output = new Uint8Array(brotliMaxCompressedSize(input.length));
         const written = op_brotli_compress_stream(context, input, output);
         if (written > 0) {
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           this.push(TypedArrayPrototypeSlice(output, 0, written));
         }
         callback();
@@ -121,7 +121,7 @@ export class BrotliCompress extends Transform {
         const output = new Uint8Array(1024);
         let avail;
         while ((avail = op_brotli_compress_stream_end(context, output)) > 0) {
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           this.push(TypedArrayPrototypeSlice(output, 0, avail));
         }
         close(context);

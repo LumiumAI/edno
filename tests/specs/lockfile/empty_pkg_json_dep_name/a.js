@@ -1,3 +1,3 @@
-import { setValue } from "@denotest/esm-basic";
+import { setValue } from "@ednotest/esm-basic";
 setValue(2);
 console.log("ok");

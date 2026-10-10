@@ -1,6 +1,6 @@
 let serveAddr;
 
-Deno.serve({
+Edno.serve({
   onListen(addr) {
     serveAddr = addr;
   },

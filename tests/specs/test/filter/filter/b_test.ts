@@ -1,3 +1,3 @@
-Deno.test("foo", function () {});
-Deno.test("bar", function () {});
-Deno.test("baz", function () {});
+Edno.test("foo", function () {});
+Edno.test("bar", function () {});
+Edno.test("baz", function () {});

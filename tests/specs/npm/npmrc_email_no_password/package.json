@@ -2,6 +2,6 @@
   "name": "npmrc_email_no_password_test",
   "version": "0.0.1",
   "dependencies": {
-    "@denotest/basic": "^=1.0.0"
+    "@ednotest/basic": "^=1.0.0"
   }
 }

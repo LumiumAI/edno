@@ -6,4 +6,4 @@ for (var i = 0; i < 8192; i++) {
 
 fileText += "console.log(myVar); // make this line longer with a comment\n";
 
-Deno.writeTextFileSync("main.ts", fileText);
+Edno.writeTextFileSync("main.ts", fileText);

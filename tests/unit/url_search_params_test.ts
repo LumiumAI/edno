@@ -5,7 +5,7 @@ import { assert, assertEquals } from "./test_util.ts";
 // must run in linear time. A quadratic implementation would take many seconds
 // (or minutes) at this size; the linear implementation finishes in
 // milliseconds. The 5s bound is intentionally loose to avoid CI flakes.
-Deno.test(function urlSearchParamsSetDeleteManyDuplicatesIsLinear() {
+Edno.test(function urlSearchParamsSetDeleteManyDuplicatesIsLinear() {
   const N = 20_000;
   const init: [string, string][] = [];
   for (let i = 0; i < N; i++) init.push(["dup", String(i)]);
@@ -24,13 +24,13 @@ Deno.test(function urlSearchParamsSetDeleteManyDuplicatesIsLinear() {
   assertEquals(b.getAll("dup").length, 1);
 });
 
-Deno.test(function urlSearchParamsWithMultipleSpaces() {
+Edno.test(function urlSearchParamsWithMultipleSpaces() {
   const init = { str: "this string has spaces in it" };
   const searchParams = new URLSearchParams(init).toString();
   assertEquals(searchParams, "str=this+string+has+spaces+in+it");
 });
 
-Deno.test(function urlSearchParamsWithExclamation() {
+Edno.test(function urlSearchParamsWithExclamation() {
   const init = [
     ["str", "hello, world!"],
   ];
@@ -38,7 +38,7 @@ Deno.test(function urlSearchParamsWithExclamation() {
   assertEquals(searchParams, "str=hello%2C+world%21");
 });
 
-Deno.test(function urlSearchParamsWithQuotes() {
+Edno.test(function urlSearchParamsWithQuotes() {
   const init = [
     ["str", "'hello world'"],
   ];
@@ -46,7 +46,7 @@ Deno.test(function urlSearchParamsWithQuotes() {
   assertEquals(searchParams, "str=%27hello+world%27");
 });
 
-Deno.test(function urlSearchParamsWithBracket() {
+Edno.test(function urlSearchParamsWithBracket() {
   const init = [
     ["str", "(hello world)"],
   ];
@@ -54,7 +54,7 @@ Deno.test(function urlSearchParamsWithBracket() {
   assertEquals(searchParams, "str=%28hello+world%29");
 });
 
-Deno.test(function urlSearchParamsWithTilde() {
+Edno.test(function urlSearchParamsWithTilde() {
   const init = [
     ["str", "hello~world"],
   ];
@@ -62,7 +62,7 @@ Deno.test(function urlSearchParamsWithTilde() {
   assertEquals(searchParams, "str=hello%7Eworld");
 });
 
-Deno.test(function urlSearchParamsInitString() {
+Edno.test(function urlSearchParamsInitString() {
   const init = "c=4&a=2&b=3&%C3%A1=1";
   const searchParams = new URLSearchParams(init);
   assert(
@@ -71,7 +71,7 @@ Deno.test(function urlSearchParamsInitString() {
   );
 });
 
-Deno.test(function urlSearchParamsInitStringWithPlusCharacter() {
+Edno.test(function urlSearchParamsInitStringWithPlusCharacter() {
   let params = new URLSearchParams("q=a+b");
   assertEquals(params.toString(), "q=a+b");
   assertEquals(params.get("q"), "a b");
@@ -81,7 +81,7 @@ Deno.test(function urlSearchParamsInitStringWithPlusCharacter() {
   assertEquals(params.get("q"), "a b c");
 });
 
-Deno.test(function urlSearchParamsInitStringWithMalformedParams() {
+Edno.test(function urlSearchParamsInitStringWithMalformedParams() {
   // These test cases are copied from Web Platform Tests
   // https://github.com/web-platform-tests/wpt/blob/54c6d64/url/urlsearchparams-constructor.any.js#L60-L80
   let params = new URLSearchParams("id=0&value=%");
@@ -107,7 +107,7 @@ Deno.test(function urlSearchParamsInitStringWithMalformedParams() {
   assertEquals(params.get("b"), "%*");
 });
 
-Deno.test(function urlSearchParamsInitIterable() {
+Edno.test(function urlSearchParamsInitIterable() {
   const init = [
     ["a", "54"],
     ["b", "true"],
@@ -116,33 +116,33 @@ Deno.test(function urlSearchParamsInitIterable() {
   assertEquals(searchParams.toString(), "a=54&b=true");
 });
 
-Deno.test(function urlSearchParamsInitRecord() {
+Edno.test(function urlSearchParamsInitRecord() {
   const init = { a: "54", b: "true" };
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.toString(), "a=54&b=true");
 });
 
-Deno.test(function urlSearchParamsInit() {
+Edno.test(function urlSearchParamsInit() {
   const params1 = new URLSearchParams("a=b");
   assertEquals(params1.toString(), "a=b");
   const params2 = new URLSearchParams(params1);
   assertEquals(params2.toString(), "a=b");
 });
 
-Deno.test(function urlSearchParamsAppendSuccess() {
+Edno.test(function urlSearchParamsAppendSuccess() {
   const searchParams = new URLSearchParams();
   searchParams.append("a", "true");
   assertEquals(searchParams.toString(), "a=true");
 });
 
-Deno.test(function urlSearchParamsDeleteSuccess() {
+Edno.test(function urlSearchParamsDeleteSuccess() {
   const init = "a=54&b=true";
   const searchParams = new URLSearchParams(init);
   searchParams.delete("b");
   assertEquals(searchParams.toString(), "a=54");
 });
 
-Deno.test(function urlSearchParamsGetAllSuccess() {
+Edno.test(function urlSearchParamsGetAllSuccess() {
   const init = "a=54&b=true&a=true";
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.getAll("a"), ["54", "true"]);
@@ -150,7 +150,7 @@ Deno.test(function urlSearchParamsGetAllSuccess() {
   assertEquals(searchParams.getAll("c"), []);
 });
 
-Deno.test(function urlSearchParamsGetSuccess() {
+Edno.test(function urlSearchParamsGetSuccess() {
   const init = "a=54&b=true&a=true";
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.get("a"), "54");
@@ -158,7 +158,7 @@ Deno.test(function urlSearchParamsGetSuccess() {
   assertEquals(searchParams.get("c"), null);
 });
 
-Deno.test(function urlSearchParamsHasSuccess() {
+Edno.test(function urlSearchParamsHasSuccess() {
   const init = "a=54&b=true&a=true";
   const searchParams = new URLSearchParams(init);
   assert(searchParams.has("a"));
@@ -166,28 +166,28 @@ Deno.test(function urlSearchParamsHasSuccess() {
   assert(!searchParams.has("c"));
 });
 
-Deno.test(function urlSearchParamsSetReplaceFirstAndRemoveOthers() {
+Edno.test(function urlSearchParamsSetReplaceFirstAndRemoveOthers() {
   const init = "a=54&b=true&a=true";
   const searchParams = new URLSearchParams(init);
   searchParams.set("a", "false");
   assertEquals(searchParams.toString(), "a=false&b=true");
 });
 
-Deno.test(function urlSearchParamsSetAppendNew() {
+Edno.test(function urlSearchParamsSetAppendNew() {
   const init = "a=54&b=true&a=true";
   const searchParams = new URLSearchParams(init);
   searchParams.set("c", "foo");
   assertEquals(searchParams.toString(), "a=54&b=true&a=true&c=foo");
 });
 
-Deno.test(function urlSearchParamsSortSuccess() {
+Edno.test(function urlSearchParamsSortSuccess() {
   const init = "c=4&a=2&b=3&a=1";
   const searchParams = new URLSearchParams(init);
   searchParams.sort();
   assertEquals(searchParams.toString(), "a=2&a=1&b=3&c=4");
 });
 
-Deno.test(function urlSearchParamsForEachSuccess() {
+Edno.test(function urlSearchParamsForEachSuccess() {
   const init = [
     ["a", "54"],
     ["b", "true"],
@@ -203,34 +203,34 @@ Deno.test(function urlSearchParamsForEachSuccess() {
   assertEquals(callNum, init.length);
 });
 
-Deno.test(function urlSearchParamsMissingName() {
+Edno.test(function urlSearchParamsMissingName() {
   const init = "=4";
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.get(""), "4");
   assertEquals(searchParams.toString(), "=4");
 });
 
-Deno.test(function urlSearchParamsMissingValue() {
+Edno.test(function urlSearchParamsMissingValue() {
   const init = "4=";
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.get("4"), "");
   assertEquals(searchParams.toString(), "4=");
 });
 
-Deno.test(function urlSearchParamsMissingEqualSign() {
+Edno.test(function urlSearchParamsMissingEqualSign() {
   const init = "4";
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.get("4"), "");
   assertEquals(searchParams.toString(), "4=");
 });
 
-Deno.test(function urlSearchParamsMissingPair() {
+Edno.test(function urlSearchParamsMissingPair() {
   const init = "c=4&&a=54&";
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.toString(), "c=4&a=54");
 });
 
-Deno.test(function urlSearchParamsForShortEncodedChar() {
+Edno.test(function urlSearchParamsForShortEncodedChar() {
   const init = { linefeed: "\n", tab: "\t" };
   const searchParams = new URLSearchParams(init);
   assertEquals(searchParams.toString(), "linefeed=%0A&tab=%09");
@@ -238,7 +238,7 @@ Deno.test(function urlSearchParamsForShortEncodedChar() {
 
 // If pair does not contain exactly two items, then throw a TypeError.
 // ref https://url.spec.whatwg.org/#interface-urlsearchparams
-Deno.test(function urlSearchParamsShouldThrowTypeError() {
+Edno.test(function urlSearchParamsShouldThrowTypeError() {
   let hasThrown = 0;
 
   try {
@@ -268,7 +268,7 @@ Deno.test(function urlSearchParamsShouldThrowTypeError() {
   assertEquals(hasThrown, 2);
 });
 
-Deno.test(function urlSearchParamsAppendArgumentsCheck() {
+Edno.test(function urlSearchParamsAppendArgumentsCheck() {
   const methodRequireOneParam = ["delete", "getAll", "get", "has", "forEach"];
 
   const methodRequireTwoParams = ["append", "set"];
@@ -279,7 +279,7 @@ Deno.test(function urlSearchParamsAppendArgumentsCheck() {
       const searchParams = new URLSearchParams();
       let hasThrown = 0;
       try {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (searchParams as any)[method]();
         hasThrown = 1;
       } catch (err) {
@@ -296,7 +296,7 @@ Deno.test(function urlSearchParamsAppendArgumentsCheck() {
     const searchParams = new URLSearchParams();
     let hasThrown = 0;
     try {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (searchParams as any)[method]("foo");
       hasThrown = 1;
     } catch (err) {
@@ -311,7 +311,7 @@ Deno.test(function urlSearchParamsAppendArgumentsCheck() {
 });
 
 // ref: https://github.com/web-platform-tests/wpt/blob/master/url/urlsearchparams-delete.any.js
-Deno.test(function urlSearchParamsDeletingAppendedMultiple() {
+Edno.test(function urlSearchParamsDeletingAppendedMultiple() {
   const params = new URLSearchParams();
   params.append("first", (1 as unknown) as string);
   assert(params.has("first"));
@@ -325,7 +325,7 @@ Deno.test(function urlSearchParamsDeletingAppendedMultiple() {
 });
 
 // ref: https://github.com/web-platform-tests/wpt/blob/master/url/urlsearchparams-constructor.any.js#L176-L182
-Deno.test(function urlSearchParamsCustomSymbolIterator() {
+Edno.test(function urlSearchParamsCustomSymbolIterator() {
   const params = new URLSearchParams();
   params[Symbol.iterator] = function* (): URLSearchParamsIterator<
     [string, string]
@@ -336,10 +336,10 @@ Deno.test(function urlSearchParamsCustomSymbolIterator() {
   assertEquals(params1.get("a"), "b");
 });
 
-Deno.test(
+Edno.test(
   function urlSearchParamsCustomSymbolIteratorWithNonStringParams() {
     const params = {};
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     (params as any)[Symbol.iterator] = function* (): IterableIterator<
       [number, number]
     > {
@@ -351,7 +351,7 @@ Deno.test(
 );
 
 // If a class extends URLSearchParams, override one method should not change another's behavior.
-Deno.test(
+Edno.test(
   function urlSearchParamsOverridingAppendNotChangeConstructorAndSet() {
     let overriddenAppendCalled = 0;
     class CustomSearchParams extends URLSearchParams {
@@ -368,7 +368,7 @@ Deno.test(
   },
 );
 
-Deno.test(function urlSearchParamsOverridingEntriesNotChangeForEach() {
+Edno.test(function urlSearchParamsOverridingEntriesNotChangeForEach() {
   class CustomSearchParams extends URLSearchParams {
     override *entries(): URLSearchParamsIterator<[string, string]> {
       yield* [];
@@ -380,14 +380,14 @@ Deno.test(function urlSearchParamsOverridingEntriesNotChangeForEach() {
   assertEquals(loopCount, 1);
 });
 
-Deno.test(function urlSearchParamsInitUndefinedIsEmpty() {
+Edno.test(function urlSearchParamsInitUndefinedIsEmpty() {
   assertEquals(new URLSearchParams(undefined).toString(), "");
   assertEquals(new URLSearchParams().toString(), "");
 });
 
 // `null` is a value, not a missing argument: WebIDL union resolution sends it
 // to the USVString overload, since `record` is not a dictionary type.
-Deno.test(function urlSearchParamsInitNullIsStringified() {
+Edno.test(function urlSearchParamsInitNullIsStringified() {
   assertEquals(new URLSearchParams(null!).toString(), "null=");
   assertEquals(new URLSearchParams(null!).get("null"), "");
 });

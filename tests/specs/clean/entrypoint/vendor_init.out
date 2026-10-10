@@ -1,4 +1,4 @@
-./denodir
+./ednodir
 [WILDCARD]- gen
 -- file
 [WILDCARD]--- vendor1.ts.js
@@ -13,7 +13,7 @@
 - node_analysis_cache_v2[WILDCARD]
 - npm
 -- localhost_4260
---- @denotest
+--- @ednotest
 ---- add
 ----- 1.0.0
 ------ index.d.ts
@@ -42,13 +42,13 @@
 - v8_code_cache_v2[WILDCARD]
 
 ./node_modules
-- .deno
--- .deno.lock
+- .edno
+-- .edno.lock
 -- .setup-cache.bin
--- @denotest+add@1.0.0
+-- @ednotest+add@1.0.0
 --- .initialized
 --- node_modules
----- @denotest
+---- @ednotest
 ----- add
 -- chalk@5.0.1
 --- .initialized
@@ -59,7 +59,7 @@
 ----- readme.md
 ----- source
 -- node_modules
-- @denotest
+- @ednotest
 -- add (symlink)
 - chalk (symlink)
 

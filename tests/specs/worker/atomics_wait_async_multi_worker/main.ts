@@ -1,6 +1,6 @@
 // Test that foreground tasks are delivered to the correct isolate when
 // multiple workers are using Atomics.waitAsync concurrently.
-Deno.test("multiple workers waitAsync resolve independently", async () => {
+Edno.test("multiple workers waitAsync resolve independently", async () => {
   const NUM_WORKERS = 4;
   const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT);
   const ia = new Int32Array(sab);

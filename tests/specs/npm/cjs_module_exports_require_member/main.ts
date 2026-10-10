@@ -8,7 +8,7 @@ import {
   disableFragmentWarnings,
   gql,
   resetCaches,
-} from "npm:@denotest/cjs-module-exports-require-member";
+} from "npm:@ednotest/cjs-module-exports-require-member";
 
 console.log(gql());
 console.log(resetCaches());

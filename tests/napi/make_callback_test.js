@@ -4,7 +4,7 @@ import { assertEquals, loadTestLibrary } from "./common.js";
 
 const mc = loadTestLibrary();
 
-Deno.test("napi makeCallback1", function () {
+Edno.test("napi makeCallback1", function () {
   const resource = {};
 
   let callCount = 0;
@@ -18,7 +18,7 @@ Deno.test("napi makeCallback1", function () {
   assertEquals(callCount, 1);
 });
 
-Deno.test("napi makeCallback2", function () {
+Edno.test("napi makeCallback2", function () {
   const resource = {};
 
   let callCount = 0;
@@ -33,7 +33,7 @@ Deno.test("napi makeCallback2", function () {
   assertEquals(callCount, 1);
 });
 
-Deno.test("napi makeCallback recursive", function () {
+Edno.test("napi makeCallback recursive", function () {
   const resource = {};
   let callCount = 0;
 
@@ -53,7 +53,7 @@ Deno.test("napi makeCallback recursive", function () {
   assertEquals(result, 5);
 });
 
-Deno.test("napi makeCallback3", function () {
+Edno.test("napi makeCallback3", function () {
   const resource = {};
 
   let callCount = 0;

@@ -1,8 +1,8 @@
-Deno.env.get("FOO");
-Deno.env.get("BAR");
+Edno.env.get("FOO");
+Edno.env.get("BAR");
 
-Deno.loadavg();
-Deno.hostname();
+Edno.loadavg();
+Edno.hostname();
 
-Deno.cwd();
-Deno.lstatSync(new URL("../", import.meta.url));
+Edno.cwd();
+Edno.lstatSync(new URL("../", import.meta.url));

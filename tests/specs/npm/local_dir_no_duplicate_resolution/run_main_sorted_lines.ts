@@ -1,5 +1,5 @@
-const { success, stderr } = new Deno.Command(
-  Deno.execPath(),
+const { success, stderr } = new Edno.Command(
+  Edno.execPath(),
   {
     args: ["run", "-A", "--log-level=debug", "main.tsx"],
   },

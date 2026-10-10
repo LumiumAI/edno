@@ -2,6 +2,6 @@
   "name": "@scope/frontend",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/lifecycle-scripts-init-cwd": "1.0.0"
+    "@ednotest/lifecycle-scripts-init-cwd": "1.0.0"
   }
 }

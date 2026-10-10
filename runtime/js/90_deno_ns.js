@@ -8,86 +8,86 @@ import {
   op_runtime_memory_usage,
 } from "ext:core/ops";
 
-const timers = core.loadExtScript("ext:deno_web/02_timers.js");
-const httpClient = core.loadExtScript("ext:deno_fetch/22_http_client.js");
-const console = core.loadExtScript("ext:deno_web/01_console.js");
-const ffi = core.loadExtScript("ext:deno_ffi/00_ffi.js");
-const net = core.loadExtScript("ext:deno_net/01_net.js");
-const tls = core.loadExtScript("ext:deno_net/02_tls.js");
-// `Deno.serve` is the eager loader chain into 22_body -> 06_streams (the
+const timers = core.loadExtScript("ext:edno_web/02_timers.js");
+const httpClient = core.loadExtScript("ext:edno_fetch/22_http_client.js");
+const console = core.loadExtScript("ext:edno_web/01_console.js");
+const ffi = core.loadExtScript("ext:edno_ffi/00_ffi.js");
+const net = core.loadExtScript("ext:edno_net/01_net.js");
+const tls = core.loadExtScript("ext:edno_net/02_tls.js");
+// `Edno.serve` is the eager loader chain into 22_body -> 06_streams (the
 // 208 KB web streams polyfill). Defer until first access so programs that
-// don't use Deno.serve don't pay the parse cost at startup.
+// don't use Edno.serve don't pay the parse cost at startup.
 let _serveImpl;
 function lazyServe() {
   return _serveImpl ??
-    (_serveImpl = core.loadExtScript("ext:deno_http/00_serve.ts"));
+    (_serveImpl = core.loadExtScript("ext:edno_http/00_serve.ts"));
 }
-// Deno.serveHttp and Deno.upgradeWebSocket each chain through
+// Edno.serveHttp and Edno.upgradeWebSocket each chain through
 // 23_request -> 22_body -> 06_streams (208 KB). Defer both.
 let _httpImpl;
 function lazyHttp() {
   return _httpImpl ??
-    (_httpImpl = core.loadExtScript("ext:deno_http/01_http.js"));
+    (_httpImpl = core.loadExtScript("ext:edno_http/01_http.js"));
 }
 let _websocketImpl;
 function lazyWebsocket() {
   return _websocketImpl ??
-    (_websocketImpl = core.loadExtScript("ext:deno_http/02_websocket.ts"));
+    (_websocketImpl = core.loadExtScript("ext:edno_http/02_websocket.ts"));
 }
 const errors = core.loadExtScript("ext:runtime/01_errors.js");
 const version = core.loadExtScript("ext:runtime/01_version.ts");
 const permissions = core.loadExtScript("ext:runtime/10_permissions.js");
-const io = core.loadExtScript("ext:deno_io/12_io.js");
-const fs = core.loadExtScript("ext:deno_fs/30_fs.js");
-const os = core.loadExtScript("ext:deno_os/30_os.js");
+const io = core.loadExtScript("ext:edno_io/12_io.js");
+const fs = core.loadExtScript("ext:edno_fs/30_fs.js");
+const os = core.loadExtScript("ext:edno_os/30_os.js");
 const fsEvents = core.loadExtScript("ext:runtime/40_fs_events.js");
-// Deno.Command / Deno.run / etc.: 40_process.js extends ReadableStream at
+// Edno.Command / Edno.run / etc.: 40_process.js extends ReadableStream at
 // module body, which pulls 06_streams.js (208 KB). Defer.
 let _processImpl;
 function lazyProcess() {
   return _processImpl ??
-    (_processImpl = core.loadExtScript("ext:deno_process/40_process.js"));
+    (_processImpl = core.loadExtScript("ext:edno_process/40_process.js"));
 }
-const signals = core.loadExtScript("ext:deno_os/40_signals.js");
+const signals = core.loadExtScript("ext:edno_os/40_signals.js");
 const tty = core.loadExtScript("ext:runtime/40_tty.js");
-// Deno.Kv is a niche API and pulls 06_streams. Defer.
+// Edno.Kv is a niche API and pulls 06_streams. Defer.
 let _kvImpl;
 function lazyKv() {
-  return _kvImpl ?? (_kvImpl = core.loadExtScript("ext:deno_kv/01_db.ts"));
+  return _kvImpl ?? (_kvImpl = core.loadExtScript("ext:edno_kv/01_db.ts"));
 }
-// `Deno.cron`, `Deno.UnsafeWindowSurface`, `Deno.telemetry` are rarely used
+// `Edno.cron`, `Edno.UnsafeWindowSurface`, `Edno.telemetry` are rarely used
 // and their backing modules (`01_cron.ts`, `02_surface.js`, `telemetry.ts`)
 // are several KB of bytecode + closures each in the snapshot heap. Defer the
 // `loadExtScript()` calls so they don't materialize at snapshot build time:
 // only on first property access at runtime.
 let _cron;
 const lazyCron = () =>
-  _cron ?? (_cron = core.loadExtScript("ext:deno_cron/01_cron.ts"));
+  _cron ?? (_cron = core.loadExtScript("ext:edno_cron/01_cron.ts"));
 let _surface;
 const lazySurface = () =>
   _surface ??
-    (_surface = core.loadExtScript("ext:deno_canvas/02_surface.js"));
+    (_surface = core.loadExtScript("ext:edno_canvas/02_surface.js"));
 let _telemetry;
 const lazyTelemetry = () =>
   _telemetry ??
-    (_telemetry = core.loadExtScript("ext:deno_telemetry/telemetry.ts"));
-import { unstableIds } from "ext:deno_features/flags.js";
-const { loadWebGPU } = core.loadExtScript("ext:deno_webgpu/00_init.js");
-import { bundle } from "ext:deno_bundle_runtime/bundle.ts";
+    (_telemetry = core.loadExtScript("ext:edno_telemetry/telemetry.ts"));
+import { unstableIds } from "ext:edno_features/flags.js";
+const { loadWebGPU } = core.loadExtScript("ext:edno_webgpu/00_init.js");
+import { bundle } from "ext:edno_bundle_runtime/bundle.ts";
 
 const { ObjectDefineProperty, Float64Array } = primordials;
 
-const loadQuic = core.createLazyLoader("ext:deno_net/03_quic.js");
+const loadQuic = core.createLazyLoader("ext:edno_net/03_quic.js");
 const loadWebTransport = core.createLazyLoader(
-  "ext:deno_web/webtransport.js",
+  "ext:edno_web/webtransport.js",
 );
 
-// Each entry here is a property on `internals` (i.e. `Deno[Deno.internal]`)
+// Each entry here is a property on `internals` (i.e. `Edno[Edno.internal]`)
 // that's defined at module body time by a `lazy_loaded_js` polyfill (e.g.
 // `internals.serveHttpOnListener = ...` at the end of `00_serve.ts`). When
 // the lazy script hasn't loaded yet, the property is `undefined` and any
-// caller that captured it (Deno's own unit tests, user code reaching into
-// `Deno[Deno.internal]`) sees `undefined`. Define a configurable accessor
+// caller that captured it (Edno's own unit tests, user code reaching into
+// `Edno[Edno.internal]`) sees `undefined`. Define a configurable accessor
 // here so the first read triggers the lazy load and the polyfill's own
 // `internals.X = value;` assignment then replaces this accessor with a
 // plain data property via the setter. After the first read it costs the
@@ -116,33 +116,33 @@ function defineLazyInternal(name, specifier) {
   });
 }
 
-// `ext:deno_http/00_serve.ts` (registers serve internals at module body).
-defineLazyInternal("addTrailers", "ext:deno_http/00_serve.ts");
-defineLazyInternal("serveHttpOnListener", "ext:deno_http/00_serve.ts");
-defineLazyInternal("serveHttpOnConnection", "ext:deno_http/00_serve.ts");
-// `ext:deno_cron/01_cron.ts` registers `internals.formatToCronSchedule` /
+// `ext:edno_http/00_serve.ts` (registers serve internals at module body).
+defineLazyInternal("addTrailers", "ext:edno_http/00_serve.ts");
+defineLazyInternal("serveHttpOnListener", "ext:edno_http/00_serve.ts");
+defineLazyInternal("serveHttpOnConnection", "ext:edno_http/00_serve.ts");
+// `ext:edno_cron/01_cron.ts` registers `internals.formatToCronSchedule` /
 // `internals.parseScheduleToString` at module body. Now that cron is lazy
 // (see `lazyCron` below), expose these via the same accessor pattern so
-// `cron_test.ts` (which destructures them from `Deno[Deno.internal]`) and
+// `cron_test.ts` (which destructures them from `Edno[Edno.internal]`) and
 // any user code reaching in keep working.
-defineLazyInternal("formatToCronSchedule", "ext:deno_cron/01_cron.ts");
-defineLazyInternal("parseScheduleToString", "ext:deno_cron/01_cron.ts");
-// `ext:deno_http/02_websocket.ts`.
+defineLazyInternal("formatToCronSchedule", "ext:edno_cron/01_cron.ts");
+defineLazyInternal("parseScheduleToString", "ext:edno_cron/01_cron.ts");
+// `ext:edno_http/02_websocket.ts`.
 defineLazyInternal(
   "buildCaseInsensitiveCommaValueFinder",
-  "ext:deno_http/02_websocket.ts",
+  "ext:edno_http/02_websocket.ts",
 );
-// `ext:deno_fetch/23_request.js`.
-defineLazyInternal("getCachedAbortSignal", "ext:deno_fetch/23_request.js");
-// `ext:deno_process/40_process.js` (registers process internals at module body).
-defineLazyInternal("getExtraPipeRids", "ext:deno_process/40_process.js");
-defineLazyInternal("getIpcPipeRid", "ext:deno_process/40_process.js");
-defineLazyInternal("kExtraStdio", "ext:deno_process/40_process.js");
+// `ext:edno_fetch/23_request.js`.
+defineLazyInternal("getCachedAbortSignal", "ext:edno_fetch/23_request.js");
+// `ext:edno_process/40_process.js` (registers process internals at module body).
+defineLazyInternal("getExtraPipeRids", "ext:edno_process/40_process.js");
+defineLazyInternal("getIpcPipeRid", "ext:edno_process/40_process.js");
+defineLazyInternal("kExtraStdio", "ext:edno_process/40_process.js");
 
 // the out buffer for `cpuUsage` and `memoryUsage`
 const usageBuffer = new Float64Array(4);
 
-const denoNs = {
+const ednoNs = {
   Process: undefined,
   run: undefined,
   isatty: tty.isatty,
@@ -274,7 +274,7 @@ const denoNs = {
   },
 };
 
-core.defineGlobalProperties(denoNs, {
+core.defineGlobalProperties(ednoNs, {
   Process: core.propWritableLazyLoaded(
     (process) => process.Process,
     lazyProcess,
@@ -306,21 +306,21 @@ core.defineGlobalProperties(denoNs, {
   ),
 });
 
-const denoNsUnstableById = { __proto__: null };
+const ednoNsUnstableById = { __proto__: null };
 
-denoNsUnstableById[unstableIds.bundle] = {
+ednoNsUnstableById[unstableIds.bundle] = {
   bundle,
 };
 
-// denoNsUnstableById[unstableIds.broadcastChannel] = { __proto__: null }
+// ednoNsUnstableById[unstableIds.broadcastChannel] = { __proto__: null }
 
-denoNsUnstableById[unstableIds.cron] = {
+ednoNsUnstableById[unstableIds.cron] = {
   get cron() {
     return lazyCron().cron;
   },
 };
 
-denoNsUnstableById[unstableIds.kv] = {
+ednoNsUnstableById[unstableIds.kv] = {
   get openKv() {
     return lazyKv().openKv;
   },
@@ -338,14 +338,14 @@ denoNsUnstableById[unstableIds.kv] = {
   },
 };
 
-denoNsUnstableById[unstableIds.net] = {
+ednoNsUnstableById[unstableIds.net] = {
   listenDatagram: net.createListenDatagram(
     op_net_listen_udp,
     op_net_listen_unixpacket,
   ),
 };
 
-core.defineGlobalProperties(denoNsUnstableById[unstableIds.net], {
+core.defineGlobalProperties(ednoNsUnstableById[unstableIds.net], {
   connectQuic: core.propWritableLazyLoaded((q) => q.connectQuic, loadQuic),
   QuicEndpoint: core.propWritableLazyLoaded((q) => q.QuicEndpoint, loadQuic),
   QuicBidirectionalStream: core.propWritableLazyLoaded(
@@ -369,20 +369,20 @@ core.defineGlobalProperties(denoNsUnstableById[unstableIds.net], {
   ),
 });
 
-// denoNsUnstableById[unstableIds.unsafeProto] = { __proto__: null }
+// ednoNsUnstableById[unstableIds.unsafeProto] = { __proto__: null }
 
-denoNsUnstableById[unstableIds.webgpu] = {
+ednoNsUnstableById[unstableIds.webgpu] = {
   get UnsafeWindowSurface() {
     return lazySurface().UnsafeWindowSurface;
   },
 };
-core.defineGlobalProperties(denoNsUnstableById[unstableIds.webgpu], {
+core.defineGlobalProperties(ednoNsUnstableById[unstableIds.webgpu], {
   webgpu: core.propWritableLazyLoaded(
-    (webgpu) => webgpu.denoNsWebGPU,
+    (webgpu) => webgpu.ednoNsWebGPU,
     loadWebGPU,
   ),
 });
 
-// denoNsUnstableById[unstableIds.workerOptions] = { __proto__: null }
+// ednoNsUnstableById[unstableIds.workerOptions] = { __proto__: null }
 
-export { denoNs, denoNsUnstableById, unstableIds };
+export { ednoNs, ednoNsUnstableById, unstableIds };

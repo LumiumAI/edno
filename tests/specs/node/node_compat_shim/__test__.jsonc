@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "tests": {
-    // With no real `node` on PATH, Deno provides itself as `node`, so a native
+    // With no real `node` on PATH, Edno provides itself as `node`, so a native
     // PATH-based spawn of `node` succeeds.
     "provides_node_when_absent": {
       "if": "unix",
@@ -17,7 +17,7 @@
       "args": "run -A spawn_node.mjs",
       "envs": {
         "PATH": "",
-        "DENO_DISABLE_NODE_SHIM": "1"
+        "EDNO_DISABLE_NODE_SHIM": "1"
       },
       "output": "spawn_node_disabled.out"
     },

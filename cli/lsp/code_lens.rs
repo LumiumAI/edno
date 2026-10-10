@@ -10,12 +10,12 @@ use deno_ast::SourceRangedForSpanned;
 use deno_ast::swc::ast;
 use deno_ast::swc::ecma_visit::Visit;
 use deno_ast::swc::ecma_visit::VisitWith;
-use deno_core::ModuleSpecifier;
-use deno_core::error::AnyError;
-use deno_core::serde::Deserialize;
-use deno_core::serde::Serialize;
-use deno_core::serde_json;
-use deno_core::serde_json::json;
+use edno_core::ModuleSpecifier;
+use edno_core::error::AnyError;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Serialize;
+use edno_core::serde_json;
+use edno_core::serde_json::json;
 use lazy_regex::lazy_regex;
 use lsp_types::Uri;
 use once_cell::sync::Lazy;
@@ -53,7 +53,7 @@ pub struct CodeLensData {
 }
 
 /// The body of a test or test step registration call, i.e. the function passed
-/// to `Deno.test(...)`, `t.step(...)`, `describe(...)`, `it(...)`, etc.
+/// to `Edno.test(...)`, `t.step(...)`, `describe(...)`, `it(...)`, etc.
 enum TestFnBody<'a> {
   Arrow(&'a ast::ArrowExpr),
   Fn(&'a ast::Function),
@@ -150,7 +150,7 @@ fn find_test_fn_body(node: &ast::CallExpr) -> Option<TestFnBody<'_>> {
 
 /// Push the "Run Test" and "Debug" code lenses for a test or test step. For a
 /// test step, `name` is the name of the enclosing top-level test (the only
-/// granularity `deno test --filter` supports), so debugging a step runs its
+/// granularity `edno test --filter` supports), so debugging a step runs its
 /// parent test under the inspector.
 fn add_test_code_lenses(
   code_lenses: &mut Vec<lsp::CodeLens>,
@@ -165,7 +165,7 @@ fn add_test_code_lenses(
       range,
       command: Some(lsp::Command {
         title: title.to_string(),
-        command: "deno.client.test".to_string(),
+        command: "edno.client.test".to_string(),
         arguments: Some(vec![
           json!(specifier),
           json!(name),
@@ -206,7 +206,7 @@ fn collect_step_code_lenses(
   if let Some(var) = maybe_step_var {
     vars.insert(var);
   }
-  let mut collector = DenoTestStepCollector {
+  let mut collector = EdnoTestStepCollector {
     code_lenses,
     specifier,
     parsed_source,
@@ -221,14 +221,14 @@ fn collect_step_code_lenses(
   }
 }
 
-struct DenoTestCollector {
+struct EdnoTestCollector {
   code_lenses: Vec<lsp::CodeLens>,
   parsed_source: ParsedSource,
   specifier: ModuleSpecifier,
   test_vars: HashSet<String>,
 }
 
-impl DenoTestCollector {
+impl EdnoTestCollector {
   pub fn new(specifier: ModuleSpecifier, parsed_source: ParsedSource) -> Self {
     Self {
       code_lenses: Vec::new(),
@@ -272,7 +272,7 @@ impl DenoTestCollector {
   }
 }
 
-impl Visit for DenoTestCollector {
+impl Visit for EdnoTestCollector {
   fn visit_call_expr(&mut self, node: &ast::CallExpr) {
     let ast::Callee::Expr(callee_expr) = &node.callee else {
       return;
@@ -306,7 +306,7 @@ impl Visit for DenoTestCollector {
       return;
     };
     let is_describe = match prop_chain {
-      ["", "Deno", "test"] | ["Deno", "test", "ignore" | "only"] => false,
+      ["", "Edno", "test"] | ["Edno", "test", "ignore" | "only"] => false,
       ["", "", "describe"] | ["", "describe", "ignore" | "only" | "skip"] => {
         true
       }
@@ -320,9 +320,9 @@ impl Visit for DenoTestCollector {
     for decl in &node.decls {
       if let Some(init) = &decl.init {
         match init.as_ref() {
-          // Identify destructured assignments of `test` from `Deno`
+          // Identify destructured assignments of `test` from `Edno`
           ast::Expr::Ident(ident) => {
-            if ident.sym == "Deno"
+            if ident.sym == "Edno"
               && let ast::Pat::Object(object_pat) = &decl.name
             {
               for prop in &object_pat.props {
@@ -346,10 +346,10 @@ impl Visit for DenoTestCollector {
               }
             }
           }
-          // Identify variable assignments where the init is `Deno.test`
+          // Identify variable assignments where the init is `Edno.test`
           ast::Expr::Member(member_expr) => {
             if let ast::Expr::Ident(obj_ident) = member_expr.obj.as_ref()
-              && obj_ident.sym == "Deno"
+              && obj_ident.sym == "Edno"
               && let ast::MemberProp::Ident(prop_ident) = &member_expr.prop
               && prop_ident.sym == "test"
               && let ast::Pat::Ident(binding_ident) = &decl.name
@@ -369,7 +369,7 @@ impl Visit for DenoTestCollector {
 /// `TestStepCollector`, but instead of building a test hierarchy it pushes a
 /// "Run Test"/"Debug" code lens for each step (filtering by the enclosing
 /// top-level test `root_name`).
-struct DenoTestStepCollector<'a> {
+struct EdnoTestStepCollector<'a> {
   code_lenses: &'a mut Vec<lsp::CodeLens>,
   specifier: &'a ModuleSpecifier,
   parsed_source: &'a ParsedSource,
@@ -379,7 +379,7 @@ struct DenoTestStepCollector<'a> {
   is_describe: bool,
 }
 
-impl Visit for DenoTestStepCollector<'_> {
+impl Visit for EdnoTestStepCollector<'_> {
   fn visit_call_expr(&mut self, node: &ast::CallExpr) {
     let ast::Callee::Expr(callee_expr) = &node.callee else {
       return;
@@ -432,7 +432,7 @@ impl Visit for DenoTestStepCollector<'_> {
       &rightmost_symbol_range,
     );
     // A step body can itself contain nested steps (`t.step(...)` within a
-    // `t.step(...)`), so descend into it as a `Deno.test`-style step body.
+    // `t.step(...)`), so descend into it as a `Edno.test`-style step body.
     if let Some(body) = find_test_fn_body(node) {
       collect_step_code_lenses(
         self.code_lenses,
@@ -549,7 +549,7 @@ async fn resolve_implementation_code_lens(
   } else {
     lsp::Command {
       title,
-      command: "deno.client.showReferences".to_string(),
+      command: "edno.client.showReferences".to_string(),
       arguments: Some(vec![
         json!(data.uri),
         json!(code_lens.range.start),
@@ -603,7 +603,7 @@ async fn resolve_references_code_lens(
   } else {
     lsp::Command {
       title,
-      command: "deno.client.showReferences".to_string(),
+      command: "edno.client.showReferences".to_string(),
       arguments: Some(vec![
         json!(data.uri),
         json!(code_lens.range.start),
@@ -649,7 +649,7 @@ pub fn collect_test(
 ) -> Result<Vec<lsp::CodeLens>, AnyError> {
   // TODO(nayeemrmn): Do cancellation checks while collecting tests.
   let mut collector =
-    DenoTestCollector::new(specifier.clone(), parsed_source.clone());
+    EdnoTestCollector::new(specifier.clone(), parsed_source.clone());
   parsed_source.program().visit_with(&mut collector);
   Ok(collector.take())
 }
@@ -744,7 +744,7 @@ pub fn collect_tsc(
 #[cfg(test)]
 mod tests {
   use deno_ast::MediaType;
-  use deno_core::resolve_url;
+  use edno_core::resolve_url;
 
   use super::*;
 
@@ -752,20 +752,20 @@ mod tests {
   fn test_deno_test_collector() {
     let specifier = resolve_url("https://deno.land/x/mod.ts").unwrap();
     let source = r#"
-      Deno.test({
+      Edno.test({
         name: "test a",
         fn() {}
       });
 
-      Deno.test(function useFnName() {});
+      Edno.test(function useFnName() {});
 
-      Deno.test("test b", function anotherTest() {});
+      Edno.test("test b", function anotherTest() {});
 
-      Deno.test.ignore("test ignore", () => {});
+      Edno.test.ignore("test ignore", () => {});
 
-      Deno.test.only("test only", () => {});
+      Edno.test.only("test only", () => {});
 
-      Deno.test(`test template literal name`, () => {});
+      Edno.test(`test template literal name`, () => {});
 
       describe("test describe", () => {});
 
@@ -785,7 +785,7 @@ mod tests {
     })
     .unwrap();
     let mut collector =
-      DenoTestCollector::new(specifier, parsed_module.clone());
+      EdnoTestCollector::new(specifier, parsed_module.clone());
     parsed_module.program().visit_with(&mut collector);
     assert_eq!(
       collector.take(),
@@ -803,7 +803,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test a"),
@@ -827,7 +827,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test a"),
@@ -851,7 +851,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("useFnName"),
@@ -875,7 +875,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("useFnName"),
@@ -899,7 +899,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test b"),
@@ -923,7 +923,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test b"),
@@ -947,7 +947,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test ignore"),
@@ -971,7 +971,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test ignore"),
@@ -995,7 +995,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test only"),
@@ -1019,7 +1019,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test only"),
@@ -1043,7 +1043,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test template literal name"),
@@ -1067,7 +1067,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test template literal name"),
@@ -1091,7 +1091,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe"),
@@ -1115,7 +1115,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe"),
@@ -1139,7 +1139,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe ignore"),
@@ -1163,7 +1163,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe ignore"),
@@ -1187,7 +1187,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe only"),
@@ -1211,7 +1211,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe only"),
@@ -1235,7 +1235,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "▶\u{fe0e} Run Test".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe skip"),
@@ -1259,7 +1259,7 @@ mod tests {
           },
           command: Some(lsp::Command {
             title: "Debug".to_string(),
-            command: "deno.client.test".to_string(),
+            command: "edno.client.test".to_string(),
             arguments: Some(vec![
               json!("https://deno.land/x/mod.ts"),
               json!("test describe skip"),
@@ -1303,7 +1303,7 @@ mod tests {
     })
     .unwrap();
     let mut collector =
-      DenoTestCollector::new(specifier, parsed_module.clone());
+      EdnoTestCollector::new(specifier, parsed_module.clone());
     parsed_module.program().visit_with(&mut collector);
     collector.take()
   }
@@ -1315,7 +1315,7 @@ mod tests {
     // under the inspector. Regression test for
     // https://github.com/denoland/deno/issues/21664.
     let source = r#"
-      Deno.test("test a", async (t) => {
+      Edno.test("test a", async (t) => {
         await t.step("step 1", () => {});
         await t.step("step 2", async (t) => {
           await t.step("nested step", () => {});
@@ -1361,7 +1361,7 @@ mod tests {
   fn test_deno_test_collector_steps_destructured() {
     // Destructured `step` from the test context is also detected.
     let source = r#"
-      Deno.test("test a", async ({ step }) => {
+      Edno.test("test a", async ({ step }) => {
         await step("step 1", () => {});
       });
     "#;

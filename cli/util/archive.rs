@@ -5,9 +5,9 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
 
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 
 fn unzip_with_shell(
   archive_path: &Path,
@@ -73,7 +73,7 @@ fn unzip(
 
 pub struct UnpackArgs<'a> {
   /// The full file name of the file expected to be produced by unpacking the
-  /// archive (e.g. `deno`, `deno.exe`, `libdenort.dylib`).
+  /// archive (e.g. `edno`, `edno.exe`, `libdenort.dylib`).
   pub exe_name: &'a str,
   pub archive_name: &'a str,
   pub archive_data: &'a [u8],
@@ -154,29 +154,29 @@ mod tests {
   #[test]
   fn unpacks_executable_without_extension() {
     let temp_dir = tempfile::TempDir::new().unwrap();
-    let data = make_zip("deno", b"fake exe");
+    let data = make_zip("edno", b"fake exe");
     let path = unpack_into_dir(UnpackArgs {
-      exe_name: "deno",
-      archive_name: "deno-aarch64-apple-darwin.zip",
+      exe_name: "edno",
+      archive_name: "edno-aarch64-apple-darwin.zip",
       archive_data: &data,
       dest_path: temp_dir.path(),
     })
     .unwrap();
-    assert_eq!(path, temp_dir.path().join("deno"));
+    assert_eq!(path, temp_dir.path().join("edno"));
     assert_eq!(std::fs::read(&path).unwrap(), b"fake exe");
   }
 
   #[test]
   fn unpacks_executable_with_exe_extension() {
     let temp_dir = tempfile::TempDir::new().unwrap();
-    let data = make_zip("deno.exe", b"fake exe");
+    let data = make_zip("edno.exe", b"fake exe");
     let path = unpack_into_dir(UnpackArgs {
-      exe_name: "deno.exe",
-      archive_name: "deno-x86_64-pc-windows-msvc.zip",
+      exe_name: "edno.exe",
+      archive_name: "edno-x86_64-pc-windows-msvc.zip",
       archive_data: &data,
       dest_path: temp_dir.path(),
     })
     .unwrap();
-    assert_eq!(path, temp_dir.path().join("deno.exe"));
+    assert_eq!(path, temp_dir.path().join("edno.exe"));
   }
 }

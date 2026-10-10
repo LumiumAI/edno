@@ -1,36 +1,36 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-//! Lets Deno stand in for `node` when no real Node.js binary is available.
+//! Lets Edno stand in for `node` when no real Node.js binary is available.
 //!
 //! Two complementary mechanisms:
 //!
-//! 1. Arg0 dispatch ([`maybe_rewrite_node_arg0`]): when the deno binary is
+//! 1. Arg0 dispatch ([`maybe_rewrite_node_arg0`]): when the edno binary is
 //!    invoked through a file named `node` (a symlink/hardlink created below),
-//!    translate the Node.js CLI arguments to Deno arguments and run as if
-//!    `deno node ...` had been invoked.
+//!    translate the Node.js CLI arguments to Edno arguments and run as if
+//!    `edno node ...` had been invoked.
 //!
 //! 2. PATH injection ([`ensure_node_on_path`]): create a `node` executable
-//!    pointing back at the current deno binary in a cache directory and prepend
+//!    pointing back at the current edno binary in a cache directory and prepend
 //!    that directory to the process's own `PATH`, so that child processes
 //!    (including native ones such as Next.js Turbopack, which spawn `node` via
-//!    a raw OS PATH lookup that bypasses Deno's JS-level interception) can find
+//!    a raw OS PATH lookup that bypasses Edno's JS-level interception) can find
 //!    a `node` to run.
 //!
 //! Both are best-effort and only kick in when a real `node` is not already
 //! available on `PATH`, so existing Node.js setups are never shadowed. The
-//! behavior can be disabled entirely with `DENO_DISABLE_NODE_SHIM=1`.
+//! behavior can be disabled entirely with `EDNO_DISABLE_NODE_SHIM=1`.
 
 use std::ffi::OsString;
 use std::path::Path;
 use std::path::PathBuf;
 
 /// Env var that disables the whole feature when set to a truthy value.
-const DISABLE_ENV_VAR: &str = "DENO_DISABLE_NODE_SHIM";
+const DISABLE_ENV_VAR: &str = "EDNO_DISABLE_NODE_SHIM";
 /// Internal marker set once the shim has been put on PATH, used to avoid the
 /// shim recursively validating against itself when a spawned `node` (which is
-/// really deno) re-enters this code.
-const ACTIVE_ENV_VAR: &str = "DENO_NODE_SHIM_ACTIVE";
-/// Name of the directory under DENO_DIR that holds the `node` shim.
+/// really edno) re-enters this code.
+const ACTIVE_ENV_VAR: &str = "EDNO_NODE_SHIM_ACTIVE";
+/// Name of the directory under EDNO_DIR that holds the `node` shim.
 const SHIM_DIR_NAME: &str = "node_compat_bin";
 
 fn is_truthy(value: &str) -> bool {
@@ -51,9 +51,9 @@ fn env_disabled() -> bool {
 /// off the cold-start path of commands like `fmt`/`lint`/`check`/`lsp` that
 /// never spawn one.
 pub fn subcommand_may_spawn_node(
-  subcommand: &crate::args::DenoSubcommand,
+  subcommand: &crate::args::EdnoSubcommand,
 ) -> bool {
-  use crate::args::DenoSubcommand::*;
+  use crate::args::EdnoSubcommand::*;
   matches!(
     subcommand,
     Run(_) | Task(_) | Test(_) | Bench(_) | Eval(_) | Repl(_) | Serve(_)
@@ -67,9 +67,9 @@ fn is_node_arg0(arg0: &OsString) -> bool {
   let Some(file_name) = Path::new(arg0).file_name() else {
     return false;
   };
-  // Never misfire on the deno binary itself.
-  if file_name.eq_ignore_ascii_case("deno")
-    || file_name.eq_ignore_ascii_case("deno.exe")
+  // Never misfire on the edno binary itself.
+  if file_name.eq_ignore_ascii_case("edno")
+    || file_name.eq_ignore_ascii_case("edno.exe")
   {
     return false;
   }
@@ -80,10 +80,10 @@ fn is_node_arg0(arg0: &OsString) -> bool {
 }
 
 /// If the process was invoked as `node`, translate the Node.js CLI args into
-/// Deno args and return the rewritten argv. Otherwise returns `args` unchanged.
+/// Edno args and return the rewritten argv. Otherwise returns `args` unchanged.
 ///
 /// Must be called before any threads are spawned, as it may mutate process
-/// environment variables (`NODE_OPTIONS`, `DENO_TLS_CA_STORE`, ...).
+/// environment variables (`NODE_OPTIONS`, `EDNO_TLS_CA_STORE`, ...).
 pub fn maybe_rewrite_node_arg0(args: Vec<OsString>) -> Vec<OsString> {
   let Some(arg0) = args.first() else {
     return args;
@@ -98,7 +98,7 @@ pub fn maybe_rewrite_node_arg0(args: Vec<OsString>) -> Vec<OsString> {
   }
 
   // node_shim operates on Strings. Node never passes non-UTF8 flags, and any
-  // entrypoint path is re-resolved by deno's own `run` resolution.
+  // entrypoint path is re-resolved by edno's own `run` resolution.
   let node_args: Vec<String> = args[1..]
     .iter()
     .map(|a| a.to_string_lossy().into_owned())
@@ -116,7 +116,7 @@ pub fn maybe_rewrite_node_arg0(args: Vec<OsString>) -> Vec<OsString> {
           eprintln!("Errors: {}", errors.join(", "));
         }
       }
-      deno_runtime::exit(1);
+      edno_runtime::exit(1);
     }
   };
 
@@ -125,27 +125,27 @@ pub fn maybe_rewrite_node_arg0(args: Vec<OsString>) -> Vec<OsString> {
 
   apply_env_side_effects(&result);
 
-  let mut deno_args = result.deno_args;
+  let mut edno_args = result.edno_args;
 
   // Resolve the entrypoint for the run path the same way the standalone shim
   // does, sharing a single implementation. `current_exe` resolves to the real
-  // deno binary (not the `node` symlink), so the resolution subprocess runs as
-  // plain `deno eval` without re-entering arg0 dispatch.
+  // edno binary (not the `node` symlink), so the resolution subprocess runs as
+  // plain `edno eval` without re-entering arg0 dispatch.
   #[allow(clippy::disallowed_methods, reason = "resolving the node shim exe")]
   let current_exe =
-    std::env::current_exe().unwrap_or_else(|_| PathBuf::from("deno"));
-  node_shim::resolve_run_entrypoint(&current_exe, &mut deno_args);
+    std::env::current_exe().unwrap_or_else(|_| PathBuf::from("edno"));
+  node_shim::resolve_run_entrypoint(&current_exe, &mut edno_args);
 
-  // `deno_args[0]` is the program-name slot ("node") that deno's flag parser
-  // skips; `deno_args[1..]` carry the real subcommand. Returning `deno_args`
-  // verbatim is exactly what the standalone shim feeds to deno.
-  deno_args.into_iter().map(OsString::from).collect()
+  // `edno_args[0]` is the program-name slot ("node") that edno's flag parser
+  // skips; `edno_args[1..]` carry the real subcommand. Returning `edno_args`
+  // verbatim is exactly what the standalone shim feeds to edno.
+  edno_args.into_iter().map(OsString::from).collect()
 }
 
 fn apply_env_side_effects(result: &node_shim::TranslatedArgs) {
   if result.use_system_ca {
     // SAFETY: called before any threads are spawned.
-    unsafe { std::env::set_var("DENO_TLS_CA_STORE", "system") };
+    unsafe { std::env::set_var("EDNO_TLS_CA_STORE", "system") };
   }
   if !result.node_options.is_empty() {
     let options = result.node_options.join(" ");
@@ -162,20 +162,20 @@ fn apply_env_side_effects(result: &node_shim::TranslatedArgs) {
     // SAFETY: called before any threads are spawned.
     unsafe {
       std::env::set_var(
-        "DENO_NODE_TRACE_EVENT_CATEGORIES",
+        "EDNO_NODE_TRACE_EVENT_CATEGORIES",
         &result.trace_event_categories,
       )
     };
   }
 }
 
-/// Ensure a `node` executable that points back at the current deno binary is
+/// Ensure a `node` executable that points back at the current edno binary is
 /// available on `PATH`, so child processes that spawn `node` natively can find
 /// one. Best-effort and no-op when a real `node` already exists, when disabled,
 /// or when the shim is already active.
 ///
 /// Must be called before any threads are spawned (it mutates `PATH`).
-pub fn ensure_node_on_path(deno_dir_root: &Path) -> std::io::Result<()> {
+pub fn ensure_node_on_path(edno_dir_root: &Path) -> std::io::Result<()> {
   if env_disabled() {
     return Ok(());
   }
@@ -197,7 +197,7 @@ pub fn ensure_node_on_path(deno_dir_root: &Path) -> std::io::Result<()> {
   let current_exe =
     crate::util::fs::canonicalize_path(&current_exe).unwrap_or(current_exe);
 
-  let shim_dir = deno_dir_root.join(SHIM_DIR_NAME);
+  let shim_dir = edno_dir_root.join(SHIM_DIR_NAME);
   let shim_name = if cfg!(windows) { "node.exe" } else { "node" };
   let shim_path = shim_dir.join(shim_name);
 
@@ -242,7 +242,7 @@ fn shim_is_valid(shim_path: &Path, current_exe: &Path) -> bool {
 fn create_shim(shim_path: &Path, current_exe: &Path) -> std::io::Result<()> {
   // Symlink to a unique temp name first, then atomically `rename` it into
   // place. This keeps a valid `node` visible at all times, so two concurrent
-  // deno invocations (e.g. editor + terminal) can't race into a window where
+  // edno invocations (e.g. editor + terminal) can't race into a window where
   // the shim is momentarily missing.
   let tmp_path =
     shim_path.with_extension(format!("tmp-{}", std::process::id()));
@@ -262,7 +262,7 @@ fn create_shim(shim_path: &Path, current_exe: &Path) -> std::io::Result<()> {
 #[cfg(windows)]
 fn create_shim(shim_path: &Path, current_exe: &Path) -> std::io::Result<()> {
   // Native CreateProcess / Rust's Command PATH lookup only execute `.exe`, not
-  // `.cmd`, so the shim must be a real executable. A hardlink shares the deno
+  // `.cmd`, so the shim must be a real executable. A hardlink shares the edno
   // binary's bytes with no extra disk; fall back to a copy across volumes.
   if shim_path.exists() {
     let _ = std::fs::remove_file(shim_path);
@@ -317,8 +317,8 @@ mod tests {
     assert!(is_node_arg0(&OsString::from("/usr/local/bin/node")));
     assert!(!is_node_arg0(&OsString::from("anode")));
     assert!(!is_node_arg0(&OsString::from("/path/to/mynode")));
-    assert!(!is_node_arg0(&OsString::from("deno")));
-    assert!(!is_node_arg0(&OsString::from("/usr/bin/deno")));
+    assert!(!is_node_arg0(&OsString::from("edno")));
+    assert!(!is_node_arg0(&OsString::from("/usr/bin/edno")));
   }
 
   #[test]
@@ -326,13 +326,13 @@ mod tests {
   fn detects_node_exe_arg0_on_windows() {
     assert!(is_node_arg0(&OsString::from("node.exe")));
     assert!(is_node_arg0(&OsString::from("NODE.EXE")));
-    assert!(!is_node_arg0(&OsString::from("deno.exe")));
+    assert!(!is_node_arg0(&OsString::from("edno.exe")));
   }
 
   #[test]
   fn non_node_arg0_passes_through_unchanged() {
     let args = vec![
-      OsString::from("/usr/bin/deno"),
+      OsString::from("/usr/bin/edno"),
       OsString::from("run"),
       OsString::from("main.ts"),
     ];
@@ -360,13 +360,13 @@ mod tests {
     // is the only coverage of the hardlink/copy path, which the unix-only spec
     // tests can't reach.
     let base = std::env::temp_dir()
-      .join(format!("deno_node_shim_test_{}", std::process::id()));
+      .join(format!("edno_node_shim_test_{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
 
-    // Stand-in for the deno binary the shim points back at. Keep it in the same
+    // Stand-in for the edno binary the shim points back at. Keep it in the same
     // directory tree as the shim so a Windows hardlink stays on one volume.
-    let fake_exe = base.join(if cfg!(windows) { "deno.exe" } else { "deno" });
+    let fake_exe = base.join(if cfg!(windows) { "edno.exe" } else { "edno" });
     std::fs::write(&fake_exe, b"binary").unwrap();
 
     let shim_dir = base.join(SHIM_DIR_NAME);
@@ -383,7 +383,7 @@ mod tests {
     }
 
     // A shim pointing at a different binary must be reported invalid (this is
-    // what triggers recreation after a deno upgrade).
+    // what triggers recreation after a edno upgrade).
     let other_exe = base.join("other");
     std::fs::write(&other_exe, b"binary").unwrap();
     assert!(!shim_is_valid(&shim_path, &other_exe));

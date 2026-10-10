@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-//! Minimal [EditorConfig](https://editorconfig.org/) loader used by `deno fmt`.
+//! Minimal [EditorConfig](https://editorconfig.org/) loader used by `edno fmt`.
 //!
 //! Walks up the directory tree from a given file, parses encountered
 //! `.editorconfig` files, and resolves matching properties for that file.
@@ -13,8 +13,8 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use deno_config::deno_json::FmtOptionsConfig;
-use deno_config::deno_json::NewLineKind;
+use edno_config::edno_json::FmtOptionsConfig;
+use edno_config::edno_json::NewLineKind;
 use regex::Regex;
 
 /// Properties resolved from `.editorconfig` files for a particular file.
@@ -51,7 +51,7 @@ pub enum EndOfLine {
 
 impl EditorConfigProperties {
   /// Apply the resolved properties to `cfg`, filling in only fields
-  /// that are currently `None`. Deno's own config and CLI flags
+  /// that are currently `None`. Edno's own config and CLI flags
   /// therefore always take precedence.
   pub fn apply_to(&self, cfg: &mut FmtOptionsConfig) {
     if cfg.use_tabs.is_none()

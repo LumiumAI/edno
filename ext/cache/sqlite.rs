@@ -9,11 +9,11 @@ use std::sync::Arc;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
-use deno_core::BufMutView;
-use deno_core::Resource;
-use deno_core::convert::ByteString;
-use deno_core::parking_lot::Mutex;
-use deno_core::unsync::spawn_blocking;
+use edno_core::BufMutView;
+use edno_core::Resource;
+use edno_core::convert::ByteString;
+use edno_core::parking_lot::Mutex;
+use edno_core::unsync::spawn_blocking;
 use rusqlite::Connection;
 use rusqlite::OptionalExtension;
 use rusqlite::params;
@@ -89,14 +89,14 @@ fn create_cache_storage_dir(
 
 impl SqliteBackedCache {
   pub fn new(cache_storage_dir: PathBuf) -> Result<Self, CacheError> {
-    let mode = match std::env::var("DENO_CACHE_DB_MODE")
+    let mode = match std::env::var("EDNO_CACHE_DB_MODE")
       .unwrap_or_default()
       .as_str()
     {
       "disk" | "" => Mode::Disk,
       "memory" => Mode::InMemory,
       _ => {
-        log::warn!("Unknown DENO_CACHE_DB_MODE value, defaulting to disk");
+        log::warn!("Unknown EDNO_CACHE_DB_MODE value, defaulting to disk");
         Mode::Disk
       }
     };
@@ -501,7 +501,7 @@ fn get_responses_dir(cache_storage_dir: PathBuf, cache_id: i64) -> PathBuf {
     .join("responses")
 }
 
-impl deno_core::Resource for SqliteBackedCache {
+impl edno_core::Resource for SqliteBackedCache {
   fn name(&self) -> std::borrow::Cow<'_, str> {
     "SqliteBackedCache".into()
   }

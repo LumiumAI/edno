@@ -10,11 +10,11 @@ const deniedDb = "denied/secret.db";
 
 // Direct filesystem read is blocked by --deny-read.
 try {
-  Deno.readTextFileSync(deniedDb);
+  Edno.readTextFileSync(deniedDb);
   console.log("direct-read-UNEXPECTED-OK");
 } catch (e) {
   console.log(
-    e instanceof Deno.errors.NotCapable
+    e instanceof Edno.errors.NotCapable
       ? "direct-read-blocked"
       : "direct-read-OTHER:" + e.name,
   );
@@ -26,7 +26,7 @@ try {
   console.log("direct-open-UNEXPECTED-OK");
 } catch (e) {
   console.log(
-    e instanceof Deno.errors.NotCapable
+    e instanceof Edno.errors.NotCapable
       ? "direct-open-blocked"
       : "direct-open-OTHER:" + e.name,
   );

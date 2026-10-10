@@ -1,5 +1,5 @@
 {
-    "name": "@denotest/special-chars-in-bin-name",
+    "name": "@ednotest/special-chars-in-bin-name",
     "version": "1.0.0",
     "type": "module",
     "main": "main.mjs",

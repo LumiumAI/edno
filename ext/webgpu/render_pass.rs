@@ -4,18 +4,18 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 use std::num::NonZeroU64;
 
-use deno_core::GarbageCollected;
-use deno_core::WebIDL;
-use deno_core::cppgc::Ref;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::v8::Local;
-use deno_core::v8::Value;
-use deno_core::webidl::ContextFn;
-use deno_core::webidl::IntOptions;
-use deno_core::webidl::Nullable;
-use deno_core::webidl::WebIdlConverter;
-use deno_core::webidl::WebIdlError;
+use edno_core::GarbageCollected;
+use edno_core::WebIDL;
+use edno_core::cppgc::Ref;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::v8::Local;
+use edno_core::v8::Value;
+use edno_core::webidl::ContextFn;
+use edno_core::webidl::IntOptions;
+use edno_core::webidl::Nullable;
+use edno_core::webidl::WebIdlConverter;
+use edno_core::webidl::WebIdlError;
 
 use crate::Instance;
 use crate::buffer::GPUBuffer;
@@ -36,7 +36,7 @@ pub struct GPURenderPassEncoder {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPURenderPassEncoder {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPURenderPassEncoder"
   }

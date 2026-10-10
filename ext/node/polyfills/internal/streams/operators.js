@@ -1,31 +1,31 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 import { core, primordials } from "ext:core/mod.js";
 const { AbortController, AbortSignal } = core.loadExtScript(
-  "ext:deno_web/03_abort_signal.js",
+  "ext:edno_web/03_abort_signal.js",
 );
-const imported1 = core.loadExtScript("ext:deno_node/internal/errors.ts");
+const imported1 = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   validateAbortSignal,
   validateInteger,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 import {
   kResistStopPropagation,
   kWeakHandler,
-} from "ext:deno_node/internal/event_target.mjs";
+} from "ext:edno_node/internal/event_target.mjs";
 const { finished } = core.loadExtScript(
-  "ext:deno_node/internal/streams/end-of-stream.js",
+  "ext:edno_node/internal/streams/end-of-stream.js",
 );
-import staticCompose from "ext:deno_node/internal/streams/compose.js";
+import staticCompose from "ext:edno_node/internal/streams/compose.js";
 const { addAbortSignalNoValidate } = core.loadExtScript(
-  "ext:deno_node/internal/streams/add-abort-signal.js",
+  "ext:edno_node/internal/streams/add-abort-signal.js",
 );
 const {
   isNodeStream,
   isWritable,
-} = core.loadExtScript("ext:deno_node/internal/streams/utils.js");
+} = core.loadExtScript("ext:edno_node/internal/streams/utils.js");
 
 const {
   AbortError,

@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-process-global
+// edno-lint-ignore-file no-process-global
 (function () {
 const { core, primordials } = __bootstrap;
 const { getOptionValue } = core.loadExtScript(
-  "ext:deno_node/internal/options.ts",
+  "ext:edno_node/internal/options.ts",
 );
 
 const {
@@ -44,7 +44,7 @@ function onWarning(
     msg += `${warning.stack}`;
   } else {
     msg += typeof warning.toString === "function"
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       ? `${warning.toString()}`
       : ErrorPrototypeToString(warning);
   }

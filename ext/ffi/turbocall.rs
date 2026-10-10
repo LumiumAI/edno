@@ -3,10 +3,10 @@
 use std::ffi::c_void;
 use std::sync::LazyLock;
 
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::v8::fast_api;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::v8::fast_api;
 
 use crate::NativeType;
 use crate::Symbol;
@@ -243,7 +243,7 @@ pub(crate) fn compile_trampoline(
     f.def_var(options_v, args[argx]);
 
     static TRACE_TURBO: LazyLock<bool> = LazyLock::new(|| {
-      std::env::var("DENO_UNSTABLE_FFI_TRACE_TURBO").as_deref() == Ok("1")
+      std::env::var("EDNO_UNSTABLE_FFI_TRACE_TURBO").as_deref() == Ok("1")
     });
 
     if *TRACE_TURBO {
@@ -477,35 +477,35 @@ impl From<&NativeType> for fast_api::CTypeInfo {
 }
 
 extern "C" fn turbocall_ab_contents(
-  v: deno_core::v8::Local<deno_core::v8::Value>,
+  v: edno_core::v8::Local<edno_core::v8::Value>,
 ) -> *mut c_void {
   super::ir::parse_buffer_arg(v).unwrap_or(isize::MAX as _)
 }
 
 unsafe extern "C" fn turbocall_raise(
-  options: *const deno_core::v8::fast_api::FastApiCallbackOptions,
+  options: *const edno_core::v8::fast_api::FastApiCallbackOptions,
 ) {
   // SAFETY: This is called with valid FastApiCallbackOptions from within fast callback.
   v8::callback_scope!(unsafe scope, unsafe { &*options });
   let exception =
-    deno_core::error::to_v8_error(scope, &crate::IRError::InvalidBufferType);
+    edno_core::error::to_v8_error(scope, &crate::IRError::InvalidBufferType);
   scope.throw_exception(exception);
 }
 
 pub struct TurbocallTarget(String);
 
 unsafe extern "C" fn turbocall_trace(
-  options: *const deno_core::v8::fast_api::FastApiCallbackOptions,
+  options: *const edno_core::v8::fast_api::FastApiCallbackOptions,
 ) {
   // SAFETY: This is called with valid FastApiCallbackOptions from within fast callback.
   v8::callback_scope!(unsafe let scope, unsafe { &*options });
-  let func_data = deno_core::cppgc::try_unwrap_cppgc_object::<FunctionData>(
+  let func_data = edno_core::cppgc::try_unwrap_cppgc_object::<FunctionData>(
     scope,
     // SAFETY: This is valid if the options are valid.
     unsafe { (&*options).data },
   )
   .unwrap();
-  deno_core::JsRuntime::op_state_from(scope)
+  edno_core::JsRuntime::op_state_from(scope)
     .borrow_mut()
     .put(TurbocallTarget(func_data.symbol.name.clone()));
 }

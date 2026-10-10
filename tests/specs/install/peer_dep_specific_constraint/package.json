@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@denotest/peer-dep-specific-constraint": "*",
-    "@denotest/add": "1"
+    "@ednotest/peer-dep-specific-constraint": "*",
+    "@ednotest/add": "1"
   }
 }

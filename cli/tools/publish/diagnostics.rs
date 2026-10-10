@@ -18,10 +18,10 @@ use deno_ast::diagnostics::DiagnosticSnippetHighlightStyle;
 use deno_ast::diagnostics::DiagnosticSourcePos;
 use deno_ast::diagnostics::DiagnosticSourceRange;
 use deno_ast::swc::common::util::take::Take;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::parking_lot::Mutex;
-use deno_core::url::Url;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::parking_lot::Mutex;
+use edno_core::url::Url;
 use deno_graph::fast_check::FastCheckDiagnostic;
 use deno_semver::Version;
 

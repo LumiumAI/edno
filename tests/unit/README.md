@@ -1,21 +1,21 @@
-# Deno runtime tests
+# Edno runtime tests
 
-Files in this directory are unit tests for Deno runtime.
+Files in this directory are unit tests for Edno runtime.
 
-Testing Deno runtime code requires checking API under different runtime
+Testing Edno runtime code requires checking API under different runtime
 permissions. To accomplish this all tests exercised are created using
-`Deno.test()` function.
+`Edno.test()` function.
 
 ```ts
 import {} from "./test_util.ts";
 
-Deno.test(function simpleTestFn(): void {
+Edno.test(function simpleTestFn(): void {
   // test code here
 });
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { read: true, write: true },
   },
   function complexTestFn(): void {
@@ -30,10 +30,10 @@ There are two ways to run `unit_test_runner.ts`:
 
 ```sh
 # Run all tests.
-cargo run --bin deno -- test --allow-all --location=http://js-unit-tests/foo/bar cli/tests/unit/
+cargo run --bin edno -- test --allow-all --location=http://js-unit-tests/foo/bar cli/tests/unit/
 
 # Run a specific test module
-cargo run --bin deno -- test --allow-all --location=http://js-unit-tests/foo/bar cli/tests/unit/files_test.ts
+cargo run --bin edno -- test --allow-all --location=http://js-unit-tests/foo/bar cli/tests/unit/files_test.ts
 ```
 
 ### Http server

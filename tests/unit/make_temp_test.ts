@@ -6,9 +6,9 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test({ permissions: { write: true } }, function makeTempDirSyncSuccess() {
-  const dir1 = Deno.makeTempDirSync({ prefix: "hello", suffix: "world" });
-  const dir2 = Deno.makeTempDirSync({ prefix: "hello", suffix: "world" });
+Edno.test({ permissions: { write: true } }, function makeTempDirSyncSuccess() {
+  const dir1 = Edno.makeTempDirSync({ prefix: "hello", suffix: "world" });
+  const dir2 = Edno.makeTempDirSync({ prefix: "hello", suffix: "world" });
   // Check that both dirs are different.
   assert(dir1 !== dir2);
   for (const dir of [dir1, dir2]) {
@@ -18,38 +18,38 @@ Deno.test({ permissions: { write: true } }, function makeTempDirSyncSuccess() {
     assert(lastPart.endsWith("world"));
   }
   // Check that the `dir` option works.
-  const dir3 = Deno.makeTempDirSync({ dir: dir1 });
+  const dir3 = Edno.makeTempDirSync({ dir: dir1 });
   assert(dir3.startsWith(dir1));
   assert(/^[\\\/]/.test(dir3.slice(dir1.length)));
   // Check that creating a temp dir inside a nonexisting directory fails.
   assertThrows(() => {
-    Deno.makeTempDirSync({ dir: "/baddir" });
-  }, Deno.errors.NotFound);
+    Edno.makeTempDirSync({ dir: "/baddir" });
+  }, Edno.errors.NotFound);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true, sys: ["umask"] } },
   function makeTempDirSyncMode() {
-    const path = Deno.makeTempDirSync();
-    const pathInfo = Deno.statSync(path);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o700 & ~Deno.umask());
+    const path = Edno.makeTempDirSync();
+    const pathInfo = Edno.statSync(path);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o700 & ~Edno.umask());
     }
   },
 );
 
-Deno.test({ permissions: { write: false } }, function makeTempDirSyncPerm() {
+Edno.test({ permissions: { write: false } }, function makeTempDirSyncPerm() {
   // makeTempDirSync should require write permissions (for now).
   assertThrows(() => {
-    Deno.makeTempDirSync({ dir: "/baddir" });
-  }, Deno.errors.NotCapable);
+    Edno.makeTempDirSync({ dir: "/baddir" });
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { write: true } },
   async function makeTempDirSuccess() {
-    const dir1 = await Deno.makeTempDir({ prefix: "hello", suffix: "world" });
-    const dir2 = await Deno.makeTempDir({ prefix: "hello", suffix: "world" });
+    const dir1 = await Edno.makeTempDir({ prefix: "hello", suffix: "world" });
+    const dir2 = await Edno.makeTempDir({ prefix: "hello", suffix: "world" });
     // Check that both dirs are different.
     assert(dir1 !== dir2);
     for (const dir of [dir1, dir2]) {
@@ -59,30 +59,30 @@ Deno.test(
       assert(lastPart.endsWith("world"));
     }
     // Check that the `dir` option works.
-    const dir3 = await Deno.makeTempDir({ dir: dir1 });
+    const dir3 = await Edno.makeTempDir({ dir: dir1 });
     assert(dir3.startsWith(dir1));
     assert(/^[\\\/]/.test(dir3.slice(dir1.length)));
     // Check that creating a temp dir inside a nonexisting directory fails.
     await assertRejects(async () => {
-      await Deno.makeTempDir({ dir: "/baddir" });
-    }, Deno.errors.NotFound);
+      await Edno.makeTempDir({ dir: "/baddir" });
+    }, Edno.errors.NotFound);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true, sys: ["umask"] } },
   async function makeTempDirMode() {
-    const path = await Deno.makeTempDir();
-    const pathInfo = Deno.statSync(path);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o700 & ~Deno.umask());
+    const path = await Edno.makeTempDir();
+    const pathInfo = Edno.statSync(path);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o700 & ~Edno.umask());
     }
   },
 );
 
-Deno.test({ permissions: { write: true } }, function makeTempFileSyncSuccess() {
-  const file1 = Deno.makeTempFileSync({ prefix: "hello", suffix: "world" });
-  const file2 = Deno.makeTempFileSync({ prefix: "hello", suffix: "world" });
+Edno.test({ permissions: { write: true } }, function makeTempFileSyncSuccess() {
+  const file1 = Edno.makeTempFileSync({ prefix: "hello", suffix: "world" });
+  const file2 = Edno.makeTempFileSync({ prefix: "hello", suffix: "world" });
   // Check that both dirs are different.
   assert(file1 !== file2);
   for (const dir of [file1, file2]) {
@@ -92,39 +92,39 @@ Deno.test({ permissions: { write: true } }, function makeTempFileSyncSuccess() {
     assert(lastPart.endsWith("world"));
   }
   // Check that the `dir` option works.
-  const dir = Deno.makeTempDirSync({ prefix: "tempdir" });
-  const file3 = Deno.makeTempFileSync({ dir });
+  const dir = Edno.makeTempDirSync({ prefix: "tempdir" });
+  const file3 = Edno.makeTempFileSync({ dir });
   assert(file3.startsWith(dir));
   assert(/^[\\\/]/.test(file3.slice(dir.length)));
   // Check that creating a temp file inside a nonexisting directory fails.
   assertThrows(() => {
-    Deno.makeTempFileSync({ dir: "/baddir" });
-  }, Deno.errors.NotFound);
+    Edno.makeTempFileSync({ dir: "/baddir" });
+  }, Edno.errors.NotFound);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true, sys: ["umask"] } },
   function makeTempFileSyncMode() {
-    const path = Deno.makeTempFileSync();
-    const pathInfo = Deno.statSync(path);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o600 & ~Deno.umask());
+    const path = Edno.makeTempFileSync();
+    const pathInfo = Edno.statSync(path);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o600 & ~Edno.umask());
     }
   },
 );
 
-Deno.test({ permissions: { write: false } }, function makeTempFileSyncPerm() {
+Edno.test({ permissions: { write: false } }, function makeTempFileSyncPerm() {
   // makeTempFileSync should require write permissions (for now).
   assertThrows(() => {
-    Deno.makeTempFileSync({ dir: "/baddir" });
-  }, Deno.errors.NotCapable);
+    Edno.makeTempFileSync({ dir: "/baddir" });
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { write: true } },
   async function makeTempFileSuccess() {
-    const file1 = await Deno.makeTempFile({ prefix: "hello", suffix: "world" });
-    const file2 = await Deno.makeTempFile({ prefix: "hello", suffix: "world" });
+    const file1 = await Edno.makeTempFile({ prefix: "hello", suffix: "world" });
+    const file2 = await Edno.makeTempFile({ prefix: "hello", suffix: "world" });
     // Check that both dirs are different.
     assert(file1 !== file2);
     for (const dir of [file1, file2]) {
@@ -134,46 +134,46 @@ Deno.test(
       assert(lastPart.endsWith("world"));
     }
     // Check that the `dir` option works.
-    const dir = Deno.makeTempDirSync({ prefix: "tempdir" });
-    const file3 = await Deno.makeTempFile({ dir });
+    const dir = Edno.makeTempDirSync({ prefix: "tempdir" });
+    const file3 = await Edno.makeTempFile({ dir });
     assert(file3.startsWith(dir));
     assert(/^[\\\/]/.test(file3.slice(dir.length)));
     // Check that creating a temp file inside a nonexisting directory fails.
     await assertRejects(async () => {
-      await Deno.makeTempFile({ dir: "/baddir" });
-    }, Deno.errors.NotFound);
+      await Edno.makeTempFile({ dir: "/baddir" });
+    }, Edno.errors.NotFound);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true, sys: ["umask"] } },
   async function makeTempFileMode() {
-    const path = await Deno.makeTempFile();
-    const pathInfo = Deno.statSync(path);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o600 & ~Deno.umask());
+    const path = await Edno.makeTempFile();
+    const pathInfo = Edno.statSync(path);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o600 & ~Edno.umask());
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function makeTempInvalidCharacter() {
     // Various control and ASCII characters that are disallowed on all platforms
     for (const invalid of ["\0", "*", "\x9f"]) {
-      assertThrows(() => Deno.makeTempFileSync({ prefix: invalid }));
-      assertThrows(() => Deno.makeTempDirSync({ prefix: invalid }));
-      assertThrows(() => Deno.makeTempFileSync({ suffix: invalid }));
-      assertThrows(() => Deno.makeTempDirSync({ suffix: invalid }));
+      assertThrows(() => Edno.makeTempFileSync({ prefix: invalid }));
+      assertThrows(() => Edno.makeTempDirSync({ prefix: invalid }));
+      assertThrows(() => Edno.makeTempFileSync({ suffix: invalid }));
+      assertThrows(() => Edno.makeTempDirSync({ suffix: invalid }));
     }
 
     // On Windows, files can't end with space or period
-    if (Deno.build.os === "windows") {
-      assertThrows(() => Deno.makeTempFileSync({ suffix: "." }));
-      assertThrows(() => Deno.makeTempFileSync({ suffix: " " }));
+    if (Edno.build.os === "windows") {
+      assertThrows(() => Edno.makeTempFileSync({ suffix: "." }));
+      assertThrows(() => Edno.makeTempFileSync({ suffix: " " }));
     } else {
-      Deno.makeTempFileSync({ suffix: "." });
-      Deno.makeTempFileSync({ suffix: " " });
+      Edno.makeTempFileSync({ suffix: "." });
+      Edno.makeTempFileSync({ suffix: " " });
     }
   },
 );

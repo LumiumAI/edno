@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/pre-release-stable-latest",
+  "name": "@ednotest/pre-release-stable-latest",
   "version": "0.45.1",
   "publishConfig": {
     "tag": "latest"

@@ -3,13 +3,13 @@
 use std::io::Write;
 use std::sync::Arc;
 
-use deno_core::anyhow::Context;
-use deno_core::error::AnyError;
-use deno_core::futures;
-use deno_core::futures::FutureExt;
-use deno_core::futures::StreamExt;
-use deno_core::serde_json;
-use deno_npm::resolution::NpmResolutionSnapshot;
+use edno_core::anyhow::Context;
+use edno_core::error::AnyError;
+use edno_core::futures;
+use edno_core::futures::FutureExt;
+use edno_core::futures::StreamExt;
+use edno_core::serde_json;
+use edno_npm::resolution::NpmResolutionSnapshot;
 use eszip::v2::Url;
 use http::header::HeaderName;
 use http::header::HeaderValue;
@@ -1059,7 +1059,7 @@ mod socket_dev {
 
 #[cfg(test)]
 mod tests {
-  use deno_core::serde_json;
+  use edno_core::serde_json;
 
   use super::npm::BulkAuditResponse;
   use super::print_fix_summary;
@@ -1089,7 +1089,7 @@ mod tests {
   #[test]
   fn test_bulk_audit_response_deserialize_with_advisory() {
     let json = r#"{
-      "@denotest/with-vuln1": [{
+      "@ednotest/with-vuln1": [{
         "url": "https://example.com/vuln/101010",
         "title": "test vulnerability",
         "severity": "high",
@@ -1098,7 +1098,7 @@ mod tests {
     }"#;
     let response: BulkAuditResponse = serde_json::from_str(json).unwrap();
     assert_eq!(response.len(), 1);
-    let advisories = &response["@denotest/with-vuln1"];
+    let advisories = &response["@ednotest/with-vuln1"];
     assert_eq!(advisories.len(), 1);
     assert_eq!(advisories[0].severity, "high");
     assert!(advisories[0].patched_versions.is_none());

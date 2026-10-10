@@ -1,19 +1,19 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 (function () {
 const { core, primordials } = __bootstrap;
 const lazyProcess = core.createLazyLoader("node:process");
-const imported1 = core.loadExtScript("ext:deno_node/internal/errors.ts");
+const imported1 = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { kEmptyObject, once } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const {
   validateAbortSignal,
   validateBoolean,
   validateFunction,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 
 const {
   isClosed,
@@ -31,10 +31,10 @@ const {
   isWritableStream,
   kIsClosedPromise,
   willEmitClose: _willEmitClose,
-} = core.loadExtScript("ext:deno_node/internal/streams/utils.js");
+} = core.loadExtScript("ext:edno_node/internal/streams/utils.js");
 
 const _mod2 = core.loadExtScript(
-  "ext:deno_node/internal/events/abort_listener.mjs",
+  "ext:edno_node/internal/events/abort_listener.mjs",
 );
 
 const {
@@ -79,7 +79,7 @@ function eos(stream, options, callback) {
   // Capture the current async context so that the callback runs in the
   // same AsyncLocalStorage scope that was active when eos() was called.
   // In Node.js this happens automatically through the native AsyncWrap
-  // layer, but Deno's ops don't propagate Node-style async context.
+  // layer, but Edno's ops don't propagate Node-style async context.
   const snapshot = core.getAsyncContext();
   const originalCallback = callback;
   callback = function (...args) {
@@ -349,7 +349,7 @@ function eosWeb(stream, options, callback) {
     resolverFn,
     resolverFn,
   );
-  // Deno diverges from upstream, which returns `nop`, to honor the returned
+  // Edno diverges from upstream, which returns `nop`, to honor the returned
   // cleanup function contract.
   // https://github.com/nodejs/node/pull/46205
   return cleanup;

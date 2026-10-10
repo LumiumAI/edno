@@ -3,7 +3,7 @@ import { scrypt, scryptSync } from "node:crypto";
 import { Buffer } from "node:buffer";
 import { assertEquals, assertThrows } from "@std/assert";
 
-Deno.test("scrypt works correctly", async () => {
+Edno.test("scrypt works correctly", async () => {
   const { promise, resolve } = Promise.withResolvers<boolean>();
 
   scrypt("password", "salt", 32, (err, key) => {
@@ -51,7 +51,7 @@ Deno.test("scrypt works correctly", async () => {
   await promise;
 });
 
-Deno.test("scrypt works with options", async () => {
+Edno.test("scrypt works with options", async () => {
   const { promise, resolve } = Promise.withResolvers<boolean>();
 
   scrypt(
@@ -107,7 +107,7 @@ Deno.test("scrypt works with options", async () => {
   await promise;
 });
 
-Deno.test("scryptSync works correctly", () => {
+Edno.test("scryptSync works correctly", () => {
   const key = scryptSync("password", "salt", 32);
   assertEquals(
     key,
@@ -148,7 +148,7 @@ Deno.test("scryptSync works correctly", () => {
   );
 });
 
-Deno.test("scryptSync with options works correctly", () => {
+Edno.test("scryptSync with options works correctly", () => {
   const key = scryptSync("password", "salt", 32, { N: 512 });
   assertEquals(
     key,
@@ -190,7 +190,7 @@ Deno.test("scryptSync with options works correctly", () => {
 });
 
 // Regression test for https://github.com/denoland/deno/issues/27716
-Deno.test("scrypt with 128-byte keylen matches Node", async () => {
+Edno.test("scrypt with 128-byte keylen matches Node", async () => {
   const expected = "745731af4484f323968969eda289aeee005b5903ac561e64a5aca121" +
     "797bf7734ef9fd58422e2e22183bcacba9ec87ba0c83b7a2e788f03ce0da06463433cda" +
     "64176095fbbad7dc98c33fd75955b4b29c94f6e97617bd68d8ff17cf1ed5ad12f3fc6c8" +
@@ -210,7 +210,7 @@ Deno.test("scrypt with 128-byte keylen matches Node", async () => {
   assertEquals(scryptSync("password", "salt", 128).toString("hex"), expected);
 });
 
-Deno.test("scrypt handles concurrent 128-byte keylen calls", async () => {
+Edno.test("scrypt handles concurrent 128-byte keylen calls", async () => {
   const run = () =>
     new Promise<string>((resolve, reject) => {
       scrypt("password", "salt", 128, (err, key) => {
@@ -223,7 +223,7 @@ Deno.test("scrypt handles concurrent 128-byte keylen calls", async () => {
   assertEquals(a, b);
 });
 
-Deno.test("scryptSync throws Node-compatible error for invalid params", () => {
+Edno.test("scryptSync throws Node-compatible error for invalid params", () => {
   const error = assertThrows(() => {
     scryptSync("pass", "salt", 1, { N: 1, p: 1, r: 1 });
   }) as RangeError & { code?: string };
@@ -232,7 +232,7 @@ Deno.test("scryptSync throws Node-compatible error for invalid params", () => {
   assertEquals(error.message, "Invalid scrypt params");
 });
 
-Deno.test("scrypt accepts large safe maxmem values", async () => {
+Edno.test("scrypt accepts large safe maxmem values", async () => {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
 
   scrypt("", "", 4, { maxmem: 2 ** 52 }, (err, key) => {

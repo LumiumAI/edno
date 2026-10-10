@@ -18,7 +18,7 @@ function assertStatFs(
   assertEquals(typeof statFs.bavail, expectedType);
   assertEquals(typeof statFs.files, expectedType);
   assertEquals(typeof statFs.ffree, expectedType);
-  if (Deno.build.os == "windows") {
+  if (Edno.build.os == "windows") {
     assertEquals(statFs.type, bigint ? 0n : 0);
     assertEquals(statFs.files, bigint ? 0n : 0);
     assertEquals(statFs.ffree, bigint ? 0n : 0);
@@ -27,7 +27,7 @@ function assertStatFs(
 
 const filePath = path.fromFileUrl(import.meta.url);
 
-Deno.test({
+Edno.test({
   name: "fs.statfs()",
   async fn() {
     await new Promise<fs.StatsFsBase<unknown>>((resolve, reject) => {
@@ -39,7 +39,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.statfs() with Buffer",
   async fn() {
     await new Promise<fs.StatsFsBase<unknown>>((resolve, reject) => {
@@ -51,7 +51,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.statfs() bigint",
   async fn() {
     await new Promise<fs.StatsFsBase<unknown>>((resolve, reject) => {
@@ -63,7 +63,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.statfsSync()",
   fn() {
     const statFs = fs.statfsSync(filePath);
@@ -71,7 +71,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.statfsSync() with Buffer",
   fn() {
     const statFs = fs.statfsSync(Buffer.from(filePath));
@@ -79,7 +79,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.statfsSync() bigint",
   fn() {
     const statFs = fs.statfsSync(filePath, { bigint: true });
@@ -87,7 +87,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.statfs() non-existent path",
   async fn() {
     const nonExistentPath = path.join(filePath, "../non-existent");
@@ -98,7 +98,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "fs.statfsSync() non-existent path",
   fn() {
     const nonExistentPath = path.join(filePath, "../non-existent");

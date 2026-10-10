@@ -5,7 +5,7 @@ import { assert, assertEquals, assertThrows } from "./test_util.ts";
 // Basic tests for the structured clone algorithm. Mainly tests TypeScript
 // typings. Actual functionality is tested in WPT.
 
-Deno.test("self.structuredClone", async () => {
+Edno.test("self.structuredClone", async () => {
   const arrayOriginal = ["hello world"];
   const channelOriginal = new MessageChannel();
   const [arrayCloned, portTransferred] = self
@@ -23,7 +23,7 @@ Deno.test("self.structuredClone", async () => {
   portTransferred.close();
 });
 
-Deno.test("correct DataCloneError message", () => {
+Edno.test("correct DataCloneError message", () => {
   assertThrows(
     () => {
       const sab = new SharedArrayBuffer(1024);
@@ -60,7 +60,7 @@ Deno.test("correct DataCloneError message", () => {
   structuredClone(ab2, { transfer: [ab2] });
 });
 
-Deno.test("structuredClone URL throws DataCloneError", () => {
+Edno.test("structuredClone URL throws DataCloneError", () => {
   // URL is not [Serializable] per the WHATWG/HTML spec, so cloning it must
   // throw a DataCloneError rather than silently producing an empty object.
   assertThrows(
@@ -75,7 +75,7 @@ Deno.test("structuredClone URL throws DataCloneError", () => {
   );
 });
 
-Deno.test("postMessage URL throws DataCloneError", () => {
+Edno.test("postMessage URL throws DataCloneError", () => {
   // Posting a non-serializable value must take the same path as
   // structuredClone and throw, instead of silently delivering `{}`.
   const { port1, port2 } = new MessageChannel();
@@ -96,7 +96,7 @@ Deno.test("postMessage URL throws DataCloneError", () => {
   }
 });
 
-Deno.test("structuredClone CryptoKey", async () => {
+Edno.test("structuredClone CryptoKey", async () => {
   // AES key
   const aesKey = await crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 },

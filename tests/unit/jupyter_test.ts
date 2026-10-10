@@ -3,12 +3,12 @@
 import { assert, assertEquals, assertThrows } from "./test_util.ts";
 
 // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-const format = Deno[Deno.internal].jupyter.formatInner;
+const format = Edno[Edno.internal].jupyter.formatInner;
 
-Deno.test("Deno.jupyter is not available", () => {
+Edno.test("Edno.jupyter is not available", () => {
   assertThrows(
-    () => Deno.jupyter,
-    "Deno.jupyter is only available in `deno jupyter` subcommand.",
+    () => Edno.jupyter,
+    "Edno.jupyter is only available in `edno jupyter` subcommand.",
   );
 });
 
@@ -17,7 +17,7 @@ export async function assertFormattedAs(obj: unknown, result: object) {
   assertEquals(formatted, result);
 }
 
-Deno.test("display(canvas) creates a PNG", async () => {
+Edno.test("display(canvas) creates a PNG", async () => {
   // Let's make a fake Canvas with a fake Data URL
   class FakeCanvas {
     toDataURL() {
@@ -32,7 +32,7 @@ Deno.test("display(canvas) creates a PNG", async () => {
   });
 });
 
-Deno.test(
+Edno.test(
   "class with a Symbol.for('Jupyter.display') function gets displayed",
   async () => {
     class Example {
@@ -54,7 +54,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "class with an async Symbol.for('Jupyter.display') function gets displayed",
   async () => {
     class Example {
@@ -80,24 +80,24 @@ Deno.test(
 
 let isCI: boolean;
 try {
-  isCI = (Deno.env.get("CI")?.length ?? 0) > 0;
+  isCI = (Edno.env.get("CI")?.length ?? 0) > 0;
 } catch {
   isCI = true;
 }
 
 // Skip these tests on linux CI, because the vulkan emulator is not good enough
 // yet, and skip on macOS x86 CI because these do not have virtual GPUs.
-const isCIWithoutGPU = (Deno.build.os === "linux" ||
-  (Deno.build.os === "darwin" && Deno.build.arch === "x86_64")) && isCI;
+const isCIWithoutGPU = (Edno.build.os === "linux" ||
+  (Edno.build.os === "darwin" && Edno.build.arch === "x86_64")) && isCI;
 // Skip these tests in WSL because it doesn't have good GPU support.
 const isWsl = await checkIsWsl();
 async function checkIsWsl() {
-  return Deno.build.os === "linux" && await hasMicrosoftProcVersion();
+  return Edno.build.os === "linux" && await hasMicrosoftProcVersion();
 
   async function hasMicrosoftProcVersion() {
     // https://github.com/microsoft/WSL/issues/423#issuecomment-221627364
     try {
-      const procVersion = await Deno.readTextFile("/proc/version");
+      const procVersion = await Edno.readTextFile("/proc/version");
       return /microsoft/i.test(procVersion);
     } catch {
       return false;
@@ -105,7 +105,7 @@ async function checkIsWsl() {
   }
 }
 
-Deno.test(
+Edno.test(
   {
     ignore: isWsl || isCIWithoutGPU,
     name: "display GPUTexture",
@@ -194,7 +194,7 @@ fn fs_main() -> @location(0) vec4<f32> {
   },
 );
 
-Deno.test(
+Edno.test(
   {
     ignore: isWsl || isCIWithoutGPU,
     name: "display GPUBuffer",
@@ -202,8 +202,8 @@ Deno.test(
   async () => {
     // Get some numbers from the command line, or use the default 1, 4, 3, 295.
     let numbers: Uint32Array;
-    if (Deno.args.length > 0) {
-      numbers = new Uint32Array(Deno.args.map((a) => parseInt(a)));
+    if (Edno.args.length > 0) {
+      numbers = new Uint32Array(Edno.args.map((a) => parseInt(a)));
     } else {
       numbers = new Uint32Array([1, 4, 3, 295]);
     }

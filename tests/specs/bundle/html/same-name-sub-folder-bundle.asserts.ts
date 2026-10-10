@@ -4,7 +4,7 @@ assertFileContains("./dist/index.html", /src="\.\/index-[^\.]+\.js"/);
 assertFileContains("./dist/sub/index.html", /src="\.\/index-[^\.]+\.js"/);
 
 function walk(dir: string, fn: (entry: string) => void) {
-  Deno.readDirSync(dir).forEach((entry) => {
+  Edno.readDirSync(dir).forEach((entry) => {
     if (entry.isDirectory) {
       walk(dir + "/" + entry.name, fn);
     } else {

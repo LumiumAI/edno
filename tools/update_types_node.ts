@@ -1,7 +1,7 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S edno run -A
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import $, { Path } from "jsr:@david/dax@^0.42.0";
 import * as semver from "@std/semver";
@@ -20,7 +20,7 @@ import {
 } from "jsr:@ts-morph/ts-morph@27.0.2";
 
 const rootDir = $.path(import.meta.url).parentOrThrow().parentOrThrow();
-// Single source of truth: the same pin `deno check` installs for projects that
+// Single source of truth: the same pin `edno check` installs for projects that
 // don't bring their own @types/node.
 const typesNodeVersion = readPinnedTypesNodeVersion();
 const dtsDir = rootDir.join("cli/tsc/dts/");
@@ -141,7 +141,7 @@ function modifySourceFiles() {
     nodeTypesDir.join("index.d.cts").toString(),
   );
 
-  // Names that Deno exposes as Web Platform globals. Used to alias the
+  // Names that Edno exposes as Web Platform globals. Used to alias the
   // `node:stream/web` module exports to the globals (see `aliasWebStreamGlobals`).
   const webGlobalNames = getWebGlobalNames();
 
@@ -249,9 +249,9 @@ function modifySourceFiles() {
       }
     }
 
-    // `node:stream/web` re-exposes the same Web Streams classes Deno uses for
+    // `node:stream/web` re-exposes the same Web Streams classes Edno uses for
     // its globals. The upstream `@types/node` declarations redeclare them as
-    // separate structural interfaces, which cross-reference Deno's globals
+    // separate structural interfaces, which cross-reference Edno's globals
     // (e.g. via `pipeThrough`) in a way TypeScript can't prove compatible. That
     // makes `new ReadableStream()` unassignable to `Readable.fromWeb()` and
     // friends. Alias the module exports straight to the globals so platform
@@ -283,12 +283,12 @@ function modifySourceFiles() {
   project.saveSync();
 }
 
-// Collect the names Deno declares as Web Platform globals (from
-// `lib.deno_web.d.ts`). These are what `node:stream/web` should alias to.
+// Collect the names Edno declares as Web Platform globals (from
+// `lib.edno_web.d.ts`). These are what `node:stream/web` should alias to.
 function getWebGlobalNames(): Set<string> {
   const project = new Project({ skipAddingFilesFromTsConfig: true });
   const sourceFile = project.addSourceFileAtPath(
-    dtsDir.join("lib.deno_web.d.ts").toString(),
+    dtsDir.join("lib.edno_web.d.ts").toString(),
   );
   const names = new Set<string>();
   for (const decl of sourceFile.getInterfaces()) {
@@ -437,7 +437,7 @@ function handleVarDecl(decl: VariableDeclaration) {
     case "URLPattern":
       // Unlike its sibling web globals, `@types/node` declares `var URLPattern`
       // *unconditionally* (no `typeof globalThis extends { onmessage: any; ... }`
-      // guard), so it cannot defer to a Deno declaration. Deno concedes the
+      // guard), so it cannot defer to a Edno declaration. Edno concedes the
       // `URLPattern` constructor to `@types/node` (keeping only the interface in
       // its own libs), so keep this declaration - it is the sole provider of the
       // `URLPattern` value in a single global table.

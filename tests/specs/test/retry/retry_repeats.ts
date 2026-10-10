@@ -3,7 +3,7 @@
 // repetition up to two attempts. The first attempt of every repetition fails
 // and the retry passes, so both repetitions pass and the test is flaky.
 let runs = 0;
-Deno.test({
+Edno.test({
   name: "compose",
   repeats: 1,
   retry: 1,

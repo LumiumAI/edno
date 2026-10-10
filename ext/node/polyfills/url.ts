@@ -65,9 +65,9 @@ const {
   ERR_INVALID_FILE_URL_PATH,
   ERR_INVALID_URL,
   ERR_INVALID_URL_SCHEME,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { validateString } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const {
   CHAR_0,
@@ -105,25 +105,25 @@ const {
   CHAR_UPPERCASE_Z,
   CHAR_VERTICAL_LINE,
   CHAR_ZERO_WIDTH_NOBREAK_SPACE,
-} = core.loadExtScript("ext:deno_node/path/_constants.ts");
+} = core.loadExtScript("ext:edno_node/path/_constants.ts");
 const lazyPath = core.createLazyLoader("node:path");
 const {
   domainToASCII: idnaToASCII,
   domainToUnicode: idnaToUnicode,
-} = core.loadExtScript("ext:deno_node/internal/idna.ts");
-const { isWindows, osType } = core.loadExtScript("ext:deno_node/_util/os.ts");
+} = core.loadExtScript("ext:edno_node/internal/idna.ts");
+const { isWindows, osType } = core.loadExtScript("ext:edno_node/_util/os.ts");
 let _Buffer;
 function lazyBuffer() {
   return _Buffer ??=
-    core.loadExtScript("ext:deno_node/internal/buffer.mjs").Buffer;
+    core.loadExtScript("ext:edno_node/internal/buffer.mjs").Buffer;
 }
 const { encodeStr, hexTable } = core.loadExtScript(
-  "ext:deno_node/internal/querystring.ts",
+  "ext:edno_node/internal/querystring.ts",
 );
-const querystring = core.loadExtScript("ext:deno_node/querystring.js").default;
-const { URL, URLSearchParams } = core.loadExtScript("ext:deno_web/00_url.js");
+const querystring = core.loadExtScript("ext:edno_node/querystring.js").default;
+const { URL, URLSearchParams } = core.loadExtScript("ext:edno_web/00_url.js");
 const { urlToHttpOptions } = core.loadExtScript(
-  "ext:deno_node/internal/url.ts",
+  "ext:edno_node/internal/url.ts",
 );
 
 const forwardSlashRegEx = new SafeRegExp(/\//g);
@@ -178,7 +178,7 @@ const hostnameMaxLen = 255;
 // digits
 // alpha (uppercase)
 // alpha (lowercase)
-// deno-fmt-ignore
+// edno-fmt-ignore
 const noEscapeAuth = new Int8Array([
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x00 - 0x0F
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x10 - 0x1F
@@ -1148,7 +1148,7 @@ function getHostname(self: Url, rest: string, hostname: string) {
 
 // Escaped characters. Use empty strings to fill up unused entries.
 // Using Array is faster than Object/Map
-// deno-fmt-ignore
+// edno-fmt-ignore
 const escapedCodes = [
   /* 0 - 9 */ "",
   "",
@@ -1475,7 +1475,7 @@ function getPathBufferFromURLWin(url: URL) {
     const prefix = Buffer.from("\\\\", "ascii");
     const domain = Buffer.from(domainToUnicode(hostname), "utf8");
     // `concat` is a `node:buffer` static method on `Buffer`
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     return Buffer.concat([prefix, domain, decodedPathname]);
   }
   const letter = decodedPathname[1] | 0x20;

@@ -1,7 +1,7 @@
-#!/usr/bin/env -S deno run --allow-all --config=tests/config/deno.json
+#!/usr/bin/env -S edno run --allow-all --config=tests/config/edno.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import {
   buildMode,
@@ -19,8 +19,8 @@ import { checkCopyright } from "./copyright_checker.js";
 
 const promises = [];
 
-let js = Deno.args.includes("--js");
-let rs = Deno.args.includes("--rs");
+let js = Edno.args.includes("--js");
+let rs = Edno.args.includes("--rs");
 if (!js && !rs) {
   js = true;
   rs = true;
@@ -49,14 +49,14 @@ const results = await Promise.allSettled(promises);
 for (const result of results) {
   if (result.status === "rejected") {
     console.error(result.reason);
-    Deno.exit(1);
+    Edno.exit(1);
   }
 }
 
 async function lintJS() {
-  const configPath = await Deno.makeTempFile({ suffix: ".json" });
+  const configPath = await Edno.makeTempFile({ suffix: ".json" });
   try {
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       configPath,
       JSON.stringify({
         lint: {
@@ -113,11 +113,11 @@ async function lintJS() {
 
     const chunks = splitToChunks(
       sourceFiles,
-      `${Deno.execPath()} lint --config=`.length + configPath.length,
+      `${Edno.execPath()} lint --config=`.length + configPath.length,
     );
     const pending = [];
     for (const chunk of chunks) {
-      const cmd = new Deno.Command(Deno.execPath(), {
+      const cmd = new Edno.Command(Edno.execPath(), {
         cwd: ROOT_PATH,
         args: ["lint", "--config=" + configPath, ...chunk],
         // capture to not conflict with clippy output
@@ -127,9 +127,9 @@ async function lintJS() {
         cmd.output().then(({ stderr, code }) => {
           if (code > 0) {
             const decoder = new TextDecoder();
-            console.log("\n------ deno lint ------");
+            console.log("\n------ edno lint ------");
             console.log(decoder.decode(stderr));
-            throw new Error("deno lint failed");
+            throw new Error("edno lint failed");
           }
         }),
       );
@@ -141,22 +141,22 @@ async function lintJS() {
       }
     }
   } finally {
-    await Deno.remove(configPath);
+    await Edno.remove(configPath);
   }
 }
 
 // Bootstrap files need a separate lint run because prefer-primordials applies
-// only to them. Implemented as an internal Deno lint plugin (not the public
+// only to them. Implemented as an internal Edno lint plugin (not the public
 // deno_lint rule) — see tools/lint_plugins/prefer_primordials.ts.
 async function lintBootstraps() {
   const pluginPath = import.meta.resolve(
     "./lint_plugins/prefer_primordials.ts",
   );
 
-  // Create a temp deno.json config that only enables our plugin.
-  const configPath = await Deno.makeTempFile({ suffix: ".json" });
+  // Create a temp edno.json config that only enables our plugin.
+  const configPath = await Edno.makeTempFile({ suffix: ".json" });
   try {
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       configPath,
       JSON.stringify({
         lint: {
@@ -192,11 +192,11 @@ async function lintBootstraps() {
 
     const chunks = splitToChunks(
       sourceFiles,
-      `${Deno.execPath()} lint --config=`.length + configPath.length,
+      `${Edno.execPath()} lint --config=`.length + configPath.length,
     );
     const pending = [];
     for (const chunk of chunks) {
-      const cmd = new Deno.Command(Deno.execPath(), {
+      const cmd = new Edno.Command(Edno.execPath(), {
         cwd: ROOT_PATH,
         args: ["lint", "--config=" + configPath, ...chunk],
         // capture to not conflict with clippy output
@@ -206,9 +206,9 @@ async function lintBootstraps() {
         cmd.output().then(({ stderr, code }) => {
           if (code > 0) {
             const decoder = new TextDecoder();
-            console.log("\n------ deno lint bootstraps ------");
+            console.log("\n------ edno lint bootstraps ------");
             console.log(decoder.decode(stderr));
-            throw new Error("deno lint bootstraps failed");
+            throw new Error("edno lint bootstraps failed");
           }
         }),
       );
@@ -220,11 +220,11 @@ async function lintBootstraps() {
       }
     }
   } finally {
-    await Deno.remove(configPath);
+    await Edno.remove(configPath);
   }
 }
 
-// Lint ext/node/polyfills for Deno.* API usage. These should be migrated
+// Lint ext/node/polyfills for Edno.* API usage. These should be migrated
 // to internal ops or ext: imports. The expected violation counts are tracked
 // per file in no_deno_api_in_polyfills.ts -- any mismatch is a hard error.
 async function lintNodePolyfillDenoApis() {
@@ -234,10 +234,10 @@ async function lintNodePolyfillDenoApis() {
 
   const { EXPECTED_VIOLATIONS } = await import(pluginPath);
 
-  // Create a temp deno.json config that only enables our plugin.
-  const configPath = await Deno.makeTempFile({ suffix: ".json" });
+  // Create a temp edno.json config that only enables our plugin.
+  const configPath = await Edno.makeTempFile({ suffix: ".json" });
   try {
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       configPath,
       JSON.stringify({
         lint: {
@@ -261,7 +261,7 @@ async function lintNodePolyfillDenoApis() {
       return;
     }
 
-    const cmd = new Deno.Command(Deno.execPath(), {
+    const cmd = new Edno.Command(Edno.execPath(), {
       cwd: ROOT_PATH,
       args: [
         "lint",
@@ -277,7 +277,7 @@ async function lintNodePolyfillDenoApis() {
       new TextDecoder().decode(stderr);
 
     // Strip ANSI codes for reliable parsing.
-    // deno-lint-ignore no-control-regex
+    // edno-lint-ignore no-control-regex
     const clean = output.replace(/\x1b\[[0-9;]*m/g, "");
 
     // Count actual violations per file.
@@ -295,30 +295,30 @@ async function lintNodePolyfillDenoApis() {
 
     // Debug: show what we parsed.
     console.log(
-      `[no-deno-api] ROOT_PATH: ${ROOT_PATH}`,
+      `[no-edno-api] ROOT_PATH: ${ROOT_PATH}`,
     );
     console.log(
-      `[no-deno-api] deno lint output length: stdout=${
+      `[no-edno-api] edno lint output length: stdout=${
         new TextDecoder().decode(stdout).length
       } stderr=${new TextDecoder().decode(stderr).length}`,
     );
     console.log(
-      `[no-deno-api] regex matched ${allMatches.length} violation(s)`,
+      `[no-edno-api] regex matched ${allMatches.length} violation(s)`,
     );
     if (allMatches.length === 0 && clean.length > 0) {
       // Show first few lines with --> to debug format mismatch
       const arrowLines = clean.split("\n").filter((l) => l.includes("-->"));
       console.log(
-        `[no-deno-api] lines containing "-->": ${arrowLines.length}`,
+        `[no-edno-api] lines containing "-->": ${arrowLines.length}`,
       );
       for (const line of arrowLines.slice(0, 5)) {
-        console.log(`[no-deno-api]   ${JSON.stringify(line)}`);
+        console.log(`[no-edno-api]   ${JSON.stringify(line)}`);
       }
     } else if (allMatches.length > 0) {
       // Show a sample match
       const m = allMatches[0];
       console.log(
-        `[no-deno-api] sample match: path=${JSON.stringify(m[1])} -> relPath=${
+        `[no-edno-api] sample match: path=${JSON.stringify(m[1])} -> relPath=${
           JSON.stringify(
             m[1].replace(ROOT_PATH + "/", "").replace(ROOT_PATH + "\\", "")
               .replaceAll("\\", "/"),
@@ -327,7 +327,7 @@ async function lintNodePolyfillDenoApis() {
       );
     }
     console.log(
-      `[no-deno-api] actualCounts has ${
+      `[no-edno-api] actualCounts has ${
         Object.keys(actualCounts).length
       } file(s)`,
     );
@@ -345,14 +345,14 @@ async function lintNodePolyfillDenoApis() {
 
       if (actual > expected) {
         errors.push(
-          `${file}: expected ${expected} Deno.* violations but found ${actual} (+${
+          `${file}: expected ${expected} Edno.* violations but found ${actual} (+${
             actual - expected
           }). ` +
-            "New Deno.* API usage is not allowed in node polyfills.",
+            "New Edno.* API usage is not allowed in node polyfills.",
         );
       } else if (actual < expected) {
         errors.push(
-          `${file}: expected ${expected} Deno.* violations but found ${actual} (-${
+          `${file}: expected ${expected} Edno.* violations but found ${actual} (-${
             expected - actual
           }). ` +
             "Please update EXPECTED_VIOLATIONS in tools/lint_plugins/no_deno_api_in_polyfills.ts.",
@@ -361,16 +361,16 @@ async function lintNodePolyfillDenoApis() {
     }
 
     if (errors.length > 0) {
-      console.log("\n------ node polyfills Deno API usage ------");
+      console.log("\n------ node polyfills Edno API usage ------");
       for (const err of errors) {
         console.error(err);
       }
       throw new Error(
-        `${errors.length} file(s) have mismatched Deno.* API violation counts`,
+        `${errors.length} file(s) have mismatched Edno.* API violation counts`,
       );
     }
   } finally {
-    await Deno.remove(configPath);
+    await Edno.remove(configPath);
   }
 }
 
@@ -399,8 +399,8 @@ async function clippy() {
     "warnings",
     "--deny",
     "clippy::unused_async",
-    // the std print macros panic on broken pipes (ex. `deno test | head`);
-    // prefer the `log` crate for diagnostics and deno_print's drop_println!
+    // the std print macros panic on broken pipes (ex. `edno test | head`);
+    // prefer the `log` crate for diagnostics and edno_print's drop_println!
     // macros for stdout output, or ignore these print_* rules if necessary
     "--deny",
     "clippy::print_stderr",
@@ -415,7 +415,7 @@ async function clippy() {
   // clippy's print_stdout/print_stderr messages are not configurable, so
   // watch for them in the output and point at the replacement ourselves
   async function runClippy(args, errorMessage) {
-    const cargoCmd = new Deno.Command("cargo", {
+    const cargoCmd = new Edno.Command("cargo", {
       cwd: ROOT_PATH,
       args,
       stdout: "inherit",
@@ -426,15 +426,15 @@ async function clippy() {
     let stderrText = "";
     for await (const chunk of child.stderr) {
       stderrText += decoder.decode(chunk, { stream: true });
-      await Deno.stderr.write(chunk);
+      await Edno.stderr.write(chunk);
     }
     const { code } = await child.status;
     if (/clippy::print[-_]std(out|err)/.test(stderrText)) {
       console.error(
-        "\nhint: the std print macros panic when the output pipe is closed (ex. `deno test | head`).",
+        "\nhint: the std print macros panic when the output pipe is closed (ex. `edno test | head`).",
       );
       console.error(
-        "      use deno_print's drop_println!/drop_eprintln! macros for command output or the `log` crate for diagnostics.",
+        "      use edno_print's drop_println!/drop_eprintln! macros for command output or the `log` crate for diagnostics.",
       );
     }
     if (code > 0) {
@@ -444,9 +444,9 @@ async function clippy() {
 
   // Cargo's --all-features cannot represent mutually exclusive engine
   // backends. Enable every workspace feature explicitly except QuickJS and
-  // platform-specific V8 modes, then check deno_core separately below.
+  // platform-specific V8 modes, then check edno_core separately below.
   {
-    const metadataCommand = new Deno.Command("cargo", {
+    const metadataCommand = new Edno.Command("cargo", {
       cwd: ROOT_PATH,
       args: ["metadata", "--no-deps", "--format-version", "1"],
       stdout: "piped",
@@ -461,13 +461,13 @@ async function clippy() {
     );
     const workspaceMembers = new Set(metadata.workspace_members);
     const workspaceFeatures = metadata.packages
-      .filter((pkg) => workspaceMembers.has(pkg.id) && pkg.name !== "deno_core")
+      .filter((pkg) => workspaceMembers.has(pkg.id) && pkg.name !== "edno_core")
       .flatMap((pkg) =>
         Object.keys(pkg.features).map((feature) => `${pkg.name}/${feature}`)
       )
       .filter((feature) =>
         !feature.endsWith("/quickjs") &&
-        !feature.startsWith("deno_v8/v8_enable_")
+        !feature.startsWith("edno_v8/v8_enable_")
       )
       .sort();
 
@@ -479,7 +479,7 @@ async function clippy() {
       "--locked",
       "--workspace",
       "--exclude",
-      "deno_core",
+      "edno_core",
     ];
 
     if (currentBuildMode != "debug") {
@@ -489,10 +489,10 @@ async function clippy() {
     await runClippy([...cmd, ...clippyDenyFlags], "clippy failed");
   }
 
-  // Run clippy for deno_core with specific features, matching the invocation
+  // Run clippy for edno_core with specific features, matching the invocation
   // from https://github.com/denoland/deno_core/blob/main/tools/lint.ts
   {
-    const DENO_CORE_CLIPPY_FEATURES = [
+    const EDNO_CORE_CLIPPY_FEATURES = [
       "default",
       "unsafe_runtime_options",
       "unsafe_use_unprotected_platform",
@@ -502,11 +502,11 @@ async function clippy() {
     const cmd = [
       "clippy",
       "-p",
-      "deno_core",
+      "edno_core",
       "--all-targets",
       "--locked",
       "--features",
-      DENO_CORE_CLIPPY_FEATURES,
+      EDNO_CORE_CLIPPY_FEATURES,
     ];
 
     if (currentBuildMode != "debug") {
@@ -515,7 +515,7 @@ async function clippy() {
 
     await runClippy(
       [...cmd, ...clippyDenyFlags],
-      "clippy failed for deno_core",
+      "clippy failed for edno_core",
     );
   }
 }
@@ -536,7 +536,7 @@ async function ensureWorkflowYmlsUpToDate() {
   ];
 
   for (const gen of generators) {
-    const cmd = new Deno.Command("deno", {
+    const cmd = new Edno.Command("edno", {
       cwd: ROOT_PATH,
       args: ["run", "--allow-read=.", "--allow-net=jsr.io", gen, "--lint"],
       stderr: "piped",
@@ -562,7 +562,7 @@ async function ensureWorkflowYmlsUpToDate() {
  * this convention.
  */
 async function ensureNoNonPermissionCapitalLetterShortFlags() {
-  const text = await Deno.readTextFile(
+  const text = await Edno.readTextFile(
     join(ROOT_PATH, "libs/cli_parser/src/defs.rs"),
   );
   const shortFlags = text.matchAll(/\.short\('([A-Z])'\)/g);
@@ -574,7 +574,7 @@ async function ensureNoNonPermissionCapitalLetterShortFlags() {
   const expected = [
     // --allow-all
     "A",
-    // --dev flag for `deno install` (precedence: `npm install -D <package>`)
+    // --dev flag for `edno install` (precedence: `npm install -D <package>`)
     "D",
     // --allow-env
     "E",
@@ -584,7 +584,7 @@ async function ensureNoNonPermissionCapitalLetterShortFlags() {
     "L",
     // --allow-net
     "N",
-    // --save-optional flag for `deno add`/`deno install`
+    // --save-optional flag for `edno add`/`edno install`
     // (precedence: `npm install -O <package>`)
     "O",
     // --permission-set
@@ -653,7 +653,7 @@ async function ensureNoUnusedOutFiles() {
 
   for (const testFile of testFiles) {
     try {
-      const text = await Deno.readTextFile(testFile.path);
+      const text = await Edno.readTextFile(testFile.path);
       const data = parseJSONC(text);
       checkObject(dirname(testFile.path), data);
     } catch (err) {
@@ -746,7 +746,7 @@ async function ensureDisallowedMethodsEnforced() {
     const clippyToml = join(crateDir, "clippy.toml");
     let clippyContent;
     try {
-      clippyContent = await Deno.readTextFile(clippyToml);
+      clippyContent = await Edno.readTextFile(clippyToml);
     } catch {
       errors.push(`Missing clippy.toml: ${clippyToml}`);
       return;
@@ -764,12 +764,12 @@ async function ensureDisallowedMethodsEnforced() {
 
   // check ext crates
   for await (
-    const entry of Deno.readDir(join(ROOT_PATH, "ext"))
+    const entry of Edno.readDir(join(ROOT_PATH, "ext"))
   ) {
     if (!entry.isDirectory) continue;
     const crateDir = join(ROOT_PATH, "ext", entry.name);
     try {
-      await Deno.stat(join(crateDir, "Cargo.toml"));
+      await Edno.stat(join(crateDir, "Cargo.toml"));
     } catch {
       continue;
     }
@@ -778,7 +778,7 @@ async function ensureDisallowedMethodsEnforced() {
 
   // check libs crates
   for await (
-    const entry of Deno.readDir(join(ROOT_PATH, "libs"))
+    const entry of Edno.readDir(join(ROOT_PATH, "libs"))
   ) {
     if (entry.name === "core_testing") {
       continue; // skip only test crates
@@ -786,7 +786,7 @@ async function ensureDisallowedMethodsEnforced() {
     if (!entry.isDirectory) continue;
     const crateDir = join(ROOT_PATH, "libs", entry.name);
     try {
-      await Deno.stat(join(crateDir, "Cargo.toml"));
+      await Edno.stat(join(crateDir, "Cargo.toml"));
     } catch {
       continue;
     }

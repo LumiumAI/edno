@@ -18,7 +18,7 @@ async function readTextStream(stream: ReadableStream<string>): Promise<string> {
 }
 
 // just a hack to get a body object
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function buildBody(body: any, headers?: Headers): Body {
   const stub = new Request("http://foo/", {
     body: body,
@@ -39,7 +39,7 @@ const intArrays = [
   Float32Array,
   Float64Array,
 ];
-Deno.test(async function arrayBufferFromByteArrays() {
+Edno.test(async function arrayBufferFromByteArrays() {
   const buffer = new TextEncoder().encode("ahoyhoy8").buffer;
 
   for (const type of intArrays) {
@@ -53,7 +53,7 @@ Deno.test(async function arrayBufferFromByteArrays() {
 // must run in linear time. A quadratic implementation would take many seconds
 // (or minutes) at this size; the linear implementation finishes in
 // milliseconds. The 5s bound is intentionally loose to avoid CI flakes.
-Deno.test(function formDataSetDeleteManyDuplicatesIsLinear() {
+Edno.test(function formDataSetDeleteManyDuplicatesIsLinear() {
   const N = 20_000;
 
   const a = new FormData();
@@ -73,7 +73,7 @@ Deno.test(function formDataSetDeleteManyDuplicatesIsLinear() {
 });
 
 //FormData
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function bodyMultipartFormData() {
     const response = await fetch(
@@ -93,7 +93,7 @@ Deno.test(
 );
 
 // FormData: non-ASCII names and filenames
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function bodyMultipartFormDataNonAsciiNames() {
     const boundary = "----01230123";
@@ -127,7 +127,7 @@ Deno.test(
 );
 
 // FormData: non-ASCII names and filenames roundtrip
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function bodyMultipartFormDataNonAsciiRoundtrip() {
     const inFormData = new FormData();
@@ -145,7 +145,7 @@ Deno.test(
   },
 );
 
-Deno.test(async function bodyMultipartFormDataEmptyFilenameIsFile() {
+Edno.test(async function bodyMultipartFormDataEmptyFilenameIsFile() {
   const boundary = "AaB03x";
   const payload = [
     `--${boundary}`,
@@ -191,7 +191,7 @@ Deno.test(async function bodyMultipartFormDataEmptyFilenameIsFile() {
   assertEquals(await fileWithContents.text(), "file contents");
 });
 
-Deno.test(async function bodyMultipartFormDataInitialBoundaryAtStart() {
+Edno.test(async function bodyMultipartFormDataInitialBoundaryAtStart() {
   const boundary = "AaB03x";
   const payload = [
     `--${boundary}`,
@@ -212,7 +212,7 @@ Deno.test(async function bodyMultipartFormDataInitialBoundaryAtStart() {
   assertEquals(formData.get("field"), "value");
 });
 
-Deno.test(async function bodyMultipartFormDataIgnoresPreamble() {
+Edno.test(async function bodyMultipartFormDataIgnoresPreamble() {
   const boundary = "AaB03x";
   const payload = [
     "multipart preamble",
@@ -238,7 +238,7 @@ Deno.test(async function bodyMultipartFormDataIgnoresPreamble() {
   assertEquals(formData.get("field"), "value");
 });
 
-Deno.test(async function bodyMultipartFormDataAcceptsTransportPadding() {
+Edno.test(async function bodyMultipartFormDataAcceptsTransportPadding() {
   const boundary = "AaB03x";
   const payload = [
     `--${boundary} \t`,
@@ -265,7 +265,7 @@ Deno.test(async function bodyMultipartFormDataAcceptsTransportPadding() {
   assertEquals(formData.get("second"), "two");
 });
 
-Deno.test(async function bodyMultipartFormDataInitialClosingBoundaryIsEmpty() {
+Edno.test(async function bodyMultipartFormDataInitialClosingBoundaryIsEmpty() {
   const boundary = "AaB03x";
   const payloads = [
     `--${boundary}--`,
@@ -287,7 +287,7 @@ Deno.test(async function bodyMultipartFormDataInitialClosingBoundaryIsEmpty() {
   }
 });
 
-Deno.test(async function bodyMultipartFormDataRejectsInvalidInitialBoundary() {
+Edno.test(async function bodyMultipartFormDataRejectsInvalidInitialBoundary() {
   const boundary = "AaB03x";
   const payloads = [
     "",
@@ -315,7 +315,7 @@ Deno.test(async function bodyMultipartFormDataRejectsInvalidInitialBoundary() {
   }
 });
 
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function bodyURLEncodedFormData() {
     const response = await fetch(
@@ -331,18 +331,18 @@ Deno.test(
     assert(formData.has("field_1"));
     assertEquals(formData.get("field_1")!.toString(), "Hi");
     assert(formData.has("field_2"));
-    assertEquals(formData.get("field_2")!.toString(), "<Deno>");
+    assertEquals(formData.get("field_2")!.toString(), "<Edno>");
   },
 );
 
-Deno.test({ permissions: {} }, async function bodyURLSearchParams() {
+Edno.test({ permissions: {} }, async function bodyURLSearchParams() {
   const body = buildBody(new URLSearchParams({ hello: "world" }));
 
   const text = await body.text();
   assertEquals(text, "hello=world");
 });
 
-Deno.test(async function bodyArrayBufferMultipleParts() {
+Edno.test(async function bodyArrayBufferMultipleParts() {
   const parts: Uint8Array[] = [];
   let size = 0;
   for (let i = 0; i <= 150000; i++) {
@@ -366,7 +366,7 @@ Deno.test(async function bodyArrayBufferMultipleParts() {
 });
 
 // https://github.com/denoland/deno/issues/20793
-Deno.test(
+Edno.test(
   { permissions: { net: true } },
   async function bodyMultipartFormDataMultipleHeaders() {
     const boundary = "----formdata-polyfill-0.970665446687947";
@@ -397,13 +397,13 @@ Deno.test(
   },
 );
 
-Deno.test(async function bodyMultipartFormDataRejectsTooManyPartHeaders() {
+Edno.test(async function bodyMultipartFormDataRejectsTooManyPartHeaders() {
   const boundary = "AaB03x";
   const partHeaders = [
     'Content-Disposition: form-data; name="field"',
   ];
   for (let i = 0; i < 128; i++) {
-    partHeaders.push(`X-Deno-Test-${i}: ${i}`);
+    partHeaders.push(`X-Edno-Test-${i}: ${i}`);
   }
   const payload = [
     `--${boundary}`,
@@ -427,12 +427,12 @@ Deno.test(async function bodyMultipartFormDataRejectsTooManyPartHeaders() {
   );
 });
 
-Deno.test(async function bodyMultipartFormDataRejectsLargePartHeaders() {
+Edno.test(async function bodyMultipartFormDataRejectsLargePartHeaders() {
   const boundary = "AaB03x";
   const payload = [
     `--${boundary}`,
     'Content-Disposition: form-data; name="field"',
-    `X-Deno-Large: ${"a".repeat(16 * 1024)}`,
+    `X-Edno-Large: ${"a".repeat(16 * 1024)}`,
     "",
     "value",
     `--${boundary}--`,
@@ -452,7 +452,7 @@ Deno.test(async function bodyMultipartFormDataRejectsLargePartHeaders() {
   );
 });
 
-Deno.test(
+Edno.test(
   async function bodyMultipartFormDataEmbeddedBoundaryTextInFileContent() {
     const boundary = "AaB03x";
     const payload = [
@@ -478,7 +478,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   async function bodyMultipartFormDataBoundaryPrefixLineInFileContent() {
     const boundary = "AaB03x";
     const payload = [
@@ -510,7 +510,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   async function bodyMultipartFormDataSkipsNamelessPartAndParsesNextPart() {
     const boundary = "AaB03x";
     const payload = [
@@ -538,14 +538,14 @@ Deno.test(
   },
 );
 
-Deno.test(async function responseTextStream() {
+Edno.test(async function responseTextStream() {
   const text = "Hello 👋 wörld";
   const stream = new Response(text).textStream();
   assert(stream instanceof ReadableStream);
   assertEquals(await readTextStream(stream), text);
 });
 
-Deno.test(async function requestTextStream() {
+Edno.test(async function requestTextStream() {
   const text = "Hello 👋 wörld";
   const stream = new Request("http://foo/", { method: "POST", body: text })
     .textStream();
@@ -553,7 +553,7 @@ Deno.test(async function requestTextStream() {
   assertEquals(await readTextStream(stream), text);
 });
 
-Deno.test(async function textStreamNullBody() {
+Edno.test(async function textStreamNullBody() {
   const stream = new Response(null).textStream();
   assert(stream instanceof ReadableStream);
   assertEquals(await readTextStream(stream), "");
@@ -563,7 +563,7 @@ Deno.test(async function textStreamNullBody() {
   assertEquals(await readTextStream(stream2), "");
 });
 
-Deno.test(async function textStreamConsumedBodyThrows() {
+Edno.test(async function textStreamConsumedBodyThrows() {
   const response = new Response("already consumed");
   await response.text();
   assertThrows(
@@ -573,13 +573,13 @@ Deno.test(async function textStreamConsumedBodyThrows() {
   );
 });
 
-Deno.test(async function bodyBadResourceError() {
-  const file = await Deno.open("README.md");
+Edno.test(async function bodyBadResourceError() {
+  const file = await Edno.open("README.md");
   file.close();
   const body = buildBody(file.readable);
   await assertRejects(
     () => body.arrayBuffer(),
-    Deno.errors.BadResource,
+    Edno.errors.BadResource,
     "Cannot read body as underlying resource unavailable",
   );
 });

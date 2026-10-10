@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 #![deny(warnings)]
-deno_ops_compile_test_runner::prelude!();
+edno_ops_compile_test_runner::prelude!();
 use std::cell::Cell;
 
-use deno_core::cppgc::GarbageCollected;
-use deno_core::v8;
+use edno_core::cppgc::GarbageCollected;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 
 pub struct Foo {

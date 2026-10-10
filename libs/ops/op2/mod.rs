@@ -434,11 +434,11 @@ pub(crate) fn generate_op2(
   };
 
   let accessor_type = if config.getter {
-    quote!(::deno_core::AccessorType::Getter)
+    quote!(::edno_core::AccessorType::Getter)
   } else if config.setter {
-    quote!(::deno_core::AccessorType::Setter)
+    quote!(::edno_core::AccessorType::Setter)
   } else {
-    quote!(::deno_core::AccessorType::None)
+    quote!(::edno_core::AccessorType::None)
   };
 
   let symbol_for = config.symbol;
@@ -446,7 +446,7 @@ pub(crate) fn generate_op2(
 
   Ok(quote! {
     #[allow(non_camel_case_types)]
-    #vis const fn #rust_name <#(#generic : #bound),*> () -> ::deno_core::_ops::OpDecl {
+    #vis const fn #rust_name <#(#generic : #bound),*> () -> ::edno_core::_ops::OpDecl {
       #[allow(non_camel_case_types)]
       #(#attrs)*
       #vis struct #rust_name <#(#generic),*> {
@@ -454,10 +454,10 @@ pub(crate) fn generate_op2(
         _unconstructable: ::std::marker::PhantomData<(#(#generic),*)>
       }
 
-      impl <#(#generic : #bound),*> ::deno_core::_ops::Op for #rust_name <#(#generic),*> {
+      impl <#(#generic : #bound),*> ::edno_core::_ops::Op for #rust_name <#(#generic),*> {
         const NAME: &'static str = stringify!(#name);
-        const DECL: ::deno_core::_ops::OpDecl = ::deno_core::_ops::OpDecl::new_internal_op2(
-          /*name*/ ::deno_core::__op_name_fast!(#name),
+        const DECL: ::edno_core::_ops::OpDecl = ::edno_core::_ops::OpDecl::new_internal_op2(
+          /*name*/ ::edno_core::__op_name_fast!(#name),
           /*is_async*/ #is_async,
           /*is_reentrant*/ #is_reentrant,
           /*symbol_for*/ #symbol_for,
@@ -469,16 +469,16 @@ pub(crate) fn generate_op2(
           /*accessor_type*/ #accessor_type,
           /*fast_fn*/ #fast_definition,
           /*fast_fn_metrics*/ #fast_definition_metrics,
-          /*metadata*/ ::deno_core::OpMetadata {
+          /*metadata*/ ::edno_core::OpMetadata {
             #(#meta_key: Some(#meta_value),)*
-            ..::deno_core::OpMetadata::default()
+            ..::edno_core::OpMetadata::default()
           },
         );
       }
 
       impl <#(#generic : #bound),*> #rust_name <#(#generic),*> {
         pub const fn name() -> &'static str {
-          <Self as deno_core::_ops::Op>::NAME
+          <Self as edno_core::_ops::Op>::NAME
         }
 
         #fast_fn
@@ -487,7 +487,7 @@ pub(crate) fn generate_op2(
 
       #callable
 
-      <#rust_name <#(#generic),*>  as ::deno_core::_ops::Op>::DECL
+      <#rust_name <#(#generic),*>  as ::edno_core::_ops::Op>::DECL
     }
   })
 }

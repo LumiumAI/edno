@@ -1,5 +1,5 @@
-import defaultImport, { MyClass } from "@denotest/cjs-default-export";
-import * as namespaceImport from "@denotest/cjs-default-export";
+import defaultImport, { MyClass } from "@ednotest/cjs-default-export";
+import * as namespaceImport from "@ednotest/cjs-default-export";
 import localDefaultImport from "./local.cjs";
 import * as localNamespaceImport from "./local.cjs";
 

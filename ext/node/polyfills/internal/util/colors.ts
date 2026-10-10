@@ -2,7 +2,7 @@
 // Copyright Node.js contributors. All rights reserved. MIT License.
 (function () {
 const { core } = __bootstrap;
-const io = core.loadExtScript("ext:deno_io/12_io.js");
+const io = core.loadExtScript("ext:edno_io/12_io.js");
 
 let blue = "";
 let green = "";
@@ -19,7 +19,7 @@ function shouldColorize() {
     return false;
   }
 
-  return !Deno.noColor;
+  return !Edno.noColor;
 }
 
 function refresh() {

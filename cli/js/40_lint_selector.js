@@ -857,7 +857,7 @@ export function compileSelector(selector) {
         break;
       default:
         // @ts-ignore error handling
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.log(node);
         throw new Error(`Unknown selector node`);
     }

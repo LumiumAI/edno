@@ -8,92 +8,92 @@ import {
   unreachable,
 } from "./test_util.ts";
 
-Deno.test({ permissions: { read: true } }, function readFileSyncSuccess() {
-  const data = Deno.readFileSync("tests/testdata/assets/fixture.json");
+Edno.test({ permissions: { read: true } }, function readFileSyncSuccess() {
+  const data = Edno.readFileSync("tests/testdata/assets/fixture.json");
   assert(data.byteLength > 0);
   const decoder = new TextDecoder("utf-8");
   const json = decoder.decode(data);
   const pkg = JSON.parse(json);
-  assertEquals(pkg.name, "deno");
+  assertEquals(pkg.name, "edno");
 });
 
-Deno.test({ permissions: { read: true } }, function readFileSyncUrl() {
-  const data = Deno.readFileSync(
+Edno.test({ permissions: { read: true } }, function readFileSyncUrl() {
+  const data = Edno.readFileSync(
     pathToAbsoluteFileUrl("tests/testdata/assets/fixture.json"),
   );
   assert(data.byteLength > 0);
   const decoder = new TextDecoder("utf-8");
   const json = decoder.decode(data);
   const pkg = JSON.parse(json);
-  assertEquals(pkg.name, "deno");
+  assertEquals(pkg.name, "edno");
 });
 
-Deno.test({ permissions: { read: false } }, function readFileSyncPerm() {
+Edno.test({ permissions: { read: false } }, function readFileSyncPerm() {
   assertThrows(() => {
-    Deno.readFileSync("tests/testdata/assets/fixture.json");
-  }, Deno.errors.NotCapable);
+    Edno.readFileSync("tests/testdata/assets/fixture.json");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, function readFileSyncNotFound() {
+Edno.test({ permissions: { read: true } }, function readFileSyncNotFound() {
   assertThrows(() => {
-    Deno.readFileSync("bad_filename");
-  }, Deno.errors.NotFound);
+    Edno.readFileSync("bad_filename");
+  }, Edno.errors.NotFound);
 });
 
-Deno.test({ permissions: { read: true } }, async function readFileUrl() {
-  const data = await Deno.readFile(
+Edno.test({ permissions: { read: true } }, async function readFileUrl() {
+  const data = await Edno.readFile(
     pathToAbsoluteFileUrl("tests/testdata/assets/fixture.json"),
   );
   assert(data.byteLength > 0);
   const decoder = new TextDecoder("utf-8");
   const json = decoder.decode(data);
   const pkg = JSON.parse(json);
-  assertEquals(pkg.name, "deno");
+  assertEquals(pkg.name, "edno");
 });
 
-Deno.test({ permissions: { read: true } }, async function readFileSuccess() {
-  const data = await Deno.readFile("tests/testdata/assets/fixture.json");
+Edno.test({ permissions: { read: true } }, async function readFileSuccess() {
+  const data = await Edno.readFile("tests/testdata/assets/fixture.json");
   assert(data.byteLength > 0);
   const decoder = new TextDecoder("utf-8");
   const json = decoder.decode(data);
   const pkg = JSON.parse(json);
-  assertEquals(pkg.name, "deno");
+  assertEquals(pkg.name, "edno");
 });
 
-Deno.test({ permissions: { read: false } }, async function readFilePerm() {
+Edno.test({ permissions: { read: false } }, async function readFilePerm() {
   await assertRejects(async () => {
-    await Deno.readFile("tests/testdata/assets/fixture.json");
-  }, Deno.errors.NotCapable);
+    await Edno.readFile("tests/testdata/assets/fixture.json");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, function readFileSyncLoop() {
+Edno.test({ permissions: { read: true } }, function readFileSyncLoop() {
   for (let i = 0; i < 256; i++) {
-    Deno.readFileSync("tests/testdata/assets/fixture.json");
+    Edno.readFileSync("tests/testdata/assets/fixture.json");
   }
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readFileDoesNotLeakResources() {
-    await assertRejects(async () => await Deno.readFile("cli"));
+    await assertRejects(async () => await Edno.readFile("cli"));
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   function readFileSyncDoesNotLeakResources() {
-    assertThrows(() => Deno.readFileSync("cli"));
+    assertThrows(() => Edno.readFileSync("cli"));
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readFileWithAbortSignal() {
     const ac = new AbortController();
     queueMicrotask(() => ac.abort());
     const error = await assertRejects(
       async () => {
-        await Deno.readFile("tests/testdata/assets/fixture.json", {
+        await Edno.readFile("tests/testdata/assets/fixture.json", {
           signal: ac.signal,
         });
       },
@@ -103,7 +103,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readFileWithAbortSignalReason() {
     const ac = new AbortController();
@@ -111,7 +111,7 @@ Deno.test(
     queueMicrotask(() => ac.abort(abortReason));
     const error = await assertRejects(
       async () => {
-        await Deno.readFile("tests/testdata/assets/fixture.json", {
+        await Edno.readFile("tests/testdata/assets/fixture.json", {
           signal: ac.signal,
         });
       },
@@ -120,13 +120,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readFileWithAbortSignalPrimitiveReason() {
     const ac = new AbortController();
     queueMicrotask(() => ac.abort("Some string"));
     try {
-      await Deno.readFile("tests/testdata/assets/fixture.json", {
+      await Edno.readFile("tests/testdata/assets/fixture.json", {
         signal: ac.signal,
       });
       unreachable();
@@ -137,40 +137,40 @@ Deno.test(
 );
 
 // Test that AbortController's cancel handle is cleaned-up correctly, and do not leak resources.
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readFileWithAbortSignalNotCalled() {
     const ac = new AbortController();
-    await Deno.readFile("tests/testdata/assets/fixture.json", {
+    await Edno.readFile("tests/testdata/assets/fixture.json", {
       signal: ac.signal,
     });
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "linux" },
+Edno.test(
+  { ignore: Edno.build.os !== "linux" },
   async function readFileProcFs() {
-    const data = await Deno.readFile("/proc/self/stat");
+    const data = await Edno.readFile("/proc/self/stat");
     assert(data.byteLength > 0);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readFileNotFoundErrorCode() {
     try {
-      await Deno.readFile("definitely-not-found.json");
+      await Edno.readFile("definitely-not-found.json");
     } catch (e) {
       assertEquals((e as { code: string }).code, "ENOENT");
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readFileIsDirectoryErrorCode() {
     try {
-      await Deno.readFile("tests/testdata/assets/");
+      await Edno.readFile("tests/testdata/assets/");
     } catch (e) {
       assertEquals((e as { code: string }).code, "EISDIR");
     }

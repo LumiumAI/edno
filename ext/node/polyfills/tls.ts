@@ -3,15 +3,15 @@
 
 (function () {
 const { core, primordials } = __bootstrap;
-const { notImplemented } = core.loadExtScript("ext:deno_node/_utils.ts");
+const { notImplemented } = core.loadExtScript("ext:edno_node/_utils.ts");
 const { getExecArgvOptionValue, getOptionValue } = core.loadExtScript(
-  "ext:deno_node/internal/options.ts",
+  "ext:edno_node/internal/options.ts",
 );
 const { convertALPNProtocols } = core.loadExtScript(
-  "ext:deno_node/internal/tls_common.js",
+  "ext:edno_node/internal/tls_common.js",
 );
 const { X509Certificate } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/x509.ts",
+  "ext:edno_node/internal/crypto/x509.ts",
 );
 const {
   op_get_env_no_permission_check,
@@ -22,12 +22,12 @@ const {
 const {
   validateOneOf,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { isArrayBufferView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const { ERR_INVALID_ARG_TYPE } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 
 const { isTypedArray } = core;
@@ -70,7 +70,7 @@ const {
 // is registered as a global, so a top-level `new TextDecoder()` would throw.
 let utf8Decoder: TextDecoder | null = null;
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function arrayBufferViewToString(view: any): string {
   // Use the matching prototype getter so a forged accessor on the view
   // can't redirect us to a different ArrayBuffer / out-of-bounds region.
@@ -135,7 +135,7 @@ function writeNativeCryptoDebug(message: string) {
 
 function emitDefaultCertificatesDebug() {
   const useOpenSslCa =
-    op_get_env_no_permission_check("DENO_NODE_USE_OPENSSL_CA") === "1";
+    op_get_env_no_permission_check("EDNO_NODE_USE_OPENSSL_CA") === "1";
   if (useOpenSslCa) {
     return;
   }
@@ -143,7 +143,7 @@ function emitDefaultCertificatesDebug() {
   const stores: string[] = [];
   ArrayPrototypeForEach(
     StringPrototypeSplit(
-      op_get_env_no_permission_check("DENO_TLS_CA_STORE") ?? "mozilla",
+      op_get_env_no_permission_check("EDNO_TLS_CA_STORE") ?? "mozilla",
       ",",
     ),
     (store) => {
@@ -253,7 +253,7 @@ function getDefaultMinVersion(): string {
 let hasDefaultCACertificatesOverride = false;
 
 function hasStore(store: string): boolean {
-  const storesValue = op_get_env_no_permission_check("DENO_TLS_CA_STORE");
+  const storesValue = op_get_env_no_permission_check("EDNO_TLS_CA_STORE");
   if (storesValue == null) {
     return false;
   }
@@ -291,7 +291,7 @@ function getDefaultUsesSystemCertificates(): boolean {
 }
 
 function getDefaultUsesBundledCertificates(): boolean {
-  const storesValue = op_get_env_no_permission_check("DENO_TLS_CA_STORE");
+  const storesValue = op_get_env_no_permission_check("EDNO_TLS_CA_STORE");
   if (storesValue != null) {
     return hasStore("mozilla");
   }

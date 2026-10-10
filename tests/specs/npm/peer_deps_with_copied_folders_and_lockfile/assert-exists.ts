@@ -1,11 +1,11 @@
-if (Deno.args.length === 0) {
+if (Edno.args.length === 0) {
   console.error("no args");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 function exists(path: string) {
   try {
-    Deno.statSync(path);
+    Edno.statSync(path);
     return true;
   } catch (error) {
     console.error(error);
@@ -34,11 +34,11 @@ function expandBraces(pattern: string): string[] {
   return results;
 }
 
-const paths = Deno.args.map((arg) => arg.trim()).flatMap(expandBraces);
+const paths = Edno.args.map((arg) => arg.trim()).flatMap(expandBraces);
 
 for (const path of paths) {
   if (!exists(path)) {
     console.error(`${path} does not exist`);
-    Deno.exit(1);
+    Edno.exit(1);
   }
 }

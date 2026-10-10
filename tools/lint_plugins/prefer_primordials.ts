@@ -286,26 +286,26 @@ export const HINT = {
     "Instead use either `ObjectHasOwn` or `ReflectHas` from the `primordials` object",
 } as const;
 
-type Node = Deno.lint.Node;
-type Identifier = Deno.lint.Identifier;
-type ObjectExpression = Deno.lint.ObjectExpression;
+type Node = Edno.lint.Node;
+type Identifier = Edno.lint.Identifier;
+type ObjectExpression = Edno.lint.ObjectExpression;
 
 interface Scope {
   parent: Scope | null;
   bindings: Set<string>;
   consts: Map<string, Node>;
-  range: Deno.lint.Range;
+  range: Edno.lint.Range;
   children: Scope[];
 }
 
 function rangeContains(
-  outer: Deno.lint.Range,
-  inner: Deno.lint.Range,
+  outer: Edno.lint.Range,
+  inner: Edno.lint.Range,
 ): boolean {
   return outer[0] <= inner[0] && inner[1] <= outer[1];
 }
 
-function posInRange(range: Deno.lint.Range, pos: number): boolean {
+function posInRange(range: Edno.lint.Range, pos: number): boolean {
   return range[0] <= pos && pos < range[1];
 }
 
@@ -343,7 +343,7 @@ function addBindingPattern(scope: Scope, node: Node | null | undefined): void {
 
 function collectBindingsFromParams(
   scope: Scope,
-  params: Deno.lint.Parameter[],
+  params: Edno.lint.Parameter[],
 ): void {
   for (const param of params) {
     if (param.type === "TSParameterProperty") {
@@ -355,11 +355,11 @@ function collectBindingsFromParams(
 }
 
 /** Build a scope tree so we can detect shadowed globals (e.g. `const Array = ...`). */
-function buildScopeTreeFixed(ast: Deno.lint.Program): Scope {
+function buildScopeTreeFixed(ast: Edno.lint.Program): Scope {
   type ScopeEx = Scope & { isFn: boolean };
   function create(
     parent: ScopeEx | null,
-    range: Deno.lint.Range,
+    range: Edno.lint.Range,
     isFn: boolean,
   ): ScopeEx {
     const scope: ScopeEx = {
@@ -450,7 +450,7 @@ function buildScopeTreeFixed(ast: Deno.lint.Program): Scope {
         const inner = create(scope, node.range, false);
         // StaticBlock.body is Statement[], but plugin host proxies can
         // occasionally surface a non-iterable value — walk defensively.
-        const body = (node as Deno.lint.StaticBlock).body;
+        const body = (node as Edno.lint.StaticBlock).body;
         if (Array.isArray(body)) {
           for (const stmt of body) visit(stmt, inner);
         } else {
@@ -617,7 +617,7 @@ function isNullLiteral(node: Node): boolean {
   if (node.type !== "Literal") return false;
   // Avoid `"regex" in node` — lint AST nodes are proxies and may report
   // inherited keys. Check the actual regex field / value / raw instead.
-  const lit = node as Deno.lint.Literal & { regex?: unknown; raw?: string };
+  const lit = node as Edno.lint.Literal & { regex?: unknown; raw?: string };
   if (lit.regex) return false;
   return lit.value === null || lit.raw === "null";
 }
@@ -707,7 +707,7 @@ function insideParam(node: Node): boolean {
 }
 
 function memberPropName(
-  member: Deno.lint.MemberExpression,
+  member: Edno.lint.MemberExpression,
 ): string | null {
   if (member.computed) return null;
   if (member.property.type === "Identifier") return member.property.name;
@@ -715,7 +715,7 @@ function memberPropName(
 }
 
 function checkDescriptor(
-  ctx: Deno.lint.RuleContext,
+  ctx: Edno.lint.RuleContext,
   root: Scope,
   node: Node,
 ): void {
@@ -734,7 +734,7 @@ function checkDescriptor(
 }
 
 function report(
-  ctx: Deno.lint.RuleContext,
+  ctx: Edno.lint.RuleContext,
   node: Node,
   message: string,
   hint: string,
@@ -742,8 +742,8 @@ function report(
   ctx.report({ node, message, hint });
 }
 
-const plugin: Deno.lint.Plugin = {
-  name: "deno-internal",
+const plugin: Edno.lint.Plugin = {
+  name: "edno-internal",
   rules: {
     "prefer-primordials": {
       create(context) {
@@ -773,7 +773,7 @@ const plugin: Deno.lint.Plugin = {
             if (
               UNSAFE_CONSTRUCTOR_TARGETS.has(name) &&
               node.parent?.type === "NewExpression" &&
-              (node.parent as Deno.lint.NewExpression).callee === node
+              (node.parent as Edno.lint.NewExpression).callee === node
             ) {
               report(
                 context,
@@ -786,7 +786,7 @@ const plugin: Deno.lint.Plugin = {
             if (
               UNSAFE_FUNCTION_TARGETS.has(name) &&
               node.parent?.type === "CallExpression" &&
-              (node.parent as Deno.lint.CallExpression).callee === node
+              (node.parent as Edno.lint.CallExpression).callee === node
             ) {
               report(
                 context,
@@ -802,7 +802,7 @@ const plugin: Deno.lint.Plugin = {
             ) {
               if (
                 node.parent?.type === "CallExpression" &&
-                (node.parent as Deno.lint.CallExpression).callee === node
+                (node.parent as Edno.lint.CallExpression).callee === node
               ) {
                 const arg = node.parent.arguments[2];
                 if (arg) checkDescriptor(context, scopeRoot, arg as Node);
@@ -815,7 +815,7 @@ const plugin: Deno.lint.Plugin = {
             ) {
               if (
                 node.parent?.type === "CallExpression" &&
-                (node.parent as Deno.lint.CallExpression).callee === node
+                (node.parent as Edno.lint.CallExpression).callee === node
               ) {
                 const arg = node.parent.arguments[1];
                 const descriptors = arg &&
@@ -848,7 +848,7 @@ const plugin: Deno.lint.Plugin = {
             // member expression used as a computed property is not part of the
             // chain, though: `obj[Symbol.iterator]` must still flag `Symbol`.
             const isChainedObject = node.parent?.type === "MemberExpression" &&
-              (node.parent as Deno.lint.MemberExpression).object === node;
+              (node.parent as Edno.lint.MemberExpression).object === node;
             if (
               !isChainedObject &&
               node.object.type === "Identifier" &&
@@ -871,7 +871,7 @@ const plugin: Deno.lint.Plugin = {
             // checks). Optional calls (`foo.bar?.()`) still look up methods on
             // the receiver prototype chain, so flag them for pollution resistance.
             const isCallCallee = node.parent?.type === "CallExpression" &&
-              (node.parent as Deno.lint.CallExpression).callee === node;
+              (node.parent as Edno.lint.CallExpression).callee === node;
 
             if (isCallCallee && METHOD_TARGETS.has(propName)) {
               report(
@@ -883,7 +883,7 @@ const plugin: Deno.lint.Plugin = {
             }
 
             const isAssignLeft = node.parent?.type === "AssignmentExpression" &&
-              (node.parent as Deno.lint.AssignmentExpression).left === node;
+              (node.parent as Edno.lint.AssignmentExpression).left === node;
 
             if (
               !isAssignLeft &&

@@ -5,7 +5,7 @@
     "auto": {
       "steps": [
         {
-          "args": "install --node-modules-dir=auto npm:@denotest/extra-info",
+          "args": "install --node-modules-dir=auto npm:@ednotest/extra-info",
           "output": "[WILDCARD]"
         },
         {
@@ -21,7 +21,7 @@
     "manual": {
       "steps": [
         {
-          "args": "install --node-modules-dir=manual npm:@denotest/extra-info",
+          "args": "install --node-modules-dir=manual npm:@ednotest/extra-info",
           "output": "[WILDCARD]"
         },
         {
@@ -37,7 +37,7 @@
     "none": {
       "steps": [
         {
-          "args": "install --node-modules-dir=none npm:@denotest/extra-info",
+          "args": "install --node-modules-dir=none npm:@ednotest/extra-info",
           "output": "[WILDCARD]"
         },
         {
@@ -55,7 +55,7 @@
     "fallback": {
       "steps": [
         {
-          "args": "install --node-modules-dir=auto npm:@denotest/extra-info",
+          "args": "install --node-modules-dir=auto npm:@ednotest/extra-info",
           "output": "[WILDCARD]"
         },
         {
@@ -65,7 +65,7 @@
         {
           "args": [
             "eval",
-            "Deno.removeSync(Deno.cwd() + '/node_modules/.deno/@denotest+extra-info@1.0.0/node_modules/@denotest/extra-info/package.json')"
+            "Edno.removeSync(Edno.cwd() + '/node_modules/.edno/@ednotest+extra-info@1.0.0/node_modules/@ednotest/extra-info/package.json')"
           ],
           "output": "[WILDCARD]"
         },

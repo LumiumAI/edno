@@ -31,7 +31,7 @@ fn compile_basic() {
     output.assert_exit_code(0);
     output.skip_output_check();
     let output = context.new_command().name(&exe).run();
-    output.assert_matches_text("Welcome to Deno!\n");
+    output.assert_matches_text("Welcome to Edno!\n");
   }
 
   // On arm64 macOS, check if `codesign -v` passes
@@ -45,7 +45,7 @@ fn compile_basic() {
     assert!(output.status.success());
   }
 
-  // now ensure this works when the deno_dir is readonly
+  // now ensure this works when the edno_dir is readonly
   let readonly_dir = dir.path().join("readonly");
   readonly_dir.make_dir_readonly();
   let readonly_sub_dir = readonly_dir.join("sub");
@@ -53,10 +53,10 @@ fn compile_basic() {
   let output = context
     .new_command()
     // it should fail creating this, but still work
-    .env("DENO_DIR", readonly_sub_dir)
+    .env("EDNO_DIR", readonly_sub_dir)
     .name(exe)
     .run();
-  output.assert_matches_text("Welcome to Deno!\n");
+  output.assert_matches_text("Welcome to Edno!\n");
 }
 
 #[test]
@@ -115,7 +115,7 @@ fn standalone_load_datauri() {
     .name(&exe)
     .run()
     .assert_exit_code(0)
-    .assert_matches_text("Hello Deno!\n");
+    .assert_matches_text("Hello Edno!\n");
 }
 
 // https://github.com/denoland/deno/issues/13704
@@ -135,7 +135,7 @@ fn standalone_follow_redirects() {
       "--output",
       &exe.to_string_lossy(),
       "--config",
-      "../config/deno.json",
+      "../config/edno.json",
       "./compile/standalone_follow_redirects.ts",
     ])
     .run()
@@ -656,7 +656,7 @@ fn dynamic_import_unanalyzable() {
     .assert_exit_code(0);
 }
 
-// TODO(2.0): this test should first run `deno install`?
+// TODO(2.0): this test should first run `edno install`?
 #[test]
 #[ignore]
 fn compile_npm_specifiers() {
@@ -667,8 +667,8 @@ fn compile_npm_specifiers() {
     "main.ts",
     concat!(
       "import path from 'node:path';\n",
-      "import { getValue, setValue } from 'npm:@denotest/esm-basic';\n",
-      "import getValueDefault from 'npm:@denotest/esm-import-cjs-default';\n",
+      "import { getValue, setValue } from 'npm:@ednotest/esm-basic';\n",
+      "import getValueDefault from 'npm:@ednotest/esm-import-cjs-default';\n",
       "setValue(2);\n",
       "console.log(path.join('testing', 'this'));",
       "console.log(getValue());",
@@ -732,14 +732,14 @@ testing[WILDCARD]this
   temp_dir.write(
     "main.ts",
     concat!(
-      "import { getValue, setValue } from '@denotest/esm-basic';\n",
+      "import { getValue, setValue } from '@ednotest/esm-basic';\n",
       "setValue(2);\n",
       "console.log(getValue());",
     ),
   );
   temp_dir.write(
     "package.json",
-    r#"{ "dependencies": { "@denotest/esm-basic": "1" } }"#,
+    r#"{ "dependencies": { "@ednotest/esm-basic": "1" } }"#,
   );
 
   context
@@ -757,7 +757,7 @@ testing[WILDCARD]this
 
   // now try with byonm
   temp_dir.remove_dir_all("node_modules");
-  temp_dir.write("deno.json", r#"{"unstable":["byonm"]}"#);
+  temp_dir.write("edno.json", r#"{"unstable":["byonm"]}"#);
   context.run_npm("install");
 
   context
@@ -779,11 +779,11 @@ testing[WILDCARD]this
 #[test]
 fn compile_npm_bin_esm() {
   run_npm_bin_compile_test(RunNpmBinCompileOptions {
-    input_specifier: "npm:@denotest/bin/cli-esm",
+    input_specifier: "npm:@ednotest/bin/cli-esm",
     copy_temp_dir: None,
     compile_args: vec![],
     run_args: vec!["this", "is", "a", "test"],
-    output_file: "npm/deno_run_esm.out",
+    output_file: "npm/edno_run_esm.out",
     node_modules_local: false,
     input_name: None,
     expected_name: "cli-esm",
@@ -794,11 +794,11 @@ fn compile_npm_bin_esm() {
 #[test]
 fn compile_npm_bin_cjs() {
   run_npm_bin_compile_test(RunNpmBinCompileOptions {
-    input_specifier: "npm:@denotest/bin/cli-cjs",
+    input_specifier: "npm:@ednotest/bin/cli-cjs",
     copy_temp_dir: None,
     compile_args: vec![],
     run_args: vec!["this", "is", "a", "test"],
-    output_file: "npm/deno_run_cjs.out",
+    output_file: "npm/edno_run_cjs.out",
     node_modules_local: false,
     input_name: None,
     expected_name: "cli-cjs",
@@ -813,7 +813,7 @@ fn compile_npm_cowsay_main() {
     copy_temp_dir: None,
     compile_args: vec!["--allow-read", "--allow-env"],
     run_args: vec!["Hello"],
-    output_file: "npm/deno_run_cowsay.out",
+    output_file: "npm/edno_run_cowsay.out",
     node_modules_local: false,
     input_name: None,
     expected_name: "cowsay",
@@ -824,14 +824,14 @@ fn compile_npm_cowsay_main() {
 #[test]
 fn compile_npm_no_permissions() {
   run_npm_bin_compile_test(RunNpmBinCompileOptions {
-    input_specifier: "npm:@denotest/cli-with-permissions@1.0.0",
+    input_specifier: "npm:@ednotest/cli-with-permissions@1.0.0",
     copy_temp_dir: None,
-    compile_args: vec!["-o", "denotest"],
+    compile_args: vec!["-o", "ednotest"],
     run_args: vec!["Hello"],
     output_file: "npm/compile_npm_no_permissions.out",
     node_modules_local: false,
     input_name: None,
-    expected_name: "denotest",
+    expected_name: "ednotest",
     exit_code: 1,
   });
 }
@@ -843,7 +843,7 @@ fn compile_npm_cowsay_explicit() {
     copy_temp_dir: None,
     compile_args: vec!["--allow-read", "--allow-env"],
     run_args: vec!["Hello"],
-    output_file: "npm/deno_run_cowsay.out",
+    output_file: "npm/edno_run_cowsay.out",
     node_modules_local: false,
     input_name: None,
     expected_name: "cowsay",
@@ -892,8 +892,8 @@ fn run_npm_bin_compile_test(opts: RunNpmBinCompileOptions) {
   eprintln!("{}", output.combined_output());
   output.skip_output_check();
 
-  // delete the npm folder in the DENO_DIR to ensure it's not using it
-  context.deno_dir().remove_dir_all("./npm");
+  // delete the npm folder in the EDNO_DIR to ensure it's not using it
+  context.edno_dir().remove_dir_all("./npm");
 
   // run
   let binary_path = if cfg!(windows) {
@@ -913,7 +913,7 @@ fn run_npm_bin_compile_test(opts: RunNpmBinCompileOptions) {
 #[test]
 fn compile_node_modules_symlink_outside() {
   // this code is using a canonicalized temp dir because otherwise
-  // it fails on the Windows CI because Deno makes the root directory
+  // it fails on the Windows CI because Edno makes the root directory
   // a common ancestor of the symlinked temp dir and the canonicalized
   // temp dir, which causes the warnings to not be surfaced
   #[allow(deprecated, reason = "needed for canonicalized temp dir")]
@@ -983,7 +983,7 @@ fn compile_node_modules_symlink_non_existent() {
   let context = TestContextBuilder::for_npm().use_temp_cwd().build();
   let temp_dir = context.temp_dir().path();
   temp_dir.join("main.ts").write(
-    r#"import { getValue, setValue } from "npm:@denotest/esm-basic";
+    r#"import { getValue, setValue } from "npm:@ednotest/esm-basic";
 setValue(4);
 console.log(getValue());"#,
   );
@@ -998,9 +998,9 @@ console.log(getValue());"#,
     .run();
   output.assert_exit_code(0);
   output.assert_matches_text(
-    r#"Download http://localhost:4260/@denotest%2fesm-basic
-Download http://localhost:4260/@denotest/esm-basic/1.0.0.tgz
-Initialize @denotest/esm-basic@1.0.0
+    r#"Download http://localhost:4260/@ednotest%2fesm-basic
+Download http://localhost:4260/@ednotest/esm-basic/1.0.0.tgz
+Initialize @ednotest/esm-basic@1.0.0
 Check main.ts
 Compile main.ts to [WILDCARD]
 Warning Failed resolving symlink. Ignoring.
@@ -1084,7 +1084,7 @@ fn granular_unstable_features_config_file() {
     dir.path().join("app")
   };
   dir.write(
-    "deno.json",
+    "edno.json",
     serde_json::to_string_pretty(&serde_json::json!({
       "unstable": ["kv", "temporal"]
     }))
@@ -1095,7 +1095,7 @@ fn granular_unstable_features_config_file() {
     .args_vec([
       "compile",
       "--config",
-      &dir.path().join("deno.json").to_string(),
+      &dir.path().join("edno.json").to_string(),
       "--output",
       &exe.to_string_lossy(),
       "./unstable_features.ts",
@@ -1152,7 +1152,7 @@ fn standalone_config_file_respects_compiler_options() {
       "compile",
       "--allow-read",
       "--config",
-      "compile/compiler_options/deno.json",
+      "compile/compiler_options/edno.json",
       "--output",
       &exe.to_string_lossy(),
       "./compile/compiler_options/main.ts",

@@ -1,26 +1,26 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_telemetry"
+name = "edno_telemetry"
 version = "0.81.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Telemetry for Deno"
+description = "Telemetry for Edno"
 
 [lib]
 path = "lib.rs"
 
 [dependencies]
 async-trait.workspace = true
-deno_core.workspace = true
+edno_core.workspace = true
 deno_error.workspace = true
-deno_net.workspace = true
-deno_signals.workspace = true
+edno_net.workspace = true
+edno_signals.workspace = true
 deno_terminal.workspace = true
-deno_tls.workspace = true
+edno_tls.workspace = true
 flate2 = { workspace = true, features = ["default"] }
 http-body-util.workspace = true
 hyper.workspace = true

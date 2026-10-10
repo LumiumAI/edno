@@ -1,1 +1,1 @@
-import "npm:@denotest/cjs-local-global-decls@1.0.0";
+import "npm:@ednotest/cjs-local-global-decls@1.0.0";

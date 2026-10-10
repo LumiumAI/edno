@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/cjs-reexport-relative-parent",
+  "name": "@ednotest/cjs-reexport-relative-parent",
   "version": "1.0.0",
   "main": "./sub_dir/index.js"
 }

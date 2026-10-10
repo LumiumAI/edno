@@ -10,57 +10,57 @@ const {
   StringPrototypeStartsWith,
 } = primordials;
 const asyncWrap = core.loadExtScript(
-  "ext:deno_node/internal_binding/async_wrap.ts",
+  "ext:edno_node/internal_binding/async_wrap.ts",
 );
 const { default: blockList } = core.loadExtScript(
-  "ext:deno_node/internal_binding/block_list.ts",
+  "ext:edno_node/internal_binding/block_list.ts",
 );
 const buffer = core.loadExtScript(
-  "ext:deno_node/internal_binding/buffer.ts",
+  "ext:edno_node/internal_binding/buffer.ts",
 );
 const { default: caresWrap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/cares_wrap.ts",
+  "ext:edno_node/internal_binding/cares_wrap.ts",
 );
 const constants = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
 const crypto = core.loadExtScript(
-  "ext:deno_node/internal_binding/crypto.ts",
+  "ext:edno_node/internal_binding/crypto.ts",
 );
 const pipeWrap = core.loadExtScript(
-  "ext:deno_node/internal_binding/pipe_wrap.ts",
+  "ext:edno_node/internal_binding/pipe_wrap.ts",
 );
 const streamWrap = core.loadExtScript(
-  "ext:deno_node/internal_binding/stream_wrap.ts",
+  "ext:edno_node/internal_binding/stream_wrap.ts",
 );
 const stringDecoder = core.loadExtScript(
-  "ext:deno_node/internal_binding/string_decoder.ts",
+  "ext:edno_node/internal_binding/string_decoder.ts",
 );
 const symbols = core.loadExtScript(
-  "ext:deno_node/internal_binding/symbols.ts",
+  "ext:edno_node/internal_binding/symbols.ts",
 );
 const tcpWrap = core.loadExtScript(
-  "ext:deno_node/internal_binding/tcp_wrap.ts",
+  "ext:edno_node/internal_binding/tcp_wrap.ts",
 );
 const ttyWrap = core.loadExtScript(
-  "ext:deno_node/internal_binding/tty_wrap.ts",
+  "ext:edno_node/internal_binding/tty_wrap.ts",
 );
-const types = core.loadExtScript("ext:deno_node/internal_binding/types.ts");
+const types = core.loadExtScript("ext:edno_node/internal_binding/types.ts");
 const udpWrap = core.loadExtScript(
-  "ext:deno_node/internal_binding/udp_wrap.ts",
+  "ext:edno_node/internal_binding/udp_wrap.ts",
 );
 const util = core.loadExtScript(
-  "ext:deno_node/internal_binding/util.ts",
+  "ext:edno_node/internal_binding/util.ts",
 );
-const uvNamespace = core.loadExtScript("ext:deno_node/internal_binding/uv.ts");
+const uvNamespace = core.loadExtScript("ext:edno_node/internal_binding/uv.ts");
 const httpParser = core.loadExtScript(
-  "ext:deno_node/internal_binding/http_parser.ts",
+  "ext:edno_node/internal_binding/http_parser.ts",
 );
 const http2Binding = core.loadExtScript(
-  "ext:deno_node/internal_binding/http2.ts",
+  "ext:edno_node/internal_binding/http2.ts",
 );
 const inspectorBinding = core.loadExtScript(
-  "ext:deno_node/internal_binding/inspector.js",
+  "ext:edno_node/internal_binding/inspector.js",
 );
 
 // Mutable shallow copy so callers can replace properties (e.g. wrap

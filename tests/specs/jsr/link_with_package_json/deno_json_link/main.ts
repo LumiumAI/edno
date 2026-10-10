@@ -1,2 +1,2 @@
-import { value } from "@denotest/dep";
+import { value } from "@ednotest/dep";
 console.log(value);

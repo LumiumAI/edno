@@ -3,7 +3,7 @@
 (function () {
 const { core, primordials } = __bootstrap;
 const { op_fetch_custom_client } = core.ops;
-const { loadTlsKeyPair } = core.loadExtScript("ext:deno_net/02_tls.js");
+const { loadTlsKeyPair } = core.loadExtScript("ext:edno_net/02_tls.js");
 
 const { internalRidSymbol } = core;
 const {
@@ -17,7 +17,7 @@ const {
 } = primordials;
 
 /**
- * @param {Deno.CreateHttpClientOptions} options
+ * @param {Edno.CreateHttpClientOptions} options
  * @returns {HttpClient}
  */
 function createHttpClient(options) {
@@ -90,7 +90,7 @@ function createHttpClient(options) {
       proxy.transport = "http";
     }
   }
-  const keyPair = loadTlsKeyPair("Deno.createHttpClient", options);
+  const keyPair = loadTlsKeyPair("Edno.createHttpClient", options);
   return new HttpClient(
     op_fetch_custom_client(
       options,

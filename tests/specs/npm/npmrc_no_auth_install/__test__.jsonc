@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "tests": {
-    "deno_install_arg": {
+    "edno_install_arg": {
       "steps": [{
         "args": "install",
         "output": "install.out"

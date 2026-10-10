@@ -15,14 +15,14 @@ const {
   StringPrototypeSlice,
   decodeURIComponent,
 } = primordials;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const { encodeStr, hexTable } = core.loadExtScript(
-  "ext:deno_node/internal/querystring.ts",
+  "ext:edno_node/internal/querystring.ts",
 );
 const { unhexTable } = core.loadExtScript(
-  "ext:deno_node/internal_binding/_utils.ts",
+  "ext:edno_node/internal_binding/_utils.ts",
 );
-const { kEmptyObject } = core.loadExtScript("ext:deno_node/internal/util.mjs");
+const { kEmptyObject } = core.loadExtScript("ext:edno_node/internal/util.mjs");
 
 /**
  * replaces encodeURIComponent()
@@ -39,7 +39,7 @@ function qsEscape(str) {
   return encodeStr(str, noEscape, hexTable);
 }
 
-// deno-fmt-ignore
+// edno-fmt-ignore
 const isHexTable = new Int8Array([
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0 - 15
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16 - 31
@@ -280,7 +280,7 @@ function parse(
  * alpha (uppercase)
  * alpha (lowercase)
  */
-// deno-fmt-ignore
+// edno-fmt-ignore
 const noEscape = new Int8Array([
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0 - 15
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16 - 31
@@ -432,7 +432,7 @@ function unescapeBuffer(s, decodeSpaces = false) {
     out[outIndex++] = currentChar;
     index++;
   }
-  // deno-lint-ignore deno-internal/prefer-primordials -- `out` is a Node Buffer; Buffer.prototype.slice is not Uint8Array.prototype.slice
+  // edno-lint-ignore edno-internal/prefer-primordials -- `out` is a Node Buffer; Buffer.prototype.slice is not Uint8Array.prototype.slice
   return hasHex ? out.slice(0, outIndex) : out;
 }
 
@@ -440,7 +440,7 @@ function qsUnescape(s) {
   try {
     return decodeURIComponent(s);
   } catch {
-    // deno-lint-ignore deno-internal/prefer-primordials -- `unescapeBuffer` returns a Node Buffer; Buffer.prototype.toString is not String/Object toString
+    // edno-lint-ignore edno-internal/prefer-primordials -- `unescapeBuffer` returns a Node Buffer; Buffer.prototype.toString is not String/Object toString
     return unescapeBuffer(s).toString();
   }
 }

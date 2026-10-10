@@ -316,10 +316,10 @@ mod tests {
     let before = r#"{
   "version": "5",
   "packages": {
-    "npm:@denotest/add@1": "1.0.0"
+    "npm:@ednotest/add@1": "1.0.0"
   },
   "npm": {
-    "@denotest/add@1.0.0": {
+    "@ednotest/add@1.0.0": {
       "integrity": "abc",
       "tarball": "http://localhost/add/1.0.0.tgz"
     }
@@ -328,15 +328,15 @@ mod tests {
     let after = r#"{
   "version": "5",
   "packages": {
-    "npm:@denotest/add@1": "1.0.0",
-    "npm:@denotest/subtract@1": "1.0.0"
+    "npm:@ednotest/add@1": "1.0.0",
+    "npm:@ednotest/subtract@1": "1.0.0"
   },
   "npm": {
-    "@denotest/add@1.0.0": {
+    "@ednotest/add@1.0.0": {
       "integrity": "abc",
       "tarball": "http://localhost/add/1.0.0.tgz"
     },
-    "@denotest/subtract@1.0.0": {
+    "@ednotest/subtract@1.0.0": {
       "integrity": "def",
       "tarball": "http://localhost/subtract/1.0.0.tgz"
     }
@@ -346,12 +346,12 @@ mod tests {
       before,
       after,
       concat!(
-        " 4 | -    \"npm:@denotest/add@1\": \"1.0.0\"\n",
-        " 4 | +    \"npm:@denotest/add@1\": \"1.0.0\",\n",
-        " 5 | +    \"npm:@denotest/subtract@1\": \"1.0.0\"\n",
+        " 4 | -    \"npm:@ednotest/add@1\": \"1.0.0\"\n",
+        " 4 | +    \"npm:@ednotest/add@1\": \"1.0.0\",\n",
+        " 5 | +    \"npm:@ednotest/subtract@1\": \"1.0.0\"\n",
         "   | ...\n",
         "11 | +    },\n",
-        "12 | +    \"@denotest/subtract@1.0.0\": {\n",
+        "12 | +    \"@ednotest/subtract@1.0.0\": {\n",
         "13 | +      \"integrity\": \"def\",\n",
         "14 | +      \"tarball\": \"http://localhost/subtract/1.0.0.tgz\"\n",
       ),

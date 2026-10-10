@@ -1,9 +1,9 @@
 error[ban-untagged-ignore]: Ignore directive requires lint rule name(s)
  --> [WILDCARD]file1.js:1:1
   | 
-1 | // deno-lint-ignore
+1 | // edno-lint-ignore
   | ^^^^^^^^^^^^^^^^^^^
-  = hint: Add one or more lint rule names.  E.g. // deno-lint-ignore adjacent-overload-signatures
+  = hint: Add one or more lint rule names.  E.g. // edno-lint-ignore adjacent-overload-signatures
 
   docs: https://docs.deno.com/lint/rules/ban-untagged-ignore
 

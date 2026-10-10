@@ -1,14 +1,14 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_kv"
+name = "edno_kv"
 version = "0.167.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Implementation of the Deno database API"
+description = "Implementation of the Edno database API"
 
 [lib]
 path = "lib.rs"
@@ -20,13 +20,13 @@ base64.workspace = true
 boxed_error.workspace = true
 bytes.workspace = true
 chrono = { workspace = true, features = ["now"] }
-deno_core.workspace = true
+edno_core.workspace = true
 deno_error.workspace = true
-deno_features.workspace = true
-deno_fetch.workspace = true
+edno_features.workspace = true
+edno_fetch.workspace = true
 deno_path_util.workspace = true
-deno_permissions.workspace = true
-deno_tls.workspace = true
+edno_permissions.workspace = true
+edno_tls.workspace = true
 denokv_proto.workspace = true
 denokv_remote.workspace = true
 denokv_sqlite.workspace = true

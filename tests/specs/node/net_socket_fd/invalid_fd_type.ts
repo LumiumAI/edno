@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
-const tmpFile = path.join(os.tmpdir(), `deno_net_fd_test_${process.pid}.txt`);
+const tmpFile = path.join(os.tmpdir(), `edno_net_fd_test_${process.pid}.txt`);
 fs.writeFileSync(tmpFile, "test");
 const fileFd = fs.openSync(tmpFile, "r");
 try {

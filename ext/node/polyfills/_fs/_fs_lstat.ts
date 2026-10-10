@@ -2,17 +2,17 @@
 
 (function () {
 const { core, primordials } = __bootstrap;
-const { denoErrorToNodeError } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+const { ednoErrorToNodeError } = core.loadExtScript(
+  "ext:edno_node/internal/errors.ts",
 );
 
 const lazyStatUtils = core.createLazyLoader(
-  "ext:deno_node/internal/fs/stat_utils.ts",
+  "ext:edno_node/internal/fs/stat_utils.ts",
 );
 const lazyFsUtils = core.createLazyLoader(
-  "ext:deno_node/internal/fs/utils.mjs",
+  "ext:edno_node/internal/fs/utils.mjs",
 );
-const { promisify } = core.loadExtScript("ext:deno_node/internal/util.mjs");
+const { promisify } = core.loadExtScript("ext:edno_node/internal/util.mjs");
 
 const {
   Error,
@@ -37,20 +37,20 @@ function lstat(
   // Match Node: errors carry the requested path (see lib/fs.js lstat).
   const validatedPath = lazyFsUtils().getValidatedPathToString(path);
   PromisePrototypeThen(
-    Deno.lstat(validatedPath),
+    Edno.lstat(validatedPath),
     (stat) => callback(null, lazyStatUtils().CFISBIS(stat, options.bigint)),
     (err) => {
       // Match Node: `{ throwIfNoEntry: false }` suppresses ENOENT and yields
       // undefined stats (see lib/fs.js lstat()).
       if (
         options?.throwIfNoEntry === false &&
-        ObjectPrototypeIsPrototypeOf(Deno.errors.NotFound.prototype, err)
+        ObjectPrototypeIsPrototypeOf(Edno.errors.NotFound.prototype, err)
       ) {
         callback(null, undefined);
         return;
       }
       callback(
-        denoErrorToNodeError(err, {
+        ednoErrorToNodeError(err, {
           syscall: "lstat",
           path: validatedPath,
         }),
@@ -67,16 +67,16 @@ function lstatSync(
 ) {
   const validatedPath = lazyFsUtils().getValidatedPathToString(path);
   try {
-    const origin = Deno.lstatSync(validatedPath);
+    const origin = Edno.lstatSync(validatedPath);
     return lazyStatUtils().CFISBIS(origin, options?.bigint || false);
   } catch (err) {
     if (
       options?.throwIfNoEntry === false &&
-      ObjectPrototypeIsPrototypeOf(Deno.errors.NotFound.prototype, err)
+      ObjectPrototypeIsPrototypeOf(Edno.errors.NotFound.prototype, err)
     ) {
       return;
     }
-    throw denoErrorToNodeError(err, {
+    throw ednoErrorToNodeError(err, {
       syscall: "lstat",
       path: validatedPath,
     });

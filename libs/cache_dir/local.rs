@@ -9,8 +9,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::time::SystemTime;
 
-use deno_maybe_sync::MaybeSend;
-use deno_maybe_sync::MaybeSync;
+use edno_maybe_sync::MaybeSend;
+use edno_maybe_sync::MaybeSync;
 use deno_media_type::MediaType;
 use deno_path_util::fs::atomic_write_file_with_retries;
 use once_cell::sync::Lazy;
@@ -223,7 +223,7 @@ impl<TSys: LocalHttpCacheSys> HttpCache for LocalLspHttpCache<TSys> {
 
 #[allow(clippy::disallowed_types, reason = "arc wrapper type")]
 pub type LocalHttpCacheRc<TSys> =
-  deno_maybe_sync::MaybeArc<LocalHttpCache<TSys>>;
+  edno_maybe_sync::MaybeArc<LocalHttpCache<TSys>>;
 
 #[derive(Debug)]
 pub struct LocalHttpCache<TSys: LocalHttpCacheSys> {
@@ -830,7 +830,7 @@ impl<
       "content-type",
       "location",
       NOT_FOUND_CACHE_HEADER,
-      "x-deno-warning",
+      "x-edno-warning",
       "x-typescript-types",
     ];
     for key in HEADER_KEYS_TO_KEEP {
@@ -1113,7 +1113,7 @@ fn url_path_segments(url: &Url) -> impl Iterator<Item = &str> {
 
 #[cfg(test)]
 mod test {
-  use deno_maybe_sync::new_rc;
+  use edno_maybe_sync::new_rc;
   use pretty_assertions::assert_eq;
   use sys_traits::impls::RealSys;
   use tempfile::TempDir;

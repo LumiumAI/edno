@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run -A --lock=tools/deno.lock.json
+#!/usr/bin/env -S edno run -A --lock=tools/edno.lock.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 // NOTICE: This deployment/npm folder was lifted from https://github.com/dprint/dprint/blob/0ba79811cc96d2dee8e0cf766a8c8c0fc44879c2/deployment/npm/
 // with permission (Copyright 2019-2023 David Sherret)
@@ -14,67 +14,67 @@ interface Package {
   libc?: "glibc" | "musl";
 }
 
-const args = parseArgs(Deno.args, {
+const args = parseArgs(Edno.args, {
   boolean: ["publish", "publish-only"],
 });
 const packages: Package[] = [{
-  zipFileName: "deno-x86_64-pc-windows-msvc.zip",
+  zipFileName: "edno-x86_64-pc-windows-msvc.zip",
   os: "win32",
   cpu: "x64",
 }, {
-  zipFileName: "deno-aarch64-pc-windows-msvc.zip",
+  zipFileName: "edno-aarch64-pc-windows-msvc.zip",
   os: "win32",
   cpu: "arm64",
 }, {
-  zipFileName: "deno-x86_64-apple-darwin.zip",
+  zipFileName: "edno-x86_64-apple-darwin.zip",
   os: "darwin",
   cpu: "x64",
 }, {
-  zipFileName: "deno-aarch64-apple-darwin.zip",
+  zipFileName: "edno-aarch64-apple-darwin.zip",
   os: "darwin",
   cpu: "arm64",
 }, {
-  zipFileName: "deno-x86_64-unknown-linux-gnu.zip",
+  zipFileName: "edno-x86_64-unknown-linux-gnu.zip",
   os: "linux",
   cpu: "x64",
   libc: "glibc",
 }, {
-  zipFileName: "deno-aarch64-unknown-linux-gnu.zip",
+  zipFileName: "edno-aarch64-unknown-linux-gnu.zip",
   os: "linux",
   cpu: "arm64",
   libc: "glibc",
 }];
 
-const markdownText = `# Deno
+const markdownText = `# Edno
 
-[Deno](https://deno.com)
+[Edno](https://deno.com)
 ([/ˈdiːnoʊ/](https://ipa-reader.com/?text=%CB%88di%CB%90no%CA%8A), pronounced
 \`dee-no\`) is a JavaScript, TypeScript, and WebAssembly runtime with secure
 defaults and a great developer experience. It's built on [V8](https://v8.dev/),
 [Rust](https://www.rust-lang.org/), and [Tokio](https://tokio.rs/).
 
-Learn more about the Deno runtime
+Learn more about the Edno runtime
 [in the documentation](https://docs.deno.com/runtime/manual).
 `;
 
 const currentDir = $.path(import.meta.dirname!);
 const rootDir = currentDir.parentOrThrow().parentOrThrow().parentOrThrow();
 const outputDir = currentDir.join("./dist");
-const scopeDir = outputDir.join("@deno");
-const denoDir = outputDir.join("deno");
+const scopeDir = outputDir.join("@edno");
+const ednoDir = outputDir.join("edno");
 const version = resolveVersion();
 
 $.logStep(`Publishing ${version}...`);
 
 if (!args["publish-only"]) {
   await $`rm -rf ${outputDir}`;
-  await $`mkdir -p ${denoDir} ${scopeDir}`;
+  await $`mkdir -p ${ednoDir} ${scopeDir}`;
 
-  // setup Deno packages
+  // setup Edno packages
   {
-    $.logStep(`Setting up deno ${version}...`);
+    $.logStep(`Setting up edno ${version}...`);
     const pkgJson = {
-      "name": "deno",
+      "name": "edno",
       "version": version,
       "description": "A modern runtime for JavaScript and TypeScript.",
       "bin": "bin.cjs",
@@ -98,22 +98,22 @@ if (!args["publish-only"]) {
         "postinstall": "node ./install.cjs",
       },
       optionalDependencies: packages
-        .map((pkg) => `@deno/${getPackageNameNoScope(pkg)}`)
+        .map((pkg) => `@edno/${getPackageNameNoScope(pkg)}`)
         .reduce((obj, pkgName) => ({ ...obj, [pkgName]: version }), {}),
     };
-    currentDir.join("bin.cjs").copyFileToDirSync(denoDir);
-    currentDir.join("install_api.cjs").copyFileToDirSync(denoDir);
-    currentDir.join("install.cjs").copyFileToDirSync(denoDir);
-    denoDir.join("package.json").writeJsonPrettySync(pkgJson);
-    rootDir.join("LICENSE.md").copyFileSync(denoDir.join("LICENSE"));
-    denoDir.join("README.md").writeTextSync(markdownText);
+    currentDir.join("bin.cjs").copyFileToDirSync(ednoDir);
+    currentDir.join("install_api.cjs").copyFileToDirSync(ednoDir);
+    currentDir.join("install.cjs").copyFileToDirSync(ednoDir);
+    ednoDir.join("package.json").writeJsonPrettySync(pkgJson);
+    rootDir.join("LICENSE.md").copyFileSync(ednoDir.join("LICENSE"));
+    ednoDir.join("README.md").writeTextSync(markdownText);
     // ensure the test files don't get published
-    denoDir.join(".npmignore").writeTextSync("deno\ndeno.exe\n");
+    ednoDir.join(".npmignore").writeTextSync("edno\ndeno.exe\n");
 
     // setup each binary package
     for (const pkg of packages) {
       const pkgName = getPackageNameNoScope(pkg);
-      $.logStep(`Setting up @deno/${pkgName}...`);
+      $.logStep(`Setting up @edno/${pkgName}...`);
       const pkgDir = scopeDir.join(pkgName);
       const zipPath = pkgDir.join("output.zip");
 
@@ -128,12 +128,12 @@ if (!args["publish-only"]) {
 
       // create the package.json and readme
       pkgDir.join("README.md").writeTextSync(
-        `# @denoland/${pkgName}\n\n${pkgName} distribution of [Deno](https://deno.land).\n`,
+        `# @ednoland/${pkgName}\n\n${pkgName} distribution of [Edno](https://deno.land).\n`,
       );
       pkgDir.join("package.json").writeJsonPrettySync({
-        "name": `@deno/${pkgName}`,
+        "name": `@edno/${pkgName}`,
         "version": version,
-        "description": `${pkgName} distribution of Deno`,
+        "description": `${pkgName} distribution of Edno`,
         "repository": {
           "type": "git",
           "url": "git+https://github.com/denoland/deno.git",
@@ -158,21 +158,21 @@ if (!args["publish-only"]) {
 if (args.publish || args["publish-only"]) {
   for (const pkg of packages) {
     const pkgName = getPackageNameNoScope(pkg);
-    $.logStep(`Publishing @deno/${pkgName}...`);
-    if (await checkPackagePublished(`@deno/${pkgName}`)) {
+    $.logStep(`Publishing @edno/${pkgName}...`);
+    if (await checkPackagePublished(`@edno/${pkgName}`)) {
       $.logLight("  Already published.");
       continue;
     }
     const pkgDir = scopeDir.join(pkgName);
     // ensure the binary is executable in the tarball
     if (pkg.os !== "win32") {
-      await $`chmod +x ${pkgDir.join("deno")}`;
+      await $`chmod +x ${pkgDir.join("edno")}`;
     }
     await $`cd ${pkgDir} && npm publish --provenance --access public`;
   }
 
-  $.logStep(`Publishing deno...`);
-  await $`cd ${denoDir} && npm publish --provenance --access public`;
+  $.logStep(`Publishing edno...`);
+  await $`cd ${ednoDir} && npm publish --provenance --access public`;
 }
 
 function getPackageNameNoScope(name: Package) {

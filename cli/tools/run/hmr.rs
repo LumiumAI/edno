@@ -5,12 +5,12 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::atomic::AtomicI32;
 
-use deno_core::LocalInspectorSession;
-use deno_core::error::CoreError;
-use deno_core::parking_lot::Mutex;
-use deno_core::serde_json::json;
-use deno_core::serde_json::{self};
-use deno_core::url::Url;
+use edno_core::LocalInspectorSession;
+use edno_core::error::CoreError;
+use edno_core::parking_lot::Mutex;
+use edno_core::serde_json::json;
+use edno_core::serde_json::{self};
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 use deno_terminal::colors;
 use tokio::select;
@@ -107,8 +107,8 @@ impl HmrRunnerState {
     })))
   }
 
-  pub fn callback(&self, msg: deno_core::InspectorMsg) {
-    let deno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
+  pub fn callback(&self, msg: edno_core::InspectorMsg) {
+    let edno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
       let notification = serde_json::from_str(&msg.content).unwrap();
       self.handle_notification(notification);
       return;

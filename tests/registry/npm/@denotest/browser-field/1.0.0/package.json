@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/browser-field",
+  "name": "@ednotest/browser-field",
   "version": "1.0.0",
   "main": "main.js",
   "browser": "browser.js",

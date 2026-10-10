@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 import { core, primordials } from "ext:core/mod.js";
@@ -6,10 +6,10 @@ const {
   isIterable,
   isNodeStream,
   isWebStream,
-} = core.loadExtScript("ext:deno_node/internal/streams/utils.js");
-import { pipelineImpl as pl } from "ext:deno_node/internal/streams/pipeline.js";
+} = core.loadExtScript("ext:edno_node/internal/streams/utils.js");
+import { pipelineImpl as pl } from "ext:edno_node/internal/streams/pipeline.js";
 const { finished } = core.loadExtScript(
-  "ext:deno_node/internal/streams/end-of-stream.js",
+  "ext:edno_node/internal/streams/end-of-stream.js",
 );
 import * as _mod2 from "node:stream";
 "use strict";

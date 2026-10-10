@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";

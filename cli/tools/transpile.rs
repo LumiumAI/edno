@@ -8,13 +8,13 @@ use deno_ast::EmitOptions;
 use deno_ast::MediaType;
 use deno_ast::SourceMapOption;
 use deno_ast::TranspileModuleOptions;
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow;
-use deno_core::anyhow::Context;
-use deno_core::error::AnyError;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow;
+use edno_core::anyhow::Context;
+use edno_core::error::AnyError;
 use deno_graph::GraphKind;
 use deno_graph::ModuleGraph;
-use deno_resolver::emit::patch_public_decorator_access_has;
+use edno_resolver::emit::patch_public_decorator_access_has;
 use deno_terminal::colors;
 use sys_traits::PathsInErrorsExt;
 
@@ -72,7 +72,7 @@ pub async fn transpile(
     SourceMapMode::Separate => SourceMapOption::Separate,
   };
 
-  // Resolve transpile options from deno.json compilerOptions
+  // Resolve transpile options from edno.json compilerOptions
   let compiler_options_resolver = factory.compiler_options_resolver()?;
 
   // Collect file paths and specifiers
@@ -121,7 +121,7 @@ pub async fn transpile(
       maybe_syntax: None,
     })?;
 
-    // Use transpile options from deno.json, with source map overridden by CLI flag
+    // Use transpile options from edno.json, with source map overridden by CLI flag
     let transpile_and_emit_options = compiler_options_resolver
       .for_specifier(specifier)
       .transpile_options()?;
@@ -158,7 +158,7 @@ pub async fn transpile(
     };
 
     // Always apply the CLI source map mode. The built-in emit defaults
-    // have inlineSourceMap: true (for the runtime), but `deno transpile`
+    // have inlineSourceMap: true (for the runtime), but `edno transpile`
     // should produce clean output by default. Users must pass --source-map
     // explicitly to enable source maps.
     let emit_options = EmitOptions {
@@ -190,7 +190,7 @@ pub async fn transpile(
     // Determine output path
     if is_stdout_mode {
       // Single file, no output specified: print to stdout
-      deno_print::drop_write_stdout(js_text.as_bytes());
+      edno_print::drop_write_stdout(js_text.as_bytes());
     } else {
       let output_path = maybe_output_path.unwrap();
 

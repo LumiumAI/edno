@@ -5,17 +5,17 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_config::deno_json::DesktopConfig;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::url::Url;
+use edno_config::edno_json::DesktopConfig;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::url::Url;
 use deno_terminal::colors;
 use sha2::Digest;
 
 use crate::args::CliOptions;
 use crate::args::CompileFlags;
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::DesktopFlags;
 use crate::args::Flags;
 use crate::args::TypeCheckMode;
@@ -29,7 +29,7 @@ use crate::util::progress_bar::ProgressBarStyle;
 /// binaries from `github.com/littledivy/laufey/releases/tag/v{LAUFEY_VERSION}`.
 const LAUFEY_VERSION: &str = env!("LAUFEY_VERSION");
 
-/// Rustc target triple the deno binary was built for. Used as the default
+/// Rustc target triple the edno binary was built for. Used as the default
 /// target when selecting a prebuilt laufey backend archive.
 const LAUFEY_NATIVE_TARGET: &str = env!("TARGET");
 
@@ -46,7 +46,7 @@ pub async fn desktop(
 ) -> Result<(), AnyError> {
   log::warn!(
     "{}",
-    colors::yellow_bold("⚠ deno desktop is experimental and subject to change")
+    colors::yellow_bold("⚠ edno desktop is experimental and subject to change")
   );
 
   let all_targets = desktop_flags.all_targets;
@@ -56,7 +56,7 @@ pub async fn desktop(
   let cli_options = factory.cli_options()?;
   let desktop_config = cli_options.start_dir.to_desktop_config()?.clone();
   let laufey_resolver = Arc::new(LaufeyBackendResolver::new(&factory)?);
-  let deno_dir_root = factory.deno_dir()?.root.clone();
+  let edno_dir_root = factory.edno_dir()?.root.clone();
 
   apply_desktop_config_to_flags(&mut desktop_flags, desktop_config);
 
@@ -77,7 +77,7 @@ pub async fn desktop(
         desktop_flags,
         cli_options,
         &laufey_resolver,
-        &deno_dir_root,
+        &edno_dir_root,
       ))
       .await?;
     }
@@ -88,13 +88,13 @@ pub async fn desktop(
       desktop_flags,
       cli_options,
       &laufey_resolver,
-      &deno_dir_root,
+      &edno_dir_root,
     ))
     .await
   }
 }
 
-/// Applies `deno.json`'s `desktop` config to the CLI flags. A `deno.json` field
+/// Applies `edno.json`'s `desktop` config to the CLI flags. A `edno.json` field
 /// only fills in a flag that was left unset — CLI flags always win. The webview
 /// backend remains the final fallback via the `unwrap_or("webview")` call sites
 /// that consume `desktop_flags.backend`.
@@ -118,7 +118,7 @@ fn apply_desktop_config_to_flags(
     if let Some(icons) = app_config.icons
       && desktop_flags.icon.is_none()
     {
-      use deno_config::deno_json::DesktopIconValue;
+      use edno_config::edno_json::DesktopIconValue;
       let platform_icon = if cfg!(target_os = "macos") {
         icons.macos
       } else if cfg!(target_os = "windows") {
@@ -178,7 +178,7 @@ async fn compile_desktop(
   mut desktop_flags: DesktopFlags,
   cli_options: &Arc<CliOptions>,
   laufey_resolver: &LaufeyBackendResolver,
-  deno_dir_root: &Path,
+  edno_dir_root: &Path,
 ) -> Result<(), AnyError> {
   // If the user asked for a `.dmg` (macOS) installer via `--output`, strip
   // the extension for the intermediate compile/bundle step and remember the
@@ -333,7 +333,7 @@ async fn compile_desktop(
             // (e.g. Vite's); type-checking it would demand the project ship
             // `@types/node` and checks nothing user-authored, so skip it.
             flags.type_check_mode = TypeCheckMode::None;
-            // The dev server used to run as an unsandboxed `deno task dev`
+            // The dev server used to run as an unsandboxed `edno task dev`
             // subprocess; now that it runs inside the desktop runtime, keep
             // that behavior — a sandboxed Vite immediately dies on env reads
             // (e.g. NAPI_RS_WASI_FLAVOR from its napi loader).
@@ -347,10 +347,10 @@ async fn compile_desktop(
       };
       log::info!("Detected {} framework", detection.name);
       if !use_framework_hmr {
-        // Run the framework's build step (e.g. `deno task build`) before its
+        // Run the framework's build step (e.g. `edno task build`) before its
         // build output (`dist`, `.next`, etc.) is added to the compile includes
         // below; otherwise the include points at a directory that doesn't exist
-        // yet and the compile fails (#35535). Mirrors `deno compile .`.
+        // yet and the compile fails (#35535). Mirrors `edno compile .`.
         super::framework::run_build_command(detection, cwd)?;
       }
       // Enable CJS detection for Node-based frameworks.
@@ -359,7 +359,7 @@ async fn compile_desktop(
         && !matches!(flags.type_check_mode, TypeCheckMode::None)
       {
         log::info!(
-          "Disabling Deno type checking for Next.js desktop compile; Next handles app compilation itself"
+          "Disabling Edno type checking for Next.js desktop compile; Next handles app compilation itself"
         );
         flags.type_check_mode = TypeCheckMode::None;
       }
@@ -367,8 +367,8 @@ async fn compile_desktop(
       // NamedTempFile below cleans up on drop, but a Ctrl-C delivers SIGINT
       // to the whole process group (see `run_desktop_hmr`) and the parent
       // exits without running destructors — so the dev loop would otherwise
-      // accumulate `.deno_desktop_entry-*.ts` files in the project root.
-      const ENTRY_PREFIX: &str = ".deno_desktop_entry-";
+      // accumulate `.edno_desktop_entry-*.ts` files in the project root.
+      const ENTRY_PREFIX: &str = ".edno_desktop_entry-";
       if let Ok(entries) = std::fs::read_dir(cwd) {
         for entry in entries.flatten() {
           if entry
@@ -381,7 +381,7 @@ async fn compile_desktop(
         }
       }
       // Write a temporary entrypoint file. tempfile gives us a unique
-      // name (no collision between concurrent `deno desktop` runs in
+      // name (no collision between concurrent `edno desktop` runs in
       // the same project) and 0600 mode (no symlink-pre-creation
       // attack); cleanup-on-drop replaces the explicit guard.
       let entrypoint_temp = tempfile::Builder::new()
@@ -474,7 +474,7 @@ async fn compile_desktop(
   // the cwd litters the project with `<name>.dylib`, its compile temp file
   // (`<name>.dylib.tmp-*`) and the runtime auto-update sidecars
   // (`.update-ok`, `.backup`). Redirect it into a stable per-project dir under
-  // `deno_dir` so the cwd stays clean. The path is keyed by the project dir so
+  // `edno_dir` so the cwd stays clean. The path is keyed by the project dir so
   // it's stable across relaunches (the auto-update / rollback sentinels rely on
   // a consistent dylib path).
   let hmr_output_override = if desktop_flags.hmr || inspector_requested {
@@ -494,7 +494,7 @@ async fn compile_desktop(
     let key = faster_hex::hex_string(&sha2::Sha256::digest(
       detection_cwd.to_string_lossy().as_bytes(),
     ));
-    let dir = deno_dir_root.join("desktop").join(&key[..16]);
+    let dir = edno_dir_root.join("desktop").join(&key[..16]);
     std::fs::create_dir_all(&dir).with_context(|| {
       format!("failed to create desktop dev dir {}", dir.display())
     })?;
@@ -527,7 +527,7 @@ async fn compile_desktop(
   };
 
   let mut temp_flags = flags.clone();
-  temp_flags.subcommand = DenoSubcommand::Compile(compile_flags.clone());
+  temp_flags.subcommand = EdnoSubcommand::Compile(compile_flags.clone());
   temp_flags.internal.is_desktop = true;
 
   let output_path = super::compile::compile_binary(
@@ -687,7 +687,7 @@ fn make_self_extracting(
 fn validate_url_scheme(scheme: &str) -> Result<(), AnyError> {
   let reserved = ["http", "https", "file", "ftp", "ws", "wss"];
   let bail = |reason: &str| {
-    Err(deno_core::anyhow::anyhow!(
+    Err(edno_core::anyhow::anyhow!(
       "Invalid deep-link scheme {scheme:?}: {reason}."
     ))
   };
@@ -818,7 +818,7 @@ fn register_deep_links_linux(
     .filter_map(|e| e.ok().map(|e| e.path()))
     .find(|p| p.extension().is_some_and(|e| e == "desktop"))
     .ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "no .desktop file found in {}",
         bundle_path.display()
       )
@@ -970,7 +970,7 @@ fn make_self_extracting_macos(
   let bundle_id =
     read_plist_string(&contents.join("Info.plist"), "CFBundleIdentifier")
       .unwrap_or_else(|| {
-        format!("com.deno.desktop.{}", app_name.to_lowercase())
+        format!("com.edno.desktop.{}", app_name.to_lowercase())
       });
   validate_bundle_identifier(&bundle_id)?;
 
@@ -1069,7 +1069,7 @@ fn make_self_extracting_dir(
     .map(|s| s.to_string_lossy().into_owned())
     .unwrap_or_else(|| "App".to_string());
   validate_launcher_name(&app_name, "app name")?;
-  let id = format!("com.deno.desktop.{}", app_name.to_lowercase());
+  let id = format!("com.edno.desktop.{}", app_name.to_lowercase());
 
   let parent = bundle_path.parent().unwrap_or_else(|| Path::new("."));
   let staging = tempfile::Builder::new()
@@ -1162,15 +1162,15 @@ fn resolve_hmr_icon_path(
   let icon_path = match icon {
     crate::args::IconConfig::Single(p) => initial_cwd.join(p),
     crate::args::IconConfig::Set(_) => {
-      deno_core::anyhow::bail!("icon sets are not supported in --hmr mode yet")
+      edno_core::anyhow::bail!("icon sets are not supported in --hmr mode yet")
     }
   };
   if !icon_path.exists() {
-    deno_core::anyhow::bail!("icon '{}' not found", icon_path.display());
+    edno_core::anyhow::bail!("icon '{}' not found", icon_path.display());
   }
   match icon_path.extension().and_then(|e| e.to_str()) {
     Some("icns") | Some("png") => {}
-    _ => deno_core::anyhow::bail!(
+    _ => edno_core::anyhow::bail!(
       "icon '{}' must be .icns or .png",
       icon_path.display()
     ),
@@ -1209,7 +1209,7 @@ async fn spawn_framework_dev_server(
     })?;
 
   let stdout = child.stdout.take().ok_or_else(|| {
-    deno_core::anyhow::anyhow!("failed to capture HMR dev server stdout")
+    edno_core::anyhow::anyhow!("failed to capture HMR dev server stdout")
   })?;
   let mut lines = BufReader::new(stdout).lines();
 
@@ -1223,11 +1223,11 @@ async fn spawn_framework_dev_server(
         return Ok(url);
       }
     }
-    deno_core::anyhow::bail!("dev server exited without printing a URL")
+    edno_core::anyhow::bail!("dev server exited without printing a URL")
   })
   .await
   .map_err(|_| {
-    deno_core::anyhow::anyhow!(
+    edno_core::anyhow::anyhow!(
       "{name} dev server with HMR did not start within 15s"
     )
   })??;
@@ -1247,7 +1247,7 @@ async fn spawn_framework_dev_server(
 /// Launch the desktop app with HMR enabled after compilation.
 ///
 /// Framework dev servers provide HMR via websocket. Since they run inside
-/// the Deno desktop runtime, `Deno.desktop` APIs remain available.
+/// the Edno desktop runtime, `Edno.desktop` APIs remain available.
 /// `child_process.fork()` works because forked workers use
 /// `override_main_module` to run the target script instead of the
 /// embedded entrypoint.
@@ -1286,7 +1286,7 @@ async fn run_desktop_hmr(
   // menu bar, Dock and Cmd-Tab switcher. Pass a clearer name (the configured
   // app name / project directory) so laufey can override the process name at
   // launch. `desktop_flags.output` is already resolved from `--output`,
-  // deno.json `desktop.app.name`, or the project dir before we get here.
+  // edno.json `desktop.app.name`, or the project dir before we get here.
   let app_name = desktop_flags
     .output
     .as_deref()
@@ -1337,23 +1337,23 @@ async fn run_desktop_hmr(
     cmd.env("LAUFEY_APP_NAME", name);
   }
   // Only enable the file watcher + setScriptSource pipeline when the user
-  // actually asked for HMR. `deno desktop --inspect` alone used to spin up
+  // actually asked for HMR. `edno desktop --inspect` alone used to spin up
   // both, surprising users (and burning the inspector channel on hot
   // reloads they didn't request).
   if desktop_flags.hmr {
-    cmd.env("DENO_DESKTOP_HMR", &source_abs);
+    cmd.env("EDNO_DESKTOP_HMR", &source_abs);
   }
 
   // In-runtime framework dev: the compiled entrypoint boots the framework's
   // dev server inside the desktop runtime (see `hmr_entrypoint_code`), so
-  // server-side code keeps access to `Deno.desktop` (#35899). Signal
+  // server-side code keeps access to `Edno.desktop` (#35899). Signal
   // rt_desktop to restore CWD to the source dir and leave hot reloading to
   // the framework; the webview finds the server via the regular
-  // DENO_SERVE_ADDRESS poll, so no external process and no URL scraping.
+  // EDNO_SERVE_ADDRESS poll, so no external process and no URL scraping.
   let in_runtime_dev = desktop_flags.hmr
     && framework.is_some_and(|f| f.hmr_entrypoint_code().is_some());
   if in_runtime_dev {
-    cmd.env("DENO_DESKTOP_FRAMEWORK_DEV", "1");
+    cmd.env("EDNO_DESKTOP_FRAMEWORK_DEV", "1");
   }
 
   let _dev_server_child = if desktop_flags.hmr
@@ -1369,21 +1369,21 @@ async fn run_desktop_hmr(
       fw.name,
       dev_url,
     );
-    cmd.env("DENO_DESKTOP_DEV_URL", &dev_url);
+    cmd.env("EDNO_DESKTOP_DEV_URL", &dev_url);
     Some(child)
   } else {
     None
   };
 
   // Wire up the unified DevTools multiplexer when --inspect is set.
-  // The mux runs in this (parent) process and fronts both the Deno runtime
+  // The mux runs in this (parent) process and fronts both the Edno runtime
   // inspector (in the LAUFEY subprocess) and the CEF renderer's debug port
   // (in CEF's child process). We allocate two internal ports here, hand
   // them to the subprocess via env vars, and bind the user-visible port
   // for DevTools to attach to.
   let user_inspect = flags.inspect.or(flags.inspect_brk).or(flags.inspect_wait);
   let mux_handle = if let Some(user_addr) = user_inspect {
-    let deno_internal: SocketAddr = format!(
+    let edno_internal: SocketAddr = format!(
       "127.0.0.1:{}",
       crate::tools::desktop_devtools::allocate_random_port()?
     )
@@ -1403,7 +1403,7 @@ async fn run_desktop_hmr(
     let handle = crate::tools::desktop_devtools::spawn_mux(
       crate::tools::desktop_devtools::MuxConfig {
         listen: user_addr,
-        deno_internal,
+        edno_internal,
         cef_internal,
         inspect_brk: flags.inspect_brk.is_some(),
         wait_for_debugger,
@@ -1417,29 +1417,29 @@ async fn run_desktop_hmr(
       handle.listen,
     );
     log::debug!(
-      "[desktop] internal upstream ports: deno={} cef={}",
-      deno_internal,
+      "[desktop] internal upstream ports: edno={} cef={}",
+      edno_internal,
       cef_internal,
     );
 
     cmd
       .env(
-        "DENO_DESKTOP_INSPECT_INTERNAL_PORT",
-        deno_internal.to_string(),
+        "EDNO_DESKTOP_INSPECT_INTERNAL_PORT",
+        edno_internal.to_string(),
       )
       // Exposed so rt_desktop's `openDevtools()` can launch a browser
       // pointed at the unified DevTools frontend instead of CEF's
       // renderer-only native window.
-      .env("DENO_DESKTOP_MUX_WS", handle.listen.to_string())
+      .env("EDNO_DESKTOP_MUX_WS", handle.listen.to_string())
       .env(
         "LAUFEY_REMOTE_DEBUGGING_PORT",
         cef_internal.port().to_string(),
       );
     if flags.inspect_brk.is_some() {
-      cmd.env("DENO_DESKTOP_INSPECT_BRK", "1");
+      cmd.env("EDNO_DESKTOP_INSPECT_BRK", "1");
     }
     if flags.inspect_wait.is_some() {
-      cmd.env("DENO_DESKTOP_INSPECT_WAIT", "1");
+      cmd.env("EDNO_DESKTOP_INSPECT_WAIT", "1");
     }
     Some(handle)
   } else {
@@ -1456,7 +1456,7 @@ async fn run_desktop_hmr(
   // On macOS we go through posix_spawn with TCC responsibility disclaimed
   // (see `disclaim_spawn`) so the laufey child is its own permission principal.
   // Without this, the kernel attributes notification/location/etc requests
-  // to whatever started deno (typically the terminal), which has no bundle
+  // to whatever started edno (typically the terminal), which has no bundle
   // id and causes `UNUserNotificationCenter.requestAuthorization` to fail
   // with UNErrorCodeNotificationsNotAllowed before any user prompt.
   #[cfg(target_os = "macos")]
@@ -1501,9 +1501,9 @@ async fn run_desktop_hmr(
 /// Marker file written into every generated desktop app directory/bundle so a
 /// later build can recognize its own previous output and clear it, while never
 /// touching unrelated user data that happens to share the inferred app name.
-const APP_DIR_MARKER: &str = ".deno-desktop-app";
+const APP_DIR_MARKER: &str = ".edno-desktop-app";
 
-/// Used for `deno desktop --hmr` when a framework runs its own HMR server.
+/// Used for `edno desktop --hmr` when a framework runs its own HMR server.
 /// The compiled app has nothing to serve in this case.
 const NOOP_ENTRYPOINT: &str =
   "// @ts-nocheck\nawait new Promise<void>(() => {});\n";
@@ -1547,7 +1547,7 @@ fn reserve_app_dir(app_dir: &Path) -> Result<(), AnyError> {
   if !is_ours && !is_empty {
     bail!(
       "Refusing to delete existing directory '{}': it was not created by \
-       `deno desktop`. The app name was inferred from the entrypoint or the \
+       `edno desktop`. The app name was inferred from the entrypoint or the \
        project directory and collided with this directory. Pass --output to \
        choose a different name, or remove the directory yourself if it is a \
        leftover from an older build.",
@@ -1612,7 +1612,7 @@ async fn package_desktop_app(
 /// AppName/
 ///   AppName.exe         (LAUFEY backend binary, renamed to the app name)
 ///   libcef.dll, ...     (CEF support files, if any)
-///   AppName.dll         (compiled Deno runtime + user code)
+///   AppName.dll         (compiled Edno runtime + user code)
 ///   AppIcon.ico         (optional)
 /// ```
 ///
@@ -1658,7 +1658,7 @@ async fn package_windows_app_dir(
     let _ = std::fs::remove_file(&cache_file);
   }
 
-  // Copy the compiled dylib (denort.dll) alongside the backend binary.
+  // Copy the compiled dylib (ednort.dll) alongside the backend binary.
   //
   // No `linux_colocated_runtime_name` equivalent is needed here: the Windows
   // launcher is `<app>.exe`, so the same chop-at-the-last-dot lookup removes a
@@ -1737,7 +1737,7 @@ async fn package_windows_app_dir(
 /// AppName/
 ///   AppName             (LAUFEY backend binary, renamed to the app name)
 ///   libcef.so, ...      (CEF support files, if any)
-///   AppName.so          (compiled Deno runtime + user code)
+///   AppName.so          (compiled Edno runtime + user code)
 ///   AppIcon.png         (optional)
 /// ```
 ///
@@ -1869,7 +1869,7 @@ async fn package_linux_app_dir(
   let desktop_id = desktop_flags
     .identifier
     .clone()
-    .unwrap_or_else(|| format!("com.deno.desktop.{}", app_name.to_lowercase()));
+    .unwrap_or_else(|| format!("com.edno.desktop.{}", app_name.to_lowercase()));
   if let Err(e) = validate_bundle_identifier(&desktop_id) {
     log::warn!(
       "skipping .desktop file: {e} (desktop file IDs follow the same reverse-DNS rules as macOS bundle IDs)"
@@ -1909,14 +1909,14 @@ const LAUFEY_DEV_DIR_ENV: &str = "LAUFEY_DEV_DIR";
 /// `LAUFEY_DEV_DIR` is not set.
 struct LaufeyBackendResolver {
   http_client_provider: Arc<HttpClientProvider>,
-  /// `<deno_dir>/laufey/<version>/`
+  /// `<edno_dir>/laufey/<version>/`
   cache_root: PathBuf,
 }
 
 impl LaufeyBackendResolver {
   fn new(factory: &CliFactory) -> Result<Self, AnyError> {
     let cache_root =
-      factory.deno_dir()?.root.join("laufey").join(LAUFEY_VERSION);
+      factory.edno_dir()?.root.join("laufey").join(LAUFEY_VERSION);
     Ok(Self {
       http_client_provider: factory.http_client_provider().clone(),
       cache_root,
@@ -1928,7 +1928,7 @@ impl LaufeyBackendResolver {
   }
 
   /// Download + verify + extract a backend archive if it isn't already in
-  /// `<deno_dir>/laufey/<version>/<backend>/<target>/`.
+  /// `<edno_dir>/laufey/<version>/<backend>/<target>/`.
   async fn ensure_downloaded(
     &self,
     backend: &str,
@@ -1950,7 +1950,7 @@ impl LaufeyBackendResolver {
     // bumps, so this is the trust anchor. That the lock file's pinned version
     // matches LAUFEY_VERSION is asserted at build time (see cli/build.rs).
     let expected = parse_sha256sum(LAUFEY_PINNED_SUMS, &archive).ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "no pinned SHA-256 for {archive} in cli/laufey_sums.lock \
          (regenerate when bumping LAUFEY_VERSION to v{LAUFEY_VERSION}; \
          laufey v{LAUFEY_VERSION} release may not include backend '{backend}' for target '{target}')"
@@ -1972,7 +1972,7 @@ impl LaufeyBackendResolver {
     // releases) start rate-limiting empty UAs aggressively.
     let mut headers = http::HeaderMap::new();
     if let Ok(ua) = http::HeaderValue::from_str(&format!(
-      "deno-desktop/{} (+https://deno.com)",
+      "edno-desktop/{} (+https://deno.com)",
       env!("CARGO_PKG_VERSION")
     )) {
       headers.insert(http::header::USER_AGENT, ua);
@@ -1983,7 +1983,7 @@ impl LaufeyBackendResolver {
       .with_context(|| format!("failed to download {url}"))?;
     let data = response
       .into_maybe_bytes()?
-      .ok_or_else(|| deno_core::anyhow::anyhow!("empty response from {url}"))?;
+      .ok_or_else(|| edno_core::anyhow::anyhow!("empty response from {url}"))?;
 
     let actual =
       faster_hex::hex_string(&sha2::Sha256::digest(&data)).to_lowercase();
@@ -1997,14 +1997,14 @@ impl LaufeyBackendResolver {
     }
 
     let parent = dir.parent().ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "LAUFEY cache dir has no parent: {}",
         dir.display()
       )
     })?;
     std::fs::create_dir_all(parent)?;
 
-    // Stage extraction in a sibling tempdir so concurrent `deno desktop`
+    // Stage extraction in a sibling tempdir so concurrent `edno desktop`
     // builds don't see (or stomp on) a half-populated `dir` while one
     // is mid-extract. tempfile's cleanup-on-drop covers panic /
     // early-return paths; on the happy path we consume the TempDir via
@@ -2046,7 +2046,7 @@ impl LaufeyBackendResolver {
       if marker.exists() {
         return Ok(dir);
       }
-      return Err(deno_core::anyhow::anyhow!(
+      return Err(edno_core::anyhow::anyhow!(
         "failed to atomic-rename LAUFEY cache to {}: {e}",
         dir.display(),
       ));
@@ -2087,7 +2087,7 @@ impl LaufeyBackendResolver {
     if let Some(dev_dir) = laufey_dev_dir() {
       let binary =
         locate_dev_backend_binary(&dev_dir, backend).ok_or_else(|| {
-          deno_core::anyhow::anyhow!(
+          edno_core::anyhow::anyhow!(
             "could not find '{backend}' backend binary under {} (set via {})",
             dev_dir.display(),
             LAUFEY_DEV_DIR_ENV
@@ -2112,7 +2112,7 @@ impl LaufeyBackendResolver {
 
     let dir = self.ensure_downloaded(backend, target).await?;
     locate_backend_binary(&dir, backend, target).ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "could not find '{backend}' backend binary inside {}",
         dir.display()
       )
@@ -2127,7 +2127,7 @@ impl LaufeyBackendResolver {
   ) -> Result<PathBuf, AnyError> {
     if let Some(dev_dir) = laufey_dev_dir() {
       return locate_dev_app_bundle(&dev_dir, backend).ok_or_else(|| {
-        deno_core::anyhow::anyhow!(
+        edno_core::anyhow::anyhow!(
           "could not find '{backend}' .app bundle under {} (set via {})",
           dev_dir.display(),
           LAUFEY_DEV_DIR_ENV
@@ -2137,7 +2137,7 @@ impl LaufeyBackendResolver {
 
     let dir = self.ensure_downloaded(backend, target).await?;
     locate_app_bundle(&dir, backend).ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "could not find '{backend}' .app bundle inside {} (backend may not ship as an app for target '{target}')",
         dir.display()
       )
@@ -2153,7 +2153,7 @@ impl LaufeyBackendResolver {
   ) -> Result<PathBuf, AnyError> {
     let binary = self.find_binary(backend, target).await?;
     let parent = binary.parent().ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "LAUFEY backend binary has no parent directory: {}",
         binary.display()
       )
@@ -2209,7 +2209,7 @@ fn extract_laufey_archive(
     let decoder = flate2::read::GzDecoder::new(data);
     let mut archive = tar::Archive::new(decoder);
     // Strip mode bits from archive entries: a tampered archive could
-    // otherwise ship setuid/setgid binaries into the deno cache. Files keep
+    // otherwise ship setuid/setgid binaries into the edno cache. Files keep
     // the umask-applied default; we re-add execute bits below for entries
     // that need them.
     archive.set_preserve_permissions(false);
@@ -2368,7 +2368,7 @@ fn locate_app_bundle(dir: &Path, backend: &str) -> Option<PathBuf> {
 
 /// Target triple to use when selecting a laufey backend archive. Honors
 /// `desktop_flags.target` (for cross-target packaging); otherwise defaults to
-/// the host triple this deno binary was built for.
+/// the host triple this edno binary was built for.
 fn laufey_target_for(desktop_flags: &DesktopFlags) -> &str {
   desktop_flags
     .target
@@ -2549,7 +2549,7 @@ fn rewrite_helper_plist_identifier(
     .get("CFBundleIdentifier")
     .and_then(|v| v.as_string())
     .ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "helper plist {} has no CFBundleIdentifier",
         plist_path.display()
       )
@@ -2592,8 +2592,8 @@ fn codesign_macos_bundle(
   if !cfg!(target_os = "macos") {
     bail!(
       "codesigning requires a macOS build host (uses `codesign(1)`). \
-       Run `deno desktop` on macOS, or drop `macos.codesignIdentity` \
-       from your deno.json when cross-building."
+       Run `edno desktop` on macOS, or drop `macos.codesignIdentity` \
+       from your edno.json when cross-building."
     );
   }
   if identity.is_empty() {
@@ -2798,7 +2798,7 @@ fn codesign_one(
 /// identifier matches its host bundle's `CFBundleIdentifier`. Run once
 /// per fresh download; HMR mode runs laufey.app directly (no per-project
 /// wrapper), so without this UN sees `Identifier=laufey` /
-/// `CFBundleIdentifier=com.deno.desktop` and refuses notification
+/// `CFBundleIdentifier=com.edno.desktop` and refuses notification
 /// authorization. Best-effort: failures here are logged but don't
 /// abort the install, since most desktop features still work without
 /// notifications.
@@ -2809,7 +2809,7 @@ fn harmonize_cached_laufey_identifiers(
 ) -> Result<(), AnyError> {
   let laufey_app = locate_laufey_app_in_install(install_dir, backend)
     .ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "could not find laufey.app under {} to re-sign",
         install_dir.display()
       )
@@ -3002,13 +3002,13 @@ struct DylibParts<'a> {
 
 fn dylib_parts(dylib_path: &Path) -> Result<DylibParts<'_>, AnyError> {
   let parent = dylib_path.parent().ok_or_else(|| {
-    deno_core::anyhow::anyhow!(
+    edno_core::anyhow::anyhow!(
       "invalid --output: dylib path has no parent dir: {}",
       dylib_path.display()
     )
   })?;
   let file_name = dylib_path.file_name().ok_or_else(|| {
-    deno_core::anyhow::anyhow!(
+    edno_core::anyhow::anyhow!(
       "invalid --output: dylib path has no file name: {}",
       dylib_path.display()
     )
@@ -3016,7 +3016,7 @@ fn dylib_parts(dylib_path: &Path) -> Result<DylibParts<'_>, AnyError> {
   let app_name = dylib_path
     .file_stem()
     .ok_or_else(|| {
-      deno_core::anyhow::anyhow!(
+      edno_core::anyhow::anyhow!(
         "invalid --output: dylib path has no file stem: {}",
         dylib_path.display()
       )
@@ -3047,7 +3047,7 @@ fn dylib_parts(dylib_path: &Path) -> Result<DylibParts<'_>, AnyError> {
 ///
 /// The coupling is two-way and silent. If laufey changes
 /// `LaufeyFindColocatedRuntime` to strip only a known extension, every app
-/// built by this version of Deno stops starting: the launcher would begin
+/// built by this version of Edno stops starting: the launcher would begin
 /// looking for `MyApp-2.9.2.so`, which we deliberately do not ship. **Re-check
 /// this function when bumping laufey**, and if the lookup has changed, ship
 /// the library under the name the new lookup resolves.
@@ -3167,7 +3167,7 @@ fn macos_runtime_dylib_name(backend: &str, laufey_exe_stem: &str) -> String {
 ///     Info.plist          (CFBundleExecutable = the LAUFEY backend binary)
 ///     MacOS/
 ///       laufey_webview    (LAUFEY backend binary; the bundle executable)
-///       libruntime.dylib  (compiled Deno runtime + user code; the `cef`
+///       libruntime.dylib  (compiled Edno runtime + user code; the `cef`
 ///                          backend uses `<backend-executable>.dylib` instead)
 ///     Resources/
 ///       AppIcon.icns      (optional)
@@ -3244,7 +3244,7 @@ async fn package_macos_app_bundle(
   // a `--runtime` argument (see `macos_runtime_dylib_name`). We deliberately do
   // NOT write a shell-script launcher that execs the backend with `--runtime`:
   // under LaunchServices (open / Finder / double-click) that `exec` breaks the
-  // app's foreground-GUI registration, so an `NSStatusItem` (Deno.Tray) is
+  // app's foreground-GUI registration, so an `NSStatusItem` (Edno.Tray) is
   // created but never attaches to the menu bar. Instead the backend binary is
   // the bundle's CFBundleExecutable directly (see Info.plist below), so the
   // process LaunchServices launches IS the GUI process. See denoland/deno#35619.
@@ -3254,7 +3254,7 @@ async fn package_macos_app_bundle(
 
   // Resolve the bundle identifier. The user-configured `identifier` is
   // preferred; otherwise we synthesize one from the app name. The
-  // synthetic form is fine for `deno run`-like local use, but real
+  // synthetic form is fine for `edno run`-like local use, but real
   // distribution wants a stable reverse-DNS identifier — notification
   // permission (and other tcc-keyed permissions) are decided per
   // (bundle id, code signature), so a synthetic id changes the user's
@@ -3266,7 +3266,7 @@ async fn package_macos_app_bundle(
     }
     None => {
       let slug = app_name.to_lowercase().replace(' ', "-");
-      format!("com.deno.desktop.{slug}")
+      format!("com.edno.desktop.{slug}")
     }
   };
 
@@ -3277,7 +3277,7 @@ async fn package_macos_app_bundle(
   // string builder (and is called repeatedly from tests). The plist keys
   // accept only period-separated integers, so a non-numeric version leaves
   // the defaults in place — say so, since the deb/rpm path rejects the same
-  // `deno.json` outright.
+  // `edno.json` outright.
   warn_about_unusable_version(
     config_package_version(cli_options).as_deref(),
     "the bundle will carry CFBundleShortVersionString 1.0 / CFBundleVersion \
@@ -3383,7 +3383,7 @@ fn render_macos_info_plist(
   has_icon: bool,
   config_version: Option<&str>,
 ) -> String {
-  // deno.json `version` when configured (#36503), reduced to the numeric
+  // edno.json `version` when configured (#36503), reduced to the numeric
   // `major.minor.build` form both version keys accept — a semver prerelease
   // carried through verbatim is rejected by notarization and App Store
   // validation (macOS only tolerates it for locally-distributed apps). The
@@ -3491,7 +3491,7 @@ fn create_macos_dmg(
   let staged_app = staging.path().join(
     app_bundle
       .file_name()
-      .ok_or_else(|| deno_core::anyhow::anyhow!("app bundle has no name"))?,
+      .ok_or_else(|| edno_core::anyhow::anyhow!("app bundle has no name"))?,
   );
   crate::tools::compile::copy_dir_all(app_bundle, &staged_app)?;
   #[cfg(unix)]
@@ -3781,7 +3781,7 @@ const LINUX_PACKAGE_VERSION: &str = "1.0.0";
 /// Metadata shared by the `.deb` and `.rpm` builders, derived from the staged
 /// app dir name and the desktop flags. Avoids new config fields — the package
 /// name comes from the app dir, the identifier from `--identifier` (or the same
-/// synthetic `com.deno.desktop.<slug>` default the `.desktop` writer uses).
+/// synthetic `com.edno.desktop.<slug>` default the `.desktop` writer uses).
 struct LinuxPackageMeta {
   /// Sanitized lowercase package name (Debian rules: `[a-z0-9][a-z0-9+.-]+`).
   /// Used as the package name, the `/usr/bin` symlink, and the icon/`.desktop`
@@ -3818,7 +3818,7 @@ fn debian_package_name(app_name: &str) -> String {
   }
 }
 
-/// The workspace root deno.json `version` field, used as the package version
+/// The workspace root edno.json `version` field, used as the package version
 /// across the macOS bundle and the Linux/Windows installers (#36503).
 fn config_package_version(
   cli_options: &crate::args::CliOptions,
@@ -3830,7 +3830,7 @@ fn config_package_version(
     .filter(|v| !v.is_empty())
 }
 
-/// The workspace root deno.json `license` field (when it is a string), used
+/// The workspace root edno.json `license` field (when it is a string), used
 /// for the `.rpm` License tag (#36503).
 fn config_package_license(
   cli_options: &crate::args::CliOptions,
@@ -3856,7 +3856,7 @@ fn linux_package_meta(
   let identifier = desktop_flags
     .identifier
     .clone()
-    .unwrap_or_else(|| format!("com.deno.desktop.{package}"));
+    .unwrap_or_else(|| format!("com.edno.desktop.{package}"));
   Ok(LinuxPackageMeta {
     summary: format!("{app_name} desktop application"),
     maintainer: format!("{app_name} <noreply@deno.com>"),
@@ -3867,7 +3867,7 @@ fn linux_package_meta(
   })
 }
 
-/// The `.deb`/`.rpm` version string for a configured deno.json `version`.
+/// The `.deb`/`.rpm` version string for a configured edno.json `version`.
 ///
 /// Both formats constrain the version tag, and outside of publishing
 /// `version` is a free-form string, so an unusable value has to be rejected
@@ -3890,14 +3890,14 @@ fn linux_package_version(
   };
   if !version.starts_with(|c: char| c.is_ascii_digit()) {
     bail!(
-      "deno.json `version` \"{version}\" cannot be used as a Debian/RPM package version: it must start with a digit"
+      "edno.json `version` \"{version}\" cannot be used as a Debian/RPM package version: it must start with a digit"
     );
   }
   if let Some(c) = version.chars().find(|c| {
     !(c.is_ascii_alphanumeric() || matches!(c, '.' | '+' | '-' | '~'))
   }) {
     bail!(
-      "deno.json `version` \"{version}\" cannot be used as a Debian/RPM package version: the character '{c}' is not allowed (only alphanumerics, '.', '+', '-' and '~')"
+      "edno.json `version` \"{version}\" cannot be used as a Debian/RPM package version: the character '{c}' is not allowed (only alphanumerics, '.', '+', '-' and '~')"
     );
   }
   Ok(version.replace('-', "~"))
@@ -4276,7 +4276,7 @@ fn create_linux_rpm(
   let arch = rpm_arch_for_target(target)?;
 
   // Zstd payload (see Cargo.toml: gzip would pull flate2's zlib-rs shim, which
-  // link-clashes with deno's zlib-ng), plus a pinned source date for
+  // link-clashes with edno's zlib-ng), plus a pinned source date for
   // reproducible builds — mirrors the `mtime: 0` used in the AppImage/`.deb`
   // paths so identical inputs yield identical packages.
   let config = rpm::BuildConfig::default()
@@ -4286,7 +4286,7 @@ fn create_linux_rpm(
   let mut builder = rpm::PackageBuilder::new(
     &meta.package,
     &meta.version,
-    // deno.json `license` when configured; the previous hard-coded "MIT"
+    // edno.json `license` when configured; the previous hard-coded "MIT"
     // mislabeled every package built from a differently-licensed project
     // (#36503).
     config_license.unwrap_or("MIT"),
@@ -4315,7 +4315,7 @@ fn create_linux_rpm(
   // /usr/share/applications/<pkg>.desktop — staged to a temp file because the
   // rpm builder reads file content from disk.
   let staging = tempfile::Builder::new()
-    .prefix(".deno-desktop-rpm-")
+    .prefix(".edno-desktop-rpm-")
     .tempdir()?;
   let desktop_path = staging.path().join("app.desktop");
   std::fs::write(&desktop_path, system_desktop_entry(&meta))?;
@@ -4492,7 +4492,7 @@ fn msi_product_version(
   for (field, (limit, name)) in fields.iter().zip(LIMITS) {
     if *field > limit {
       bail!(
-        "deno.json `version` \"{version}\" cannot be used as an MSI \
+        "edno.json `version` \"{version}\" cannot be used as an MSI \
          ProductVersion: the {name} field {field} exceeds the maximum of \
          {limit}. Windows Installer packs ProductVersion into \
          major(0-255).minor(0-255).build(0-65535), so a CalVer-style version \
@@ -4518,7 +4518,7 @@ fn msi_product_version(
 /// the format holds. Neither is an error: MSI's ProductVersion and the plist
 /// version keys simply can't express those versions, so falling back or
 /// truncating is the only way through. But the deb/rpm path rejects the very
-/// same `deno.json`, and quietly shipping a version the user didn't write is
+/// same `edno.json`, and quietly shipping a version the user didn't write is
 /// the failure #36503 is about. `consequence` names what will ship instead.
 ///
 /// Call this once per build, from the packager rather than from a helper:
@@ -4533,13 +4533,13 @@ fn warn_about_unusable_version(
     return;
   };
   if numeric_version_fields(version).is_none() {
-    log::warn!("deno.json `version` {version:?} is not numeric; {consequence}");
+    log::warn!("edno.json `version` {version:?} is not numeric; {consequence}");
   } else if version_core_fields(version).len() > 3 {
     // Three is all either target can hold (MSI's ProductVersion has three
     // fields, `CFBundleVersion` accepts at most three integers), so the
     // output is right — this is only about saying so.
     log::warn!(
-      "deno.json `version` {version:?} has more than three numeric fields; \
+      "edno.json `version` {version:?} has more than three numeric fields; \
        only the leading major.minor.build are used"
     );
   }
@@ -4584,7 +4584,7 @@ fn version_core_fields(version: &str) -> Vec<&str> {
 ///   <AppName>.bat          (launcher)
 ///   laufey.exe             (CEF backend)
 ///   libcef.dll, ...        (CEF support files)
-///   denort.dll             (compiled runtime + user code)
+///   ednort.dll             (compiled runtime + user code)
 ///   ...                    (nested dirs preserved)
 /// ```
 fn create_windows_msi(
@@ -4605,7 +4605,7 @@ fn create_windows_msi(
     .file_name()
     .map(|s| s.to_string_lossy().into_owned())
     .unwrap_or_else(|| "App".to_string());
-  // deno.json `version` when configured, reduced to the numeric
+  // edno.json `version` when configured, reduced to the numeric
   // `major.minor.build` form MSI's ProductVersion requires (a semver
   // prerelease/build suffix would fail MSI validation); the default matches
   // the macOS bundle's CFBundleVersion and the Linux package default
@@ -4620,8 +4620,8 @@ fn create_windows_msi(
   let identifier = desktop_flags
     .identifier
     .clone()
-    .unwrap_or_else(|| format!("com.deno.desktop.{}", app_name.to_lowercase()));
-  let manufacturer = "Deno";
+    .unwrap_or_else(|| format!("com.edno.desktop.{}", app_name.to_lowercase()));
+  let manufacturer = "Edno";
   let arch = msi_arch_for_target(target)?;
 
   // --- Walk the staged tree: register every directory, then every file. ----
@@ -4845,7 +4845,7 @@ fn create_windows_msi(
     summary.set_comments(format!("{app_name} desktop application"));
     summary.set_arch(arch);
     summary.set_languages(&[msi::Language::from_code(1033)]);
-    summary.set_creating_application("deno desktop");
+    summary.set_creating_application("edno desktop");
     // Package code: a fresh GUID identifying this exact package build.
     summary.set_uuid(uuid::Uuid::new_v5(
       &MSI_GUID_NAMESPACE,
@@ -5288,7 +5288,7 @@ fn msi_sort_tables_by_string_id(msi_path: &Path) -> Result<(), AnyError> {
   // The string-pool header's top bit selects 3-byte string references; tiny
   // databases use 2-byte refs, but honor the flag to stay correct at any size.
   let pool_raw = find_raw("_StringPool").ok_or_else(|| {
-    deno_core::anyhow::anyhow!("malformed .msi: no _StringPool stream")
+    edno_core::anyhow::anyhow!("malformed .msi: no _StringPool stream")
   })?;
   let pool = read_stream(&mut comp, &pool_raw)?;
   let str_w: usize = if pool.len() >= 4 && (pool[3] & 0x80) != 0 {
@@ -5300,7 +5300,7 @@ fn msi_sort_tables_by_string_id(msi_path: &Path) -> Result<(), AnyError> {
   // Map every string-pool id to its text so data-table streams (named by table
   // text) can be matched to their column schema (keyed by table string id).
   let data_raw = find_raw("_StringData").ok_or_else(|| {
-    deno_core::anyhow::anyhow!("malformed .msi: no _StringData stream")
+    edno_core::anyhow::anyhow!("malformed .msi: no _StringData stream")
   })?;
   let str_data = read_stream(&mut comp, &data_raw)?;
   let mut strings = vec![String::new()]; // 1-based; index 0 is unused.
@@ -5341,7 +5341,7 @@ fn msi_sort_tables_by_string_id(msi_path: &Path) -> Result<(), AnyError> {
   // Parse the (now sorted) `_Columns` table to recover every persistent table's
   // column widths and which columns are primary keys.
   let columns_raw = find_raw("_Columns").ok_or_else(|| {
-    deno_core::anyhow::anyhow!("malformed .msi: no _Columns stream")
+    edno_core::anyhow::anyhow!("malformed .msi: no _Columns stream")
   })?;
   let columns = read_stream(&mut comp, &columns_raw)?;
   let col_row_w = str_w + 2 + str_w + 2; // Table, Number, Name, Type
@@ -5449,7 +5449,7 @@ fn build_msi_cabinet(files: &[MsiFile]) -> Result<Vec<u8>, AnyError> {
   {
     let name = file_writer.file_name().to_string();
     let f = by_key.get(name.as_str()).ok_or_else(|| {
-      deno_core::anyhow::anyhow!("cabinet file {name} missing")
+      edno_core::anyhow::anyhow!("cabinet file {name} missing")
     })?;
     let data = std::fs::read(&f.abs_path).with_context(|| {
       format!("failed to read {} for .msi cabinet", f.abs_path.display())
@@ -5516,7 +5516,7 @@ fn convert_icon_set_to_icns(
   cwd: &Path,
   entries: &[crate::args::IconSetEntry],
   icns_path: &Path,
-) -> Result<(), deno_core::error::AnyError> {
+) -> Result<(), edno_core::error::AnyError> {
   use std::io::Write;
 
   let mut icons: Vec<(&'static [u8; 4], Vec<u8>)> = Vec::new();
@@ -5533,7 +5533,7 @@ fn convert_icon_set_to_icns(
   }
 
   if icons.is_empty() {
-    deno_core::anyhow::bail!("No valid icon images found for .icns");
+    edno_core::anyhow::bail!("No valid icon images found for .icns");
   }
 
   // File header (8 bytes) + for each icon: 4-byte OSType + 4-byte length + payload.
@@ -5588,7 +5588,7 @@ pub fn convert_icon_set_to_ico(
   cwd: &Path,
   entries: &[crate::args::IconSetEntry],
   ico_path: &Path,
-) -> Result<(), deno_core::error::AnyError> {
+) -> Result<(), edno_core::error::AnyError> {
   use std::io::Write;
 
   let mut images: Vec<(u32, Vec<u8>)> = Vec::new();
@@ -5603,7 +5603,7 @@ pub fn convert_icon_set_to_ico(
   }
 
   if images.is_empty() {
-    deno_core::anyhow::bail!("No valid icon images found for .ico");
+    edno_core::anyhow::bail!("No valid icon images found for .ico");
   }
 
   let count = images.len() as u16;
@@ -5644,7 +5644,7 @@ pub fn convert_icon_set_to_ico(
 
 /// Spawn a child with macOS TCC "responsibility" disclaimed, so the child
 /// is its own permission principal instead of inheriting attribution from
-/// the calling chain (terminal → deno → laufey).
+/// the calling chain (terminal → edno → laufey).
 ///
 /// Without this, requests like `UNUserNotificationCenter.requestAuthorization`
 /// fail immediately with `UNErrorCodeNotificationsNotAllowed` because TCC
@@ -5849,8 +5849,8 @@ mod tests {
   #[test]
   fn macos_info_plist_includes_principal_class_and_tcc_usage_strings() {
     let plist = render_macos_info_plist(
-      "Deno Demo",
-      "com.deno.demo",
+      "Edno Demo",
+      "com.edno.demo",
       "laufey_webview",
       true,
       None,
@@ -5864,19 +5864,19 @@ mod tests {
     ));
     assert!(
       plist.contains("<key>NSMicrophoneUsageDescription</key>")
-        && plist.contains("Deno Demo requires access to the microphone")
+        && plist.contains("Edno Demo requires access to the microphone")
     );
     assert!(
       plist.contains("<key>NSCameraUsageDescription</key>")
-        && plist.contains("Deno Demo requires access to the camera")
+        && plist.contains("Edno Demo requires access to the camera")
     );
     assert!(
       plist.contains("<key>NSAudioCaptureUsageDescription</key>")
-        && plist.contains("Deno Demo requires access to audio capture")
+        && plist.contains("Edno Demo requires access to audio capture")
     );
     assert!(
       plist.contains("<key>NSBluetoothAlwaysUsageDescription</key>")
-        && plist.contains("Deno Demo requires access to Bluetooth")
+        && plist.contains("Edno Demo requires access to Bluetooth")
     );
     assert!(plist.contains("<string>AppIcon</string>"));
   }
@@ -6039,11 +6039,11 @@ def456  other.zip
   #[test]
   fn bundle_id_accepts_canonical() {
     for ok in &[
-      "com.deno.app",
-      "com.deno.my-app",
-      "com.deno.app.v2",
+      "com.edno.app",
+      "com.edno.my-app",
+      "com.edno.app.v2",
       "A.B",
-      "com.deno.app.helper",
+      "com.edno.app.helper",
     ] {
       assert!(
         validate_bundle_identifier(ok).is_ok(),
@@ -6057,14 +6057,14 @@ def456  other.zip
     let cases = &[
       ("", "empty"),
       ("noseparator", "no dot"),
-      ("com.deno.", "trailing empty segment"),
-      (".com.deno", "leading empty segment"),
-      ("com..deno", "doubled dot"),
-      ("com.deno.app/foo", "slash"),
-      ("com.deno.app foo", "space"),
-      ("com.deno.app$bar", "shell metachar"),
-      ("com.deno.app;rm", "semicolon"),
-      ("com.deno.app\nx", "newline"),
+      ("com.edno.", "trailing empty segment"),
+      (".com.edno", "leading empty segment"),
+      ("com..edno", "doubled dot"),
+      ("com.edno.app/foo", "slash"),
+      ("com.edno.app foo", "space"),
+      ("com.edno.app$bar", "shell metachar"),
+      ("com.edno.app;rm", "semicolon"),
+      ("com.edno.app\nx", "newline"),
     ];
     for (bad, why) in cases {
       assert!(
@@ -6076,10 +6076,10 @@ def456  other.zip
 
   #[test]
   fn bundle_id_rejects_too_long() {
-    let long = format!("com.deno.{}", "x".repeat(200));
+    let long = format!("com.edno.{}", "x".repeat(200));
     assert!(validate_bundle_identifier(&long).is_err());
     // Right at the boundary.
-    let just_too_long = format!("com.deno.{}", "x".repeat(155));
+    let just_too_long = format!("com.edno.{}", "x".repeat(155));
     assert!(
       validate_bundle_identifier(&just_too_long).is_err(),
       "ids longer than 155 chars must be rejected (Apple receipt limit)"
@@ -6193,8 +6193,8 @@ def456  other.zip
     // truncated name — otherwise it starts up with "No runtime library found"
     // (issue #35971).
     assert_eq!(
-      linux_colocated_runtime_name("template-deno2.9.2-desktop-vue3-vite8"),
-      "template-deno2.9.so"
+      linux_colocated_runtime_name("template-edno2.9.2-desktop-vue3-vite8"),
+      "template-edno2.9.so"
     );
     assert_eq!(
       linux_colocated_runtime_name("myapp.v1.2.3"),
@@ -6265,7 +6265,7 @@ def456  other.zip
 
   #[test]
   fn resolve_app_dir_targets_rejects_clobbering_a_backend_library() {
-    // `deno desktop --output libcef` on Linux, `--output libcef` on Windows:
+    // `edno desktop --output libcef` on Linux, `--output libcef` on Windows:
     // the runtime library copy would replace a file CEF ships.
     let tmp = tempfile::tempdir().unwrap();
 
@@ -6398,7 +6398,7 @@ def456  other.zip
 
   #[test]
   fn reject_backend_file_collision_rejects_a_backend_file() {
-    // `deno desktop --output libcef` on Linux, or `--output d3dcompiler_47` on
+    // `edno desktop --output libcef` on Linux, or `--output d3dcompiler_47` on
     // Windows: the copy would replace a file CEF ships and the app would no
     // longer start, with nothing in the build output to say why.
     let tmp = tempfile::tempdir().unwrap();
@@ -7573,7 +7573,7 @@ def456  other.zip
 
   #[test]
   fn packaging_honors_config_version_and_license() {
-    // deno.json `version`/`license` must reach the installers instead of the
+    // edno.json `version`/`license` must reach the installers instead of the
     // hard-coded 1.0.0 / MIT defaults (#36503). Semver prereleases map to the
     // `~` ordering both deb and rpm use for "before the release".
     let tmp = tempfile::tempdir().unwrap();
@@ -8266,7 +8266,7 @@ def456  other.zip
 
   #[test]
   fn reserve_app_dir_clears_previous_build() {
-    // A directory carrying our marker is a prior `deno desktop` output and
+    // A directory carrying our marker is a prior `edno desktop` output and
     // may be replaced.
     let tmp = tempfile::tempdir().unwrap();
     let app_dir = tmp.path().join("app");
@@ -8316,7 +8316,7 @@ def456  other.zip
     assert!(path.exists());
   }
 
-  // --- desktop.backend config merge (CLI flag > deno.json > webview) ---
+  // --- desktop.backend config merge (CLI flag > edno.json > webview) ---
 
   #[test]
   fn backend_from_deno_json_when_flag_absent() {

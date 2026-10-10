@@ -1,1 +1,1 @@
-module.exports.getValue = require("@denotest/types-entry-value-not-exists").getValue;
+module.exports.getValue = require("@ednotest/types-entry-value-not-exists").getValue;

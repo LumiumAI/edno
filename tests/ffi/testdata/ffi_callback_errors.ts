@@ -1,16 +1,16 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
-const targetDir = Deno.execPath().replace(/[^\/\\]+$/, "");
+const targetDir = Edno.execPath().replace(/[^\/\\]+$/, "");
 const [libPrefix, libSuffix] = {
   darwin: ["lib", "dylib"],
   linux: ["lib", "so"],
   windows: ["", "dll"],
-}[Deno.build.os];
+}[Edno.build.os];
 const libPath = `${targetDir}/${libPrefix}test_ffi.${libSuffix}`;
 
-const dylib = Deno.dlopen(
+const dylib = Edno.dlopen(
   libPath,
   {
     store_function_2: {
@@ -52,12 +52,12 @@ globalThis.addEventListener("unhandledrejection", (data) => {
 
 const timer = setTimeout(() => {
   console.error(
-    "Test failed, final callback did not get picked up by Deno event loop",
+    "Test failed, final callback did not get picked up by Edno event loop",
   );
-  Deno.exit(-1);
+  Edno.exit(-1);
 }, 5_000);
 
-Deno.unrefTimer(timer);
+Edno.unrefTimer(timer);
 
 enum CallCase {
   SyncSelf,
@@ -66,7 +66,7 @@ enum CallCase {
   AsyncSyncFfi,
   AsyncFfi,
 }
-type U8CallCase = Deno.NativeU8Enum<CallCase>;
+type U8CallCase = Edno.NativeU8Enum<CallCase>;
 
 const throwCb = (c: CallCase): number => {
   console.log("CallCase:", CallCase[c]);
@@ -81,10 +81,10 @@ const THROW_CB_DEFINITION = {
   result: "u8",
 } as const;
 
-const cb = new Deno.UnsafeCallback(THROW_CB_DEFINITION, throwCb);
+const cb = new Edno.UnsafeCallback(THROW_CB_DEFINITION, throwCb);
 
 try {
-  const fnPointer = new Deno.UnsafeFnPointer(cb.pointer, THROW_CB_DEFINITION);
+  const fnPointer = new Edno.UnsafeFnPointer(cb.pointer, THROW_CB_DEFINITION);
 
   fnPointer.call(CallCase.SyncSelf);
 } catch (_err) {
@@ -103,7 +103,7 @@ try {
 }
 
 try {
-  const fnPointer = new Deno.UnsafeFnPointer(cb.pointer, {
+  const fnPointer = new Edno.UnsafeFnPointer(cb.pointer, {
     ...THROW_CB_DEFINITION,
     nonblocking: true,
   });

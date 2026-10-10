@@ -1,7 +1,7 @@
 let testCount = 0;
 const logs: string[] = [];
 
-Deno.test.beforeEach(() => {
+Edno.test.beforeEach(() => {
   testCount++;
   logs.push(`beforeEach executed for test ${testCount}`);
 
@@ -10,7 +10,7 @@ Deno.test.beforeEach(() => {
   }
 });
 
-Deno.test.afterEach(() => {
+Edno.test.afterEach(() => {
   logs.push(`afterEach executed for test ${testCount}`);
 
   if (testCount === 4) {
@@ -18,23 +18,23 @@ Deno.test.afterEach(() => {
   }
 });
 
-Deno.test("test 1 - should pass", () => {
+Edno.test("test 1 - should pass", () => {
   logs.push("test 1 executed");
 });
 
-Deno.test("test 2 - should pass", () => {
+Edno.test("test 2 - should pass", () => {
   logs.push("test 2 executed");
 });
 
-Deno.test("test 3 - beforeEach fails", () => {
+Edno.test("test 3 - beforeEach fails", () => {
   logs.push("test 3 executed");
 });
 
-Deno.test("test 4 - afterEach fails", () => {
+Edno.test("test 4 - afterEach fails", () => {
   logs.push("test 4 executed");
 });
 
-Deno.test("test 5 - test itself fails", () => {
+Edno.test("test 5 - test itself fails", () => {
   logs.push("test 5 executed");
   throw new Error("test 5 failed");
 });

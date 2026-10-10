@@ -1,10 +1,10 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { LogLevel, WebClient } from "npm:@slack/web-api@7.8.0";
 
-const token = Deno.env.get("SLACK_TOKEN");
-const channel = Deno.env.get("SLACK_CHANNEL");
+const token = Edno.env.get("SLACK_TOKEN");
+const channel = Edno.env.get("SLACK_CHANNEL");
 
 if (!token) {
   console.error("SLACK_TOKEN is required");

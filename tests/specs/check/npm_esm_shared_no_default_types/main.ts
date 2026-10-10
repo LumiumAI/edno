@@ -5,9 +5,9 @@
 // default`, alongside an `import` condition pointing at an ESM `.js` file.
 // Because the `.d.ts` has no real default export, `import pkg from "..."` must
 // be typed via the CommonJS synthetic default (the module namespace), matching
-// `tsc` under NodeNext and Deno <= 2.8.2. Treating the `.d.ts` as ESM instead
+// `tsc` under NodeNext and Edno <= 2.8.2. Treating the `.d.ts` as ESM instead
 // would fail with `TS1192: Module ... has no default export`.
-import playwright from "npm:@denotest/esm-package-no-default-export-types";
+import playwright from "npm:@ednotest/esm-package-no-default-export-types";
 
 const result: string = playwright.firefox.launch();
 console.log(result);

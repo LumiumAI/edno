@@ -1,7 +1,7 @@
 {
-  "name": "@denotest/add",
+  "name": "@ednotest/add",
   "exports": "./mod.ts",
   "imports": {
-    "@denotest/subtract": "jsr:@denotest/subtract"
+    "@ednotest/subtract": "jsr:@ednotest/subtract"
   }
 }

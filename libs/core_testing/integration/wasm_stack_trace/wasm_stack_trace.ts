@@ -87,7 +87,7 @@ try {
 }
 
 // Test 2: User prepareStackTrace sees correct wasm callsite toString()
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 (Error as any).prepareStackTrace = function (_: unknown, callsites: any[]) {
   const parts: string[] = [];
   for (const cs of callsites) {

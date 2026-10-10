@@ -23,21 +23,21 @@ use deno_ast::diagnostics::DiagnosticSourceRange;
 use deno_ast::swc::ecma_visit::Visit;
 use deno_ast::swc::ecma_visit::VisitWith;
 use deno_ast::swc::ecma_visit::noop_visit_type;
-use deno_config::workspace::WorkspaceDirectory;
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow;
+use edno_config::workspace::WorkspaceDirectory;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow;
 use deno_graph::analysis::DependencyDescriptor;
 use deno_graph::analysis::DynamicTemplatePart;
 use deno_graph::analysis::StaticDependencyKind;
 use deno_graph::analysis::TypeScriptReference;
-use deno_package_json::PackageJsonDepValue;
-use deno_package_json::PackageJsonDepValueParseErrorKind;
-use deno_package_json::PackageJsonDepWorkspaceReq;
-use deno_resolver::npm::NpmResolverSys;
-use deno_resolver::workspace::MappedResolution;
-use deno_resolver::workspace::PackageJsonDepResolution;
-use deno_resolver::workspace::WorkspaceResolver;
-use deno_runtime::deno_node::is_builtin_node_module;
+use edno_package_json::PackageJsonDepValue;
+use edno_package_json::PackageJsonDepValueParseErrorKind;
+use edno_package_json::PackageJsonDepWorkspaceReq;
+use edno_resolver::npm::NpmResolverSys;
+use edno_resolver::workspace::MappedResolution;
+use edno_resolver::workspace::PackageJsonDepResolution;
+use edno_resolver::workspace::WorkspaceResolver;
+use edno_runtime::edno_node::is_builtin_node_module;
 use deno_semver::Version;
 use deno_semver::VersionReq;
 use deno_semver::jsr::JsrDepPackageReq;
@@ -364,7 +364,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
     &self,
     referrer: &ModuleSpecifier,
     specifier: &str,
-    resolution_kind: deno_resolver::workspace::ResolutionKind,
+    resolution_kind: edno_resolver::workspace::ResolutionKind,
     text_info: &SourceTextInfo,
     range: PositionOrSourceRangeRef<'_>,
     diagnostic_reporter: &mut dyn FnMut(SpecifierUnfurlerDiagnostic),
@@ -422,7 +422,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
     &self,
     referrer: &ModuleSpecifier,
     specifier: &str,
-    resolution_kind: deno_resolver::workspace::ResolutionKind,
+    resolution_kind: edno_resolver::workspace::ResolutionKind,
   ) -> Result<Option<String>, UnfurlSpecifierError> {
     let resolved = match self.workspace_resolver.resolve(
       specifier,
@@ -719,13 +719,13 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
       }
     };
 
-    // now look in the member and root deno json
-    let deno_jsons = [
+    // now look in the member and root edno json
+    let edno_jsons = [
       self.workspace_dir.member_deno_json(),
       self.workspace_dir.workspace.root_deno_json(),
     ];
-    for deno_json in deno_jsons.iter().flatten() {
-      let deps = deno_json
+    for edno_json in edno_jsons.iter().flatten() {
+      let deps = edno_json
         .dependencies(self.workspace_dir.workspace.catalogs())
         .into_iter()
         .collect::<BTreeSet<_>>();
@@ -738,7 +738,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
 
     // check the import map for the types package
     if let Some(import_map) = self.workspace_resolver.maybe_import_map() {
-      let deps = deno_config::import_map::import_map_deps(import_map);
+      let deps = edno_config::import_map::import_map_deps(import_map);
       for dep in deps {
         if let Some(version_req) = check_dep(dep) {
           return Some(version_req);
@@ -824,7 +824,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
         let maybe_unfurled = self.unfurl_specifier_reporting_diagnostic(
           module_url,
           specifier,
-          deno_resolver::workspace::ResolutionKind::Execution, // dynamic imports are always execution
+          edno_resolver::workspace::ResolutionKind::Execution, // dynamic imports are always execution
           text_info,
           PositionOrSourceRangeRef::PositionRange(&dep.argument_range),
           diagnostic_reporter,
@@ -862,7 +862,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
             let unfurled = self.unfurl_specifier_reporting_diagnostic(
               module_url,
               specifier,
-              deno_resolver::workspace::ResolutionKind::Execution, // dynamic imports are always execution
+              edno_resolver::workspace::ResolutionKind::Execution, // dynamic imports are always execution
               text_info,
               PositionOrSourceRangeRef::PositionRange(&dep.argument_range),
               diagnostic_reporter,
@@ -914,7 +914,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
     let analyze_specifier =
       |specifier: &str,
        range: PositionOrSourceRangeRef,
-       resolution_kind: deno_resolver::workspace::ResolutionKind,
+       resolution_kind: edno_resolver::workspace::ResolutionKind,
        context: SpecifierTextContext,
        text_changes: &mut Vec<deno_ast::TextChange>,
        diagnostic_reporter: &mut dyn FnMut(SpecifierUnfurlerDiagnostic)| {
@@ -950,7 +950,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
       match dep {
         DependencyDescriptor::Static(dep) => {
           let resolution_kind = if parsed_source.media_type().is_declaration() {
-            deno_resolver::workspace::ResolutionKind::Types
+            edno_resolver::workspace::ResolutionKind::Types
           } else {
             match dep.kind {
               StaticDependencyKind::Export
@@ -959,12 +959,12 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
               | StaticDependencyKind::ImportSource
               | StaticDependencyKind::ExportEquals
               | StaticDependencyKind::ImportEquals => {
-                deno_resolver::workspace::ResolutionKind::Execution
+                edno_resolver::workspace::ResolutionKind::Execution
               }
               StaticDependencyKind::ExportType
               | StaticDependencyKind::ImportType
               | StaticDependencyKind::MaybeTsModuleAugmentation => {
-                deno_resolver::workspace::ResolutionKind::Types
+                edno_resolver::workspace::ResolutionKind::Types
               }
             }
           };
@@ -974,7 +974,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
             && let Ok(Some(unfurled)) = self.unfurl_specifier(
               url,
               &dep.specifier,
-              deno_resolver::workspace::ResolutionKind::Types,
+              edno_resolver::workspace::ResolutionKind::Types,
             )
             && let Some(types_specifier) =
               self.get_types_package_specifier(&unfurled, url)
@@ -1043,7 +1043,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
       analyze_specifier(
         &specifier_with_range.text,
         PositionOrSourceRangeRef::PositionRange(&specifier_with_range.range),
-        deno_resolver::workspace::ResolutionKind::Types,
+        edno_resolver::workspace::ResolutionKind::Types,
         SpecifierTextContext::QuotedComment,
         text_changes,
         diagnostic_reporter,
@@ -1053,7 +1053,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
       analyze_specifier(
         &jsdoc.specifier.text,
         PositionOrSourceRangeRef::PositionRange(&jsdoc.specifier.range),
-        deno_resolver::workspace::ResolutionKind::Types,
+        edno_resolver::workspace::ResolutionKind::Types,
         SpecifierTextContext::QuotedComment,
         text_changes,
         diagnostic_reporter,
@@ -1063,7 +1063,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
       analyze_specifier(
         &specifier_with_range.text,
         PositionOrSourceRangeRef::PositionRange(&specifier_with_range.range),
-        deno_resolver::workspace::ResolutionKind::Execution,
+        edno_resolver::workspace::ResolutionKind::Execution,
         SpecifierTextContext::UnquotedComment,
         text_changes,
         diagnostic_reporter,
@@ -1073,7 +1073,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
       analyze_specifier(
         &specifier_with_range.text,
         PositionOrSourceRangeRef::PositionRange(&specifier_with_range.range),
-        deno_resolver::workspace::ResolutionKind::Types,
+        edno_resolver::workspace::ResolutionKind::Types,
         SpecifierTextContext::UnquotedComment,
         text_changes,
         diagnostic_reporter,
@@ -1086,7 +1086,7 @@ impl<TSys: SpecifierUnfurlerSys> SpecifierUnfurler<TSys> {
       analyze_specifier(
         &specifier,
         PositionOrSourceRangeRef::SourceRange(range),
-        deno_resolver::workspace::ResolutionKind::Execution,
+        edno_resolver::workspace::ResolutionKind::Execution,
         SpecifierTextContext::JavaScript,
         text_changes,
         diagnostic_reporter,
@@ -1177,13 +1177,13 @@ mod tests {
 
   use deno_ast::MediaType;
   use deno_ast::ModuleSpecifier;
-  use deno_core::serde_json::json;
-  use deno_core::url::Url;
+  use edno_core::serde_json::json;
+  use edno_core::url::Url;
   use deno_graph::ast::ParserModuleAnalyzer;
-  use deno_resolver::factory::ResolverFactory;
-  use deno_resolver::factory::ResolverFactoryOptions;
-  use deno_resolver::factory::WorkspaceFactory;
-  use deno_resolver::factory::WorkspaceFactoryOptions;
+  use edno_resolver::factory::ResolverFactory;
+  use edno_resolver::factory::ResolverFactoryOptions;
+  use edno_resolver::factory::WorkspaceFactory;
+  use edno_resolver::factory::WorkspaceFactoryOptions;
   use pretty_assertions::assert_eq;
   use sys_traits::EnvCurrentDir;
   use sys_traits::impls::InMemorySys;
@@ -1227,7 +1227,7 @@ mod tests {
     let cwd = get_cwd();
     let memory_sys = InMemorySys::new_with_cwd(&cwd);
     memory_sys.fs_insert_json(
-      cwd.join("deno.json"),
+      cwd.join("edno.json"),
       json!({
         "workspace": [
           "./jsr-package"
@@ -1249,9 +1249,9 @@ mod tests {
       }),
     );
     memory_sys.fs_insert_json(
-      cwd.join("jsr-package/deno.json"),
+      cwd.join("jsr-package/edno.json"),
       json!({
-        "name": "@denotest/example",
+        "name": "@ednotest/example",
         "version": "1.0.0",
         "exports": "./mod.ts"
       }),
@@ -1277,7 +1277,7 @@ import "./mod.ts";
 import { } from "./c";
 import type { } from "./c";
 import url from "url";
-import "@denotest/example";
+import "@ednotest/example";
 // TODO: unfurl these to jsr
 // import "npm:@jsr/std__fs@1/file";
 // import "npm:@jsr/std__fs@1";
@@ -1339,7 +1339,7 @@ import "./mod.ts";
 import { } from "./c.js";
 import type { } from "./c.d.ts";
 import url from "node:url";
-import "jsr:@denotest/example@^1.0.0";
+import "jsr:@ednotest/example@^1.0.0";
 // TODO: unfurl these to jsr
 // import "npm:@jsr/std__fs@1/file";
 // import "npm:@jsr/std__fs@1";
@@ -1381,7 +1381,7 @@ export type * from "./c.d.ts";
     let cwd = get_cwd();
     let memory_sys = InMemorySys::new_with_cwd(&cwd);
     memory_sys.fs_insert_json(
-      cwd.join("deno.json"),
+      cwd.join("edno.json"),
       json!({
         "imports": {
           "lib/": "./lib/",
@@ -1424,7 +1424,7 @@ const laterUnrelatedText = "lib/";
     let cwd = get_cwd();
     let memory_sys = InMemorySys::new_with_cwd(&cwd);
     memory_sys.fs_insert_json(
-      cwd.join("deno.json"),
+      cwd.join("edno.json"),
       json!({
         "imports": {
           "double": "npm:package/path\"double",
@@ -1475,7 +1475,7 @@ import.meta.resolve("npm:package/path\"double");
     memory_sys.fs_insert_json(
       cwd.join("publish/package.json"),
       json!({
-        "name": "@denotest/main",
+        "name": "@ednotest/main",
         "version": "1.0.0",
         "dependencies": {
           "add": "workspace:~",
@@ -1487,7 +1487,7 @@ import.meta.resolve("npm:package/path\"double");
     memory_sys.fs_insert_json(
       cwd.join("publish/jsr.json"),
       json!({
-        "name": "@denotest/main",
+        "name": "@ednotest/main",
         "version": "1.0.0",
         "exports": "./mod.ts",
       }),
@@ -1603,7 +1603,7 @@ export { a, data, helper, other, unsafe };
 import type { f } from "npm:@types/package@^1";
 export { d, e, f };
 "#;
-      // when using a deno.json or import map, it adds an extra slash at the
+      // when using a edno.json or import map, it adds an extra slash at the
       // start, which is harmless, so ignore that in order to normalize to the
       // expected source
       assert_eq!(unfurled_source.replace("npm:/", "npm:"), expected_source);
@@ -1615,13 +1615,13 @@ export { d, e, f };
 
     // these different scenarios should all have the same outcome
     let cwd = get_cwd();
-    // deno.json
+    // edno.json
     {
       let memory_sys = InMemorySys::new_with_cwd(&cwd);
       memory_sys.fs_insert_json(
-        cwd.join("deno.json"),
+        cwd.join("edno.json"),
         json!({
-          "name": "@denotest/main",
+          "name": "@ednotest/main",
           "version": "1.0.0",
           "exports": "./mod.ts",
           "nodeModulesDir": "manual",
@@ -1646,9 +1646,9 @@ export { d, e, f };
         }),
       );
       memory_sys.fs_insert_json(
-        cwd.join("deno.json"),
+        cwd.join("edno.json"),
         json!({
-          "name": "@denotest/main",
+          "name": "@ednotest/main",
           "version": "1.0.0",
           "exports": "./mod.ts"
         }),
@@ -1659,9 +1659,9 @@ export { d, e, f };
     {
       let memory_sys = InMemorySys::new_with_cwd(&cwd);
       memory_sys.fs_insert_json(
-        cwd.join("deno.json"),
+        cwd.join("edno.json"),
         json!({
-          "name": "@denotest/main",
+          "name": "@ednotest/main",
           "version": "1.0.0",
           "exports": "./mod.ts",
           "nodeModulesDir": "manual",
@@ -1696,9 +1696,9 @@ export { d, e, f };
       }),
     );
     memory_sys.fs_insert_json(
-      cwd.join("deno.json"),
+      cwd.join("edno.json"),
       json!({
-        "name": "@denotest/main",
+        "name": "@ednotest/main",
         "version": "1.0.0",
         "exports": "./mod.ts"
       }),
@@ -1760,9 +1760,9 @@ export { data, helper };
       }),
     );
     memory_sys.fs_insert_json(
-      cwd.join("deno.json"),
+      cwd.join("edno.json"),
       json!({
-        "name": "@denotest/main",
+        "name": "@ednotest/main",
         "version": "1.0.0",
         "exports": "./mod.ts"
       }),
@@ -1859,7 +1859,7 @@ export * from "jsr:@std/semver@1";
       sys,
       cwd.to_path_buf(),
       WorkspaceFactoryOptions {
-        maybe_custom_deno_dir_root: Some(cwd.join("deno_dir")),
+        maybe_custom_deno_dir_root: Some(cwd.join("edno_dir")),
         ..Default::default()
       },
     ));
@@ -1867,7 +1867,7 @@ export * from "jsr:@std/semver@1";
       workspace_factory,
       ResolverFactoryOptions {
         package_json_dep_resolution: Some(
-          deno_resolver::workspace::PackageJsonDepResolution::Enabled,
+          edno_resolver::workspace::PackageJsonDepResolution::Enabled,
         ),
         unstable_sloppy_imports: true,
         ..Default::default()

@@ -1,5 +1,5 @@
 let port;
-const server = Deno.serve(
+const server = Edno.serve(
   {
     port: 0,
     onListen: (addr) => {

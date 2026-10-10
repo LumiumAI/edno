@@ -1,6 +1,6 @@
-#!/usr/bin/env -S deno run --v8-flags=--jitless --allow-env --allow-read --allow-run --allow-write
+#!/usr/bin/env -S edno run --v8-flags=--jitless --allow-env --allow-read --allow-run --allow-write
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-console camelcase
+// edno-lint-ignore-file no-console camelcase
 /**
  * Generate a Linux linker order from exact first function entries.
  *
@@ -49,7 +49,7 @@ function usage(): never {
       "[--starts-range BEGIN:END] [--exclude-address HEX] " +
       "[--workload-profile run-first|timer-free-first]",
   );
-  Deno.exit(2);
+  Edno.exit(2);
 }
 
 function parseArgs(args: string[]): Options {
@@ -117,9 +117,9 @@ async function runCommand(
     env?: Record<string, string>;
     timeoutMs?: number;
   } = {},
-): Promise<Deno.CommandOutput> {
+): Promise<Edno.CommandOutput> {
   const [command, ...args] = argv;
-  const child = new Deno.Command(command, {
+  const child = new Edno.Command(command, {
     args,
     cwd: options.cwd,
     env: options.env,
@@ -164,21 +164,21 @@ async function writeFixtures(
   const node = join(root, "node.ts");
   const format = join(root, "format_me.ts");
   await Promise.all([
-    Deno.writeTextFile(empty, "void 0;\n"),
-    Deno.writeTextFile(timer, "setTimeout(() => {}, 0);\n"),
-    Deno.writeTextFile(
+    Edno.writeTextFile(empty, "void 0;\n"),
+    Edno.writeTextFile(timer, "setTimeout(() => {}, 0);\n"),
+    Edno.writeTextFile(
       timerFree,
       "Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1);\n",
     ),
-    Deno.writeTextFile(
+    Edno.writeTextFile(
       hello,
       "const greet = (name: string): string => `hello ${name}`;\n" +
         'console.log(greet("world"));\n',
     ),
-    Deno.writeTextFile(
+    Edno.writeTextFile(
       server,
       "const abort = new AbortController();\n" +
-        "const server = Deno.serve(\n" +
+        "const server = Edno.serve(\n" +
         "  { port: 0, signal: abort.signal },\n" +
         '  () => new Response("ok"),\n' +
         ");\n" +
@@ -186,52 +186,52 @@ async function writeFixtures(
         "abort.abort();\n" +
         "await server.finished;\n",
     ),
-    Deno.writeTextFile(
+    Edno.writeTextFile(
       test,
-      'Deno.test("passes", () => {\n' +
+      'Edno.test("passes", () => {\n' +
         '  if (1 + 1 !== 2) throw new Error("bad arithmetic");\n' +
         "});\n",
     ),
-    Deno.writeTextFile(
+    Edno.writeTextFile(
       node,
       'import { createHash } from "node:crypto";\n' +
         'console.log(createHash("sha256").update("x").digest("hex"));\n',
     ),
-    Deno.writeTextFile(
+    Edno.writeTextFile(
       format,
       "export const value = { nested: [1, 2, 3] };\n",
     ),
   ]);
 
   const runEmpty = {
-    name: "deno run empty",
+    name: "edno run empty",
     args: ["run", "--quiet", empty],
     cwd: root,
   };
   const runTimerFree = {
-    name: "deno run timer-free",
+    name: "edno run timer-free",
     args: ["run", "--quiet", timerFree],
     cwd: root,
   };
   const remaining: Workload[] = [
-    { name: "deno run hello", args: ["run", "--quiet", hello], cwd: root },
+    { name: "edno run hello", args: ["run", "--quiet", hello], cwd: root },
     {
-      name: "deno run timer",
+      name: "edno run timer",
       args: ["run", "--quiet", timer],
       cwd: root,
     },
     {
-      name: "deno serve",
+      name: "edno serve",
       args: ["run", "--quiet", "--allow-net", server],
       cwd: root,
     },
-    { name: "deno test", args: ["test", "--quiet", test], cwd: root },
+    { name: "edno test", args: ["test", "--quiet", test], cwd: root },
     {
-      name: "deno node:crypto",
+      name: "edno node:crypto",
       args: ["run", "--quiet", node],
       cwd: root,
     },
-    { name: "deno fmt", args: ["fmt", "--check", format], cwd: root },
+    { name: "edno fmt", args: ["fmt", "--check", format], cwd: root },
   ];
   return profile === "run-first"
     ? [runEmpty, ...remaining]
@@ -240,7 +240,7 @@ async function writeFixtures(
 
 async function loadSymbols(binary: string): Promise<Map<number, string[]>> {
   const result = await runCommand([
-    Deno.env.get("NM") ?? "nm",
+    Edno.env.get("NM") ?? "nm",
     "--defined-only",
     "--numeric-sort",
     binary,
@@ -269,7 +269,7 @@ async function loadFunctionStarts(
   allowedNames?: Set<string>,
 ): Promise<number[]> {
   const result = await runCommand([
-    Deno.env.get("READELF") ?? "readelf",
+    Edno.env.get("READELF") ?? "readelf",
     "--syms",
     "--wide",
     binary,
@@ -316,7 +316,7 @@ async function loadFunctionStarts(
 async function loadOrderSequence(path: string): Promise<string[]> {
   const sequence: string[] = [];
   const names = new Set<string>();
-  for (const line of (await Deno.readTextFile(path)).split("\n")) {
+  for (const line of (await Edno.readTextFile(path)).split("\n")) {
     if (
       line.length !== 0 &&
       !line.startsWith("#") &&
@@ -352,7 +352,7 @@ async function writeFunctionStarts(
       true,
     );
   }
-  await Deno.writeFile(path, raw);
+  await Edno.writeFile(path, raw);
 }
 
 function parseTrace(raw: Uint8Array): {
@@ -397,27 +397,27 @@ function intersectionSize(sets: Set<number>[]): number {
 
 async function generate(options: Options) {
   if (
-    Deno.build.os !== "linux" ||
-    (Deno.build.arch !== "x86_64" && Deno.build.arch !== "aarch64")
+    Edno.build.os !== "linux" ||
+    (Edno.build.arch !== "x86_64" && Edno.build.arch !== "aarch64")
   ) {
     throw new Error("exact function tracing requires x86-64 or arm64 Linux");
   }
-  const binary = await Deno.realPath(options.binary);
-  const tracerSource = await Deno.realPath(options.tracerSource);
-  const runnerSource = await Deno.realPath(
+  const binary = await Edno.realPath(options.binary);
+  const tracerSource = await Edno.realPath(options.tracerSource);
+  const runnerSource = await Edno.realPath(
     join(dirname(tracerSource), "orderfile_trace_runner.c"),
   );
-  await Deno.mkdir(dirname(options.output), { recursive: true });
+  await Edno.mkdir(dirname(options.output), { recursive: true });
 
-  const root = await Deno.makeTempDir({ prefix: "deno-function-order-" });
+  const root = await Edno.makeTempDir({ prefix: "edno-function-order-" });
   const tracer = join(root, "function_tracer.so");
   const runner = join(root, "trace_runner");
   const startsPath = join(root, "function_starts.bin");
-  const denoDir = join(root, "deno-dir");
-  await Deno.mkdir(denoDir);
+  const ednoDir = join(root, "edno-dir");
+  await Edno.mkdir(ednoDir);
   try {
     await runCommand([
-      Deno.env.get("CC") ?? "cc",
+      Edno.env.get("CC") ?? "cc",
       "-O2",
       "-shared",
       "-fPIC",
@@ -427,7 +427,7 @@ async function generate(options: Options) {
       "-ldl",
     ]);
     await runCommand([
-      Deno.env.get("CC") ?? "cc",
+      Edno.env.get("CC") ?? "cc",
       "-O2",
       "-o",
       runner,
@@ -437,7 +437,7 @@ async function generate(options: Options) {
     const symbols = await loadSymbols(binary);
     const allowedNames = options.startsFilter === undefined
       ? undefined
-      : await loadOrderNames(await Deno.realPath(options.startsFilter));
+      : await loadOrderNames(await Edno.realPath(options.startsFilter));
     const discoveredFunctionStarts = await loadFunctionStarts(
       binary,
       symbols,
@@ -454,7 +454,7 @@ async function generate(options: Options) {
       throw new Error("function-start selection was empty");
     }
     await writeFunctionStarts(startsPath, functionStarts);
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       `${options.output}.starts.json`,
       `${
         JSON.stringify(
@@ -491,23 +491,23 @@ async function generate(options: Options) {
         const tracePath = join(root, `trace-${workloadIndex}-${repeat}.bin`);
         await runCommand([
           runner,
-          String(Deno.pid),
+          String(Edno.pid),
           binary,
           ...workload.args,
         ], {
           cwd: workload.cwd,
           env: {
-            ...Deno.env.toObject(),
-            DENO_ORDER_RUNNER_PRELOAD: tracer,
-            DENO_FUNCTION_TRACE_OUT: tracePath,
-            DENO_FUNCTION_TRACE_STARTS: startsPath,
-            DENO_DIR: denoDir,
-            DENO_NO_UPDATE_CHECK: "1",
-            DENO_NO_PACKAGE_JSON: "1",
+            ...Edno.env.toObject(),
+            EDNO_ORDER_RUNNER_PRELOAD: tracer,
+            EDNO_FUNCTION_TRACE_OUT: tracePath,
+            EDNO_FUNCTION_TRACE_STARTS: startsPath,
+            EDNO_DIR: ednoDir,
+            EDNO_NO_UPDATE_CHECK: "1",
+            EDNO_NO_PACKAGE_JSON: "1",
             NO_COLOR: "1",
           },
         });
-        const trace = parseTrace(await Deno.readFile(tracePath));
+        const trace = parseTrace(await Edno.readFile(tracePath));
         totalStarts ??= trace.totalStarts;
         if (trace.totalStarts !== totalStarts) {
           throw new Error("ELF function start count changed between traces");
@@ -564,13 +564,13 @@ async function generate(options: Options) {
       `# Profile: ${options.workloadProfile}; ${options.repeats} traces per workload.`,
       `# ${seenAddresses.size} function addresses; ${orderedNames.length} symbol names.`,
     ];
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       options.output,
       [...comments, ...orderedNames, ""].join("\n"),
     );
     const report = {
       platform: "linux",
-      architecture: Deno.build.arch,
+      architecture: Edno.build.arch,
       binary,
       order_file: options.output,
       workload_profile: options.workloadProfile,
@@ -586,16 +586,16 @@ async function generate(options: Options) {
       symbol_names: orderedNames.length,
       workloads: workloadReports,
     };
-    await Deno.writeTextFile(
+    await Edno.writeTextFile(
       `${options.output}.json`,
       `${JSON.stringify(report, null, 2)}\n`,
     );
     console.log(JSON.stringify(report, null, 2));
   } finally {
-    await Deno.remove(root, { recursive: true });
+    await Edno.remove(root, { recursive: true });
   }
 }
 
 if (import.meta.main) {
-  await generate(parseArgs(Deno.args));
+  await generate(parseArgs(Edno.args));
 }

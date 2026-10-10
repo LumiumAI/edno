@@ -1,4 +1,4 @@
-const obj = Deno.env.toObject();
+const obj = Edno.env.toObject();
 const pathKey = Object.keys(obj).find((p) => p.toLowerCase() === "path");
 if (pathKey == null) {
   throw "FAIL CASING";

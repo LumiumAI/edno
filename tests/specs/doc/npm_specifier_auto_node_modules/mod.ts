@@ -1,1 +1,1 @@
-export { getValue, setValue } from "npm:@denotest/esm-basic";
+export { getValue, setValue } from "npm:@ednotest/esm-basic";

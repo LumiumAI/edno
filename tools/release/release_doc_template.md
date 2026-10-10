@@ -7,8 +7,8 @@ land until the release is finished.**
 
 - [ ] Ensure forks and local clones of:
   - [`denoland/deno`](https://github.com/denoland/deno/),
-  - [`denoland/dotcom`](https://github.com/denoland/dotcom/),
-  - [`denoland/deno_docker`](https://github.com/denoland/deno_docker/),
+  - [`ednoland/dotcom`](https://github.com/ednoland/dotcom/),
+  - [`ednoland/deno_docker`](https://github.com/ednoland/deno_docker/),
   - [`denoland/deno-docs`](https://github.com/denoland/deno-docs)
 - [ ] Check https://deno.land/benchmarks?-100 and ensure there's no recent
       regressions.
@@ -19,7 +19,7 @@ land until the release is finished.**
 
 @here
 
-Deno v$VERSION is now getting released.
+Edno v$VERSION is now getting released.
 
 `denoland/deno` is now locked.
 
@@ -28,7 +28,7 @@ Deno v$VERSION is now getting released.
 Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
 ```
 
-## Updating `deno`
+## Updating `edno`
 
 ### Phase 1: Bumping versions
 
@@ -84,14 +84,14 @@ Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
   - [ ] There are 46 assets on the v$VERSION
         [GitHub release draft](https://github.com/denoland/deno/releases/).
   - [ ] There are 48 zip files for this version on
-        [dl.deno.land](https://dash.cloudflare.com/895762025d37fc687ecd72d7cc80204a/r2/default/buckets/dl-deno-land?prefix=release%2Fv$VERSION).
+        [dl.deno.land](https://dash.cloudflare.com/895762025d37fc687ecd72d7cc80204a/r2/default/buckets/dl-edno-land?prefix=release%2Fv$VERSION).
 
 - [ ] Publish the release on Github
 
 ## Update https://deno.com
 
 - [ ] Run
-      https://github.com/denoland/dotcom/actions/workflows/update_version.yml to
+      https://github.com/ednoland/dotcom/actions/workflows/update_version.yml to
       automatically open a PR.
   - [ ] Merge the PR.
 
@@ -105,12 +105,12 @@ Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
 ## Updating `deno_docker`
 
 - [ ] Run the version bump workflow:
-      https://github.com/denoland/deno_docker/actions/workflows/version_bump.yml
+      https://github.com/ednoland/deno_docker/actions/workflows/version_bump.yml
 - [ ] This will open a PR. Review and merge it.
 - [ ] Create a `$VERSION` tag (_without_ `v` prefix).
 - [ ] This will trigger a publish CI run. Verify that it completes sucessfully.
 
-## Updating `deno_pypi`
+## Updating `edno_pypi`
 
 - [ ] Run the version bump workflow:
       https://github.com/denoland/deno_pypi/actions/workflows/version-bump.yml
@@ -118,7 +118,7 @@ Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
 - [ ] Run the release workflow:
       https://github.com/denoland/deno_pypi/actions/workflows/release.yml
 - [ ] This will trigger a publish CI run. Verify that it completes sucessfully
-      and new version is available at https://pypi.org/project/deno/.
+      and new version is available at https://pypi.org/project/edno/.
 
 ## Update MDN
 
@@ -127,17 +127,17 @@ Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
       changes in this release. If in doubt message @bartlomieju and skip this
       step.
 
-## Add `deno upgrade` banner
+## Add `edno upgrade` banner
 
 - [ ] You can optionally add a banner that will be printed when users run
-      `deno
+      `edno
       upgrade`. This is useful in situation when you want to inform
       users about a need to run a command to enjoy a new feature or a breaking
       change.
   - Create `banner.txt` file with the content you want to print - _it must be
     plaintext_.
   - Upload the file in
-    https://dash.cloudflare.com/895762025d37fc687ecd72d7cc80204a/r2/default/buckets/dl-deno-land?prefix=release%2Fv$VERSION/banner.txt.
+    https://dash.cloudflare.com/895762025d37fc687ecd72d7cc80204a/r2/default/buckets/dl-edno-land?prefix=release%2Fv$VERSION/banner.txt.
 
 ## All done!
 
@@ -152,7 +152,7 @@ Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
 
 *You can land PRs now*
 
-Deno v$VERSION has been released.
+Edno v$VERSION has been released.
 ```
 
 ## Downgrading
@@ -160,6 +160,6 @@ Deno v$VERSION has been released.
 In case something went wrong:
 
 1. Update https://dl.deno.land/release-latest.txt to the previous release.
-1. Revert the PR to the [dotcom repo](https://github.com/denoland/dotcom/) in
-   order to prevent the [`setup-deno`](https://github.com/denoland/setup-deno)
+1. Revert the PR to the [dotcom repo](https://github.com/ednoland/dotcom/) in
+   order to prevent the [`setup-edno`](https://github.com/denoland/setup-deno)
    GH action from pulling it in.

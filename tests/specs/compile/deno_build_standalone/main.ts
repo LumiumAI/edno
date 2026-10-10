@@ -1,4 +1,4 @@
-const value: boolean = Deno.build.standalone;
+const value: boolean = Edno.build.standalone;
 console.log(value);
 
 new Worker(import.meta.resolve("./worker.ts"), {

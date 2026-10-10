@@ -1,2 +1,2 @@
-/// <reference lib="deno.ns" />
+/// <reference lib="edno.ns" />
 /// <reference no-default-lib="true" />

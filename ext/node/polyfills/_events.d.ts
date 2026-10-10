@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 // Forked from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/9b9cd671114a2a5178809798d8e7f4d8ca6c2671/types/node/events.d.ts
 
@@ -43,7 +43,7 @@ export interface Abortable {
 export function getEventListeners(
   emitter: EventTarget | EventEmitter,
   name: string | symbol,
-  // deno-lint-ignore ban-types
+  // edno-lint-ignore ban-types
 ): Function[];
 
 /**
@@ -462,7 +462,7 @@ export class EventEmitter {
    * ```
    * @since v0.1.26
    */
-  // deno-lint-ignore ban-types
+  // edno-lint-ignore ban-types
   listeners(eventName: string | symbol): Function[];
   /**
    * Returns a copy of the array of listeners for the event named `eventName`,
@@ -493,7 +493,7 @@ export class EventEmitter {
    * ```
    * @since v9.4.0
    */
-  // deno-lint-ignore ban-types
+  // edno-lint-ignore ban-types
   rawListeners(eventName: string | symbol): Function[];
   /**
    * Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments

@@ -19,13 +19,13 @@ use std::task::Poll;
 use std::task::Waker;
 use std::task::ready;
 
-use deno_core::BufView;
-use deno_core::JsBuffer;
-use deno_core::OpState;
-use deno_core::ResourceId;
-use deno_core::futures::task::AtomicWaker;
-use deno_core::serde_v8;
-use deno_core::v8;
+use edno_core::BufView;
+use edno_core::JsBuffer;
+use edno_core::OpState;
+use edno_core::ResourceId;
+use edno_core::futures::task::AtomicWaker;
+use edno_core::serde_v8;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 use http::request::Parts;
 use hyper::body::Body;
@@ -93,7 +93,7 @@ pub(crate) struct HttpServerStateInner {
   pool: Vec<(Rc<HttpRecord>, HeaderMap)>,
   /// Registry of upgraded server-side WebSockets owned by this server, so
   /// that `op_http_close` can drive a graceful or forceful shutdown of any
-  /// websockets that are still open when `Deno.serve` is being torn down.
+  /// websockets that are still open when `Edno.serve` is being torn down.
   /// Without this they would leak past `await server.shutdown()` as
   /// `serverWebSocket` resources.
   pub(crate) active_websockets: Rc<ActiveWebSockets>,
@@ -114,7 +114,7 @@ pub(crate) enum WsShutdownMode {
 #[derive(Default)]
 pub(crate) struct ActiveWebSockets {
   next_key: Cell<u64>,
-  entries: RefCell<HashMap<u64, Weak<deno_websocket::ServerWebSocket>>>,
+  entries: RefCell<HashMap<u64, Weak<edno_websocket::ServerWebSocket>>>,
   /// Once set, every new websocket registered through
   /// [`Self::register`] is immediately shut down. Set by
   /// [`Self::begin_shutdown`] when `op_http_close` / `op_http_cancel` starts
@@ -138,7 +138,7 @@ impl ActiveWebSockets {
   pub(crate) fn register(
     &self,
     key: u64,
-    ws: &Rc<deno_websocket::ServerWebSocket>,
+    ws: &Rc<edno_websocket::ServerWebSocket>,
   ) {
     self.entries.borrow_mut().insert(key, Rc::downgrade(ws));
     if let Some(mode) = self.shutting_down.get() {
@@ -178,7 +178,7 @@ impl ActiveWebSockets {
     // Bind first: `for ... in self.entries.borrow().values()...collect()`
     // would hold the `Ref` across the loop body, blocking any re-entry into
     // the registry from `apply_shutdown`.
-    let live: Vec<Rc<deno_websocket::ServerWebSocket>> = self
+    let live: Vec<Rc<edno_websocket::ServerWebSocket>> = self
       .entries
       .borrow()
       .values()
@@ -191,7 +191,7 @@ impl ActiveWebSockets {
 }
 
 fn apply_shutdown(
-  ws: &Rc<deno_websocket::ServerWebSocket>,
+  ws: &Rc<edno_websocket::ServerWebSocket>,
   mode: WsShutdownMode,
 ) {
   match mode {
@@ -696,7 +696,7 @@ where
     return Ok(response);
   }
 
-  let otel_info = if let Some(otel) = deno_telemetry::OTEL_GLOBALS
+  let otel_info = if let Some(otel) = edno_telemetry::OTEL_GLOBALS
     .get()
     .filter(|o| o.has_metrics())
   {
@@ -806,7 +806,7 @@ pub(crate) fn trust_proxy_headers() -> bool {
   static TRUST_PROXY_HEADERS: OnceLock<bool> = OnceLock::new();
 
   *TRUST_PROXY_HEADERS.get_or_init(|| {
-    std::env::var_os("DENO_TRUST_PROXY_HEADERS")
+    std::env::var_os("EDNO_TRUST_PROXY_HEADERS")
       .is_some_and(|value| value == "1")
   })
 }
@@ -822,7 +822,7 @@ impl HttpRecord {
   ) -> Rc<Self> {
     let (mut request_parts, request_body) = request.into_parts();
     let client_addr = if trust_proxy_headers() {
-      request_parts.headers.remove("x-deno-client-address")
+      request_parts.headers.remove("x-edno-client-address")
     } else {
       None
     };
@@ -1174,10 +1174,10 @@ impl HttpRecord {
 
   /// Copy relevant attributes (like `http.route`) from a span to OtelInfo
   /// for metrics.
-  pub fn copy_span_to_otel_info(&self, span: &deno_telemetry::OtelSpan) {
+  pub fn copy_span_to_otel_info(&self, span: &edno_telemetry::OtelSpan) {
     let mut inner = self.self_mut();
     let span_state = span.0.borrow();
-    if let deno_telemetry::OtelSpanState::Recording(data) = &**span_state
+    if let edno_telemetry::OtelSpanState::Recording(data) = &**span_state
       && let Some(info) = inner.otel_info.as_mut()
     {
       for attr in &data.attributes {
@@ -1351,7 +1351,7 @@ mod tests {
   use std::error::Error as StdError;
 
   use bytes::Buf;
-  use deno_net::raw::NetworkStreamType;
+  use edno_net::raw::NetworkStreamType;
   use hyper::body::Body;
   use hyper::service::HttpService;
   use hyper::service::service_fn;
@@ -1397,7 +1397,7 @@ mod tests {
   }
 
   #[tokio::test]
-  async fn test_handle_request() -> Result<(), deno_core::error::AnyError> {
+  async fn test_handle_request() -> Result<(), edno_core::error::AnyError> {
     let (tx, mut rx) = tokio::sync::mpsc::channel(10);
     let server_state = HttpServerState::new();
     let server_state_check = server_state.clone();

@@ -1,3 +1,3 @@
 import "@std/dotenv/load";
 
-console.log(Deno.env.get("GREETING")); // hello world
+console.log(Edno.env.get("GREETING")); // hello world

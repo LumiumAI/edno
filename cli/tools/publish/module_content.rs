@@ -8,14 +8,14 @@ use deno_ast::MediaType;
 use deno_ast::ParsedSource;
 use deno_ast::SourceTextInfo;
 use deno_ast::TextChange;
-use deno_core::anyhow::Context;
-use deno_core::error::AnyError;
-use deno_core::url::Url;
+use edno_core::anyhow::Context;
+use edno_core::error::AnyError;
+use edno_core::url::Url;
 use deno_graph::ModuleGraph;
-use deno_resolver::cache::LazyGraphSourceParser;
-use deno_resolver::cache::ParsedSourceCache;
-use deno_resolver::deno_json::CompilerOptionsResolver;
-use deno_resolver::workspace::ResolutionKind;
+use edno_resolver::cache::LazyGraphSourceParser;
+use edno_resolver::cache::ParsedSourceCache;
+use edno_resolver::edno_json::CompilerOptionsResolver;
+use edno_resolver::workspace::ResolutionKind;
 use lazy_regex::Lazy;
 
 use super::diagnostics::PublishDiagnostic;
@@ -29,7 +29,7 @@ use crate::tools::unfurl_utils::is_safe_unquoted_comment_value;
 
 fn jsx_pragma(name: &str, value: &str) -> Result<String, AnyError> {
   if !is_safe_unquoted_comment_value(value) {
-    return Err(deno_core::anyhow::anyhow!(
+    return Err(edno_core::anyhow::anyhow!(
       "Cannot represent compiler option '{name}' as a generated JSX pragma."
     ));
   }
@@ -342,10 +342,10 @@ mod test {
   use std::path::PathBuf;
 
   use deno_path_util::url_from_file_path;
-  use deno_resolver::factory::ResolverFactory;
-  use deno_resolver::factory::ResolverFactoryOptions;
-  use deno_resolver::factory::WorkspaceFactory;
-  use deno_resolver::factory::WorkspaceFactoryOptions;
+  use edno_resolver::factory::ResolverFactory;
+  use edno_resolver::factory::ResolverFactoryOptions;
+  use edno_resolver::factory::WorkspaceFactory;
+  use edno_resolver::factory::WorkspaceFactoryOptions;
   use pretty_assertions::assert_eq;
   use sys_traits::FsCreateDirAll;
   use sys_traits::FsWrite;
@@ -373,12 +373,12 @@ mod test {
   async fn test_module_content_jsx() {
     run_test(&[
       (
-        "/deno.json",
+        "/edno.json",
         r#"{ "nodeModulesDir": "manual", "workspace": ["package-a", "package-b", "package-c", "package-d"] }"#,
         None,
       ),
       (
-        "/package-a/deno.json",
+        "/package-a/edno.json",
         r#"{ "compilerOptions": {
         "jsx": "react-jsx",
         "jsxImportSource": "react",
@@ -392,7 +392,7 @@ mod test {
         None,
       ),
       (
-        "/package-b/deno.json",
+        "/package-b/edno.json",
         r#"{
         "compilerOptions": { "jsx": "react-jsx" },
         "imports": {
@@ -403,7 +403,7 @@ mod test {
         None,
       ),
       (
-        "/package-c/deno.json",
+        "/package-c/edno.json",
         r#"{
         "compilerOptions": {
           "jsx": "precompile",
@@ -418,7 +418,7 @@ mod test {
         None,
       ),
       (
-        "/package-d/deno.json",
+        "/package-d/edno.json",
         r#"{
         "compilerOptions": { "jsx": "react" },
         "imports": {
@@ -482,7 +482,7 @@ mod test {
     in_memory_sys.fs_create_dir_all(get_path("/")).unwrap();
     in_memory_sys
       .fs_write(
-        get_path("/deno.json"),
+        get_path("/edno.json"),
         r#"{
           "compilerOptions": {
             "jsx": "react-jsx",
@@ -521,7 +521,7 @@ mod test {
     in_memory_sys.fs_create_dir_all(get_path("/")).unwrap();
     in_memory_sys
       .fs_write(
-        get_path("/deno.json"),
+        get_path("/edno.json"),
         r#"{
           "name": "@scope/pkg",
           "version": "1.0.0",
@@ -665,7 +665,7 @@ mod test {
       sys.clone(),
       cwd.to_path_buf(),
       WorkspaceFactoryOptions {
-        maybe_custom_deno_dir_root: Some(cwd.join("deno_dir")),
+        maybe_custom_deno_dir_root: Some(cwd.join("edno_dir")),
         ..Default::default()
       },
     ));
@@ -673,7 +673,7 @@ mod test {
       workspace_factory,
       ResolverFactoryOptions {
         package_json_dep_resolution: Some(
-          deno_resolver::workspace::PackageJsonDepResolution::Enabled,
+          edno_resolver::workspace::PackageJsonDepResolution::Enabled,
         ),
         unstable_sloppy_imports: true,
         ..Default::default()

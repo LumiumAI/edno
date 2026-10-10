@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --check --allow-write=. --allow-read=. --lock=./tools/deno.lock.json
+#!/usr/bin/env -S edno run --check --allow-write=. --allow-read=. --lock=./tools/edno.lock.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { createWorkflow, step } from "jsr:@david/gagen@0.3.1";
 
@@ -15,15 +15,15 @@ const workflow = createWorkflow({
     runsOn: "ubuntu-latest",
     steps: [
       step({
-        name: "Install Deno",
+        name: "Install Edno",
         uses: "denoland/setup-deno@v2",
-        with: { "deno-version": "canary" },
+        with: { "edno-version": "canary" },
       }),
       step({
         name: "Lint",
         env: { PR_TITLE: "${{ github.event.pull_request.title }}" },
         run:
-          'deno run https://raw.githubusercontent.com/denoland/deno/refs/heads/main/tools/verify_pr_title.js "$PR_TITLE"',
+          'edno run https://raw.githubusercontent.com/denoland/deno/refs/heads/main/tools/verify_pr_title.js "$PR_TITLE"',
       }),
     ],
   }],

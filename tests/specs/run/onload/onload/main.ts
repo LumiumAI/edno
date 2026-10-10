@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-prototype-builtins
+// edno-lint-ignore-file no-prototype-builtins
 import { assert } from "@std/assert";
 import "./imported.ts";
 

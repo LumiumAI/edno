@@ -6,19 +6,19 @@
       "traceState": "",
       "parentSpanId": "",
       "flags": 257,
-      "name": "deno.cron",
+      "name": "edno.cron",
       "kind": 1,
       "startTimeUnixNano": "[WILDCARD]",
       "endTimeUnixNano": "[WILDCARD]",
       "attributes": [
         {
-          "key": "deno.cron.name",
+          "key": "edno.cron.name",
           "value": {
             "stringValue": "test-cron"
           }
         },
         {
-          "key": "deno.cron.schedule",
+          "key": "edno.cron.schedule",
           "value": {
             "stringValue": "*/20 * * * *"
           }
@@ -61,19 +61,19 @@
       "traceState": "",
       "parentSpanId": "",
       "flags": 257,
-      "name": "deno.cron",
+      "name": "edno.cron",
       "kind": 1,
       "startTimeUnixNano": "[WILDCARD]",
       "endTimeUnixNano": "[WILDCARD]",
       "attributes": [
         {
-          "key": "deno.cron.name",
+          "key": "edno.cron.name",
           "value": {
             "stringValue": "test-cron"
           }
         },
         {
-          "key": "deno.cron.schedule",
+          "key": "edno.cron.schedule",
           "value": {
             "stringValue": "*/20 * * * *"
           }

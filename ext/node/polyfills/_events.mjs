@@ -68,17 +68,17 @@ const kWatermarkData = SymbolFor("nodejs.watermarkData");
 const kEvents = Symbol("kEvents");
 
 const { inspect } = core.loadExtScript(
-  "ext:deno_node/internal/util/inspect.mjs",
+  "ext:edno_node/internal/util/inspect.mjs",
 );
 const { kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const {
   AbortError,
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_THIS,
   ERR_UNHANDLED_ERROR,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const lazyAsyncHooks = core.createLazyLoader("node:async_hooks");
 const {
@@ -89,16 +89,16 @@ const {
   validateNumber,
   validateObject,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { spliceOne } = core.loadExtScript("ext:deno_node/_utils.ts");
-const { nextTick } = core.loadExtScript("ext:deno_node/_process/process.ts");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { spliceOne } = core.loadExtScript("ext:edno_node/_utils.ts");
+const { nextTick } = core.loadExtScript("ext:edno_node/_process/process.ts");
 const {
   eventTargetData,
   kResistStopImmediatePropagation,
-} = core.loadExtScript("ext:deno_web/02_event.js");
+} = core.loadExtScript("ext:edno_web/02_event.js");
 
 const { addAbortListener } = core.loadExtScript(
-  "ext:deno_node/internal/events/abort_listener.mjs",
+  "ext:edno_node/internal/events/abort_listener.mjs",
 );
 const kFirstEventParam = Symbol("kFirstEventParam");
 const kCapture = Symbol("kCapture");
@@ -371,7 +371,7 @@ function identicalSequenceRange(a, b) {
   return [0, 0];
 }
 
-// deno-lint-ignore no-unused-vars
+// edno-lint-ignore no-unused-vars
 function enhanceStackTrace(err, own) {
   let ctorInfo = "";
   try {
@@ -554,7 +554,7 @@ function _addListener(target, type, listener, prepend) {
       w.emitter = target;
       w.type = type;
       w.count = existing.length;
-      // deno-lint-ignore no-process-global
+      // edno-lint-ignore no-process-global
       process.emitWarning(w);
     }
   }
@@ -928,7 +928,7 @@ function getEventListeners(emitterOrTarget, type) {
  * @param {{ signal: AbortSignal; }} [options]
  * @returns {Promise}
  */
-// deno-lint-ignore require-await
+// edno-lint-ignore require-await
 async function once(emitter, name, options = kEmptyObject) {
   validateObject(options, "options");
   const signal = options?.signal;

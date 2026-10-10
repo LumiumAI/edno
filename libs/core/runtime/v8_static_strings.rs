@@ -14,14 +14,14 @@ pub use v8_static_strings;
 v8_static_strings!(
   BUILD_CUSTOM_ERROR = "buildCustomError",
   CALL_CONSOLE = "callConsole",
-  CALL_SITE_EVALS = "deno_core::call_site_evals",
+  CALL_SITE_EVALS = "edno_core::call_site_evals",
   CAUSE = "cause",
   CODE = "code",
   CONSOLE = "console",
   CONSTRUCTOR = "constructor",
   ERROR_CONSTRUCTORS = "errorConstructors",
   CORE = "core",
-  DENO = "Deno",
+  EDNO = "Edno",
   DEFAULT = "default",
   DIRNAME = "dirname",
   ERR_MODULE_NOT_FOUND = "ERR_MODULE_NOT_FOUND",
@@ -50,5 +50,5 @@ v8_static_strings!(
   WEAK_MAP = "WeakMap",
   WEBASSEMBLY = "WebAssembly",
   ESMODULE = "__esModule",
-  HOST_OBJECT = "Deno.core.hostObject",
+  HOST_OBJECT = "Edno.core.hostObject",
 );

@@ -4,7 +4,7 @@ use std::collections::VecDeque;
 use std::io::Write;
 
 use console_static_text::ansi::strip_ansi_codes;
-use deno_core::anyhow::Context;
+use edno_core::anyhow::Context;
 
 use super::fmt::to_relative_path_or_remote_url;
 use super::*;
@@ -271,7 +271,7 @@ impl TestReporter for JunitTestReporter {
         });
     }
 
-    let report = JunitReport::new("deno test", *elapsed, suites.into_values());
+    let report = JunitReport::new("edno test", *elapsed, suites.into_values());
 
     if self.output_path == "-" {
       report
@@ -619,7 +619,7 @@ impl From<TestStepDescription> for TestNameTreeNode {
 
 #[cfg(test)]
 mod tests {
-  use deno_core::error::JsStackFrame;
+  use edno_core::error::JsStackFrame;
 
   use super::*;
 

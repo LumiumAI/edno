@@ -43,7 +43,7 @@ members = [
   "libs/core_testing",
   "libs/crypto",
   "libs/dcore",
-  "libs/deno_v8",
+  "libs/edno_v8",
   "libs/dotenv",
   "libs/eszip",
   "libs/http_h1",
@@ -106,7 +106,7 @@ deno_task_shell = "=0.33.3"
 deno_terminal = "=0.2.3"
 deno_unsync = { version = "0.4.4", default-features = false }
 deno_whoami = "0.1.0"
-v8 = { package = "deno_v8", version = "0.4.0", path = "./libs/deno_v8", default-features = false, features = ["simdutf"] }
+v8 = { package = "edno_v8", version = "0.4.0", path = "./libs/edno_v8", default-features = false, features = ["simdutf"] }
 
 denokv_proto = "0.14.0"
 denokv_remote = "0.14.0"
@@ -114,65 +114,65 @@ denokv_remote = "0.14.0"
 denokv_sqlite = { default-features = false, version = "0.14.0" }
 
 # exts
-deno_bundle_runtime = { version = "0.46.0", path = "./ext/bundle" }
-deno_cache = { version = "0.192.0", path = "./ext/cache" }
-deno_canvas = { version = "0.121.0", path = "./ext/canvas" }
-deno_cron = { version = "0.139.0", path = "./ext/cron" }
-deno_crypto = { version = "0.273.0", path = "./ext/crypto" }
-deno_fetch = { version = "0.283.0", path = "./ext/fetch" }
-deno_ffi = { version = "0.246.0", path = "./ext/ffi" }
-deno_fs = { version = "0.169.0", path = "./ext/fs" }
-deno_http = { version = "0.257.0", path = "./ext/http" }
-deno_image = { version = "0.35.0", path = "./ext/image" }
-deno_io = { version = "0.169.0", path = "./ext/io" }
-deno_kv = { version = "0.167.0", path = "./ext/kv" }
-deno_napi = { version = "0.190.0", path = "./ext/napi" }
-deno_net = { version = "0.251.0", path = "./ext/net" }
-deno_node = { version = "0.197.0", path = "./ext/node" }
-deno_node_crypto = { version = "0.29.0", path = "./ext/node_crypto" }
-deno_node_sqlite = { version = "0.29.0", path = "./ext/node_sqlite" }
-deno_os = { version = "0.76.0", path = "./ext/os" }
-deno_process = { version = "0.74.0", path = "./ext/process" }
-deno_signals = { version = "0.50.0", path = "./ext/signals" }
-deno_telemetry = { version = "0.81.0", path = "./ext/telemetry" }
-deno_tls = { version = "0.246.0", path = "./ext/tls" }
-deno_web = { version = "0.290.0", path = "./ext/web" }
-deno_webgpu = { version = "0.226.0", path = "./ext/webgpu" }
-deno_webidl = { version = "0.259.0", path = "./ext/webidl" }
-deno_websocket = { version = "0.264.0", path = "./ext/websocket" }
-deno_webstorage = { version = "0.254.0", path = "./ext/webstorage" }
-denort_helper = { version = "0.57.0", path = "./ext/rt_helper" }
+edno_bundle_runtime = { version = "0.46.0", path = "./ext/bundle" }
+edno_cache = { version = "0.192.0", path = "./ext/cache" }
+edno_canvas = { version = "0.121.0", path = "./ext/canvas" }
+edno_cron = { version = "0.139.0", path = "./ext/cron" }
+edno_crypto = { version = "0.273.0", path = "./ext/crypto" }
+edno_fetch = { version = "0.283.0", path = "./ext/fetch" }
+edno_ffi = { version = "0.246.0", path = "./ext/ffi" }
+edno_fs = { version = "0.169.0", path = "./ext/fs" }
+edno_http = { version = "0.257.0", path = "./ext/http" }
+edno_image = { version = "0.35.0", path = "./ext/image" }
+edno_io = { version = "0.169.0", path = "./ext/io" }
+edno_kv = { version = "0.167.0", path = "./ext/kv" }
+edno_napi = { version = "0.190.0", path = "./ext/napi" }
+edno_net = { version = "0.251.0", path = "./ext/net" }
+edno_node = { version = "0.197.0", path = "./ext/node" }
+edno_node_crypto = { version = "0.29.0", path = "./ext/node_crypto" }
+edno_node_sqlite = { version = "0.29.0", path = "./ext/node_sqlite" }
+edno_os = { version = "0.76.0", path = "./ext/os" }
+edno_process = { version = "0.74.0", path = "./ext/process" }
+edno_signals = { version = "0.50.0", path = "./ext/signals" }
+edno_telemetry = { version = "0.81.0", path = "./ext/telemetry" }
+edno_tls = { version = "0.246.0", path = "./ext/tls" }
+edno_web = { version = "0.290.0", path = "./ext/web" }
+edno_webgpu = { version = "0.226.0", path = "./ext/webgpu" }
+edno_webidl = { version = "0.259.0", path = "./ext/webidl" }
+edno_websocket = { version = "0.264.0", path = "./ext/websocket" }
+edno_webstorage = { version = "0.254.0", path = "./ext/webstorage" }
+ednort_helper = { version = "0.57.0", path = "./ext/rt_helper" }
 
 # workspace libraries
-deno_bench_util = { version = "0.253.0", path = "./tests/bench_util" }
-deno_cache_dir = { version = "0.51.0", path = "./libs/cache_dir" }
-deno_cli_parser = { version = "0.9.0", path = "./libs/cli_parser" }
-deno_config = { version = "0.109.0", features = ["workspace"], path = "./libs/config" }
+edno_bench_util = { version = "0.253.0", path = "./tests/bench_util" }
+edno_cache_dir = { version = "0.51.0", path = "./libs/cache_dir" }
+edno_cli_parser = { version = "0.9.0", path = "./libs/cli_parser" }
+edno_config = { version = "0.109.0", features = ["workspace"], path = "./libs/config" }
 # Workspace binaries select the JavaScript engine at their top level. Keep the
-# backend-independent runtime defaults enabled here without pulling deno_core's
+# backend-independent runtime defaults enabled here without pulling edno_core's
 # public V8 default into a QuickJS feature graph.
-deno_core = { version = "0.412.0", path = "./libs/core", default-features = false, features = ["reactor-tokio", "v8_use_custom_libcxx"] }
-deno_core_testing = { path = "./libs/core_testing" }
-deno_crypto_provider = { version = "0.53.0", path = "./libs/crypto" }
-deno_dotenv = { version = "0.28.0", path = "./libs/dotenv" }
-deno_features = { version = "0.56.0", path = "./runtime/features" }
-deno_http_h1 = { version = "0.10.0", path = "./libs/http_h1" }
-deno_inspector_server = { version = "0.33.0", path = "./libs/inspector_server" }
-deno_lib = { version = "0.77.0", path = "./cli/lib" }
-deno_lockfile = { version = "0.61.0", path = "./libs/lockfile" }
-deno_maybe_sync = { version = "0.46.0", path = "./libs/maybe_sync" }
-deno_npm = { version = "0.71.0", path = "./libs/npm" }
-deno_npm_cache = { version = "0.78.0", path = "./libs/npm_cache" }
-deno_npm_installer = { version = "0.54.0", path = "./libs/npm_installer" }
-deno_npmrc = { version = "0.20.0", path = "./libs/npmrc" }
-deno_ops = { version = "0.288.0", path = "./libs/ops" }
-deno_package_json = { version = "0.61.0", default-features = false, path = "./libs/package_json" }
-deno_permissions = { version = "0.118.0", path = "./runtime/permissions" }
-deno_print = { version = "0.7.0", path = "./libs/print" }
-deno_resolver = { version = "0.90.0", path = "./libs/resolver" }
-deno_runtime = { version = "0.267.0", path = "./runtime" }
-deno_snapshots = { version = "0.74.0", path = "./cli/snapshot" }
-deno_subprocess_windows = { path = "./runtime/subprocess_windows", version = "0.54.0" }
+edno_core = { version = "0.412.0", path = "./libs/core", default-features = false, features = ["reactor-tokio", "v8_use_custom_libcxx"] }
+edno_core_testing = { path = "./libs/core_testing" }
+edno_crypto_provider = { version = "0.53.0", path = "./libs/crypto" }
+edno_dotenv = { version = "0.28.0", path = "./libs/dotenv" }
+edno_features = { version = "0.56.0", path = "./runtime/features" }
+edno_http_h1 = { version = "0.10.0", path = "./libs/http_h1" }
+edno_inspector_server = { version = "0.33.0", path = "./libs/inspector_server" }
+edno_lib = { version = "0.77.0", path = "./cli/lib" }
+edno_lockfile = { version = "0.61.0", path = "./libs/lockfile" }
+edno_maybe_sync = { version = "0.46.0", path = "./libs/maybe_sync" }
+edno_npm = { version = "0.71.0", path = "./libs/npm" }
+edno_npm_cache = { version = "0.78.0", path = "./libs/npm_cache" }
+edno_npm_installer = { version = "0.54.0", path = "./libs/npm_installer" }
+edno_npmrc = { version = "0.20.0", path = "./libs/npmrc" }
+edno_ops = { version = "0.288.0", path = "./libs/ops" }
+edno_package_json = { version = "0.61.0", default-features = false, path = "./libs/package_json" }
+edno_permissions = { version = "0.118.0", path = "./runtime/permissions" }
+edno_print = { version = "0.7.0", path = "./libs/print" }
+edno_resolver = { version = "0.90.0", path = "./libs/resolver" }
+edno_runtime = { version = "0.267.0", path = "./runtime" }
+edno_snapshots = { version = "0.74.0", path = "./cli/snapshot" }
+edno_subprocess_windows = { path = "./runtime/subprocess_windows", version = "0.54.0" }
 eszip = { version = "0.137.0", path = "./libs/eszip" }
 napi_sym = { version = "0.189.0", path = "./ext/napi/sym" }
 node_resolver = { version = "0.97.0", path = "./libs/node_resolver" }
@@ -291,11 +291,11 @@ rayon = "1.11.0"
 regex = "^1.7.0"
 reqwest = { version = "=0.12.5", default-features = false, features = ["rustls-tls", "stream", "gzip", "brotli", "socks", "json", "http2"] } # pinned because of https://github.com/seanmonstar/reqwest/pull/1955
 # zstd payload (not gzip): rpm's `gzip-compression` pulls flate2's zlib-rs C
-# shim, which collides at link time with deno's zlib-ng (libz-sys). deno
+# shim, which collides at link time with edno's zlib-ng (libz-sys). edno
 # already depends on `zstd`, and modern RPM tooling reads zstd payloads.
 rpm = { version = "0.25.1", default-features = false, features = ["payload", "zstd-compression"] }
 rstest = "0"
-rusqlite = { version = "0.40.0", features = ["unlock_notify", "bundled", "session", "modern_sqlite", "limits", "backup", "fallible_uint"] } # "modern_sqlite": need sqlite >= 3.49.0 for some db configs; "fallible_uint": ToSql for u64/usize (needed when crates like deno_cache are published/built standalone, not just feature-unified via denokv_sqlite)
+rusqlite = { version = "0.40.0", features = ["unlock_notify", "bundled", "session", "modern_sqlite", "limits", "backup", "fallible_uint"] } # "modern_sqlite": need sqlite >= 3.49.0 for some db configs; "fallible_uint": ToSql for u64/usize (needed when crates like edno_cache are published/built standalone, not just feature-unified via denokv_sqlite)
 rustls = { version = "=0.23.40", default-features = false, features = ["logging", "std", "tls12", "aws_lc_rs"] }
 rustls-pemfile = "2"
 rustls-tokio-stream = "=0.8.0"
@@ -493,7 +493,7 @@ split-debuginfo = "packed"
 debug = "line-tables-only"
 panic = "abort"
 
-[profile.bench.package.deno_npm]
+[profile.bench.package.edno_npm]
 opt-level = 3
 
 # Build release with debug symbols: cargo build --profile=release-with-debug
@@ -510,7 +510,7 @@ incremental = true
 codegen-units = 128
 lto = "thin"
 
-[profile.release-lite.package.deno_npm]
+[profile.release-lite.package.edno_npm]
 opt-level = 3
 
 # Key generation is too slow on `debug`
@@ -521,7 +521,7 @@ opt-level = 3
 [profile.dev.package.v8]
 opt-level = 1
 
-# speeds up deno compile tests a lot
+# speeds up edno compile tests a lot
 [profile.dev.package.libsui]
 opt-level = 3
 
@@ -538,35 +538,35 @@ opt-level = 3
 opt-level = 3
 [profile.release.package.bytes]
 opt-level = 3
-[profile.release.package.deno_bench_util]
+[profile.release.package.edno_bench_util]
 opt-level = 3
-[profile.release.package.deno_core]
+[profile.release.package.edno_core]
 opt-level = 3
-[profile.release.package.deno_crypto]
+[profile.release.package.edno_crypto]
 opt-level = 3
-[profile.release.package.deno_fetch]
+[profile.release.package.edno_fetch]
 opt-level = 3
-[profile.release.package.deno_ffi]
+[profile.release.package.edno_ffi]
 opt-level = 3
-[profile.release.package.deno_http]
+[profile.release.package.edno_http]
 opt-level = 3
-[profile.release.package.deno_http_h1]
+[profile.release.package.edno_http_h1]
 opt-level = 3
-[profile.release.package.deno_napi]
+[profile.release.package.edno_napi]
 opt-level = 3
-[profile.release.package.deno_net]
+[profile.release.package.edno_net]
 opt-level = 3
-[profile.release.package.deno_node]
+[profile.release.package.edno_node]
 opt-level = 3
-[profile.release.package.deno_runtime]
+[profile.release.package.edno_runtime]
 opt-level = 3
-[profile.release.package.deno_tls]
+[profile.release.package.edno_tls]
 opt-level = 3
-[profile.release.package.deno_web]
+[profile.release.package.edno_web]
 opt-level = 3
-[profile.release.package.deno_process]
+[profile.release.package.edno_process]
 opt-level = 3
-[profile.release.package.deno_websocket]
+[profile.release.package.edno_websocket]
 opt-level = 3
 [profile.release.package.fastwebsockets]
 opt-level = 3
@@ -628,11 +628,11 @@ opt-level = 3
 opt-level = 3
 [profile.release.package.deno_semver]
 opt-level = 3
-[profile.release.package.deno_npm]
+[profile.release.package.edno_npm]
 opt-level = 3
-[profile.release.package.deno_lockfile]
+[profile.release.package.edno_lockfile]
 opt-level = 3
-[profile.release.package.deno_npm_cache]
+[profile.release.package.edno_npm_cache]
 opt-level = 3
 [profile.release.package.twox-hash]
 opt-level = 3

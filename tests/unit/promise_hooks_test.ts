@@ -12,8 +12,8 @@ function monitorPromises(outputArray: string[]) {
     return promiseIds.get(promise);
   }
 
-  // @ts-ignore: Deno[Deno.internal].core allowed
-  Deno[Deno.internal].core.setPromiseHooks(
+  // @ts-ignore: Edno[Edno.internal].core allowed
+  Edno[Edno.internal].core.setPromiseHooks(
     (promise: Promise<unknown>, parentPromise?: Promise<unknown>) => {
       outputArray.push(
         `init ${identify(promise)}` +
@@ -32,7 +32,7 @@ function monitorPromises(outputArray: string[]) {
   );
 }
 
-Deno.test(async function promiseHookBasic() {
+Edno.test(async function promiseHookBasic() {
   // Bogus await here to ensure any pending promise resolution from the
   // test runtime has a chance to run and avoid contaminating our results.
   await Promise.resolve(null);
@@ -87,7 +87,7 @@ Deno.test(async function promiseHookBasic() {
   ]);
 });
 
-Deno.test(async function promiseHookMultipleConsumers() {
+Edno.test(async function promiseHookMultipleConsumers() {
   const hookResultsFirstConsumer: string[] = [];
   const hookResultsSecondConsumer: string[] = [];
 

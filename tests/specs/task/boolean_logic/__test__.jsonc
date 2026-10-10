@@ -1,4 +1,4 @@
 {
-  "args": "task -q --config deno.json boolean_logic",
+  "args": "task -q --config edno.json boolean_logic",
   "output": "task_boolean_logic.out"
 }

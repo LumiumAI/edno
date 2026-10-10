@@ -1,6 +1,6 @@
 // Proof that v8::TerminateExecution interrupts a synchronous hot loop —
 // the second test must still run after the first is killed.
-Deno.test({
+Edno.test({
   name: "spins forever",
   timeout: 100,
   fn() {
@@ -8,4 +8,4 @@ Deno.test({
   },
 });
 
-Deno.test("runs after the spin", () => {});
+Edno.test("runs after the spin", () => {});

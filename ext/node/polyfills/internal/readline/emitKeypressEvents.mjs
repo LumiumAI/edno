@@ -33,9 +33,9 @@ const {
   charLengthAt,
   CSI,
   emitKeys,
-} = core.loadExtScript("ext:deno_node/internal/readline/utils.mjs");
+} = core.loadExtScript("ext:edno_node/internal/readline/utils.mjs");
 const { kSawKeyPress } = core.loadExtScript(
-  "ext:deno_node/internal/readline/symbols.mjs",
+  "ext:edno_node/internal/readline/symbols.mjs",
 );
 
 const {
@@ -43,7 +43,7 @@ const {
 } = CSI;
 
 const { StringDecoder } = core.loadExtScript(
-  "ext:deno_node/string_decoder.ts",
+  "ext:edno_node/string_decoder.ts",
 );
 
 const KEYPRESS_DECODER = Symbol("keypress-decoder");
@@ -65,11 +65,11 @@ function emitKeypressEvents(stream, iface = undefined) {
   stream[KEYPRESS_DECODER] = new StringDecoder("utf8");
 
   stream[ESCAPE_DECODER] = emitKeys(stream);
-  // deno-lint-ignore deno-internal/prefer-primordials -- generator object, not an array
+  // edno-lint-ignore edno-internal/prefer-primordials -- generator object, not an array
   stream[ESCAPE_DECODER].next();
 
   const triggerEscape = () =>
-    // deno-lint-ignore deno-internal/prefer-primordials -- generator object, not an array
+    // edno-lint-ignore edno-internal/prefer-primordials -- generator object, not an array
     stream[ESCAPE_DECODER].next("");
   const { escapeCodeTimeout = ESCAPE_CODE_TIMEOUT } = iface;
   let timeoutId;
@@ -92,7 +92,7 @@ function emitKeypressEvents(stream, iface = undefined) {
           }
 
           try {
-            // deno-lint-ignore deno-internal/prefer-primordials -- generator object, not an array
+            // edno-lint-ignore edno-internal/prefer-primordials -- generator object, not an array
             stream[ESCAPE_DECODER].next(character);
             // Escape letter at the tail position
             if (length === string.length && character === kEscape) {
@@ -105,7 +105,7 @@ function emitKeypressEvents(stream, iface = undefined) {
             // If the generator throws (it could happen in the `keypress`
             // event), we need to restart it.
             stream[ESCAPE_DECODER] = emitKeys(stream);
-            // deno-lint-ignore deno-internal/prefer-primordials -- generator object, not an array
+            // edno-lint-ignore edno-internal/prefer-primordials -- generator object, not an array
             stream[ESCAPE_DECODER].next();
             throw err;
           }

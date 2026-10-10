@@ -9,12 +9,12 @@ import { assertEquals, assertThrows } from "@std/assert";
 import * as path from "node:path";
 
 const extensionPath = (() => {
-  const isWindows = Deno.build.os === "windows";
-  const isMac = Deno.build.os === "darwin";
-  const isLinux = Deno.build.os === "linux";
+  const isWindows = Edno.build.os === "windows";
+  const isMac = Edno.build.os === "darwin";
+  const isLinux = Edno.build.os === "linux";
 
   const currentDir = new URL(".", import.meta.url).pathname;
-  const denoDir = path.resolve(currentDir, "../..");
+  const ednoDir = path.resolve(currentDir, "../..");
 
   let libPrefix = "";
   let libSuffix = "";
@@ -31,20 +31,20 @@ const extensionPath = (() => {
     throw new Error("Unsupported platform");
   }
 
-  const targetDir = path.join(denoDir, "target", "debug");
+  const targetDir = path.join(ednoDir, "target", "debug");
   return path.join(targetDir, `${libPrefix}test_sqlite_extension.${libSuffix}`);
 })();
 
 const extensionExists = (() => {
   try {
-    Deno.statSync(extensionPath);
+    Edno.statSync(extensionPath);
     return true;
   } catch {
     return false;
   }
 })();
 
-Deno.test({
+Edno.test({
   name: "[node/sqlite] DatabaseSync loadExtension",
   ignore: !extensionExists,
   permissions: { read: true, write: true, ffi: true },
@@ -64,7 +64,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/sqlite] DatabaseSync loadExtension with FFI permission denied",
   permissions: { read: true, write: true, ffi: false },
   fn() {
@@ -73,11 +73,11 @@ Deno.test({
         allowExtension: true,
         readOnly: false,
       });
-    }, Deno.errors.NotCapable);
+    }, Edno.errors.NotCapable);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/sqlite] DatabaseSync loadExtension with invalid path",
   permissions: { read: true, write: true, ffi: true },
   fn() {

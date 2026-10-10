@@ -44,8 +44,8 @@ const {
   readableStreamForRid,
   WritableStream,
   writableStreamForRid,
-} = core.loadExtScript("ext:deno_web/06_streams.js");
-const { loadTlsKeyPair } = core.loadExtScript("ext:deno_net/02_tls.js");
+} = core.loadExtScript("ext:edno_web/06_streams.js");
+const { loadTlsKeyPair } = core.loadExtScript("ext:edno_net/02_tls.js");
 const {
   BadResourcePrototype,
 } = core;
@@ -149,7 +149,7 @@ class QuicEndpoint {
   }
 
   listen(options) {
-    const keyPair = loadTlsKeyPair("Deno.QuicEndpoint.listen", {
+    const keyPair = loadTlsKeyPair("Edno.QuicEndpoint.listen", {
       cert: options.cert,
       key: options.key,
     });
@@ -572,7 +572,7 @@ function connectQuic(options) {
     new QuicEndpoint({
       [kRid]: op_quic_endpoint_create({ hostname: "::", port: 0 }, 0, false),
     });
-  const keyPair = loadTlsKeyPair("Deno.connectQuic", {
+  const keyPair = loadTlsKeyPair("Edno.connectQuic", {
     cert: options.cert,
     key: options.key,
   });

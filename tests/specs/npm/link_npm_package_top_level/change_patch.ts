@@ -1,6 +1,6 @@
 const filePath = "./cowsay/package.json";
-const packageJson = JSON.parse(Deno.readTextFileSync(filePath));
+const packageJson = JSON.parse(Edno.readTextFileSync(filePath));
 packageJson.dependencies = {
-  "@denotest/add": "1",
+  "@ednotest/add": "1",
 };
-Deno.writeTextFileSync(filePath, JSON.stringify(packageJson));
+Edno.writeTextFileSync(filePath, JSON.stringify(packageJson));

@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::error::CoreError;
+use edno_core::error::CoreError;
 use deno_error::JsErrorBox;
 
 use super::CodeCacheInfo;
@@ -380,7 +380,7 @@ impl ModuleMap {
     }?;
 
     // `LazyEsmModuleLoader` only knows the in-binary static sources and has no
-    // DENO_DIR access, so `source.code_cache` is always `None` here. Read the
+    // EDNO_DIR access, so `source.code_cache` is always `None` here. Read the
     // persisted V8 code cache from the REAL loader (Cli/EmbeddedModuleLoader)
     // instead — the same seam the residual `lazy_loaded_js` path uses. Without
     // this, residual ESM (node:process, node:module, the stream/net/tty
@@ -519,7 +519,7 @@ impl ModuleMap {
 
   /// Load and evaluate a script on demand. The evaluated result is
   /// cached in `loaded_script_results` so later callers (the JS
-  /// `Deno.core.loadExtScript()` op, the `synthetic_esm` dispatch, etc.)
+  /// `Edno.core.loadExtScript()` op, the `synthetic_esm` dispatch, etc.)
   /// share a single evaluation — the source is consumed on first eval,
   /// and re-evaluating polyfill IIFEs would clobber registered hooks and
   /// duplicate class identities. Circular dependencies are detected and
@@ -641,7 +641,7 @@ impl ModuleMap {
     };
     let bootstrap_param = v8::String::new(tc_scope, "__bootstrap").unwrap();
     // Persist a V8 code cache for this residual `lazy_loaded_js` module through
-    // the same on-disk (DENO_DIR) cache user scripts use, keyed by specifier +
+    // the same on-disk (EDNO_DIR) cache user scripts use, keyed by specifier +
     // source hash. Residuals ship source-only in the binary, so without this a
     // node-heavy program re-pays parse+compile of the whole node-polyfill
     // closure at runtime on every cold start. The first run compiles and

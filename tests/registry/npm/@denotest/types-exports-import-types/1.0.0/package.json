@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/types-exports-import-types",
+  "name": "@ednotest/types-exports-import-types",
   "version": "1.0.0",
   "exports": {
     "node": {

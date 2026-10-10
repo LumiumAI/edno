@@ -1,4 +1,4 @@
-Warning the configuration file "[WILDCARD]/deno-override.json" contains an entry for "importMap" that is being ignored.
+Warning the configuration file "[WILDCARD]/edno-override.json" contains an entry for "importMap" that is being ignored.
 local: [WILDCARD]test.ts
 type: TypeScript
 dependencies: 0 unique

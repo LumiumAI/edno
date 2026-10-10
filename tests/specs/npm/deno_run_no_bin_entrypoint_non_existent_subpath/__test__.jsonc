@@ -1,5 +1,5 @@
 {
-  "args": "run -A --quiet npm:@denotest/esm-basic/non-existent.js",
-  "output": "deno_run_no_bin_entrypoint_non_existent_subpath.out",
+  "args": "run -A --quiet npm:@ednotest/esm-basic/non-existent.js",
+  "output": "edno_run_no_bin_entrypoint_non_existent_subpath.out",
   "exitCode": 1
 }

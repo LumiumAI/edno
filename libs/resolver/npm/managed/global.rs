@@ -5,8 +5,8 @@
 use std::borrow::Cow;
 use std::path::PathBuf;
 
-use deno_npm::NpmPackageCacheFolderId;
-use deno_npm::NpmPackageId;
+use edno_npm::NpmPackageCacheFolderId;
+use edno_npm::NpmPackageId;
 use deno_semver::StackString;
 use deno_semver::Version;
 use deno_semver::package::PackageNv;
@@ -102,8 +102,8 @@ impl<TSys: GlobalNpmPackageResolverSys> GlobalNpmPackageResolver<TSys> {
     let Ok(referrer_path) = referrer.path() else {
       return Ok(None);
     };
-    // strip any subpath (e.g. "@denotest/add2/sub.js" -> "@denotest/add2")
-    let name = deno_npm::package_name_without_subpath(name);
+    // strip any subpath (e.g. "@ednotest/add2/sub.js" -> "@ednotest/add2")
+    let name = edno_npm::package_name_without_subpath(name);
     let cache_location = self.cache.root_dir();
     for current_folder in referrer_path
       .ancestors()
@@ -146,7 +146,7 @@ impl<TSys: GlobalNpmPackageResolverSys> NpmPackageFolderResolver
     name: &str,
     referrer: &UrlOrPathRef,
   ) -> Result<PathBuf, PackageFolderResolveError> {
-    use deno_npm::resolution::PackageNotFoundFromReferrerError;
+    use edno_npm::resolution::PackageNotFoundFromReferrerError;
     let Some(referrer_cache_folder_id) = self
       .resolve_package_cache_folder_id_from_specifier_inner(referrer.url()?)
     else {

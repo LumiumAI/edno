@@ -1,3 +1,3 @@
-import { hello } from "npm:@denotest/node-addon-implicit-node-gyp@1.0.0";
+import { hello } from "npm:@ednotest/node-addon-implicit-node-gyp@1.0.0";
 
 console.log(hello());

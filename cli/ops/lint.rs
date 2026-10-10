@@ -6,10 +6,10 @@ use deno_ast::ParseDiagnostic;
 use deno_ast::SourceRange;
 use deno_ast::SourceTextInfo;
 use deno_ast::SourceTextProvider;
-use deno_core::FromV8;
-use deno_core::OpState;
-use deno_core::convert::Uint8Array;
-use deno_core::op2;
+use edno_core::FromV8;
+use edno_core::OpState;
+use edno_core::convert::Uint8Array;
+use edno_core::op2;
 use deno_lint::diagnostic::LintDiagnostic;
 use deno_lint::diagnostic::LintDiagnosticDetails;
 use deno_lint::diagnostic::LintDiagnosticRange;
@@ -22,7 +22,7 @@ use crate::tools::lint;
 use crate::tools::lint::PluginLogger;
 use crate::util::text_encoding::Utf16Map;
 
-deno_core::extension!(
+edno_core::extension!(
   deno_lint_ext,
   ops = [
     op_lint_create_serialized_ast,
@@ -45,7 +45,7 @@ deno_core::extension!(
   },
 );
 
-deno_core::extension!(
+edno_core::extension!(
   deno_lint_ext_for_test,
   ops = [op_lint_create_serialized_ast, op_is_cancelled],
   state = |state| {

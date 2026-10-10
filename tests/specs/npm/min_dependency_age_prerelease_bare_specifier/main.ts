@@ -5,5 +5,5 @@
 // find npm package ... matching '*'". It should fall back to the newest allowed
 // version at or below the tagged version (1.0.0-dev.1), just like `@latest`.
 // Regression test for https://github.com/denoland/deno/issues/36614.
-import pkg from "npm:@denotest/pre-release-latest-min-age";
+import pkg from "npm:@ednotest/pre-release-latest-min-age";
 console.log("resolved:", pkg.version);

@@ -1,5 +1,5 @@
 {
-  "name": "@denotest3/gitlab-pkg",
+  "name": "@ednotest3/gitlab-pkg",
   "version": "1.0.0",
   "type": "module",
   "main": "main.mjs"

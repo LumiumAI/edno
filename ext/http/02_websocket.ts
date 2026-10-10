@@ -24,15 +24,15 @@ const {
 
 const EMPTY_OPTIONS = ObjectFreeze(ObjectSetPrototypeOf({}, null));
 
-const { toInnerRequest } = core.loadExtScript("ext:deno_fetch/23_request.js");
+const { toInnerRequest } = core.loadExtScript("ext:edno_fetch/23_request.js");
 const {
   fromInnerResponse,
   newInnerResponse,
-} = core.loadExtScript("ext:deno_fetch/23_response.js");
-const { setEventTargetData } = core.loadExtScript("ext:deno_web/02_event.js");
+} = core.loadExtScript("ext:edno_fetch/23_response.js");
+const { setEventTargetData } = core.loadExtScript("ext:edno_web/02_event.js");
 
 const loadWebSocket = core.createLazyLoader(
-  "ext:deno_websocket/01_websocket.js",
+  "ext:edno_websocket/01_websocket.js",
 );
 
 const _ws = Symbol("[[associated_ws]]");
@@ -195,7 +195,7 @@ function upgradeWebSocket(request, options = EMPTY_OPTIONS) {
         handle.readStop();
 
         // Take the TCP stream from libuv into a resource, then create
-        // the WebSocket via ext/http (avoids ext/node -> deno_websocket dep).
+        // the WebSocket via ext/http (avoids ext/node -> edno_websocket dep).
         const streamRid = handle.takeStream();
         const wsRid = op_http_ws_create_from_stream_resource(
           streamRid,

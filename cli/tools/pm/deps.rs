@@ -6,26 +6,26 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use deno_ast::ModuleSpecifier;
-use deno_config::deno_json::ConfigFile;
-use deno_config::deno_json::ConfigFileRc;
-use deno_config::workspace::Workspace;
-use deno_config::workspace::WorkspaceDirectory;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_core::futures::StreamExt;
-use deno_core::futures::future::try_join;
-use deno_core::futures::stream::FuturesOrdered;
-use deno_core::futures::stream::FuturesUnordered;
-use deno_core::serde_json;
-use deno_core::url::Url;
+use edno_config::edno_json::ConfigFile;
+use edno_config::edno_json::ConfigFileRc;
+use edno_config::workspace::Workspace;
+use edno_config::workspace::WorkspaceDirectory;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_core::futures::StreamExt;
+use edno_core::futures::future::try_join;
+use edno_core::futures::stream::FuturesOrdered;
+use edno_core::futures::stream::FuturesUnordered;
+use edno_core::serde_json;
+use edno_core::url::Url;
 use deno_graph::JsrPackageReqNotFoundError;
 use deno_graph::packages::JsrPackageVersionInfo;
-use deno_npm::resolution::NpmVersionResolver;
-use deno_package_json::PackageJsonDepsMap;
-use deno_package_json::PackageJsonRc;
-use deno_runtime::deno_permissions::PermissionsContainer;
+use edno_npm::resolution::NpmVersionResolver;
+use edno_package_json::PackageJsonDepsMap;
+use edno_package_json::PackageJsonRc;
+use edno_runtime::edno_permissions::PermissionsContainer;
 use deno_semver::StackString;
 use deno_semver::Version;
 use deno_semver::VersionReq;
@@ -62,10 +62,10 @@ pub enum ImportMapKind {
 
 #[derive(Clone)]
 pub enum DepLocation {
-  DenoJson(ConfigFileRc, KeyPath, ImportMapKind),
+  EdnoJson(ConfigFileRc, KeyPath, ImportMapKind),
   PackageJson(PackageJsonRc, KeyPath),
   /// A `catalog`/`catalogs` entry defined in the workspace root config
-  /// (deno.json or package.json). Unlike the other locations the value is a
+  /// (edno.json or package.json). Unlike the other locations the value is a
   /// bare version requirement (e.g. `^1.0.0`) rather than a full specifier.
   /// `key_paths` lists candidate paths to the entry; the first one that
   /// resolves is updated (package.json may declare catalogs at the top level
@@ -79,12 +79,12 @@ pub enum DepLocation {
 
 impl DepLocation {
   pub fn is_deno_json(&self) -> bool {
-    matches!(self, DepLocation::DenoJson(..))
+    matches!(self, DepLocation::EdnoJson(..))
   }
 
   pub fn file_path(&self) -> Cow<'_, std::path::Path> {
     match self {
-      DepLocation::DenoJson(arc, _, kind) => match kind {
+      DepLocation::EdnoJson(arc, _, kind) => match kind {
         ImportMapKind::Inline => {
           Cow::Owned(arc.specifier.to_file_path().unwrap())
         }
@@ -96,7 +96,7 @@ impl DepLocation {
   }
   fn config_kind(&self) -> super::ConfigKind {
     match self {
-      DepLocation::DenoJson(_, _, _) => super::ConfigKind::DenoJson,
+      DepLocation::EdnoJson(_, _, _) => super::ConfigKind::EdnoJson,
       DepLocation::PackageJson(_, _) => super::ConfigKind::PackageJson,
       DepLocation::Catalog { kind, .. } => *kind,
     }
@@ -123,8 +123,8 @@ impl std::fmt::Debug for DebugAdapter<&PackageJsonRc> {
 impl std::fmt::Debug for DepLocation {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     match self {
-      DepLocation::DenoJson(arc, key_path, kind) => {
-        let mut debug = f.debug_tuple("DenoJson");
+      DepLocation::EdnoJson(arc, key_path, kind) => {
+        let mut debug = f.debug_tuple("EdnoJson");
         debug
           .field(&DebugAdapter(arc))
           .field(key_path)
@@ -230,7 +230,7 @@ impl Dep {
   }
 
   /// Whether this dependency is a development dependency. Only `package.json`
-  /// `devDependencies` are considered dev; `deno.json` imports and `catalog`
+  /// `devDependencies` are considered dev; `edno.json` imports and `catalog`
   /// entries have no such distinction and are always treated as regular
   /// dependencies.
   pub fn is_dev(&self) -> bool {
@@ -238,7 +238,7 @@ impl Dep {
       DepLocation::PackageJson(_, key_path) => {
         matches!(key_path.parts.first(), Some(KeyPart::DevDependencies))
       }
-      DepLocation::DenoJson(..) | DepLocation::Catalog { .. } => false,
+      DepLocation::EdnoJson(..) | DepLocation::Catalog { .. } => false,
     }
   }
 }
@@ -273,36 +273,36 @@ fn import_map_entries(
 }
 
 fn to_import_map_value_from_imports(
-  deno_json: &ConfigFile,
+  edno_json: &ConfigFile,
 ) -> serde_json::Value {
   let mut value = serde_json::Map::with_capacity(2);
-  if let Some(imports) = &deno_json.json.imports {
+  if let Some(imports) = &edno_json.json.imports {
     value.insert("imports".to_string(), imports.clone());
   }
-  if let Some(scopes) = &deno_json.json.scopes {
+  if let Some(scopes) = &edno_json.json.scopes {
     value.insert("scopes".to_string(), scopes.clone());
   }
   serde_json::Value::Object(value)
 }
 
-fn deno_json_import_map(
-  deno_json: &ConfigFile,
+fn edno_json_import_map(
+  edno_json: &ConfigFile,
 ) -> Result<Option<(ImportMapWithDiagnostics, ImportMapKind)>, AnyError> {
-  let (value, kind) = if deno_json.json.imports.is_some()
-    || deno_json.json.scopes.is_some()
+  let (value, kind) = if edno_json.json.imports.is_some()
+    || edno_json.json.scopes.is_some()
   {
     (
-      to_import_map_value_from_imports(deno_json),
+      to_import_map_value_from_imports(edno_json),
       ImportMapKind::Inline,
     )
   } else {
-    match deno_json.to_import_map_path()? {
+    match edno_json.to_import_map_path()? {
       Some(path) => {
         let err_context = || {
           format!(
             "loading import map at '{}' (from \"importMap\" field in '{}')",
             path.display(),
-            deno_json.specifier
+            edno_json.specifier
           )
         };
         let text = std::fs::read_to_string(&path).with_context(err_context)?;
@@ -313,7 +313,7 @@ fn deno_json_import_map(
     }
   };
 
-  import_map::parse_from_value(deno_json.specifier.clone(), value)
+  import_map::parse_from_value(edno_json.specifier.clone(), value)
     .map_err(Into::into)
     .map(|import_map| Some((import_map, kind)))
 }
@@ -325,15 +325,15 @@ enum PackageJsonDepKind {
 }
 
 fn add_deps_from_deno_json(
-  deno_json: &Arc<ConfigFile>,
+  edno_json: &Arc<ConfigFile>,
   mut filter: impl DepFilter,
   deps: &mut Vec<Dep>,
 ) {
-  let (import_map, import_map_kind) = match deno_json_import_map(deno_json) {
+  let (import_map, import_map_kind) = match edno_json_import_map(edno_json) {
     Ok(Some((import_map, import_map_kind))) => (import_map, import_map_kind),
     Ok(None) => return,
     Err(e) => {
-      log::warn!("failed to parse imports from {}: {e}", &deno_json.specifier);
+      log::warn!("failed to parse imports from {}: {e}", &edno_json.specifier);
       return;
     }
   };
@@ -358,8 +358,8 @@ fn add_deps_from_deno_json(
     }
     let id = DepId(deps.len());
     deps.push(Dep {
-      location: DepLocation::DenoJson(
-        deno_json.clone(),
+      location: DepLocation::EdnoJson(
+        edno_json.clone(),
         key_path,
         import_map_kind.clone(),
       ),
@@ -394,10 +394,10 @@ fn add_deps_from_package_json(
         }
       };
       match v {
-        deno_package_json::PackageJsonDepValue::File(_) => {
+        edno_package_json::PackageJsonDepValue::File(_) => {
           // ignore
         }
-        deno_package_json::PackageJsonDepValue::Req(req) => {
+        edno_package_json::PackageJsonDepValue::Req(req) => {
           let alias = k.as_str();
           let alias = (alias != req.name).then(|| alias.to_string());
           if !filter.should_include(alias.as_deref(), req, DepKind::Npm) {
@@ -418,8 +418,8 @@ fn add_deps_from_package_json(
             alias,
           })
         }
-        deno_package_json::PackageJsonDepValue::Workspace { .. }
-        | deno_package_json::PackageJsonDepValue::Catalog(_) => continue,
+        edno_package_json::PackageJsonDepValue::Workspace { .. }
+        | edno_package_json::PackageJsonDepValue::Catalog(_) => continue,
       }
     }
   }
@@ -450,7 +450,7 @@ fn add_deps_from_catalogs(
   deps: &mut Vec<Dep>,
 ) {
   // Mirror `Workspace`'s own resolution: a root package.json catalog takes
-  // precedence over deno.json, and if it's present deno.json catalogs are
+  // precedence over edno.json, and if it's present edno.json catalogs are
   // ignored entirely.
   let pkg_json = workspace
     .root_pkg_json()
@@ -471,7 +471,7 @@ fn add_deps_from_catalogs(
     };
     (
       path,
-      super::ConfigKind::DenoJson,
+      super::ConfigKind::EdnoJson,
       dj.catalog(),
       dj.catalogs(),
       false,
@@ -559,8 +559,8 @@ fn deps_from_workspace(
   dep_filter: impl DepFilter,
 ) -> Result<Vec<Dep>, AnyError> {
   let mut deps = Vec::with_capacity(256);
-  for deno_json in workspace.deno_jsons() {
-    add_deps_from_deno_json(deno_json, dep_filter, &mut deps);
+  for edno_json in workspace.edno_jsons() {
+    add_deps_from_deno_json(edno_json, dep_filter, &mut deps);
   }
   for package_json in workspace.package_jsons() {
     add_deps_from_package_json(package_json, dep_filter, &mut deps);
@@ -690,13 +690,13 @@ impl DepManager {
     args: DepManagerArgs,
   ) -> Result<Self, AnyError> {
     let mut deps = Vec::with_capacity(256);
-    if let Some(deno_json) = workspace_dir.member_deno_json() {
-      if deno_json.specifier.scheme() != "file" {
-        bail!("remote deno.json files are not supported");
+    if let Some(edno_json) = workspace_dir.member_deno_json() {
+      if edno_json.specifier.scheme() != "file" {
+        bail!("remote edno.json files are not supported");
       }
-      let path = deno_json.specifier.to_file_path().unwrap();
+      let path = edno_json.specifier.to_file_path().unwrap();
       if path.parent().unwrap() == workspace_dir.dir_path() {
-        add_deps_from_deno_json(deno_json, dep_filter, &mut deps);
+        add_deps_from_deno_json(edno_json, dep_filter, &mut deps);
       }
     }
     if let Some(package_json) = workspace_dir.member_pkg_json() {
@@ -828,7 +828,7 @@ impl DepManager {
         &roots,
         crate::module_loader::PrepareModuleLoadOptions {
           is_dynamic: false,
-          lib: deno_config::workspace::TsTypeLib::DenoWindow,
+          lib: edno_config::workspace::TsTypeLib::EdnoWindow,
           permissions: self.permissions_container.clone(),
           file_permission_api_name: None,
           ext_overwrite: None,
@@ -982,7 +982,7 @@ impl DepManager {
                 let lower_bound = &semver_compatible.as_ref()?.version;
                 // Only consider pre-release versions when the currently
                 // resolved version is itself a pre-release. Otherwise
-                // `deno outdated --latest` reports a pre-release (e.g.
+                // `edno outdated --latest` reports a pre-release (e.g.
                 // 2.0.3-alpha.0) as the latest version even though JSR
                 // designates the newest stable release as latest. This mirrors
                 // npm packages, which resolve latest from the `latest`
@@ -1095,7 +1095,7 @@ impl DepManager {
           let dep = &mut self.deps[dep_id.0];
           dep.req.version_req = version_req.clone();
           match &dep.location {
-            DepLocation::DenoJson(arc, key_path, _) => {
+            DepLocation::EdnoJson(arc, key_path, _) => {
               let updater =
                 get_or_create_updater(&mut config_updaters, &dep.location)?;
 
@@ -1203,7 +1203,7 @@ impl DepManager {
   /// writes the lockfile to disk. The next install will re-resolve the
   /// missing entries to the latest version that matches each dependency's
   /// existing version requirement, bumping the lockfile within ranges
-  /// without modifying `deno.json`/`package.json`.
+  /// without modifying `edno.json`/`package.json`.
   pub fn invalidate_lockfile_for_update(
     &self,
     dep_ids: impl IntoIterator<Item = DepId>,

@@ -21,7 +21,7 @@ globalThis.clearInterval = timers.clearInterval;
 globalThis.setImmediate = timers.setImmediate;
 globalThis.clearImmediate = timers.clearImmediate;
 globalThis.Worker = worker.Worker;
-Deno.core.addMainModuleHandler((module) => {
+Edno.core.addMainModuleHandler((module) => {
   if (onMainModuleCb) onMainModuleCb(module);
 });
 let onMainModuleCb = () => {};
@@ -33,25 +33,25 @@ Reflect.defineProperty(globalThis, "onmainmodule", {
 Reflect.defineProperty(globalThis, "onerror", {
   set: (cb) => {
     if (cb) {
-      Deno.core.setReportExceptionCallback((error) => {
+      Edno.core.setReportExceptionCallback((error) => {
         let defaultPrevented = false;
         cb({
           error,
           preventDefault: () => defaultPrevented = true,
         });
         if (!defaultPrevented) {
-          Deno.core.reportUnhandledException(error);
+          Edno.core.reportUnhandledException(error);
         }
       });
     } else {
-      Deno.core.setReportExceptionCallback(null);
+      Edno.core.setReportExceptionCallback(null);
     }
   },
 });
 Reflect.defineProperty(globalThis, "onunhandledrejection", {
   set: (cb) => {
     if (cb) {
-      Deno.core.setUnhandledPromiseRejectionHandler((promise, reason) => {
+      Edno.core.setUnhandledPromiseRejectionHandler((promise, reason) => {
         let defaultPrevented = false;
         cb({
           promise,
@@ -61,24 +61,24 @@ Reflect.defineProperty(globalThis, "onunhandledrejection", {
         return defaultPrevented;
       });
     } else {
-      Deno.core.setUnhandledPromiseRejectionHandler(null);
+      Edno.core.setUnhandledPromiseRejectionHandler(null);
     }
   },
 });
 Reflect.defineProperty(globalThis, "onrejectionhandled", {
   set: (cb) => {
     if (cb) {
-      Deno.core.setHandledPromiseRejectionHandler((promise, reason) => {
+      Edno.core.setHandledPromiseRejectionHandler((promise, reason) => {
         cb({
           promise,
           reason,
         });
       });
     } else {
-      Deno.core.setHandledPromiseRejectionHandler(null);
+      Edno.core.setHandledPromiseRejectionHandler(null);
     }
   },
 });
-Deno.unrefTimer = timers.unrefTimer;
-Deno.refTimer = timers.refTimer;
-Deno.unrefImmediate = timers.unrefImmediate;
+Edno.unrefTimer = timers.unrefTimer;
+Edno.refTimer = timers.refTimer;
+Edno.unrefImmediate = timers.unrefImmediate;

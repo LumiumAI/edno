@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/augments-global",
+  "name": "@ednotest/augments-global",
   "version": "1.0.0",
   "types": "./index.d.ts",
   "exports": {

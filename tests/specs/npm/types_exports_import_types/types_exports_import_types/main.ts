@@ -1,4 +1,4 @@
-import { getValue } from "npm:@denotest/types-exports-import-types";
+import { getValue } from "npm:@ednotest/types-exports-import-types";
 
 // should error here
 const result: string = getValue();

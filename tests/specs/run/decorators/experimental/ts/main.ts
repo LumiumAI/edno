@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 function Decorate() {
   return function (constructor: any): any {

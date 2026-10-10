@@ -1,4 +1,4 @@
-// Tests that calling Deno.upgradeWebSocket twice on the same socket
+// Tests that calling Edno.upgradeWebSocket twice on the same socket
 // fails gracefully. The second upgrade should fire an error event
 // because the TCP stream was already taken by the first upgrade.
 
@@ -11,13 +11,13 @@ server.on("upgrade", (req, nodeSocket, head) => {
   const headers = req.headers as HeadersInit;
 
   // First upgrade — should succeed
-  const { socket: ws1 } = Deno.upgradeWebSocket(
+  const { socket: ws1 } = Edno.upgradeWebSocket(
     new Request("http://localhost/", { headers }),
     { socket: nodeSocket as Socket, head },
   );
 
   // Second upgrade on the same node socket — should fail
-  const { socket: ws2 } = Deno.upgradeWebSocket(
+  const { socket: ws2 } = Edno.upgradeWebSocket(
     new Request("http://localhost/", { headers }),
     { socket: nodeSocket as Socket, head },
   );
@@ -28,7 +28,7 @@ server.on("upgrade", (req, nodeSocket, head) => {
     server.close();
     // The second WebSocket's error leaves resources that prevent clean
     // shutdown, so exit explicitly after the close handshake completes.
-    setTimeout(() => Deno.exit(0), 200);
+    setTimeout(() => Edno.exit(0), 200);
   };
 
   ws2.addEventListener("error", () => {
@@ -49,6 +49,6 @@ server.listen(0, () => {
 
 const _t = setTimeout(() => {
   console.error("timeout - forcing exit");
-  Deno.exit(1);
+  Edno.exit(1);
 }, 10_000);
-Deno.unrefTimer(_t);
+Edno.unrefTimer(_t);

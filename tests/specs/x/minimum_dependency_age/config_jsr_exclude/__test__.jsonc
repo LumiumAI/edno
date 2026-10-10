@@ -1,16 +1,16 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [{
-    // Structured `minimumDependencyAge` (age + exclude) in the cwd deno.json
-    // must not break `deno x` or make it diverge from
-    // `deno run jsr:@denotest/x-min-dep-age`, which selects the newest version
+    // Structured `minimumDependencyAge` (age + exclude) in the cwd edno.json
+    // must not break `edno x` or make it diverge from
+    // `edno run jsr:@ednotest/x-min-dep-age`, which selects the newest version
     // 2.0.0 (a directly-run `jsr:` specifier is not subject to the age cutoff).
     // Before the #35991 review fix, the config was forwarded as a scalar flag,
-    // dropping the exclude and diverging from `deno run`.
-    "args": "x -y jsr:@denotest/x-min-dep-age",
+    // dropping the exclude and diverging from `edno run`.
+    "args": "x -y jsr:@ednotest/x-min-dep-age",
     "output": "[WILDCARD]\n2.0.0\n"
   }]
 }

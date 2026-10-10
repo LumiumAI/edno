@@ -2,13 +2,13 @@
 (function () {
 const { core, internals, primordials } = __bootstrap;
 const { isArrayBufferView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const { TextDecoder } = core.loadExtScript(
-  "ext:deno_web/08_text_encoding.js",
+  "ext:edno_web/08_text_encoding.js",
 );
 const { kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 
 const {
@@ -21,10 +21,10 @@ const {
 const { isAnyArrayBuffer } = core;
 
 const kDispatcherOptions = SymbolFor(
-  "Deno.internal.node.undici.dispatcherOptions",
+  "Edno.internal.node.undici.dispatcherOptions",
 );
 const kGlobalDispatcher = SymbolFor(
-  "Deno.internal.node.undici.globalDispatcher",
+  "Edno.internal.node.undici.globalDispatcher",
 );
 
 function normalizeCaCerts(ca) {

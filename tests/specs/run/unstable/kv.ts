@@ -1,1 +1,1 @@
-const db = await Deno.openKv();
+const db = await Edno.openKv();

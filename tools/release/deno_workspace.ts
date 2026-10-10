@@ -2,7 +2,7 @@
 
 import { $, ReleasesMdFile, Repo } from "./deps.ts";
 
-export class DenoWorkspace {
+export class EdnoWorkspace {
   #repo: Repo;
 
   static get rootDirPath() {
@@ -10,11 +10,11 @@ export class DenoWorkspace {
     return currentDirPath.parentOrThrow().parentOrThrow();
   }
 
-  static async load(): Promise<DenoWorkspace> {
-    return new DenoWorkspace(
+  static async load(): Promise<EdnoWorkspace> {
+    return new EdnoWorkspace(
       await Repo.load({
-        name: "deno",
-        path: DenoWorkspace.rootDirPath,
+        name: "edno",
+        path: EdnoWorkspace.rootDirPath,
       }),
     );
   }
@@ -42,15 +42,15 @@ export class DenoWorkspace {
   }
 
   getCliCrate() {
-    return this.getCrate("deno");
+    return this.getCrate("edno");
   }
 
   getDenoRtCrate() {
-    return this.getCrate("denort");
+    return this.getCrate("ednort");
   }
 
   getDenoLibCrate() {
-    return this.getCrate("deno_lib");
+    return this.getCrate("edno_lib");
   }
 
   getCrate(name: string) {
@@ -59,13 +59,13 @@ export class DenoWorkspace {
 
   getReleasesMdFile() {
     return new ReleasesMdFile(
-      DenoWorkspace.rootDirPath.join("Releases.md").toString(),
+      EdnoWorkspace.rootDirPath.join("Releases.md").toString(),
     );
   }
 
   async runFormatter() {
     await this.#repo.command(
-      "deno run --allow-write --allow-read --allow-net --allow-run ./tools/format.js",
+      "edno run --allow-write --allow-read --allow-net --allow-run ./tools/format.js",
     );
   }
 }

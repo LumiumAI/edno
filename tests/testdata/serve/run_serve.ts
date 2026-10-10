@@ -1,3 +1,3 @@
-Deno.serve((_req: Request) => {
-  return new Response("Deno.serve() works!");
+Edno.serve((_req: Request) => {
+  return new Response("Edno.serve() works!");
 });

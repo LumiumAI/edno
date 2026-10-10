@@ -5,15 +5,15 @@ mod sync_fetch;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use deno_core::CancelFuture;
-use deno_core::DetachedBuffer;
-use deno_core::JsBuffer;
-use deno_core::JsRuntimeInspector;
-use deno_core::OpState;
-use deno_core::op2;
-use deno_web::JsMessageData;
-use deno_web::MessagePortError;
-use deno_web::RecvMessageData;
+use edno_core::CancelFuture;
+use edno_core::DetachedBuffer;
+use edno_core::JsBuffer;
+use edno_core::JsRuntimeInspector;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_web::JsMessageData;
+use edno_web::MessagePortError;
+use edno_web::RecvMessageData;
 pub use sync_fetch::SyncFetchError;
 
 use self::sync_fetch::op_worker_sync_fetch;
@@ -21,8 +21,8 @@ use crate::web_worker::WebWorkerInternalHandle;
 use crate::web_worker::WorkerControlEvent;
 use crate::web_worker::WorkerThreadType;
 
-deno_core::extension!(
-  deno_web_worker,
+edno_core::extension!(
+  edno_web_worker,
   ops = [
     op_worker_post_message,
     op_worker_post_message_raw,
@@ -108,7 +108,7 @@ fn op_worker_maybe_wait_for_debugger(state: &mut OpState) {
 fn op_worker_close(state: &mut OpState) {
   // Notify parent that we're finished
   let exit_code = state
-    .try_borrow::<deno_os::ExitCode>()
+    .try_borrow::<edno_os::ExitCode>()
     .map(|e| e.get())
     .unwrap_or(0);
   let mut handle = state.borrow_mut::<WebWorkerInternalHandle>().clone();

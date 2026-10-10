@@ -4,13 +4,13 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::rc::Rc;
 
-use deno_core::Extension;
-use deno_core::ExtensionFileSource;
-use deno_core::ExtensionFileSourceCode;
-use deno_core::snapshot::*;
-use deno_core::v8;
-use deno_resolver::npm::DenoInNpmPackageChecker;
-use deno_resolver::npm::NpmResolver;
+use edno_core::Extension;
+use edno_core::ExtensionFileSource;
+use edno_core::ExtensionFileSourceCode;
+use edno_core::snapshot::*;
+use edno_core::v8;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
+use edno_resolver::npm::NpmResolver;
 
 use crate::ops;
 use crate::ops::bootstrap::SnapshotOptions;
@@ -31,7 +31,7 @@ pub enum LazyExtensionFileKind {
   /// `lazy_loaded_js` — loaded on demand via `core.loadExtScript()`.
   Js,
   /// `lazy_loaded_esm` — loaded on demand via `op_lazy_load_esm` (i.e. the
-  /// `createLazyLoader` factory exposed by `Deno.core`).
+  /// `createLazyLoader` factory exposed by `Edno.core`).
   Esm,
 }
 
@@ -57,54 +57,54 @@ pub fn create_runtime_snapshot(
   // `runtime/worker.rs`, `runtime/web_worker.rs`, `runtime/snapshot_info.rs`
   // and `runtime/snapshot.rs`!
   let mut extensions: Vec<Extension> = vec![
-    deno_telemetry::deno_telemetry::lazy_init(),
-    deno_webidl::deno_webidl::lazy_init(),
-    deno_web::deno_web::lazy_init(),
-    deno_webgpu::deno_webgpu::lazy_init(),
-    deno_image::deno_image::lazy_init(),
-    deno_canvas::deno_canvas::lazy_init(),
-    deno_fetch::deno_fetch::lazy_init(),
-    deno_cache::deno_cache::lazy_init(),
-    deno_websocket::deno_websocket::lazy_init(),
-    deno_webstorage::deno_webstorage::lazy_init(),
-    deno_crypto::deno_crypto::lazy_init(),
-    deno_ffi::deno_ffi::lazy_init(),
-    deno_net::deno_net::lazy_init(),
-    deno_tls::deno_tls::lazy_init(),
-    deno_kv::deno_kv::lazy_init(),
-    deno_cron::deno_cron::init(Box::new(
-      deno_cron::local::LocalCronHandler::new(),
+    edno_telemetry::edno_telemetry::lazy_init(),
+    edno_webidl::edno_webidl::lazy_init(),
+    edno_web::edno_web::lazy_init(),
+    edno_webgpu::edno_webgpu::lazy_init(),
+    edno_image::edno_image::lazy_init(),
+    edno_canvas::edno_canvas::lazy_init(),
+    edno_fetch::edno_fetch::lazy_init(),
+    edno_cache::edno_cache::lazy_init(),
+    edno_websocket::edno_websocket::lazy_init(),
+    edno_webstorage::edno_webstorage::lazy_init(),
+    edno_crypto::edno_crypto::lazy_init(),
+    edno_ffi::edno_ffi::lazy_init(),
+    edno_net::edno_net::lazy_init(),
+    edno_tls::edno_tls::lazy_init(),
+    edno_kv::edno_kv::lazy_init(),
+    edno_cron::edno_cron::init(Box::new(
+      edno_cron::local::LocalCronHandler::new(),
     )),
-    deno_napi::deno_napi::lazy_init(),
-    deno_http::deno_http::lazy_init(),
-    deno_io::deno_io::lazy_init(),
-    deno_fs::deno_fs::lazy_init(),
-    deno_os::deno_os::lazy_init(),
-    deno_process::deno_process::lazy_init(),
-    deno_node_crypto::deno_node_crypto::lazy_init(),
-    deno_node_sqlite::deno_node_sqlite::lazy_init(),
-    deno_node::deno_node::lazy_init::<
-      DenoInNpmPackageChecker,
+    edno_napi::edno_napi::lazy_init(),
+    edno_http::edno_http::lazy_init(),
+    edno_io::edno_io::lazy_init(),
+    edno_fs::edno_fs::lazy_init(),
+    edno_os::edno_os::lazy_init(),
+    edno_process::edno_process::lazy_init(),
+    edno_node_crypto::edno_node_crypto::lazy_init(),
+    edno_node_sqlite::edno_node_sqlite::lazy_init(),
+    edno_node::edno_node::lazy_init::<
+      EdnoInNpmPackageChecker,
       NpmResolver<sys_traits::impls::RealSys>,
       sys_traits::impls::RealSys,
     >(),
-    ops::runtime::deno_runtime::lazy_init(),
-    ops::worker_host::deno_worker_host::lazy_init(),
-    ops::fs_events::deno_fs_events::lazy_init(),
-    ops::permissions::deno_permissions::lazy_init(),
-    ops::tty::deno_tty::lazy_init(),
-    ops::http::deno_http_runtime::lazy_init(),
-    deno_bundle_runtime::deno_bundle_runtime::lazy_init(),
-    ops::desktop::deno_desktop::lazy_init(),
-    ops::bootstrap::deno_bootstrap::init(Some(snapshot_options), false),
+    ops::runtime::edno_runtime::lazy_init(),
+    ops::worker_host::edno_worker_host::lazy_init(),
+    ops::fs_events::edno_fs_events::lazy_init(),
+    ops::permissions::edno_permissions::lazy_init(),
+    ops::tty::edno_tty::lazy_init(),
+    ops::http::edno_http_runtime::lazy_init(),
+    edno_bundle_runtime::edno_bundle_runtime::lazy_init(),
+    ops::desktop::edno_desktop::lazy_init(),
+    ops::bootstrap::edno_bootstrap::init(Some(snapshot_options), false),
     runtime::lazy_init(),
-    ops::web_worker::deno_web_worker::lazy_init(),
+    ops::web_worker::edno_web_worker::lazy_init(),
   ];
   extensions.extend(custom_extensions);
 
   let lazy_extension_files = collect_lazy_extension_files(&extensions);
   let minify_sources =
-    std::env::var_os("DENO_SNAPSHOT_MINIFY_SOURCES").is_some();
+    std::env::var_os("EDNO_SNAPSHOT_MINIFY_SOURCES").is_some();
 
   let output = create_snapshot(
     CreateSnapshotOptions {
@@ -122,17 +122,17 @@ pub fn create_runtime_snapshot(
         let isolate = rt.v8_isolate();
         v8::scope!(scope, isolate);
 
-        let tmpl = deno_node::init_global_template(
+        let tmpl = edno_node::init_global_template(
           scope,
-          deno_node::ContextInitMode::ForSnapshot,
+          edno_node::ContextInitMode::ForSnapshot,
         );
-        let ctx = deno_node::create_v8_context(
+        let ctx = edno_node::create_v8_context(
           scope,
           tmpl,
-          deno_node::ContextInitMode::ForSnapshot,
+          edno_node::ContextInitMode::ForSnapshot,
           std::ptr::null_mut(),
         );
-        assert_eq!(scope.add_context(ctx), deno_node::VM_CONTEXT_INDEX);
+        assert_eq!(scope.add_context(ctx), edno_node::VM_CONTEXT_INDEX);
       })),
       skip_op_registration: false,
     },

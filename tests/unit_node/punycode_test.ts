@@ -3,7 +3,7 @@
 import * as punycode from "node:punycode";
 import { assertEquals } from "@std/assert";
 
-Deno.test("regression #19214", () => {
+Edno.test("regression #19214", () => {
   const input = "个\uFFFD\uFFFD.hk";
 
   assertEquals(punycode.toASCII(input), "xn--ciq6844ba.hk");
@@ -11,6 +11,6 @@ Deno.test("regression #19214", () => {
   assertEquals(punycode.toUnicode("xn--ciq6844ba.hk"), input);
 });
 
-Deno.test("Decode empty input", () => {
+Edno.test("Decode empty input", () => {
   assertEquals(punycode.decode(""), "");
 });

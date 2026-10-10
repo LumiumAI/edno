@@ -1,5 +1,5 @@
-import * as import1 from "npm:@denotest/types-ambient";
-import * as import2 from "npm:@denotest/types-ambient@1";
+import * as import1 from "npm:@ednotest/types-ambient";
+import * as import2 from "npm:@ednotest/types-ambient@1";
 
 console.log(import1.Test);
 console.log(import1.Test2); // should error

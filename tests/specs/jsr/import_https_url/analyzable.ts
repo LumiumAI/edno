@@ -1,1 +1,1 @@
-import "jsr:@denotest/import-https-url/analyzable";
+import "jsr:@ednotest/import-https-url/analyzable";

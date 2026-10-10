@@ -4,14 +4,14 @@ use std::borrow::Cow;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-use deno_core::error::CoreError;
-use deno_core::stats::RuntimeActivity;
-use deno_core::stats::RuntimeActivityDiff;
-use deno_core::stats::RuntimeActivityStats;
-use deno_core::stats::RuntimeActivityStatsFactory;
-use deno_core::stats::RuntimeActivityStatsFilter;
-use deno_core::stats::RuntimeActivityType;
-use deno_runtime::worker::MainWorker;
+use edno_core::error::CoreError;
+use edno_core::stats::RuntimeActivity;
+use edno_core::stats::RuntimeActivityDiff;
+use edno_core::stats::RuntimeActivityStats;
+use edno_core::stats::RuntimeActivityStatsFactory;
+use edno_core::stats::RuntimeActivityStatsFilter;
+use edno_core::stats::RuntimeActivityType;
+use edno_runtime::worker::MainWorker;
 
 use super::poll_event_loop;
 
@@ -227,7 +227,7 @@ pub fn create_test_sanitizer_helper(
 
 /// The sanitizer must ignore ops, resources and timers that were started at the top-level, but
 /// completed and restarted, replacing themselves with the same "thing". For example, if you run a
-/// `Deno.serve` server at the top level and make fetch requests to it during the test, those ops
+/// `Edno.serve` server at the top level and make fetch requests to it during the test, those ops
 /// should not count as completed during the test because they are immediately replaced.
 fn is_empty(
   top_level: &TopLevelSanitizerStats,

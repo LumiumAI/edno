@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/types-directory-import",
+  "name": "@ednotest/types-directory-import",
   "version": "1.0.0",
   "exports": {
     ".": {

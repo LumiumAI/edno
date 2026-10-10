@@ -1,3 +1,3 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 function foo(): any {}

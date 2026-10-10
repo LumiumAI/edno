@@ -1,1 +1,1 @@
-export * from "npm:@denotest/subtract";
+export * from "npm:@ednotest/subtract";

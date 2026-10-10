@@ -12,14 +12,14 @@ use std::sync::MutexGuard;
 use std::sync::atomic::AtomicI32;
 use std::sync::atomic::Ordering;
 
-use deno_core::OpState;
-use deno_core::ToV8;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::OpState;
+use edno_core::ToV8;
+use edno_core::op2;
+use edno_core::v8;
 use deno_path_util::normalize_path;
-use deno_permissions::PermissionCheckError;
-use deno_permissions::PermissionState;
-use deno_permissions::PermissionsContainer;
+use edno_permissions::PermissionCheckError;
+use edno_permissions::PermissionState;
+use edno_permissions::PermissionsContainer;
 
 mod ops;
 pub mod sys_info;
@@ -45,7 +45,7 @@ impl ExitCode {
 }
 
 pub fn exit(code: i32) -> ! {
-  deno_signals::run_exit();
+  edno_signals::run_exit();
   #[allow(
     clippy::disallowed_methods,
     reason = "exit is the intended behavior"
@@ -53,10 +53,10 @@ pub fn exit(code: i32) -> ! {
   std::process::exit(code);
 }
 
-/// Callbacks to run before the process exits via `Deno.exit()`.
+/// Callbacks to run before the process exits via `Edno.exit()`.
 ///
 /// Used to flush CPU profiling data and coverage data that would otherwise
-/// be lost when `Deno.exit()` calls `std::process::exit()` directly,
+/// be lost when `Edno.exit()` calls `std::process::exit()` directly,
 /// bypassing normal cleanup in the worker's run loop.
 #[derive(Default)]
 pub struct OpExitCallbacks(Vec<Box<dyn FnMut()>>);
@@ -73,22 +73,22 @@ impl OpExitCallbacks {
   }
 }
 
-/// Holds the main isolate's handle so that `op_exit` (i.e. `Deno.exit()`) can
+/// Holds the main isolate's handle so that `op_exit` (i.e. `Edno.exit()`) can
 /// terminate the current isolate instead of the whole process. Installed by
-/// `deno run --watch` / `deno serve --watch` so a script calling `Deno.exit()`
+/// `edno run --watch` / `edno serve --watch` so a script calling `Edno.exit()`
 /// ends the current run without killing the file watcher. See issue #7590.
 pub struct WatcherExitHandle(pub v8::IsolateHandle);
 
 /// Marker set by `op_exit` when a [`WatcherExitHandle`] is present, recording
-/// that the script called `Deno.exit()`. The watcher reads this after the run
-/// to confirm the V8 termination it observes was caused by `Deno.exit()` rather
+/// that the script called `Edno.exit()`. The watcher reads this after the run
+/// to confirm the V8 termination it observes was caused by `Edno.exit()` rather
 /// than another error; the requested exit code is read separately from the
-/// worker's `ExitCode` (set by `Deno.exit()` before `op_exit` runs).
+/// worker's `ExitCode` (set by `Edno.exit()` before `op_exit` runs).
 #[derive(Clone, Copy, Debug)]
 pub struct WatcherExited;
 
-deno_core::extension!(
-  deno_os,
+edno_core::extension!(
+  edno_os,
   ops = [
     op_env,
     op_exec_path,
@@ -201,7 +201,7 @@ impl ProcessEnvGuard {
     value: impl AsRef<std::ffi::OsStr>,
   ) {
     let key = key.as_ref();
-    // SAFETY: Deno exposes process environment mutation for compatibility.
+    // SAFETY: Edno exposes process environment mutation for compatibility.
     // This guard coordinates the runtime mutation paths with the native
     // timezone refresh below, but cannot coordinate arbitrary native readers.
     unsafe {
@@ -227,7 +227,7 @@ impl ProcessEnvGuard {
 
   pub fn remove_var(&self, key: impl AsRef<std::ffi::OsStr>) {
     let key = key.as_ref();
-    // SAFETY: Deno exposes process environment mutation for compatibility.
+    // SAFETY: Edno exposes process environment mutation for compatibility.
     // This guard coordinates the runtime mutation paths with the native
     // timezone refresh below, but cannot coordinate arbitrary native readers.
     unsafe {
@@ -326,7 +326,7 @@ fn op_env(
 ) -> Result<HashMap<String, String>, PermissionCheckError> {
   fn map_kv(kv: (OsString, OsString)) -> Option<(String, String)> {
     let key = kv.0.into_string().ok()?;
-    // Skip keys that `Deno.env.get`/`set`/`delete` would reject, so that
+    // Skip keys that `Edno.env.get`/`set`/`delete` would reject, so that
     // enumeration stays consistent with the rest of the API. On Windows,
     // cmd.exe exposes hidden per-drive cwd variables such as `=C:` which
     // contain `=` and are not meant to be surfaced to users.
@@ -456,7 +456,7 @@ fn op_get_exit_code(state: &mut OpState) -> i32 {
 
 #[op2(fast)]
 fn op_exit(state: &mut OpState) {
-  // Under `deno run --watch`, terminate the current V8 isolate instead of
+  // Under `edno run --watch`, terminate the current V8 isolate instead of
   // exiting the process so the file watcher survives and can restart the
   // script on the next file change. See issue #7590.
   //
@@ -528,7 +528,7 @@ fn op_loadavg(
 ) -> Result<(f64, f64, f64), PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("loadavg", "Deno.loadavg()")?;
+    .check_sys("loadavg", "Edno.loadavg()")?;
   Ok(sys_info::loadavg())
 }
 
@@ -537,7 +537,7 @@ fn op_loadavg(
 fn op_hostname(state: &mut OpState) -> Result<String, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("hostname", "Deno.hostname()")?;
+    .check_sys("hostname", "Edno.hostname()")?;
   Ok(sys_info::hostname())
 }
 
@@ -546,7 +546,7 @@ fn op_hostname(state: &mut OpState) -> Result<String, PermissionCheckError> {
 fn op_os_release(state: &mut OpState) -> Result<String, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("osRelease", "Deno.osRelease()")?;
+    .check_sys("osRelease", "Edno.osRelease()")?;
   Ok(sys_info::os_release())
 }
 
@@ -556,7 +556,7 @@ fn op_network_interfaces(
 ) -> Result<Vec<NetworkInterface>, OsError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("networkInterfaces", "Deno.networkInterfaces()")?;
+    .check_sys("networkInterfaces", "Edno.networkInterfaces()")?;
   Ok(netif::up()?.map(NetworkInterface::from).collect())
 }
 
@@ -607,7 +607,7 @@ fn op_system_memory_info(
 ) -> Result<Option<sys_info::MemInfo>, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("systemMemoryInfo", "Deno.systemMemoryInfo()")?;
+    .check_sys("systemMemoryInfo", "Edno.systemMemoryInfo()")?;
   Ok(sys_info::mem_info())
 }
 
@@ -617,7 +617,7 @@ fn op_system_memory_info(
 fn op_gid(state: &mut OpState) -> Result<Option<u32>, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("gid", "Deno.gid()")?;
+    .check_sys("gid", "Edno.gid()")?;
   // TODO(bartlomieju):
   #[allow(clippy::undocumented_unsafe_blocks, reason = "libc call")]
   unsafe {
@@ -631,7 +631,7 @@ fn op_gid(state: &mut OpState) -> Result<Option<u32>, PermissionCheckError> {
 fn op_gid(state: &mut OpState) -> Result<Option<u32>, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("gid", "Deno.gid()")?;
+    .check_sys("gid", "Edno.gid()")?;
   Ok(None)
 }
 
@@ -641,7 +641,7 @@ fn op_gid(state: &mut OpState) -> Result<Option<u32>, PermissionCheckError> {
 fn op_uid(state: &mut OpState) -> Result<Option<u32>, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("uid", "Deno.uid()")?;
+    .check_sys("uid", "Edno.uid()")?;
   // TODO(bartlomieju):
   #[allow(clippy::undocumented_unsafe_blocks, reason = "libc call")]
   unsafe {
@@ -655,7 +655,7 @@ fn op_uid(state: &mut OpState) -> Result<Option<u32>, PermissionCheckError> {
 fn op_uid(state: &mut OpState) -> Result<Option<u32>, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("uid", "Deno.uid()")?;
+    .check_sys("uid", "Edno.uid()")?;
   Ok(None)
 }
 
@@ -949,7 +949,7 @@ fn rss() -> u64 {
 fn os_uptime(state: &mut OpState) -> Result<u64, PermissionCheckError> {
   state
     .borrow_mut::<PermissionsContainer>()
-    .check_sys("osUptime", "Deno.osUptime()")?;
+    .check_sys("osUptime", "Edno.osUptime()")?;
   Ok(sys_info::os_uptime())
 }
 

@@ -1,3 +1,3 @@
-Deno.test("test 11", () => {
+Edno.test("test 11", () => {
   throw new Error();
 });

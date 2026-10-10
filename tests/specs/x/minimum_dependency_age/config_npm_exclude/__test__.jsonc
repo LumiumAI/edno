@@ -1,13 +1,13 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [{
-    // The cwd deno.json sets a cutoff that would exclude 2.0.0, but the package
+    // The cwd edno.json sets a cutoff that would exclude 2.0.0, but the package
     // is listed in `minimumDependencyAge.exclude`, so the newest version 2.0.0
-    // is selected — `deno x` must match `deno run` here (issue #35991 review).
-    "args": "x -y npm:@denotest/x-min-dep-age",
+    // is selected — `edno x` must match `edno run` here (issue #35991 review).
+    "args": "x -y npm:@ednotest/x-min-dep-age",
     "output": "[WILDCARD]\n2.0.0\n"
   }]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/say-hello",
+  "name": "@ednotest/say-hello",
   "version": "1.0.0",
   "bin": "./say-hello.js",
   "type": "module"

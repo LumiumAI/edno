@@ -1,4 +1,4 @@
-// deno-fmt-ignore-file
+// edno-fmt-ignore-file
 // @ts-ignore
 import {
   value,

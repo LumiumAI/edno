@@ -5,7 +5,7 @@ import { assert, assertEquals, loadTestLibrary } from "./common.js";
 
 const objectWrap = loadTestLibrary();
 
-Deno.test("napi object wrap new", function () {
+Edno.test("napi object wrap new", function () {
   const obj = new objectWrap.NapiObject(0);
   assertEquals(obj.get_value(), 0);
   obj.set_value(10);
@@ -18,30 +18,30 @@ Deno.test("napi object wrap new", function () {
   assertEquals(objectWrap.NapiObject.factory(), 64);
 });
 
-Deno.test("napi bind finalizer", function () {
+Edno.test("napi bind finalizer", function () {
   const obj = {};
   objectWrap.test_bind_finalizer(obj);
 });
 
-Deno.test("napi external finalizer", function () {
+Edno.test("napi external finalizer", function () {
   let obj = objectWrap.test_external_finalizer();
   assert(obj);
   obj = null;
 });
 
-Deno.test("napi external buffer", function () {
+Edno.test("napi external buffer", function () {
   let buf = objectWrap.test_external_buffer();
   assertEquals(buf, Buffer.from([1, 2, 3]));
   buf = null;
 });
 
-Deno.test("napi external arraybuffer", function () {
+Edno.test("napi external arraybuffer", function () {
   let buf = objectWrap.test_external_arraybuffer();
   assertEquals(new Uint8Array(buf), new Uint8Array([1, 2, 3]));
   buf = null;
 });
 
-Deno.test("napi class accessor property is writable", function () {
+Edno.test("napi class accessor property is writable", function () {
   // Accessor properties (getter/setter) defined via napi_define_class
   // should be writable via the setter even when napi_writable is not
   // set in the attributes. napi_writable only applies to data properties.
@@ -51,7 +51,7 @@ Deno.test("napi class accessor property is writable", function () {
   assertEquals(obj.value, 42);
 });
 
-Deno.test("napi object wrap userland owned", function () {
+Edno.test("napi object wrap userland owned", function () {
   let obj = new objectWrap.NapiObjectOwned(1);
   assertEquals(obj.get_value(), 1);
   obj = null;
@@ -59,7 +59,7 @@ Deno.test("napi object wrap userland owned", function () {
   globalThis.gc();
 });
 
-Deno.test("napi remove_wrap", function () {
+Edno.test("napi remove_wrap", function () {
   const obj = {};
   const result = objectWrap.test_remove_wrap(obj);
   assertEquals(result, true);
@@ -67,7 +67,7 @@ Deno.test("napi remove_wrap", function () {
 
 // Regression test for #33924: `napi_new_instance` must produce a
 // properly wrapped instance.
-Deno.test("napi new_instance via napi_new_instance", function () {
+Edno.test("napi new_instance via napi_new_instance", function () {
   const obj = objectWrap.test_call_new_instance(objectWrap.NapiObject, 7);
   assert(obj instanceof objectWrap.NapiObject);
   assertEquals(obj.get_value(), 7);
@@ -75,7 +75,7 @@ Deno.test("napi new_instance via napi_new_instance", function () {
   assertEquals(obj.get_value(), 8);
 });
 
-Deno.test("napi new_instance allows JS in native constructor", function () {
+Edno.test("napi new_instance allows JS in native constructor", function () {
   const obj = objectWrap.test_new_instance_constructor_can_call_js();
   assert(Object.isSealed(obj));
 });
@@ -86,7 +86,7 @@ Deno.test("napi new_instance allows JS in native constructor", function () {
 // through a subsequent napi_new_instance call running at call-depth-zero on the
 // event loop. Pre-fix the isolate was flipped to Auto, the microtask drained
 // during construction, and napi-rs's factory wrapping leaked across classes.
-Deno.test("napi_resolve_deferred preserves Explicit microtask policy", async () => {
+Edno.test("napi_resolve_deferred preserves Explicit microtask policy", async () => {
   const drainedDuringConstruction = await new Promise((resolve) => {
     objectWrap.test_resolve_deferred_keeps_microtask_policy(
       objectWrap.NapiObject,

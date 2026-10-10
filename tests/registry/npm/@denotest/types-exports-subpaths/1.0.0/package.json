@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/types-exports-subpaths",
+  "name": "@ednotest/types-exports-subpaths",
   "version": "1.0.0",
   "exports": {
     "./client": {

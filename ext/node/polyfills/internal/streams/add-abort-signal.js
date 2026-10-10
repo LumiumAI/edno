@@ -1,18 +1,18 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 (function () {
 const { core, primordials } = __bootstrap;
-const imported1 = core.loadExtScript("ext:deno_node/internal/errors.ts");
+const imported1 = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   isNodeStream,
   isWebStream,
   kControllerErrorFunction,
-} = core.loadExtScript("ext:deno_node/internal/streams/utils.js");
+} = core.loadExtScript("ext:edno_node/internal/streams/utils.js");
 const eos =
-  core.loadExtScript("ext:deno_node/internal/streams/end-of-stream.js").default;
+  core.loadExtScript("ext:edno_node/internal/streams/end-of-stream.js").default;
 const _mod2 = core.loadExtScript(
-  "ext:deno_node/internal/events/abort_listener.mjs",
+  "ext:edno_node/internal/events/abort_listener.mjs",
 );
 
 const {

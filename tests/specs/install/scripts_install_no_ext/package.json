@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@denotest/install-no-ext": "*"
+    "@ednotest/install-no-ext": "*"
   }
 }

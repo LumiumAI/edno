@@ -7,19 +7,19 @@ use std::path::PathBuf;
 
 use base64::prelude::BASE64_STANDARD;
 use base64::prelude::Engine;
-use deno_npm::resolution::PackageIdNotFoundError;
-use deno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
-use deno_npm_installer::process_state::NpmProcessState;
-use deno_npm_installer::process_state::NpmProcessStateFromEnvVarSys;
-use deno_npm_installer::process_state::NpmProcessStateKind;
-use deno_runtime::UNSTABLE_ENV_VAR_NAMES;
-use deno_runtime::colors;
-use deno_runtime::deno_node::ops::ipc::ChildIpcSerialization;
-use deno_runtime::deno_tls::deno_native_certs::load_native_certs;
-use deno_runtime::deno_tls::rustls;
-use deno_runtime::deno_tls::rustls::RootCertStore;
-use deno_runtime::deno_tls::rustls_pemfile;
-use deno_runtime::deno_tls::webpki_roots;
+use edno_npm::resolution::PackageIdNotFoundError;
+use edno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
+use edno_npm_installer::process_state::NpmProcessState;
+use edno_npm_installer::process_state::NpmProcessStateFromEnvVarSys;
+use edno_npm_installer::process_state::NpmProcessStateKind;
+use edno_runtime::UNSTABLE_ENV_VAR_NAMES;
+use edno_runtime::colors;
+use edno_runtime::edno_node::ops::ipc::ChildIpcSerialization;
+use edno_runtime::edno_tls::deno_native_certs::load_native_certs;
+use edno_runtime::edno_tls::rustls;
+use edno_runtime::edno_tls::rustls::RootCertStore;
+use edno_runtime::edno_tls::rustls_pemfile;
+use edno_runtime::edno_tls::webpki_roots;
 use deno_semver::npm::NpmPackageReqReference;
 use serde::Deserialize;
 use serde::Serialize;
@@ -33,7 +33,7 @@ pub fn npm_pkg_req_ref_to_binary_command(
 }
 
 pub fn has_trace_permissions_enabled(sys: &impl EnvVar) -> bool {
-  has_flag_env_var(sys, "DENO_TRACE_PERMISSIONS")
+  has_flag_env_var(sys, "EDNO_TRACE_PERMISSIONS")
 }
 
 pub fn has_flag_env_var(sys: &impl EnvVar, name: &str) -> bool {
@@ -50,14 +50,14 @@ pub fn has_flag_env_var(sys: &impl EnvVar, name: &str) -> bool {
 /// `process.on("message")`. The env vars are removed once read so they don't
 /// leak into grandchild processes. Returns `Ok(None)` when no channel was set.
 ///
-/// Shared by the `deno` CLI and the standalone (`denort`) runtime so the two
+/// Shared by the `edno` CLI and the standalone (`ednort`) runtime so the two
 /// entry points can't drift; the latter relies on this for IPC to work in a
 /// compiled binary's forked child (issue #26304).
 pub fn node_ipc_init(
   sys: &impl EnvVar,
 ) -> Result<
   Option<(i64, ChildIpcSerialization)>,
-  deno_runtime::deno_core::anyhow::Error,
+  edno_runtime::edno_core::anyhow::Error,
 > {
   let maybe_node_channel_fd = sys.env_var("NODE_CHANNEL_FD").ok();
   let maybe_node_channel_serialization =
@@ -135,7 +135,7 @@ pub fn get_root_cert_store(
   let mut root_cert_store = RootCertStore::empty();
   let ca_stores: Vec<String> = maybe_ca_stores
     .or_else(|| {
-      let env_ca_store = sys.env_var("DENO_TLS_CA_STORE").ok()?;
+      let env_ca_store = sys.env_var("EDNO_TLS_CA_STORE").ok()?;
       Some(
         env_ca_store
           .split(',')
@@ -178,7 +178,7 @@ pub fn get_root_cert_store(
   }
 
   let ca_data = maybe_ca_data
-    .or_else(|| sys.env_var("DENO_CERT").ok().and_then(CaData::parse));
+    .or_else(|| sys.env_var("EDNO_CERT").ok().and_then(CaData::parse));
   if let Some(ca_data) = ca_data {
     let result = match ca_data {
       CaData::File(ca_file) => {
@@ -240,7 +240,7 @@ pub fn npm_process_state(
 
   NPM_PROCESS_STATE
     .get_or_init(|| {
-      use deno_runtime::deno_process::NPM_RESOLUTION_STATE_FD_ENV_VAR_NAME;
+      use edno_runtime::edno_process::NPM_RESOLUTION_STATE_FD_ENV_VAR_NAME;
       let fd_or_path = sys.env_var_os(NPM_RESOLUTION_STATE_FD_ENV_VAR_NAME)?;
 
       sys.env_remove_var(NPM_RESOLUTION_STATE_FD_ENV_VAR_NAME);
@@ -272,7 +272,7 @@ pub fn resolve_npm_resolution_snapshot(
 
 #[derive(Clone, Default, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UnstableConfig {
-  // TODO(bartlomieju): remove in Deno 2.5
+  // TODO(bartlomieju): remove in Edno 2.5
   pub legacy_flag_enabled: bool, // --unstable
   pub detect_cjs: bool,
   pub lazy_dynamic_imports: bool,

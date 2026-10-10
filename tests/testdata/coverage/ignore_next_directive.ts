@@ -5,11 +5,11 @@ type Dummy = {
 };
 
 export function used(condition: boolean): boolean {
-  // deno-coverage-ignore
+  // edno-coverage-ignore
   if (condition) return false;
 
   return true;
 }
 
-// deno-coverage-ignore
+// edno-coverage-ignore
 function unused() {}

@@ -8,9 +8,9 @@ import {
 } from "./test_util.ts";
 import { copy } from "@std/io/copy";
 
-// Note tests for Deno.FsFile.setRaw is in integration tests.
+// Note tests for Edno.FsFile.setRaw is in integration tests.
 
-function changingCreateOptions(): Deno.OpenOptions {
+function changingCreateOptions(): Edno.OpenOptions {
   let writeReads = 0;
   return {
     read: false,
@@ -23,168 +23,168 @@ function changingCreateOptions(): Deno.OpenOptions {
   };
 }
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: false } },
   function openSyncChangingOptionsChecksConvertedAccess() {
     const path = `open_sync_changing_options_${crypto.randomUUID()}`;
 
     assertThrows(
-      () => Deno.openSync(path, changingCreateOptions()),
-      Deno.errors.NotCapable,
+      () => Edno.openSync(path, changingCreateOptions()),
+      Edno.errors.NotCapable,
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: false } },
   async function openChangingOptionsChecksConvertedAccess() {
     const path = `open_changing_options_${crypto.randomUUID()}`;
 
     await assertRejects(
-      () => Deno.open(path, changingCreateOptions()),
-      Deno.errors.NotCapable,
+      () => Edno.open(path, changingCreateOptions()),
+      Edno.errors.NotCapable,
     );
   },
 );
 
-Deno.test(function filesStdioFileDescriptors() {
-  // @ts-ignore `Deno.stdin.rid` was soft-removed in Deno 2.
-  assertEquals(Deno.stdin.rid, 0);
-  // @ts-ignore `Deno.stdout.rid` was soft-removed in Deno 2.
-  assertEquals(Deno.stdout.rid, 1);
-  // @ts-ignore `Deno.stderr.rid` was soft-removed in Deno 2.
-  assertEquals(Deno.stderr.rid, 2);
+Edno.test(function filesStdioFileDescriptors() {
+  // @ts-ignore `Edno.stdin.rid` was soft-removed in Edno 2.
+  assertEquals(Edno.stdin.rid, 0);
+  // @ts-ignore `Edno.stdout.rid` was soft-removed in Edno 2.
+  assertEquals(Edno.stdout.rid, 1);
+  // @ts-ignore `Edno.stderr.rid` was soft-removed in Edno 2.
+  assertEquals(Edno.stderr.rid, 2);
 });
 
-Deno.test(function fsFileGlobalSymbolCannotConstruct() {
-  const FsFileCtor = Deno.FsFile as unknown as new (
+Edno.test(function fsFileGlobalSymbolCannotConstruct() {
+  const FsFileCtor = Edno.FsFile as unknown as new (
     rid: number,
     token: symbol,
-  ) => Deno.FsFile;
+  ) => Edno.FsFile;
 
   assertThrows(
-    () => new FsFileCtor(0, Symbol.for("Deno.internal.FsFile")),
+    () => new FsFileCtor(0, Symbol.for("Edno.internal.FsFile")),
     TypeError,
-    "'Deno.FsFile' cannot be constructed",
+    "'Edno.FsFile' cannot be constructed",
   );
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function filesCopyToStdout() {
     const filename = "tests/testdata/assets/fixture.json";
-    using file = await Deno.open(filename);
-    assert(file instanceof Deno.FsFile);
-    const bytesWritten = await copy(file, Deno.stdout);
-    const fileSize = Deno.statSync(filename).size;
+    using file = await Edno.open(filename);
+    assert(file instanceof Edno.FsFile);
+    const bytesWritten = await copy(file, Edno.stdout);
+    const fileSize = Edno.statSync(filename).size;
     assertEquals(bytesWritten, fileSize);
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true, sys: ["umask"] },
   },
   function openSyncMode() {
-    const path = Deno.makeTempDirSync() + "/test_openSync.txt";
-    using _file = Deno.openSync(path, {
+    const path = Edno.makeTempDirSync() + "/test_openSync.txt";
+    using _file = Edno.openSync(path, {
       write: true,
       createNew: true,
       mode: 0o626,
     });
-    const pathInfo = Deno.statSync(path);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Deno.umask());
+    const pathInfo = Edno.statSync(path);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Edno.umask());
     }
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true, sys: ["umask"] },
   },
   async function openMode() {
-    const path = (await Deno.makeTempDir()) + "/test_open.txt";
-    using _file = await Deno.open(path, {
+    const path = (await Edno.makeTempDir()) + "/test_open.txt";
+    using _file = await Edno.open(path, {
       write: true,
       createNew: true,
       mode: 0o626,
     });
-    const pathInfo = Deno.statSync(path);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Deno.umask());
+    const pathInfo = Edno.statSync(path);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Edno.umask());
     }
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true, sys: ["umask"] },
   },
   function openSyncUrl() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const fileUrl = new URL(
       `file://${
-        Deno.build.os === "windows" ? "/" : ""
+        Edno.build.os === "windows" ? "/" : ""
       }${tempDir}/test_open.txt`,
     );
-    using _file = Deno.openSync(fileUrl, {
+    using _file = Edno.openSync(fileUrl, {
       write: true,
       createNew: true,
       mode: 0o626,
     });
-    const pathInfo = Deno.statSync(fileUrl);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Deno.umask());
+    const pathInfo = Edno.statSync(fileUrl);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Edno.umask());
     }
 
-    Deno.removeSync(tempDir, { recursive: true });
+    Edno.removeSync(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true, sys: ["umask"] },
   },
   async function openUrl() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fileUrl = new URL(
       `file://${
-        Deno.build.os === "windows" ? "/" : ""
+        Edno.build.os === "windows" ? "/" : ""
       }${tempDir}/test_open.txt`,
     );
-    using _file = await Deno.open(fileUrl, {
+    using _file = await Edno.open(fileUrl, {
       write: true,
       createNew: true,
       mode: 0o626,
     });
-    const pathInfo = Deno.statSync(fileUrl);
-    if (Deno.build.os !== "windows") {
-      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Deno.umask());
+    const pathInfo = Edno.statSync(fileUrl);
+    if (Edno.build.os !== "windows") {
+      assertEquals(pathInfo.mode! & 0o777, 0o626 & ~Edno.umask());
     }
 
-    Deno.removeSync(tempDir, { recursive: true });
+    Edno.removeSync(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: false } },
   async function writePermFailure() {
     const filename = "tests/hello.txt";
-    const openOptions: Deno.OpenOptions[] = [{ write: true }, { append: true }];
+    const openOptions: Edno.OpenOptions[] = [{ write: true }, { append: true }];
     for (const options of openOptions) {
       await assertRejects(async () => {
-        await Deno.open(filename, options);
-      }, Deno.errors.NotCapable);
+        await Edno.open(filename, options);
+      }, Edno.errors.NotCapable);
     }
   },
 );
 
-Deno.test(async function openOptions() {
+Edno.test(async function openOptions() {
   const filename = "tests/testdata/assets/fixture.json";
   await assertRejects(
     async () => {
-      await Deno.open(filename, { write: false });
+      await Edno.open(filename, { write: false });
     },
     Error,
     "'options' requires at least one option to be true",
@@ -192,7 +192,7 @@ Deno.test(async function openOptions() {
 
   await assertRejects(
     async () => {
-      await Deno.open(filename, { truncate: true, write: false });
+      await Edno.open(filename, { truncate: true, write: false });
     },
     Error,
     "'truncate' option requires 'write' to be true",
@@ -200,7 +200,7 @@ Deno.test(async function openOptions() {
 
   await assertRejects(
     async () => {
-      await Deno.open(filename, { create: true, write: false });
+      await Edno.open(filename, { create: true, write: false });
     },
     Error,
     "'create' or 'createNew' options require 'write' or 'append' to be true",
@@ -208,48 +208,48 @@ Deno.test(async function openOptions() {
 
   await assertRejects(
     async () => {
-      await Deno.open(filename, { createNew: true, append: false });
+      await Edno.open(filename, { createNew: true, append: false });
     },
     Error,
     "'create' or 'createNew' options require 'write' or 'append' to be true",
   );
 });
 
-Deno.test({ permissions: { read: false } }, async function readPermFailure() {
+Edno.test({ permissions: { read: false } }, async function readPermFailure() {
   await assertRejects(async () => {
-    await Deno.open("package.json", { read: true });
-  }, Deno.errors.NotCapable);
+    await Edno.open("package.json", { read: true });
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { write: true } },
   async function writeNullBufferFailure() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const filename = tempDir + "hello.txt";
     const w = {
       write: true,
       truncate: true,
       create: true,
     };
-    using file = await Deno.open(filename, w);
+    using file = await Edno.open(filename, w);
 
     // writing null should throw an error
     await assertRejects(
       async () => {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         await file.write(null as any);
       },
     ); // TODO(bartlomieju): Check error kind when dispatch_minimal pipes errors properly
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function readNullBufferFailure() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const filename = tempDir + "hello.txt";
-    using file = await Deno.open(filename, {
+    using file = await Edno.open(filename, {
       read: true,
       write: true,
       truncate: true,
@@ -262,156 +262,156 @@ Deno.test(
 
     // reading file into null buffer should throw an error
     await assertRejects(async () => {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       await file.read(null as any);
     }, TypeError);
     // TODO(bartlomieju): Check error kind when dispatch_minimal pipes errors properly
 
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: false, read: false } },
   async function readWritePermFailure() {
     const filename = "tests/hello.txt";
     await assertRejects(async () => {
-      await Deno.open(filename, { read: true });
-    }, Deno.errors.NotCapable);
+      await Edno.open(filename, { read: true });
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function openNotFound() {
     await assertRejects(
       async () => {
-        await Deno.open("bad_file_name");
+        await Edno.open("bad_file_name");
       },
-      Deno.errors.NotFound,
+      Edno.errors.NotFound,
       `open 'bad_file_name'`,
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   function openSyncNotFound() {
     assertThrows(
       () => {
-        Deno.openSync("bad_file_name");
+        Edno.openSync("bad_file_name");
       },
-      Deno.errors.NotFound,
+      Edno.errors.NotFound,
       `open 'bad_file_name'`,
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function createFile() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const filename = tempDir + "/test.txt";
-    const f = await Deno.create(filename);
-    let fileInfo = Deno.statSync(filename);
+    const f = await Edno.create(filename);
+    let fileInfo = Edno.statSync(filename);
     assert(fileInfo.isFile);
     assert(fileInfo.size === 0);
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
     await f.write(data);
-    fileInfo = Deno.statSync(filename);
+    fileInfo = Edno.statSync(filename);
     assert(fileInfo.size === 5);
     f.close();
 
     // TODO(bartlomieju): test different modes
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function createFileWithUrl() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fileUrl = new URL(
-      `file://${Deno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
+      `file://${Edno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
     );
-    const f = await Deno.create(fileUrl);
-    let fileInfo = Deno.statSync(fileUrl);
+    const f = await Edno.create(fileUrl);
+    let fileInfo = Edno.statSync(fileUrl);
     assert(fileInfo.isFile);
     assert(fileInfo.size === 0);
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
     await f.write(data);
-    fileInfo = Deno.statSync(fileUrl);
+    fileInfo = Edno.statSync(fileUrl);
     assert(fileInfo.size === 5);
     f.close();
 
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function createSyncFile() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const filename = tempDir + "/test.txt";
-    const f = Deno.createSync(filename);
-    let fileInfo = Deno.statSync(filename);
+    const f = Edno.createSync(filename);
+    let fileInfo = Edno.statSync(filename);
     assert(fileInfo.isFile);
     assert(fileInfo.size === 0);
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
     await f.write(data);
-    fileInfo = Deno.statSync(filename);
+    fileInfo = Edno.statSync(filename);
     assert(fileInfo.size === 5);
     f.close();
 
     // TODO(bartlomieju): test different modes
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function createSyncFileWithUrl() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fileUrl = new URL(
-      `file://${Deno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
+      `file://${Edno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
     );
-    const f = Deno.createSync(fileUrl);
-    let fileInfo = Deno.statSync(fileUrl);
+    const f = Edno.createSync(fileUrl);
+    let fileInfo = Edno.statSync(fileUrl);
     assert(fileInfo.isFile);
     assert(fileInfo.size === 0);
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
     await f.write(data);
-    fileInfo = Deno.statSync(fileUrl);
+    fileInfo = Edno.statSync(fileUrl);
     assert(fileInfo.size === 5);
     f.close();
 
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function openModeWrite() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const encoder = new TextEncoder();
     const filename = tempDir + "hello.txt";
     const data = encoder.encode("Hello world!\n");
-    let file = await Deno.open(filename, {
+    let file = await Edno.open(filename, {
       create: true,
       write: true,
       truncate: true,
     });
     // assert file was created
-    let fileInfo = Deno.statSync(filename);
+    let fileInfo = Edno.statSync(filename);
     assert(fileInfo.isFile);
     assertEquals(fileInfo.size, 0);
     // write some data
     await file.write(data);
-    fileInfo = Deno.statSync(filename);
+    fileInfo = Edno.statSync(filename);
     assertEquals(fileInfo.size, 13);
     // assert we can't read from file
     let thrown = false;
@@ -425,26 +425,26 @@ Deno.test(
     }
     file.close();
     // assert that existing file is truncated on open
-    file = await Deno.open(filename, {
+    file = await Edno.open(filename, {
       write: true,
       truncate: true,
     });
     file.close();
-    const fileSize = Deno.statSync(filename).size;
+    const fileSize = Edno.statSync(filename).size;
     assertEquals(fileSize, 0);
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function openModeWriteRead() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const encoder = new TextEncoder();
     const filename = tempDir + "hello.txt";
     const data = encoder.encode("Hello world!\n");
 
-    using file = await Deno.open(filename, {
+    using file = await Edno.open(filename, {
       write: true,
       truncate: true,
       create: true,
@@ -452,34 +452,34 @@ Deno.test(
     });
     const seekPosition = 0;
     // assert file was created
-    let fileInfo = Deno.statSync(filename);
+    let fileInfo = Edno.statSync(filename);
     assert(fileInfo.isFile);
     assertEquals(fileInfo.size, 0);
     // write some data
     await file.write(data);
-    fileInfo = Deno.statSync(filename);
+    fileInfo = Edno.statSync(filename);
     assertEquals(fileInfo.size, 13);
 
     const buf = new Uint8Array(20);
     // seeking from beginning of a file
-    const cursorPosition = await file.seek(seekPosition, Deno.SeekMode.Start);
+    const cursorPosition = await file.seek(seekPosition, Edno.SeekMode.Start);
     assertEquals(seekPosition, cursorPosition);
     const result = await file.read(buf);
     assertEquals(result, 13);
 
-    await Deno.remove(tempDir, { recursive: true });
+    await Edno.remove(tempDir, { recursive: true });
   },
 );
 
-Deno.test({ permissions: { read: true } }, async function seekStart() {
+Edno.test({ permissions: { read: true } }, async function seekStart() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = await Deno.open(filename);
+  using file = await Edno.open(filename);
   const seekPosition = 6;
   // Deliberately move 1 step forward
   await file.read(new Uint8Array(1)); // "H"
   // Skipping "Hello "
   // seeking from beginning of a file plus seekPosition
-  const cursorPosition = await file.seek(seekPosition, Deno.SeekMode.Start);
+  const cursorPosition = await file.seek(seekPosition, Edno.SeekMode.Start);
   assertEquals(seekPosition, cursorPosition);
   const buf = new Uint8Array(6);
   await file.read(buf);
@@ -487,15 +487,15 @@ Deno.test({ permissions: { read: true } }, async function seekStart() {
   assertEquals(decoded, "world!");
 });
 
-Deno.test({ permissions: { read: true } }, async function seekStartBigInt() {
+Edno.test({ permissions: { read: true } }, async function seekStartBigInt() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = await Deno.open(filename);
+  using file = await Edno.open(filename);
   const seekPosition = 6n;
   // Deliberately move 1 step forward
   await file.read(new Uint8Array(1)); // "H"
   // Skipping "Hello "
   // seeking from beginning of a file plus seekPosition
-  const cursorPosition = await file.seek(seekPosition, Deno.SeekMode.Start);
+  const cursorPosition = await file.seek(seekPosition, Edno.SeekMode.Start);
   assertEquals(seekPosition, BigInt(cursorPosition));
   const buf = new Uint8Array(6);
   await file.read(buf);
@@ -503,15 +503,15 @@ Deno.test({ permissions: { read: true } }, async function seekStartBigInt() {
   assertEquals(decoded, "world!");
 });
 
-Deno.test({ permissions: { read: true } }, function seekSyncStart() {
+Edno.test({ permissions: { read: true } }, function seekSyncStart() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = Deno.openSync(filename);
+  using file = Edno.openSync(filename);
   const seekPosition = 6;
   // Deliberately move 1 step forward
   file.readSync(new Uint8Array(1)); // "H"
   // Skipping "Hello "
   // seeking from beginning of a file plus seekPosition
-  const cursorPosition = file.seekSync(seekPosition, Deno.SeekMode.Start);
+  const cursorPosition = file.seekSync(seekPosition, Edno.SeekMode.Start);
   assertEquals(seekPosition, cursorPosition);
   const buf = new Uint8Array(6);
   file.readSync(buf);
@@ -519,15 +519,15 @@ Deno.test({ permissions: { read: true } }, function seekSyncStart() {
   assertEquals(decoded, "world!");
 });
 
-Deno.test({ permissions: { read: true } }, async function seekCurrent() {
+Edno.test({ permissions: { read: true } }, async function seekCurrent() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = await Deno.open(filename);
+  using file = await Edno.open(filename);
   // Deliberately move 1 step forward
   await file.read(new Uint8Array(1)); // "H"
   // Skipping "ello "
   const seekPosition = 5;
   // seekPosition is relative to current cursor position after read
-  const cursorPosition = await file.seek(seekPosition, Deno.SeekMode.Current);
+  const cursorPosition = await file.seek(seekPosition, Edno.SeekMode.Current);
   assertEquals(seekPosition + 1, cursorPosition);
   const buf = new Uint8Array(6);
   await file.read(buf);
@@ -535,15 +535,15 @@ Deno.test({ permissions: { read: true } }, async function seekCurrent() {
   assertEquals(decoded, "world!");
 });
 
-Deno.test({ permissions: { read: true } }, function seekSyncCurrent() {
+Edno.test({ permissions: { read: true } }, function seekSyncCurrent() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = Deno.openSync(filename);
+  using file = Edno.openSync(filename);
   // Deliberately move 1 step forward
   file.readSync(new Uint8Array(1)); // "H"
   // Skipping "ello "
   const seekPosition = 5;
   // seekPosition is relative to current cursor position after read
-  const cursorPosition = file.seekSync(seekPosition, Deno.SeekMode.Current);
+  const cursorPosition = file.seekSync(seekPosition, Edno.SeekMode.Current);
   assertEquals(seekPosition + 1, cursorPosition);
   const buf = new Uint8Array(6);
   file.readSync(buf);
@@ -551,12 +551,12 @@ Deno.test({ permissions: { read: true } }, function seekSyncCurrent() {
   assertEquals(decoded, "world!");
 });
 
-Deno.test({ permissions: { read: true } }, async function seekEnd() {
+Edno.test({ permissions: { read: true } }, async function seekEnd() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = await Deno.open(filename);
+  using file = await Edno.open(filename);
   const seekPosition = -6;
   // seek from end of file that has 12 chars, 12 - 6  = 6
-  const cursorPosition = await file.seek(seekPosition, Deno.SeekMode.End);
+  const cursorPosition = await file.seek(seekPosition, Edno.SeekMode.End);
   assertEquals(6, cursorPosition);
   const buf = new Uint8Array(6);
   await file.read(buf);
@@ -564,12 +564,12 @@ Deno.test({ permissions: { read: true } }, async function seekEnd() {
   assertEquals(decoded, "world!");
 });
 
-Deno.test({ permissions: { read: true } }, function seekSyncEnd() {
+Edno.test({ permissions: { read: true } }, function seekSyncEnd() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = Deno.openSync(filename);
+  using file = Edno.openSync(filename);
   const seekPosition = -6;
   // seek from end of file that has 12 chars, 12 - 6  = 6
-  const cursorPosition = file.seekSync(seekPosition, Deno.SeekMode.End);
+  const cursorPosition = file.seekSync(seekPosition, Edno.SeekMode.End);
   assertEquals(6, cursorPosition);
   const buf = new Uint8Array(6);
   file.readSync(buf);
@@ -577,12 +577,12 @@ Deno.test({ permissions: { read: true } }, function seekSyncEnd() {
   assertEquals(decoded, "world!");
 });
 
-Deno.test({ permissions: { read: true } }, async function seekMode() {
+Edno.test({ permissions: { read: true } }, async function seekMode() {
   const filename = "tests/testdata/assets/hello.txt";
-  using file = await Deno.open(filename);
+  using file = await Edno.open(filename);
   await assertRejects(
     async () => {
-      await file.seek(1, -1 as unknown as Deno.SeekMode);
+      await file.seek(1, -1 as unknown as Edno.SeekMode);
     },
     TypeError,
     "Invalid seek mode",
@@ -595,50 +595,50 @@ Deno.test({ permissions: { read: true } }, async function seekMode() {
   assertEquals(new TextDecoder().decode(buf), "H");
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function fileTruncateSyncSuccess() {
-    const filename = Deno.makeTempDirSync() + "/test_fileTruncateSync.txt";
-    using file = Deno.openSync(filename, {
+    const filename = Edno.makeTempDirSync() + "/test_fileTruncateSync.txt";
+    using file = Edno.openSync(filename, {
       create: true,
       read: true,
       write: true,
     });
 
     file.truncateSync(20);
-    assertEquals(Deno.readFileSync(filename).byteLength, 20);
+    assertEquals(Edno.readFileSync(filename).byteLength, 20);
     file.truncateSync(5);
-    assertEquals(Deno.readFileSync(filename).byteLength, 5);
+    assertEquals(Edno.readFileSync(filename).byteLength, 5);
     file.truncateSync(-5);
-    assertEquals(Deno.readFileSync(filename).byteLength, 0);
+    assertEquals(Edno.readFileSync(filename).byteLength, 0);
 
-    Deno.removeSync(filename);
+    Edno.removeSync(filename);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function fileTruncateSuccess() {
-    const filename = Deno.makeTempDirSync() + "/test_fileTruncate.txt";
-    using file = await Deno.open(filename, {
+    const filename = Edno.makeTempDirSync() + "/test_fileTruncate.txt";
+    using file = await Edno.open(filename, {
       create: true,
       read: true,
       write: true,
     });
 
     await file.truncate(20);
-    assertEquals((await Deno.readFile(filename)).byteLength, 20);
+    assertEquals((await Edno.readFile(filename)).byteLength, 20);
     await file.truncate(5);
-    assertEquals((await Deno.readFile(filename)).byteLength, 5);
+    assertEquals((await Edno.readFile(filename)).byteLength, 5);
     await file.truncate(-5);
-    assertEquals((await Deno.readFile(filename)).byteLength, 0);
+    assertEquals((await Edno.readFile(filename)).byteLength, 0);
 
-    await Deno.remove(filename);
+    await Edno.remove(filename);
   },
 );
 
-Deno.test({ permissions: { read: true } }, function fileStatSyncSuccess() {
-  using file = Deno.openSync("README.md");
+Edno.test({ permissions: { read: true } }, function fileStatSyncSuccess() {
+  using file = Edno.openSync("README.md");
   const fileInfo = file.statSync();
   assert(fileInfo.isFile);
   assert(!fileInfo.isSymlink);
@@ -647,11 +647,11 @@ Deno.test({ permissions: { read: true } }, function fileStatSyncSuccess() {
   assert(fileInfo.atime);
   assert(fileInfo.mtime);
   // The `birthtime` field is not available on Linux before kernel version 4.11.
-  assert(fileInfo.birthtime || Deno.build.os === "linux");
+  assert(fileInfo.birthtime || Edno.build.os === "linux");
 });
 
-Deno.test(async function fileStatSuccess() {
-  using file = await Deno.open("README.md");
+Edno.test(async function fileStatSuccess() {
+  using file = await Edno.open("README.md");
   const fileInfo = await file.stat();
   assert(fileInfo.isFile);
   assert(!fileInfo.isSymlink);
@@ -660,12 +660,12 @@ Deno.test(async function fileStatSuccess() {
   assert(fileInfo.atime);
   assert(fileInfo.mtime);
   // The `birthtime` field is not available on Linux before kernel version 4.11.
-  assert(fileInfo.birthtime || Deno.build.os === "linux");
+  assert(fileInfo.birthtime || Edno.build.os === "linux");
 });
 
-Deno.test({ permissions: { read: true } }, async function readableStream() {
+Edno.test({ permissions: { read: true } }, async function readableStream() {
   const filename = "tests/testdata/assets/hello.txt";
-  const file = await Deno.open(filename);
+  const file = await Edno.open(filename);
   assert(file.readable instanceof ReadableStream);
   const chunks = [];
   for await (const chunk of file.readable) {
@@ -675,7 +675,7 @@ Deno.test({ permissions: { read: true } }, async function readableStream() {
   assertEquals(chunks[0].byteLength, 12);
 });
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true },
     sanitizeOps: true,
@@ -686,13 +686,13 @@ Deno.test(
     // closes it automatically, so the resource and op sanitizers should not
     // report a leak even though `file` is never closed manually.
     const filename = "tests/testdata/assets/hello.txt";
-    const file = await Deno.open(filename);
+    const file = await Edno.open(filename);
     const chunks = await Array.fromAsync(file.readable);
     assertEquals(chunks.length, 1);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readableStreamClosedResourceErrorMessage() {
     // Regression test for https://github.com/denoland/deno/issues/34958 —
@@ -700,7 +700,7 @@ Deno.test(
     // `.close()`) while its `.readable` stream is still being consumed should
     // surface an actionable error rather than a terse "Bad resource ID".
     const filename = "tests/testdata/assets/hello.txt";
-    const file = await Deno.open(filename);
+    const file = await Edno.open(filename);
     const reader = file.readable.getReader();
     file.close();
     await assertRejects(
@@ -711,14 +711,14 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writableStreamClosedResourceErrorMessage() {
     // Regression test for https://github.com/denoland/deno/issues/34958 —
     // the writable counterpart of the case above.
-    const tempFile = await Deno.makeTempFile();
+    const tempFile = await Edno.makeTempFile();
     try {
-      const file = await Deno.open(tempFile, { write: true });
+      const file = await Edno.open(tempFile, { write: true });
       const writer = file.writable.getWriter();
       file.close();
       // The file's writable stream buffers small writes (64 KiB), so write a
@@ -733,16 +733,16 @@ Deno.test(
         "The stream's underlying resource was closed or consumed",
       );
     } finally {
-      await Deno.remove(tempFile);
+      await Edno.remove(tempFile);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readableStreamTextEncoderPipe() {
     const filename = "tests/testdata/assets/hello.txt";
-    const file = await Deno.open(filename);
+    const file = await Edno.open(filename);
     const readable = file.readable.pipeThrough(new TextDecoderStream());
     const chunks = [];
     for await (const chunk of readable) {
@@ -753,10 +753,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true, run: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function readableStreamCancelOnFifo() {
     // Regression test for https://github.com/denoland/deno/issues/21186
@@ -767,10 +767,10 @@ Deno.test(
     // running a subprocess that opens a FIFO, starts a read, cancels
     // it, and is expected to exit promptly. Without the fix the
     // subprocess would hang until killed.
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fifo = `${tempDir}/fifo`;
     try {
-      const mkfifo = new Deno.Command("mkfifo", { args: [fifo] }).outputSync();
+      const mkfifo = new Edno.Command("mkfifo", { args: [fifo] }).outputSync();
       if (mkfifo.code !== 0) {
         throw new Error(
           `mkfifo failed: ${new TextDecoder().decode(mkfifo.stderr)}`,
@@ -779,14 +779,14 @@ Deno.test(
       const script = `
         const fifo = ${JSON.stringify(fifo)};
         // O_RDWR avoids the POSIX FIFO open-blocks-on-peer semantics.
-        const file = await Deno.open(fifo, { read: true, write: true });
+        const file = await Edno.open(fifo, { read: true, write: true });
         const r = file.readable.getReader();
         const reading = r.read();
         await new Promise((res) => setTimeout(res, 50));
         await r.cancel();
         await reading;
       `;
-      const out = await new Deno.Command(Deno.execPath(), {
+      const out = await new Edno.Command(Edno.execPath(), {
         args: ["eval", script],
         stdout: "null",
         stderr: "piped",
@@ -803,16 +803,16 @@ Deno.test(
         `subprocess failed: ${new TextDecoder().decode(out.stderr)}`,
       );
     } finally {
-      await Deno.remove(tempDir, { recursive: true });
+      await Edno.remove(tempDir, { recursive: true });
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writableStream() {
-    const path = await Deno.makeTempFile();
-    const file = await Deno.open(path, { write: true });
+    const path = await Edno.makeTempFile();
+    const file = await Edno.open(path, { write: true });
     assert(file.writable instanceof WritableStream);
     const readable = new ReadableStream({
       start(controller) {
@@ -822,58 +822,58 @@ Deno.test(
       },
     });
     await readable.pipeTo(file.writable);
-    const res = await Deno.readTextFile(path);
+    const res = await Edno.readTextFile(path);
     assertEquals(res, "hello world!");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function readTextFileNonUtf8() {
-    const path = await Deno.makeTempFile();
-    using file = await Deno.open(path, { write: true });
+    const path = await Edno.makeTempFile();
+    using file = await Edno.open(path, { write: true });
     await file.write(new TextEncoder().encode("hello "));
     await file.write(new Uint8Array([0xC0]));
 
-    const res = await Deno.readTextFile(path);
-    const resSync = Deno.readTextFileSync(path);
+    const res = await Edno.readTextFile(path);
+    const resSync = Edno.readTextFileSync(path);
     assertEquals(res, resSync);
     assertEquals(res, "hello \uFFFD");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function fsFileExplicitResourceManagement() {
-    let file2: Deno.FsFile;
+    let file2: Edno.FsFile;
 
     {
-      using file = await Deno.open("tests/testdata/assets/hello.txt");
+      using file = await Edno.open("tests/testdata/assets/hello.txt");
       file2 = file;
 
       const stat = file.statSync();
       assert(stat.isFile);
     }
 
-    assertThrows(() => file2.statSync(), Deno.errors.BadResource);
+    assertThrows(() => file2.statSync(), Edno.errors.BadResource);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function fsFileExplicitResourceManagementManualClose() {
-    using file = await Deno.open("tests/testdata/assets/hello.txt");
+    using file = await Edno.open("tests/testdata/assets/hello.txt");
     file.close();
-    assertThrows(() => file.statSync(), Deno.errors.BadResource); // definitely closed
+    assertThrows(() => file.statSync(), Edno.errors.BadResource); // definitely closed
     // calling [Symbol.dispose] after manual close is a no-op
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function fsFileDatasyncSyncSuccess() {
-    const filename = Deno.makeTempDirSync() + "/test_fdatasyncSync.txt";
-    const file = Deno.openSync(filename, {
+    const filename = Edno.makeTempDirSync() + "/test_fdatasyncSync.txt";
+    const file = Edno.openSync(filename, {
       read: true,
       write: true,
       create: true,
@@ -881,17 +881,17 @@ Deno.test(
     const data = new Uint8Array(64);
     file.writeSync(data);
     file.syncDataSync();
-    assertEquals(Deno.readFileSync(filename), data);
+    assertEquals(Edno.readFileSync(filename), data);
     file.close();
-    Deno.removeSync(filename);
+    Edno.removeSync(filename);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function fsFileDatasyncSuccess() {
-    const filename = (await Deno.makeTempDir()) + "/test_fdatasync.txt";
-    const file = await Deno.open(filename, {
+    const filename = (await Edno.makeTempDir()) + "/test_fdatasync.txt";
+    const file = await Edno.open(filename, {
       read: true,
       write: true,
       create: true,
@@ -899,17 +899,17 @@ Deno.test(
     const data = new Uint8Array(64);
     await file.write(data);
     await file.syncData();
-    assertEquals(await Deno.readFile(filename), data);
+    assertEquals(await Edno.readFile(filename), data);
     file.close();
-    await Deno.remove(filename);
+    await Edno.remove(filename);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function fsFileSyncSyncSuccess() {
-    const filename = Deno.makeTempDirSync() + "/test_fsyncSync.txt";
-    const file = Deno.openSync(filename, {
+    const filename = Edno.makeTempDirSync() + "/test_fsyncSync.txt";
+    const file = Edno.openSync(filename, {
       read: true,
       write: true,
       create: true,
@@ -919,15 +919,15 @@ Deno.test(
     file.syncSync();
     assertEquals(file.statSync().size, size);
     file.close();
-    Deno.removeSync(filename);
+    Edno.removeSync(filename);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function fsFileSyncSuccess() {
-    const filename = (await Deno.makeTempDir()) + "/test_fsync.txt";
-    const file = await Deno.open(filename, {
+    const filename = (await Edno.makeTempDir()) + "/test_fsync.txt";
+    const file = await Edno.open(filename, {
       read: true,
       write: true,
       create: true,
@@ -937,37 +937,37 @@ Deno.test(
     await file.sync();
     assertEquals((await file.stat()).size, size);
     file.close();
-    await Deno.remove(filename);
+    await Edno.remove(filename);
   },
 );
 
-Deno.test({ permissions: { read: true } }, function fsFileIsTerminal() {
+Edno.test({ permissions: { read: true } }, function fsFileIsTerminal() {
   // CI not under TTY, so cannot test stdin/stdout/stderr.
-  using file = Deno.openSync("tests/testdata/assets/hello.txt");
+  using file = Edno.openSync("tests/testdata/assets/hello.txt");
   assert(!file.isTerminal());
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, run: true } },
   async function fsFileLockFileSync() {
     await runFlockTests({ sync: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, run: true } },
   async function fsFileLockFileAsync() {
     await runFlockTests({ sync: false });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function fsFileTryLockSync() {
-    const path = Deno.makeTempFileSync();
+    const path = Edno.makeTempFileSync();
     try {
-      using file1 = Deno.openSync(path, { read: true, write: true });
-      using file2 = Deno.openSync(path, { read: true, write: true });
+      using file1 = Edno.openSync(path, { read: true, write: true });
+      using file2 = Edno.openSync(path, { read: true, write: true });
 
       // First lock should succeed
       assertEquals(file1.tryLockSync(true), true);
@@ -985,18 +985,18 @@ Deno.test(
       assertEquals(file2.tryLockSync(true), true);
       file2.unlockSync();
     } finally {
-      Deno.removeSync(path);
+      Edno.removeSync(path);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function fsFileTryLockAsync() {
-    const path = await Deno.makeTempFile();
+    const path = await Edno.makeTempFile();
     try {
-      using file1 = await Deno.open(path, { read: true, write: true });
-      using file2 = await Deno.open(path, { read: true, write: true });
+      using file1 = await Edno.open(path, { read: true, write: true });
+      using file2 = await Edno.open(path, { read: true, write: true });
 
       // First lock should succeed
       assertEquals(await file1.tryLock(true), true);
@@ -1014,18 +1014,18 @@ Deno.test(
       assertEquals(await file2.tryLock(true), true);
       await file2.unlock();
     } finally {
-      await Deno.remove(path);
+      await Edno.remove(path);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function fsFileTryLockSharedSync() {
-    const path = Deno.makeTempFileSync();
+    const path = Edno.makeTempFileSync();
     try {
-      using file1 = Deno.openSync(path, { read: true, write: true });
-      using file2 = Deno.openSync(path, { read: true, write: true });
+      using file1 = Edno.openSync(path, { read: true, write: true });
+      using file2 = Edno.openSync(path, { read: true, write: true });
 
       // First shared lock should succeed
       assertEquals(file1.tryLockSync(false), true);
@@ -1034,13 +1034,13 @@ Deno.test(
       assertEquals(file2.tryLockSync(false), true);
 
       // Exclusive lock should fail when shared locks are held
-      using file3 = Deno.openSync(path, { read: true, write: true });
+      using file3 = Edno.openSync(path, { read: true, write: true });
       assertEquals(file3.tryLockSync(true), false);
 
       file1.unlockSync();
       file2.unlockSync();
     } finally {
-      Deno.removeSync(path);
+      Edno.removeSync(path);
     }
   },
 );
@@ -1140,15 +1140,15 @@ async function checkFirstBlocksSecond(opts: {
 function runFlockTestProcess(opts: { exclusive: boolean; sync: boolean }) {
   const path = "tests/testdata/assets/lock_target.txt";
   const scriptText = `
-    const file = Deno.openSync("${path}");
+    const file = Edno.openSync("${path}");
 
     // ready signal
-    Deno.stdout.writeSync(new Uint8Array(1));
+    Edno.stdout.writeSync(new Uint8Array(1));
     // wait for enter lock signal
-    Deno.stdin.readSync(new Uint8Array(1));
+    Edno.stdin.readSync(new Uint8Array(1));
 
     // entering signal
-    Deno.stdout.writeSync(new Uint8Array(1));
+    Edno.stdout.writeSync(new Uint8Array(1));
     // lock and record the entry time
     ${
     opts.sync
@@ -1157,10 +1157,10 @@ function runFlockTestProcess(opts: { exclusive: boolean; sync: boolean }) {
   }
     const enterTime = new Date().getTime();
     // entered signal
-    Deno.stdout.writeSync(new Uint8Array(1));
+    Edno.stdout.writeSync(new Uint8Array(1));
 
     // wait for exit lock signal
-    Deno.stdin.readSync(new Uint8Array(1));
+    Edno.stdin.readSync(new Uint8Array(1));
 
     // record the exit time and wait a little bit before releasing
     // the lock so that the enter time of the next process doesn't
@@ -1172,13 +1172,13 @@ function runFlockTestProcess(opts: { exclusive: boolean; sync: boolean }) {
     ${opts.sync ? "file.unlockSync();" : "await file.unlock();"}
 
     // exited signal
-    Deno.stdout.writeSync(new Uint8Array(1));
+    Edno.stdout.writeSync(new Uint8Array(1));
 
     // output the enter and exit time
     console.log(JSON.stringify({ enterTime, exitTime }));
 `;
 
-  const process = new Deno.Command(Deno.execPath(), {
+  const process = new Edno.Command(Edno.execPath(), {
     args: ["eval", scriptText],
     stdin: "piped",
     stdout: "piped",

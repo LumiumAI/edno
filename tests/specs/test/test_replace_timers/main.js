@@ -1,4 +1,4 @@
-Deno.test("foo", async (t) => {
+Edno.test("foo", async (t) => {
   globalThis.setTimeout = () => {};
   globalThis.clearTimeout = () => {};
   globalThis.setInterval = () => {};

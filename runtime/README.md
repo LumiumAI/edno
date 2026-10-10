@@ -1,22 +1,22 @@
-# `deno_runtime` crate
+# `edno_runtime` crate
 
-[![crates](https://img.shields.io/crates/v/deno_runtime.svg)](https://crates.io/crates/deno_runtime)
-[![docs](https://docs.rs/deno_runtime/badge.svg)](https://docs.rs/deno_runtime)
+[![crates](https://img.shields.io/crates/v/edno_runtime.svg)](https://crates.io/crates/edno_runtime)
+[![docs](https://docs.rs/edno_runtime/badge.svg)](https://docs.rs/edno_runtime)
 
-This is a slim version of the Deno CLI which removes typescript integration and
+This is a slim version of the Edno CLI which removes typescript integration and
 various tooling (like lint and doc). Basically only JavaScript execution with
-Deno's operating system bindings (ops).
+Edno's operating system bindings (ops).
 
 ## Stability
 
 This crate is built using battle-tested modules that were originally in the
-`deno` crate, however the API of this crate is subject to rapid and breaking
+`edno` crate, however the API of this crate is subject to rapid and breaking
 changes.
 
 ## `MainWorker`
 
 The main API of this crate is `MainWorker`. `MainWorker` is a structure
-encapsulating `deno_core::JsRuntime` with a set of ops used to implement `Deno`
+encapsulating `edno_core::JsRuntime` with a set of ops used to implement `Edno`
 namespace.
 
 When creating a `MainWorker` implementors must call `MainWorker::bootstrap` to
@@ -34,7 +34,7 @@ runtime's properties:
 
 ## `Worker` Web API
 
-`deno_runtime` comes with support for `Worker` Web API. The `Worker` API is
+`edno_runtime` comes with support for `Worker` Web API. The `Worker` API is
 implemented using `WebWorker` structure.
 
 When creating a new instance of `MainWorker` implementors must provide a

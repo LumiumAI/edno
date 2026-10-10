@@ -5,15 +5,15 @@ use std::collections::HashSet;
 use std::sync::Arc;
 
 use deno_ast::ModuleSpecifier;
-use deno_config::deno_json::LintRulesConfig;
-use deno_config::workspace::WorkspaceDirectory;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_config::edno_json::LintRulesConfig;
+use edno_config::workspace::WorkspaceDirectory;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 use deno_graph::ModuleGraph;
 use deno_lint::diagnostic::LintDiagnostic;
 use deno_lint::rules::LintRule;
 use deno_lint::tags;
-use deno_resolver::workspace::WorkspaceResolver;
+use edno_resolver::workspace::WorkspaceResolver;
 
 use crate::sys::CliSys;
 
@@ -55,7 +55,7 @@ pub enum FileOrPackageLintRule {
 
 #[derive(Debug)]
 enum CliLintRuleKind {
-  DenoLint(Box<dyn LintRule>),
+  EdnoLint(Box<dyn LintRule>),
   Extended(Box<dyn ExtendedLintRule>),
   Package(Box<dyn PackageLintRule>),
 }
@@ -73,7 +73,7 @@ impl CliLintRule {
   pub fn code(&self) -> &'static str {
     use CliLintRuleKind::*;
     match &self.0 {
-      DenoLint(rule) => rule.code(),
+      EdnoLint(rule) => rule.code(),
       Extended(rule) => rule.code(),
       Package(rule) => rule.code(),
     }
@@ -82,7 +82,7 @@ impl CliLintRule {
   pub fn tags(&self) -> tags::Tags {
     use CliLintRuleKind::*;
     match &self.0 {
-      DenoLint(rule) => rule.tags(),
+      EdnoLint(rule) => rule.tags(),
       Extended(rule) => rule.tags(),
       Package(rule) => rule.tags(),
     }
@@ -91,7 +91,7 @@ impl CliLintRule {
   pub fn help_docs_url(&self) -> Cow<'static, str> {
     use CliLintRuleKind::*;
     match &self.0 {
-      DenoLint(rule) => {
+      EdnoLint(rule) => {
         Cow::Owned(format!("https://docs.deno.com/lint/rules/{}", rule.code()))
       }
       Extended(rule) => rule.help_docs_url(),
@@ -102,7 +102,7 @@ impl CliLintRule {
   pub fn supports_incremental_cache(&self) -> bool {
     use CliLintRuleKind::*;
     match &self.0 {
-      DenoLint(_) => true,
+      EdnoLint(_) => true,
       Extended(rule) => rule.supports_incremental_cache(),
       // graph rules don't go through the incremental cache, so allow it
       Package(_) => true,
@@ -112,7 +112,7 @@ impl CliLintRule {
   pub fn into_file_or_pkg_rule(self) -> FileOrPackageLintRule {
     use CliLintRuleKind::*;
     match self.0 {
-      DenoLint(rule) => FileOrPackageLintRule::File(rule),
+      EdnoLint(rule) => FileOrPackageLintRule::File(rule),
       Extended(rule) => FileOrPackageLintRule::File(rule.into_base()),
       Package(rule) => FileOrPackageLintRule::Package(rule),
     }
@@ -174,7 +174,7 @@ impl LintRuleProvider {
     ))];
     deno_lint_rules
       .into_iter()
-      .map(|rule| CliLintRule(CliLintRuleKind::DenoLint(rule)))
+      .map(|rule| CliLintRule(CliLintRuleKind::EdnoLint(rule)))
       .chain(cli_lint_rules)
       .chain(cli_graph_rules)
       .collect()

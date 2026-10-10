@@ -27,21 +27,21 @@ const lazyDns = core.createLazyLoader("node:dns");
 // bootstrapped, so make sure it is loaded before scheduling one.
 const lazyProcess = core.createLazyLoader("node:process");
 const { ERR_SOCKET_BAD_TYPE } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const { UDP } = core.loadExtScript(
-  "ext:deno_node/internal_binding/udp_wrap.ts",
+  "ext:edno_node/internal_binding/udp_wrap.ts",
 );
 const { guessHandleType } = core.loadExtScript(
-  "ext:deno_node/internal_binding/util.ts",
+  "ext:edno_node/internal_binding/util.ts",
 );
-const { codeMap } = core.loadExtScript("ext:deno_node/internal_binding/uv.ts");
+const { codeMap } = core.loadExtScript("ext:edno_node/internal_binding/uv.ts");
 const {
   isInt32,
   validateFunction,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
-const { isIP } = core.loadExtScript("ext:deno_node/internal/net.ts");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
+const { isIP } = core.loadExtScript("ext:edno_node/internal/net.ts");
 const { FunctionPrototypeBind, MapPrototypeGet, Symbol } = primordials;
 
 type SocketType = "udp4" | "udp6";
@@ -136,7 +136,7 @@ function _createSocketHandle(
       err = handle.open(fd);
     }
   } else if (port || address) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     err = handle.bind(address, port || 0, flags);
   }
 

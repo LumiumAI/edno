@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/create-require",
+  "name": "@ednotest/create-require",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js"

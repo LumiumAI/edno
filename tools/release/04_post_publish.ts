@@ -1,9 +1,9 @@
-#!/usr/bin/env -S deno run -A --lock=tools/deno.lock.json
+#!/usr/bin/env -S edno run -A --lock=tools/edno.lock.json
 // Copyright 2018-2026 the Deno authors. MIT license.
-import { DenoWorkspace } from "./deno_workspace.ts";
+import { EdnoWorkspace } from "./edno_workspace.ts";
 import { $, createOctoKit, getGitHubRepository } from "./deps.ts";
 
-const workspace = await DenoWorkspace.load();
+const workspace = await EdnoWorkspace.load();
 const repo = workspace.repo;
 const cliCrate = workspace.getCliCrate();
 
@@ -105,7 +105,7 @@ async function forwardReleaseCommitToMain() {
       "```\n\n" +
       "Don't need this PR? Close it.\n";
 
-    const actor = Deno.env.get("GH_WORKFLOW_ACTOR");
+    const actor = Edno.env.get("GH_WORKFLOW_ACTOR");
     if (actor != null) {
       text += `\ncc @${actor}`;
     }

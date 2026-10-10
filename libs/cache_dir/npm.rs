@@ -375,7 +375,7 @@ mod test {
     let cases = [
       ("JSON", "jjju6tq"),
       ("@types/JSON", "ib2hs4dfomxuuu2pjy"),
-      ("Deno_123", "irsw4327gezdg"),
+      ("Edno_123", "irsw4327gezdg"),
     ];
     for (name, encoded) in cases {
       assert_eq!(mixed_case_package_name_encode(name), encoded);

@@ -5,19 +5,19 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use deno_core::FromV8;
-use deno_core::OpState;
-use deno_core::ToV8;
-use deno_core::convert::Uint8Array;
-use deno_core::error::AnyError;
-use deno_core::op2;
+use edno_core::FromV8;
+use edno_core::OpState;
+use edno_core::ToV8;
+use edno_core::convert::Uint8Array;
+use edno_core::error::AnyError;
+use edno_core::op2;
 use deno_error::JsErrorBox;
-use deno_permissions::PermissionsContainer;
+use edno_permissions::PermissionsContainer;
 
-deno_core::extension!(
-  deno_bundle_runtime,
+edno_core::extension!(
+  edno_bundle_runtime,
   deps = [
-    deno_web
+    edno_web
   ],
   ops = [
     op_bundle,
@@ -44,14 +44,14 @@ impl BundleProvider for () {
     _options: BundleOptions,
     _permissions: PermissionsContainer,
   ) -> Result<BuildResponse, AnyError> {
-    // Embedders that don't wire up a real provider (notably `denort`, used
-    // by `deno compile` outputs) fall through to this no-op implementation.
+    // Embedders that don't wire up a real provider (notably `ednort`, used
+    // by `edno compile` outputs) fall through to this no-op implementation.
     // Surface that limitation directly to the user instead of leaking the
     // historical "default BundleProvider does not do anything" string.
     // See denoland/deno#31597.
-    Err(deno_core::anyhow::anyhow!(
-      "Deno.bundle() is not available in compiled binaries (`deno compile`). \
-       Run with `deno run` instead, or pre-bundle the entrypoints at build time."
+    Err(edno_core::anyhow::anyhow!(
+      "Edno.bundle() is not available in compiled binaries (`edno compile`). \
+       Run with `edno run` instead, or pre-bundle the entrypoints at build time."
     ))
   }
 }
@@ -97,7 +97,7 @@ pub struct BundleOptions {
 pub enum BundlePlatform {
   Browser,
   #[default]
-  Deno,
+  Edno,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Copy, Default, serde::Deserialize)]
@@ -236,7 +236,7 @@ pub async fn op_bundle(
       .cloned()
       .ok_or_else(|| {
         JsErrorBox::generic(
-          "Deno.bundle() requires a runtime permissions context",
+          "Edno.bundle() requires a runtime permissions context",
         )
       })?;
     (

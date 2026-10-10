@@ -6,32 +6,32 @@ use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::serde_json::json;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::serde_json::json;
 
 use crate::util::fs::canonicalize_path;
 
-static TEST_ENV_VAR_NAME: &str = "DENO_TEST_JUPYTER_PATH";
+static TEST_ENV_VAR_NAME: &str = "EDNO_TEST_JUPYTER_PATH";
 
-const DENO_ICON_32: &[u8] = include_bytes!("./resources/deno-logo-32x32.png");
-const DENO_ICON_64: &[u8] = include_bytes!("./resources/deno-logo-64x64.png");
-const DENO_ICON_SVG: &[u8] = include_bytes!("./resources/deno-logo-svg.svg");
+const EDNO_ICON_32: &[u8] = include_bytes!("./resources/edno-logo-32x32.png");
+const EDNO_ICON_64: &[u8] = include_bytes!("./resources/edno-logo-64x64.png");
+const EDNO_ICON_SVG: &[u8] = include_bytes!("./resources/edno-logo-svg.svg");
 
-/// Resolves the most stable path to the current Deno executable to embed in
+/// Resolves the most stable path to the current Edno executable to embed in
 /// the generated Jupyter kernelspec's `argv`.
 ///
 /// `std::env::current_exe()` resolves symlinks. For package-manager installs –
-/// most notably Homebrew, which symlinks `/opt/homebrew/bin/deno` to a
-/// versioned path under `Cellar/deno/<version>/bin/deno` – the resolved path
+/// most notably Homebrew, which symlinks `/opt/homebrew/bin/edno` to a
+/// versioned path under `Cellar/edno/<version>/bin/edno` – the resolved path
 /// embeds the installed version number and stops existing after an upgrade,
 /// leaving the kernel pointing at a missing binary (`spawn ... ENOENT`, see
 /// https://github.com/denoland/deno/issues/25306).
 ///
-/// To keep the kernel working across upgrades we prefer a `deno` entry found on
-/// `PATH` that resolves to the same binary (e.g. `/opt/homebrew/bin/deno`),
+/// To keep the kernel working across upgrades we prefer a `edno` entry found on
+/// `PATH` that resolves to the same binary (e.g. `/opt/homebrew/bin/edno`),
 /// falling back to the resolved executable path when no such entry exists.
 fn kernel_exe_path() -> Result<PathBuf, AnyError> {
   let current_exe =
@@ -70,14 +70,14 @@ fn get_user_data_dir() -> Result<PathBuf, AnyError> {
   {
     let home = std::env::var_os("HOME")
       .map(PathBuf::from)
-      .ok_or_else(|| deno_core::anyhow::anyhow!("HOME not set"))?;
+      .ok_or_else(|| edno_core::anyhow::anyhow!("HOME not set"))?;
     Ok(home.join("Library").join("Jupyter"))
   }
   #[cfg(target_os = "windows")]
   {
     let appdata = std::env::var_os("APPDATA")
       .map(PathBuf::from)
-      .ok_or_else(|| deno_core::anyhow::anyhow!("APPDATA not set"))?;
+      .ok_or_else(|| edno_core::anyhow::anyhow!("APPDATA not set"))?;
     Ok(appdata.join("jupyter"))
   }
   #[cfg(not(any(target_os = "macos", target_os = "windows")))]
@@ -87,7 +87,7 @@ fn get_user_data_dir() -> Result<PathBuf, AnyError> {
     }
     let home = std::env::var_os("HOME")
       .map(PathBuf::from)
-      .ok_or_else(|| deno_core::anyhow::anyhow!("HOME not set"))?;
+      .ok_or_else(|| edno_core::anyhow::anyhow!("HOME not set"))?;
     Ok(home.join(".local").join("share").join("jupyter"))
   }
 }
@@ -95,24 +95,24 @@ fn get_user_data_dir() -> Result<PathBuf, AnyError> {
 pub fn status(maybe_name: Option<&str>) -> Result<(), AnyError> {
   let user_data_dir = get_user_data_dir()?;
 
-  let kernel_name = maybe_name.unwrap_or("deno");
+  let kernel_name = maybe_name.unwrap_or("edno");
   let kernel_spec_dir_path = user_data_dir.join("kernels").join(kernel_name);
   let kernel_spec_path = kernel_spec_dir_path.join("kernel.json");
 
   if kernel_spec_path.exists() {
     log::info!(
-      "✅ Deno kernel already installed at {}",
+      "✅ Edno kernel already installed at {}",
       kernel_spec_dir_path.display()
     );
     Ok(())
   } else {
-    let mut install_cmd = "deno jupyter --install".to_string();
+    let mut install_cmd = "edno jupyter --install".to_string();
     if let Some(name) = maybe_name {
       install_cmd.push_str(" --name ");
       install_cmd.push_str(name);
     }
     log::warn!(
-      "ℹ️ Deno kernel is not yet installed, run `{}` to set it up",
+      "ℹ️ Edno kernel is not yet installed, run `{}` to set it up",
       install_cmd
     );
     Ok(())
@@ -137,7 +137,7 @@ pub fn install(
 ) -> Result<(), AnyError> {
   let user_data_dir = get_user_data_dir()?;
 
-  let kernel_name = maybe_name.unwrap_or("deno");
+  let kernel_name = maybe_name.unwrap_or("edno");
   let kernel_spec_dir_path = user_data_dir.join("kernels").join(kernel_name);
   let kernel_spec_path = kernel_spec_dir_path.join("kernel.json");
 
@@ -150,12 +150,12 @@ pub fn install(
 
   if kernel_spec_path.exists() && !force {
     bail!(
-      "Deno kernel already exists at {}, run again with `--force` to overwrite it",
+      "Edno kernel already exists at {}, run again with `--force` to overwrite it",
       kernel_spec_dir_path.display()
     );
   }
 
-  let display_name = maybe_display_name.unwrap_or("Deno");
+  let display_name = maybe_display_name.unwrap_or("Edno");
   let current_exe_path = kernel_exe_path()?.to_string_lossy().into_owned();
 
   // TODO(bartlomieju): add remaining fields as per
@@ -180,15 +180,15 @@ pub fn install(
   })?;
   let failed_icon_fn =
     || format!("Failed to copy icon to {}", kernel_spec_dir_path.display());
-  install_icon(&kernel_spec_dir_path, "logo-32x32.png", DENO_ICON_32)
+  install_icon(&kernel_spec_dir_path, "logo-32x32.png", EDNO_ICON_32)
     .with_context(failed_icon_fn)?;
-  install_icon(&kernel_spec_dir_path, "logo-64x64.png", DENO_ICON_64)
+  install_icon(&kernel_spec_dir_path, "logo-64x64.png", EDNO_ICON_64)
     .with_context(failed_icon_fn)?;
-  install_icon(&kernel_spec_dir_path, "logo-svg.svg", DENO_ICON_SVG)
+  install_icon(&kernel_spec_dir_path, "logo-svg.svg", EDNO_ICON_SVG)
     .with_context(failed_icon_fn)?;
 
   log::info!(
-    "✅ Deno kernelspec installed successfully at {}.",
+    "✅ Edno kernelspec installed successfully at {}.",
     kernel_spec_dir_path.display()
   );
   Ok(())
@@ -205,14 +205,14 @@ mod tests {
     // Simulates a Homebrew install: the running binary is the resolved,
     // versioned `Cellar` path, while `PATH` contains a stable symlink to it.
     let tmp = tempfile::tempdir().unwrap();
-    let cellar_dir = tmp.path().join("Cellar").join("deno").join("1.0.0");
+    let cellar_dir = tmp.path().join("Cellar").join("edno").join("1.0.0");
     let bin_dir = tmp.path().join("bin");
     std::fs::create_dir_all(&cellar_dir).unwrap();
     std::fs::create_dir_all(&bin_dir).unwrap();
 
-    let resolved_exe = cellar_dir.join("deno");
+    let resolved_exe = cellar_dir.join("edno");
     std::fs::write(&resolved_exe, b"").unwrap();
-    let symlinked_exe = bin_dir.join("deno");
+    let symlinked_exe = bin_dir.join("edno");
     symlink(&resolved_exe, &symlinked_exe).unwrap();
 
     let path_var = OsString::from(bin_dir.to_string_lossy().into_owned());
@@ -225,7 +225,7 @@ mod tests {
   #[test]
   fn stable_exe_path_without_match_falls_back() {
     let tmp = tempfile::tempdir().unwrap();
-    let resolved_exe = tmp.path().join("deno");
+    let resolved_exe = tmp.path().join("edno");
     std::fs::write(&resolved_exe, b"").unwrap();
 
     // No PATH at all.
@@ -237,7 +237,7 @@ mod tests {
       resolved_exe
     );
 
-    // A PATH that doesn't contain a matching `deno` falls back to the exe.
+    // A PATH that doesn't contain a matching `edno` falls back to the exe.
     let other_dir = tmp.path().join("other");
     std::fs::create_dir_all(&other_dir).unwrap();
     assert_eq!(
@@ -251,19 +251,19 @@ mod tests {
 
   #[test]
   fn stable_exe_path_ignores_unrelated_path_deno() {
-    // A different `deno` binary on PATH that doesn't resolve to the running
+    // A different `edno` binary on PATH that doesn't resolve to the running
     // executable must not be chosen.
     let tmp = tempfile::tempdir().unwrap();
-    let real_exe = tmp.path().join("real-deno");
+    let real_exe = tmp.path().join("real-edno");
     std::fs::write(&real_exe, b"").unwrap();
 
     let bin_dir = tmp.path().join("bin");
     std::fs::create_dir_all(&bin_dir).unwrap();
-    std::fs::write(bin_dir.join("deno"), b"").unwrap();
+    std::fs::write(bin_dir.join("edno"), b"").unwrap();
 
     let path_var = OsString::from(bin_dir.to_string_lossy().into_owned());
-    // `real_exe`'s file name is `real-deno`, so no candidate matches; even if
-    // it were `deno`, the unrelated binary canonicalizes elsewhere.
+    // `real_exe`'s file name is `real-edno`, so no candidate matches; even if
+    // it were `edno`, the unrelated binary canonicalizes elsewhere.
     assert_eq!(stable_exe_path(&real_exe, Some(path_var)), real_exe);
   }
 }

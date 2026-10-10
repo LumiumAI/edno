@@ -12,7 +12,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
 use serde_json::json;
-use test_util::DenoChild;
+use test_util::EdnoChild;
 use test_util::TestContext;
 use test_util::TestContextBuilder;
 use test_util::assertions::assert_json_subset;
@@ -77,7 +77,7 @@ impl ConnectionSpec {
         shell_port,
         stdin_port,
         iopub_port,
-        kernel_name: "deno".into(),
+        kernel_name: "edno".into(),
       },
       listeners,
     )
@@ -358,7 +358,7 @@ impl JupyterClient {
 }
 
 async fn wait_or_kill(
-  mut process: DenoChild,
+  mut process: EdnoChild,
   wait: Duration,
 ) -> Result<Output> {
   let start = std::time::Instant::now();
@@ -372,7 +372,7 @@ async fn wait_or_kill(
   Ok(process.wait_with_output()?)
 }
 
-struct JupyterServerProcess(Option<DenoChild>);
+struct JupyterServerProcess(Option<EdnoChild>);
 
 impl JupyterServerProcess {
   // Wait for the process to exit, or kill it after the given duration.
@@ -510,7 +510,7 @@ async fn jupyter_kernel_info() -> Result<()> {
     msg.content,
     json!({
       "status": "ok",
-      "implementation": "Deno kernel",
+      "implementation": "Edno kernel",
       "language_info": {
         "name": "typescript",
         "mimetype": "text/x.typescript",
@@ -1126,7 +1126,7 @@ async fn jupyter_http_server() -> Result<()> {
       json!({
         "silent": false,
         "store_history": false,
-        "code": r#"Deno.serve({ port: 10234 }, (req) => Response.json({ hello: "world" }))"#,
+        "code": r#"Edno.serve({ port: 10234 }, (req) => Response.json({ hello: "world" }))"#,
       }),
     )
     .await?;
@@ -1174,7 +1174,7 @@ async fn jupyter_stdin_prompt_reply() -> Result<()> {
   );
 
   client
-    .send(Stdin, "input_reply", json!({ "value": "deno" }))
+    .send(Stdin, "input_reply", json!({ "value": "edno" }))
     .await?;
 
   let reply = client.recv(Shell).await?;
@@ -1199,7 +1199,7 @@ async fn jupyter_stdin_disabled_returns_null() -> Result<()> {
         "user_expressions": {},
         "allow_stdin": false,
         "stop_on_error": false,
-        "code": "Deno.jupyter.broadcast(\"stream\", { name: \"stdout\", text: String(prompt(\"x?\")) })",
+        "code": "Edno.jupyter.broadcast(\"stream\", { name: \"stdout\", text: String(prompt(\"x?\")) })",
       }),
     )
     .await?;

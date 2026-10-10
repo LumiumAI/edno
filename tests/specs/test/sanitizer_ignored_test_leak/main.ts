@@ -2,16 +2,16 @@
 // Those leaks must not be attributed to subsequent tests.
 
 let leakedTimerId: ReturnType<typeof setTimeout>;
-let leakedListener: Deno.Listener;
+let leakedListener: Edno.Listener;
 let leakedAccept: Promise<void>;
 
-Deno.test(
+Edno.test(
   { sanitizeOps: false, sanitizeResources: false },
   function ignoresSanitizersAndLeaksActivities() {
     // Intentionally leak a timer, a resource, and a pending async op. This test
     // opts out of sanitizers, so it does not fail.
     leakedTimerId = setTimeout(() => {}, 100000);
-    leakedListener = Deno.listen({ hostname: "127.0.0.1", port: 0 });
+    leakedListener = Edno.listen({ hostname: "127.0.0.1", port: 0 });
     leakedAccept = leakedListener.accept().then(
       (conn) => conn.close(),
       () => {},
@@ -19,7 +19,7 @@ Deno.test(
   },
 );
 
-Deno.test(async function laterTestClearsTheLeakedActivities() {
+Edno.test(async function laterTestClearsTheLeakedActivities() {
   // Clearing/closing activities leaked by the previous (sanitizer-ignoring)
   // test makes them complete during this test. Before the ignorelist fix, this
   // was reported as sanitizer activity attributed to this test. It must not be
@@ -30,7 +30,7 @@ Deno.test(async function laterTestClearsTheLeakedActivities() {
   await leakedAccept;
 });
 
-Deno.test(async function laterTestIsUnaffected() {
+Edno.test(async function laterTestIsUnaffected() {
   // A normal test that does not leak should still pass.
   await new Promise((resolve) => setTimeout(resolve, 1));
 });

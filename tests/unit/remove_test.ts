@@ -3,45 +3,45 @@ import { assert, assertRejects, assertThrows } from "./test_util.ts";
 
 const REMOVE_METHODS = ["remove", "removeSync"] as const;
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeDirSuccess() {
     for (const method of REMOVE_METHODS) {
       // REMOVE EMPTY DIRECTORY
-      const path = Deno.makeTempDirSync() + "/subdir";
-      Deno.mkdirSync(path);
-      const pathInfo = Deno.statSync(path);
+      const path = Edno.makeTempDirSync() + "/subdir";
+      Edno.mkdirSync(path);
+      const pathInfo = Edno.statSync(path);
       assert(pathInfo.isDirectory); // check exist first
-      await Deno[method](path); // remove
+      await Edno[method](path); // remove
       // We then check again after remove
       assertThrows(() => {
-        Deno.statSync(path);
-      }, Deno.errors.NotFound);
+        Edno.statSync(path);
+      }, Edno.errors.NotFound);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeFileSuccess() {
     for (const method of REMOVE_METHODS) {
       // REMOVE FILE
       const enc = new TextEncoder();
       const data = enc.encode("Hello");
-      const filename = Deno.makeTempDirSync() + "/test.txt";
-      Deno.writeFileSync(filename, data, { mode: 0o666 });
-      const fileInfo = Deno.statSync(filename);
+      const filename = Edno.makeTempDirSync() + "/test.txt";
+      Edno.writeFileSync(filename, data, { mode: 0o666 });
+      const fileInfo = Edno.statSync(filename);
       assert(fileInfo.isFile); // check exist first
-      await Deno[method](filename); // remove
+      await Edno[method](filename); // remove
       // We then check again after remove
       assertThrows(() => {
-        Deno.statSync(filename);
-      }, Deno.errors.NotFound);
+        Edno.statSync(filename);
+      }, Edno.errors.NotFound);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeFileByUrl() {
     for (const method of REMOVE_METHODS) {
@@ -49,40 +49,40 @@ Deno.test(
       const enc = new TextEncoder();
       const data = enc.encode("Hello");
 
-      const tempDir = Deno.makeTempDirSync();
+      const tempDir = Edno.makeTempDirSync();
       const fileUrl = new URL(
-        `file://${Deno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
+        `file://${Edno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
       );
 
-      Deno.writeFileSync(fileUrl, data, { mode: 0o666 });
-      const fileInfo = Deno.statSync(fileUrl);
+      Edno.writeFileSync(fileUrl, data, { mode: 0o666 });
+      const fileInfo = Edno.statSync(fileUrl);
       assert(fileInfo.isFile); // check exist first
-      await Deno[method](fileUrl); // remove
+      await Edno[method](fileUrl); // remove
       // We then check again after remove
       assertThrows(() => {
-        Deno.statSync(fileUrl);
-      }, Deno.errors.NotFound);
+        Edno.statSync(fileUrl);
+      }, Edno.errors.NotFound);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeFail() {
     for (const method of REMOVE_METHODS) {
       // NON-EMPTY DIRECTORY
-      const path = Deno.makeTempDirSync() + "/dir/subdir";
+      const path = Edno.makeTempDirSync() + "/dir/subdir";
       const subPath = path + "/subsubdir";
-      Deno.mkdirSync(path, { recursive: true });
-      Deno.mkdirSync(subPath);
-      const pathInfo = Deno.statSync(path);
+      Edno.mkdirSync(path, { recursive: true });
+      Edno.mkdirSync(subPath);
+      const pathInfo = Edno.statSync(path);
       assert(pathInfo.isDirectory); // check exist first
-      const subPathInfo = Deno.statSync(subPath);
+      const subPathInfo = Edno.statSync(subPath);
       assert(subPathInfo.isDirectory); // check exist first
 
       await assertRejects(
         async () => {
-          await Deno[method](path);
+          await Edno[method](path);
         },
         Error,
         `remove '${path}'`,
@@ -92,200 +92,200 @@ Deno.test(
       // NON-EXISTENT DIRECTORY/FILE
       await assertRejects(
         async () => {
-          await Deno[method]("/baddir");
+          await Edno[method]("/baddir");
         },
-        Deno.errors.NotFound,
+        Edno.errors.NotFound,
         `remove '/baddir'`,
       );
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeDanglingSymlinkSuccess() {
     for (const method of REMOVE_METHODS) {
-      const danglingSymlinkPath = Deno.makeTempDirSync() + "/dangling_symlink";
-      if (Deno.build.os === "windows") {
-        Deno.symlinkSync("unexistent_file", danglingSymlinkPath, {
+      const danglingSymlinkPath = Edno.makeTempDirSync() + "/dangling_symlink";
+      if (Edno.build.os === "windows") {
+        Edno.symlinkSync("unexistent_file", danglingSymlinkPath, {
           type: "file",
         });
       } else {
-        Deno.symlinkSync("unexistent_file", danglingSymlinkPath);
+        Edno.symlinkSync("unexistent_file", danglingSymlinkPath);
       }
-      const pathInfo = Deno.lstatSync(danglingSymlinkPath);
+      const pathInfo = Edno.lstatSync(danglingSymlinkPath);
       assert(pathInfo.isSymlink);
-      await Deno[method](danglingSymlinkPath);
+      await Edno[method](danglingSymlinkPath);
       assertThrows(() => {
-        Deno.lstatSync(danglingSymlinkPath);
-      }, Deno.errors.NotFound);
+        Edno.lstatSync(danglingSymlinkPath);
+      }, Edno.errors.NotFound);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeValidSymlinkSuccess() {
     for (const method of REMOVE_METHODS) {
       const encoder = new TextEncoder();
       const data = encoder.encode("Test");
-      const tempDir = Deno.makeTempDirSync();
+      const tempDir = Edno.makeTempDirSync();
       const filePath = tempDir + "/test.txt";
       const validSymlinkPath = tempDir + "/valid_symlink";
-      Deno.writeFileSync(filePath, data, { mode: 0o666 });
-      if (Deno.build.os === "windows") {
-        Deno.symlinkSync(filePath, validSymlinkPath, { type: "file" });
+      Edno.writeFileSync(filePath, data, { mode: 0o666 });
+      if (Edno.build.os === "windows") {
+        Edno.symlinkSync(filePath, validSymlinkPath, { type: "file" });
       } else {
-        Deno.symlinkSync(filePath, validSymlinkPath);
+        Edno.symlinkSync(filePath, validSymlinkPath);
       }
-      const symlinkPathInfo = Deno.statSync(validSymlinkPath);
+      const symlinkPathInfo = Edno.statSync(validSymlinkPath);
       assert(symlinkPathInfo.isFile);
-      await Deno[method](validSymlinkPath);
+      await Edno[method](validSymlinkPath);
       assertThrows(() => {
-        Deno.statSync(validSymlinkPath);
-      }, Deno.errors.NotFound);
-      await Deno[method](filePath);
+        Edno.statSync(validSymlinkPath);
+      }, Edno.errors.NotFound);
+      await Edno[method](filePath);
     }
   },
 );
 
-Deno.test({ permissions: { write: false } }, async function removePerm() {
+Edno.test({ permissions: { write: false } }, async function removePerm() {
   for (const method of REMOVE_METHODS) {
     await assertRejects(async () => {
-      await Deno[method]("/baddir");
-    }, Deno.errors.NotCapable);
+      await Edno[method]("/baddir");
+    }, Edno.errors.NotCapable);
   }
 });
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeAllDirSuccess() {
     for (const method of REMOVE_METHODS) {
       // REMOVE EMPTY DIRECTORY
-      let path = Deno.makeTempDirSync() + "/dir/subdir";
-      Deno.mkdirSync(path, { recursive: true });
-      let pathInfo = Deno.statSync(path);
+      let path = Edno.makeTempDirSync() + "/dir/subdir";
+      Edno.mkdirSync(path, { recursive: true });
+      let pathInfo = Edno.statSync(path);
       assert(pathInfo.isDirectory); // check exist first
-      await Deno[method](path, { recursive: true }); // remove
+      await Edno[method](path, { recursive: true }); // remove
       // We then check again after remove
       assertThrows(
         () => {
-          Deno.statSync(path);
+          Edno.statSync(path);
         }, // Directory is gone
-        Deno.errors.NotFound,
+        Edno.errors.NotFound,
       );
 
       // REMOVE NON-EMPTY DIRECTORY
-      path = Deno.makeTempDirSync() + "/dir/subdir";
+      path = Edno.makeTempDirSync() + "/dir/subdir";
       const subPath = path + "/subsubdir";
-      Deno.mkdirSync(path, { recursive: true });
-      Deno.mkdirSync(subPath);
-      pathInfo = Deno.statSync(path);
+      Edno.mkdirSync(path, { recursive: true });
+      Edno.mkdirSync(subPath);
+      pathInfo = Edno.statSync(path);
       assert(pathInfo.isDirectory); // check exist first
-      const subPathInfo = Deno.statSync(subPath);
+      const subPathInfo = Edno.statSync(subPath);
       assert(subPathInfo.isDirectory); // check exist first
-      await Deno[method](path, { recursive: true }); // remove
+      await Edno[method](path, { recursive: true }); // remove
       // We then check parent directory again after remove
       assertThrows(() => {
-        Deno.statSync(path);
-      }, Deno.errors.NotFound);
+        Edno.statSync(path);
+      }, Edno.errors.NotFound);
       // Directory is gone
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function removeAllFileSuccess() {
     for (const method of REMOVE_METHODS) {
       // REMOVE FILE
       const enc = new TextEncoder();
       const data = enc.encode("Hello");
-      const filename = Deno.makeTempDirSync() + "/test.txt";
-      Deno.writeFileSync(filename, data, { mode: 0o666 });
-      const fileInfo = Deno.statSync(filename);
+      const filename = Edno.makeTempDirSync() + "/test.txt";
+      Edno.writeFileSync(filename, data, { mode: 0o666 });
+      const fileInfo = Edno.statSync(filename);
       assert(fileInfo.isFile); // check exist first
-      await Deno[method](filename, { recursive: true }); // remove
+      await Edno[method](filename, { recursive: true }); // remove
       // We then check again after remove
       assertThrows(() => {
-        Deno.statSync(filename);
-      }, Deno.errors.NotFound);
+        Edno.statSync(filename);
+      }, Edno.errors.NotFound);
       // File is gone
     }
   },
 );
 
-Deno.test({ permissions: { write: true } }, async function removeAllFail() {
+Edno.test({ permissions: { write: true } }, async function removeAllFail() {
   for (const method of REMOVE_METHODS) {
     // NON-EXISTENT DIRECTORY/FILE
     await assertRejects(
       async () => {
         // Non-existent
-        await Deno[method]("/baddir", { recursive: true });
+        await Edno[method]("/baddir", { recursive: true });
       },
-      Deno.errors.NotFound,
+      Edno.errors.NotFound,
       `remove '/baddir'`,
     );
   }
 });
 
-Deno.test({ permissions: { write: false } }, async function removeAllPerm() {
+Edno.test({ permissions: { write: false } }, async function removeAllPerm() {
   for (const method of REMOVE_METHODS) {
     await assertRejects(async () => {
-      await Deno[method]("/baddir", { recursive: true });
-    }, Deno.errors.NotCapable);
+      await Edno[method]("/baddir", { recursive: true });
+    }, Edno.errors.NotCapable);
   }
 });
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { write: true, read: true, net: true },
   },
   async function removeUnixSocketSuccess() {
     for (const method of REMOVE_METHODS) {
       // MAKE TEMPORARY UNIX SOCKET
-      const path = Deno.makeTempDirSync() + "/test.sock";
-      const listener = Deno.listen({ transport: "unix", path });
-      Deno.statSync(path); // check if unix socket exists
+      const path = Edno.makeTempDirSync() + "/test.sock";
+      const listener = Edno.listen({ transport: "unix", path });
+      Edno.statSync(path); // check if unix socket exists
 
-      await Deno[method](path);
-      assertThrows(() => Deno.statSync(path), Deno.errors.NotFound);
+      await Edno[method](path);
+      assertThrows(() => Edno.statSync(path), Edno.errors.NotFound);
       listener.close();
     }
   },
 );
 
-if (Deno.build.os === "windows") {
-  Deno.test(
+if (Edno.build.os === "windows") {
+  Edno.test(
     { permissions: { run: true, write: true, read: true } },
     async function removeFileSymlink() {
-      const { success } = await new Deno.Command("cmd", {
+      const { success } = await new Edno.Command("cmd", {
         args: ["/c", "mklink", "file_link", "bar"],
         stdout: "null",
       }).output();
 
       assert(success);
-      await Deno.remove("file_link");
+      await Edno.remove("file_link");
       await assertRejects(async () => {
-        await Deno.lstat("file_link");
-      }, Deno.errors.NotFound);
+        await Edno.lstat("file_link");
+      }, Edno.errors.NotFound);
     },
   );
 
-  Deno.test(
+  Edno.test(
     { permissions: { run: true, write: true, read: true } },
     async function removeDirSymlink() {
-      const { success } = await new Deno.Command("cmd", {
+      const { success } = await new Edno.Command("cmd", {
         args: ["/c", "mklink", "/d", "dir_link", "bar"],
         stdout: "null",
       }).output();
 
       assert(success);
-      await Deno.remove("dir_link");
+      await Edno.remove("dir_link");
       await assertRejects(async () => {
-        await Deno.lstat("dir_link");
-      }, Deno.errors.NotFound);
+        await Edno.lstat("dir_link");
+      }, Edno.errors.NotFound);
     },
   );
 }

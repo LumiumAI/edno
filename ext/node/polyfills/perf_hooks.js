@@ -37,17 +37,17 @@ const {
   PerformanceEntry,
   PerformanceObserver: WebPerformanceObserver,
   PerformanceObserverEntryList,
-} = core.loadExtScript("ext:deno_web/15_performance.js");
+} = core.loadExtScript("ext:edno_web/15_performance.js");
 const { EldHistogram, BaseHistogram } = core.ops;
 const { ERR_ILLEGAL_CONSTRUCTOR, ERR_INVALID_ARG_TYPE, ERR_OUT_OF_RANGE } = core
   .loadExtScript(
-    "ext:deno_node/internal/errors.ts",
+    "ext:edno_node/internal/errors.ts",
   );
 const { customInspectSymbol, kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const { inspect } = core.loadExtScript(
-  "ext:deno_node/internal/util/inspect.mjs",
+  "ext:edno_node/internal/util/inspect.mjs",
 );
 
 const constants = {
@@ -262,7 +262,7 @@ const timerify = (fn, options = undefined) => {
     ) {
       // `result` is an arbitrary user thenable, not necessarily a native
       // Promise, so PromisePrototypeFinally cannot be used here.
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       return result.finally(() => recordTimerifyHistogram(histogram, start));
     }
     if (histogram !== undefined) {
@@ -364,7 +364,7 @@ class Histogram {
   get percentiles() {
     // Real Map (not SafeMap): returned to userland and must pass
     // `instanceof Map` (SafeMap's prototype chain excludes Map).
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const out = new Map();
     if (typeof this[_handle].percentiles === "function") {
       const flat = this[_handle].percentiles();
@@ -390,7 +390,7 @@ class Histogram {
   get percentilesBigInt() {
     // Real Map (not SafeMap): returned to userland and must pass
     // `instanceof Map` (SafeMap's prototype chain excludes Map).
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const out = new Map();
     if (typeof this[_handle].percentilesBigInt === "function") {
       const flat = this[_handle].percentilesBigInt();

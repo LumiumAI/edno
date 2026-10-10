@@ -4,13 +4,13 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use deno_core::OpMetricsEvent;
-use deno_core::OpMetricsFactoryFn;
-use deno_core::OpMetricsSource;
-use deno_core::anyhow::Error;
+use edno_core::OpMetricsEvent;
+use edno_core::OpMetricsFactoryFn;
+use edno_core::OpMetricsSource;
+use edno_core::anyhow::Error;
 
-#[derive(Default, Debug, Clone, deno_core::serde::Serialize)]
-#[serde(crate = "deno_core::serde")]
+#[derive(Default, Debug, Clone, edno_core::serde::Serialize)]
+#[serde(crate = "edno_core::serde")]
 struct OpCount {
   slow: u64,
   fast: u64,
@@ -18,8 +18,8 @@ struct OpCount {
   async_: u64,
 }
 
-#[derive(Default, Debug, Clone, deno_core::serde::Serialize)]
-#[serde(crate = "deno_core::serde")]
+#[derive(Default, Debug, Clone, edno_core::serde::Serialize)]
+#[serde(crate = "edno_core::serde")]
 struct OpMetricsSummaryInner {
   counts: HashMap<String, OpCount>,
   completed_sync: u64,

@@ -1,16 +1,16 @@
 let testCount = 0;
 const logs: string[] = [];
 
-Deno.test.beforeEach(() => {
+Edno.test.beforeEach(() => {
   testCount++;
   logs.push(`beforeEach executed for test ${testCount}`);
 });
 
-Deno.test.afterEach(() => {
+Edno.test.afterEach(() => {
   logs.push(`afterEach2 executed for test ${testCount}`);
 });
 
-Deno.test.afterEach(() => {
+Edno.test.afterEach(() => {
   logs.push(`afterEach executed for test ${testCount}`);
 
   if (testCount === 1) {
@@ -18,11 +18,11 @@ Deno.test.afterEach(() => {
   }
 });
 
-Deno.test("first test", () => {
+Edno.test("first test", () => {
   logs.push("first test executed");
 });
 
-Deno.test("second test", () => {
+Edno.test("second test", () => {
   logs.push("second test executed");
 });
 

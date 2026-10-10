@@ -128,7 +128,7 @@ pub struct LintRulesConfig {
 
 #[derive(Debug, JsError, Error)]
 #[class(generic)]
-#[error("Could not find permission set '{0}' in deno.json")]
+#[error("Could not find permission set '{0}' in edno.json")]
 pub struct UndefinedPermissionError(String);
 
 #[derive(Debug, JsError, Boxed)]
@@ -221,7 +221,7 @@ impl SerializedLintConfig {
     let files = SerializedFilesConfig { include, exclude };
     if !self.deprecated_files.is_null() {
       log::warn!(
-        "Warning: \"files\" configuration in \"lint\" was removed in Deno 2, use \"include\" and \"exclude\" instead."
+        "Warning: \"files\" configuration in \"lint\" was removed in Edno 2, use \"include\" and \"exclude\" instead."
       );
     }
     Ok(LintConfig {
@@ -425,7 +425,7 @@ pub struct FmtOptionsConfig {
   pub angular_next_control_flow_same_line: Option<bool>,
   pub sort_named_imports: Option<SortOrder>,
   pub sort_named_exports: Option<SortOrder>,
-  /// Whether `deno fmt` should read `.editorconfig` files to fill in
+  /// Whether `edno fmt` should read `.editorconfig` files to fill in
   /// options that are not otherwise set. Defaults to `true` when unset.
   pub use_editor_config: Option<bool>,
 }
@@ -585,7 +585,7 @@ impl SerializedFmtConfig {
     };
     if !self.deprecated_files.is_null() {
       log::warn!(
-        "Warning: \"files\" configuration in \"fmt\" was removed in Deno 2, use \"include\" and \"exclude\" instead."
+        "Warning: \"files\" configuration in \"fmt\" was removed in Edno 2, use \"include\" and \"exclude\" instead."
       );
     }
     Ok(FmtConfig {
@@ -663,7 +663,7 @@ impl SerializedTestConfig {
     let files = SerializedFilesConfig { include, exclude };
     if !self.deprecated_files.is_null() {
       log::warn!(
-        "Warning: \"files\" configuration in \"test\" was removed in Deno 2, use \"include\" and \"exclude\" instead."
+        "Warning: \"files\" configuration in \"test\" was removed in Edno 2, use \"include\" and \"exclude\" instead."
       );
     }
     Ok(TestConfig {
@@ -765,7 +765,7 @@ impl SerializedBenchConfig {
     let files = SerializedFilesConfig { include, exclude };
     if !self.deprecated_files.is_null() {
       log::warn!(
-        "Warning: \"files\" configuration in \"bench\" was removed in Deno 2, use \"include\" and \"exclude\" instead."
+        "Warning: \"files\" configuration in \"bench\" was removed in Edno 2, use \"include\" and \"exclude\" instead."
       );
     }
     Ok(BenchConfig {
@@ -801,8 +801,8 @@ impl BenchConfig {
   }
 }
 
-/// Minimum coverage percentages required for `deno coverage` and
-/// `deno test --coverage` to succeed. Modelled on Vitest's
+/// Minimum coverage percentages required for `edno coverage` and
+/// `edno test --coverage` to succeed. Modelled on Vitest's
 /// `coverage.thresholds`. A `None` value means the metric is not checked.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct CoverageThresholds {
@@ -914,7 +914,7 @@ struct SerializedDesktopAppConfig {
   /// `com.acme.foo`). Used as the macOS `CFBundleIdentifier`, the Linux
   /// `.desktop` file identifier, and (eventually) the Windows
   /// AppUserModelID. Optional; when omitted a synthetic
-  /// `com.deno.desktop.<slug>` is generated from the app name.
+  /// `com.edno.desktop.<slug>` is generated from the app name.
   pub identifier: Option<String>,
   /// Custom URL schemes (deep links) the app registers with the OS, e.g.
   /// `["acme"]` to handle `acme://...` links. Each entry is a bare scheme
@@ -1541,16 +1541,16 @@ pub struct ConfigFileJson {
   pub unstable: Vec<String>,
 }
 
-pub trait DenoJsonCache {
+pub trait EdnoJsonCache {
   fn get(&self, path: &Path) -> Option<ConfigFileRc>;
-  fn set(&self, path: PathBuf, deno_json: ConfigFileRc);
+  fn set(&self, path: PathBuf, edno_json: ConfigFileRc);
 }
 
 #[derive(Debug, Error, JsError)]
 pub enum ConfigFileError {
   #[class(type)]
   #[error(
-    "Only file: specifiers are supported for security reasons in import maps stored in a deno.json. To use a remote import map, use the --import-map flag and \"deno.importMap\" in the language server config"
+    "Only file: specifiers are supported for security reasons in import maps stored in a edno.json. To use a remote import map, use the --import-map flag and \"edno.importMap\" in the language server config"
   )]
   OnlyFileSpecifiersSupported,
   #[class(inherit)]
@@ -1628,7 +1628,7 @@ pub enum ConfigFileExportsError {
   },
   #[class(type)]
   #[error(
-    "The path of the {key} must be a string, found invalid value '{value}'. Exports in deno.json do not support conditional exports."
+    "The path of the {key} must be a string, found invalid value '{value}'. Exports in edno.json do not support conditional exports."
   )]
   InvalidValueConditionalExports {
     key: Cow<'static, str>,
@@ -1724,7 +1724,7 @@ pub enum ToLockConfigError {
 }
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type ConfigFileRc = deno_maybe_sync::MaybeArc<ConfigFile>;
+pub type ConfigFileRc = edno_maybe_sync::MaybeArc<ConfigFile>;
 
 #[derive(Clone, Debug)]
 pub struct ConfigFile {
@@ -1733,11 +1733,11 @@ pub struct ConfigFile {
 }
 
 impl ConfigFile {
-  /// Filenames that Deno will recognize when discovering config.
+  /// Filenames that Edno will recognize when discovering config.
   pub(crate) fn resolve_config_file_names<'a>(
     additional_config_file_names: &[&'a str],
   ) -> Cow<'a, [&'a str]> {
-    const CONFIG_FILE_NAMES: [&str; 2] = ["deno.json", "deno.jsonc"];
+    const CONFIG_FILE_NAMES: [&str; 2] = ["edno.json", "edno.jsonc"];
     if additional_config_file_names.is_empty() {
       Cow::Borrowed(&CONFIG_FILE_NAMES)
     } else {
@@ -1753,7 +1753,7 @@ impl ConfigFile {
 
   pub(crate) fn maybe_find_in_folder(
     sys: &impl FsRead,
-    maybe_cache: Option<&dyn DenoJsonCache>,
+    maybe_cache: Option<&dyn EdnoJsonCache>,
     folder: &Path,
     config_file_names: &[&str],
   ) -> Result<Option<ConfigFileRc>, ConfigFileReadError> {
@@ -1774,7 +1774,7 @@ impl ConfigFile {
       }
       match ConfigFile::read(sys, &file_path) {
         Ok(cf) => {
-          let cf = deno_maybe_sync::new_rc(cf);
+          let cf = edno_maybe_sync::new_rc(cf);
           log::debug!("Config file found at '{}'", file_path.display());
           if let Some(cache) = maybe_cache {
             cache.set(file_path, cf.clone());
@@ -2757,7 +2757,7 @@ impl ConfigFile {
       Some(LockConfig::Object { path, .. }) if path.is_some() => Ok(path),
       _ => {
         let mut path = url_to_file_path(&self.specifier)?;
-        path.set_file_name("deno.lock");
+        path.set_file_name("edno.lock");
         Ok(Some(path))
       }
     }
@@ -2932,17 +2932,17 @@ mod tests {
         "useEditorConfig": false
       },
       "tasks": {
-        "build": "deno run --allow-read --allow-write build.ts",
-        "server": "deno run --allow-net --allow-read server.ts",
+        "build": "edno run --allow-read --allow-write build.ts",
+        "server": "edno run --allow-net --allow-read server.ts",
         "client": {
           "description": "Build client project",
-          "command": "deno run -A client.js",
+          "command": "edno run -A client.js",
           "dependencies": ["build"]
         }
       },
       "unstable": ["kv", "ffi"]
     }"#;
-    let config_dir = Url::parse("file:///deno/").unwrap();
+    let config_dir = Url::parse("file:///edno/").unwrap();
     let config_specifier = config_dir.join("tsconfig.json").unwrap();
     let config_file =
       ConfigFile::new(config_text, config_specifier.clone()).unwrap();
@@ -2954,10 +2954,10 @@ mod tests {
         files: FilePatterns {
           base: config_dir_path.clone(),
           include: Some(PathOrPatternSet::new(vec![PathOrPattern::Path(
-            PathBuf::from("/deno/src/")
+            PathBuf::from("/edno/src/")
           )])),
           exclude: PathOrPatternSet::new(vec![PathOrPattern::Path(
-            PathBuf::from("/deno/src/testdata/")
+            PathBuf::from("/edno/src/testdata/")
           )]),
         },
         options: LintOptionsConfig {
@@ -2976,10 +2976,10 @@ mod tests {
         files: FilePatterns {
           base: config_dir_path.clone(),
           include: Some(PathOrPatternSet::new(vec![PathOrPattern::Path(
-            PathBuf::from("/deno/src/")
+            PathBuf::from("/edno/src/")
           )])),
           exclude: PathOrPatternSet::new(vec![PathOrPattern::Path(
-            PathBuf::from("/deno/src/testdata/")
+            PathBuf::from("/edno/src/testdata/")
           )]),
         },
         options: FmtOptionsConfig {
@@ -3016,17 +3016,17 @@ mod tests {
     let tasks_config = config_file.to_tasks_config().unwrap().unwrap();
     assert_eq!(
       tasks_config["build"],
-      "deno run --allow-read --allow-write build.ts".into(),
+      "edno run --allow-read --allow-write build.ts".into(),
     );
     assert_eq!(
       tasks_config["server"],
-      "deno run --allow-net --allow-read server.ts".into(),
+      "edno run --allow-net --allow-read server.ts".into(),
     );
     assert_eq!(
       tasks_config["client"],
       TaskDefinition {
         description: Some("Build client project".to_string()),
-        command: Some("deno run -A client.js".to_string()),
+        command: Some("edno run -A client.js".to_string()),
         dependencies: vec!["build".to_string()],
         files: Vec::new(),
         output: Vec::new(),
@@ -3047,7 +3047,7 @@ mod tests {
         "exclude": ["!dist/data", "dist/"]
       }
     }"#;
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
 
     let err = config_file.to_fmt_config().err().unwrap();
@@ -3065,7 +3065,7 @@ mod tests {
         "exclude": ["!dist/data/**/*.ts", "dist/"]
       }
     }"#;
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
 
     let err = config_file.to_lint_config().err().unwrap();
@@ -3093,7 +3093,7 @@ mod tests {
         }
       }
     }"#;
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     let config_file_both =
       ConfigFile::new(config_text_both, config_specifier.clone()).unwrap();
     let config_file_deprecated =
@@ -3113,14 +3113,14 @@ mod tests {
   #[test]
   fn test_parse_config_with_empty_file() {
     let config_text = "";
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     ConfigFile::new(config_text, config_specifier).unwrap(); // no panic
   }
 
   #[test]
   fn test_parse_config_with_commented_file() {
     let config_text = r#"//{"foo":"bar"}"#;
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     ConfigFile::new(config_text, config_specifier).unwrap(); // no panic
   }
 
@@ -3133,7 +3133,7 @@ mod tests {
       },
       "bench": {}
     }"#;
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
 
     let test_config = config_file.to_test_config(&Default::default()).unwrap();
@@ -3141,8 +3141,8 @@ mod tests {
     assert_eq!(
       test_config.files.exclude,
       PathOrPatternSet::from_absolute_paths(&[
-        "/deno/foo/".to_string(),
-        "/deno/npm/".to_string(),
+        "/edno/foo/".to_string(),
+        "/edno/npm/".to_string(),
       ])
       .unwrap()
     );
@@ -3151,7 +3151,7 @@ mod tests {
       config_file.to_bench_config(&Default::default()).unwrap();
     assert_eq!(
       bench_config.files.exclude,
-      PathOrPatternSet::from_absolute_paths(&["/deno/foo/".to_string()])
+      PathOrPatternSet::from_absolute_paths(&["/edno/foo/".to_string()])
         .unwrap()
     );
   }
@@ -3164,7 +3164,7 @@ mod tests {
         "exclude": ["npm/"],
       }
     }"#;
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
 
     let publish_config = config_file.to_publish_config().unwrap();
@@ -3172,8 +3172,8 @@ mod tests {
     assert_eq!(
       publish_config.files.exclude,
       PathOrPatternSet::from_absolute_paths(&[
-        "/deno/foo/".to_string(),
-        "/deno/npm/".to_string(),
+        "/edno/foo/".to_string(),
+        "/edno/npm/".to_string(),
       ])
       .unwrap()
     );
@@ -3184,14 +3184,14 @@ mod tests {
     let config_text = r#"{
       "exclude": ["npm/"]
     }"#;
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
 
     let files_config = config_file.to_exclude_files_config().unwrap();
     assert_eq!(files_config.include, None);
     assert_eq!(
       files_config.exclude,
-      PathOrPatternSet::from_absolute_paths(&["/deno/npm/".to_string()])
+      PathOrPatternSet::from_absolute_paths(&["/edno/npm/".to_string()])
         .unwrap()
     );
 
@@ -3199,7 +3199,7 @@ mod tests {
     assert_eq!(lint_config.files.include, None);
     assert_eq!(
       lint_config.files.exclude,
-      PathOrPatternSet::from_absolute_paths(&["/deno/npm/".to_string()])
+      PathOrPatternSet::from_absolute_paths(&["/edno/npm/".to_string()])
         .unwrap()
     );
 
@@ -3207,7 +3207,7 @@ mod tests {
     assert_eq!(fmt_config.files.include, None);
     assert_eq!(
       fmt_config.files.exclude,
-      PathOrPatternSet::from_absolute_paths(&["/deno/npm/".to_string()])
+      PathOrPatternSet::from_absolute_paths(&["/edno/npm/".to_string()])
         .unwrap()
     );
   }
@@ -3215,7 +3215,7 @@ mod tests {
   #[test]
   fn test_parse_config_with_invalid_file() {
     let config_text = "{foo:bar}";
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     // Emit error: Unable to parse config file JSON "<config_path>" because of Unexpected token on line 1 column 6.
     assert!(ConfigFile::new(config_text, config_specifier,).is_err());
   }
@@ -3223,7 +3223,7 @@ mod tests {
   #[test]
   fn test_parse_config_with_not_object_file() {
     let config_text = "[]";
-    let config_specifier = Url::parse("file:///deno/tsconfig.json").unwrap();
+    let config_specifier = Url::parse("file:///edno/tsconfig.json").unwrap();
     // Emit error: config file JSON "<config_path>" should be an object
     assert!(ConfigFile::new(config_text, config_specifier,).is_err());
   }
@@ -3243,7 +3243,7 @@ mod tests {
     }
 
     fn parse(json: &str) -> MinimumDependencyAgeConfig {
-      let specifier = Url::parse("file:///deno/deno.json").unwrap();
+      let specifier = Url::parse("file:///edno/edno.json").unwrap();
       let config_file = ConfigFile::new(json, specifier).unwrap();
       config_file
         .to_minimum_dependency_age_config(&TestEnv)
@@ -3294,7 +3294,7 @@ mod tests {
     assert!(config.exclude.is_empty());
 
     // Unknown field still errors.
-    let specifier = Url::parse("file:///deno/deno.json").unwrap();
+    let specifier = Url::parse("file:///edno/edno.json").unwrap();
     let config_file = ConfigFile::new(
       r#"{ "minimumDependencyAge": { "unknown": 1 } }"#,
       specifier,
@@ -3309,7 +3309,7 @@ mod tests {
     ));
 
     // Out-of-range numeric values should return an error instead of panicking.
-    let specifier = Url::parse("file:///deno/deno.json").unwrap();
+    let specifier = Url::parse("file:///edno/edno.json").unwrap();
     let config_file =
       ConfigFile::new(r#"{ "minimumDependencyAge": 138939752218 }"#, specifier)
         .unwrap();
@@ -3329,8 +3329,8 @@ mod tests {
     run_task_error_test(
       r#"{
         "tasks": {
-          "build": "deno test",
-          "some%test": "deno bundle mod.ts"
+          "build": "edno test",
+          "some%test": "edno bundle mod.ts"
         }
       }"#,
       concat!(
@@ -3345,8 +3345,8 @@ mod tests {
     run_task_error_test(
       r#"{
         "tasks": {
-          "build": "deno test",
-          "1test": "deno bundle mod.ts"
+          "build": "edno test",
+          "1test": "edno bundle mod.ts"
         }
       }"#,
       concat!(
@@ -3361,8 +3361,8 @@ mod tests {
     run_task_error_test(
       r#"{
         "tasks": {
-          "build": "deno test",
-          "": "deno bundle mod.ts"
+          "build": "edno test",
+          "": "edno bundle mod.ts"
         }
       }"#,
       "Configuration file task names cannot be empty",
@@ -3371,7 +3371,7 @@ mod tests {
 
   #[track_caller]
   fn run_task_error_test(config_text: &str, expected_error: &str) {
-    let config_dir = Url::parse("file:///deno/").unwrap();
+    let config_dir = Url::parse("file:///edno/").unwrap();
     let config_specifier = config_dir.join("tsconfig.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     assert_eq!(
@@ -3391,17 +3391,17 @@ mod tests {
   #[test]
   fn resolve_lockfile_path_from_unix_path() {
     let config_file =
-      ConfigFile::new("{}", Url::parse("file:///root/deno.json").unwrap())
+      ConfigFile::new("{}", Url::parse("file:///root/edno.json").unwrap())
         .unwrap();
     let lockfile_path = config_file.resolve_lockfile_path().unwrap();
     let lockfile_path = lockfile_path.unwrap();
-    assert_eq!(lockfile_path, PathBuf::from("/root/deno.lock"));
+    assert_eq!(lockfile_path, PathBuf::from("/root/edno.lock"));
   }
 
   #[test]
   fn exports() {
     fn get_exports(config_text: &str) -> ExportsConfig {
-      let config_dir = Url::parse("file:///deno/").unwrap();
+      let config_dir = Url::parse("file:///edno/").unwrap();
       let config_specifier = config_dir.join("tsconfig.json").unwrap();
       let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
       config_file.to_exports_config().unwrap()
@@ -3430,7 +3430,7 @@ mod tests {
         .unwrap()
         .unwrap()
         .to_string(),
-      "file:///deno/mod.ts"
+      "file:///edno/mod.ts"
     );
     assert!(exports.get_resolved("./non-existent").unwrap().is_none());
   }
@@ -3439,7 +3439,7 @@ mod tests {
   fn exports_errors() {
     #[track_caller]
     fn run_test(config_text: &str, expected_error: &str) {
-      let config_dir = Url::parse("file:///deno/").unwrap();
+      let config_dir = Url::parse("file:///edno/").unwrap();
       let config_specifier = config_dir.join("tsconfig.json").unwrap();
       let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
       assert_eq!(
@@ -3522,7 +3522,7 @@ mod tests {
     // object key value
     run_test(
       r#"{ "exports": { "./mod": {} } }"#,
-      "The path of the './mod' export must be a string, found invalid value '{}'. Exports in deno.json do not support conditional exports.",
+      "The path of the './mod' export must be a string, found invalid value '{}'. Exports in edno.json do not support conditional exports.",
     );
     // non-map or string value
     run_test(
@@ -3539,7 +3539,7 @@ mod tests {
   #[test]
   fn resolve_export_value_urls() {
     fn get_exports(config_text: &str) -> Vec<String> {
-      let config_dir = Url::parse("file:///deno/").unwrap();
+      let config_dir = Url::parse("file:///edno/").unwrap();
       let config_specifier = config_dir.join("tsconfig.json").unwrap();
       let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
       config_file
@@ -3555,12 +3555,12 @@ mod tests {
     // string export
     assert_eq!(
       get_exports(r#"{ "exports": "./mod.ts" }"#),
-      vec!["file:///deno/mod.ts".to_string()]
+      vec!["file:///edno/mod.ts".to_string()]
     );
     // map export
     assert_eq!(
       get_exports(r#"{ "exports": { "./export": "./mod.ts" } }"#),
-      vec!["file:///deno/mod.ts".to_string()]
+      vec!["file:///edno/mod.ts".to_string()]
     );
     // multiple
     assert_eq!(
@@ -3568,8 +3568,8 @@ mod tests {
         r#"{ "exports": { "./export": "./mod.ts", "./other": "./other.ts" } }"#
       ),
       vec![
-        "file:///deno/mod.ts".to_string(),
-        "file:///deno/other.ts".to_string(),
+        "file:///edno/mod.ts".to_string(),
+        "file:///edno/other.ts".to_string(),
       ]
     );
   }
@@ -3622,7 +3622,7 @@ mod tests {
         "@std/test": "jsr:@std/test@0.2.0"
       }
     }"#;
-    let config_specifier = root_url().join("deno.json").unwrap();
+    let config_specifier = root_url().join("edno.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     let result = config_file.to_import_map_from_imports().unwrap();
 
@@ -3643,13 +3643,13 @@ mod tests {
       // will be ignored because imports and scopes takes precedence
       "importMap": "import_map.json",
     }"#;
-    let config_specifier = root_url().join("deno.json").unwrap();
+    let config_specifier = root_url().join("edno.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     let result = config_file.to_import_map(&UnreachableSys).unwrap().unwrap();
 
     assert_eq!(
       result.import_map.base_url(),
-      &root_url().join("deno.json").unwrap()
+      &root_url().join("edno.json").unwrap()
     );
     assert_eq!(
       json!(result.import_map.imports()),
@@ -3668,13 +3668,13 @@ mod tests {
       // will be ignored because imports and scopes takes precedence
       "importMap": "import_map.json",
     }"#;
-    let config_specifier = root_url().join("deno.json").unwrap();
+    let config_specifier = root_url().join("edno.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     let result = config_file.to_import_map(&UnreachableSys).unwrap().unwrap();
 
     assert_eq!(
       result.import_map.base_url(),
-      &root_url().join("deno.json").unwrap()
+      &root_url().join("edno.json").unwrap()
     );
     assert_eq!(
       json!(result.import_map),
@@ -3715,7 +3715,7 @@ mod tests {
     let config_text = r#"{
       "importMap": "import_map.json",
     }"#;
-    let config_specifier = root_url().join("deno.json").unwrap();
+    let config_specifier = root_url().join("edno.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     let result = config_file.to_import_map(&MockFs).unwrap().unwrap();
 
@@ -3737,15 +3737,15 @@ mod tests {
     let config_text = r#"{
       "importMap": "https://deno.land/import_map.json",
     }"#;
-    let config_specifier = root_url().join("deno.json").unwrap();
+    let config_specifier = root_url().join("edno.json").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     let err = config_file.to_import_map(&UnreachableSys).unwrap_err();
     assert_eq!(
       err.to_string(),
       concat!(
         "Only file: specifiers are supported for security reasons in ",
-        "import maps stored in a deno.json. To use a remote import map, ",
-        "use the --import-map flag and \"deno.importMap\" in the ",
+        "import maps stored in a edno.json. To use a remote import map, ",
+        "use the --import-map flag and \"edno.importMap\" in the ",
         "language server config"
       )
     );
@@ -3753,9 +3753,9 @@ mod tests {
 
   fn root_url() -> Url {
     if cfg!(windows) {
-      Url::parse("file://C:/deno/").unwrap()
+      Url::parse("file://C:/edno/").unwrap()
     } else {
-      Url::parse("file:///deno/").unwrap()
+      Url::parse("file:///edno/").unwrap()
     }
   }
 
@@ -3764,33 +3764,33 @@ mod tests {
     let config_text = r#"{
       "tasks": {
         // dev task
-        "dev": "deno run -A --watch mod.ts",
+        "dev": "edno run -A --watch mod.ts",
         // run task
         // with multiple line comments
-        "run": "deno run -A mod.ts", // comments not supported here
+        "run": "edno run -A mod.ts", // comments not supported here
         /*
          * test task
          *
          * with multi-line comments
          */
-        "test": "deno test",
-        /* we should */ /* ignore these */ "fmt": "deno fmt",
-        "lint": "deno lint"
+        "test": "edno test",
+        /* we should */ /* ignore these */ "fmt": "edno fmt",
+        "lint": "edno lint"
         // trailing comments
       },
     }"#;
 
     let config =
-      ConfigFile::new(config_text, root_url().join("deno.jsonc").unwrap())
+      ConfigFile::new(config_text, root_url().join("edno.jsonc").unwrap())
         .unwrap();
     assert_eq!(
       config.resolve_tasks_config().unwrap(),
       IndexMap::from([
-        ("dev".into(), "deno run -A --watch mod.ts".into(),),
-        ("run".into(), "deno run -A mod.ts".into(),),
-        ("test".into(), "deno test".into(),),
-        ("fmt".into(), "deno fmt".into(),),
-        ("lint".into(), "deno lint".into(),)
+        ("dev".into(), "edno run -A --watch mod.ts".into(),),
+        ("run".into(), "edno run -A mod.ts".into(),),
+        ("test".into(), "edno test".into(),),
+        ("fmt".into(), "edno fmt".into(),),
+        ("lint".into(), "edno lint".into(),)
       ])
     );
   }
@@ -3799,7 +3799,7 @@ mod tests {
   fn resolve_import_map_url_parent() {
     let config_text = r#"{ "importMap": "../import_map.json" }"#;
     let file_path = deno_path_util::url_to_file_path(
-      &root_url().join("sub/deno.json").unwrap(),
+      &root_url().join("sub/edno.json").unwrap(),
     )
     .unwrap();
     let config_specifier =
@@ -3828,17 +3828,17 @@ mod tests {
       ),
       (
         r#"{ "lock": { "frozen": false } }"#,
-        (false, root_joined("deno.lock")),
+        (false, root_joined("edno.lock")),
       ),
       (
         r#"{ "lock": { "path": "mydeno.lock" } }"#,
         (false, root_joined("mydeno.lock")),
       ),
-      (r#"{ "lock": {} }"#, (false, root_joined("deno.lock"))),
+      (r#"{ "lock": {} }"#, (false, root_joined("edno.lock"))),
     ];
     for (config_text, (frozen, resolved_path)) in cases {
       let config_file =
-        ConfigFile::new(config_text, root_url().join("deno.json").unwrap())
+        ConfigFile::new(config_text, root_url().join("edno.json").unwrap())
           .unwrap();
       let lock_config = config_file.to_lock_config().unwrap().unwrap();
       assert_eq!(
@@ -3873,7 +3873,7 @@ mod tests {
     fn get_result(
       text: &str,
     ) -> Result<AllowScriptsConfig, ToInvalidConfigError> {
-      let config_specifier = root_url().join("deno.json").unwrap();
+      let config_specifier = root_url().join("edno.json").unwrap();
       let config_file = ConfigFile::new(text, config_specifier).unwrap();
       config_file.to_allow_scripts_config()
     }

@@ -1,8 +1,8 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 // Calling the top-level `test()` from inside another test's body should
 // register a subtest of the running test, matching Node.js, instead of
-// throwing "Nested Deno.test() calls are not supported".
+// throwing "Nested Edno.test() calls are not supported".
 // https://github.com/denoland/deno/issues/35391
 
 import assert from "node:assert";

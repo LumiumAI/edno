@@ -8,11 +8,11 @@ use std::sync::Arc;
 use deno_ast::MediaType;
 use deno_ast::ModuleSpecifier;
 use deno_ast::diagnostics::Diagnostic;
-use deno_config::glob::FileCollector;
-use deno_config::workspace::JsrPackageConfig;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_config::glob::FileCollector;
+use edno_config::workspace::JsrPackageConfig;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 use deno_graph::Module;
 use deno_graph::ModuleGraph;
 use deno_terminal::colors;
@@ -61,31 +61,31 @@ pub async fn pack(
   let mut packages = cli_options.start_dir.jsr_packages_for_publish();
   if packages.is_empty() {
     match cli_options.start_dir.member_deno_json() {
-      Some(deno_json) => {
-        let Some(name) = deno_json.json.name.clone() else {
+      Some(edno_json) => {
+        let Some(name) = edno_json.json.name.clone() else {
           bail!(
             "Missing 'name' field in '{}'. Add a package name like:\n  {{\n    \"name\": \"@scope/package-name\",\n    ...\n  }}",
-            deno_json.specifier
+            edno_json.specifier
           );
         };
-        if deno_json.json.version.is_none() {
+        if edno_json.json.version.is_none() {
           bail!(
             "Missing 'version' field in '{}'. Add a version like:\n  {{\n    \"version\": \"1.0.0\",\n    ...\n  }}",
-            deno_json.specifier
+            edno_json.specifier
           );
         }
-        if deno_json.json.exports.is_none() {
+        if edno_json.json.exports.is_none() {
           bail!(
             "Missing 'exports' field in '{}'. Add an exports field like:\n  {{\n    \"exports\": \"./mod.ts\",\n    ...\n  }}",
-            deno_json.specifier
+            edno_json.specifier
           );
         }
 
         packages.push(JsrPackageConfig {
           name,
           member_dir: cli_options.start_dir.workspace.root_dir().clone(),
-          config_file: deno_json.clone(),
-          license: deno_json
+          config_file: edno_json.clone(),
+          license: edno_json
             .json
             .license
             .as_ref()
@@ -94,7 +94,7 @@ pub async fn pack(
         });
       }
       None => {
-        bail!("No deno.json found in current directory");
+        bail!("No edno.json found in current directory");
       }
     }
   }
@@ -300,7 +300,7 @@ fn collect_graph_modules(
       if specifier.scheme() == "file"
         && let Ok(path) = specifier.to_file_path()
         && path.starts_with(package_dir)
-        && file_patterns.matches_path(&path, deno_config::glob::PathKind::File)
+        && file_patterns.matches_path(&path, edno_config::glob::PathKind::File)
         && !is_excluded_path(&path, package_dir)
       {
         let relative = path.strip_prefix(package_dir).unwrap();
@@ -435,14 +435,14 @@ pub struct AssetFile {
 /// Walk the filesystem for non-module assets matched by the package's
 /// publish config (`publish.include`/`exclude`) and read their raw bytes.
 ///
-/// `deno publish` collects every file via the publish `FilePatterns`, but
-/// `deno pack` only walks the module graph, so static assets were never
+/// `edno publish` collects every file via the publish `FilePatterns`, but
+/// `edno pack` only walks the module graph, so static assets were never
 /// included. This mirrors `publish`'s `collect_paths` (ignore .git,
 /// node_modules and the vendor dir, honour .gitignore, skip non-regular
 /// files / `.DS_Store` / `.gitignore`) and then drops anything already
 /// emitted by another part of the tarball:
 ///   - source modules (they are transpiled into the tarball separately),
-///   - the generated `package.json`'s source `deno.json`/`deno.jsonc`,
+///   - the generated `package.json`'s source `edno.json`/`edno.jsonc`,
 ///   - the auto-included README/LICENSE files.
 fn collect_asset_files(
   package: &JsrPackageConfig,
@@ -497,7 +497,7 @@ fn collect_asset_files(
 
   let collected = FileCollector::new(|e| {
     if !e.metadata.file_type().is_file() {
-      // Mirror `deno publish`, which surfaces a diagnostic for non-regular
+      // Mirror `edno publish`, which surfaces a diagnostic for non-regular
       // files matched by the publish config. `pack` can't include them, so
       // warn rather than silently dropping (e.g. a symlinked asset) to
       // avoid a confusing "why is my file missing?" report.
@@ -525,7 +525,7 @@ fn collect_asset_files(
   for path in collected {
     if excluded.contains(&path)
       || is_excluded_path(&path, &package_dir)
-      || !cli_patterns.matches_path(&path, deno_config::glob::PathKind::File)
+      || !cli_patterns.matches_path(&path, edno_config::glob::PathKind::File)
     {
       continue;
     }
@@ -594,11 +594,11 @@ fn split_shebang(source: &str) -> (Option<&str>, &str) {
   }
 }
 
-/// Create transpile options from deno.json compiler options
+/// Create transpile options from edno.json compiler options
 fn create_transpile_options(
-  config_file: &deno_config::deno_json::ConfigFile,
+  config_file: &edno_config::edno_json::ConfigFile,
 ) -> Result<deno_ast::TranspileOptions, AnyError> {
-  // Get compiler options from deno.json
+  // Get compiler options from edno.json
   let compiler_options = config_file.json.compiler_options.as_ref();
 
   // Helper to extract a string value from compiler options
@@ -674,13 +674,13 @@ fn create_transpile_options(
 fn process_modules(
   graph: &ModuleGraph,
   paths: &[CollectedPath],
-  parsed_source_cache: &deno_resolver::cache::ParsedSourceCache,
+  parsed_source_cache: &edno_resolver::cache::ParsedSourceCache,
   pack_flags: &PackFlags,
-  config_file: &deno_config::deno_json::ConfigFile,
+  config_file: &edno_config::edno_json::ConfigFile,
 ) -> Result<Vec<ProcessedFile>, AnyError> {
   let mut processed = Vec::new();
 
-  // Get transpile options from deno.json compiler options
+  // Get transpile options from edno.json compiler options
   let transpile_options = create_transpile_options(config_file)?;
 
   for path in paths {
@@ -707,17 +707,17 @@ fn process_single_module(
   graph: &ModuleGraph,
   js_module: &deno_graph::JsModule,
   path: &CollectedPath,
-  parsed_source_cache: &deno_resolver::cache::ParsedSourceCache,
+  parsed_source_cache: &edno_resolver::cache::ParsedSourceCache,
   pack_flags: &PackFlags,
   transpile_options: &deno_ast::TranspileOptions,
 ) -> Result<ProcessedFile, AnyError> {
   let media_type = js_module.media_type;
   let raw_source = js_module.source.text.as_ref();
-  // Strip a leading shebang (e.g. `#!/usr/bin/env deno`) before all other
+  // Strip a leading shebang (e.g. `#!/usr/bin/env edno`) before all other
   // processing. SWC's module parser rejects shebangs with "Expected
   // ident", and tools downstream don't want to deal with them either.
   // We re-prepend the shebang to the final emitted JS so executable
-  // scripts still work after `deno pack`.
+  // scripts still work after `edno pack`.
   let (shebang, source_text) = split_shebang(raw_source);
 
   let parsed = parsed_source_cache.remove_or_parse_module(
@@ -784,7 +784,7 @@ fn process_single_module(
   };
 
   // Re-prepend the shebang we stripped earlier so executable scripts
-  // (e.g. `#!/usr/bin/env -S deno run -A`) still work after pack.
+  // (e.g. `#!/usr/bin/env -S edno run -A`) still work after pack.
   let js_content = match shebang {
     Some(line) => format!("{}{}", line, js_content),
     None => js_content,

@@ -2,7 +2,7 @@
 
 import { assertEquals, assertThrows } from "./test_util.ts";
 
-Deno.test(function addEventListenerTest() {
+Edno.test(function addEventListenerTest() {
   const document = new EventTarget();
 
   assertEquals(document.addEventListener("x", null, false), undefined);
@@ -10,7 +10,7 @@ Deno.test(function addEventListenerTest() {
   assertEquals(document.addEventListener("x", null), undefined);
 });
 
-Deno.test(function constructedEventTargetCanBeUsedAsExpected() {
+Edno.test(function constructedEventTargetCanBeUsedAsExpected() {
   const target = new EventTarget();
   const event = new Event("foo", { bubbles: true, cancelable: false });
   let callCount = 0;
@@ -33,7 +33,7 @@ Deno.test(function constructedEventTargetCanBeUsedAsExpected() {
   assertEquals(callCount, 2);
 });
 
-Deno.test(function anEventTargetCanBeSubclassed() {
+Edno.test(function anEventTargetCanBeSubclassed() {
   class NicerEventTarget extends EventTarget {
     on(
       type: string,
@@ -67,7 +67,7 @@ Deno.test(function anEventTargetCanBeSubclassed() {
   assertEquals(callCount, 0);
 });
 
-Deno.test(function removeEventListenerTest() {
+Edno.test(function removeEventListenerTest() {
   const target = new EventTarget();
   let callCount = 0;
   const listener = () => {
@@ -125,14 +125,14 @@ Deno.test(function removeEventListenerTest() {
   assertEquals(callCount, 4);
 });
 
-Deno.test(function removingNullEventListenerShouldSucceed() {
+Edno.test(function removingNullEventListenerShouldSucceed() {
   const document = new EventTarget();
   assertEquals(document.removeEventListener("x", null, false), undefined);
   assertEquals(document.removeEventListener("x", null, true), undefined);
   assertEquals(document.removeEventListener("x", null), undefined);
 });
 
-Deno.test(function removeEventListenerWithNullOptions() {
+Edno.test(function removeEventListenerWithNullOptions() {
   const target = new EventTarget();
   let callCount = 0;
   const listener = () => {
@@ -157,7 +157,7 @@ Deno.test(function removeEventListenerWithNullOptions() {
   target.removeEventListener("test", listener, true);
 });
 
-Deno.test(function constructedEventTargetUseObjectPrototype() {
+Edno.test(function constructedEventTargetUseObjectPrototype() {
   const target = new EventTarget();
   const event = new Event("toString", { bubbles: true, cancelable: false });
   let callCount = 0;
@@ -180,12 +180,12 @@ Deno.test(function constructedEventTargetUseObjectPrototype() {
   assertEquals(callCount, 2);
 });
 
-Deno.test(function toStringShouldBeWebCompatible() {
+Edno.test(function toStringShouldBeWebCompatible() {
   const target = new EventTarget();
   assertEquals(target.toString(), "[object EventTarget]");
 });
 
-Deno.test(function dispatchEventShouldNotThrowError() {
+Edno.test(function dispatchEventShouldNotThrowError() {
   let hasThrown = false;
 
   try {
@@ -204,7 +204,7 @@ Deno.test(function dispatchEventShouldNotThrowError() {
   assertEquals(hasThrown, false);
 });
 
-Deno.test(function eventTargetThisShouldDefaultToWindow() {
+Edno.test(function eventTargetThisShouldDefaultToWindow() {
   const {
     addEventListener,
     dispatchEvent,
@@ -233,7 +233,7 @@ Deno.test(function eventTargetThisShouldDefaultToWindow() {
   assertEquals(n, 1);
 });
 
-Deno.test(function eventTargetShouldAcceptEventListenerObject() {
+Edno.test(function eventTargetShouldAcceptEventListenerObject() {
   const target = new EventTarget();
   const event = new Event("foo", { bubbles: true, cancelable: false });
   let callCount = 0;
@@ -258,7 +258,7 @@ Deno.test(function eventTargetShouldAcceptEventListenerObject() {
   assertEquals(callCount, 2);
 });
 
-Deno.test(function eventTargetShouldAcceptAsyncFunction() {
+Edno.test(function eventTargetShouldAcceptAsyncFunction() {
   const target = new EventTarget();
   const event = new Event("foo", { bubbles: true, cancelable: false });
   let callCount = 0;
@@ -281,7 +281,7 @@ Deno.test(function eventTargetShouldAcceptAsyncFunction() {
   assertEquals(callCount, 2);
 });
 
-Deno.test(
+Edno.test(
   function eventTargetShouldAcceptAsyncFunctionForEventListenerObject() {
     const target = new EventTarget();
     const event = new Event("foo", { bubbles: true, cancelable: false });
@@ -307,7 +307,7 @@ Deno.test(
     assertEquals(callCount, 2);
   },
 );
-Deno.test(function eventTargetDispatchShouldSetTargetNoListener() {
+Edno.test(function eventTargetDispatchShouldSetTargetNoListener() {
   const target = new EventTarget();
   const event = new Event("foo");
   assertEquals(event.target, null);
@@ -315,7 +315,7 @@ Deno.test(function eventTargetDispatchShouldSetTargetNoListener() {
   assertEquals(event.target, target);
 });
 
-Deno.test(function eventTargetDispatchShouldSetTargetInListener() {
+Edno.test(function eventTargetDispatchShouldSetTargetInListener() {
   const target = new EventTarget();
   const event = new Event("foo");
   assertEquals(event.target, null);
@@ -328,7 +328,7 @@ Deno.test(function eventTargetDispatchShouldSetTargetInListener() {
   assertEquals(called, true);
 });
 
-Deno.test(function eventTargetDispatchShouldFireCurrentListenersOnly() {
+Edno.test(function eventTargetDispatchShouldFireCurrentListenersOnly() {
   const target = new EventTarget();
   const event = new Event("foo");
   let callCount = 0;
@@ -342,7 +342,7 @@ Deno.test(function eventTargetDispatchShouldFireCurrentListenersOnly() {
   assertEquals(callCount, 1);
 });
 
-Deno.test(function eventTargetAddEventListenerGlobalAbort() {
+Edno.test(function eventTargetAddEventListenerGlobalAbort() {
   return new Promise<void>((resolve) => {
     const c = new AbortController();
 
@@ -352,7 +352,7 @@ Deno.test(function eventTargetAddEventListenerGlobalAbort() {
   });
 });
 
-Deno.test(function eventTargetManualRemoveCleansAbortSignalListener() {
+Edno.test(function eventTargetManualRemoveCleansAbortSignalListener() {
   const target = new EventTarget();
   const controller = new AbortController();
   const listener = () => {};
@@ -371,7 +371,7 @@ Deno.test(function eventTargetManualRemoveCleansAbortSignalListener() {
   assertEquals(removeCount, 0);
 });
 
-Deno.test(function eventTargetOnceListenerCleansAbortSignalListener() {
+Edno.test(function eventTargetOnceListenerCleansAbortSignalListener() {
   const target = new EventTarget();
   const controller = new AbortController();
   const listener = () => {};
@@ -393,7 +393,7 @@ Deno.test(function eventTargetOnceListenerCleansAbortSignalListener() {
   assertEquals(removeCount, 0);
 });
 
-Deno.test(function eventTargetBrandChecking() {
+Edno.test(function eventTargetBrandChecking() {
   const self = {};
 
   assertThrows(

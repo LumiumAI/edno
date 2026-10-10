@@ -1,3 +1,3 @@
 try {
-  const _ = await import("npm:@denotest/node-lifecycle-scripts");
+  const _ = await import("npm:@ednotest/node-lifecycle-scripts");
 } catch (_) {}

@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-explicit-any no-var
+// edno-lint-ignore-file no-explicit-any no-var
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
@@ -123,7 +123,7 @@ interface WebSocketEventMap {
  * server, as well as for sending and receiving data on the connection.
  *
  * If you are looking to create a WebSocket server, please take a look at
- * `Deno.upgradeWebSocket()`.
+ * `Edno.upgradeWebSocket()`.
  *
  * @example
  * ```ts
@@ -314,7 +314,7 @@ interface WebSocketOptions {
    * This is useful when you need to connect through a proxy or customize TLS settings.
    *
    * ```ts
-   * const client = Deno.createHttpClient({
+   * const client = Edno.createHttpClient({
    *   proxy: {
    *     transport: "unix",
    *     path: "/path/to/socket",
@@ -326,7 +326,7 @@ interface WebSocketOptions {
    *
    * @experimental
    */
-  client?: Deno.HttpClient;
+  client?: Edno.HttpClient;
 }
 
 /**

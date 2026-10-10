@@ -6,17 +6,17 @@ use std::path::PathBuf;
 use anyhow::Context;
 use anyhow::Error as AnyError;
 use capacity_builder::StringBuilder;
-use deno_config::workspace::Workspace;
+use edno_config::workspace::Workspace;
 use deno_error::JsErrorBox;
-use deno_lockfile::Lockfile;
-use deno_lockfile::NpmPackageInfoProvider;
-use deno_lockfile::WorkspaceMemberConfig;
-use deno_maybe_sync::MaybeSend;
-use deno_maybe_sync::MaybeSync;
-use deno_npm::registry::NpmRegistryApi;
-use deno_npm::resolution::DefaultTarballUrlProvider;
-use deno_npm::resolution::NpmRegistryDefaultTarballUrlProvider;
-use deno_package_json::PackageJsonDepValue;
+use edno_lockfile::Lockfile;
+use edno_lockfile::NpmPackageInfoProvider;
+use edno_lockfile::WorkspaceMemberConfig;
+use edno_maybe_sync::MaybeSend;
+use edno_maybe_sync::MaybeSync;
+use edno_npm::registry::NpmRegistryApi;
+use edno_npm::resolution::DefaultTarballUrlProvider;
+use edno_npm::resolution::NpmRegistryDefaultTarballUrlProvider;
+use edno_package_json::PackageJsonDepValue;
 use deno_path_util::fs::atomic_write_file_with_retries;
 use deno_semver::VersionReq;
 use deno_semver::jsr::JsrDepPackageReq;
@@ -40,7 +40,7 @@ pub trait NpmRegistryApiEx: NpmRegistryApi + MaybeSend + MaybeSync {}
 impl<T> NpmRegistryApiEx for T where T: NpmRegistryApi + MaybeSend + MaybeSync {}
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-type NpmRegistryApiRc = deno_maybe_sync::MaybeArc<dyn NpmRegistryApiEx>;
+type NpmRegistryApiRc = edno_maybe_sync::MaybeArc<dyn NpmRegistryApiEx>;
 
 pub struct LockfileNpmPackageInfoApiAdapter {
   api: NpmRegistryApiRc,
@@ -62,7 +62,7 @@ impl LockfileNpmPackageInfoApiAdapter {
     &self,
     values: &[PackageNv],
   ) -> Result<
-    Vec<deno_lockfile::Lockfile5NpmInfo>,
+    Vec<edno_lockfile::Lockfile5NpmInfo>,
     Box<dyn std::error::Error + Send + Sync>,
   > {
     let futs = values
@@ -72,7 +72,7 @@ impl LockfileNpmPackageInfoApiAdapter {
         let version_info =
           info.version_info(v, &self.workspace_link_packages.0)?;
         Ok::<_, Box<dyn std::error::Error + Send + Sync>>(
-          deno_lockfile::Lockfile5NpmInfo {
+          edno_lockfile::Lockfile5NpmInfo {
             tarball_url: version_info.dist.as_ref().and_then(|d| {
               let tarball_url_provider = NpmRegistryDefaultTarballUrlProvider;
               if d.tarball == tarball_url_provider.default_tarball_url(v) {
@@ -118,14 +118,14 @@ impl LockfileNpmPackageInfoApiAdapter {
 }
 
 #[async_trait::async_trait(?Send)]
-impl deno_lockfile::NpmPackageInfoProvider
+impl edno_lockfile::NpmPackageInfoProvider
   for LockfileNpmPackageInfoApiAdapter
 {
   async fn get_npm_package_info(
     &self,
     values: &[PackageNv],
   ) -> Result<
-    Vec<deno_lockfile::Lockfile5NpmInfo>,
+    Vec<edno_lockfile::Lockfile5NpmInfo>,
     Box<dyn std::error::Error + Send + Sync>,
   > {
     let package_infos = self.get_infos(values).await;
@@ -189,9 +189,9 @@ pub struct LockfileFlags {
   pub skip_write: bool,
   pub no_config: bool,
   pub no_npm: bool,
-  /// When no `deno.lock` exists in the workspace, attempt to seed one by
+  /// When no `edno.lock` exists in the workspace, attempt to seed one by
   /// translating a sibling `package-lock.json`. Currently only set by
-  /// `deno install`.
+  /// `edno install`.
   pub import_npm_lockfile: bool,
 }
 
@@ -206,7 +206,7 @@ pub enum LockfileWriteError {
 }
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type LockfileLockRc<TSys> = deno_maybe_sync::MaybeArc<LockfileLock<TSys>>;
+pub type LockfileLockRc<TSys> = edno_maybe_sync::MaybeArc<LockfileLock<TSys>>;
 
 #[derive(Debug)]
 pub struct LockfileLock<TSys: LockfileSys> {
@@ -218,7 +218,7 @@ pub struct LockfileLock<TSys: LockfileSys> {
 }
 
 impl<TSys: LockfileSys> LockfileLock<TSys> {
-  /// Get the inner deno_lockfile::Lockfile.
+  /// Get the inner edno_lockfile::Lockfile.
   pub fn lock(&self) -> Guard<'_, Lockfile> {
     Guard {
       guard: self.lockfile.lock(),
@@ -227,13 +227,13 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
 
   /// Creates an adapter for the lockfile that can be provided to deno_graph.
   #[cfg(feature = "graph")]
-  pub fn as_deno_graph_locker(&self) -> DenoGraphLocker<'_, TSys> {
-    DenoGraphLocker(self)
+  pub fn as_deno_graph_locker(&self) -> EdnoGraphLocker<'_, TSys> {
+    EdnoGraphLocker(self)
   }
 
   pub fn set_workspace_config(
     &self,
-    options: deno_lockfile::SetWorkspaceConfigOptions,
+    options: edno_lockfile::SetWorkspaceConfigOptions,
   ) {
     self.lockfile.lock().set_workspace_config(options);
   }
@@ -275,7 +275,7 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
     // If the lockfile path is a symlink, resolve it to its target so the
     // atomic write below replaces the target file rather than clobbering the
     // symlink with a freshly created regular file. This matches how the
-    // deno.json/package.json writes follow symlinks (they write in place).
+    // edno.json/package.json writes follow symlinks (they write in place).
     let write_path = if self.sys.fs_is_symlink_no_err(&lockfile.filename) {
       self
         .sys
@@ -284,7 +284,7 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
     } else {
       lockfile.filename.clone()
     };
-    // do an atomic write to reduce the chance of multiple deno
+    // do an atomic write to reduce the chance of multiple edno
     // processes corrupting the file
     const CACHE_PERM: u32 = 0o644;
     atomic_write_file_with_retries(&self.sys, &write_path, &bytes, CACHE_PERM)
@@ -350,7 +350,7 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
     let root_folder = workspace.root_folder_configs();
     let frozen = flags.frozen_lockfile.unwrap_or_else(|| {
       root_folder
-        .deno_json
+        .edno_json
         .as_ref()
         .and_then(|c| c.to_lock_config().ok().flatten().map(|c| c.frozen()))
         .unwrap_or(false)
@@ -367,18 +367,18 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
     )
     .await?;
     let root_url = workspace.root_dir_url();
-    let config = deno_lockfile::WorkspaceConfig {
+    let config = edno_lockfile::WorkspaceConfig {
       root: WorkspaceMemberConfig {
         package_json_deps: pkg_json_deps(
           root_folder.pkg_json.as_deref(),
           workspace.catalogs(),
         ),
         dependencies: if let Some(map) = maybe_external_import_map {
-          deno_config::import_map::import_map_deps_from_value(map)
+          edno_config::import_map::import_map_deps_from_value(map)
             .collect::<HashSet<_>>()
         } else {
           root_folder
-            .deno_json
+            .edno_json
             .as_deref()
             .map(|d| d.dependencies(workspace.catalogs()))
             .unwrap_or_default()
@@ -407,7 +407,7 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
                   workspace.catalogs(),
                 ),
                 dependencies: folder
-                  .deno_json
+                  .edno_json
                   .as_deref()
                   .map(|d| d.dependencies(workspace.catalogs()))
                   .unwrap_or_default(),
@@ -459,7 +459,7 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
           .unwrap();
           // anything that affects npm resolution should go here in order to bust
           // the npm resolution when it changes
-          let value = deno_lockfile::LockfileLinkContent {
+          let value = edno_lockfile::LockfileLinkContent {
             dependencies: collect_deps(pkg_json.dependencies.as_ref()),
             optional_dependencies: collect_deps(
               pkg_json.optional_dependencies.as_ref(),
@@ -475,20 +475,20 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
           };
           Some((key, value))
         })
-        .chain(workspace.link_deno_jsons().filter_map(|deno_json| {
-          let name = deno_json.json.name.as_ref()?;
+        .chain(workspace.link_deno_jsons().filter_map(|edno_json| {
+          let name = edno_json.json.name.as_ref()?;
           let key = StringBuilder::<String>::build(|builder| {
             builder.append("jsr:");
             builder.append(name);
-            if let Some(version) = &deno_json.json.version {
+            if let Some(version) = &edno_json.json.version {
               builder.append('@');
               builder.append(version);
             }
           })
           .unwrap();
-          let value = deno_lockfile::LockfileLinkContent {
+          let value = edno_lockfile::LockfileLinkContent {
             // not this workspace's catalogs, so don't resolve against them
-            dependencies: deno_json.dependencies(&Default::default()),
+            dependencies: edno_json.dependencies(&Default::default()),
             optional_dependencies: Default::default(),
             peer_dependencies: Default::default(),
             peer_dependencies_meta: Default::default(),
@@ -500,7 +500,7 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
         .npm_overrides()
         .map(|m| serde_json::Value::Object(m.clone())),
     };
-    lockfile.set_workspace_config(deno_lockfile::SetWorkspaceConfigOptions {
+    lockfile.set_workspace_config(edno_lockfile::SetWorkspaceConfigOptions {
       no_npm: flags.no_npm,
       no_config: flags.no_config,
       config,
@@ -511,12 +511,12 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
   pub async fn read_from_path(
     sys: TSys,
     opts: LockfileReadFromPathOptions,
-    api: &dyn deno_lockfile::NpmPackageInfoProvider,
+    api: &dyn edno_lockfile::NpmPackageInfoProvider,
   ) -> Result<LockfileLock<TSys>, AnyError> {
     let lockfile = match sys.fs_read_to_string(&opts.file_path) {
       Ok(text) => {
         Lockfile::new(
-          deno_lockfile::NewLockfileOptions {
+          edno_lockfile::NewLockfileOptions {
             file_path: opts.file_path,
             content: &text,
             overwrite: false,
@@ -580,7 +580,7 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
         }
       };
       Err(JsErrorBox::generic(format!(
-        "The lockfile is out of date. Run `deno install --frozen=false`, or rerun with `--frozen=false` to update it.\nchanges:\n{truncated_diff}"
+        "The lockfile is out of date. Run `edno install --frozen=false`, or rerun with `--frozen=false` to update it.\nchanges:\n{truncated_diff}"
       )))
     } else {
       Ok(())
@@ -598,10 +598,10 @@ impl<TSys: LockfileSys> LockfileLock<TSys> {
 /// `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `bun.lock` wins.
 async fn try_import_npm_lockfile<TSys: LockfileSys>(
   sys: &TSys,
-  deno_lock_path: &std::path::Path,
-  api: &dyn deno_lockfile::NpmPackageInfoProvider,
+  edno_lock_path: &std::path::Path,
+  api: &dyn edno_lockfile::NpmPackageInfoProvider,
 ) -> Result<Option<Lockfile>, AnyError> {
-  let Some(parent) = deno_lock_path.parent() else {
+  let Some(parent) = edno_lock_path.parent() else {
     return Ok(None);
   };
 
@@ -631,7 +631,7 @@ async fn try_import_npm_lockfile<TSys: LockfileSys>(
           .with_context(|| format!("Failed reading '{}'", path.display()));
       }
     };
-    let deno_lock_text = match translate(&text) {
+    let edno_lock_text = match translate(&text) {
       Ok(text) => text,
       Err(err) => {
         log::warn!(
@@ -644,9 +644,9 @@ async fn try_import_npm_lockfile<TSys: LockfileSys>(
       }
     };
     let mut lockfile = Lockfile::new(
-      deno_lockfile::NewLockfileOptions {
-        file_path: deno_lock_path.to_path_buf(),
-        content: &deno_lock_text,
+      edno_lockfile::NewLockfileOptions {
+        file_path: edno_lock_path.to_path_buf(),
+        content: &edno_lock_text,
         overwrite: false,
       },
       api,
@@ -657,7 +657,7 @@ async fn try_import_npm_lockfile<TSys: LockfileSys>(
     // `file:`/`link:` entries) translates to an empty lockfile, and claiming
     // we seeded it would be misleading.
     if !lockfile.content.is_empty() {
-      log::info!("Seeded deno.lock from {}", path.display());
+      log::info!("Seeded edno.lock from {}", path.display());
     }
     // Force write on first save so the imported state is persisted even if
     // no subsequent resolution mutates the lockfile.
@@ -670,11 +670,11 @@ async fn try_import_npm_lockfile<TSys: LockfileSys>(
 
 /// An adapter to use the lockfile with `deno_graph`.
 #[cfg(feature = "graph")]
-pub struct DenoGraphLocker<'a, TSys: LockfileSys>(&'a LockfileLock<TSys>);
+pub struct EdnoGraphLocker<'a, TSys: LockfileSys>(&'a LockfileLock<TSys>);
 
 #[cfg(feature = "graph")]
 impl<TSys: LockfileSys> deno_graph::source::Locker
-  for DenoGraphLocker<'_, TSys>
+  for EdnoGraphLocker<'_, TSys>
 {
   fn get_remote_checksum(
     &self,

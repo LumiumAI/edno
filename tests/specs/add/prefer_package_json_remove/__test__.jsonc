@@ -1,18 +1,18 @@
 {
   "tempDir": true,
   "tests": {
-    // With "preferPackageJson": true in deno.json, `deno remove` (no flag)
+    // With "preferPackageJson": true in edno.json, `edno remove` (no flag)
     // removes the dependency from package.json.
     "removes_from_package_json": {
       "steps": [
         {
-          "args": "remove @denotest/esm-basic",
+          "args": "remove @ednotest/esm-basic",
           "output": "remove.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('package.json').trim())"
+            "console.log(Edno.readTextFileSync('package.json').trim())"
           ],
           "output": "package.json.out"
         }

@@ -6279,7 +6279,7 @@ declare var CSSPropertyRule: {
  */
 interface CSSRotate extends CSSTransformComponent {
     /**
-     * The **`angle`** property of the CSSRotate interface gets and sets the angle of rotation. A positive angle denotes a clockwise rotation, a negative angle a counter-clockwise one.
+     * The **`angle`** property of the CSSRotate interface gets and sets the angle of rotation. A positive angle ednotes a clockwise rotation, a negative angle a counter-clockwise one.
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSRotate/angle)
      */
@@ -24594,7 +24594,7 @@ interface MediaStream extends EventTarget {
      */
     readonly active: boolean;
     /**
-     * The **`id`** read-only property of the MediaStream interface is a string containing 36 characters denoting a unique identifier (GUID) for the object.
+     * The **`id`** read-only property of the MediaStream interface is a string containing 36 characters ednoting a unique identifier (GUID) for the object.
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MediaStream/id)
      */

@@ -15,10 +15,10 @@ use std::time::SystemTime;
 
 use deno_path_util::normalize_path;
 use deno_path_util::strip_unc_prefix;
-use deno_runtime::colors;
-use deno_runtime::deno_core::anyhow::Context;
-use deno_runtime::deno_core::anyhow::bail;
-use deno_runtime::deno_core::error::AnyError;
+use edno_runtime::colors;
+use edno_runtime::edno_core::anyhow::Context;
+use edno_runtime::edno_core::anyhow::bail;
+use edno_runtime::edno_core::error::AnyError;
 use indexmap::IndexSet;
 use serde::Deserialize;
 use serde::Deserializer;
@@ -384,8 +384,8 @@ impl VfsEntry {
   }
 }
 
-pub static DENO_COMPILE_GLOBAL_NODE_MODULES_DIR_NAME: &str =
-  ".deno_compile_node_modules";
+pub static EDNO_COMPILE_GLOBAL_NODE_MODULES_DIR_NAME: &str =
+  ".edno_compile_node_modules";
 
 #[derive(Debug)]
 pub struct BuiltVfs {
@@ -575,7 +575,7 @@ impl VfsBuilder {
   /// Add a directory that might be the minimum root directory
   /// of the VFS.
   ///
-  /// For example, say the user has a deno.json and specifies an
+  /// For example, say the user has a edno.json and specifies an
   /// import map in a parent directory. The import map won't be
   /// included in the VFS, but its base will meaning we need to
   /// tell the VFS builder to include the base of the import map
@@ -1286,7 +1286,7 @@ impl VfsBuilder {
       }
       match current_dir.entries.iter().next().unwrap() {
         VfsEntry::Dir(dir) => {
-          if dir.name == DENO_COMPILE_GLOBAL_NODE_MODULES_DIR_NAME {
+          if dir.name == EDNO_COMPILE_GLOBAL_NODE_MODULES_DIR_NAME {
             // special directory we want to maintain
             break;
           }

@@ -9,11 +9,11 @@ import {
 } from "./test_util.ts";
 
 // https://github.com/denoland/deno/issues/11664
-Deno.test(async function testImportArrayBufferKey() {
+Edno.test(async function testImportArrayBufferKey() {
   const subtle = globalThis.crypto.subtle;
   assert(subtle);
 
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const key = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
 
   const cryptoKey = await subtle.importKey(
@@ -29,7 +29,7 @@ Deno.test(async function testImportArrayBufferKey() {
   await subtle.sign({ name: "HMAC" }, cryptoKey, new Uint8Array(8));
 });
 
-Deno.test(async function testSignVerify() {
+Edno.test(async function testSignVerify() {
   const subtle = globalThis.crypto.subtle;
   assert(subtle);
   for (const algorithm of ["RSA-PSS", "RSASSA-PKCS1-v1_5"]) {
@@ -78,7 +78,7 @@ Deno.test(async function testSignVerify() {
   }
 });
 
-// deno-fmt-ignore
+// edno-fmt-ignore
 const plainText = new Uint8Array([95, 77, 186, 79, 50, 12, 12, 232, 118, 114, 90, 252, 229, 251, 210, 91, 248, 62, 90, 113, 37, 160, 140, 175, 231, 60, 62, 186, 196, 33, 119, 157, 249, 213, 93, 24, 12, 58, 233, 148, 38, 69, 225, 216, 47, 238, 140, 157, 41, 75, 60, 177, 160, 138, 153, 49, 32, 27, 60, 14, 129, 252, 71, 202, 207, 131, 21, 162, 175, 102, 50, 65, 19, 195, 182, 98, 48, 195, 70, 8, 196, 244, 89, 54, 52, 206, 2, 178, 103, 54, 34, 119, 240, 168, 64, 202, 116, 188, 61, 26, 98, 54, 149, 44, 94, 215, 170, 248, 168, 254, 203, 221, 250, 117, 132, 230, 151, 140, 234, 93, 42, 91, 159, 183, 241, 180, 140, 139, 11, 229, 138, 48, 82, 2, 117, 77, 131, 118, 16, 115, 116, 121, 60, 240, 38, 170, 238, 83, 0, 114, 125, 131, 108, 215, 30, 113, 179, 69, 221, 178, 228, 68, 70, 255, 197, 185, 1, 99, 84, 19, 137, 13, 145, 14, 163, 128, 152, 74, 144, 25, 16, 49, 50, 63, 22, 219, 204, 157, 107, 225, 104, 184, 72, 133, 56, 76, 160, 62, 18, 96, 10, 193, 194, 72, 2, 138, 243, 114, 108, 201, 52, 99, 136, 46, 168, 192, 42, 171]);
 
 // Passing
@@ -101,7 +101,7 @@ const hashPlainTextVector = [
   },
 ];
 
-Deno.test(async function testEncryptDecrypt() {
+Edno.test(async function testEncryptDecrypt() {
   const subtle = globalThis.crypto.subtle;
   assert(subtle);
   for (
@@ -154,7 +154,7 @@ Deno.test(async function testEncryptDecrypt() {
   }
 });
 
-Deno.test(async function testRsaOaepLabelBytes() {
+Edno.test(async function testRsaOaepLabelBytes() {
   const subtle = globalThis.crypto.subtle;
   const keyPair = await subtle.generateKey(
     {
@@ -210,7 +210,7 @@ Deno.test(async function testRsaOaepLabelBytes() {
   );
 });
 
-Deno.test(async function testGenerateRSAKey() {
+Edno.test(async function testGenerateRSAKey() {
   const subtle = globalThis.crypto.subtle;
   assert(subtle);
 
@@ -231,7 +231,7 @@ Deno.test(async function testGenerateRSAKey() {
   assert(keyPair.privateKey.usages.includes("sign"));
 });
 
-Deno.test(async function testGenerateHMACKey() {
+Edno.test(async function testGenerateHMACKey() {
   const key = await globalThis.crypto.subtle.generateKey(
     {
       name: "HMAC",
@@ -246,7 +246,7 @@ Deno.test(async function testGenerateHMACKey() {
   assert(key.usages.includes("sign"));
 });
 
-Deno.test(async function testECDSASignVerify() {
+Edno.test(async function testECDSASignVerify() {
   const key = await globalThis.crypto.subtle.generateKey(
     {
       name: "ECDSA",
@@ -277,7 +277,7 @@ Deno.test(async function testECDSASignVerify() {
 });
 
 // Tests the "bad paths" as a temporary replacement for sign_verify/ecdsa WPT.
-Deno.test(async function testECDSASignVerifyFail() {
+Edno.test(async function testECDSASignVerifyFail() {
   const key = await globalThis.crypto.subtle.generateKey(
     {
       name: "ECDSA",
@@ -318,7 +318,7 @@ Deno.test(async function testECDSASignVerifyFail() {
 });
 
 // https://github.com/denoland/deno/issues/11313
-Deno.test(async function testSignRSASSAKey() {
+Edno.test(async function testSignRSASSAKey() {
   const subtle = globalThis.crypto.subtle;
   assert(subtle);
 
@@ -350,7 +350,7 @@ Deno.test(async function testSignRSASSAKey() {
   assert(signature);
 });
 
-// deno-fmt-ignore
+// edno-fmt-ignore
 const rawKey = new Uint8Array([
   1, 2, 3, 4, 5, 6, 7, 8,
   9, 10, 11, 12, 13, 14, 15, 16
@@ -365,7 +365,7 @@ const jwk: JsonWebKey = {
   "key_ops": ["sign"],
 };
 
-Deno.test(async function subtleCryptoHmacImportExport() {
+Edno.test(async function subtleCryptoHmacImportExport() {
   const key1 = await crypto.subtle.importKey(
     "raw",
     rawKey,
@@ -391,7 +391,7 @@ Deno.test(async function subtleCryptoHmacImportExport() {
     key2,
     new Uint8Array([1, 2, 3, 4]),
   );
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expected = new Uint8Array([
     59, 170, 255, 216, 51, 141, 51, 194,
     213, 48, 41, 191, 184, 40, 216, 47,
@@ -415,7 +415,7 @@ Deno.test(async function subtleCryptoHmacImportExport() {
 });
 
 // https://github.com/denoland/deno/issues/12085
-Deno.test(async function generateImportHmacJwk() {
+Edno.test(async function generateImportHmacJwk() {
   const key = await crypto.subtle.generateKey(
     {
       name: "HMAC",
@@ -444,11 +444,11 @@ const pkcs8TestVectors = [
   { pem: "tests/testdata/webcrypto/id_rsaEncryption.pem", hash: "SHA-256" },
 ];
 
-Deno.test({ permissions: { read: true } }, async function importRsaPkcs8() {
+Edno.test({ permissions: { read: true } }, async function importRsaPkcs8() {
   const pemHeader = "-----BEGIN PRIVATE KEY-----";
   const pemFooter = "-----END PRIVATE KEY-----";
   for (const { pem, hash } of pkcs8TestVectors) {
-    const keyFile = await Deno.readTextFile(pem);
+    const keyFile = await Edno.readTextFile(pem);
     const pemContents = keyFile.substring(
       pemHeader.length,
       keyFile.length - pemFooter.length,
@@ -497,13 +497,13 @@ const nonInteroperableVectors = [
   },
 ];
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function importNonInteroperableRsaPkcs8() {
     const pemHeader = "-----BEGIN PRIVATE KEY-----";
     const pemFooter = "-----END PRIVATE KEY-----";
     for (const { pem, hash } of nonInteroperableVectors) {
-      const keyFile = await Deno.readTextFile(pem);
+      const keyFile = await Edno.readTextFile(pem);
       const pemContents = keyFile.substring(
         pemHeader.length,
         keyFile.length - pemFooter.length,
@@ -530,7 +530,7 @@ Deno.test(
   },
 );
 
-// deno-fmt-ignore
+// edno-fmt-ignore
 const asn1AlgorithmIdentifier = new Uint8Array([
   0x02, 0x01, 0x00, // INTEGER
   0x30, 0x0d, // SEQUENCE (2 elements)
@@ -539,7 +539,7 @@ const asn1AlgorithmIdentifier = new Uint8Array([
   0x05, 0x00, // NULL
 ]);
 
-Deno.test(async function rsaExport() {
+Edno.test(async function rsaExport() {
   for (const algorithm of ["RSASSA-PKCS1-v1_5", "RSA-PSS", "RSA-OAEP"]) {
     const keyPair = await crypto.subtle.generateKey(
       {
@@ -587,7 +587,7 @@ Deno.test(async function rsaExport() {
   }
 });
 
-Deno.test(async function testHkdfDeriveBits() {
+Edno.test(async function testHkdfDeriveBits() {
   const rawKey = crypto.getRandomValues(new Uint8Array(16));
   const key = await crypto.subtle.importKey(
     "raw",
@@ -611,7 +611,7 @@ Deno.test(async function testHkdfDeriveBits() {
   assertEquals(result.byteLength, 128 / 8);
 });
 
-Deno.test(async function testHkdfDeriveBitsWithLargeKeySize() {
+Edno.test(async function testHkdfDeriveBitsWithLargeKeySize() {
   const key = await crypto.subtle.importKey(
     "raw",
     new Uint8Array([0x00]),
@@ -636,7 +636,7 @@ Deno.test(async function testHkdfDeriveBitsWithLargeKeySize() {
   );
 });
 
-Deno.test(async function testEcdhDeriveBitsWithShorterLength() {
+Edno.test(async function testEcdhDeriveBitsWithShorterLength() {
   const keypair = await crypto.subtle.generateKey(
     {
       name: "ECDH",
@@ -656,7 +656,7 @@ Deno.test(async function testEcdhDeriveBitsWithShorterLength() {
   assertEquals(result.byteLength * 8, 256);
 });
 
-Deno.test(async function testEcdhDeriveBitsWithLongerLength() {
+Edno.test(async function testEcdhDeriveBitsWithLongerLength() {
   const keypair = await crypto.subtle.generateKey(
     {
       name: "ECDH",
@@ -680,7 +680,7 @@ Deno.test(async function testEcdhDeriveBitsWithLongerLength() {
   );
 });
 
-Deno.test(async function testEcdhDeriveBitsWithNullLength() {
+Edno.test(async function testEcdhDeriveBitsWithNullLength() {
   const keypair = await crypto.subtle.generateKey(
     {
       name: "ECDH",
@@ -701,7 +701,7 @@ Deno.test(async function testEcdhDeriveBitsWithNullLength() {
   assertEquals(result.byteLength * 8, 384);
 });
 
-Deno.test(async function testDeriveKey() {
+Edno.test(async function testDeriveKey() {
   // Test deriveKey
   const rawKey = crypto.getRandomValues(new Uint8Array(16));
   const key = await crypto.subtle.importKey(
@@ -737,8 +737,8 @@ Deno.test(async function testDeriveKey() {
   assertEquals(algorithm.length, 512);
 });
 
-Deno.test(async function testDeriveKeyAesOcb() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(async function testDeriveKeyAesOcb() {
+  // edno-lint-ignore no-explicit-any
   const subtle = crypto.subtle as any;
   const rawKey = crypto.getRandomValues(new Uint8Array(16));
   const key = await subtle.importKey(
@@ -786,7 +786,7 @@ Deno.test(async function testDeriveKeyAesOcb() {
   assertEquals(new Uint8Array(decrypted), plaintext);
 });
 
-Deno.test(async function testAesCbcEncryptDecrypt() {
+Edno.test(async function testAesCbcEncryptDecrypt() {
   const key = await crypto.subtle.generateKey(
     { name: "AES-CBC", length: 128 },
     true,
@@ -820,7 +820,7 @@ Deno.test(async function testAesCbcEncryptDecrypt() {
   assertEquals(new Uint8Array(decrypted), new Uint8Array([1, 2, 3, 4, 5, 6]));
 });
 
-Deno.test(async function testAesCtrEncryptDecrypt() {
+Edno.test(async function testAesCtrEncryptDecrypt() {
   async function aesCtrRoundTrip(
     key: CryptoKey,
     counter: Uint8Array<ArrayBuffer>,
@@ -924,7 +924,7 @@ Deno.test(async function testAesCtrEncryptDecrypt() {
   }
 });
 
-Deno.test(async function testECDH() {
+Edno.test(async function testECDH() {
   for (const keySize of [256, 384]) {
     const keyPair = await crypto.subtle.generateKey(
       {
@@ -949,7 +949,7 @@ Deno.test(async function testECDH() {
   }
 });
 
-Deno.test(async function testWrapKey() {
+Edno.test(async function testWrapKey() {
   // Test wrapKey
   const key = await crypto.subtle.generateKey(
     {
@@ -988,7 +988,7 @@ Deno.test(async function testWrapKey() {
 
 // Doesn't need to cover all cases.
 // Only for testing types.
-Deno.test(async function testAesKeyGen() {
+Edno.test(async function testAesKeyGen() {
   const key = await crypto.subtle.generateKey(
     {
       name: "AES-GCM",
@@ -1007,7 +1007,7 @@ Deno.test(async function testAesKeyGen() {
   assertEquals(algorithm.length, 256);
 });
 
-Deno.test(async function testUnwrapKey() {
+Edno.test(async function testUnwrapKey() {
   const subtle = crypto.subtle;
 
   const AES_KEY: AesKeyAlgorithm & AesCbcParams = {
@@ -1066,7 +1066,7 @@ Deno.test(async function testUnwrapKey() {
 // because the UTF-8 JSON serialization of the JWK is generally not a multiple
 // of 8 bytes. Browsers and Node.js pad the JSON with ASCII spaces before
 // running AES-KW; we now do the same.
-Deno.test(async function testWrapUnwrapJwkAesKw() {
+Edno.test(async function testWrapUnwrapJwkAesKw() {
   const subtle = crypto.subtle;
   for (const hash of ["SHA-1", "SHA-256", "SHA-384", "SHA-512"] as const) {
     const key = await subtle.generateKey(
@@ -1110,8 +1110,8 @@ Deno.test(async function testWrapUnwrapJwkAesKw() {
   }
 });
 
-Deno.test(async function testDecryptWithInvalidIntializationVector() {
-  // deno-fmt-ignore
+Edno.test(async function testDecryptWithInvalidIntializationVector() {
+  // edno-fmt-ignore
   const data = new Uint8Array([42,42,42,42,42,42,42,42,42,42,42,42,42,42,42]);
   const key = await crypto.subtle.importKey(
     "raw",
@@ -1120,14 +1120,14 @@ Deno.test(async function testDecryptWithInvalidIntializationVector() {
     true,
     ["encrypt", "decrypt"],
   );
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const initVector = new Uint8Array([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-CBC", iv: initVector },
     key,
     data,
   );
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const initVector2 = new Uint8Array([15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]);
   await assertRejects(async () => {
     await crypto.subtle.decrypt(
@@ -1210,7 +1210,7 @@ const jwtRSAKeys = {
   },
 };
 
-Deno.test(async function testImportRsaJwk() {
+Edno.test(async function testImportRsaJwk() {
   const subtle = globalThis.crypto.subtle;
   assert(subtle);
 
@@ -1449,7 +1449,7 @@ function equalJwk(expected: JWK, got: JWK): boolean {
   return true;
 }
 
-Deno.test(async function testImportExportEcDsaJwk() {
+Edno.test(async function testImportExportEcDsaJwk() {
   const subtle = crypto.subtle;
   assert(subtle);
 
@@ -1513,7 +1513,7 @@ Deno.test(async function testImportExportEcDsaJwk() {
   }
 });
 
-Deno.test(async function testEcdsaCrossHashAlgorithms() {
+Edno.test(async function testEcdsaCrossHashAlgorithms() {
   // Ensure that we can sign and verify with hash algorithms that
   // don't match the curve's nominal size. For example, sign using
   // P-384 with a SHA-256 digest and verify using the same params.
@@ -1560,7 +1560,7 @@ Deno.test(async function testEcdsaCrossHashAlgorithms() {
   assert(verified);
 });
 
-Deno.test(async function testImportEcDhJwk() {
+Edno.test(async function testImportEcDhJwk() {
   const subtle = crypto.subtle;
   assert(subtle);
 
@@ -1624,7 +1624,7 @@ const ecTestKeys = [
     size: 256,
     namedCurve: "P-256",
     signatureLength: 64,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     raw: new Uint8Array([
       4, 210, 16, 176, 166, 249, 217, 240, 18, 134, 128, 88, 180, 63, 164, 244,
       113, 1, 133, 67, 187, 160, 12, 146, 80, 223, 146, 87, 194, 172, 174, 93,
@@ -1632,7 +1632,7 @@ const ecTestKeys = [
       23, 91, 250, 179, 75, 142, 108, 9, 158, 24, 241, 193, 152, 53, 131, 97,
       232,
     ]),
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     spki: new Uint8Array([
       48, 89, 48, 19, 6, 7, 42, 134, 72, 206, 61, 2, 1, 6, 8, 42, 134, 72, 206,
       61, 3, 1, 7, 3, 66, 0, 4, 210, 16, 176, 166, 249, 217, 240, 18, 134, 128,
@@ -1641,7 +1641,7 @@ const ecTestKeys = [
       77, 16, 149, 112, 27, 23, 91, 250, 179, 75, 142, 108, 9, 158, 24, 241,
       193, 152, 53, 131, 97, 232,
     ]),
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     pkcs8: new Uint8Array([
       48, 129, 135, 2, 1, 0, 48, 19, 6, 7, 42, 134, 72, 206, 61, 2, 1, 6, 8, 42,
       134, 72, 206, 61, 3, 1, 7, 4, 109, 48, 107, 2, 1, 1, 4, 32, 19, 211, 58,
@@ -1658,7 +1658,7 @@ const ecTestKeys = [
     size: 384,
     namedCurve: "P-384",
     signatureLength: 96,
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     raw: new Uint8Array([
       4, 118, 64, 176, 165, 100, 177, 112, 49, 254, 58, 53, 158, 63, 73, 200,
       148, 248, 242, 216, 186, 80, 92, 160, 53, 64, 232, 157, 19, 1, 12, 226,
@@ -1668,7 +1668,7 @@ const ecTestKeys = [
       165, 47, 72, 53, 17, 17, 246, 161, 220, 26, 21, 23, 219, 1, 107, 185,
       163, 215,
     ]),
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     spki: new Uint8Array([
       48, 118, 48, 16, 6, 7, 42, 134, 72, 206, 61, 2, 1, 6, 5, 43, 129, 4, 0,
       34, 3, 98, 0, 4, 118, 64, 176, 165, 100, 177, 112, 49, 254, 58, 53, 158,
@@ -1679,7 +1679,7 @@ const ecTestKeys = [
       145, 139, 165, 47, 72, 53, 17, 17, 246, 161, 220, 26, 21, 23, 219, 1,
       107, 185, 163, 215,
     ]),
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     pkcs8: new Uint8Array([
       48, 129, 182, 2, 1, 0, 48, 16, 6, 7, 42, 134, 72, 206, 61, 2, 1, 6, 5, 43,
       129, 4, 0, 34, 4, 129, 158, 48, 129, 155, 2, 1, 1, 4, 48, 202, 7, 195,
@@ -1697,7 +1697,7 @@ const ecTestKeys = [
   },
 ];
 
-Deno.test(async function testImportEcSpkiPkcs8() {
+Edno.test(async function testImportEcSpkiPkcs8() {
   const subtle = globalThis.crypto.subtle;
   assert(subtle);
 
@@ -1789,7 +1789,7 @@ Deno.test(async function testImportEcSpkiPkcs8() {
   }
 });
 
-Deno.test(async function testAesGcmEncrypt() {
+Edno.test(async function testAesGcmEncrypt() {
   const key = await crypto.subtle.importKey(
     "raw",
     new Uint8Array(16),
@@ -1898,7 +1898,7 @@ async function roundTripSecretJwk(
   validateKeys(key, jwk, exportedKey);
 }
 
-Deno.test(async function testSecretJwkBase64Url() {
+Edno.test(async function testSecretJwkBase64Url() {
   // Test 16bits with "overflow" in 3rd pos of 'quartet', no padding
   const keyData = `{
       "kty": "oct",
@@ -1988,7 +1988,7 @@ Deno.test(async function testSecretJwkBase64Url() {
   );
 });
 
-Deno.test(async function testAESWrapKey() {
+Edno.test(async function testAESWrapKey() {
   const key = await crypto.subtle.generateKey(
     {
       name: "AES-KW",
@@ -2047,7 +2047,7 @@ Deno.test(async function testAESWrapKey() {
 });
 
 // https://github.com/denoland/deno/issues/13534
-Deno.test(async function testAesGcmTagLength() {
+Edno.test(async function testAesGcmTagLength() {
   const key = await crypto.subtle.importKey(
     "raw",
     new Uint8Array(32),
@@ -2075,7 +2075,7 @@ Deno.test(async function testAesGcmTagLength() {
   });
 });
 
-Deno.test(async function ecPrivateKeyMaterialExportSpki() {
+Edno.test(async function ecPrivateKeyMaterialExportSpki() {
   // `generateKey` generates a key pair internally stored as "private" key.
   const keys = await crypto.subtle.generateKey(
     { name: "ECDSA", namedCurve: "P-256" },
@@ -2092,7 +2092,7 @@ Deno.test(async function ecPrivateKeyMaterialExportSpki() {
 });
 
 // https://github.com/denoland/deno/issues/13911
-Deno.test(async function importJwkWithUse() {
+Edno.test(async function importJwkWithUse() {
   const jwk = {
     "kty": "EC",
     "use": "sig",
@@ -2115,7 +2115,7 @@ Deno.test(async function importJwkWithUse() {
 });
 
 // https://github.com/denoland/deno/issues/14215
-Deno.test(async function exportKeyNotExtractable() {
+Edno.test(async function exportKeyNotExtractable() {
   const key = await crypto.subtle.generateKey(
     {
       name: "HMAC",
@@ -2135,7 +2135,7 @@ Deno.test(async function exportKeyNotExtractable() {
 });
 
 // https://github.com/denoland/deno/issues/15126
-Deno.test(async function testImportLeadingZeroesKey() {
+Edno.test(async function testImportLeadingZeroesKey() {
   const alg = { name: "ECDSA", namedCurve: "P-256" };
 
   const jwk = {
@@ -2162,7 +2162,7 @@ Deno.test(async function testImportLeadingZeroesKey() {
 });
 
 // https://github.com/denoland/deno/issues/15523
-Deno.test(async function testECspkiRoundTrip() {
+Edno.test(async function testECspkiRoundTrip() {
   const alg = { name: "ECDH", namedCurve: "P-256" };
   const { publicKey } = await crypto.subtle.generateKey(alg, true, [
     "deriveBits",
@@ -2172,8 +2172,8 @@ Deno.test(async function testECspkiRoundTrip() {
 });
 
 // https://github.com/denoland/deno/issues/34044
-Deno.test(async function p521CompressedSpkiExportsUncompressed() {
-  // deno-fmt-ignore
+Edno.test(async function p521CompressedSpkiExportsUncompressed() {
+  // edno-fmt-ignore
   const compressedSpki = new Uint8Array([
     48, 88, 48, 16, 6, 7, 42, 134, 72, 206, 61, 2, 1, 6, 5, 43, 129, 4, 0, 35, 3, 68, 0, 3, 1, 86, 244, 121, 248, 223, 30, 32, 167, 255, 192, 76, 228, 32, 195, 225, 84, 174, 37, 25, 150, 190, 228, 47, 3, 75, 132, 212, 27, 116, 63, 52, 228, 95, 49, 27, 129, 58, 156, 222, 200, 205, 165, 155, 187, 189, 49, 212, 96, 179, 41, 37, 33, 231, 193, 183, 34, 229, 102, 124, 3, 219, 47, 174, 117, 63,
   ]);
@@ -2187,14 +2187,14 @@ Deno.test(async function p521CompressedSpkiExportsUncompressed() {
   );
   const exported = new Uint8Array(await crypto.subtle.exportKey("spki", key));
 
-  // deno-fmt-ignore
+  // edno-fmt-ignore
   const expected = new Uint8Array([
     48, 129, 155, 48, 16, 6, 7, 42, 134, 72, 206, 61, 2, 1, 6, 5, 43, 129, 4, 0, 35, 3, 129, 134, 0, 4, 1, 86, 244, 121, 248, 223, 30, 32, 167, 255, 192, 76, 228, 32, 195, 225, 84, 174, 37, 25, 150, 190, 228, 47, 3, 75, 132, 212, 27, 116, 63, 52, 228, 95, 49, 27, 129, 58, 156, 222, 200, 205, 165, 155, 187, 189, 49, 212, 96, 179, 41, 37, 33, 231, 193, 183, 34, 229, 102, 124, 3, 219, 47, 174, 117, 63, 1, 80, 23, 54, 207, 226, 71, 57, 67, 32, 216, 228, 175, 194, 253, 57, 181, 169, 51, 16, 97, 184, 30, 34, 65, 40, 43, 158, 23, 137, 24, 34, 181, 183, 158, 5, 47, 69, 151, 181, 150, 67, 253, 57, 55, 156, 81, 189, 81, 37, 196, 244, 139, 195, 240, 37, 206, 60, 211, 105, 83, 40, 108, 203, 56, 251,
   ]);
   assertEquals(exported, expected);
 });
 
-Deno.test(async function testHmacJwkImport() {
+Edno.test(async function testHmacJwkImport() {
   await crypto.subtle.importKey(
     "jwk",
     {
@@ -2209,7 +2209,7 @@ Deno.test(async function testHmacJwkImport() {
   );
 });
 
-Deno.test(async function p521Import() {
+Edno.test(async function p521Import() {
   const jwk = {
     "crv": "P-521",
     "ext": true,
@@ -2235,7 +2235,7 @@ Deno.test(async function p521Import() {
   assert(key instanceof CryptoKey);
 });
 
-Deno.test(async function p521Generate() {
+Edno.test(async function p521Generate() {
   const algorithm = { name: "ECDSA", namedCurve: "P-521" };
 
   const key = await crypto.subtle.generateKey(
@@ -2248,7 +2248,7 @@ Deno.test(async function p521Generate() {
   assert(key.publicKey instanceof CryptoKey);
 });
 
-Deno.test(async function x25519SharedSecret() {
+Edno.test(async function x25519SharedSecret() {
   const alicesKeyPair = await crypto.subtle.generateKey(
     {
       name: "X25519",
@@ -2289,7 +2289,7 @@ Deno.test(async function x25519SharedSecret() {
 });
 
 // https://github.com/denoland/deno/issues/26870
-Deno.test(async function jwkKeyOpsValidation() {
+Edno.test(async function jwkKeyOpsValidation() {
   const { privateKey } = await crypto.subtle.generateKey(
     {
       name: "RSASSA-PKCS1-v1_5",
@@ -2325,7 +2325,7 @@ Deno.test(async function jwkKeyOpsValidation() {
 });
 
 // https://github.com/denoland/deno/issues/26431
-Deno.test(async function p521ExportJwkPrivateKeyRoundTrip() {
+Edno.test(async function p521ExportJwkPrivateKeyRoundTrip() {
   const keyPair = await crypto.subtle.generateKey(
     { name: "ECDSA", namedCurve: "P-521" },
     true,
@@ -2354,7 +2354,7 @@ Deno.test(async function p521ExportJwkPrivateKeyRoundTrip() {
   assertEquals(reExported.d, jwk.d);
 });
 
-Deno.test(async function x25519ExportJwk() {
+Edno.test(async function x25519ExportJwk() {
   const keyPair = await crypto.subtle.generateKey(
     {
       name: "X25519",
@@ -2372,37 +2372,37 @@ Deno.test(async function x25519ExportJwk() {
 });
 
 // https://github.com/denoland/deno/issues/32330
-Deno.test(async function testSha3DigestAlgorithms() {
+Edno.test(async function testSha3DigestAlgorithms() {
   function toHex(buf: ArrayBuffer): string {
     return [...new Uint8Array(buf)]
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
   }
 
-  const data = new TextEncoder().encode("Hello, Deno!");
+  const data = new TextEncoder().encode("Hello, Edno!");
 
   // SHA3-256 produces 32 bytes
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   const sha3_256 = await crypto.subtle.digest("SHA3-256", data);
   assertEquals(sha3_256.byteLength, 32);
 
   // SHA3-384 produces 48 bytes
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   const sha3_384 = await crypto.subtle.digest("SHA3-384", data);
   assertEquals(sha3_384.byteLength, 48);
 
   // SHA3-512 produces 64 bytes
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   const sha3_512 = await crypto.subtle.digest("SHA3-512", data);
   assertEquals(sha3_512.byteLength, 64);
 
   // Verify deterministic: same input always gives same output
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   const sha3_256_again = await crypto.subtle.digest("SHA3-256", data);
   assertEquals(toHex(sha3_256), toHex(sha3_256_again));
 });
 
-Deno.test(async function testSha3DigestKnownVectors() {
+Edno.test(async function testSha3DigestKnownVectors() {
   function toHex(buf: ArrayBuffer): string {
     return [...new Uint8Array(buf)]
       .map((b) => b.toString(16).padStart(2, "0"))
@@ -2426,7 +2426,7 @@ Deno.test(async function testSha3DigestKnownVectors() {
   );
 });
 
-Deno.test(async function testSha3DigestVariousInputTypes() {
+Edno.test(async function testSha3DigestVariousInputTypes() {
   const text = new TextEncoder().encode("test");
   const expected = await crypto.subtle.digest("SHA3-256", text);
 
@@ -2450,7 +2450,7 @@ Deno.test(async function testSha3DigestVariousInputTypes() {
 
 // Regression test for https://github.com/denoland/deno/issues/30243
 // Importing a PKCS#8 RSA key with the wrong algorithm (ECDSA) should throw, not panic.
-Deno.test("crypto.subtle.importKey PKCS#8 with wrong algorithm does not panic", async () => {
+Edno.test("crypto.subtle.importKey PKCS#8 with wrong algorithm does not panic", async () => {
   const rsaKey = await crypto.subtle.generateKey(
     {
       name: "RSASSA-PKCS1-v1_5",
@@ -2478,7 +2478,7 @@ Deno.test("crypto.subtle.importKey PKCS#8 with wrong algorithm does not panic", 
 // Regression test for https://github.com/denoland/deno/issues/33032
 // Importing a raw X25519 public key whose length is not 32 bytes
 // must throw a DataError DOMException, not panic.
-Deno.test(async function x25519ImportRawInvalidLength() {
+Edno.test(async function x25519ImportRawInvalidLength() {
   await assertRejects(
     () =>
       crypto.subtle.importKey(
@@ -2508,7 +2508,7 @@ Deno.test(async function x25519ImportRawInvalidLength() {
 
 // Importing a raw X448 public key whose length is not 56 bytes
 // must throw a DataError DOMException, not panic.
-Deno.test(async function x448ImportRawInvalidLength() {
+Edno.test(async function x448ImportRawInvalidLength() {
   await assertRejects(
     () =>
       crypto.subtle.importKey(
@@ -2525,7 +2525,7 @@ Deno.test(async function x448ImportRawInvalidLength() {
 
 // Importing a raw Ed25519 public key whose length is not 32 bytes
 // must throw a DataError DOMException, not panic.
-Deno.test(async function ed25519ImportRawInvalidLength() {
+Edno.test(async function ed25519ImportRawInvalidLength() {
   await assertRejects(
     () =>
       crypto.subtle.importKey(
@@ -2544,7 +2544,7 @@ Deno.test(async function ed25519ImportRawInvalidLength() {
 // or `CryptoKey` directly. Each must throw a `TypeError` with
 // `code: 'ERR_ILLEGAL_CONSTRUCTOR'`, matching Node and the upstream
 // `parallel/test-webcrypto-constructors.js` shape.
-Deno.test("crypto constructors throw ERR_ILLEGAL_CONSTRUCTOR", () => {
+Edno.test("crypto constructors throw ERR_ILLEGAL_CONSTRUCTOR", () => {
   for (
     const [Ctor, label] of [
       [CryptoKey, "CryptoKey"],
@@ -2559,7 +2559,7 @@ Deno.test("crypto constructors throw ERR_ILLEGAL_CONSTRUCTOR", () => {
       `${label}: expected TypeError`,
     );
     assertEquals(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (err as any).code,
       "ERR_ILLEGAL_CONSTRUCTOR",
       `${label}: code`,
@@ -2570,14 +2570,14 @@ Deno.test("crypto constructors throw ERR_ILLEGAL_CONSTRUCTOR", () => {
 // Tests for WICG "Modern Algorithms in the Web Cryptography API"
 // https://wicg.github.io/webcrypto-modern-algos/
 //
-// The lib.dom.d.ts shipped in Deno reflects the current Web Crypto IDL,
+// The lib.dom.d.ts shipped in Edno reflects the current Web Crypto IDL,
 // which does not yet include the WICG modern-algorithms additions. Until
 // those land upstream, parameter dictionaries for the new algorithms are
 // cast to AlgorithmIdentifier here.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 type AnyAlg = any;
 
-Deno.test(async function chaCha20Poly1305RoundTrip() {
+Edno.test(async function chaCha20Poly1305RoundTrip() {
   const key = await crypto.subtle.generateKey(
     { name: "ChaCha20-Poly1305" } as AnyAlg,
     true,
@@ -2607,7 +2607,7 @@ Deno.test(async function chaCha20Poly1305RoundTrip() {
   assertEquals(new Uint8Array(decrypted), plaintext);
 });
 
-Deno.test(async function chaCha20Poly1305TamperDetected() {
+Edno.test(async function chaCha20Poly1305TamperDetected() {
   const key = await crypto.subtle.generateKey(
     { name: "ChaCha20-Poly1305" } as AnyAlg,
     true,
@@ -2632,7 +2632,7 @@ Deno.test(async function chaCha20Poly1305TamperDetected() {
     ), DOMException);
 });
 
-Deno.test(async function chaCha20Poly1305RejectsBadIvLength() {
+Edno.test(async function chaCha20Poly1305RejectsBadIvLength() {
   const key = await crypto.subtle.generateKey(
     { name: "ChaCha20-Poly1305" } as AnyAlg,
     true,
@@ -2647,8 +2647,8 @@ Deno.test(async function chaCha20Poly1305RejectsBadIvLength() {
     ), DOMException);
 });
 
-Deno.test(async function chaCha20Poly1305ImportRawSecretKey() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(async function chaCha20Poly1305ImportRawSecretKey() {
+  // edno-lint-ignore no-explicit-any
   const subtle = crypto.subtle as any;
   const raw = new Uint8Array(32).fill(0x42);
   const key = await subtle.importKey(
@@ -2662,8 +2662,8 @@ Deno.test(async function chaCha20Poly1305ImportRawSecretKey() {
   assertEquals(exported, raw);
 });
 
-Deno.test(async function chaCha20Poly1305ImportExportJwk() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(async function chaCha20Poly1305ImportExportJwk() {
+  // edno-lint-ignore no-explicit-any
   const subtle = crypto.subtle as any;
   const raw = new Uint8Array(32).fill(0x42);
   const imported = await subtle.importKey(
@@ -2690,8 +2690,8 @@ Deno.test(async function chaCha20Poly1305ImportExportJwk() {
 
 // deriveKey() must work for modern symmetric algorithms: its internal import
 // step uses "raw-secret", which ChaCha20-Poly1305 accepts.
-Deno.test(async function chaCha20Poly1305DeriveKey() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(async function chaCha20Poly1305DeriveKey() {
+  // edno-lint-ignore no-explicit-any
   const subtle = crypto.subtle as any;
   const baseKey = await subtle.importKey(
     "raw",
@@ -2730,8 +2730,8 @@ Deno.test(async function chaCha20Poly1305DeriveKey() {
 });
 
 // New symmetric algorithms only recognize "raw-secret", not the legacy "raw".
-Deno.test(async function chaCha20Poly1305RejectsRawFormat() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(async function chaCha20Poly1305RejectsRawFormat() {
+  // edno-lint-ignore no-explicit-any
   const subtle = crypto.subtle as any;
   const raw = new Uint8Array(32).fill(0x42);
   await assertRejects(() =>
@@ -2754,8 +2754,8 @@ Deno.test(async function chaCha20Poly1305RejectsRawFormat() {
 });
 
 // For existing symmetric algorithms "raw" is an alias of "raw-secret".
-Deno.test(async function rawSecretAliasForExistingSymmetricAlgorithms() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(async function rawSecretAliasForExistingSymmetricAlgorithms() {
+  // edno-lint-ignore no-explicit-any
   const subtle = crypto.subtle as any;
   const raw = new Uint8Array(16).fill(0x11);
 
@@ -2798,11 +2798,11 @@ Deno.test(async function rawSecretAliasForExistingSymmetricAlgorithms() {
 
 // For existing asymmetric algorithms "raw-public" is an alias of "raw".
 // https://wicg.github.io/webcrypto-modern-algos/#subtlecrypto-interface-keyformat
-Deno.test(async function rawPublicAliasForExistingAsymmetricAlgorithms() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(async function rawPublicAliasForExistingAsymmetricAlgorithms() {
+  // edno-lint-ignore no-explicit-any
   const subtle = crypto.subtle as any;
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const cases: [any, KeyUsage[], KeyUsage[]][] = [
     [{ name: "ECDSA", namedCurve: "P-256" }, ["sign", "verify"], ["verify"]],
     [{ name: "ECDH", namedCurve: "P-256" }, ["deriveBits"], []],
@@ -2849,7 +2849,7 @@ Deno.test(async function rawPublicAliasForExistingAsymmetricAlgorithms() {
 
 // X448 private keys must be exportable to JWK (kty=OKP, crv=X448, x + d),
 // mirroring X25519. Regression test for the previously-missing private export.
-Deno.test(async function x448JwkExportImportRoundtrip() {
+Edno.test(async function x448JwkExportImportRoundtrip() {
   const { publicKey, privateKey } = await crypto.subtle.generateKey(
     { name: "X448" },
     true,
@@ -2906,7 +2906,7 @@ Deno.test(async function x448JwkExportImportRoundtrip() {
 // X448 must derive the correct public key from a known private scalar
 // (RFC 7748 requires clamping the scalar, not reducing it mod the group
 // order). Regression test for denoland/deno#35155.
-Deno.test(async function x448DerivesCorrectPublicKey() {
+Edno.test(async function x448DerivesCorrectPublicKey() {
   const scalar = decodeHex(
     "27a4354608f3bdd38f1f5af305f3e0682efe4e25808249d8fcb55927f6a9f446b8dc1d0a2c3b8cb133a5673b59a6d55ce754ec0c9a555401",
   );
@@ -2975,7 +2975,7 @@ function btoaUrlSafe(bytes: Uint8Array): string {
     .replace(/=+$/, "");
 }
 
-Deno.test(async function hmacSha3SignVerify() {
+Edno.test(async function hmacSha3SignVerify() {
   for (const hash of ["SHA3-256", "SHA3-384", "SHA3-512"]) {
     const key = await crypto.subtle.generateKey(
       { name: "HMAC", hash },
@@ -2989,7 +2989,7 @@ Deno.test(async function hmacSha3SignVerify() {
   }
 });
 
-Deno.test(async function cshakeDigest() {
+Edno.test(async function cshakeDigest() {
   // cSHAKE with empty function name and empty customization equals SHAKE.
   // The spec defines no standalone SHAKE algorithm; SHAKE is reachable only
   // as cSHAKE with empty N and S. Reference vector is SHAKE128("hello", 128).
@@ -3030,7 +3030,7 @@ Deno.test(async function cshakeDigest() {
   assert(customizedHex !== shake);
 });
 
-Deno.test(async function turboShakeDigest() {
+Edno.test(async function turboShakeDigest() {
   const data = new TextEncoder().encode("hello");
   const ts128 = new Uint8Array(
     await crypto.subtle.digest(
@@ -3062,7 +3062,7 @@ Deno.test(async function turboShakeDigest() {
   assert(differs);
 });
 
-Deno.test(async function kangarooTwelveDigest() {
+Edno.test(async function kangarooTwelveDigest() {
   const data = new TextEncoder().encode("hello");
   const kt = new Uint8Array(
     await crypto.subtle.digest(
@@ -3085,7 +3085,7 @@ Deno.test(async function kangarooTwelveDigest() {
       {
         name: "KT128",
         outputLength: 256,
-        customization: new TextEncoder().encode("Deno"),
+        customization: new TextEncoder().encode("Edno"),
       } as AnyAlg,
       data,
     ),
@@ -3170,12 +3170,12 @@ Deno.test(async function kangarooTwelveDigest() {
   );
 });
 
-Deno.test(async function kmacSignVerifyAndJwkRoundTrip() {
+Edno.test(async function kmacSignVerifyAndJwkRoundTrip() {
   const data = new TextEncoder().encode("modern algorithms");
   const params = {
     name: "KMAC128",
     outputLength: 256,
-    customization: new TextEncoder().encode("Deno"),
+    customization: new TextEncoder().encode("Edno"),
   } as AnyAlg;
   const key = await crypto.subtle.generateKey(
     { name: "KMAC128", length: 128 } as AnyAlg,
@@ -3211,7 +3211,7 @@ Deno.test(async function kmacSignVerifyAndJwkRoundTrip() {
   assert(await crypto.subtle.verify(params, imported, sig, data));
 });
 
-Deno.test(async function slhDsaSignVerifyAndExportRoundTrips() {
+Edno.test(async function slhDsaSignVerifyAndExportRoundTrips() {
   const algorithm = "SLH-DSA-SHAKE-128f";
   const pair = await crypto.subtle.generateKey(
     algorithm,
@@ -3222,7 +3222,7 @@ Deno.test(async function slhDsaSignVerifyAndExportRoundTrips() {
   const data = new TextEncoder().encode("stateless hash signatures");
   const params = {
     name: algorithm,
-    context: new TextEncoder().encode("deno"),
+    context: new TextEncoder().encode("edno"),
   } as AnyAlg;
   const signature = await crypto.subtle.sign(params, pair.privateKey, data);
   assert(await crypto.subtle.verify(params, pair.publicKey, signature, data));
@@ -3306,10 +3306,10 @@ Deno.test(async function slhDsaSignVerifyAndExportRoundTrips() {
 // https://github.com/denoland/deno/pull/35708
 // Exercise every "raw-*" KeyFormat variant through the *typed* `crypto.subtle`
 // API (no `as any`/`AnyAlg` cast on the `format` argument). This round-trips the
-// runtime and also guards that lib.deno_crypto.d.ts's `KeyFormat` union stays in
+// runtime and also guards that lib.edno_crypto.d.ts's `KeyFormat` union stays in
 // sync with the formats importKey()/exportKey() actually accept: if any variant
 // were dropped from the type, this test would fail to type-check.
-Deno.test(async function webcryptoRawKeyFormatVariants() {
+Edno.test(async function webcryptoRawKeyFormatVariants() {
   // raw-secret: symmetric AES-GCM key.
   const aesKey = await crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 },
@@ -3388,7 +3388,7 @@ Deno.test(async function webcryptoRawKeyFormatVariants() {
   );
 });
 
-Deno.test(async function argon2DeriveBitsRfcVectors() {
+Edno.test(async function argon2DeriveBitsRfcVectors() {
   const password = new Uint8Array(32).fill(0x01);
   const nonce = new Uint8Array(16).fill(0x02);
   const secretValue = new Uint8Array(8).fill(0x03);
@@ -3534,7 +3534,7 @@ Deno.test(async function argon2DeriveBitsRfcVectors() {
   }
 });
 
-Deno.test(async function shakeFamilyRequiresOutputLength() {
+Edno.test(async function shakeFamilyRequiresOutputLength() {
   // The modern WebCrypto algorithms spec renamed the output length dictionary
   // member from `length` to `outputLength`. Passing the legacy `length` member
   // (with no `outputLength`) must be treated as a missing required member.
@@ -3568,7 +3568,7 @@ Deno.test(async function shakeFamilyRequiresOutputLength() {
 // ML-KEM (FIPS 203) — post-quantum key encapsulation.
 // https://wicg.github.io/webcrypto-modern-algos/#ml-kem
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const subtleAny = crypto.subtle as any;
 
 const ML_KEM_VARIANTS = [
@@ -3578,7 +3578,7 @@ const ML_KEM_VARIANTS = [
 ] as const;
 
 for (const variant of ML_KEM_VARIANTS) {
-  Deno.test(`mlKemGenerateAndRoundTrip:${variant.name}`, async () => {
+  Edno.test(`mlKemGenerateAndRoundTrip:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3611,7 +3611,7 @@ for (const variant of ML_KEM_VARIANTS) {
     assertEquals(new Uint8Array(decBits), new Uint8Array(enc.sharedKey));
   });
 
-  Deno.test(`mlKemEncapsulateKeyDecapsulateKey:${variant.name}`, async () => {
+  Edno.test(`mlKemEncapsulateKeyDecapsulateKey:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3645,7 +3645,7 @@ for (const variant of ML_KEM_VARIANTS) {
     assert(ok, `HMAC verify with decapsulated key for ${variant.name}`);
   });
 
-  Deno.test(`mlKemImportExportRawPublic:${variant.name}`, async () => {
+  Edno.test(`mlKemImportExportRawPublic:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3679,7 +3679,7 @@ for (const variant of ML_KEM_VARIANTS) {
     assertEquals(new Uint8Array(dec), new Uint8Array(enc.sharedKey));
   });
 
-  Deno.test(`mlKemImportExportPkcs8Spki:${variant.name}`, async () => {
+  Edno.test(`mlKemImportExportPkcs8Spki:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3694,7 +3694,7 @@ for (const variant of ML_KEM_VARIANTS) {
     );
     // PKCS#8 must use the seed-only form (a ~86-byte DER wrapping the 64-byte
     // seed), not the much larger expanded-key form (privLen + DER overhead)
-    // that older Deno releases emitted.
+    // that older Edno releases emitted.
     assert(
       pkcs8.length < 120,
       `${variant.name} pkcs8 should be seed-form, got ${pkcs8.length} bytes`,
@@ -3727,7 +3727,7 @@ for (const variant of ML_KEM_VARIANTS) {
     assertEquals(new Uint8Array(dec), new Uint8Array(enc.sharedKey));
   });
 
-  Deno.test(`mlKemImportExportRawSeed:${variant.name}`, async () => {
+  Edno.test(`mlKemImportExportRawSeed:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3770,7 +3770,7 @@ for (const variant of ML_KEM_VARIANTS) {
     assertEquals(seed2, seed);
   });
 
-  Deno.test(`mlKemImportExportJwk:${variant.name}`, async () => {
+  Edno.test(`mlKemImportExportJwk:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3826,7 +3826,7 @@ for (const variant of ML_KEM_VARIANTS) {
     assertEquals(privJwk2.pub, privJwk.pub);
   });
 
-  Deno.test(`mlKemRawPrivateNotSupported:${variant.name}`, async () => {
+  Edno.test(`mlKemRawPrivateNotSupported:${variant.name}`, async () => {
     // raw-private is not a spec format for ML-KEM (only raw-seed/pkcs8/jwk).
     const kp = await subtleAny.generateKey(
       { name: variant.name },
@@ -3850,7 +3850,7 @@ for (const variant of ML_KEM_VARIANTS) {
     );
   });
 
-  Deno.test(`mlKemGetPublicKey:${variant.name}`, async () => {
+  Edno.test(`mlKemGetPublicKey:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3859,7 +3859,7 @@ for (const variant of ML_KEM_VARIANTS) {
 
     // getPublicKey lives on SubtleCrypto.prototype, not CryptoKey.prototype.
     assertEquals(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       typeof (kp.privateKey as any).getPublicKey,
       "undefined",
     );
@@ -3893,7 +3893,7 @@ for (const variant of ML_KEM_VARIANTS) {
     );
   });
 
-  Deno.test(`mlKemTamperedCiphertextRejected:${variant.name}`, async () => {
+  Edno.test(`mlKemTamperedCiphertextRejected:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3923,7 +3923,7 @@ for (const variant of ML_KEM_VARIANTS) {
     assert(!equal, `Tampered ciphertext should yield different shared key`);
   });
 
-  Deno.test(`mlKemBadCiphertextLengthRejected:${variant.name}`, async () => {
+  Edno.test(`mlKemBadCiphertextLengthRejected:${variant.name}`, async () => {
     const kp = await subtleAny.generateKey(
       { name: variant.name },
       true,
@@ -3938,7 +3938,7 @@ for (const variant of ML_KEM_VARIANTS) {
   });
 }
 
-Deno.test(async function mlKemAlgorithmMismatchRejected() {
+Edno.test(async function mlKemAlgorithmMismatchRejected() {
   const kp = await subtleAny.generateKey(
     { name: "ML-KEM-512" },
     true,
@@ -3949,7 +3949,7 @@ Deno.test(async function mlKemAlgorithmMismatchRejected() {
   );
 });
 
-Deno.test(async function mlKemRawSeedWrongLengthRejected() {
+Edno.test(async function mlKemRawSeedWrongLengthRejected() {
   await assertRejects(
     () =>
       subtleAny.importKey(
@@ -3963,7 +3963,7 @@ Deno.test(async function mlKemRawSeedWrongLengthRejected() {
   );
 });
 
-Deno.test(async function mlKemJwkWrongKtyRejected() {
+Edno.test(async function mlKemJwkWrongKtyRejected() {
   const kp = await subtleAny.generateKey(
     { name: "ML-KEM-512" },
     true,
@@ -3984,7 +3984,7 @@ Deno.test(async function mlKemJwkWrongKtyRejected() {
   );
 });
 
-Deno.test(async function mlKemJwkMismatchedPubRejected() {
+Edno.test(async function mlKemJwkMismatchedPubRejected() {
   const kp = await subtleAny.generateKey(
     { name: "ML-KEM-512" },
     true,
@@ -4013,7 +4013,7 @@ Deno.test(async function mlKemJwkMismatchedPubRejected() {
   );
 });
 
-Deno.test(async function mlKemJwkMismatchedAlgRejected() {
+Edno.test(async function mlKemJwkMismatchedAlgRejected() {
   const kp = await subtleAny.generateKey(
     { name: "ML-KEM-512" },
     true,
@@ -4033,7 +4033,7 @@ Deno.test(async function mlKemJwkMismatchedAlgRejected() {
   );
 });
 
-Deno.test(async function mlKemJwkBadPrivateUsageRejected() {
+Edno.test(async function mlKemJwkBadPrivateUsageRejected() {
   const kp = await subtleAny.generateKey(
     { name: "ML-KEM-512" },
     true,
@@ -4056,7 +4056,7 @@ Deno.test(async function mlKemJwkBadPrivateUsageRejected() {
 
 // The WICG spec requires PKCS#8 import to reject the (non-seed) expanded-key
 // form with a NotSupportedError; only the seed form is supported.
-Deno.test(async function mlKemPkcs8ExpandedFormRejected() {
+Edno.test(async function mlKemPkcs8ExpandedFormRejected() {
   // The importer classifies a bare OCTET STRING privateKey as the expanded
   // form by its DER shape, before inspecting the contents, so arbitrary bytes
   // of the right size suffice. 1632 = ML-KEM-512 expanded private key size.
@@ -4116,7 +4116,7 @@ Deno.test(async function mlKemPkcs8ExpandedFormRejected() {
 
 // `getPublicKey` lives on SubtleCrypto.prototype and derives a public key from
 // a private key for the classical asymmetric algorithms too.
-Deno.test(async function subtleGetPublicKeyClassical() {
+Edno.test(async function subtleGetPublicKeyClassical() {
   const cases = [
     {
       genAlg: { name: "ECDSA", namedCurve: "P-256" },
@@ -4189,7 +4189,7 @@ Deno.test(async function subtleGetPublicKeyClassical() {
 
 // `getPublicKey` rejects symmetric and key-derivation algorithms with a
 // NotSupportedError.
-Deno.test(async function subtleGetPublicKeyNotSupported() {
+Edno.test(async function subtleGetPublicKeyNotSupported() {
   const aesKey = await subtleAny.generateKey(
     { name: "AES-GCM", length: 256 },
     true,
@@ -4203,14 +4203,14 @@ Deno.test(async function subtleGetPublicKeyNotSupported() {
 // supports() -- synchronous feature detection per
 // https://wicg.github.io/webcrypto-modern-algos/#dom-subtlecrypto-supports
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const supports = (SubtleCrypto as any).supports.bind(SubtleCrypto) as (
   op: string,
   alg: unknown,
   lengthOrHash?: unknown,
 ) => boolean;
 
-Deno.test(function subtleCryptoSupportsBasic() {
+Edno.test(function subtleCryptoSupportsBasic() {
   // digest
   assert(supports("digest", "SHA-256"));
   assert(supports("digest", "SHA3-256"));
@@ -4231,7 +4231,7 @@ Deno.test(function subtleCryptoSupportsBasic() {
   assert(supports("verify", { name: "HMAC" }));
 });
 
-Deno.test(function subtleCryptoSupportsPqcAlgorithms() {
+Edno.test(function subtleCryptoSupportsPqcAlgorithms() {
   // ML-DSA
   for (const name of ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87"]) {
     assert(supports("generateKey", name));
@@ -4254,7 +4254,7 @@ Deno.test(function subtleCryptoSupportsPqcAlgorithms() {
   }
 });
 
-Deno.test(function subtleCryptoSupportsModernAlgorithms() {
+Edno.test(function subtleCryptoSupportsModernAlgorithms() {
   // ChaCha20-Poly1305 encrypt/decrypt + generateKey + importKey
   assert(supports("encrypt", "ChaCha20-Poly1305"));
   assert(supports("decrypt", "ChaCha20-Poly1305"));
@@ -4301,7 +4301,7 @@ Deno.test(function subtleCryptoSupportsModernAlgorithms() {
   assert(supports("getPublicKey", "SLH-DSA-SHAKE-128s"));
 });
 
-Deno.test(function subtleCryptoSupportsRejectsUnknown() {
+Edno.test(function subtleCryptoSupportsRejectsUnknown() {
   // Unrecognized operation
   assertEquals(supports("notARealOp", "SHA-256"), false);
   // Unrecognized algorithm
@@ -4319,7 +4319,7 @@ Deno.test(function subtleCryptoSupportsRejectsUnknown() {
   assertEquals(supports("getPublicKey", "NOT-AN-ALG"), false);
 });
 
-Deno.test(function subtleCryptoSupportsCaseInsensitive() {
+Edno.test(function subtleCryptoSupportsCaseInsensitive() {
   // Algorithm name matching is case-insensitive per
   // https://w3c.github.io/webcrypto/#dfn-normalize-an-algorithm
   assert(supports("digest", "sha-256"));
@@ -4327,7 +4327,7 @@ Deno.test(function subtleCryptoSupportsCaseInsensitive() {
   assert(supports("encapsulateBits", "ml-kem-768"));
 });
 
-Deno.test(function subtleCryptoSupportsWrapUnwrap() {
+Edno.test(function subtleCryptoSupportsWrapUnwrap() {
   // AES-KW supports wrapKey/unwrapKey directly.
   assert(supports("wrapKey", { name: "AES-KW", length: 256 }));
   assert(
@@ -4349,7 +4349,7 @@ Deno.test(function subtleCryptoSupportsWrapUnwrap() {
   }));
 });
 
-Deno.test(function subtleCryptoSupportsAdditionalAlgorithm() {
+Edno.test(function subtleCryptoSupportsAdditionalAlgorithm() {
   // deriveKey with target algorithm (the second-overload form).
   assert(supports("deriveKey", "HKDF", {
     name: "AES-GCM",
@@ -4386,7 +4386,7 @@ Deno.test(function subtleCryptoSupportsAdditionalAlgorithm() {
   );
 });
 
-Deno.test(function subtleCryptoSupportsLengthOverload() {
+Edno.test(function subtleCryptoSupportsLengthOverload() {
   // length is meaningful for deriveBits; for current impl it just doesn't
   // reject when the algorithm + operation pair is otherwise valid.
   assert(supports("deriveBits", "HKDF", 256));
@@ -4395,8 +4395,8 @@ Deno.test(function subtleCryptoSupportsLengthOverload() {
   assert(supports("digest", "SHA-256", 256));
 });
 
-Deno.test(function subtleCryptoSupportsThrowsOnMissingArgs() {
-  // deno-lint-ignore no-explicit-any
+Edno.test(function subtleCryptoSupportsThrowsOnMissingArgs() {
+  // edno-lint-ignore no-explicit-any
   const s = supports as any;
   assertThrows(() => s(), TypeError);
   assertThrows(() => s("sign"), TypeError);
@@ -4408,7 +4408,7 @@ Deno.test(function subtleCryptoSupportsThrowsOnMissingArgs() {
 // verify must return false (signature treated as invalid) for a non-empty
 // context. Regression-pin the behavior so a silent acceptance later (e.g.
 // after an aws-lc-rs API change) reads as a vuln, not an enhancement.
-Deno.test(async function subtleMlDsaNonEmptyContextRejected() {
+Edno.test(async function subtleMlDsaNonEmptyContextRejected() {
   const { publicKey, privateKey } = await crypto.subtle.generateKey(
     { name: "ML-DSA-65" },
     false,
@@ -4420,7 +4420,7 @@ Deno.test(async function subtleMlDsaNonEmptyContextRejected() {
   await assertRejects(
     () =>
       crypto.subtle.sign(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         { name: "ML-DSA-65", context: ctx } as any,
         privateKey,
         data,
@@ -4435,7 +4435,7 @@ Deno.test(async function subtleMlDsaNonEmptyContextRejected() {
     data,
   );
   const verified = await crypto.subtle.verify(
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     { name: "ML-DSA-65", context: ctx } as any,
     publicKey,
     validSig,

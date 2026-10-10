@@ -28,7 +28,7 @@ use crate::source_map::SourceMapApplication;
 use crate::url::Url;
 
 /// A generic wrapper that can encapsulate any concrete error type.
-// TODO(ry) Deprecate AnyError and encourage deno_core::anyhow::Error instead.
+// TODO(ry) Deprecate AnyError and encourage edno_core::anyhow::Error instead.
 pub type AnyError = anyhow::Error;
 
 deno_error::js_error_wrapper!(v8::DataError, DataError, TYPE_ERROR);
@@ -165,7 +165,7 @@ pub enum CoreErrorKind {
   #[class(generic)]
   #[error(
     "Module evaluation is still pending after multiple event loop iterations, \
-     but no stalled top-level await was found. This is a bug in Deno."
+     but no stalled top-level await was found. This is a bug in Edno."
   )]
   ModuleEvaluationDeadlock,
   #[class(generic)]
@@ -275,7 +275,7 @@ pub fn throw_js_error_class(
 /// Builds a JS exception for `error` using only native V8 APIs, without
 /// re-entering JavaScript.
 ///
-/// This mirrors what the JS `Deno.core.buildCustomError` callback does
+/// This mirrors what the JS `Edno.core.buildCustomError` callback does
 /// (restoring the registered error class so `instanceof` holds, and attaching
 /// the additional properties), but never invokes user-reachable JS. That makes
 /// it safe to call from inside a V8 fast call, where re-entering JS is
@@ -301,8 +301,8 @@ fn build_js_error_class_exception<'s, 'i>(
   };
 
   // Restore the exact registered error class (e.g. `RangeError`,
-  // `Deno.errors.NotFound`) by re-parenting the prototype, so that
-  // `err instanceof Deno.errors.NotFound` holds. We never call the class
+  // `Edno.errors.NotFound`) by re-parenting the prototype, so that
+  // `err instanceof Edno.errors.NotFound` holds. We never call the class
   // constructor (that would run JS); we only borrow its `.prototype`.
   let constructors = JsRealm::exception_state_from_scope(scope)
     .js_error_constructors
@@ -478,7 +478,7 @@ pub(crate) fn call_site_evals_key<'s, 'i>(
 }
 
 /// A `JsError` represents an exception coming from V8, with stack frames and
-/// line numbers. The deno_cli crate defines another `JsError` type, which wraps
+/// line numbers. The edno_cli crate defines another `JsError` type, which wraps
 /// the one defined here, that adds source map support and colorful formatting.
 /// When updating this struct, also update errors_are_equal_without_cause() in
 /// fmt_error.rs.
@@ -488,8 +488,8 @@ pub(crate) fn call_site_evals_key<'s, 'i>(
   Clone,
   serde::Deserialize,
   serde::Serialize,
-  deno_ops::FromV8,
-  deno_ops::ToV8,
+  edno_ops::FromV8,
+  edno_ops::ToV8,
 )]
 #[serde(rename_all = "camelCase")]
 pub struct JsError {
@@ -601,8 +601,8 @@ impl JsErrorClass for JsError {
   Clone,
   serde::Deserialize,
   serde::Serialize,
-  deno_ops::FromV8,
-  deno_ops::ToV8,
+  edno_ops::FromV8,
+  edno_ops::ToV8,
 )]
 #[serde(rename_all = "camelCase")]
 pub struct JsStackFrame {
@@ -1154,7 +1154,7 @@ impl JsError {
               )]
               {
                 eprintln!(
-                  "warning: Failed to create JsStackFrame from callsite object: {message}. This is a bug in deno"
+                  "warning: Failed to create JsStackFrame from callsite object: {message}. This is a bug in edno"
                 );
               }
               break;
@@ -1723,8 +1723,8 @@ v8_static_strings::v8_static_strings! {
   GET_PROMISE_INDEX = "getPromiseIndex",
   TO_STRING = "toString",
   PREPARE_STACK_TRACE = "prepareStackTrace",
-  ORIGINAL = "deno_core::original_call_site",
-  SOURCE_MAPPED_INFO = "deno_core::source_mapped_call_site_info",
+  ORIGINAL = "edno_core::original_call_site",
+  SOURCE_MAPPED_INFO = "edno_core::source_mapped_call_site_info",
   ERROR_RECEIVER_IS_NOT_VALID_CALLSITE_OBJECT = "The receiver is not a valid callsite object.",
 }
 
@@ -2296,7 +2296,7 @@ pub fn format_stack_trace<'s, 'i>(
       #[allow(clippy::print_stderr, reason = "intentional warning output")]
       {
         eprintln!(
-          "warning: Failed to create JsStackFrame from callsite object: {message}; Result so far: {result}. This is a bug in deno"
+          "warning: Failed to create JsStackFrame from callsite object: {message}; Result so far: {result}. This is a bug in edno"
         );
       }
       break;
@@ -2343,9 +2343,9 @@ pub enum ErrorElement {
 
 /// Applies formatting to various parts of error stack traces.
 ///
-/// This is to allow the `deno` crate to reuse `format_frame` and
+/// This is to allow the `edno` crate to reuse `format_frame` and
 /// `format_location` but apply ANSI colors for terminal output,
-/// without adding extra dependencies to `deno_core`.
+/// without adding extra dependencies to `edno_core`.
 pub trait ErrorFormat {
   fn fmt_element(
     element: ErrorElement,
@@ -2537,13 +2537,13 @@ pub fn throw_error_one_byte<'s, 'i>(
   scope: &mut v8::PinCallbackScope<'s, 'i>,
   message: &str,
 ) {
-  let msg = deno_core::v8::String::new_from_one_byte(
+  let msg = edno_core::v8::String::new_from_one_byte(
     scope,
     message.as_bytes(),
-    deno_core::v8::NewStringType::Normal,
+    edno_core::v8::NewStringType::Normal,
   )
   .unwrap();
-  let exc = deno_core::v8::Exception::type_error(scope, msg);
+  let exc = edno_core::v8::Exception::type_error(scope, msg);
   scope.throw_exception(exc);
 }
 
@@ -2564,24 +2564,24 @@ pub fn throw_invalid_this_error_one_byte<'s, 'i>(
   scope: &mut v8::PinCallbackScope<'s, 'i>,
   message: &str,
 ) {
-  let msg = deno_core::v8::String::new_from_one_byte(
+  let msg = edno_core::v8::String::new_from_one_byte(
     scope,
     message.as_bytes(),
-    deno_core::v8::NewStringType::Normal,
+    edno_core::v8::NewStringType::Normal,
   )
   .unwrap();
-  let exc = deno_core::v8::Exception::type_error(scope, msg);
+  let exc = edno_core::v8::Exception::type_error(scope, msg);
   if let Some(exc_obj) = exc.to_object(scope) {
-    let code_key = deno_core::v8::String::new_from_one_byte(
+    let code_key = edno_core::v8::String::new_from_one_byte(
       scope,
       b"code",
-      deno_core::v8::NewStringType::Normal,
+      edno_core::v8::NewStringType::Normal,
     )
     .unwrap();
-    let code_val = deno_core::v8::String::new_from_one_byte(
+    let code_val = edno_core::v8::String::new_from_one_byte(
       scope,
       b"ERR_INVALID_THIS",
-      deno_core::v8::NewStringType::Normal,
+      edno_core::v8::NewStringType::Normal,
     )
     .unwrap();
     exc_obj.set(scope, code_key.into(), code_val.into());
@@ -2597,7 +2597,7 @@ mod tests {
   #[test]
   fn test_js_error_from_v8_exception_handles_cyclic_aggregate_error() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let exception: v8::Local<v8::Object> = JsRuntime::eval(
       scope,
@@ -2622,7 +2622,7 @@ mod tests {
   #[test]
   fn test_js_error_from_v8_exception_handles_crossed_aggregate_cycle() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let exception: v8::Local<v8::Object> = JsRuntime::eval(
       scope,
@@ -2646,7 +2646,7 @@ mod tests {
   #[test]
   fn test_js_error_from_v8_exception_truncates_deep_cause_chain() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let exception: v8::Local<v8::Object> = JsRuntime::eval(
       scope,
@@ -2677,7 +2677,7 @@ mod tests {
   #[test]
   fn test_js_error_from_v8_exception_bounds_shared_aggregate_graph() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let exception: v8::Local<v8::Object> = JsRuntime::eval(
       scope,
@@ -2735,7 +2735,7 @@ mod tests {
   #[test]
   fn test_js_error_from_v8_exception_handles_throwing_aggregate_element() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let exception: v8::Local<v8::Object> = JsRuntime::eval(
       scope,
@@ -2769,7 +2769,7 @@ mod tests {
   fn test_js_error_from_v8_exception_handles_throwing_aggregate_errors_getter()
   {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let exception: v8::Local<v8::Object> = JsRuntime::eval(
       scope,
@@ -2802,7 +2802,7 @@ mod tests {
   #[test]
   fn test_is_aggregate_error_recognizes_builtin() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let exception: v8::Local<v8::Object> = JsRuntime::eval(
       scope,
@@ -2822,7 +2822,7 @@ mod tests {
   #[test]
   fn test_is_aggregate_error_handles_malformed_constructors() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     for constructor in ["null", "undefined", "42", "'AggregateError'"] {
       let exception: v8::Local<v8::Object> = JsRuntime::eval(
@@ -2849,7 +2849,7 @@ mod tests {
   #[test]
   fn test_is_aggregate_error_handles_throwing_accessors() {
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     for source in [
       "(() => { const error = new Error('constructor getter'); Object.defineProperty(error, 'constructor', { get() { throw new Error('constructor lookup failed'); } }); return error; })()",
@@ -2998,7 +2998,7 @@ mod tests {
     assert_eq!(result, None);
 
     // Completely different path (e.g., bundled synthetic path) - should return None
-    let from = Url::parse("file:///Users/dev/workspace/deno/").unwrap();
+    let from = Url::parse("file:///Users/dev/workspace/edno/").unwrap();
     let to = Url::parse("file:///a.ts").unwrap();
     let result = relative_specifier_within(&from, &to);
     assert_eq!(result, None);
@@ -3033,7 +3033,7 @@ mod tests {
   fn test_to_v8_error_handles_null_builder_exception() {
     let mut runtime = JsRuntime::new(Default::default());
 
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let throw_null_fn: v8::Local<v8::Function> =
       JsRuntime::eval(scope, "(function () { throw null; })").unwrap();
@@ -3061,7 +3061,7 @@ mod tests {
   fn test_to_v8_error_handles_stack_overflow_in_builder() {
     let mut runtime = JsRuntime::new(Default::default());
 
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     // Simulate the error builder throwing RangeError (as happens during
     // stack overflow when the builder callback itself exceeds the call
@@ -3097,7 +3097,7 @@ mod tests {
     use crate::convert::ToV8;
 
     let mut runtime = JsRuntime::new(Default::default());
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let frame = JsStackFrame {
       type_name: Some("Foo".to_string()),

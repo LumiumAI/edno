@@ -1,6 +1,6 @@
 # Tools
 
-Documentation for various tooling in support of Deno development.
+Documentation for various tooling in support of Edno development.
 
 ## format.js
 
@@ -10,21 +10,21 @@ prerequisite to run this before code check in.
 To run formatting:
 
 ```sh
-deno run --allow-read --allow-write --allow-run ./tools/format.js
+edno run --allow-read --allow-write --allow-run ./tools/format.js
 ```
 
 ## lint.js
 
-This script will lint the code base (currently using deno lint, clippy). It is a
+This script will lint the code base (currently using edno lint, clippy). It is a
 prerequisite to run this before code check in.
 
 To run linting:
 
 ```sh
-deno run --allow-read --allow-write --allow-run ./tools/lint.js
+edno run --allow-read --allow-write --allow-run ./tools/lint.js
 ```
 
-Tip: You can also use cargo to run the current or pending build of the deno
+Tip: You can also use cargo to run the current or pending build of the edno
 executable
 
 ```sh
@@ -33,10 +33,10 @@ cargo run -- run --allow-read --allow-write --allow-run ./tools/<script>
 
 ## wgpu_sync.js
 
-`wgpu_sync.js` streamlines updating `deno_webgpu` from
+`wgpu_sync.js` streamlines updating `edno_webgpu` from
 [gfx-rs/wgpu](https://github.com/gfx-rs/wgpu/).
 
-It essentially vendors the `deno_webgpu` tree with a few minor patches applied
+It essentially vendors the `edno_webgpu` tree with a few minor patches applied
 on top, somewhat similar to `git subtree`.
 
 1. Update `COMMIT` or `V_WGPU` in `./tools/wgpu_sync.js`
@@ -51,7 +51,7 @@ on top, somewhat similar to `git subtree`.
 To run the _copyright checker_:
 
 ```sh
-deno run --allow-read --allow-run  ./tools/copyright_checker.js
+edno run --allow-read --allow-run  ./tools/copyright_checker.js
 ```
 
 Then it will check all code files in the repository and report any files that

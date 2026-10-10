@@ -7,7 +7,7 @@
 // against the dropped SQLite connection. The error path must now unwind
 // cleanly: surface the JS error, exit non-zero, no panic.
 
-const kv = await Deno.openKv(":memory:");
+const kv = await Edno.openKv(":memory:");
 kv.listenQueue(() => {});
 console.log("Listening for messages...");
 

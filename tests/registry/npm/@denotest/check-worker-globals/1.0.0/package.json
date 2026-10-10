@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/check-worker-globals",
+  "name": "@ednotest/check-worker-globals",
   "version": "1.0.0",
   "main": "index.js",
   "exports": {

@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -46,7 +46,7 @@ const {
 const {
   codes: errorCodes,
   genericNodeError,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const {
   ERR_BROTLI_INVALID_PARAM,
@@ -60,24 +60,24 @@ const {
 
 const { finished, Transform } = core.createLazyLoader("node:stream")();
 const { deprecateInstantiation } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const {
   isAnyArrayBuffer,
   isArrayBufferView,
   isUint8Array,
-} = core.loadExtScript("ext:deno_node/internal/util/types.ts");
-const binding = core.loadExtScript("ext:deno_node/_zlib_binding.mjs");
+} = core.loadExtScript("ext:edno_node/internal/util/types.ts");
+const binding = core.loadExtScript("ext:edno_node/_zlib_binding.mjs");
 const { crc32: crc32Native } = binding;
 
 const assert = core.loadExtScript(
-  "ext:deno_node/internal/assert.mjs",
+  "ext:edno_node/internal/assert.mjs",
 );
 const { Buffer, kMaxLength } = core.loadExtScript(
-  "ext:deno_node/internal/buffer.mjs",
+  "ext:edno_node/internal/buffer.mjs",
 );
 const { ownerSymbol: owner_symbol } = core.loadExtScript(
-  "ext:deno_node/internal_binding/symbols.ts",
+  "ext:edno_node/internal_binding/symbols.ts",
 );
 const {
   checkRangesOrGetDefault,
@@ -85,9 +85,9 @@ const {
   validateFiniteNumber,
   validateFunction,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { zlib: zlibConstants } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
 
 const kFlushFlag = Symbol("kFlushFlag");
@@ -252,7 +252,7 @@ function zlibOnError(message, errno, code) {
 
   // Defer destroy to allow error listeners to be attached.
   // In Node.js, zlib operations run on the libuv threadpool and callbacks
-  // are invoked asynchronously. Deno's implementation is synchronous, so
+  // are invoked asynchronously. Edno's implementation is synchronous, so
   // we need to explicitly defer to match Node.js behavior.
   process.nextTick(() => {
     self.destroy(error);

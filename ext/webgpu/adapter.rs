@@ -3,13 +3,13 @@
 use std::ops::BitOr;
 use std::rc::Rc;
 
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::V8TaskSpawner;
-use deno_core::WebIDL;
-use deno_core::cppgc::SameObject;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::V8TaskSpawner;
+use edno_core::WebIDL;
+use edno_core::cppgc::SameObject;
+use edno_core::op2;
+use edno_core::v8;
 
 use super::device::DEVICE_EXTERNAL_MEMORY_SIZE;
 use super::device::GPUDevice;
@@ -65,7 +65,7 @@ impl Drop for GPUAdapter {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPUAdapter {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPUAdapter"
@@ -129,7 +129,7 @@ impl GPUAdapter {
     // because support is not complete. Allow applications to request that
     // feature even though it is not reported as an adapter-supported feature.
     //
-    // There is probably not anything useful that Deno applications can do with
+    // There is probably not anything useful that Edno applications can do with
     // external textures, but it is useful to be able to enable it in
     // `cts_runner`.
     if !required_features
@@ -150,7 +150,7 @@ impl GPUAdapter {
     )?
     .or_better_values_from(&wgpu_types::Limits::default());
 
-    let trace = std::env::var_os("DENO_WEBGPU_TRACE")
+    let trace = std::env::var_os("EDNO_WEBGPU_TRACE")
       .map(|path| wgpu_types::Trace::Directory(std::path::PathBuf::from(path)))
       .unwrap_or_default();
 
@@ -186,7 +186,7 @@ impl GPUAdapter {
     // Create the queue object eagerly so that the wgpu-core queue resource
     // gets cleaned up when the device is garbage collected, even if JS code
     // never accesses the queue property.
-    let queue_obj = deno_core::cppgc::make_cppgc_object(
+    let queue_obj = edno_core::cppgc::make_cppgc_object(
       scope,
       GPUQueue {
         instance: self.instance.clone(),
@@ -213,7 +213,7 @@ impl GPUAdapter {
       weak: std::sync::OnceLock::new(),
       has_active_capture: std::cell::RefCell::new(false),
     };
-    let device = deno_core::cppgc::make_cppgc_object(scope, device);
+    let device = edno_core::cppgc::make_cppgc_object(scope, device);
     let weak_device = v8::Weak::new(scope, device);
     let event_target_setup = state.borrow::<crate::EventTargetSetup>();
     let webidl_brand = v8::Local::new(scope, event_target_setup.brand.clone());
@@ -238,7 +238,7 @@ impl GPUAdapter {
     // weak reference to it, and store the finalizer weak reference.
     let device = device.cast::<v8::Value>();
     let device_ref =
-      deno_core::cppgc::try_unwrap_cppgc_object::<GPUDevice>(scope, device)
+      edno_core::cppgc::try_unwrap_cppgc_object::<GPUDevice>(scope, device)
         .unwrap();
     device_ref.error_handler.set_device(weak_device);
     device_ref.weak.set(finalizer).unwrap();
@@ -264,7 +264,7 @@ pub struct GPUSupportedLimits(pub wgpu_types::Limits);
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPUSupportedLimits {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPUSupportedLimits"
@@ -467,7 +467,7 @@ pub struct GPUSupportedFeatures(v8::Global<v8::Value>);
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPUSupportedFeatures {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPUSupportedFeatures"
@@ -510,7 +510,7 @@ pub struct GPUAdapterInfo {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPUAdapterInfo {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPUAdapterInfo"

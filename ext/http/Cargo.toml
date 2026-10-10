@@ -1,14 +1,14 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_http"
+name = "edno_http"
 version = "0.257.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "HTTP server implementation for Deno"
+description = "HTTP server implementation for Edno"
 
 [features]
 default = ["default_property_extractor"]
@@ -29,12 +29,12 @@ aws-lc-rs.workspace = true
 base64.workspace = true
 brotli.workspace = true
 bytes.workspace = true
-deno_core.workspace = true
+edno_core.workspace = true
 deno_error.workspace = true
-deno_http_h1.workspace = true
-deno_net.workspace = true
-deno_telemetry.workspace = true
-deno_websocket.workspace = true
+edno_http_h1.workspace = true
+edno_net.workspace = true
+edno_telemetry.workspace = true
+edno_websocket.workspace = true
 flate2.workspace = true
 http.workspace = true
 http-body-util = { workspace = true, features = ["channel"] }

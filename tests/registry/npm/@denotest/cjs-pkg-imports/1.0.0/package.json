@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/cjs-pkg-imports",
+  "name": "@ednotest/cjs-pkg-imports",
   "version": "1.0.0",
   "imports": {
     "#crypto": {

@@ -100,7 +100,7 @@
           "output": "json_import.out"
         },
         {
-          "args": ["eval", "console.log(Deno.readTextFileSync('./out.js'))"],
+          "args": ["eval", "console.log(Edno.readTextFileSync('./out.js'))"],
           "output": "imports_json.out"
         },
         {

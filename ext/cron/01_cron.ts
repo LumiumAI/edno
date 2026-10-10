@@ -15,9 +15,9 @@ const {
   ContextManager,
   enterSpan,
   exitSpan,
-} = core.loadExtScript("ext:deno_telemetry/telemetry.ts");
+} = core.loadExtScript("ext:edno_telemetry/telemetry.ts");
 const { updateSpanFromError } = core.loadExtScript(
-  "ext:deno_telemetry/util.ts",
+  "ext:edno_telemetry/util.ts",
 );
 
 function formatToCronSchedule(
@@ -65,7 +65,7 @@ function formatToCronSchedule(
 }
 
 function parseScheduleToString(
-  schedule: string | Deno.CronSchedule,
+  schedule: string | Edno.CronSchedule,
 ): string {
   if (typeof schedule === "string") {
     return schedule;
@@ -107,7 +107,7 @@ function parseScheduleToString(
 
 function cron(
   name: string,
-  schedule: string | Deno.CronSchedule,
+  schedule: string | Edno.CronSchedule,
   handlerOrOptions1:
     | (() => Promise<void> | void)
     | ({ backoffSchedule?: number[]; signal?: AbortSignal }),
@@ -188,12 +188,12 @@ function cron(
         }
 
         span = builtinTracer().startSpan(
-          "deno.cron",
+          "edno.cron",
           { kind: 0 },
           activeContext,
         );
-        span.setAttribute("deno.cron.name", name);
-        span.setAttribute("deno.cron.schedule", schedule);
+        span.setAttribute("edno.cron.name", name);
+        span.setAttribute("edno.cron.schedule", schedule);
       }
       try {
         if (span) {

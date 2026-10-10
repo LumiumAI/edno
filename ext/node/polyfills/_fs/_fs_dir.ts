@@ -4,12 +4,12 @@ import { core, primordials } from "ext:core/mod.js";
 import {
   type Dirent,
   direntFromDeno,
-} from "ext:deno_node/internal/fs/utils.mjs";
-const { default: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+} from "ext:edno_node/internal/fs/utils.mjs";
+const { default: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 const { ERR_MISSING_ARGS, ERR_DIR_CLOSED } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
-const { TextDecoder } = core.loadExtScript("ext:deno_web/08_text_encoding.js");
+const { TextDecoder } = core.loadExtScript("ext:edno_web/08_text_encoding.js");
 
 const {
   Promise,
@@ -29,8 +29,8 @@ const {
 // opposed to `uv_fs_scandir` which backs `readdir`). Do not add sorting here.
 export default class Dir {
   #dirPath: string | Uint8Array;
-  #syncIterator!: Iterator<Deno.DirEntry, undefined> | null;
-  #asyncIterator!: AsyncIterator<Deno.DirEntry, undefined> | null;
+  #syncIterator!: Iterator<Edno.DirEntry, undefined> | null;
+  #asyncIterator!: AsyncIterator<Edno.DirEntry, undefined> | null;
   #closed = false;
 
   constructor(path: string | Uint8Array) {
@@ -47,7 +47,7 @@ export default class Dir {
     return this.#dirPath;
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   read(callback?: (...args: any[]) => void): Promise<Dirent | null> {
     return new Promise((resolve, reject) => {
       if (this.#closed) {
@@ -61,7 +61,7 @@ export default class Dir {
         return;
       }
       if (!this.#asyncIterator) {
-        this.#asyncIterator = Deno.readDir(this.path)[SymbolAsyncIterator]();
+        this.#asyncIterator = Edno.readDir(this.path)[SymbolAsyncIterator]();
       }
       assert(this.#asyncIterator);
       PromisePrototypeThen(
@@ -96,7 +96,7 @@ export default class Dir {
       throw new ERR_DIR_CLOSED();
     }
     if (!this.#syncIterator) {
-      this.#syncIterator = Deno.readDirSync(this.path)![SymbolIterator]();
+      this.#syncIterator = Edno.readDirSync(this.path)![SymbolIterator]();
     }
 
     const iteratorResult = ArrayIteratorPrototypeNext(this.#syncIterator);
@@ -108,11 +108,11 @@ export default class Dir {
   }
 
   /**
-   * Unlike Node, Deno does not require managing resource ids for reading
+   * Unlike Node, Edno does not require managing resource ids for reading
    * directories, and therefore does not need to close directories when
    * finished reading.
    */
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   close(callback?: (...args: any[]) => void): Promise<void> {
     return new Promise((resolve) => {
       this.#closed = true;
@@ -124,7 +124,7 @@ export default class Dir {
   }
 
   /**
-   * Unlike Node, Deno does not require managing resource ids for reading
+   * Unlike Node, Edno does not require managing resource ids for reading
    * directories, and therefore does not need to close directories when
    * finished reading
    */

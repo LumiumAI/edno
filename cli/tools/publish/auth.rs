@@ -2,9 +2,9 @@
 
 use std::io::IsTerminal;
 
-use deno_core::anyhow;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_core::anyhow;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 
 pub enum AuthMethod {
   Interactive,
@@ -34,7 +34,7 @@ fn get_gh_oidc_env_vars() -> Option<Result<(String, String), AnyError>> {
     match (url, token) {
       (Ok(url), Ok(token)) => Some(Ok((url, token))),
       (Err(_), Err(_)) => Some(Err(anyhow::anyhow!(
-        "No means to authenticate. Pass a token to `--token`, or enable tokenless publishing from GitHub Actions using OIDC. Learn more at https://deno.co/ghoidc"
+        "No means to authenticate. Pass a token to `--token`, or enable tokenless publishing from GitHub Actions using OIDC. Learn more at https://edno.co/ghoidc"
       ))),
       _ => None,
     }

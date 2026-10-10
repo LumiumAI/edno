@@ -2,7 +2,7 @@
   "tempDir": true,
   "steps": [
     {
-      "args": "install npm:@denotest/deprecated-package",
+      "args": "install npm:@ednotest/deprecated-package",
       "output": "install.out"
     },
     {
@@ -14,7 +14,7 @@
     {
       "args": [
         "eval",
-        "console.log(Deno.readTextFileSync('package.json').trim())"
+        "console.log(Edno.readTextFileSync('package.json').trim())"
       ],
       "output": "package.json.out"
     }

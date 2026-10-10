@@ -1,26 +1,26 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 (function () {
 const { core, primordials } = __bootstrap;
 const lazyProcess = core.createLazyLoader("node:process");
 const process = lazyProcess().default;
-const { EventEmitter: EE } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter: EE } = core.loadExtScript("ext:edno_node/_events.mjs");
 const _mod1 =
-  core.loadExtScript("ext:deno_node/internal/streams/legacy.js").default;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+  core.loadExtScript("ext:edno_node/internal/streams/legacy.js").default;
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const destroyImpl =
-  core.loadExtScript("ext:deno_node/internal/streams/destroy.js").default;
+  core.loadExtScript("ext:edno_node/internal/streams/destroy.js").default;
 const eos =
-  core.loadExtScript("ext:deno_node/internal/streams/end-of-stream.js").default;
+  core.loadExtScript("ext:edno_node/internal/streams/end-of-stream.js").default;
 const { addAbortSignal } = core.loadExtScript(
-  "ext:deno_node/internal/streams/add-abort-signal.js",
+  "ext:edno_node/internal/streams/add-abort-signal.js",
 );
 const {
   getDefaultHighWaterMark,
   getHighWaterMark,
-} = core.loadExtScript("ext:deno_node/internal/streams/state.js");
-const imported2 = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/streams/state.js");
+const imported2 = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const {
   kAutoDestroy,
@@ -34,10 +34,10 @@ const {
   kObjectMode,
   kOnConstructed,
   kState,
-} = core.loadExtScript("ext:deno_node/internal/streams/utils.js");
+} = core.loadExtScript("ext:edno_node/internal/streams/utils.js");
 
 const webStreamsAdaptersSpecifier =
-  "ext:deno_node/internal/webstreams/adapters.js";
+  "ext:edno_node/internal/webstreams/adapters.js";
 
 const {
   AbortError,

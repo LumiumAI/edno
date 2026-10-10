@@ -3,14 +3,14 @@ import { assert, assertEquals, fail } from "@std/assert";
 import { assertCallbackErrorUncaught } from "../_test_utils.ts";
 import { Dir as DirOrig, type Dirent } from "node:fs";
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const Dir = DirOrig as any;
 
-Deno.test({
+Edno.test({
   name: "Closing current directory with callback is successful",
   fn() {
     let calledBack = false;
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     new Dir(".").close((valOrErr: any) => {
       assert(!valOrErr);
       calledBack = true;
@@ -19,21 +19,21 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Closing current directory without callback returns void Promise",
   async fn() {
     await new Dir(".").close();
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Closing current directory synchronously works",
   fn() {
     new Dir(".").closeSync();
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Path is correctly returned",
   fn() {
     assertEquals(new Dir("std/node").path, "std/node");
@@ -43,10 +43,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "read returns null for empty directory",
   async fn() {
-    const testDir: string = Deno.makeTempDirSync();
+    const testDir: string = Edno.makeTempDirSync();
     try {
       const file: Dirent | null = await new Dir(testDir).read();
       assert(file === null);
@@ -54,7 +54,7 @@ Deno.test({
       let calledBack = false;
       const fileFromCallback: Dirent | null = await new Dir(
         testDir,
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
       ).read((err: any, res: Dirent) => {
         assert(res === null);
         assert(err === null);
@@ -65,18 +65,18 @@ Deno.test({
 
       assertEquals(new Dir(testDir).readSync(), null);
     } finally {
-      Deno.removeSync(testDir);
+      Edno.removeSync(testDir);
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Async read returns one file at a time",
   async fn() {
-    const testDir: string = Deno.makeTempDirSync();
-    const f1 = Deno.createSync(testDir + "/foo.txt");
+    const testDir: string = Edno.makeTempDirSync();
+    const f1 = Edno.createSync(testDir + "/foo.txt");
     f1.close();
-    const f2 = Deno.createSync(testDir + "/bar.txt");
+    const f2 = Edno.createSync(testDir + "/bar.txt");
     f2.close();
 
     try {
@@ -84,7 +84,7 @@ Deno.test({
       const dir = new Dir(testDir);
       const firstRead: Dirent | null = await dir.read();
       const secondRead: Dirent | null = await dir.read(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (_err: any, secondResult: Dirent) => {
           assert(
             secondResult.name === "bar.txt" || secondResult.name === "foo.txt",
@@ -106,18 +106,18 @@ Deno.test({
       assert(thirdRead === null);
       assert(fourthRead === null);
     } finally {
-      Deno.removeSync(testDir, { recursive: true });
+      Edno.removeSync(testDir, { recursive: true });
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Sync read returns one file at a time",
   fn() {
-    const testDir: string = Deno.makeTempDirSync();
-    const f1 = Deno.createSync(testDir + "/foo.txt");
+    const testDir: string = Edno.makeTempDirSync();
+    const f1 = Edno.createSync(testDir + "/foo.txt");
     f1.close();
-    const f2 = Deno.createSync(testDir + "/bar.txt");
+    const f2 = Edno.createSync(testDir + "/bar.txt");
     f2.close();
 
     try {
@@ -137,18 +137,18 @@ Deno.test({
       assert(thirdRead === null);
       assert(fourthRead === null);
     } finally {
-      Deno.removeSync(testDir, { recursive: true });
+      Edno.removeSync(testDir, { recursive: true });
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Async iteration over existing directory",
   async fn() {
-    const testDir: string = Deno.makeTempDirSync();
-    const f1 = Deno.createSync(testDir + "/foo.txt");
+    const testDir: string = Edno.makeTempDirSync();
+    const f1 = Edno.createSync(testDir + "/foo.txt");
     f1.close();
-    const f2 = Deno.createSync(testDir + "/bar.txt");
+    const f2 = Edno.createSync(testDir + "/bar.txt");
     f2.close();
 
     try {
@@ -163,15 +163,15 @@ Deno.test({
       assert(results.includes("foo.txt"));
       assert(results.includes("bar.txt"));
     } finally {
-      Deno.removeSync(testDir, { recursive: true });
+      Edno.removeSync(testDir, { recursive: true });
     }
   },
 });
 
-Deno.test(
+Edno.test(
   "[std/node/fs] Dir.close callback isn't called twice if error is thrown",
   async () => {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     await assertCallbackErrorUncaught({
       prelude: `
     import { Dir } from "node:fs";
@@ -180,16 +180,16 @@ Deno.test(
     `,
       invocation: "dir.close(",
       async cleanup() {
-        await Deno.remove(tempDir);
+        await Edno.remove(tempDir);
       },
     });
   },
 );
 
-Deno.test(
+Edno.test(
   "[std/node/fs] Dir.read callback isn't called twice if error is thrown",
   async () => {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     await assertCallbackErrorUncaught({
       prelude: `
     import { Dir } from "node:fs";
@@ -198,16 +198,16 @@ Deno.test(
     `,
       invocation: "dir.read(",
       async cleanup() {
-        await Deno.remove(tempDir);
+        await Edno.remove(tempDir);
       },
     });
   },
 );
 
-Deno.test({
+Edno.test({
   name: "Dir.readSync throws ERR_DIR_CLOSED after closeSync",
   fn() {
-    const testDir: string = Deno.makeTempDirSync();
+    const testDir: string = Edno.makeTempDirSync();
     try {
       const dir = new Dir(testDir);
       dir.closeSync();
@@ -215,19 +215,19 @@ Deno.test({
         dir.readSync();
         fail("Expected ERR_DIR_CLOSED to be thrown");
       } catch (e) {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         assertEquals((e as any).code, "ERR_DIR_CLOSED");
       }
     } finally {
-      Deno.removeSync(testDir, { recursive: true });
+      Edno.removeSync(testDir, { recursive: true });
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Dir.read rejects with ERR_DIR_CLOSED after close",
   async fn() {
-    const testDir: string = Deno.makeTempDirSync();
+    const testDir: string = Edno.makeTempDirSync();
     try {
       const dir = new Dir(testDir);
       await dir.close();
@@ -235,19 +235,19 @@ Deno.test({
         await dir.read();
         fail("Expected ERR_DIR_CLOSED to be thrown");
       } catch (e) {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         assertEquals((e as any).code, "ERR_DIR_CLOSED");
       }
     } finally {
-      Deno.removeSync(testDir, { recursive: true });
+      Edno.removeSync(testDir, { recursive: true });
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Dir.readSync throws ERR_DIR_CLOSED after async close",
   async fn() {
-    const testDir: string = Deno.makeTempDirSync();
+    const testDir: string = Edno.makeTempDirSync();
     try {
       const dir = new Dir(testDir);
       await dir.close();
@@ -255,24 +255,24 @@ Deno.test({
         dir.readSync();
         fail("Expected ERR_DIR_CLOSED to be thrown");
       } catch (e) {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         assertEquals((e as any).code, "ERR_DIR_CLOSED");
       }
     } finally {
-      Deno.removeSync(testDir, { recursive: true });
+      Edno.removeSync(testDir, { recursive: true });
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Dir.read callback receives ERR_DIR_CLOSED after close",
   async fn() {
-    const testDir: string = Deno.makeTempDirSync();
+    const testDir: string = Edno.makeTempDirSync();
     try {
       const dir = new Dir(testDir);
       await dir.close();
       await new Promise<void>((resolve, reject) => {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         dir.read((err: any) => {
           try {
             assertEquals(err.code, "ERR_DIR_CLOSED");
@@ -283,7 +283,7 @@ Deno.test({
         });
       });
     } finally {
-      Deno.removeSync(testDir, { recursive: true });
+      Edno.removeSync(testDir, { recursive: true });
     }
   },
 });

@@ -4,9 +4,9 @@
 function allocTest(alloc, allocAssert, deallocAssert) {
   // Helper func that GCs then returns memory usage
   const sample = () => {
-    // deno-lint-ignore no-undef
+    // edno-lint-ignore no-undef
     gc();
-    return Deno.memoryUsage();
+    return Edno.memoryUsage();
   };
   const delta = (t1, t2) => t2.heapUsed - t1.heapUsed;
 
@@ -14,7 +14,7 @@ function allocTest(alloc, allocAssert, deallocAssert) {
   const t1 = sample();
 
   // Alloc
-  // deno-lint-ignore no-unused-vars
+  // edno-lint-ignore no-unused-vars
   let x = alloc();
   const t2 = sample();
   allocAssert(delta(t1, t2));

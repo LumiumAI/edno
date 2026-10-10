@@ -17,6 +17,6 @@ addEventListener("unload", () => {
   clearInterval(intervalHandle);
 });
 
-Deno.test("wait", async function () {
+Edno.test("wait", async function () {
   await firstIntervalPromise;
 });

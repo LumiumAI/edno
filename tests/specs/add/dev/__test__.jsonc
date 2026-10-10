@@ -4,34 +4,34 @@
     "package_json": {
       "steps": [
         {
-          "args": "add --dev npm:@denotest/esm-basic",
+          "args": "add --dev npm:@ednotest/esm-basic",
           "output": "add_packagejson.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('package.json').trim())"
+            "console.log(Edno.readTextFileSync('package.json').trim())"
           ],
           "output": "package.json.out"
         }
       ]
     },
-    "deno_json": {
+    "edno_json": {
       "steps": [
         {
-          "args": ["eval", "Deno.removeSync('package.json')"],
+          "args": ["eval", "Edno.removeSync('package.json')"],
           "output": ""
         },
         {
-          "args": "add --dev npm:@denotest/esm-basic",
+          "args": "add --dev npm:@ednotest/esm-basic",
           "output": "add.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('deno.json').trim())"
+            "console.log(Edno.readTextFileSync('edno.json').trim())"
           ],
-          "output": "deno.json.out"
+          "output": "edno.json.out"
         }
       ]
     }

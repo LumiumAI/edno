@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --check --allow-write=. --allow-read=. --lock=./tools/deno.lock.json
+#!/usr/bin/env -S edno run --check --allow-write=. --allow-read=. --lock=./tools/edno.lock.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 import {
   conditions,
@@ -47,9 +47,9 @@ const setupRust = step.dependsOn(cloneNodeCompatSuite)({
 });
 
 const setupDeno = step.dependsOn(setupRust)({
-  name: "Setup Deno",
+  name: "Setup Edno",
   uses: "denoland/setup-deno@v2",
-  with: { "deno-version": "canary" },
+  with: { "edno-version": "canary" },
 });
 
 const installPython = step.dependsOn(setupDeno)({
@@ -65,7 +65,7 @@ const runTests = step.dependsOn(installPython)({
     CI_SHARD_INDEX: matrix.shard_index,
     CI_SHARD_TOTAL: matrix.shard_total,
   },
-  run: "deno task --cwd tests/node_compat/runner test --report",
+  run: "edno task --cwd tests/node_compat/runner test --report",
 });
 
 const gzipReport = step.dependsOn(runTests)({
@@ -83,7 +83,7 @@ const uploadReport = step.dependsOn(gzipReport)({
     AWS_DEFAULT_REGION: "${{vars.S3_REGION }}",
   },
   run:
-    "aws s3 cp tests/node_compat/report.json.gz s3://dl-deno-land/node-compat-test/$(date +%F)/report-${{matrix.os}}-${{matrix.shard_index}}.json.gz",
+    "aws s3 cp tests/node_compat/report.json.gz s3://dl-edno-land/node-compat-test/$(date +%F)/report-${{matrix.os}}-${{matrix.shard_index}}.json.gz",
 });
 
 const testJob = job("test", {
@@ -126,7 +126,7 @@ const summaryCloneStd = step.dependsOn(summaryCheckout)({
 });
 
 const summarySetupDeno = step.dependsOn(summaryCloneStd)({
-  name: "Setup Deno",
+  name: "Setup Edno",
   uses: "denoland/setup-deno@v2",
 });
 
@@ -139,7 +139,7 @@ const summaryInstallPython = step.dependsOn(summarySetupDeno)({
 const addDaySummary = step.dependsOn(summaryInstallPython)({
   name: "Add the day summary to the month summary",
   run:
-    "deno -A --config tests/config/deno.json tests/node_compat/add_day_summary_to_month_summary.ts",
+    "edno -A --config tests/config/edno.json tests/node_compat/add_day_summary_to_month_summary.ts",
 });
 
 const gzipMonthSummary = step.dependsOn(addDaySummary)({
@@ -156,12 +156,12 @@ const uploadMonthSummary = step.dependsOn(gzipMonthSummary)({
     AWS_DEFAULT_REGION: "${{vars.S3_REGION }}",
   },
   run:
-    "aws s3 cp tests/node_compat/summary.json.gz s3://dl-deno-land/node-compat-test/summary-$(date +%Y-%m).json.gz",
+    "aws s3 cp tests/node_compat/summary.json.gz s3://dl-edno-land/node-compat-test/summary-$(date +%Y-%m).json.gz",
 });
 
 const postSlack = step.dependsOn(uploadMonthSummary)({
   name: "Post message to slack channel",
-  run: "deno -A --config tests/config/deno.json tests/node_compat/slack.ts",
+  run: "edno -A --config tests/config/edno.json tests/node_compat/slack.ts",
   env: {
     SLACK_TOKEN: "${{ secrets.NODE_COMPAT_SLACK_TOKEN }}",
     SLACK_CHANNEL: "${{ secrets.NODE_COMPAT_SLACK_CHANNEL }}",

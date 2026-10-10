@@ -1,3 +1,3 @@
 module.exports.getFileMode = function() {
-  return Deno.lstatSync(__dirname + "/exec").mode;
+  return Edno.lstatSync(__dirname + "/exec").mode;
 };

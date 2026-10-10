@@ -1,0 +1,58 @@
+# Protected strings for the Edno rename. Any line is a token that must NOT be
+# rewritten, either because we do not own the code or because it points at
+# upstream. Matched case-sensitively, longest first.
+
+# --- External Deno-org crates published on crates.io (we depend, we do not own) ---
+# Verified against Cargo.lock: every package with a `source = registry+...` and
+# "deno" in the name. Deriving this list from the lockfile rather than by hand
+# is what keeps the rename from rewriting crates we do not own.
+deno-tower-lsp-macros
+deno_ast
+deno_core_icudata
+deno_doc
+deno_error
+deno_error_macro
+deno_graph
+deno_lint
+deno_media_type
+deno_native_certs
+deno_panic
+deno_path_util
+deno_semver
+deno_task_shell
+deno_terminal
+deno_tower_lsp
+deno_tunnel
+deno_unsync
+deno_whoami
+denokv_proto
+denokv_remote
+denokv_sqlite
+
+# --- Copyright holders (MIT requires the original notice survive) ---
+the Deno authors
+the deno authors
+Deno authors
+
+# --- Upstream hosts and repos (attribution + working links) ---
+deno.land
+dl.deno.land
+docs.deno.com
+deno.com
+denoland/deno
+denoland/deno_doc
+denoland/deno_graph
+denoland/deno_ast
+denoland/deno_lint
+denoland/deno_semver
+denoland/deno_core
+denoland/deno_runtime
+denoland/deno_npm
+denoland/deno_registry
+denoland/deno_install
+denoland/setup-deno
+denoland/rusty_v8
+oven-sh/bun
+jsr.io/@deno
+jsr.io/@std
+npm/vite

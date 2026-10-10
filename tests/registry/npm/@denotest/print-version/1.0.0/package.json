@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/print-version",
+  "name": "@ednotest/print-version",
   "version": "1.0.0",
   "bin": {
     "print-version": "./print-version.js"

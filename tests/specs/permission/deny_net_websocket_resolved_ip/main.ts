@@ -1,16 +1,16 @@
 // Regression test: --deny-net=127.0.0.1 must block WebSocket connections
 // whose hostname resolves to a denied IP, mirroring the post-resolution
-// check that Deno.connect and fetch() already perform.
+// check that Edno.connect and fetch() already perform.
 
-const server = Deno.serve(
+const server = Edno.serve(
   { hostname: "0.0.0.0", port: 0, onListen: () => {} },
   (req) => {
-    const { socket, response } = Deno.upgradeWebSocket(req);
+    const { socket, response } = Edno.upgradeWebSocket(req);
     socket.onmessage = (e) => socket.send(e.data);
     return response;
   },
 );
-const { port } = server.addr as Deno.NetAddr;
+const { port } = server.addr as Edno.NetAddr;
 
 function tryConnect(url: string): Promise<"open" | "error"> {
   return new Promise((resolve) => {

@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/globals",
+  "name": "@ednotest/globals",
   "version": "1.0.0",
   "types": "index.d.ts"
 }

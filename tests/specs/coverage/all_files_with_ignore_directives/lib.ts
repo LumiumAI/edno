@@ -1,4 +1,4 @@
-// deno-coverage-ignore-file
+// edno-coverage-ignore-file
 
 export function foo() {
   return "foo";

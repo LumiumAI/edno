@@ -8,30 +8,30 @@ use std::rc::Rc;
 use std::sync::atomic::AtomicI32;
 use std::sync::atomic::Ordering;
 
-use deno_core::JsBuffer;
-use deno_core::OpState;
-use deno_core::ResourceId;
-use deno_core::ToV8;
-use deno_core::op2;
+use edno_core::JsBuffer;
+use edno_core::OpState;
+use edno_core::ResourceId;
+use edno_core::ToV8;
+use edno_core::op2;
 #[cfg(feature = "sync_fs")]
-use deno_core::unsync::spawn_blocking;
-use deno_core::v8;
-use deno_fs::FileSystemRc;
-use deno_fs::FsFileType;
-use deno_fs::OpenOptions;
-use deno_io::fs::FsResult;
-use deno_io::fs::FsStatFs;
-use deno_permissions::CheckedPath;
-use deno_permissions::CheckedPathBuf;
-use deno_permissions::OpenAccessKind;
-use deno_permissions::PermissionsContainer;
+use edno_core::unsync::spawn_blocking;
+use edno_core::v8;
+use edno_fs::FileSystemRc;
+use edno_fs::FsFileType;
+use edno_fs::OpenOptions;
+use edno_io::fs::FsResult;
+use edno_io::fs::FsStatFs;
+use edno_permissions::CheckedPath;
+use edno_permissions::CheckedPathBuf;
+use edno_permissions::OpenAccessKind;
+use edno_permissions::PermissionsContainer;
 #[cfg(feature = "sync_fs")]
 use tokio::task::JoinError;
 
 use crate::ops::constant::UV_FS_COPYFILE_EXCL;
 
 /// Virtual file descriptors for files without a real OS fd (e.g. VFS files
-/// in `deno compile` binaries). These start at a high value to avoid
+/// in `edno compile` binaries). These start at a high value to avoid
 /// collisions with real OS fds.
 const VIRTUAL_FD_START: i32 = 1_000_000_000;
 static NEXT_VIRTUAL_FD: AtomicI32 = AtomicI32::new(VIRTUAL_FD_START);
@@ -84,7 +84,7 @@ fn crt_error() -> std::io::Error {
 /// On Unix this is a no-op. On Windows it duplicates the OS HANDLE and
 /// converts it to a CRT file descriptor.
 fn raw_fd_from_backing_fd(
-  handle_fd: deno_core::ResourceHandleFd,
+  handle_fd: edno_core::ResourceHandleFd,
 ) -> Result<i32, FsError> {
   #[cfg(unix)]
   {
@@ -148,9 +148,9 @@ fn ebadf() -> FsError {
 fn file_for_fd(
   state: &OpState,
   fd: i32,
-) -> Result<Rc<dyn deno_io::fs::File>, FsError> {
+) -> Result<Rc<dyn edno_io::fs::File>, FsError> {
   state
-    .borrow::<deno_io::FdTable>()
+    .borrow::<edno_io::FdTable>()
     .get(fd)
     .cloned()
     .ok_or_else(ebadf)
@@ -175,7 +175,7 @@ macro_rules! maybe_spawn_blocking {
 pub enum FsError {
   #[class(inherit)]
   #[error(transparent)]
-  Permission(#[from] deno_permissions::PermissionCheckError),
+  Permission(#[from] edno_permissions::PermissionCheckError),
   #[class(inherit)]
   #[error("{0}")]
   Io(
@@ -188,7 +188,7 @@ pub enum FsError {
   Fs(
     #[from]
     #[inherit]
-    deno_io::fs::FsError,
+    edno_io::fs::FsError,
   ),
   #[class(inherit)]
   #[error(transparent)]
@@ -226,11 +226,11 @@ pub struct NodeFsError {
 }
 
 fn map_fs_error_to_node_fs_error(
-  err: deno_io::fs::FsError,
+  err: edno_io::fs::FsError,
   context: NodeFsErrorContext,
 ) -> FsError {
   let os_errno = match err {
-    deno_io::fs::FsError::Io(ref io_err) => io_err.raw_os_error(),
+    edno_io::fs::FsError::Io(ref io_err) => io_err.raw_os_error(),
     _ => None,
   };
 
@@ -307,7 +307,7 @@ impl CpError {
 pub fn op_node_fs_exists_sync(
   state: &mut OpState,
   #[string] path: &str,
-) -> Result<bool, deno_permissions::PermissionCheckError> {
+) -> Result<bool, edno_permissions::PermissionCheckError> {
   let path_or_err = state.borrow_mut::<PermissionsContainer>().check_open(
     Cow::Borrowed(Path::new(path)),
     OpenAccessKind::ReadNoFollow,
@@ -390,7 +390,7 @@ pub fn op_node_open_sync(
   let open_options = options;
 
   let file = fs.open_sync(&path, open_options)?;
-  // For VFS files (e.g. in deno compile), backing_fd() returns None.
+  // For VFS files (e.g. in edno compile), backing_fd() returns None.
   // Assign a virtual fd so the file can still be used through FdTable.
   let fd = match file.clone().backing_fd() {
     Some(backing_fd) => raw_fd_from_backing_fd(backing_fd)?,
@@ -407,7 +407,7 @@ pub fn op_node_open_sync(
     return Err(e.into());
   }
 
-  state.borrow_mut::<deno_io::FdTable>().register(fd, file);
+  state.borrow_mut::<edno_io::FdTable>().register(fd, file);
   Ok(fd)
 }
 
@@ -451,7 +451,7 @@ pub async fn op_node_open(
   let open_options = options;
 
   let file = fs.open_async(path.as_owned(), open_options).await?;
-  // For VFS files (e.g. in deno compile), backing_fd() returns None.
+  // For VFS files (e.g. in edno compile), backing_fd() returns None.
   // Assign a virtual fd so the file can still be used through FdTable.
   let fd = match file.clone().backing_fd() {
     Some(backing_fd) => raw_fd_from_backing_fd(backing_fd)?,
@@ -469,7 +469,7 @@ pub async fn op_node_open(
   }
 
   let mut state = state.borrow_mut();
-  state.borrow_mut::<deno_io::FdTable>().register(fd, file);
+  state.borrow_mut::<edno_io::FdTable>().register(fd, file);
   Ok(fd)
 }
 #[derive(Debug, ToV8)]
@@ -890,12 +890,12 @@ pub fn op_node_fs_close(state: &mut OpState, fd: i32) -> Result<(), FsError> {
   // FdTable.remove() drops the Rc<dyn File> and cancels the cancel handle,
   // which will abort any in-flight async reads on this fd.
   let file = state
-    .borrow_mut::<deno_io::FdTable>()
+    .borrow_mut::<edno_io::FdTable>()
     .remove(fd)
     .ok_or_else(ebadf)?;
 
   // For stdio fds (0/1/2), also remove the corresponding resource table
-  // entry so that Deno.stdin/stdout/stderr see the fd as closed and
+  // entry so that Edno.stdin/stdout/stderr see the fd as closed and
   // release their Rc clone of the same File.
   if (0..=2).contains(&fd)
     && let Ok(resource) = state.resource_table.take_any(fd as ResourceId)
@@ -928,7 +928,7 @@ pub fn op_node_fs_close(state: &mut OpState, fd: i32) -> Result<(), FsError> {
 /// Positioned read: if position >= 0, uses pread to read without moving the
 /// file cursor. If position < 0, reads from the current position.
 fn read_with_position(
-  file: Rc<dyn deno_io::fs::File>,
+  file: Rc<dyn edno_io::fs::File>,
   buf: &mut [u8],
   position: i64,
 ) -> Result<u32, FsError> {
@@ -967,11 +967,11 @@ pub async fn op_node_fs_read_deferred(
 ) -> Result<u32, FsError> {
   let file = file_for_fd(&state.borrow(), fd)?;
   if position >= 0 {
-    let view = deno_core::BufMutView::from(buf);
+    let view = edno_core::BufMutView::from(buf);
     let (nread, _) = file.read_at_async(view, position as u64).await?;
     Ok(nread as u32)
   } else {
-    let view = deno_core::BufMutView::from(buf);
+    let view = edno_core::BufMutView::from(buf);
     let (nread, _) = file.read_byob(view).await?;
     Ok(nread as u32)
   }
@@ -981,7 +981,7 @@ pub async fn op_node_fs_read_deferred(
 /// the file cursor. If position < 0, writes at the current position.
 /// Handles partial writes internally by looping until all bytes are written.
 fn write_with_position(
-  file: Rc<dyn deno_io::fs::File>,
+  file: Rc<dyn edno_io::fs::File>,
   buf: &[u8],
   position: i64,
 ) -> Result<u32, FsError> {
@@ -1110,8 +1110,8 @@ pub struct NodeFsStat {
   pub is_socket: bool,
 }
 
-impl From<deno_io::fs::FsStat> for NodeFsStat {
-  fn from(stat: deno_io::fs::FsStat) -> Self {
+impl From<edno_io::fs::FsStat> for NodeFsStat {
+  fn from(stat: edno_io::fs::FsStat) -> Self {
     NodeFsStat {
       is_file: stat.is_file,
       is_directory: stat.is_directory,
@@ -1334,7 +1334,7 @@ const CP_IS_SRC_FIFO_FLAG: u64 = 1u64 << 39;
 /// - bit 32      : destination exists
 /// - bits 33..39 : source type flags (dir, file, char/block device, symlink, socket, fifo)
 fn compact_stat_info(
-  src_stat: &deno_io::fs::FsStat,
+  src_stat: &edno_io::fs::FsStat,
   is_dest_exists: bool,
 ) -> u64 {
   let mut packed = src_stat.mode as u64;
@@ -1958,8 +1958,8 @@ fn cp_sync_dispatch_no_filter(
 
 /// Check if two stat results refer to the same file (same dev + ino).
 fn are_identical_stat(
-  src_stat: &deno_io::fs::FsStat,
-  dest_stat: &deno_io::fs::FsStat,
+  src_stat: &edno_io::fs::FsStat,
+  dest_stat: &edno_io::fs::FsStat,
 ) -> bool {
   match (dest_stat.ino, src_stat.ino) {
     (Some(dest_ino), Some(src_ino)) if dest_ino > 0 && dest_stat.dev > 0 => {
@@ -3579,7 +3579,7 @@ mod tests {
 
   #[test]
   fn test_is_src_subdir() {
-    let base = std::env::temp_dir().join("deno_is_src_subdir_test");
+    let base = std::env::temp_dir().join("edno_is_src_subdir_test");
     let src = base.join("src");
     let child = src.join("child");
     let sibling = base.join("sibling");

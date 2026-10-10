@@ -31,10 +31,10 @@ pub fn get_body(
 
   let impl_body = quote! {
     {
-      let mut __buf: [::std::mem::MaybeUninit<u8>; deno_core::_ops::STRING_STACK_BUFFER_SIZE] = [::std::mem::MaybeUninit::uninit(); deno_core::_ops::STRING_STACK_BUFFER_SIZE];
-      match deno_core::_ops::to_str(__scope, &*__value, &mut __buf).as_ref() {
+      let mut __buf: [::std::mem::MaybeUninit<u8>; edno_core::_ops::STRING_STACK_BUFFER_SIZE] = [::std::mem::MaybeUninit::uninit(); edno_core::_ops::STRING_STACK_BUFFER_SIZE];
+      match edno_core::_ops::to_str(__scope, &*__value, &mut __buf).as_ref() {
         #(#names => Ok(Self::#idents)),*,
-        s => Err(::deno_core::webidl::WebIdlError::new(__prefix, __context, ::deno_core::webidl::WebIdlErrorKind::InvalidEnumVariant { converter: #ident_string, variant: s.to_string() }))
+        s => Err(::edno_core::webidl::WebIdlError::new(__prefix, __context, ::edno_core::webidl::WebIdlErrorKind::InvalidEnumVariant { converter: #ident_string, variant: s.to_string() }))
       }
     }
   };

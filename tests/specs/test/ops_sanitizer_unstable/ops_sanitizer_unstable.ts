@@ -1,5 +1,5 @@
-Deno.test("no-op", function () {});
-Deno.test({
+Edno.test("no-op", function () {});
+Edno.test({
   name: "leak interval",
   // regression test for sanitizer errors being swallowed with permissions.
   // https://github.com/denoland/deno/pull/18550

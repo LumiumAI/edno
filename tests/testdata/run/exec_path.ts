@@ -1,1 +1,1 @@
-console.log(Deno.execPath());
+console.log(Edno.execPath());

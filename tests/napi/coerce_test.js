@@ -4,14 +4,14 @@ import { assertEquals, loadTestLibrary } from "./common.js";
 
 const coerce = loadTestLibrary();
 
-Deno.test("napi coerce bool", function () {
+Edno.test("napi coerce bool", function () {
   assertEquals(coerce.test_coerce_bool(true), true);
   assertEquals(coerce.test_coerce_bool(false), false);
   assertEquals(coerce.test_coerce_bool(0), false);
   assertEquals(coerce.test_coerce_bool(69), true);
   assertEquals(coerce.test_coerce_bool(Number.MAX_SAFE_INTEGER), true);
   assertEquals(coerce.test_coerce_bool(new Array(10)), true);
-  assertEquals(coerce.test_coerce_bool("Hello, Deno!"), true);
+  assertEquals(coerce.test_coerce_bool("Hello, Edno!"), true);
   assertEquals(coerce.test_coerce_bool(Symbol("[[test]]")), true);
   assertEquals(coerce.test_coerce_bool({}), true);
   assertEquals(coerce.test_coerce_bool(() => false), true);
@@ -19,7 +19,7 @@ Deno.test("napi coerce bool", function () {
   assertEquals(coerce.test_coerce_bool(null), false);
 });
 
-Deno.test("napi coerce number", function () {
+Edno.test("napi coerce number", function () {
   assertEquals(coerce.test_coerce_number(true), 1);
   assertEquals(coerce.test_coerce_number(false), 0);
   assertEquals(coerce.test_coerce_number(0), 0);
@@ -30,14 +30,14 @@ Deno.test("napi coerce number", function () {
     Number.MAX_SAFE_INTEGER,
   );
   assertEquals(coerce.test_coerce_number(new Array(10)), NaN);
-  assertEquals(coerce.test_coerce_number("Hello, Deno!"), NaN);
+  assertEquals(coerce.test_coerce_number("Hello, Edno!"), NaN);
   assertEquals(coerce.test_coerce_number({}), NaN);
   assertEquals(coerce.test_coerce_number(() => false), NaN);
   assertEquals(coerce.test_coerce_number(undefined), NaN);
   assertEquals(coerce.test_coerce_number(null), 0);
 });
 
-Deno.test("napi coerce string", function () {
+Edno.test("napi coerce string", function () {
   assertEquals(coerce.test_coerce_string(true), "true");
   assertEquals(coerce.test_coerce_string(false), "false");
   assertEquals(coerce.test_coerce_string(0), "0");
@@ -48,14 +48,14 @@ Deno.test("napi coerce string", function () {
     "9007199254740991",
   );
   assertEquals(coerce.test_coerce_string(new Array(10)), ",,,,,,,,,");
-  assertEquals(coerce.test_coerce_string("Hello, Deno!"), "Hello, Deno!");
+  assertEquals(coerce.test_coerce_string("Hello, Edno!"), "Hello, Edno!");
   assertEquals(coerce.test_coerce_string({}), "[object Object]");
   assertEquals(coerce.test_coerce_string(() => false), "() => false");
   assertEquals(coerce.test_coerce_string(undefined), "undefined");
   assertEquals(coerce.test_coerce_string(null), "null");
 });
 
-Deno.test("napi coerce object", function () {
+Edno.test("napi coerce object", function () {
   assertEquals(coerce.test_coerce_object(true), new Boolean(true));
   assertEquals(coerce.test_coerce_object(false), new Boolean(false));
   assertEquals(coerce.test_coerce_object(0), new Number(0));
@@ -67,8 +67,8 @@ Deno.test("napi coerce object", function () {
   );
   assertEquals(coerce.test_coerce_object(new Array(10)), new Array(10));
   assertEquals(
-    coerce.test_coerce_object("Hello, Deno!"),
-    new String("Hello, Deno!"),
+    coerce.test_coerce_object("Hello, Edno!"),
+    new String("Hello, Edno!"),
   );
   assertEquals(coerce.test_coerce_object({}), {});
 });
@@ -77,7 +77,7 @@ Deno.test("napi coerce object", function () {
 // napi_coerce_to_object(null/undefined) should return an error status
 // without leaving a pending exception that would later be re-thrown
 // as a spurious "Cannot convert undefined or null to object" TypeError.
-Deno.test("napi coerce object null/undefined no pending exception", function () {
+Edno.test("napi coerce object null/undefined no pending exception", function () {
   assertEquals(
     coerce.test_coerce_object_null_no_pending_exception(null, undefined),
     true,

@@ -1052,12 +1052,12 @@ registry=https://registry.npmjs.org/
     }
 
     assert_eq!(
-      resolved_npm_rc.get_registry_url("@deno/test").as_str(),
+      resolved_npm_rc.get_registry_url("@edno/test").as_str(),
       "https://registry.npmjs.org/"
     );
     assert_eq!(
       resolved_npm_rc
-        .get_registry_config("@deno/test")
+        .get_registry_config("@edno/test")
         .auth_token
         .as_ref()
         .unwrap(),
@@ -1447,7 +1447,7 @@ registry=${VAR_FOUND}
   fn test_scope_registry_same_as_env_registry() {
     // a scope registry that matches the env registry url should still
     // be included in the resolved npmrc. This is important because scopes
-    // that are overridden by Deno like the @jsr scope might have the registry
+    // that are overridden by Edno like the @jsr scope might have the registry
     // set to the default registry like this and so we want to ensure it's
     // still used and not overwritten
     let npm_rc = NpmRc::parse(

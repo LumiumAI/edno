@@ -1,6 +1,6 @@
 {
   "name": "run-existing-npm-package",
   "dependencies": {
-    "@denotest/bin": "1.0.0"
+    "@ednotest/bin": "1.0.0"
   }
 }

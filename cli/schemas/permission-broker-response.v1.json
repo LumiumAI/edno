@@ -1,8 +1,8 @@
 {
   "$id": "https://raw.githubusercontent.com/denoland/deno/main/cli/schemas/permission-broker-response.v1.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Schema for DENO_PERMISSION_BROKER_PATH",
-  "description": "The schema of a single line of the DENO_PERMISSION_BROKER_PATH response.",
+  "title": "Schema for EDNO_PERMISSION_BROKER_PATH",
+  "description": "The schema of a single line of the EDNO_PERMISSION_BROKER_PATH response.",
   "type": "object",
   "$defs": {
     "id": {
@@ -10,7 +10,7 @@
       "description": "The numeric ID of the request this is a response to."
     },
     "result": {
-      "description": "The result of the check, tells Deno if the request should be granted or rejected",
+      "description": "The result of the check, tells Edno if the request should be granted or rejected",
       "enum": [
         "allow",
         "deny"

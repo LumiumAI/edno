@@ -1,6 +1,6 @@
 {
   "steps": [{
-    "args": "info --config=sub/deno.json sub/main.ts",
+    "args": "info --config=sub/edno.json sub/main.ts",
     "output": "info.out"
   }, {
     "args": "run --check sub/main.ts",

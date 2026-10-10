@@ -3,7 +3,7 @@
 // NB(bartlomieju): this is on purpose to force async ops
 #![allow(clippy::unused_async, reason = "signature required by trait")]
 
-use deno_core::op2;
+use edno_core::op2;
 use deno_error::JsErrorBox;
 
 #[op2]

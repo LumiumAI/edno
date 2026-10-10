@@ -4,12 +4,12 @@ use std::io;
 use std::io::Write;
 use std::sync::Arc;
 
-use deno_core::error::AnyError;
-use deno_core::futures::StreamExt;
-use deno_core::serde_json;
-use deno_core::unsync::spawn_blocking;
-use deno_lib::version::DENO_VERSION_INFO;
-use deno_runtime::WorkerExecutionMode;
+use edno_core::error::AnyError;
+use edno_core::futures::StreamExt;
+use edno_core::serde_json;
+use edno_core::unsync::spawn_blocking;
+use edno_lib::version::EDNO_VERSION_INFO;
+use edno_runtime::WorkerExecutionMode;
 use rustyline::error::ReadlineError;
 
 use crate::args::CliOptions;
@@ -171,12 +171,12 @@ pub async fn run(
     .create_custom_worker(
       WorkerExecutionMode::Repl,
       main_module.clone(),
-      // `deno repl` doesn't support preloading modules
+      // `edno repl` doesn't support preloading modules
       vec![],
-      // `deno repl` doesn't support require modules
+      // `edno repl` doesn't support require modules
       vec![],
       permissions.clone(),
-      vec![crate::ops::testing::deno_test::init(test_event_sender)],
+      vec![crate::ops::testing::edno_test::init(test_event_sender)],
       Default::default(),
       None,
     )
@@ -207,7 +207,7 @@ pub async fn run(
   };
 
   let history_file_path = factory
-    .deno_dir()
+    .edno_dir()
     .ok()
     .and_then(|dir| dir.repl_history_file_path());
   let editor = ReplEditor::new(helper, history_file_path)?;
@@ -253,7 +253,7 @@ pub async fn run(
   if !cli_options.is_quiet() {
     let mut handle = io::stdout().lock();
 
-    writeln!(handle, "Deno {}", DENO_VERSION_INFO.deno)?;
+    writeln!(handle, "Edno {}", EDNO_VERSION_INFO.edno)?;
     writeln!(handle, "exit using ctrl+d, ctrl+c, or close()")?;
 
     if repl_flags.is_default_command {
@@ -264,7 +264,7 @@ pub async fn run(
       )?;
       writeln!(
         handle,
-        "To specify permissions, run `deno repl` with allow flags."
+        "To specify permissions, run `edno repl` with allow flags."
       )?;
     }
   }
@@ -278,7 +278,7 @@ pub async fn run(
 async fn run_json(mut repl_session: ReplSession) -> Result<i32, AnyError> {
   use bytes::Buf;
   use bytes::Bytes;
-  use deno_runtime::deno_io::BiPipe;
+  use edno_runtime::edno_io::BiPipe;
   use tokio::io::AsyncReadExt;
   use tokio::io::AsyncWriteExt;
   use tokio::io::BufReader;

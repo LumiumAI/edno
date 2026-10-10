@@ -1,7 +1,7 @@
 {
-  "name": "@denotest/MixedCase",
+  "name": "@ednotest/MixedCase",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/CAPITALS": "^1"
+    "@ednotest/CAPITALS": "^1"
   }
 }

@@ -1,5 +1,5 @@
-console.log(Deno.env.get("MYAPP_HELLO"));
-console.log(Deno.env.get("MYAPP_GOODBYE"));
-Deno.env.set("MYAPP_TEST", "done");
-Deno.env.set("MYAPP_DONE", "done");
-console.log(Deno.env.get("MYAPP_DONE"));
+console.log(Edno.env.get("MYAPP_HELLO"));
+console.log(Edno.env.get("MYAPP_GOODBYE"));
+Edno.env.set("MYAPP_TEST", "done");
+Edno.env.set("MYAPP_DONE", "done");
+console.log(Edno.env.get("MYAPP_DONE"));

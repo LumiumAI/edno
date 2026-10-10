@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 import { greaterThan, parse } from "jsr:@std/semver@1";
 
 const response = await fetch("https://dl.deno.land/release-latest.txt");
@@ -8,7 +8,7 @@ if (!response.ok) {
 }
 
 const latestVersionText = (await response.text()).trim();
-const currentVersionText = Deno.args[0];
+const currentVersionText = Edno.args[0];
 console.error("Latest version:", latestVersionText);
 console.error("Current version:", currentVersionText);
 
@@ -22,4 +22,4 @@ if (isGreater) {
     "Skipping release-latest.txt update because this version is not greater than the latest.",
   );
 }
-Deno.exit(isGreater ? 0 : 1);
+Edno.exit(isGreater ? 0 : 1);

@@ -8,28 +8,28 @@ use std::thread;
 use console_static_text::ansi::strip_ansi_codes;
 use deno_ast::MediaType;
 use deno_ast::diagnostics::Diagnostic as _;
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::futures::StreamExt;
-use deno_core::parking_lot::RwLock;
-use deno_core::resolve_url;
-use deno_core::serde::Deserialize;
-use deno_core::serde_json;
-use deno_core::serde_json::json;
-use deno_core::url::Url;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::futures::StreamExt;
+use edno_core::parking_lot::RwLock;
+use edno_core::resolve_url;
+use edno_core::serde::Deserialize;
+use edno_core::serde_json;
+use edno_core::serde_json::json;
+use edno_core::url::Url;
 use deno_error::JsErrorClass;
 use deno_graph::Resolution;
 use deno_graph::ResolutionError;
 use deno_graph::SpecifierError;
 use deno_graph::fast_check::FastCheckDiagnostic;
 use deno_graph::source::ResolveError;
-use deno_lib::args::CaData;
-use deno_resolver::deno_json::CompilerOptionsKey;
-use deno_resolver::graph::enhanced_resolution_error_message;
-use deno_resolver::workspace::sloppy_imports_resolve;
-use deno_runtime::deno_node;
-use deno_runtime::tokio_util::create_basic_runtime;
+use edno_lib::args::CaData;
+use edno_resolver::edno_json::CompilerOptionsKey;
+use edno_resolver::graph::enhanced_resolution_error_message;
+use edno_resolver::workspace::sloppy_imports_resolve;
+use edno_runtime::edno_node;
+use edno_runtime::tokio_util::create_basic_runtime;
 use deno_semver::jsr::JsrPackageReqReference;
 use deno_semver::npm::NpmPackageReqReference;
 use deno_semver::package::PackageReq;
@@ -79,7 +79,7 @@ pub struct DiagnosticsUpdateMessage {
 
 #[derive(Debug, Hash, PartialEq, Eq, Copy, Clone)]
 pub enum DiagnosticSource {
-  Deno,
+  Edno,
   Doc,
   Lint,
   Ts,
@@ -88,10 +88,10 @@ pub enum DiagnosticSource {
 impl DiagnosticSource {
   pub fn as_lsp_source(&self) -> &'static str {
     match self {
-      Self::Deno => "deno",
-      Self::Doc => "deno-doc",
-      Self::Lint => "deno-lint",
-      Self::Ts => "deno-ts",
+      Self::Edno => "edno",
+      Self::Doc => "edno-doc",
+      Self::Lint => "edno-lint",
+      Self::Ts => "edno-ts",
     }
   }
 }
@@ -107,9 +107,9 @@ pub type NoSlowTypesDiagnosticsCache = OnceCellMap<
 >;
 
 fn should_send_diagnostic_batch_notifications() -> bool {
-  deno_lib::args::has_flag_env_var(
+  edno_lib::args::has_flag_env_var(
     &CliSys::default(),
-    "DENO_INTERNAL_DIAGNOSTIC_BATCH_NOTIFICATIONS",
+    "EDNO_INTERNAL_DIAGNOSTIC_BATCH_NOTIFICATIONS",
   )
 }
 
@@ -268,7 +268,7 @@ impl DiagnosticsServer {
               Arc::new(NoSlowTypesDiagnosticsCache::default());
             let open_docs =
               snapshot.document_modules.documents.open_docs().cloned();
-            deno_core::futures::stream::iter(open_docs.map(|document| {
+            edno_core::futures::stream::iter(open_docs.map(|document| {
               let snapshot = snapshot.clone();
               let ts_server = ts_server.clone();
               let ambient_modules_regex_cache =
@@ -520,7 +520,7 @@ fn compute_document_lint_diagnostics(
   }
 }
 
-/// Computes an LSP range to highlight for a `deno doc --lint` diagnostic.
+/// Computes an LSP range to highlight for a `edno doc --lint` diagnostic.
 ///
 /// `deno_doc` only reports the byte offset of the start of the offending
 /// symbol, so highlight the identifier-like token that begins there (falling
@@ -556,7 +556,7 @@ fn doc_diagnostic_range(
   }
 }
 
-/// Generates `deno doc --lint` diagnostics for a module that is a published
+/// Generates `edno doc --lint` diagnostics for a module that is a published
 /// package's export entrypoint, caching them on the module instance. Like lint
 /// diagnostics, these are derived solely from the module's own contents, so a
 /// given module instance always produces the same result.
@@ -610,7 +610,7 @@ fn compute_document_doc_diagnostics(
   let roots = vec![specifier.clone()];
   let mut graph =
     deno_graph::ModuleGraph::new(deno_graph::GraphKind::TypesOnly);
-  deno_core::futures::executor::block_on(graph.build(
+  edno_core::futures::executor::block_on(graph.build(
     roots.clone(),
     Vec::new(),
     &loader,
@@ -720,11 +720,11 @@ struct DiagnosticDataImportMapRemap {
   pub to: String,
 }
 
-/// An enum which represents diagnostic errors which originate from Deno itself.
-pub enum DenoDiagnostic {
-  /// A `x-deno-warning` is associated with the specifier and should be displayed
+/// An enum which represents diagnostic errors which originate from Edno itself.
+pub enum EdnoDiagnostic {
+  /// A `x-edno-warning` is associated with the specifier and should be displayed
   /// as a warning to the user.
-  DenoWarn(String),
+  EdnoWarn(String),
   /// The import map file has invalid JSON or invalid import map entries.
   ImportMapDiagnostic(String),
   /// An informational diagnostic that indicates an existing specifier can be
@@ -755,10 +755,10 @@ pub enum DenoDiagnostic {
   BareNodeSpecifier(String),
 }
 
-impl DenoDiagnostic {
+impl EdnoDiagnostic {
   fn code(&self) -> &str {
     match self {
-      Self::DenoWarn(_) => "deno-warn",
+      Self::EdnoWarn(_) => "edno-warn",
       Self::ImportMapDiagnostic(_) => "import-map-diagnostic",
       Self::ImportMapRemap { .. } => "import-map-remap",
       Self::InvalidAttributeType(_) => "invalid-attribute-type",
@@ -769,7 +769,7 @@ impl DenoDiagnostic {
       Self::NoExportNpm(_) => "no-export-npm",
       Self::NoLocal(_) => "no-local",
       Self::ResolutionError(err, _) => {
-        if deno_resolver::graph::get_resolution_error_bare_node_specifier(err)
+        if edno_resolver::graph::get_resolution_error_bare_node_specifier(err)
           .is_some()
         {
           "import-node-prefix-missing"
@@ -869,7 +869,7 @@ impl DenoDiagnostic {
             diagnostics: Some(vec![diagnostic.clone()]),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![json!([data.specifier]), json!(&specifier)]),
             }),
             ..Default::default()
@@ -1004,7 +1004,7 @@ impl DenoDiagnostic {
     }
 
     let (severity, message, data) = match self {
-      Self::DenoWarn(message) => (lsp::DiagnosticSeverity::WARNING, message.to_string(), None),
+      Self::EdnoWarn(message) => (lsp::DiagnosticSeverity::WARNING, message.to_string(), None),
       Self::ImportMapDiagnostic(message) => (lsp::DiagnosticSeverity::ERROR, message.to_string(), None),
       Self::ImportMapRemap { from, to } => (lsp::DiagnosticSeverity::HINT, format!("The import specifier can be remapped to \"{to}\" which will resolve it via the active import map."), Some(json!({ "from": from, "to": to }))),
       Self::InvalidAttributeType(assert_type) => (lsp::DiagnosticSeverity::ERROR, format!("The module is a JSON module and expected an attribute type of \"json\". Instead got \"{assert_type}\"."), None),
@@ -1014,7 +1014,7 @@ impl DenoDiagnostic {
       Self::NotInstalledNpm(pkg_req, specifier) => (lsp::DiagnosticSeverity::ERROR, format!("npm package \"{pkg_req}\" is not installed or doesn't exist."), Some(json!({ "specifier": specifier }))),
       Self::NoExportNpm(pkg_ref) => (lsp::DiagnosticSeverity::ERROR, format!("NPM package \"{}\" does not define an export \"{}\".", pkg_ref.req(), pkg_ref.sub_path().unwrap_or(".")), None),
       Self::NoLocal(specifier) => {
-        let sloppy_resolution = sloppy_imports_resolve(specifier, deno_resolver::workspace::ResolutionKind::Execution, CliSys::default());
+        let sloppy_resolution = sloppy_imports_resolve(specifier, edno_resolver::workspace::ResolutionKind::Execution, CliSys::default());
         let data = sloppy_resolution.as_ref().map(|(resolved, sloppy_reason)| {
           json!({
             "specifier": specifier,
@@ -1029,7 +1029,7 @@ impl DenoDiagnostic {
         (
         lsp::DiagnosticSeverity::ERROR,
         message,
-        deno_resolver::graph::get_resolution_error_bare_node_specifier(err)
+        edno_resolver::graph::get_resolution_error_bare_node_specifier(err)
           .map(|specifier| json!({ "specifier": specifier }))
       )},
       Self::UnknownNodeSpecifier(specifier) => (lsp::DiagnosticSeverity::ERROR, format!("No such built-in module: node:{}", specifier.path()), None),
@@ -1039,7 +1039,7 @@ impl DenoDiagnostic {
       range: *range,
       severity: Some(severity),
       code: Some(lsp::NumberOrString::String(self.code().to_string())),
-      source: Some(DiagnosticSource::Deno.as_lsp_source().to_string()),
+      source: Some(DiagnosticSource::Edno.as_lsp_source().to_string()),
       message,
       data,
       ..Default::default()
@@ -1094,13 +1094,13 @@ fn import_map_resolves_dependency_key(
 }
 
 fn maybe_ambient_import_specifier(
-  diagnostic: &DenoDiagnostic,
+  diagnostic: &EdnoDiagnostic,
 ) -> Option<String> {
   match diagnostic {
-    DenoDiagnostic::NoCache(url) | DenoDiagnostic::NoLocal(url) => {
+    EdnoDiagnostic::NoCache(url) | EdnoDiagnostic::NoLocal(url) => {
       Some(url.to_string())
     }
-    DenoDiagnostic::ResolutionError(err, _) => {
+    EdnoDiagnostic::ResolutionError(err, _) => {
       maybe_ambient_specifier_resolution_err(err)
     }
     _ => None,
@@ -1157,7 +1157,7 @@ fn diagnose_resolution(
   maybe_assert_type: Option<&str>,
   referrer_module: &DocumentModule,
   import_map: Option<&ImportMap>,
-) -> (Vec<DenoDiagnostic>, Vec<DenoDiagnostic>) {
+) -> (Vec<EdnoDiagnostic>, Vec<EdnoDiagnostic>) {
   let mut diagnostics = vec![];
   let mut deferred_diagnostics = vec![];
   match resolution {
@@ -1169,8 +1169,8 @@ fn diagnose_resolution(
       let managed_npm_resolver =
         scoped_resolver.as_maybe_managed_npm_resolver();
       for (_, headers) in scoped_resolver.redirect_chain_headers(specifier) {
-        if let Some(message) = headers.get("x-deno-warning") {
-          diagnostics.push(DenoDiagnostic::DenoWarn(message.clone()));
+        if let Some(message) = headers.get("x-edno-warning") {
+          diagnostics.push(EdnoDiagnostic::EdnoWarn(message.clone()));
         }
       }
       match snapshot.document_modules.module_for_specifier(
@@ -1180,9 +1180,9 @@ fn diagnose_resolution(
       ) {
         Some(module) => {
           if let Some(headers) = &module.headers
-            && let Some(message) = headers.get("x-deno-warning")
+            && let Some(message) = headers.get("x-edno-warning")
           {
-            diagnostics.push(DenoDiagnostic::DenoWarn(message.clone()));
+            diagnostics.push(EdnoDiagnostic::EdnoWarn(message.clone()));
           }
           if module.media_type == MediaType::Json {
             match maybe_assert_type {
@@ -1194,10 +1194,10 @@ fn diagnose_resolution(
               None if is_dynamic => (),
               // The module has an incorrect assertion type, diagnostic
               Some(assert_type) => diagnostics.push(
-                DenoDiagnostic::InvalidAttributeType(assert_type.to_string()),
+                EdnoDiagnostic::InvalidAttributeType(assert_type.to_string()),
               ),
               // The module is missing an attribute type, diagnostic
-              None => diagnostics.push(DenoDiagnostic::NoAttributeType),
+              None => diagnostics.push(EdnoDiagnostic::NoAttributeType),
             }
           }
         }
@@ -1206,7 +1206,7 @@ fn diagnose_resolution(
             Ok(pkg_ref) => {
               let req = pkg_ref.into_inner().req;
               diagnostics
-                .push(DenoDiagnostic::NotInstalledJsr(req, specifier.clone()));
+                .push(EdnoDiagnostic::NotInstalledJsr(req, specifier.clone()));
             }
             _ => {
               match NpmPackageReqReference::from_specifier(specifier) {
@@ -1215,7 +1215,7 @@ fn diagnose_resolution(
                     // show diagnostics for npm package references that aren't cached
                     let req = pkg_ref.req();
                     if !npm_resolver.is_pkg_req_folder_cached(req) {
-                      diagnostics.push(DenoDiagnostic::NotInstalledNpm(
+                      diagnostics.push(EdnoDiagnostic::NotInstalledNpm(
                         req.clone(),
                         specifier.clone(),
                       ));
@@ -1235,7 +1235,7 @@ fn diagnose_resolution(
                           .is_none()
                       }) {
                         diagnostics
-                          .push(DenoDiagnostic::NoExportNpm(pkg_ref.clone()));
+                          .push(EdnoDiagnostic::NoExportNpm(pkg_ref.clone()));
                       }
                     }
                   }
@@ -1244,8 +1244,8 @@ fn diagnose_resolution(
                   if let Some(module_name) =
                     specifier.as_str().strip_prefix("node:")
                   {
-                    if !deno_node::is_builtin_node_module(module_name) {
-                      diagnostics.push(DenoDiagnostic::UnknownNodeSpecifier(
+                    if !edno_node::is_builtin_node_module(module_name) {
+                      diagnostics.push(EdnoDiagnostic::UnknownNodeSpecifier(
                         specifier.clone(),
                       ));
                     } else if module_name == dependency_key {
@@ -1260,7 +1260,7 @@ fn diagnose_resolution(
                       }
                       // show diagnostics for bare node specifiers that aren't mapped by import map
                       if !is_mapped {
-                        diagnostics.push(DenoDiagnostic::BareNodeSpecifier(
+                        diagnostics.push(EdnoDiagnostic::BareNodeSpecifier(
                           module_name.to_string(),
                         ));
                       }
@@ -1271,11 +1271,11 @@ fn diagnose_resolution(
                     // about that.
                     // these may be invalid, however, if this is an ambient module with
                     // no real source (as in the case of a virtual module).
-                    let deno_diagnostic = match specifier.scheme() {
-                      "file" => DenoDiagnostic::NoLocal(specifier.clone()),
-                      _ => DenoDiagnostic::NoCache(specifier.clone()),
+                    let edno_diagnostic = match specifier.scheme() {
+                      "file" => EdnoDiagnostic::NoLocal(specifier.clone()),
+                      _ => EdnoDiagnostic::NoCache(specifier.clone()),
                     };
-                    deferred_diagnostics.push(deno_diagnostic);
+                    deferred_diagnostics.push(edno_diagnostic);
                   }
                 }
               }
@@ -1303,12 +1303,12 @@ fn diagnose_resolution(
         })
         .unwrap_or_default();
       if maybe_ambient_specifier_resolution_err(err).is_none() {
-        diagnostics.push(DenoDiagnostic::ResolutionError(
+        diagnostics.push(EdnoDiagnostic::ResolutionError(
           *err.clone(),
           bare_importable_pkg_names,
         ))
       } else {
-        deferred_diagnostics.push(DenoDiagnostic::ResolutionError(
+        deferred_diagnostics.push(EdnoDiagnostic::ResolutionError(
           *err.clone(),
           bare_importable_pkg_names,
         ));
@@ -1322,7 +1322,7 @@ fn diagnose_resolution(
 /// Surface an unresolved import of a `.d.ts` entrypoint as a resolution error.
 ///
 /// A `.d.ts` document is itself an entrypoint in the editor, so its own
-/// unresolved imports should be reported (e.g. `TS2307` from `deno check`).
+/// unresolved imports should be reported (e.g. `TS2307` from `edno check`).
 /// However deno_graph records a bare specifier in a `.d.ts` as
 /// `Resolution::None` (a `.ts` file records `Resolution::Err`), which
 /// `diagnose_resolution()` ignores, and tsc skips them under `skipLibCheck`. So
@@ -1381,7 +1381,7 @@ fn diagnose_dts_entrypoint_unresolved_import(
         range: import.specifier_range.clone(),
       };
       diagnostics.push(
-        DenoDiagnostic::ResolutionError(
+        EdnoDiagnostic::ResolutionError(
           resolution_error,
           bare_importable_pkg_names.clone(),
         )
@@ -1413,7 +1413,7 @@ fn diagnose_dependency(
 
   if referrer_module.media_type.is_declaration() {
     // A `.d.ts` document opened in the editor is itself an entrypoint, so its
-    // own unresolved imports should be surfaced (matching `deno check`, which
+    // own unresolved imports should be surfaced (matching `edno check`, which
     // reports `TS2307` for them). This must happen regardless of `skipLibCheck`
     // and before the early return below, mirroring `cli/type_checker.rs`.
     diagnose_dts_entrypoint_unresolved_import(
@@ -1463,7 +1463,7 @@ fn diagnose_dependency(
       )
     {
       diagnostics.push(
-        DenoDiagnostic::ImportMapRemap {
+        EdnoDiagnostic::ImportMapRemap {
           from: dependency_key.to_string(),
           to,
         }
@@ -1480,7 +1480,7 @@ fn diagnose_dependency(
   // TODO(nayeemrmn): This is a crude way of detecting `@ts-types` which has
   // a different specifier and therefore needs a separate call to
   // `diagnose_resolution()`. It would be much cleaner if that were modelled as
-  // a separate dependency: https://github.com/denoland/deno_graph/issues/247.
+  // a separate dependency: https://github.com/ednoland/deno_graph/issues/247.
   let is_types_deno_types = !dependency.maybe_type.is_none()
     && !dependency.imports.iter().any(|i| {
       dependency
@@ -1586,7 +1586,7 @@ fn json_error_range(err: &serde_json::Error) -> lsp::Range {
 fn import_map_parse_diagnostic_to_lsp(
   diagnostic: &ImportMapDiagnostic,
 ) -> lsp::Diagnostic {
-  DenoDiagnostic::ImportMapDiagnostic(diagnostic.to_string())
+  EdnoDiagnostic::ImportMapDiagnostic(diagnostic.to_string())
     .to_lsp_diagnostic(&lsp::Range::default())
 }
 
@@ -1608,7 +1608,7 @@ fn diagnose_import_map_entry_value(
       if http_cache.contains(value) {
         return;
       }
-      DenoDiagnostic::NoCache(value.clone())
+      EdnoDiagnostic::NoCache(value.clone())
     }
     "jsr" => {
       let Ok(pkg_ref) = JsrPackageReqReference::from_specifier(value) else {
@@ -1619,7 +1619,7 @@ fn diagnose_import_map_entry_value(
         return;
       }
       let req = pkg_ref.into_inner().req;
-      DenoDiagnostic::NotInstalledJsr(req, value.clone())
+      EdnoDiagnostic::NotInstalledJsr(req, value.clone())
     }
     "npm" => {
       let Ok(pkg_ref) = NpmPackageReqReference::from_specifier(value) else {
@@ -1633,7 +1633,7 @@ fn diagnose_import_map_entry_value(
       {
         return;
       }
-      DenoDiagnostic::NotInstalledNpm(req, value.clone())
+      EdnoDiagnostic::NotInstalledNpm(req, value.clone())
     }
     _ => return,
   };
@@ -1688,13 +1688,13 @@ pub(crate) fn generate_import_map_diagnostics(
     }
     Err(err) => match err.as_kind() {
       ImportMapErrorKind::JsonParse(err) => vec![
-        DenoDiagnostic::ImportMapDiagnostic(format!(
+        EdnoDiagnostic::ImportMapDiagnostic(format!(
           "Unable to parse import map JSON: {err}"
         ))
         .to_lsp_diagnostic(&json_error_range(err)),
       ],
       _ => vec![
-        DenoDiagnostic::ImportMapDiagnostic(err.to_string())
+        EdnoDiagnostic::ImportMapDiagnostic(err.to_string())
           .to_lsp_diagnostic(&lsp::Range::default()),
       ],
     },
@@ -1942,7 +1942,7 @@ pub async fn generate_module_diagnostics(
 
 /// Returns the `no-slow-types` (fast check) diagnostics that land on `module`.
 ///
-/// These diagnostics are reported by `deno publish` / `deno lint` for
+/// These diagnostics are reported by `edno publish` / `edno lint` for
 /// publishable JSR packages and require a fully built fast check module graph
 /// of the whole package. Because a single slow type can produce diagnostics on
 /// any module reachable from a package's exports, the graph is built once per
@@ -1976,7 +1976,7 @@ async fn generate_no_slow_types_diagnostics(
   }
   // Respect the lint configuration: if `no-slow-types` is excluded (or not
   // otherwise enabled) for this document, don't report its diagnostics. This
-  // keeps the LSP in sync with `deno lint`, which filters the rule out.
+  // keeps the LSP in sync with `edno lint`, which filters the rule out.
   let linter = snapshot.linter_resolver.for_module(module);
   if !linter.inner.has_package_rule("no-slow-types") {
     return Vec::new();
@@ -2030,7 +2030,7 @@ fn collect_scope_no_slow_types_diagnostics(
       snapshot.config.workspace_settings_for_specifier(scope);
     let mut factory = CliFactory::from_flags(Arc::new(Flags {
       internal: InternalFlags {
-        cache_path: Some(snapshot.cache.deno_dir().root.clone()),
+        cache_path: Some(snapshot.cache.edno_dir().root.clone()),
         lockfile_skip_write: true,
         ..Default::default()
       },
@@ -2115,8 +2115,8 @@ fn no_slow_types_diagnostic_to_lsp(
 }
 
 /// Returns whether the module is an export entrypoint of a publishable
-/// (JSR) package in the workspace, i.e. a file that `deno doc --lint` and
-/// `deno publish` would check for documentation issues.
+/// (JSR) package in the workspace, i.e. a file that `edno doc --lint` and
+/// `edno publish` would check for documentation issues.
 fn module_is_package_export(
   snapshot: &StateSnapshot,
   module: &DocumentModule,
@@ -2149,7 +2149,7 @@ mod tests {
   use std::str::FromStr;
   use std::sync::Arc;
 
-  use deno_config::deno_json::ConfigFile;
+  use edno_config::edno_json::ConfigFile;
   use pretty_assertions::assert_eq;
   use test_util::TempDir;
 
@@ -2171,7 +2171,7 @@ mod tests {
   ) -> (TempDir, StateSnapshot) {
     let temp_dir = TempDir::new();
     let root_url = temp_dir.url();
-    let cache = LspCache::new(Some(root_url.join(".deno_dir").unwrap()));
+    let cache = LspCache::new(Some(root_url.join(".edno_dir").unwrap()));
     let mut config = Config::new_with_roots([root_url.clone()]);
     let enabled_settings =
       serde_json::from_str::<WorkspaceSettings>(r#"{ "enable": true }"#)
@@ -2295,7 +2295,7 @@ mod tests {
         LanguageId::Json,
       )],
       Some((
-        "deno.json",
+        "edno.json",
         r#"{
         "importMap": "./import-map.json"
       }"#,
@@ -2316,7 +2316,7 @@ mod tests {
               },
               "severity": 1,
               "code": "import-map-diagnostic",
-              "source": "deno",
+              "source": "edno",
               "message": "Invalid address \"null\" for the specifier key \"bad\". Addresses must be strings.",
             },
             {
@@ -2326,7 +2326,7 @@ mod tests {
               },
               "severity": 1,
               "code": "import-map-diagnostic",
-              "source": "deno",
+              "source": "edno",
               "message": "Invalid top-level key \"unexpected\". Only \"imports\" and \"scopes\" can be present.",
             },
             {
@@ -2336,7 +2336,7 @@ mod tests {
               },
               "severity": 1,
               "code": "no-cache",
-              "source": "deno",
+              "source": "edno",
               "message": "Uncached or missing remote URL: https://deno.land/x/example/mod.ts",
               "data": {
                 "specifier": "https://deno.land/x/example/mod.ts",
@@ -2353,7 +2353,7 @@ mod tests {
     let (temp_dir, snapshot) = setup(
       &[("import-map.json", r#"{ "imports": "#, 1, LanguageId::Json)],
       Some((
-        "deno.json",
+        "edno.json",
         r#"{
         "importMap": "./import-map.json"
       }"#,
@@ -2374,7 +2374,7 @@ mod tests {
               },
               "severity": 1,
               "code": "import-map-diagnostic",
-              "source": "deno",
+              "source": "edno",
               "message": "Unable to parse import map JSON: EOF while parsing a value at line 1 column 13",
             },
           ],
@@ -2407,7 +2407,7 @@ mod tests {
         ),
       ],
       Some((
-        "a/deno.json",
+        "a/edno.json",
         r#"{
         "imports": {
           "/~/std/": "../std/",
@@ -2437,7 +2437,7 @@ mod tests {
               },
               "severity": 4,
               "code": "import-map-remap",
-              "source": "deno",
+              "source": "edno",
               "message": "The import specifier can be remapped to \"/~/std/assert/mod.ts\" which will resolve it via the active import map.",
               "data": {
                 "from": "../std/assert/mod.ts",
@@ -2458,14 +2458,14 @@ mod tests {
   fn test_get_code_action_import_map_remap() {
     let uri = Uri::from_str("file:///a/file.ts").unwrap();
     let specifier = ModuleSpecifier::parse("file:///a/file.ts").unwrap();
-    let result = DenoDiagnostic::get_code_action(&uri, &specifier, &lsp::Diagnostic {
+    let result = EdnoDiagnostic::get_code_action(&uri, &specifier, &lsp::Diagnostic {
       range: lsp::Range {
         start: lsp::Position { line: 0, character: 23 },
         end: lsp::Position { line: 0, character: 50 },
       },
       severity: Some(lsp::DiagnosticSeverity::HINT),
       code: Some(lsp::NumberOrString::String("import-map-remap".to_string())),
-      source: Some("deno".to_string()),
+      source: Some("edno".to_string()),
       message: "The import specifier can be remapped to \"/~/std/assert/mod.ts\" which will resolve it via the active import map.".to_string(),
       data: Some(json!({
         "from": "../std/assert/mod.ts",
@@ -2494,7 +2494,7 @@ mod tests {
             },
             "severity": 4,
             "code": "import-map-remap",
-            "source": "deno",
+            "source": "edno",
             "message": "The import specifier can be remapped to \"/~/std/assert/mod.ts\" which will resolve it via the active import map.",
             "data": {
               "from": "../std/assert/mod.ts",
@@ -2555,7 +2555,7 @@ mod tests {
               },
               "severity": 1,
               "code": "import-prefix-missing",
-              "source": "deno",
+              "source": "edno",
               "message": "Import \"bad.js\" not a dependency",
             },
             {
@@ -2565,7 +2565,7 @@ mod tests {
               },
               "severity": 1,
               "code": "import-prefix-missing",
-              "source": "deno",
+              "source": "edno",
               "message": "Import \"bad.js\" not a dependency",
             },
             {
@@ -2575,7 +2575,7 @@ mod tests {
               },
               "severity": 1,
               "code": "import-prefix-missing",
-              "source": "deno",
+              "source": "edno",
               "message": "Import \"bad.d.ts\" not a dependency",
             },
           ],
@@ -2612,7 +2612,7 @@ mod tests {
               },
               "severity": 1,
               "code": "no-local",
-              "source": "deno",
+              "source": "edno",
               "message": format!(
                 "Unable to load a local module: {}🦕.ts\nPlease check the file path.",
                 temp_dir.url(),

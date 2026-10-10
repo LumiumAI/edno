@@ -11,17 +11,17 @@ const {
   ArrayPrototypeJoin,
   SafeArrayIterator,
 } = primordials;
-const { SEP } = core.loadExtScript("ext:deno_node/path/separator.ts");
+const { SEP } = core.loadExtScript("ext:edno_node/path/separator.ts");
 
 /** Determines the common path from a set of paths, using an optional separator,
  * which defaults to the OS default separator.
  *
  * ```ts
  *       const p = common([
- *         "./deno/std/path/mod.ts",
- *         "./deno/std/fs/mod.ts",
+ *         "./edno/std/path/mod.ts",
+ *         "./edno/std/fs/mod.ts",
  *       ]);
- *       console.log(p); // "./deno/std/"
+ *       console.log(p); // "./edno/std/"
  * ```
  */
 function common(paths: string[], sep = SEP): string {

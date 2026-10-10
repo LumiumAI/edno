@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/peer-dep-test-child",
+  "name": "@ednotest/peer-dep-test-child",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/peer-dep-test-grandchild": "*",
-    "@denotest/peer-dep-test-peer": "^1"
+    "@ednotest/peer-dep-test-grandchild": "*",
+    "@ednotest/peer-dep-test-peer": "^1"
   }
 }

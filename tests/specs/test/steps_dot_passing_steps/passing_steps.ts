@@ -1,4 +1,4 @@
-Deno.test("description", async (t) => {
+Edno.test("description", async (t) => {
   const success = await t.step("step 1", async (t) => {
     await t.step("inner 1", () => {});
     await t.step("inner 2", () => {});
@@ -7,7 +7,7 @@ Deno.test("description", async (t) => {
   if (!success) throw new Error("Expected the step to return true.");
 });
 
-Deno.test("description function as first arg", async (t) => {
+Edno.test("description function as first arg", async (t) => {
   const success = await t.step(async function step1(t) {
     await t.step(function inner1() {});
     await t.step(function inner1() {});
@@ -16,7 +16,7 @@ Deno.test("description function as first arg", async (t) => {
   if (!success) throw new Error("Expected the step to return true.");
 });
 
-Deno.test("parallel steps without sanitizers", async (t) => {
+Edno.test("parallel steps without sanitizers", async (t) => {
   // allowed
   await Promise.all([
     t.step({
@@ -40,7 +40,7 @@ Deno.test("parallel steps without sanitizers", async (t) => {
   ]);
 });
 
-Deno.test({
+Edno.test({
   name: "parallel steps without sanitizers due to parent",
   fn: async (t) => {
     // allowed because parent disabled the sanitizers
@@ -58,7 +58,7 @@ Deno.test({
   sanitizeExit: false,
 });
 
-Deno.test({
+Edno.test({
   name: "steps with disabled sanitizers, then enabled, then parallel disabled",
   fn: async (t) => {
     await t.step("step 1", async (t) => {
@@ -99,7 +99,7 @@ Deno.test({
   sanitizeExit: false,
 });
 
-Deno.test("steps buffered then streaming reporting", async (t) => {
+Edno.test("steps buffered then streaming reporting", async (t) => {
   // no sanitizers so this will be buffered
   await t.step({
     name: "step 1",

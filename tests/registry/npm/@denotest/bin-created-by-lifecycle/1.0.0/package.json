@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/bin-created-by-lifecycle",
+  "name": "@ednotest/bin-created-by-lifecycle",
   "version": "1.0.0",
   "scripts": {
     "install": "node install.mjs"

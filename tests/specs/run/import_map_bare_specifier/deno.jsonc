@@ -1,8 +1,8 @@
 {
   "imports": {
     "foo": "./src/app.ts",
-    "bar": "npm:@denotest/bin@0.5.0",
-    "baz": "jsr:@denotest/bin",
+    "bar": "npm:@ednotest/bin@0.5.0",
+    "baz": "jsr:@ednotest/bin",
     "./thing.ts": "./src/app.ts"
   }
 }

@@ -7,6 +7,6 @@ const child = fork("./child.js");
 child.on("message", (msg) => {
   console.log("parent got:", msg.reply);
   child.kill();
-  Deno.exit(0);
+  Edno.exit(0);
 });
 child.send({ ask: "ping" });

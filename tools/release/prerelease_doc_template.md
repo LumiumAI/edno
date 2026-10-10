@@ -7,8 +7,8 @@ land until the release is finished.**
 
 - [ ] Ensure forks and local clones of:
   - [`denoland/deno`](https://github.com/denoland/deno/),
-  - [`denoland/dotcom`](https://github.com/denoland/dotcom/),
-  - [`denoland/deno_docker`](https://github.com/denoland/deno_docker/),
+  - [`ednoland/dotcom`](https://github.com/ednoland/dotcom/),
+  - [`ednoland/deno_docker`](https://github.com/ednoland/deno_docker/),
   - [`denoland/deno-docs`](https://github.com/denoland/deno-docs)
 - [ ] Check https://deno.land/benchmarks?-100 and ensure there's no recent
       regressions.
@@ -19,7 +19,7 @@ land until the release is finished.**
 
 @here
 
-Deno v$VERSION is now getting released.
+Edno v$VERSION is now getting released.
 
 `denoland/deno` is now locked.
 
@@ -28,7 +28,7 @@ Deno v$VERSION is now getting released.
 Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
 ```
 
-## Updating `deno`
+## Updating `edno`
 
 ### Phase 1: Bumping versions
 
@@ -83,7 +83,7 @@ Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
 ## Updating `deno_docker`
 
 - [ ] Run the version bump workflow:
-      https://github.com/denoland/deno_docker/actions/workflows/version_bump.generated.yml
+      https://github.com/ednoland/deno_docker/actions/workflows/version_bump.generated.yml
 - [ ] This will open a PR. Review and merge it.
 - [ ] Create a `$VERSION` tag (_without_ `v` prefix).
 - [ ] This will trigger a publish CI run. Verify that it completes successfully.
@@ -101,5 +101,5 @@ Release checklist: <LINK TO THIS FORKED GIST GOES HERE>
 
 *You can land PRs now*
 
-Deno v$VERSION has been released.
+Edno v$VERSION has been released.
 ```

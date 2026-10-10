@@ -49,13 +49,13 @@ const {
 
 const EMPTY_OPTIONS = ObjectFreeze(ObjectSetPrototypeOf({}, null));
 
-const { ReadableStream } = core.loadExtScript("ext:deno_web/06_streams.js");
+const { ReadableStream } = core.loadExtScript("ext:edno_web/06_streams.js");
 
 const cloneableDeserializers = core.getCloneableDeserializers();
 
 const encodeCursor: (
-  selector: [Deno.KvKey | null, Deno.KvKey | null, Deno.KvKey | null],
-  boundaryKey: Deno.KvKey,
+  selector: [Edno.KvKey | null, Edno.KvKey | null, Edno.KvKey | null],
+  boundaryKey: Edno.KvKey,
 ) => string = (selector, boundaryKey) =>
   op_kv_encode_cursor(selector, boundaryKey);
 
@@ -115,7 +115,7 @@ function validateBackoffSchedule(backoffSchedule: number[]) {
 }
 
 interface RawKvEntry {
-  key: Deno.KvKey;
+  key: Edno.KvKey;
   value: RawValue;
   versionstamp: string;
 }
@@ -141,7 +141,7 @@ class Kv {
   constructor(rid: number = undefined, symbol: symbol = undefined) {
     if (kvSymbol !== symbol) {
       throw new TypeError(
-        "Deno.Kv can not be constructed: use Deno.openKv instead",
+        "Edno.Kv can not be constructed: use Edno.openKv instead",
       );
     }
     this.#rid = rid;
@@ -156,7 +156,7 @@ class Kv {
     return commitVersionstampSymbol;
   }
 
-  async get(key: Deno.KvKey, opts?: { consistency?: Deno.KvConsistencyLevel }) {
+  async get(key: Edno.KvKey, opts?: { consistency?: Edno.KvConsistencyLevel }) {
     const { 0: entries }: [RawKvEntry[]] = await op_kv_snapshot_read(
       this.#rid,
       [[
@@ -180,12 +180,12 @@ class Kv {
   }
 
   async getMany(
-    keys: Deno.KvKey[],
-    opts?: { consistency?: Deno.KvConsistencyLevel },
-  ): Promise<Deno.KvEntry<unknown>[]> {
+    keys: Edno.KvKey[],
+    opts?: { consistency?: Edno.KvConsistencyLevel },
+  ): Promise<Edno.KvEntry<unknown>[]> {
     const ranges: RawKvEntry[][] = await op_kv_snapshot_read(
       this.#rid,
-      ArrayPrototypeMap(keys, (key: Deno.KvKey) => [
+      ArrayPrototypeMap(keys, (key: Edno.KvKey) => [
         null,
         key,
         null,
@@ -207,7 +207,7 @@ class Kv {
     });
   }
 
-  async set(key: Deno.KvKey, value: unknown, options?: { expireIn?: number }) {
+  async set(key: Edno.KvKey, value: unknown, options?: { expireIn?: number }) {
     validateExpireIn(options?.expireIn);
     const versionstamp = await doAtomicWriteInPlace(
       this.#rid,
@@ -219,7 +219,7 @@ class Kv {
     return { ok: true, versionstamp };
   }
 
-  async delete(key: Deno.KvKey) {
+  async delete(key: Edno.KvKey) {
     const result = await doAtomicWriteInPlace(
       this.#rid,
       [],
@@ -230,13 +230,13 @@ class Kv {
   }
 
   list(
-    selector: Deno.KvListSelector,
+    selector: Edno.KvListSelector,
     options: {
       limit?: number;
       batchSize?: number;
       cursor?: string;
       reverse?: boolean;
-      consistency?: Deno.KvConsistencyLevel;
+      consistency?: Edno.KvConsistencyLevel;
     } = EMPTY_OPTIONS,
   ): KvListIterator {
     if (
@@ -268,11 +268,11 @@ class Kv {
   }
 
   #pullBatch(batchSize: number): (
-    selector: Deno.KvListSelector,
+    selector: Edno.KvListSelector,
     cursor: string | undefined,
     reverse: boolean,
-    consistency: Deno.KvConsistencyLevel,
-  ) => Promise<Deno.KvEntry<unknown>[]> {
+    consistency: Edno.KvConsistencyLevel,
+  ) => Promise<Edno.KvEntry<unknown>[]> {
     return async (selector, cursor, reverse, consistency) => {
       const { 0: entries }: [RawKvEntry[]] = await op_kv_snapshot_read(
         this.#rid,
@@ -295,7 +295,7 @@ class Kv {
     message: unknown,
     opts?: {
       delay?: number;
-      keysIfUndelivered?: Deno.KvKey[];
+      keysIfUndelivered?: Edno.KvKey[];
       backoffSchedule?: number[];
     },
   ) {
@@ -377,10 +377,10 @@ class Kv {
     finishMessageOps.clear();
   }
 
-  watch(keys: Deno.KvKey[], options = EMPTY_OPTIONS) {
+  watch(keys: Edno.KvKey[], options = EMPTY_OPTIONS) {
     const raw = options.raw ?? false;
     const rid = op_kv_watch(this.#rid, keys);
-    const lastEntries: (Deno.KvEntryMaybe<unknown> | undefined)[] = ArrayFrom(
+    const lastEntries: (Edno.KvEntryMaybe<unknown> | undefined)[] = ArrayFrom(
       { length: keys.length },
     );
     return new ReadableStream({
@@ -458,15 +458,15 @@ class Kv {
 class AtomicOperation {
   #rid: number;
 
-  #checks: [Deno.KvKey, string | null][] = [];
-  #mutations: [Deno.KvKey, string, RawValue | null, number | undefined][] = [];
-  #enqueues: [Uint8Array, number, Deno.KvKey[], number[] | null][] = [];
+  #checks: [Edno.KvKey, string | null][] = [];
+  #mutations: [Edno.KvKey, string, RawValue | null, number | undefined][] = [];
+  #enqueues: [Uint8Array, number, Edno.KvKey[], number[] | null][] = [];
 
   constructor(rid: number) {
     this.#rid = rid;
   }
 
-  check(...checks: Deno.AtomicCheck[]): this {
+  check(...checks: Edno.AtomicCheck[]): this {
     for (let i = 0; i < checks.length; ++i) {
       const check = checks[i];
       ArrayPrototypePush(this.#checks, [check.key, check.versionstamp]);
@@ -474,7 +474,7 @@ class AtomicOperation {
     return this;
   }
 
-  mutate(...mutations: Deno.KvMutation[]): this {
+  mutate(...mutations: Edno.KvMutation[]): this {
     for (let i = 0; i < mutations.length; ++i) {
       const mutation = mutations[i];
       const key = mutation.key;
@@ -511,7 +511,7 @@ class AtomicOperation {
     return this;
   }
 
-  sum(key: Deno.KvKey, n: bigint): this {
+  sum(key: Edno.KvKey, n: bigint): this {
     ArrayPrototypePush(this.#mutations, [
       key,
       "sum",
@@ -521,7 +521,7 @@ class AtomicOperation {
     return this;
   }
 
-  min(key: Deno.KvKey, n: bigint): this {
+  min(key: Edno.KvKey, n: bigint): this {
     ArrayPrototypePush(this.#mutations, [
       key,
       "min",
@@ -531,7 +531,7 @@ class AtomicOperation {
     return this;
   }
 
-  max(key: Deno.KvKey, n: bigint): this {
+  max(key: Edno.KvKey, n: bigint): this {
     ArrayPrototypePush(this.#mutations, [
       key,
       "max",
@@ -542,7 +542,7 @@ class AtomicOperation {
   }
 
   set(
-    key: Deno.KvKey,
+    key: Edno.KvKey,
     value: unknown,
     options?: { expireIn?: number },
   ): this {
@@ -556,7 +556,7 @@ class AtomicOperation {
     return this;
   }
 
-  delete(key: Deno.KvKey): this {
+  delete(key: Edno.KvKey): this {
     ArrayPrototypePush(this.#mutations, [key, "delete", null, undefined]);
     return this;
   }
@@ -565,7 +565,7 @@ class AtomicOperation {
     message: unknown,
     opts?: {
       delay?: number;
-      keysIfUndelivered?: Deno.KvKey[];
+      keysIfUndelivered?: Edno.KvKey[];
       backoffSchedule?: number[];
     },
   ): this {
@@ -584,7 +584,7 @@ class AtomicOperation {
     return this;
   }
 
-  async commit(): Promise<Deno.KvCommitResult | Deno.KvCommitError> {
+  async commit(): Promise<Edno.KvCommitResult | Edno.KvCommitError> {
     const versionstamp = await doAtomicWriteInPlace(
       this.#rid,
       this.#checks,
@@ -597,11 +597,11 @@ class AtomicOperation {
 
   then() {
     throw new TypeError(
-      "'Deno.AtomicOperation' is not a promise: did you forget to call 'commit()'",
+      "'Edno.AtomicOperation' is not a promise: did you forget to call 'commit()'",
     );
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     const operations = [];
 
     // Format checks
@@ -755,19 +755,19 @@ class KvU64 {
   }
 
   get [SymbolToStringTag]() {
-    return "Deno.KvU64";
+    return "Edno.KvU64";
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return StringPrototypeReplace(
       inspect(Object(this.value), inspectOptions),
       "BigInt",
-      "Deno.KvU64",
+      "Edno.KvU64",
     );
   }
 }
 
-function deserializeValue(entry: RawKvEntry): Deno.KvEntry<unknown> {
+function deserializeValue(entry: RawKvEntry): Edno.KvEntry<unknown> {
   const { kind, value } = entry.value;
   switch (kind) {
     case "v8":
@@ -802,7 +802,7 @@ function serializeValue(value: unknown): RawValue {
   } else if (ObjectPrototypeIsPrototypeOf(KvU64.prototype, value)) {
     return {
       kind: "u64",
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       value: value.valueOf(),
     };
   } else {
@@ -824,44 +824,44 @@ const AsyncIteratorPrototype = ObjectGetPrototypeOf(AsyncGeneratorPrototype);
 const AsyncIterator = AsyncIteratorPrototype.constructor;
 
 class KvListIterator extends AsyncIterator
-  implements AsyncIterator<Deno.KvEntry<unknown>> {
-  #selector: Deno.KvListSelector;
-  #entries: Deno.KvEntry<unknown>[] | null = null;
+  implements AsyncIterator<Edno.KvEntry<unknown>> {
+  #selector: Edno.KvListSelector;
+  #entries: Edno.KvEntry<unknown>[] | null = null;
   #cursorGen: (() => string) | null = null;
   #done = false;
   #lastBatch = false;
   #pullBatch: (
-    selector: Deno.KvListSelector,
+    selector: Edno.KvListSelector,
     cursor: string | undefined,
     reverse: boolean,
-    consistency: Deno.KvConsistencyLevel,
-  ) => Promise<Deno.KvEntry<unknown>[]>;
+    consistency: Edno.KvConsistencyLevel,
+  ) => Promise<Edno.KvEntry<unknown>[]>;
   #limit: number | undefined;
   #count = 0;
   #reverse: boolean;
   #batchSize: number;
-  #consistency: Deno.KvConsistencyLevel;
+  #consistency: Edno.KvConsistencyLevel;
 
   constructor(
     { limit, selector, cursor, reverse, consistency, batchSize, pullBatch }: {
       limit?: number;
-      selector: Deno.KvListSelector;
+      selector: Edno.KvListSelector;
       cursor?: string;
       reverse: boolean;
       batchSize: number;
-      consistency: Deno.KvConsistencyLevel;
+      consistency: Edno.KvConsistencyLevel;
       pullBatch: (
-        selector: Deno.KvListSelector,
+        selector: Edno.KvListSelector,
         cursor: string | undefined,
         reverse: boolean,
-        consistency: Deno.KvConsistencyLevel,
-      ) => Promise<Deno.KvEntry<unknown>[]>;
+        consistency: Edno.KvConsistencyLevel,
+      ) => Promise<Edno.KvEntry<unknown>[]>;
     },
   ) {
     super();
-    let prefix: Deno.KvKey | undefined;
-    let start: Deno.KvKey | undefined;
-    let end: Deno.KvKey | undefined;
+    let prefix: Edno.KvKey | undefined;
+    let start: Edno.KvKey | undefined;
+    let end: Edno.KvKey | undefined;
     if (ObjectHasOwn(selector, "prefix") && selector.prefix !== undefined) {
       prefix = ObjectFreeze(ArrayPrototypeSlice(selector.prefix));
     }
@@ -910,7 +910,7 @@ class KvListIterator extends AsyncIterator
     return this.#cursorGen();
   }
 
-  async next(): Promise<IteratorResult<Deno.KvEntry<unknown>>> {
+  async next(): Promise<IteratorResult<Edno.KvEntry<unknown>>> {
     // Fused or limit exceeded
     if (
       this.#done ||
@@ -960,16 +960,16 @@ class KvListIterator extends AsyncIterator
     };
   }
 
-  [SymbolAsyncIterator](): AsyncIterator<Deno.KvEntry<unknown>> {
+  [SymbolAsyncIterator](): AsyncIterator<Edno.KvEntry<unknown>> {
     return this;
   }
 }
 
 async function doAtomicWriteInPlace(
   rid: number,
-  checks: [Deno.KvKey, string | null][],
-  mutations: [Deno.KvKey, string, RawValue | null, number | undefined][],
-  enqueues: [Uint8Array, number, Deno.KvKey[], number[] | null][],
+  checks: [Edno.KvKey, string | null][],
+  mutations: [Edno.KvKey, string, RawValue | null, number | undefined][],
+  enqueues: [Uint8Array, number, Edno.KvKey[], number[] | null][],
 ): Promise<string | null> {
   for (let i = 0; i < mutations.length; ++i) {
     const mutation = mutations[i];

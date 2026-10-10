@@ -4,16 +4,16 @@ use std::cell::Cell;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use deno_core::CppgcBase;
-use deno_core::CppgcInherits;
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::ResourceId;
-use deno_core::error::ResourceError;
-use deno_core::op2;
-use deno_core::uv_compat;
-use deno_core::uv_compat::uv_handle_t;
-use deno_core::v8;
+use edno_core::CppgcBase;
+use edno_core::CppgcInherits;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::ResourceId;
+use edno_core::error::ResourceError;
+use edno_core::op2;
+use edno_core::uv_compat;
+use edno_core::uv_compat::uv_handle_t;
+use edno_core::v8;
 
 // ---------------------------------------------------------------------------
 // OwnedPtr — a raw-pointer wrapper that owns heap memory without Box's
@@ -234,7 +234,7 @@ impl From<ProviderType> for i32 {
   }
 }
 
-pub use deno_core::uv_compat::AsyncId;
+pub use edno_core::uv_compat::AsyncId;
 
 fn next_async_id(state: &mut OpState) -> i64 {
   state.borrow_mut::<AsyncId>().next()
@@ -254,7 +254,7 @@ pub struct AsyncWrap {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for AsyncWrap {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"AsyncWrap"
@@ -325,7 +325,7 @@ pub struct HandleWrap {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for HandleWrap {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"HandleWrap"
@@ -448,8 +448,8 @@ impl HandleWrap {
   }
 }
 
-static ON_CLOSE_STR: deno_core::FastStaticString =
-  deno_core::ascii_str!("_onClose");
+static ON_CLOSE_STR: edno_core::FastStaticString =
+  edno_core::ascii_str!("_onClose");
 
 #[op2(base, inherit = AsyncWrap)]
 impl HandleWrap {
@@ -531,9 +531,9 @@ fn uv_close<F>(
   // the reconstructed one to avoid dropping the original reference.
   let context_state = unsafe {
     let ptr = context.get_aligned_pointer_from_embedder_data(
-      deno_core::CONTEXT_STATE_SLOT_INDEX,
+      edno_core::CONTEXT_STATE_SLOT_INDEX,
     );
-    let rc = std::rc::Rc::from_raw(ptr as *const deno_core::ContextState);
+    let rc = std::rc::Rc::from_raw(ptr as *const edno_core::ContextState);
     let cloned = rc.clone();
     std::mem::forget(rc);
     cloned
@@ -542,7 +542,7 @@ fn uv_close<F>(
     .event_loop_phases
     .borrow_mut()
     .v8_close_callbacks
-    .push_back(deno_core::event_loop::V8CloseCallback {
+    .push_back(edno_core::event_loop::V8CloseCallback {
       callback: Box::new(on_close),
     });
 }
@@ -552,11 +552,11 @@ mod tests {
   use std::future::poll_fn;
   use std::task::Poll;
 
-  use deno_core::JsRuntime;
-  use deno_core::RuntimeOptions;
+  use edno_core::JsRuntime;
+  use edno_core::RuntimeOptions;
 
   async fn js_test(source_code: &'static str) {
-    deno_core::extension!(
+    edno_core::extension!(
       test_ext,
       objects = [super::AsyncWrap, super::HandleWrap,],
       state = |state| {
@@ -585,7 +585,7 @@ mod tests {
   async fn test_handle_wrap() {
     js_test(
       r#"
-        const { HandleWrap } = Deno.core.ops;
+        const { HandleWrap } = Edno.core.ops;
 
         let called = false;
         class MyHandleWrap extends HandleWrap {

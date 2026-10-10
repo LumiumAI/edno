@@ -8,21 +8,21 @@ import {
 const {
   inspectArgs,
   // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-} = Deno[Deno.internal];
+} = Edno[Edno.internal];
 
-Deno.test(function headersHasCorrectNameProp() {
+Edno.test(function headersHasCorrectNameProp() {
   assertEquals(Headers.name, "Headers");
 });
 
 // Logic heavily copied from web-platform-tests, make
 // sure pass mostly header basic test
 // ref: https://github.com/web-platform-tests/wpt/blob/7c50c216081d6ea3c9afe553ee7b64534020a1b2/fetch/api/headers/headers-basic.html
-Deno.test(function newHeaderTest() {
+Edno.test(function newHeaderTest() {
   new Headers();
   new Headers(undefined);
   new Headers({});
   try {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     new Headers(null as any);
   } catch (e) {
     assert(e instanceof TypeError);
@@ -33,17 +33,17 @@ const headerDict: Record<string, string> = {
   name1: "value1",
   name2: "value2",
   name3: "value3",
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   name4: undefined as any,
   "Content-Type": "value4",
 };
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const headerSeq: any[] = [];
 for (const [name, value] of Object.entries(headerDict)) {
   headerSeq.push([name, value]);
 }
 
-Deno.test(function newHeaderWithSequence() {
+Edno.test(function newHeaderWithSequence() {
   const headers = new Headers(headerSeq);
   for (const [name, value] of Object.entries(headerDict)) {
     assertEquals(headers.get(name), String(value));
@@ -51,14 +51,14 @@ Deno.test(function newHeaderWithSequence() {
   assertEquals(headers.get("length"), null);
 });
 
-Deno.test(function newHeaderWithRecord() {
+Edno.test(function newHeaderWithRecord() {
   const headers = new Headers(headerDict);
   for (const [name, value] of Object.entries(headerDict)) {
     assertEquals(headers.get(name), String(value));
   }
 });
 
-Deno.test(function newHeaderWithHeadersInstance() {
+Edno.test(function newHeaderWithHeadersInstance() {
   const headers = new Headers(headerDict);
   const headers2 = new Headers(headers);
   for (const [name, value] of Object.entries(headerDict)) {
@@ -66,7 +66,7 @@ Deno.test(function newHeaderWithHeadersInstance() {
   }
 });
 
-Deno.test(function headerAppendSuccess() {
+Edno.test(function headerAppendSuccess() {
   const headers = new Headers();
   for (const [name, value] of Object.entries(headerDict)) {
     headers.append(name, value);
@@ -74,7 +74,7 @@ Deno.test(function headerAppendSuccess() {
   }
 });
 
-Deno.test(function headerSetSuccess() {
+Edno.test(function headerSetSuccess() {
   const headers = new Headers();
   for (const [name, value] of Object.entries(headerDict)) {
     headers.set(name, value);
@@ -82,7 +82,7 @@ Deno.test(function headerSetSuccess() {
   }
 });
 
-Deno.test(function headerHasSuccess() {
+Edno.test(function headerHasSuccess() {
   const headers = new Headers(headerDict);
   for (const name of Object.keys(headerDict)) {
     assert(headers.has(name), "headers has name " + name);
@@ -93,7 +93,7 @@ Deno.test(function headerHasSuccess() {
   }
 });
 
-Deno.test(function headerDeleteSuccess() {
+Edno.test(function headerDeleteSuccess() {
   const headers = new Headers(headerDict);
   for (const name of Object.keys(headerDict)) {
     assert(headers.has(name), "headers have a header: " + name);
@@ -106,7 +106,7 @@ Deno.test(function headerDeleteSuccess() {
 // must run in linear time. A quadratic implementation would take many seconds
 // (or minutes) at this size; the linear implementation finishes in
 // milliseconds. The 5s bound is intentionally loose to avoid CI flakes.
-Deno.test(function headerSetDeleteManyDuplicatesIsLinear() {
+Edno.test(function headerSetDeleteManyDuplicatesIsLinear() {
   const N = 20_000;
   const init: [string, string][] = [];
   for (let i = 0; i < N; i++) init.push(["x-dup", String(i)]);
@@ -128,7 +128,7 @@ Deno.test(function headerSetDeleteManyDuplicatesIsLinear() {
   assertEquals(count, 1);
 });
 
-Deno.test(function headerGetSuccess() {
+Edno.test(function headerGetSuccess() {
   const headers = new Headers(headerDict);
   for (const [name, value] of Object.entries(headerDict)) {
     assertEquals(headers.get(name), String(value));
@@ -136,7 +136,7 @@ Deno.test(function headerGetSuccess() {
   }
 });
 
-Deno.test(function headerEntriesSuccess() {
+Edno.test(function headerEntriesSuccess() {
   const headers = new Headers(headerDict);
   const iterators = headers.entries();
   for (const it of iterators) {
@@ -147,7 +147,7 @@ Deno.test(function headerEntriesSuccess() {
   }
 });
 
-Deno.test(function headerKeysSuccess() {
+Edno.test(function headerKeysSuccess() {
   const headers = new Headers(headerDict);
   const iterators = headers.keys();
   for (const it of iterators) {
@@ -155,7 +155,7 @@ Deno.test(function headerKeysSuccess() {
   }
 });
 
-Deno.test(function headerValuesSuccess() {
+Edno.test(function headerValuesSuccess() {
   const headers = new Headers(headerDict);
   const iterators = headers.values();
   const entries = headers.entries();
@@ -177,7 +177,7 @@ const headerEntriesDict: Record<string, string> = {
   "Content-Types": "value6",
 };
 
-Deno.test(function headerForEachSuccess() {
+Edno.test(function headerForEachSuccess() {
   const headers = new Headers(headerEntriesDict);
   const keys = Object.keys(headerEntriesDict);
   keys.forEach((key) => {
@@ -194,7 +194,7 @@ Deno.test(function headerForEachSuccess() {
   assertEquals(callNum, keys.length);
 });
 
-Deno.test(function headerSymbolIteratorSuccess() {
+Edno.test(function headerSymbolIteratorSuccess() {
   assert(Symbol.iterator in Headers.prototype);
   const headers = new Headers(headerEntriesDict);
   for (const header of headers) {
@@ -205,7 +205,7 @@ Deno.test(function headerSymbolIteratorSuccess() {
   }
 });
 
-Deno.test(function headerTypesAvailable() {
+Edno.test(function headerTypesAvailable() {
   function newHeaders(): Headers {
     return new Headers();
   }
@@ -215,7 +215,7 @@ Deno.test(function headerTypesAvailable() {
 
 // Modified from https://github.com/bitinn/node-fetch/blob/7d3293200a91ad52b5ca7962f9d6fd1c04983edb/test/test.js#L2001-L2014
 // Copyright (c) 2016 David Frank. MIT License.
-Deno.test(function headerIllegalReject() {
+Edno.test(function headerIllegalReject() {
   let errorCount = 0;
   try {
     new Headers({ "He y": "ok" });
@@ -269,7 +269,7 @@ Deno.test(function headerIllegalReject() {
 });
 
 // If pair does not contain exactly two items,then throw a TypeError.
-Deno.test(function headerParamsShouldThrowTypeError() {
+Edno.test(function headerParamsShouldThrowTypeError() {
   let hasThrown = 0;
 
   try {
@@ -286,7 +286,7 @@ Deno.test(function headerParamsShouldThrowTypeError() {
   assertEquals(hasThrown, 2);
 });
 
-Deno.test(function headerParamsArgumentsCheck() {
+Edno.test(function headerParamsArgumentsCheck() {
   const methodRequireOneParam = ["delete", "get", "has", "forEach"] as const;
 
   const methodRequireTwoParams = ["append", "set"] as const;
@@ -295,7 +295,7 @@ Deno.test(function headerParamsArgumentsCheck() {
     const headers = new Headers();
     let hasThrown = 0;
     try {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (headers as any)[method]();
       hasThrown = 1;
     } catch (err) {
@@ -313,7 +313,7 @@ Deno.test(function headerParamsArgumentsCheck() {
     let hasThrown = 0;
 
     try {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (headers as any)[method]();
       hasThrown = 1;
     } catch (err) {
@@ -327,7 +327,7 @@ Deno.test(function headerParamsArgumentsCheck() {
 
     hasThrown = 0;
     try {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (headers as any)[method]("foo");
       hasThrown = 1;
     } catch (err) {
@@ -341,52 +341,52 @@ Deno.test(function headerParamsArgumentsCheck() {
   });
 });
 
-Deno.test(function headersInitMultiple() {
+Edno.test(function headersInitMultiple() {
   const headers = new Headers([
     ["Set-Cookie", "foo=bar"],
     ["Set-Cookie", "bar=baz"],
-    ["X-Deno", "foo"],
-    ["X-Deno", "bar"],
+    ["X-Edno", "foo"],
+    ["X-Edno", "bar"],
   ]);
   const actual = [...headers];
   assertEquals(actual, [
     ["set-cookie", "foo=bar"],
     ["set-cookie", "bar=baz"],
-    ["x-deno", "foo, bar"],
+    ["x-edno", "foo, bar"],
   ]);
 });
 
-Deno.test(function headerInitWithPrototypePollution() {
+Edno.test(function headerInitWithPrototypePollution() {
   const originalExec = RegExp.prototype.exec;
   try {
     RegExp.prototype.exec = () => {
       throw Error();
     };
     new Headers([
-      ["X-Deno", "foo"],
-      ["X-Deno", "bar"],
+      ["X-Edno", "foo"],
+      ["X-Edno", "bar"],
     ]);
   } finally {
     RegExp.prototype.exec = originalExec;
   }
 });
 
-Deno.test(function headersAppendMultiple() {
+Edno.test(function headersAppendMultiple() {
   const headers = new Headers([
     ["Set-Cookie", "foo=bar"],
-    ["X-Deno", "foo"],
+    ["X-Edno", "foo"],
   ]);
   headers.append("set-Cookie", "bar=baz");
-  headers.append("x-Deno", "bar");
+  headers.append("x-Edno", "bar");
   const actual = [...headers];
   assertEquals(actual, [
     ["set-cookie", "foo=bar"],
     ["set-cookie", "bar=baz"],
-    ["x-deno", "foo, bar"],
+    ["x-edno", "foo, bar"],
   ]);
 });
 
-Deno.test(function headersAppendDuplicateSetCookieKey() {
+Edno.test(function headersAppendDuplicateSetCookieKey() {
   const headers = new Headers([["Set-Cookie", "foo=bar"]]);
   headers.append("set-Cookie", "foo=baz");
   headers.append("Set-cookie", "baz=bar");
@@ -398,7 +398,7 @@ Deno.test(function headersAppendDuplicateSetCookieKey() {
   ]);
 });
 
-Deno.test(function headersGetSetCookie() {
+Edno.test(function headersGetSetCookie() {
   const headers = new Headers([
     ["Set-Cookie", "foo=bar"],
     ["set-Cookie", "bar=qat"],
@@ -406,7 +406,7 @@ Deno.test(function headersGetSetCookie() {
   assertEquals(headers.get("SET-COOKIE"), "foo=bar, bar=qat");
 });
 
-Deno.test(function toStringShouldBeWebCompatibility() {
+Edno.test(function toStringShouldBeWebCompatibility() {
   const headers = new Headers();
   assertEquals(headers.toString(), "[object Headers]");
 });
@@ -415,7 +415,7 @@ function stringify(...args: unknown[]): string {
   return inspectArgs(args).replace(/\n$/, "");
 }
 
-Deno.test(function customInspectReturnsCorrectHeadersFormat() {
+Edno.test(function customInspectReturnsCorrectHeadersFormat() {
   const blankHeaders = new Headers();
   assertEquals(stringify(blankHeaders), "Headers {}");
   const singleHeader = new Headers([["Content-Type", "application/json"]]);
@@ -447,7 +447,7 @@ Deno.test(function customInspectReturnsCorrectHeadersFormat() {
   );
 });
 
-Deno.test(function invalidHeadersFlaky() {
+Edno.test(function invalidHeadersFlaky() {
   assertThrows(
     () => new Headers([["x", "\u0000x"]]),
     TypeError,

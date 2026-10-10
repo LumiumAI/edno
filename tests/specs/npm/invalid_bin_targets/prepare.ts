@@ -1,14 +1,14 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-const linker = Deno.args[0];
+const linker = Edno.args[0];
 const outsidePath = linker === "isolated"
-  ? "node_modules/.deno/@denotest+invalid-bin-target@1.0.0/node_modules/@denotest/outside.js"
-  : "node_modules/@denotest/outside.js";
+  ? "node_modules/.edno/@ednotest+invalid-bin-target@1.0.0/node_modules/@ednotest/outside.js"
+  : "node_modules/@ednotest/outside.js";
 
-await Deno.mkdir(outsidePath.slice(0, outsidePath.lastIndexOf("/")), {
+await Edno.mkdir(outsidePath.slice(0, outsidePath.lastIndexOf("/")), {
   recursive: true,
 });
-await Deno.writeTextFile(outsidePath, "outside marker\n");
-if (Deno.build.os !== "windows") {
-  await Deno.chmod(outsidePath, 0o644);
+await Edno.writeTextFile(outsidePath, "outside marker\n");
+if (Edno.build.os !== "windows") {
+  await Edno.chmod(outsidePath, 0o644);
 }

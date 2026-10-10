@@ -1,15 +1,15 @@
 {
   "version": "5",
   "specifiers": {
-    "npm:@denotest/esm-basic@*": "1.0.0"
+    "npm:@ednotest/esm-basic@*": "1.0.0"
   },
   "npm": {
-    "@denotest/esm-basic@1.0.0": [WILDCARD]
+    "@ednotest/esm-basic@1.0.0": [WILDCARD]
   },
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@denotest/esm-basic@*"
+        "npm:@ednotest/esm-basic@*"
       ]
     }
   }

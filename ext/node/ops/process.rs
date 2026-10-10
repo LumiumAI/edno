@@ -1,10 +1,10 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::v8;
-use deno_permissions::PermissionCheckError;
-use deno_permissions::PermissionsContainer;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::v8;
+use edno_permissions::PermissionCheckError;
+use edno_permissions::PermissionsContainer;
 #[cfg(unix)]
 use nix::unistd::Gid;
 #[cfg(unix)]
@@ -244,7 +244,7 @@ fn kill(pid: i32, sig: i32) -> i32 {
 
 #[cfg(not(unix))]
 fn kill(pid: i32, _sig: i32) -> i32 {
-  match deno_subprocess_windows::process_kill(pid, _sig) {
+  match edno_subprocess_windows::process_kill(pid, _sig) {
     Ok(_) => 0,
     Err(e) => e.as_uv_error(),
   }
@@ -255,7 +255,7 @@ pub fn op_node_process_kill(
   state: &mut OpState,
   #[smi] pid: i32,
   #[smi] sig: i32,
-) -> Result<i32, deno_permissions::PermissionCheckError> {
+) -> Result<i32, edno_permissions::PermissionCheckError> {
   if pid != std::process::id() as i32 {
     state
       .borrow_mut::<PermissionsContainer>()
@@ -458,7 +458,7 @@ pub fn op_node_process_setuid(
 /// 13 signalsCount, 14 voluntaryContextSwitches, 15 involuntaryContextSwitches.
 ///
 /// CPU times are in microseconds. This follows libuv's `uv_getrusage` unit
-/// conventions for the platforms supported by Deno: on Unix the values come
+/// conventions for the platforms supported by Edno: on Unix the values come
 /// from `getrusage(2)`, with max RSS normalized to kilobytes on Apple
 /// platforms. Fields unavailable on a platform are reported as `0`.
 #[op2(fast)]

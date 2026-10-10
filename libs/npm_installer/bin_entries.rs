@@ -10,10 +10,10 @@ use std::path::Component;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_npm::NpmPackageExtraInfo;
-use deno_npm::NpmPackageId;
-use deno_npm::NpmResolutionPackage;
-use deno_npm::resolution::NpmResolutionSnapshot;
+use edno_npm::NpmPackageExtraInfo;
+use edno_npm::NpmPackageId;
+use edno_npm::NpmResolutionPackage;
+use edno_npm::resolution::NpmResolutionSnapshot;
 use sys_traits::FsCreateDirAll;
 use sys_traits::FsFileMetadata;
 use sys_traits::FsFileSetPermissions;
@@ -131,7 +131,7 @@ impl<'a, TSys: SetupBinEntrySys> BinEntries<'a, TSys> {
     // check for a new collision, if we haven't already
     // found one
     let has_valid_bin = match bin {
-      deno_npm::registry::NpmPackageVersionBinEntry::String(script) => {
+      edno_npm::registry::NpmPackageVersionBinEntry::String(script) => {
         if !bin_script_stays_in_package(script) {
           return;
         }
@@ -145,7 +145,7 @@ impl<'a, TSys: SetupBinEntrySys> BinEntries<'a, TSys> {
         }
         true
       }
-      deno_npm::registry::NpmPackageVersionBinEntry::Map(entries) => {
+      edno_npm::registry::NpmPackageVersionBinEntry::Map(entries) => {
         let mut has_valid_bin = false;
         for (name, script) in entries {
           if !bin_script_stays_in_package(script) {
@@ -203,7 +203,7 @@ impl<'a, TSys: SetupBinEntrySys> BinEntries<'a, TSys> {
       }
       if let Some(bin_entries) = &extra.bin {
         match bin_entries {
-          deno_npm::registry::NpmPackageVersionBinEntry::String(script) => {
+          edno_npm::registry::NpmPackageVersionBinEntry::String(script) => {
             if !bin_script_stays_in_package(script) {
               continue;
             }
@@ -215,7 +215,7 @@ impl<'a, TSys: SetupBinEntrySys> BinEntries<'a, TSys> {
             }
             new(self.sys, package, extra, package_path, name, script)?;
           }
-          deno_npm::registry::NpmPackageVersionBinEntry::Map(entries) => {
+          edno_npm::registry::NpmPackageVersionBinEntry::Map(entries) => {
             for (name, script) in entries {
               if !bin_script_stays_in_package(script) {
                 continue;
@@ -573,9 +573,9 @@ fn symlink_bin_entry<'a>(
 mod test {
   use std::path::PathBuf;
 
-  use deno_npm::NpmPackageId;
-  use deno_npm::NpmPackageIdPeerDependencies;
-  use deno_npm::resolution::SerializedNpmResolutionSnapshot;
+  use edno_npm::NpmPackageId;
+  use edno_npm::NpmPackageIdPeerDependencies;
+  use edno_npm::resolution::SerializedNpmResolutionSnapshot;
   use deno_semver::package::PackageNv;
   use sys_traits::FsCreateDirAll;
   use sys_traits::FsRead;
@@ -622,7 +622,7 @@ mod test {
     let sys = sys_traits::impls::RealSys;
     let dir = sys_traits::EnvTempDir::env_temp_dir(&sys)
       .unwrap()
-      .join(format!("deno_test_bin_entries_{name}_{id}"));
+      .join(format!("edno_test_bin_entries_{name}_{id}"));
     sys.fs_create_dir_all(&dir).unwrap();
     struct Cleanup(PathBuf);
     impl Drop for Cleanup {
@@ -674,7 +674,7 @@ mod test {
     let sys = sys_traits::impls::RealSys;
     let package = test_package("@eslint/config-inspector");
     let extra = NpmPackageExtraInfo {
-      bin: Some(deno_npm::registry::NpmPackageVersionBinEntry::Map(
+      bin: Some(edno_npm::registry::NpmPackageVersionBinEntry::Map(
         [(
           "@eslint/config-inspector".to_string(),
           "bin/config-inspector.js".to_string(),
@@ -701,7 +701,7 @@ mod test {
     let sys = sys_traits::impls::RealSys;
     let package = test_package("invalid-bin-targets");
     let extra = NpmPackageExtraInfo {
-      bin: Some(deno_npm::registry::NpmPackageVersionBinEntry::Map(
+      bin: Some(edno_npm::registry::NpmPackageVersionBinEntry::Map(
         [
           ("valid-bin".to_string(), "bin/cli.js".to_string()),
           ("absolute-bin".to_string(), "/tmp/outside.js".to_string()),

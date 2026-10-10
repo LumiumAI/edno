@@ -1,14 +1,14 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_cache"
+name = "edno_cache"
 version = "0.192.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Implementation of Cache API for Deno"
+description = "Implementation of Cache API for Edno"
 
 [lib]
 path = "lib.rs"
@@ -18,7 +18,7 @@ async-stream.workspace = true
 base64.workspace = true
 bytes.workspace = true
 chrono = { workspace = true, features = ["now"] }
-deno_core.workspace = true
+edno_core.workspace = true
 deno_error.workspace = true
 futures.workspace = true
 http.workspace = true

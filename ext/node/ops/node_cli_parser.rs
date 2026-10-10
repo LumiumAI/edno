@@ -3,10 +3,10 @@
 //! Node.js CLI Argument Parser - Uses node_shim crate
 //!
 //! This module uses the node_shim crate to parse Node.js CLI arguments
-//! and translates them to Deno CLI arguments.
+//! and translates them to Edno CLI arguments.
 
-use deno_core::ToV8;
-use deno_core::op2;
+use edno_core::ToV8;
+use edno_core::op2;
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
 #[class(generic)]
@@ -29,32 +29,32 @@ pub use node_shim::PerIsolateOptions;
 pub use node_shim::PerProcessOptions;
 pub use node_shim::TranslateOptions;
 pub use node_shim::TranslatedArgs as NodeShimTranslatedArgs;
-// Re-export types from node_shim for use elsewhere in Deno
+// Re-export types from node_shim for use elsewhere in Edno
 pub use node_shim::parse_args;
 pub use node_shim::parse_node_options_env_var;
 pub use node_shim::translate_to_deno_args as translate_to_deno_args_impl;
 pub use node_shim::wrap_eval_code;
 
-/// Result of translating Node.js CLI args to Deno args
+/// Result of translating Node.js CLI args to Edno args
 #[derive(Debug, Clone, ToV8)]
 pub struct TranslatedArgs {
-  /// The Deno CLI arguments
-  pub deno_args: Vec<String>,
+  /// The Edno CLI arguments
+  pub edno_args: Vec<String>,
   /// Node options that should be added to NODE_OPTIONS env var
   pub node_options: Vec<String>,
-  /// CA store configuration that should be passed to the spawned Deno process.
+  /// CA store configuration that should be passed to the spawned Edno process.
   pub ca_stores: Option<Vec<String>>,
   /// Whether the translated flags selected OpenSSL/system-only CA handling.
   pub use_openssl_ca: bool,
   /// Whether the child process needs npm process state
   pub needs_npm_process_state: bool,
   /// Comma-separated trace event categories from --trace-event-categories,
-  /// to be propagated via DENO_NODE_TRACE_EVENT_CATEGORIES.
+  /// to be propagated via EDNO_NODE_TRACE_EVENT_CATEGORIES.
   pub trace_event_categories: Option<String>,
 }
 
-/// Translate parsed Node.js CLI arguments to Deno CLI arguments.
-/// This is used by child_process when spawning a Deno process as Node.js.
+/// Translate parsed Node.js CLI arguments to Edno CLI arguments.
+/// This is used by child_process when spawning a Edno process as Node.js.
 fn translate_to_deno_args(
   parsed_args: ParseResult,
   script_in_npm_package: bool,
@@ -86,7 +86,7 @@ fn translate_to_deno_args(
   };
 
   TranslatedArgs {
-    deno_args: result.deno_args,
+    edno_args: result.edno_args,
     node_options: result.node_options,
     ca_stores,
     use_openssl_ca,
@@ -95,8 +95,8 @@ fn translate_to_deno_args(
   }
 }
 
-/// Op that parses Node.js CLI arguments and translates them to Deno CLI arguments.
-/// Returns an object with deno_args, node_options, and needs_npm_process_state.
+/// Op that parses Node.js CLI arguments and translates them to Edno CLI arguments.
+/// Returns an object with edno_args, node_options, and needs_npm_process_state.
 /// Throws an error if parsing fails - this helps identify unsupported flags
 /// so they can be added to node_shim.
 ///
@@ -110,11 +110,11 @@ pub fn op_node_translate_cli_args(
   wrap_eval: bool,
 ) -> Result<TranslatedArgs, CliParserError> {
   // If no args, return early with run -A -
-  // `-` tells Deno to read from stdin, matching Node.js behavior where
+  // `-` tells Edno to read from stdin, matching Node.js behavior where
   // `node` with no args reads and executes piped stdin.
   if args.is_empty() {
     return Ok(TranslatedArgs {
-      deno_args: vec!["run".to_string(), "-A".to_string(), "-".to_string()],
+      edno_args: vec!["run".to_string(), "-A".to_string(), "-".to_string()],
       node_options: vec![],
       ca_stores: None,
       use_openssl_ca: false,
@@ -227,7 +227,7 @@ mod tests {
     let parsed = parse_args(svec!["script.js"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
     assert_eq!(
-      result.deno_args,
+      result.edno_args,
       svec![
         "run",
         "-A",
@@ -244,14 +244,14 @@ mod tests {
   fn test_translate_version() {
     let parsed = parse_args(svec!["--version"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert_eq!(result.deno_args, svec!["--version"]);
+    assert_eq!(result.edno_args, svec!["--version"]);
   }
 
   #[test]
   fn test_translate_help() {
     let parsed = parse_args(svec!["--help"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert_eq!(result.deno_args, svec!["--help"]);
+    assert_eq!(result.edno_args, svec!["--help"]);
   }
 
   #[test]
@@ -259,10 +259,10 @@ mod tests {
     let parsed = parse_args(svec!["--eval", "console.log(42)"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
     // Eval code should be wrapped for child_process
-    assert!(result.deno_args.contains(&"eval".to_string()));
-    // Note: deno eval has implicit permissions, so -A is not added
+    assert!(result.edno_args.contains(&"eval".to_string()));
+    // Note: edno eval has implicit permissions, so -A is not added
     // The wrapped code should contain process.getBuiltinModule("vm").runInThisContext
-    assert!(result.deno_args.iter().any(|a| {
+    assert!(result.edno_args.iter().any(|a| {
       a.contains(r#"process.getBuiltinModule("vm").runInThisContext"#)
     }));
   }
@@ -273,10 +273,10 @@ mod tests {
     let result = translate_to_deno_args(parsed, false, true);
     assert!(
       result
-        .deno_args
+        .edno_args
         .contains(&"--inspect=127.0.0.1:9229".to_string())
     );
-    assert!(result.deno_args.contains(&"script.js".to_string()));
+    assert!(result.edno_args.contains(&"script.js".to_string()));
   }
 
   #[test]
@@ -285,7 +285,7 @@ mod tests {
     let result = translate_to_deno_args(parsed, false, true);
     assert!(
       result
-        .deno_args
+        .edno_args
         .contains(&"--inspect-brk=127.0.0.1:9229".to_string())
     );
   }
@@ -294,14 +294,14 @@ mod tests {
   fn test_translate_watch() {
     let parsed = parse_args(svec!["--watch", "script.js"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert!(result.deno_args.contains(&"--watch".to_string()));
+    assert!(result.edno_args.contains(&"--watch".to_string()));
   }
 
   #[test]
   fn test_translate_no_warnings() {
     let parsed = parse_args(svec!["--no-warnings", "script.js"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert!(result.deno_args.contains(&"--quiet".to_string()));
+    assert!(result.edno_args.contains(&"--quiet".to_string()));
     assert!(result.node_options.contains(&"--no-warnings".to_string()));
   }
 
@@ -312,7 +312,7 @@ mod tests {
     let result = translate_to_deno_args(parsed, false, true);
     assert!(
       result
-        .deno_args
+        .edno_args
         .contains(&"--conditions=development".to_string())
     );
   }
@@ -324,7 +324,7 @@ mod tests {
     let result = translate_to_deno_args(parsed, false, true);
     assert!(
       result
-        .deno_args
+        .edno_args
         .contains(&"--conditions=custom".to_string()),
     );
   }
@@ -336,7 +336,7 @@ mod tests {
     let result = translate_to_deno_args(parsed, false, true);
     assert!(
       result
-        .deno_args
+        .edno_args
         .contains(&"--conditions=custom".to_string()),
     );
   }
@@ -346,15 +346,15 @@ mod tests {
     let parsed =
       parse_args(svec!["--max-old-space-size=4096", "script.js"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert!(result.deno_args.iter().any(|a| a.contains("--v8-flags=")));
+    assert!(result.edno_args.iter().any(|a| a.contains("--v8-flags=")));
   }
 
   #[test]
   fn test_translate_repl() {
     let parsed = parse_args(svec![]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    // REPL should have empty deno_args (triggers Deno's REPL behavior)
-    assert!(result.deno_args.is_empty());
+    // REPL should have empty edno_args (triggers Edno's REPL behavior)
+    assert!(result.edno_args.is_empty());
   }
 
   #[test]
@@ -368,37 +368,37 @@ mod tests {
   fn test_translate_run_script() {
     let parsed = parse_args(svec!["--run", "build"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert_eq!(result.deno_args, svec!["task", "build"]);
+    assert_eq!(result.edno_args, svec!["task", "build"]);
   }
 
   #[test]
   fn test_translate_test_runner() {
     let parsed = parse_args(svec!["--test", "test.js"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert!(result.deno_args.contains(&"test".to_string()));
-    assert!(result.deno_args.contains(&"-A".to_string()));
-    assert!(result.deno_args.contains(&"test.js".to_string()));
+    assert!(result.edno_args.contains(&"test".to_string()));
+    assert!(result.edno_args.contains(&"-A".to_string()));
+    assert!(result.edno_args.contains(&"test.js".to_string()));
   }
 
   #[test]
   fn test_translate_test_with_watch() {
     let parsed = parse_args(svec!["--test", "--watch", "test.js"]).unwrap();
     let result = translate_to_deno_args(parsed, false, true);
-    assert!(result.deno_args.contains(&"test".to_string()));
-    assert!(result.deno_args.contains(&"--watch".to_string()));
+    assert!(result.edno_args.contains(&"test".to_string()));
+    assert!(result.edno_args.contains(&"--watch".to_string()));
   }
 
   #[test]
   fn test_translate_subcommand_passthrough() {
-    // Deno subcommands spawned via node:child_process should be passed through
-    // unchanged rather than being treated as a script for `deno run`. See
+    // Edno subcommands spawned via node:child_process should be passed through
+    // unchanged rather than being treated as a script for `edno run`. See
     // #35591.
     for subcommand in ["bundle", "serve", "fmt", "compile", "lint"] {
       let parsed =
         parse_args(svec![subcommand, "jsr:@std/http/file-server"]).unwrap();
       let result = translate_to_deno_args(parsed, false, true);
-      assert_eq!(result.deno_args[0], subcommand);
-      assert!(!result.deno_args.contains(&"run".to_string()));
+      assert_eq!(result.edno_args[0], subcommand);
+      assert!(!result.edno_args.contains(&"run".to_string()));
     }
   }
 

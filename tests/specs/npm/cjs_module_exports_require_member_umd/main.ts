@@ -9,7 +9,7 @@ import {
   disableFragmentWarnings,
   gql,
   resetCaches,
-} from "npm:@denotest/cjs-module-exports-require-member-umd";
+} from "npm:@ednotest/cjs-module-exports-require-member-umd";
 
 console.log(gql());
 console.log(resetCaches());

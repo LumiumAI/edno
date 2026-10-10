@@ -204,7 +204,7 @@ mod tests {
       "file:///src/worker/registry_config.ts".to_string(),
       "file:///src/worker/suggestions.ts".to_string(),
       "file:///src/worker/vscode.ts".to_string(),
-      "https://cdn.esm.sh/v64/twas@2.1.2/deno/twas.js".to_string(),
+      "https://cdn.esm.sh/v64/twas@2.1.2/edno/twas.js".to_string(),
       "https://deno.land/std@0.108.0/async/deadline.ts".to_string(),
       "https://deno.land/std@0.108.0/async/debounce.ts".to_string(),
       "https://deno.land/std@0.108.0/async/deferred.ts".to_string(),

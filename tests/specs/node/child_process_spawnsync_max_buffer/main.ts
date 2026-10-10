@@ -7,12 +7,12 @@ const child = `
 // Write much more than the maxBuffer below so the limit is hit quickly.
 const chunk = "x".repeat(64 * 1024);
 while (true) {
-  Deno.stdout.writeSync(new TextEncoder().encode(chunk));
+  Edno.stdout.writeSync(new TextEncoder().encode(chunk));
 }
 `;
 
 const start = Date.now();
-const result = spawnSync(Deno.execPath(), ["eval", child], {
+const result = spawnSync(Edno.execPath(), ["eval", child], {
   maxBuffer: 32 * 1024,
   // Enforce an upper bound so the test fails loudly rather than hanging if
   // the maxBuffer enforcement regresses.
@@ -25,7 +25,7 @@ if (result.error === undefined || result.error === null) {
     `expected an error to be set, got: ${JSON.stringify(result)}`,
   );
 }
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const code = (result.error as any).code;
 if (code !== "ENOBUFS") {
   throw new Error(

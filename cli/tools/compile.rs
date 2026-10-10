@@ -9,15 +9,15 @@ use std::sync::Arc;
 
 use deno_ast::MediaType;
 use deno_ast::ModuleSpecifier;
-use deno_config::deno_json::NodeModulesDirMode;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::anyhow;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
+use edno_config::edno_json::NodeModulesDirMode;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::anyhow;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
 use deno_graph::GraphKind;
 use deno_graph::ModuleGraph;
-use deno_npm_installer::graph::NpmCachingStrategy;
+use edno_npm_installer::graph::NpmCachingStrategy;
 use deno_path_util::resolve_url_or_path;
 use deno_path_util::url_from_file_path;
 use deno_path_util::url_to_file_path;
@@ -28,7 +28,7 @@ use super::installer::BinNameResolver;
 use crate::args::CliOptions;
 use crate::args::CompileFlags;
 use crate::args::ConfigFlag;
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::Flags;
 use crate::args::TypeCheckMode;
 use crate::factory::CliFactory;
@@ -103,14 +103,14 @@ async fn compile_inner(
       // Enable CJS detection for Node-based frameworks.
       flags.unstable_config.detect_cjs = true;
       // These frameworks emit a pre-built/bundled server entrypoint that is
-      // not meant to be type checked by Deno (it references Node types that
+      // not meant to be type checked by Edno (it references Node types that
       // aren't resolvable from the build output); the framework handles its
       // own compilation.
       if matches!(detection.name, "Next.js" | "SvelteKit")
         && !matches!(flags.type_check_mode, TypeCheckMode::None)
       {
         log::info!(
-          "Disabling Deno type checking for {} compile; the framework handles app compilation itself",
+          "Disabling Edno type checking for {} compile; the framework handles app compilation itself",
           detection.name
         );
         flags.type_check_mode = TypeCheckMode::None;
@@ -118,7 +118,7 @@ async fn compile_inner(
       // Write a temporary entrypoint file with a random suffix so we
       // never overwrite an existing project file.
       let entrypoint_path = dir.join(format!(
-        ".deno_compile_entry_{:08x}.ts",
+        ".edno_compile_entry_{:08x}.ts",
         rand::thread_rng().r#gen::<u32>()
       ));
       std::fs::write(&entrypoint_path, detection.entrypoint_code)?;
@@ -129,7 +129,7 @@ async fn compile_inner(
         compile_flags.output = Some(dir_name.to_string_lossy().into_owned());
       }
       // Add framework build output to includes, resolved relative to the
-      // detected app directory so `deno compile ./myapp` picks up
+      // detected app directory so `edno compile ./myapp` picks up
       // `./myapp/.next` rather than `./.next`.
       for inc in detection.include_paths {
         let resolved = dir.join(&inc).display().to_string();
@@ -152,7 +152,7 @@ async fn compile_inner(
 
   // Keep flags.subcommand in sync so resolve_main_module sees the
   // rewritten source_file instead of the original directory path.
-  flags.subcommand = DenoSubcommand::Compile(compile_flags.clone());
+  flags.subcommand = EdnoSubcommand::Compile(compile_flags.clone());
 
   // Clean up temp entrypoints on exit (framework-detected and/or bundled).
   struct CleanupGuard(Vec<PathBuf>);
@@ -188,7 +188,7 @@ async fn compile_inner(
 
   let _bundle_cleanup = if compile_flags.bundle {
     log::warn!(
-      "{} deno compile --bundle is experimental and may change.",
+      "{} edno compile --bundle is experimental and may change.",
       colors::yellow("Warning")
     );
     // Auto-include the closest `package.json` to the entrypoint, if any.
@@ -243,7 +243,7 @@ async fn compile_inner(
         .include
         .push(worker_path.display().to_string());
     }
-    flags.subcommand = DenoSubcommand::Compile(compile_flags.clone());
+    flags.subcommand = EdnoSubcommand::Compile(compile_flags.clone());
     let mut cleanup = vec![bundle_path];
     cleanup.extend(extra_cleanup);
     Some(CleanupGuard(cleanup))
@@ -327,7 +327,7 @@ async fn run_bundle_for_compile(
     all_referenced_paths.extend(worker_rewrite.referenced_abs_paths.clone());
 
     let worker_path = initial_cwd.join(format!(
-      ".deno_compile_worker_{:08x}.mjs",
+      ".edno_compile_worker_{:08x}.mjs",
       rand::thread_rng().r#gen::<u32>()
     ));
     std::fs::write(&worker_path, &worker_rewrite.bytes).with_context(|| {
@@ -354,7 +354,7 @@ async fn run_bundle_for_compile(
   };
 
   let bundle_path = initial_cwd.join(format!(
-    ".deno_compile_bundle_{:08x}.mjs",
+    ".edno_compile_bundle_{:08x}.mjs",
     rand::thread_rng().r#gen::<u32>()
   ));
   std::fs::write(&bundle_path, final_main_src.as_bytes()).with_context(
@@ -394,7 +394,7 @@ async fn bundle_one_for_compile(
 /// then falls back to a basename search across the workspace — pi's
 /// `dist/utils/image-resize.js` does
 /// `new URL("./image-resize-worker.js", import.meta.url)` and the bundle
-/// lives at `dist/.deno_compile_bundle_*.mjs`, so basename matching is
+/// lives at `dist/.edno_compile_bundle_*.mjs`, so basename matching is
 /// what locks it onto `dist/utils/image-resize-worker.js`.
 ///
 /// Returns `(original_url_string, resolved_source_path)` pairs in source
@@ -616,7 +616,7 @@ fn rewrite_absolute_bundle_paths_inner(
     };
   }
 
-  let prefix = r#"// Injected by deno compile --bundle: resolve absolute paths emitted by
+  let prefix = r#"// Injected by edno compile --bundle: resolve absolute paths emitted by
 // esbuild's CJS-from-ESM wrapper against the bundle file's runtime
 // location instead of the build-time absolute path.
 import { fileURLToPath as __internalFileURLToPath } from "node:url";
@@ -762,7 +762,7 @@ pub async fn compile_binary(
     .await
     .with_context(|| {
       format!(
-        "Writing deno compile executable to temporary file '{}'",
+        "Writing edno compile executable to temporary file '{}'",
         temp_path.display()
       )
     });
@@ -1042,7 +1042,7 @@ fn validate_output_path(output_path: &Path) -> Result<(), AnyError> {
       );
     }
 
-    // Make sure we don't overwrite any file not created by Deno compiler because
+    // Make sure we don't overwrite any file not created by Edno compiler because
     // this filename is chosen automatically in some cases.
     if !is_standalone_binary(output_path) {
       bail!(
@@ -1055,7 +1055,7 @@ fn validate_output_path(output_path: &Path) -> Result<(), AnyError> {
       );
     }
 
-    // Remove file if it was indeed a deno compiled binary, to avoid corruption
+    // Remove file if it was indeed a edno compiled binary, to avoid corruption
     // (see https://github.com/denoland/deno/issues/10310)
     std::fs::remove_file(output_path)?;
   } else {
@@ -1380,8 +1380,8 @@ fn get_os_specific_filepath(
 
 #[cfg(test)]
 mod test {
-  use deno_npm::registry::TestNpmRegistryApi;
-  use deno_npm::resolution::NpmVersionResolver;
+  use edno_npm::registry::TestNpmRegistryApi;
+  use edno_npm::resolution::NpmVersionResolver;
 
   pub use super::*;
   use crate::http_util::HttpClientProvider;

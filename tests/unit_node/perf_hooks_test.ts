@@ -13,7 +13,7 @@ import { assert, assertEquals, assertThrows } from "@std/assert";
 // - parallel/test-performance-global.js
 // - parallel/test-performanceobserver-gc.js
 
-Deno.test({
+Edno.test({
   name: "[perf_hooks] performance.timeOrigin",
   fn() {
     assertEquals(typeof performance.timeOrigin, "number");
@@ -24,14 +24,14 @@ Deno.test({
   },
 });
 
-Deno.test("[perf_hooks]: eventLoopUtilization", () => {
+Edno.test("[perf_hooks]: eventLoopUtilization", () => {
   const obj = performance.eventLoopUtilization();
   assertEquals(typeof obj.idle, "number");
   assertEquals(typeof obj.active, "number");
   assertEquals(typeof obj.utilization, "number");
 });
 
-Deno.test("[perf_hooks]: monitorEventLoopDelay", async () => {
+Edno.test("[perf_hooks]: monitorEventLoopDelay", async () => {
   const e = monitorEventLoopDelay();
   assertEquals(e.count, 0);
   e.enable();
@@ -45,18 +45,18 @@ Deno.test("[perf_hooks]: monitorEventLoopDelay", async () => {
   e.disable();
 });
 
-Deno.test("[perf_hooks]: markResourceTiming", () => {
+Edno.test("[perf_hooks]: markResourceTiming", () => {
   assert(typeof performance.markResourceTiming === "function");
 });
 
-Deno.test("[perf_hooks]: PerformanceObserver.supportedEntryTypes", () => {
+Edno.test("[perf_hooks]: PerformanceObserver.supportedEntryTypes", () => {
   const supported = PerformanceObserver.supportedEntryTypes;
   assert(Array.isArray(supported));
   assert(supported.includes("mark"));
   assert(supported.includes("measure"));
 });
 
-Deno.test("[perf_hooks]: PerformanceObserver observes marks", async () => {
+Edno.test("[perf_hooks]: PerformanceObserver observes marks", async () => {
   const entries: PerformanceEntry[] = [];
   const observer = new PerformanceObserver((list) => {
     entries.push(...list.getEntries());
@@ -78,7 +78,7 @@ Deno.test("[perf_hooks]: PerformanceObserver observes marks", async () => {
   performance.clearMarks();
 });
 
-Deno.test("[perf_hooks]: PerformanceObserver observes measures", async () => {
+Edno.test("[perf_hooks]: PerformanceObserver observes measures", async () => {
   const entries: PerformanceEntry[] = [];
   const observer = new PerformanceObserver((list) => {
     entries.push(...list.getEntries());
@@ -99,7 +99,7 @@ Deno.test("[perf_hooks]: PerformanceObserver observes measures", async () => {
   performance.clearMeasures();
 });
 
-Deno.test("[perf_hooks]: PerformanceObserver disconnect stops observation", async () => {
+Edno.test("[perf_hooks]: PerformanceObserver disconnect stops observation", async () => {
   const entries: PerformanceEntry[] = [];
   const observer = new PerformanceObserver((list) => {
     entries.push(...list.getEntries());
@@ -120,7 +120,7 @@ Deno.test("[perf_hooks]: PerformanceObserver disconnect stops observation", asyn
   performance.clearMarks();
 });
 
-Deno.test("[perf_hooks]: PerformanceObserver takeRecords", () => {
+Edno.test("[perf_hooks]: PerformanceObserver takeRecords", () => {
   const observer = new PerformanceObserver(() => {});
   observer.observe({ entryTypes: ["mark"] });
 
@@ -138,7 +138,7 @@ Deno.test("[perf_hooks]: PerformanceObserver takeRecords", () => {
   performance.clearMarks();
 });
 
-Deno.test("[perf_hooks]: PerformanceObserver observes node:http server entries", async () => {
+Edno.test("[perf_hooks]: PerformanceObserver observes node:http server entries", async () => {
   const server = http.createServer((_req, res) => {
     res.end("ok");
   });
@@ -187,7 +187,7 @@ Deno.test("[perf_hooks]: PerformanceObserver observes node:http server entries",
 // Waits for the first `http` entry named `name` and returns its `detail`.
 function observeHttpEntry(name: string) {
   const { promise, resolve, reject } = Promise.withResolvers<
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     any
   >();
   const timer = setTimeout(
@@ -198,7 +198,7 @@ function observeHttpEntry(name: string) {
     for (const entry of list.getEntries()) {
       if (entry.entryType === "http" && entry.name === name) {
         clearTimeout(timer);
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         resolve((entry as any).detail);
       }
     }
@@ -216,7 +216,7 @@ function observeHttpEntry(name: string) {
 // The reported URL must include the port when it is non-default, rather than
 // falling back to the bare hostname.
 // Refs: https://github.com/nodejs/node/issues/59625
-Deno.test("[perf_hooks]: HttpClient url reports a non-default port", async () => {
+Edno.test("[perf_hooks]: HttpClient url reports a non-default port", async () => {
   const server = http.createServer((_req, res) => res.end("ok"));
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const port = (server.address() as AddressInfo).port;
@@ -250,7 +250,7 @@ Deno.test("[perf_hooks]: HttpClient url reports a non-default port", async () =>
 // When a request path has been rewritten to absolute-form for proxying, the
 // entry must report it as-is instead of appending it to the authority again.
 // Refs: https://github.com/nodejs/node/issues/59625
-Deno.test("[perf_hooks]: HttpClient url is not duplicated when proxied", async () => {
+Edno.test("[perf_hooks]: HttpClient url is not duplicated when proxied", async () => {
   // Short-circuiting proxy: it never forwards, so the target need not exist.
   const proxy = http.createServer((_req, res) => res.end("via-proxy"));
   await new Promise<void>((resolve) => proxy.listen(0, "127.0.0.1", resolve));
@@ -265,7 +265,7 @@ Deno.test("[perf_hooks]: HttpClient url is not duplicated when proxied", async (
         path: "/foo",
         agent: new http.Agent({
           proxyEnv: { HTTP_PROXY: `http://127.0.0.1:${proxyPort}` },
-          // deno-lint-ignore no-explicit-any
+          // edno-lint-ignore no-explicit-any
         } as any),
       }, (res) => {
         res.resume();
@@ -286,7 +286,7 @@ Deno.test("[perf_hooks]: HttpClient url is not duplicated when proxied", async (
 // The URL is built from the request authority, so an explicitly supplied Host
 // header does not change it. Node reports the same, as both derive the URL
 // from `options`, not from the outgoing headers.
-Deno.test("[perf_hooks]: HttpClient url ignores an explicit Host header", async () => {
+Edno.test("[perf_hooks]: HttpClient url ignores an explicit Host header", async () => {
   const server = http.createServer((_req, res) => res.end("ok"));
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const port = (server.address() as AddressInfo).port;
@@ -315,7 +315,7 @@ Deno.test("[perf_hooks]: HttpClient url ignores an explicit Host header", async 
   }
 });
 
-Deno.test("[perf_hooks]: node:http server entries are not retroactive", async () => {
+Edno.test("[perf_hooks]: node:http server entries are not retroactive", async () => {
   let finishResponse: (() => void) | undefined;
   let resolveRequestStarted = () => {};
   const requestStarted = new Promise<void>((resolve) => {

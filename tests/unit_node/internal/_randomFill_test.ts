@@ -11,7 +11,7 @@ const validateZero = (buf: Buffer) => {
   buf.forEach((val) => assertEquals(val, 0));
 };
 
-Deno.test("[node/crypto.randomFill]", async () => {
+Edno.test("[node/crypto.randomFill]", async () => {
   const { promise, resolve } = Promise.withResolvers<boolean>();
   const buf = Buffer.alloc(10);
   const before = buf.toString("hex");
@@ -25,7 +25,7 @@ Deno.test("[node/crypto.randomFill]", async () => {
   await promise;
 });
 
-Deno.test("[node/crypto.randomFillSync]", () => {
+Edno.test("[node/crypto.randomFillSync]", () => {
   const buf = Buffer.alloc(10);
   const before = buf.toString("hex");
 
@@ -34,19 +34,19 @@ Deno.test("[node/crypto.randomFillSync]", () => {
   assertNotEquals(before, after.toString("hex"));
 });
 
-Deno.test("[node/crypto.randomFillSync] Complete fill, explicit size", () => {
+Edno.test("[node/crypto.randomFillSync] Complete fill, explicit size", () => {
   const buf = Buffer.alloc(10);
   randomFillSync(buf, undefined, 10);
   validateNonZero(buf);
 });
 
-Deno.test("[randomFillSync] Complete fill", () => {
+Edno.test("[randomFillSync] Complete fill", () => {
   const buf = Buffer.alloc(10);
   randomFillSync(buf);
   validateNonZero(buf);
 });
 
-Deno.test("[node/crypto.randomFillSync] Fill beginning, explicit offset+size", () => {
+Edno.test("[node/crypto.randomFillSync] Fill beginning, explicit offset+size", () => {
   const buf = Buffer.alloc(10);
   randomFillSync(buf, 0, 5);
   validateNonZero(buf);
@@ -56,6 +56,6 @@ Deno.test("[node/crypto.randomFillSync] Fill beginning, explicit offset+size", (
   validateZero(untouched);
 });
 
-Deno.test("[node/crypto.randomFillSync] Invalid offst/size", () => {
+Edno.test("[node/crypto.randomFillSync] Invalid offst/size", () => {
   assertThrows(() => randomFillSync(Buffer.alloc(10), 1, 10));
 });

@@ -6,8 +6,8 @@ import {
   TextLineStream,
   toFileUrl,
 } from "../../../tools/util.js";
-import { assert, denoBinary, ManifestTestOptions, runPy } from "./utils.ts";
-import { DOMParser } from "jsr:@b-fuze/deno-dom@0.1.56/wasm";
+import { assert, ednoBinary, ManifestTestOptions, runPy } from "./utils.ts";
+import { DOMParser } from "jsr:@b-fuze/edno-dom@0.1.56/wasm";
 
 export async function runWithTestUtil<T>(
   verbose: boolean,
@@ -125,14 +125,14 @@ async function runSingleTestInner(
   );
   const { title } = Object.fromEntries(_options.script_metadata || []);
   const bundle = await generateBundle(url);
-  const tempFile = await Deno.makeTempFile({
+  const tempFile = await Edno.makeTempFile({
     prefix: "wpt-bundle-",
     suffix: ".js",
   });
 
   let interval;
   try {
-    await Deno.writeTextFile(tempFile, bundle);
+    await Edno.writeTextFile(tempFile, bundle);
 
     const startTime = new Date().getTime();
 
@@ -159,7 +159,7 @@ async function runSingleTestInner(
     );
 
     const start = performance.now();
-    const proc = new Deno.Command(denoBinary(), {
+    const proc = new Edno.Command(ednoBinary(), {
       args,
       env: {
         NO_COLOR: "1",
@@ -215,7 +215,7 @@ async function runSingleTestInner(
     };
   } finally {
     clearInterval(interval);
-    await Deno.remove(tempFile);
+    await Edno.remove(tempFile);
   }
 }
 
@@ -272,7 +272,7 @@ async function generateBundle(location: URL): Promise<string> {
       const url = toFileUrl(
         join(ROOT_PATH, "./tests/wpt/runner/testharnessreport.js"),
       );
-      const contents = await Deno.readTextFile(url);
+      const contents = await Edno.readTextFile(url);
       scriptContents.push([url.href, shim]);
       scriptContents.push([url.href, contents]);
     } else if (src) {
@@ -293,7 +293,7 @@ async function generateBundle(location: URL): Promise<string> {
 
   return scriptContents.map(([url, contents]) => `
 (function() {
-  const [_,err] = Deno[Deno.internal].core.evalContext(${
+  const [_,err] = Edno[Edno.internal].core.evalContext(${
     JSON.stringify(contents)
   }, ${JSON.stringify(url)});
   if (err !== null) {

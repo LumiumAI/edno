@@ -17,24 +17,24 @@ use base64::prelude::BASE64_URL_SAFE;
 use boxed_error::Boxed;
 use chrono::DateTime;
 use chrono::Utc;
-use deno_core::AsyncRefCell;
-use deno_core::ByteString;
-use deno_core::CancelFuture;
-use deno_core::CancelHandle;
-use deno_core::JsBuffer;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::ToJsBuffer;
-use deno_core::convert::Uint8Array;
-use deno_core::futures::StreamExt;
-use deno_core::op2;
-use deno_core::serde_v8::AnyValue;
-use deno_core::serde_v8::BigInt;
+use edno_core::AsyncRefCell;
+use edno_core::ByteString;
+use edno_core::CancelFuture;
+use edno_core::CancelHandle;
+use edno_core::JsBuffer;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::ToJsBuffer;
+use edno_core::convert::Uint8Array;
+use edno_core::futures::StreamExt;
+use edno_core::op2;
+use edno_core::serde_v8::AnyValue;
+use edno_core::serde_v8::BigInt;
 use deno_error::JsErrorBox;
 use deno_error::JsErrorClass;
-use deno_features::FeatureChecker;
+use edno_features::FeatureChecker;
 use denokv_proto::AtomicWrite;
 use denokv_proto::Check;
 use denokv_proto::Consistency;
@@ -64,8 +64,8 @@ pub use crate::interface::*;
 
 pub const UNSTABLE_FEATURE_NAME: &str = "kv";
 
-deno_core::extension!(deno_kv,
-  deps = [ deno_web ],
+edno_core::extension!(edno_kv,
+  deps = [ edno_web ],
   ops = [
     op_kv_database_open,
     op_kv_snapshot_read,
@@ -129,7 +129,7 @@ pub enum KvErrorKind {
   DatabaseHandler(JsErrorBox),
   #[class(inherit)]
   #[error(transparent)]
-  Resource(#[from] deno_core::error::ResourceError),
+  Resource(#[from] edno_core::error::ResourceError),
   #[class(type)]
   #[error("Too many ranges (max {0})")]
   TooManyRanges(usize),
@@ -220,7 +220,7 @@ async fn op_kv_database_open(
     let state = state.borrow();
     state
       .borrow::<Arc<FeatureChecker>>()
-      .check_or_exit(UNSTABLE_FEATURE_NAME, "Deno.openKv");
+      .check_or_exit(UNSTABLE_FEATURE_NAME, "Edno.openKv");
     state.borrow::<Rc<dyn DynamicDbHandler>>().clone()
   };
   let db = handler

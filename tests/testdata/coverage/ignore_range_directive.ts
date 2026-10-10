@@ -5,16 +5,16 @@ type Dummy = {
 };
 
 export function used(condition: boolean): boolean {
-  // deno-coverage-ignore-start
+  // edno-coverage-ignore-start
   if (condition) {
     return false;
   }
-  // deno-coverage-ignore-stop
+  // edno-coverage-ignore-stop
 
   return true;
 }
 
-// deno-coverage-ignore-start
+// edno-coverage-ignore-start
 function unused() {
   console.log("unused");
 }

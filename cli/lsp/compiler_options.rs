@@ -6,17 +6,17 @@ use std::collections::HashSet;
 use std::sync::Arc;
 
 use deno_ast::MediaType;
-use deno_config::deno_json::CompilerOptions;
-use deno_config::glob::FilePatterns;
-use deno_config::glob::WalkEntry;
-use deno_config::workspace::TsTypeLib;
-use deno_core::url::Url;
-use deno_resolver::deno_json::CompilerOptionsKey;
-use deno_resolver::deno_json::CompilerOptionsResolver;
-use deno_resolver::deno_json::CompilerOptionsType;
-use deno_resolver::deno_json::JsxImportSourceConfig;
-use deno_resolver::deno_json::TsConfigFile;
-use deno_resolver::deno_json::get_base_compiler_options_for_emit;
+use edno_config::edno_json::CompilerOptions;
+use edno_config::glob::FilePatterns;
+use edno_config::glob::WalkEntry;
+use edno_config::workspace::TsTypeLib;
+use edno_core::url::Url;
+use edno_resolver::edno_json::CompilerOptionsKey;
+use edno_resolver::edno_json::CompilerOptionsResolver;
+use edno_resolver::edno_json::CompilerOptionsType;
+use edno_resolver::edno_json::JsxImportSourceConfig;
+use edno_resolver::edno_json::TsConfigFile;
+use edno_resolver::edno_json::get_base_compiler_options_for_emit;
 
 use crate::lsp::config::Config;
 use crate::lsp::logging::lsp_warn;
@@ -125,7 +125,7 @@ impl LspCompilerOptionsResolver {
               .workspace_dir_or_source_url()
               .cloned(),
             compiler_options: d
-              .compiler_options_for_lib(TsTypeLib::DenoWindow)
+              .compiler_options_for_lib(TsTypeLib::EdnoWindow)
               .inspect_err(|err| {
                 lsp_warn!("{err:#}");
               })
@@ -134,7 +134,7 @@ impl LspCompilerOptionsResolver {
               .unwrap_or_else(|| {
                 Arc::new(get_base_compiler_options_for_emit(
                   CompilerOptionsType::Check {
-                    lib: TsTypeLib::DenoWindow,
+                    lib: TsTypeLib::EdnoWindow,
                   },
                   d.source_kind,
                 ))

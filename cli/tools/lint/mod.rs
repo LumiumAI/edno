@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 //! This module provides file linting utilities using
-//! [`deno_lint`](https://github.com/denoland/deno_lint).
+//! [`deno_lint`](https://github.com/ednoland/deno_lint).
 
 use std::collections::HashSet;
 use std::fs;
@@ -13,25 +13,25 @@ use std::sync::Arc;
 
 use deno_ast::ModuleSpecifier;
 use deno_ast::ParsedSource;
-use deno_config::deno_json::LintRulesConfig;
-use deno_config::glob::FileCollector;
-use deno_config::glob::FilePatterns;
-use deno_config::workspace::WorkspaceDirectory;
-use deno_config::workspace::WorkspaceDirectoryRc;
-use deno_core::anyhow::anyhow;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_core::futures::future::LocalBoxFuture;
-use deno_core::parking_lot::Mutex;
-use deno_core::serde_json;
-use deno_core::unsync::future::LocalFutureExt;
-use deno_core::unsync::future::SharedLocal;
+use edno_config::edno_json::LintRulesConfig;
+use edno_config::glob::FileCollector;
+use edno_config::glob::FilePatterns;
+use edno_config::workspace::WorkspaceDirectory;
+use edno_config::workspace::WorkspaceDirectoryRc;
+use edno_core::anyhow::anyhow;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_core::futures::future::LocalBoxFuture;
+use edno_core::parking_lot::Mutex;
+use edno_core::serde_json;
+use edno_core::unsync::future::LocalFutureExt;
+use edno_core::unsync::future::SharedLocal;
 use deno_graph::ModuleGraph;
-use deno_lib::util::hash::FastInsecureHasher;
+use edno_lib::util::hash::FastInsecureHasher;
 use deno_lint::diagnostic::LintDiagnostic;
-use deno_print::drop_println;
-use deno_resolver::deno_json::CompilerOptionsResolver;
+use edno_print::drop_println;
+use edno_resolver::edno_json::CompilerOptionsResolver;
 use log::debug;
 use reporters::LintReporter;
 use reporters::create_reporter;
@@ -76,7 +76,7 @@ pub use rules::collect_no_slow_type_diagnostics;
 
 const JSON_SCHEMA_VERSION: u8 = 1;
 
-static STDIN_FILE_NAME: &str = "$deno$stdin.mts";
+static STDIN_FILE_NAME: &str = "$edno$stdin.mts";
 
 pub async fn lint(
   flags: Arc<Flags>,
@@ -129,7 +129,7 @@ pub async fn lint(
     linter.finish()
   };
   if !success {
-    deno_runtime::exit(1);
+    edno_runtime::exit(1);
   }
 
   Ok(())
@@ -423,7 +423,7 @@ impl WorkspaceLinter {
         future.await?;
       }
     } else {
-      deno_core::futures::future::try_join_all(futures).await?;
+      edno_core::futures::future::try_join_all(futures).await?;
     }
 
     if let Some(incremental_cache) = &maybe_incremental_cache {

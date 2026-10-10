@@ -2041,7 +2041,7 @@ fn pipe_test_socket_path(name: &str) -> std::path::PathBuf {
     std::sync::atomic::AtomicU64::new(0);
   let id = NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
   std::env::temp_dir()
-    .join(format!("deno-uv-{name}-{}-{id}.sock", std::process::id()))
+    .join(format!("edno-uv-{name}-{}-{id}.sock", std::process::id()))
 }
 
 #[cfg(unix)]
@@ -2948,7 +2948,7 @@ async fn uv_write_callback_is_deferred() {
 
 /// Verify that multiple connections queued before a tick are all accepted
 /// in a single event loop iteration. This prevents starvation when the
-/// connection handler does async work (e.g., Deno.listenTls) that delays
+/// connection handler does async work (e.g., Edno.listenTls) that delays
 /// returning to the I/O phase.
 #[tokio::test(flavor = "current_thread")]
 async fn tcp_batch_accept() {
@@ -3313,7 +3313,7 @@ async fn pipe_connect_retries_on_error_pipe_busy() {
   use tokio::net::windows::named_pipe::ServerOptions;
   // Unique pipe name per test run.
   let pipe_name =
-    format!(r"\\.\pipe\deno-uvcompat-busy-{}", std::process::id());
+    format!(r"\\.\pipe\edno-uvcompat-busy-{}", std::process::id());
 
   // Server with max_instances=1 -- only one client can be connected at
   // a time. The first server instance must use first_pipe_instance(true).
@@ -3391,7 +3391,7 @@ async fn uv_pipe_connect_busy_then_succeeds() {
   use tokio::net::windows::named_pipe::ServerOptions;
 
   let pipe_name =
-    format!(r"\\.\pipe\deno-uvcompat-busy-cb-{}", std::process::id());
+    format!(r"\\.\pipe\edno-uvcompat-busy-cb-{}", std::process::id());
 
   // Saturate the pipe so the synchronous open in uv_pipe_connect hits
   // ERROR_PIPE_BUSY.

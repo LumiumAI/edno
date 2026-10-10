@@ -13,16 +13,16 @@ use std::ptr::NonNull;
 use std::ptr::null;
 use std::rc::Rc;
 
-use deno_core::FromV8;
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::convert::OptionUndefined;
-use deno_core::cppgc;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::v8_static_strings;
-use deno_permissions::OpenAccessKind;
-use deno_permissions::PermissionsContainer;
+use edno_core::FromV8;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::convert::OptionUndefined;
+use edno_core::cppgc;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::v8_static_strings;
+use edno_permissions::OpenAccessKind;
+use edno_permissions::PermissionsContainer;
 use rusqlite::ffi as libsqlite3_sys;
 use rusqlite::ffi::SQLITE_DBCONFIG_DEFENSIVE;
 use rusqlite::ffi::SQLITE_DBCONFIG_DQS_DDL;
@@ -683,7 +683,7 @@ impl Drop for CallbackDepthGuard {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for DatabaseSync {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DatabaseSync"
@@ -3111,7 +3111,7 @@ pub struct DatabaseSyncLimits {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for DatabaseSyncLimits {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"DatabaseSyncLimits"

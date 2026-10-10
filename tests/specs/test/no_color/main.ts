@@ -1,16 +1,16 @@
-Deno.test({
+Edno.test({
   name: "success",
   fn() {},
 });
 
-Deno.test({
+Edno.test({
   name: "fail",
   fn() {
     throw new Error("fail");
   },
 });
 
-Deno.test({
+Edno.test({
   name: "ignored",
   ignore: true,
   fn() {},

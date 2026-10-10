@@ -1,4 +1,4 @@
-const server = Deno.serve({
+const server = Edno.serve({
   handler() {
     return new Response("Hello World");
   },

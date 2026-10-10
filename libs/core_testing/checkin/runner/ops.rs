@@ -3,18 +3,18 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use deno_core::CppgcBase;
-use deno_core::CppgcInherits;
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::stats::RuntimeActivityDiff;
-use deno_core::stats::RuntimeActivitySnapshot;
-use deno_core::stats::RuntimeActivityStats;
-use deno_core::stats::RuntimeActivityStatsFactory;
-use deno_core::stats::RuntimeActivityStatsFilter;
-use deno_core::v8;
-use deno_core::v8::cppgc::GcCell;
+use edno_core::CppgcBase;
+use edno_core::CppgcInherits;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::stats::RuntimeActivityDiff;
+use edno_core::stats::RuntimeActivitySnapshot;
+use edno_core::stats::RuntimeActivityStats;
+use edno_core::stats::RuntimeActivityStatsFactory;
+use edno_core::stats::RuntimeActivityStatsFilter;
+use edno_core::v8;
+use edno_core::v8::cppgc::GcCell;
 use deno_error::JsErrorBox;
 
 use super::Output;

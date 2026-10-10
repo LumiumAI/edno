@@ -2,7 +2,7 @@
   "compilerOptions": {
     // Notice there's no "node" here, but the user still
     // has a @types/node specified.
-    "lib": ["deno.window"]
+    "lib": ["edno.window"]
   },
   "imports": {
     "@types/node": "npm:@types/node"

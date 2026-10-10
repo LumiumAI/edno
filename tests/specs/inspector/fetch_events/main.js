@@ -17,7 +17,7 @@ await session.post("Network.enable");
 
 // ---- Test 1: redirect chain ------------------------------------------------
 {
-  const server = Deno.serve({ port: 0, onListen: () => {} }, (req) => {
+  const server = Edno.serve({ port: 0, onListen: () => {} }, (req) => {
     const url = new URL(req.url);
     if (url.pathname === "/start") {
       return new Response(null, {
@@ -83,7 +83,7 @@ await session.post("Network.enable");
 
 // ---- Test 2: streaming request body ---------------------------------------
 {
-  const server = Deno.serve(
+  const server = Edno.serve(
     { port: 0, onListen: () => {} },
     async (req) => new Response(await req.text()),
   );

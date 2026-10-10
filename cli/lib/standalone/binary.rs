@@ -4,9 +4,9 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 use deno_media_type::MediaType;
-use deno_resolver::workspace::PackageJsonDepResolution;
-use deno_runtime::deno_permissions::PermissionsOptions;
-use deno_runtime::deno_telemetry::OtelConfig;
+use edno_resolver::workspace::PackageJsonDepResolution;
+use edno_runtime::edno_permissions::PermissionsOptions;
+use edno_runtime::edno_telemetry::OtelConfig;
 use deno_semver::Version;
 use indexmap::IndexMap;
 use serde::Deserialize;
@@ -18,18 +18,18 @@ use crate::args::UnstableConfig;
 
 pub const MAGIC_BYTES: &[u8; 8] = b"d3n0l4nd";
 
-pub trait DenoRtDeserializable<'a>: Sized {
+pub trait EdnoRtDeserializable<'a>: Sized {
   fn deserialize(input: &'a [u8]) -> std::io::Result<(&'a [u8], Self)>;
 }
 
-impl<'a> DenoRtDeserializable<'a> for Cow<'a, [u8]> {
+impl<'a> EdnoRtDeserializable<'a> for Cow<'a, [u8]> {
   fn deserialize(input: &'a [u8]) -> std::io::Result<(&'a [u8], Self)> {
     let (input, data) = read_bytes_with_u32_len(input)?;
     Ok((input, Cow::Borrowed(data)))
   }
 }
 
-pub trait DenoRtSerializable<'a> {
+pub trait EdnoRtSerializable<'a> {
   fn serialize(
     &'a self,
     builder: &mut capacity_builder::BytesBuilder<'a, Vec<u8>>,
@@ -99,19 +99,19 @@ pub struct Metadata {
   #[serde(default, skip_serializing_if = "Option::is_none")]
   pub self_extracting: Option<String>,
   /// Stable identity for the compiled app, used to locate its persistent
-  /// origin storage (default `Deno.openKv()`, `localStorage`, `caches`).
+  /// origin storage (default `Edno.openKv()`, `localStorage`, `caches`).
   /// Resolved at compile time from `--app-name`, falling back to the output
   /// file name.
   #[serde(default, skip_serializing_if = "Option::is_none")]
   pub app_name: Option<String>,
-  /// Application version from deno.json or package.json, used for
+  /// Application version from edno.json or package.json, used for
   /// auto-update support in desktop apps.
   #[serde(default, skip_serializing_if = "Option::is_none")]
   pub app_version: Option<String>,
-  /// Error reporting URL from deno.json `desktop.errorReporting.url`.
+  /// Error reporting URL from edno.json `desktop.errorReporting.url`.
   #[serde(default, skip_serializing_if = "Option::is_none")]
   pub error_reporting_url: Option<String>,
-  /// Auto-update release base URL from deno.json `desktop.release.baseUrl`.
+  /// Auto-update release base URL from edno.json `desktop.release.baseUrl`.
   #[serde(default, skip_serializing_if = "Option::is_none")]
   pub release_base_url: Option<String>,
 }
@@ -134,7 +134,7 @@ impl<'a> capacity_builder::BytesAppendable<'a> for SpecifierId {
   }
 }
 
-impl<'a> DenoRtSerializable<'a> for SpecifierId {
+impl<'a> EdnoRtSerializable<'a> for SpecifierId {
   fn serialize(
     &'a self,
     builder: &mut capacity_builder::BytesBuilder<'a, Vec<u8>>,
@@ -143,7 +143,7 @@ impl<'a> DenoRtSerializable<'a> for SpecifierId {
   }
 }
 
-impl<'a> DenoRtDeserializable<'a> for SpecifierId {
+impl<'a> EdnoRtDeserializable<'a> for SpecifierId {
   fn deserialize(input: &'a [u8]) -> std::io::Result<(&'a [u8], Self)> {
     let (input, id) = read_u32(input)?;
     Ok((input, Self(id)))
@@ -171,7 +171,7 @@ pub struct RemoteModuleEntry<'a> {
   pub maybe_cjs_export_analysis: Option<Cow<'a, [u8]>>,
 }
 
-impl<'a> DenoRtSerializable<'a> for RemoteModuleEntry<'a> {
+impl<'a> EdnoRtSerializable<'a> for RemoteModuleEntry<'a> {
   fn serialize(
     &'a self,
     builder: &mut capacity_builder::BytesBuilder<'a, Vec<u8>>,
@@ -209,7 +209,7 @@ impl<'a> DenoRtSerializable<'a> for RemoteModuleEntry<'a> {
   }
 }
 
-impl<'a> DenoRtDeserializable<'a> for RemoteModuleEntry<'a> {
+impl<'a> EdnoRtDeserializable<'a> for RemoteModuleEntry<'a> {
   fn deserialize(input: &'a [u8]) -> std::io::Result<(&'a [u8], Self)> {
     #[allow(clippy::type_complexity, reason = "private code")]
     fn deserialize_data_if_has_flag(
@@ -278,7 +278,7 @@ fn serialize_media_type(media_type: MediaType) -> u8 {
   }
 }
 
-impl<'a> DenoRtDeserializable<'a> for MediaType {
+impl<'a> EdnoRtDeserializable<'a> for MediaType {
   fn deserialize(input: &'a [u8]) -> std::io::Result<(&'a [u8], Self)> {
     let (input, value) = read_u8(input)?;
     let value = match value {
@@ -358,7 +358,7 @@ impl<TData> SpecifierDataStore<TData> {
 
 impl<'a, TData> SpecifierDataStore<TData>
 where
-  TData: DenoRtSerializable<'a> + 'a,
+  TData: EdnoRtSerializable<'a> + 'a,
 {
   pub fn serialize(
     &'a self,
@@ -372,9 +372,9 @@ where
   }
 }
 
-impl<'a, TData> DenoRtDeserializable<'a> for SpecifierDataStore<TData>
+impl<'a, TData> EdnoRtDeserializable<'a> for SpecifierDataStore<TData>
 where
-  TData: DenoRtDeserializable<'a>,
+  TData: EdnoRtDeserializable<'a>,
 {
   fn deserialize(input: &'a [u8]) -> std::io::Result<(&'a [u8], Self)> {
     let (input, len) = read_u32_as_usize(input)?;

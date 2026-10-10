@@ -14,17 +14,17 @@ import fixtures from "../testdata/crypto_digest_fixtures.json" with {
 };
 
 const rsaPrivatePem = Buffer.from(
-  await Deno.readFile(
+  await Edno.readFile(
     new URL("../testdata/rsa_private.pem", import.meta.url),
   ),
 );
 const rsaPrivatePkcs1Pem = Buffer.from(
-  await Deno.readFile(
+  await Edno.readFile(
     new URL("../testdata/rsa_private_pkcs1.pem", import.meta.url),
   ),
 );
 const rsaPublicPem = Buffer.from(
-  await Deno.readFile(
+  await Edno.readFile(
     new URL("../testdata/rsa_public.pem", import.meta.url),
   ),
 );
@@ -54,7 +54,7 @@ const table = [
 
 const data = Buffer.from("some data to sign");
 
-Deno.test({
+Edno.test({
   name:
     "crypto.Sign|sign - RSA PEM with SHA224, SHA256, SHA384, SHA512 digests",
   fn() {
@@ -75,7 +75,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "crypto.Verify|verify - RSA PEM with SHA224, SHA256, SHA384, SHA512 digests",
   fn() {
@@ -101,7 +101,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "crypto.createPrivateKey|sign - RSA PEM",
   fn() {
     for (const testCase of table) {
@@ -119,7 +119,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "crypto.createPrivateKey|sign - RSA PKCS1 PEM",
   fn() {
     for (const testCase of table) {
@@ -137,7 +137,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "crypto.createSign|sign - EC PRIVATE KEY",
   fn() {
     const pem = `-----BEGIN EC PRIVATE KEY-----
@@ -148,9 +148,9 @@ AwEH
   },
 });
 
-Deno.test("crypto.createSign|sign - compare with node", async (t) => {
+Edno.test("crypto.createSign|sign - compare with node", async (t) => {
   const DATA = "Hello, world!";
-  const privateKey = Deno.readTextFileSync(
+  const privateKey = Edno.readTextFileSync(
     new URL(import.meta.resolve("../testdata/rsa_private.pem")),
   );
   for (const { digest, signature } of fixtures) {
@@ -173,9 +173,9 @@ Deno.test("crypto.createSign|sign - compare with node", async (t) => {
   }
 });
 
-Deno.test("crypto.createVerify|verify - compare with node", async (t) => {
+Edno.test("crypto.createVerify|verify - compare with node", async (t) => {
   const DATA = "Hello, world!";
-  const publicKey = Deno.readTextFileSync(
+  const publicKey = Edno.readTextFileSync(
     new URL(import.meta.resolve("../testdata/rsa_public.pem")),
   );
   for (const { digest, signature } of fixtures) {
@@ -192,7 +192,7 @@ Deno.test("crypto.createVerify|verify - compare with node", async (t) => {
   }
 });
 
-Deno.test("crypto sign|verify dsaEncoding", () => {
+Edno.test("crypto sign|verify dsaEncoding", () => {
   const { privateKey, publicKey } = generateKeyPairSync("ec", {
     namedCurve: "P-256",
   });
@@ -216,7 +216,7 @@ Deno.test("crypto sign|verify dsaEncoding", () => {
 
 // Regression test for https://github.com/denoland/deno/issues/33291
 // RSA-PSS key with non-standard PEM line width and explicit PSS parameters
-Deno.test("crypto.verify - RSA-PSS key with null algorithm infers digest from key params", () => {
+Edno.test("crypto.verify - RSA-PSS key with null algorithm infers digest from key params", () => {
   const data = Buffer.from([
     0,
     2,
@@ -595,7 +595,7 @@ QIDAQAB
 });
 
 // Companion to the above test: verify sign(null, ...) also infers digest from RSA-PSS key params
-Deno.test("crypto.sign - RSA-PSS key with null algorithm infers digest from key params", () => {
+Edno.test("crypto.sign - RSA-PSS key with null algorithm infers digest from key params", () => {
   const { privateKey, publicKey } = generateKeyPairSync("rsa-pss", {
     modulusLength: 2048,
     hashAlgorithm: "sha384",

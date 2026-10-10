@@ -33,7 +33,7 @@ class StdoutReader {
   }
 }
 
-const command = new Deno.Command(Deno.execPath(), {
+const command = new Edno.Command(Edno.execPath(), {
   args: ["task", "listener"],
   stdout: "piped",
 });
@@ -51,7 +51,7 @@ const hardTimeout = setTimeout(() => {
   } catch {
     // child may have already exited
   }
-  Deno.exit(1);
+  Edno.exit(1);
 }, 30_000);
 
 try {
@@ -71,7 +71,7 @@ try {
   const status = await child.status;
   if (!status.success) {
     console.error("Child exited with code", status.code);
-    Deno.exit(1);
+    Edno.exit(1);
   }
 } finally {
   clearTimeout(hardTimeout);

@@ -1,10 +1,10 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 // Forked from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/4f538975138678878fed5b2555c0672aa578ab7d/types/node/stream.d.ts
 
 import { Buffer } from "node:buffer";
-import { Abortable, EventEmitter } from "ext:deno_node/_events.d.ts";
+import { Abortable, EventEmitter } from "ext:edno_node/_events.d.ts";
 import {
   Buffered,
   BufferEncoding,
@@ -12,7 +12,7 @@ import {
   ReadableStream,
   ReadWriteStream,
   WritableStream,
-} from "ext:deno_node/_global.d.ts";
+} from "ext:edno_node/_global.d.ts";
 
 export class Stream extends EventEmitter {
   pipe<T extends WritableStream>(
@@ -942,7 +942,7 @@ export class Duplex extends Readable implements Writable {
       | AsyncIterable<any>
       | AsyncGeneratorFunction
       | Promise<any>
-      // deno-lint-ignore ban-types
+      // edno-lint-ignore ban-types
       | Object,
   ): Duplex;
   _write(

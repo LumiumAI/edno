@@ -10,11 +10,11 @@ const key = readFileSync(
 
 // https.Server should honor the address override the same way
 // http.Server does. The override channel is cleartext HTTP -- that
-// matches the Deno Deploy use case where the override is a trusted
+// matches the Edno Deploy use case where the override is a trusted
 // vsock/unix control plane.
-const SOCK = "/tmp/deno-https-override-test.sock";
+const SOCK = "/tmp/edno-https-override-test.sock";
 try {
-  Deno.removeSync(SOCK);
+  Edno.removeSync(SOCK);
 } catch { /* ignore */ }
 
 const server = https.createServer(
@@ -27,7 +27,7 @@ server.listen(9405, "127.0.0.1", async () => {
 
   // Plain HTTP over unix socket reaches the server via the override
   // listener.
-  const conn = await Deno.connect({ transport: "unix", path: SOCK });
+  const conn = await Edno.connect({ transport: "unix", path: SOCK });
   const req = "GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
   await conn.write(new TextEncoder().encode(req));
   const parts: Uint8Array[] = [];
@@ -46,6 +46,6 @@ server.listen(9405, "127.0.0.1", async () => {
 
   server.close();
   try {
-    Deno.removeSync(SOCK);
+    Edno.removeSync(SOCK);
   } catch { /* ignore */ }
 });

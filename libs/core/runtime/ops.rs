@@ -568,7 +568,7 @@ mod tests {
   /// For slower tests. Doesn't guarantee a JIT.
   pub const JIT_SLOW_ITERATIONS: usize = 500;
 
-  deno_core::extension!(
+  edno_core::extension!(
     testing,
     ops = [
       op_test_fail,
@@ -707,7 +707,7 @@ mod tests {
         "",
         format!(
           r"
-          const {{ op_test_fail, op_test_print_debug, {op} }} = Deno.core.ops;
+          const {{ op_test_fail, op_test_print_debug, {op} }} = Edno.core.ops;
           function assert(b) {{
             if (!b) {{
               op_test_fail();
@@ -758,7 +758,7 @@ mod tests {
         "",
         format!(
           r"
-          const {{ op_test_fail, op_test_print_debug, {op} }} = Deno.core.ops;
+          const {{ op_test_fail, op_test_print_debug, {op} }} = Edno.core.ops;
           function assert(b) {{
             if (!b) {{
               op_test_fail();

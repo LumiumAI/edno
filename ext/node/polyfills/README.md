@@ -1,10 +1,10 @@
-# Deno Node.js compatibility
+# Edno Node.js compatibility
 
 This module is meant to have a compatibility layer for the
 [Node.js standard library](https://nodejs.org/docs/latest/api/).
 
 **Warning**: Any function of this module should not be referred anywhere in the
-Deno standard library as it's a compatibility module.
+Edno standard library as it's a compatibility module.
 
 ## Supported modules
 
@@ -123,7 +123,7 @@ promise.then((value) => callback(null, value), callback);
 The second parameter of `then` can also be used to catch errors, but only errors
 from the existing promise, not the new one created by the callback.
 
-If the Deno equivalent is actually synchronous, there's a similar problem with
+If the Edno equivalent is actually synchronous, there's a similar problem with
 try/catch statements:
 
 ```ts, ignore
@@ -160,4 +160,4 @@ It's not as clean, but prevents the callback being called twice.
 
 Node compatibility can be measured by how many native Node tests pass. If you'd
 like to know what you can work on, check the
-[latest Node compatibility test results](https://node-test-viewer.deno.dev/results/latest).
+[latest Node compatibility test results](https://node-test-viewer.edno.dev/results/latest).

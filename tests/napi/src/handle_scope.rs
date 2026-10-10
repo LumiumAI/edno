@@ -54,7 +54,7 @@ extern "C" fn test_escapable_scope(
 }
 
 /// Test that calling napi_escape_handle twice returns an error.
-/// NOTE: Currently panics in Deno instead of returning
+/// NOTE: Currently panics in Edno instead of returning
 /// napi_escape_called_twice. Test is marked ignore in JS.
 extern "C" fn test_escape_twice(
   env: napi_env,

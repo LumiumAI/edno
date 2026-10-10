@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 // This module follows most of the WHATWG Living Standard for the DOM logic.
-// Many parts of the DOM are not implemented in Deno, but the logic for those
+// Many parts of the DOM are not implemented in Edno, but the logic for those
 // parts still exists.  This means you will observe a lot of strange structures
-// and impossible logic branches based on what Deno currently supports.
+// and impossible logic branches based on what Edno currently supports.
 
 (function () {
 const { core, internals, primordials } = __bootstrap;
@@ -41,8 +41,8 @@ const {
   TypeError,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 
 // Lazy-load createFilteredInspectProxy from console to avoid
 // circular dependency at load time. Only needed for custom inspect.
@@ -50,7 +50,7 @@ let _createFilteredInspectProxy;
 function getCreateFilteredInspectProxy() {
   if (!_createFilteredInspectProxy) {
     _createFilteredInspectProxy = core.loadExtScript(
-      "ext:deno_web/01_console.js",
+      "ext:edno_web/01_console.js",
     ).createFilteredInspectProxy;
   }
   return _createFilteredInspectProxy;
@@ -175,7 +175,7 @@ class Event {
     };
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       getCreateFilteredInspectProxy()({
         object: this,
@@ -1117,7 +1117,7 @@ class EventTarget {
     // This prevents the recursive dispatches of unload events.
     // See https://github.com/denoland/deno/issues/9201.
     if (event.type === "unload" && self === globalThis_) {
-      globalThis_[SymbolFor("Deno.isUnloadDispatched")] = true;
+      globalThis_[SymbolFor("Edno.isUnloadDispatched")] = true;
     }
 
     const data = self[eventTargetData];
@@ -1141,7 +1141,7 @@ class EventTarget {
     return null;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return `${this.constructor.name} ${inspect({}, inspectOptions)}`;
   }
 }
@@ -1204,7 +1204,7 @@ class ErrorEvent extends Event {
     this.#error = error;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       getCreateFilteredInspectProxy()({
         object: this,
@@ -1270,7 +1270,7 @@ class CloseEvent extends Event {
     this.#reason = reason;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       getCreateFilteredInspectProxy()({
         object: this,
@@ -1296,7 +1296,7 @@ let _MessagePortPrototype;
 function getMessagePortPrototype() {
   if (_MessagePortPrototype === undefined) {
     _MessagePortPrototype =
-      core.loadExtScript("ext:deno_web/13_message_port.js")
+      core.loadExtScript("ext:edno_web/13_message_port.js")
         .MessagePortPrototype;
   }
   return _MessagePortPrototype;
@@ -1368,7 +1368,7 @@ class MessageEvent extends Event {
       // by WPT's no-regexp-special-casing test) still produce the
       // expected `ports` array. SafeArrayIterator can't be used here
       // because it walks the value as if it were an Array.
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       for (const p of ports) {
         if (
           p === null || typeof p !== "object" ||
@@ -1427,7 +1427,7 @@ class MessageEvent extends Event {
     }
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       getCreateFilteredInspectProxy()({
         object: this,
@@ -1467,7 +1467,7 @@ class CustomEvent extends Event {
     return this.#detail;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       getCreateFilteredInspectProxy()({
         object: this,
@@ -1503,7 +1503,7 @@ class ProgressEvent extends Event {
     this.total = eventInitDict?.total ?? 0;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       getCreateFilteredInspectProxy()({
         object: this,
@@ -1556,7 +1556,7 @@ class PromiseRejectionEvent extends Event {
     this.#reason = reason;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       getCreateFilteredInspectProxy()({
         object: this,

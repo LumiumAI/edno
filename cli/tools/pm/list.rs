@@ -3,10 +3,10 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use deno_cache_dir::GlobalOrLocalHttpCache;
-use deno_cache_dir::file_fetcher::CacheSetting;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_cache_dir::GlobalOrLocalHttpCache;
+use edno_cache_dir::file_fetcher::CacheSetting;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 use deno_semver::package::PackageKind;
 use deno_semver::package::PackageReq;
 use deno_terminal::colors;
@@ -59,7 +59,7 @@ struct DepGraph {
 }
 
 impl DepGraph {
-  fn from_lockfile_content(content: &deno_lockfile::PackagesContent) -> Self {
+  fn from_lockfile_content(content: &edno_lockfile::PackagesContent) -> Self {
     let mut forward: HashMap<PkgId, Vec<PkgId>> = HashMap::new();
     let mut npm_by_base: HashMap<String, String> = HashMap::new();
 
@@ -328,7 +328,7 @@ pub async fn list(
 
   if !cli_options.start_dir.has_deno_or_pkg_json() {
     bail!(
-      "No deno.json or package.json in \"{}\".",
+      "No edno.json or package.json in \"{}\".",
       cli_options.initial_cwd().display(),
     );
   }

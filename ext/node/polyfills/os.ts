@@ -20,7 +20,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// deno-lint-ignore-file no-process-global
+// edno-lint-ignore-file no-process-global
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -32,17 +32,17 @@ const {
   op_node_os_user_info,
 } = core.ops;
 
-const { isWindows } = core.loadExtScript("ext:deno_node/_util/os.ts");
+const { isWindows } = core.loadExtScript("ext:edno_node/_util/os.ts");
 const { os } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { osUptime } = core.loadExtScript("ext:deno_os/30_os.js");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { osUptime } = core.loadExtScript("ext:edno_os/30_os.js");
 const { validateInt32 } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
-const { denoErrorToNodeSystemError } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+const { ednoErrorToNodeSystemError } = core.loadExtScript(
+  "ext:edno_node/internal/errors.ts",
 );
 
 const {
@@ -97,10 +97,10 @@ function endianness() {
 }
 
 function freemem() {
-  if (Deno.build.os === "linux" || Deno.build.os == "android") {
-    return Deno.systemMemoryInfo().available;
+  if (Edno.build.os === "linux" || Edno.build.os == "android") {
+    return Edno.systemMemoryInfo().available;
   } else {
-    return Deno.systemMemoryInfo().free;
+    return Edno.systemMemoryInfo().free;
   }
 }
 
@@ -109,7 +109,7 @@ function getPriority(pid = 0) {
   try {
     return op_node_os_get_priority(pid);
   } catch (error) {
-    throw denoErrorToNodeSystemError(error, "uv_os_getpriority");
+    throw ednoErrorToNodeSystemError(error, "uv_os_getpriority");
   }
 }
 
@@ -118,14 +118,14 @@ function homedir() {
 }
 
 function hostname() {
-  return Deno.hostname();
+  return Edno.hostname();
 }
 
 function loadavg() {
   if (isWindows) {
     return [0, 0, 0];
   }
-  return Deno.loadavg();
+  return Edno.loadavg();
 }
 
 function networkInterfaces() {
@@ -133,7 +133,7 @@ function networkInterfaces() {
   for (
     const { name, address, netmask, family, mac, scopeid, cidr }
       of new SafeArrayIterator(
-        Deno.networkInterfaces(),
+        Edno.networkInterfaces(),
       )
   ) {
     const addresses = interfaces[name] ||= [];
@@ -167,19 +167,19 @@ function platform() {
 }
 
 function release() {
-  return Deno.osRelease();
+  return Edno.osRelease();
 }
 
 function version() {
-  return Deno.osRelease();
+  return Edno.osRelease();
 }
 
 function machine() {
-  if (Deno.build.arch == "aarch64") {
+  if (Edno.build.arch == "aarch64") {
     return "arm64";
   }
 
-  return Deno.build.arch;
+  return Edno.build.arch;
 }
 
 function setPriority(pid, priority) {
@@ -194,14 +194,14 @@ function setPriority(pid, priority) {
   try {
     op_node_os_set_priority(pid, priority);
   } catch (error) {
-    throw denoErrorToNodeSystemError(error, "uv_os_setpriority");
+    throw ednoErrorToNodeSystemError(error, "uv_os_setpriority");
   }
 }
 
 function tmpdir() {
   if (isWindows) {
-    let temp = Deno.env.get("TEMP") || Deno.env.get("TMP") ||
-      (Deno.env.get("SystemRoot") || Deno.env.get("windir")) + "\\temp";
+    let temp = Edno.env.get("TEMP") || Edno.env.get("TMP") ||
+      (Edno.env.get("SystemRoot") || Edno.env.get("windir")) + "\\temp";
     if (
       temp.length > 1 && StringPrototypeEndsWith(temp, "\\") &&
       !StringPrototypeEndsWith(temp, ":\\")
@@ -211,8 +211,8 @@ function tmpdir() {
 
     return temp;
   } else {
-    let temp = Deno.env.get("TMPDIR") || Deno.env.get("TMP") ||
-      Deno.env.get("TEMP") || "/tmp";
+    let temp = Edno.env.get("TMPDIR") || Edno.env.get("TMP") ||
+      Edno.env.get("TEMP") || "/tmp";
     if (temp.length > 1 && StringPrototypeEndsWith(temp, "/")) {
       temp = StringPrototypeSlice(temp, 0, -1);
     }
@@ -221,11 +221,11 @@ function tmpdir() {
 }
 
 function totalmem() {
-  return Deno.systemMemoryInfo().total;
+  return Edno.systemMemoryInfo().total;
 }
 
 function type() {
-  switch (Deno.build.os) {
+  switch (Edno.build.os) {
     case "windows":
       return "Windows_NT";
     case "linux":
@@ -249,8 +249,8 @@ function uptime() {
 function userInfo(
   options: { encoding?: string } | undefined = undefined,
 ) {
-  let uid = Deno.uid();
-  let gid = Deno.gid();
+  let uid = Edno.uid();
+  let gid = Edno.gid();
 
   if (isWindows) {
     uid = -1;

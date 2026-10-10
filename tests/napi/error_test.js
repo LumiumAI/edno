@@ -31,7 +31,7 @@ function assertThrowsWithCode(fn, value) {
   }
 }
 
-Deno.test("napi error", function () {
+Edno.test("napi error", function () {
   class MyError extends Error {}
   const myError = new MyError("Some MyError");
 

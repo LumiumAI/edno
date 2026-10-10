@@ -30,7 +30,7 @@ function walk(
     if (maxLevel > 0 && level > maxLevel) {
       return;
     }
-    const files = Deno.readDirSync(dir).toArray();
+    const files = Edno.readDirSync(dir).toArray();
     files.sort((a, b) => a.name.localeCompare(b.name));
     for (const file of files) {
       if (file.isDirectory) {
@@ -64,9 +64,9 @@ function collectHttpCacheNames(
     name.length === 64 && name.match(/^[0-9a-f]{64}$/) && dir.includes("http")
   ) {
     const fullPath = dir + "/" + name;
-    const contents = Deno.readTextFileSync(fullPath);
+    const contents = Edno.readTextFileSync(fullPath);
     const lastLine = contents.split("\n").pop();
-    const cacheLine = "// denoCacheMetadata=";
+    const cacheLine = "// ednoCacheMetadata=";
     if (!lastLine?.startsWith(cacheLine)) {
       return;
     }
@@ -76,8 +76,8 @@ function collectHttpCacheNames(
 }
 
 let maxLevel = 0;
-for (let i = 0; i < Deno.args.length; i++) {
-  const arg = Deno.args[i];
+for (let i = 0; i < Edno.args.length; i++) {
+  const arg = Edno.args[i];
   if (arg.startsWith("--max-level=")) {
     maxLevel = parseInt(arg.split("=")[1]) - 1;
     maxLevel = Math.max(0, maxLevel);
@@ -85,7 +85,7 @@ for (let i = 0; i < Deno.args.length; i++) {
     walk(arg, collectHttpCacheNames, { maxLevel });
     console.log(arg);
     printDir(arg, maxLevel);
-    if (i < Deno.args.length - 1) {
+    if (i < Edno.args.length - 1) {
       console.log("");
       maxLevel = 0;
     }

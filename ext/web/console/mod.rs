@@ -19,10 +19,10 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::time::Instant;
 
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::v8;
 use inspect::*;
 pub use preview::op_preview_entries;
 
@@ -44,7 +44,7 @@ const STR_ABBREVIATE_SIZE: f64 = 10_000.0;
 /// Marker symbol set by the JS shim on its `stylizeNoColor` and
 /// `createStylizeWithColor(...)` functions so the engine can recognize them
 /// and run the lookup natively.
-const STYLIZE_MARKER: &str = "Deno.privateConsoleStylize";
+const STYLIZE_MARKER: &str = "Edno.privateConsoleStylize";
 
 // ---------------------------------------------------------------------------
 // intrinsics

@@ -31,7 +31,7 @@ mod semaphore;
 pub mod test_runner;
 mod wildcard;
 
-pub use builders::DenoChild;
+pub use builders::EdnoChild;
 pub use builders::TestCommandBuilder;
 pub use builders::TestCommandOutput;
 pub use builders::TestContext;
@@ -83,7 +83,7 @@ pub fn env_vars_for_jsr_tests() -> Vec<(String, String)> {
   let mut vars = env_vars_for_jsr_tests_with_git_check();
 
   vars.push((
-    "DENO_TESTING_DISABLE_GIT_CHECK".to_string(),
+    "EDNO_TESTING_DISABLE_GIT_CHECK".to_string(),
     "1".to_string(),
   ));
 
@@ -112,7 +112,7 @@ pub fn env_vars_for_jsr_provenance_tests() -> Vec<(String, String)> {
     ),
     (
       "GITHUB_REPOSITORY".to_string(),
-      "littledivy/deno_sdl2".to_string(),
+      "littledivy/edno_sdl2".to_string(),
     ),
     (
       "GITHUB_SERVER_URL".to_string(),
@@ -128,7 +128,7 @@ pub fn env_vars_for_jsr_provenance_tests() -> Vec<(String, String)> {
     ),
     (
       "GITHUB_WORKFLOW_REF".to_string(),
-      "littledivy/deno_sdl2@refs/tags/sdl2@0.0.1".to_string(),
+      "littledivy/edno_sdl2@refs/tags/sdl2@0.0.1".to_string(),
     ),
   ]);
 
@@ -142,7 +142,7 @@ pub fn env_vars_for_jsr_npm_tests() -> Vec<(String, String)> {
     ("JSR_NPM_URL".to_string(), npm_jsr_registry_url()),
     ("JSR_URL".to_string(), jsr_registry_url()),
     (
-      "DENO_TESTING_DISABLE_GIT_CHECK".to_string(),
+      "EDNO_TESTING_DISABLE_GIT_CHECK".to_string(),
       "1".to_string(),
     ),
     ("DISABLE_JSR_PROVENANCE".to_string(), "true".to_string()),
@@ -162,20 +162,20 @@ pub fn root_path() -> PathRef {
 /// Path to the pre-downloaded native TypeScript compiler, if present.
 ///
 /// `tools/download_tsc.ts` materializes it under
-/// `<target>/.native_tsc/deno_dir/tsc/<version>/<platform>/lib/tsc`. The harness
-/// injects this per-test as `DENO_TSC_BIN` (see `TestContextBuilder::build`) so
-/// `deno check`/`run --check`/`cache --check` reuse it instead of downloading
-/// the compiler into every test's fresh `DENO_DIR`. Returns `None` when it
+/// `<target>/.native_tsc/edno_dir/tsc/<version>/<platform>/lib/tsc`. The harness
+/// injects this per-test as `EDNO_TSC_BIN` (see `TestContextBuilder::build`) so
+/// `edno check`/`run --check`/`cache --check` reuse it instead of downloading
+/// the compiler into every test's fresh `EDNO_DIR`. Returns `None` when it
 /// hasn't been downloaded yet.
 pub fn native_tsc_bin_path() -> Option<PathRef> {
   let exe = if cfg!(windows) { "tsc.exe" } else { "tsc" };
-  // `tools/download_tsc.ts` defaults its cache to `./target/.native_tsc/deno_dir`
+  // `tools/download_tsc.ts` defaults its cache to `./target/.native_tsc/edno_dir`
   // (relative to the repo root), i.e. the `target` root - not the per-profile
   // `target/debug`|`target/release` dir that `target_dir()` returns.
   let tsc_root = root_path()
     .join("target")
     .join(".native_tsc")
-    .join("deno_dir")
+    .join("edno_dir")
     .join("tsc");
   for version in std::fs::read_dir(tsc_root.as_path()).ok()?.flatten() {
     for platform in std::fs::read_dir(version.path())
@@ -216,8 +216,8 @@ pub fn napi_tests_path() -> PathRef {
   root_path().join("tests").join("napi")
 }
 
-pub fn deno_config_path() -> PathRef {
-  root_path().join("tests").join("config").join("deno.json")
+pub fn edno_config_path() -> PathRef {
+  root_path().join("tests").join("config").join("edno.json")
 }
 
 /// Test server registry url.
@@ -289,21 +289,21 @@ pub fn target_dir() -> PathRef {
   PathRef::new(target_dir)
 }
 
-pub fn deno_exe_path() -> PathRef {
-  // Allow overriding the deno executable path via environment variable
-  if let Ok(path) = std::env::var("DENO_TEST_UTIL_DENO_EXE") {
+pub fn edno_exe_path() -> PathRef {
+  // Allow overriding the edno executable path via environment variable
+  if let Ok(path) = std::env::var("EDNO_TEST_UTIL_DENO_EXE") {
     return PathRef::new(PathBuf::from(path));
   }
-  // Something like /Users/rld/src/deno/target/debug/deps/deno
-  let mut p = target_dir().join("deno").to_path_buf();
+  // Something like /Users/rld/src/edno/target/debug/deps/edno
+  let mut p = target_dir().join("edno").to_path_buf();
   if cfg!(windows) {
     p.set_extension("exe");
   }
   PathRef::new(p)
 }
 
-pub fn denort_exe_path() -> PathRef {
-  let mut p = target_dir().join("denort").to_path_buf();
+pub fn ednort_exe_path() -> PathRef {
+  let mut p = target_dir().join("ednort").to_path_buf();
   if cfg!(windows) {
     p.set_extension("exe");
   }
@@ -550,24 +550,24 @@ pub fn run_and_collect_output_with_args(
   envs: Option<Vec<(String, String)>>,
   need_http_server: bool,
 ) -> (String, String) {
-  let mut deno_process_builder = deno_cmd()
+  let mut edno_process_builder = edno_cmd()
     .args_vec(args)
     .current_dir(testdata_path())
     .stdin(Stdio::piped())
     .piped_output();
   if let Some(envs) = envs {
-    deno_process_builder = deno_process_builder.envs(envs);
+    edno_process_builder = edno_process_builder.envs(envs);
   }
   let _http_guard = if need_http_server {
     Some(http_server())
   } else {
     None
   };
-  let mut deno = deno_process_builder
+  let mut edno = edno_process_builder
     .spawn()
     .expect("failed to spawn script");
   if let Some(lines) = input {
-    let stdin = deno.stdin.as_mut().expect("failed to get stdin");
+    let stdin = edno.stdin.as_mut().expect("failed to get stdin");
     stdin
       .write_all(lines.join("\n").as_bytes())
       .expect("failed to write to stdin");
@@ -576,7 +576,7 @@ pub fn run_and_collect_output_with_args(
     stdout,
     stderr,
     status,
-  } = deno.wait_with_output().expect("failed to wait on child");
+  } = edno.wait_with_output().expect("failed to wait on child");
   let stdout = String::from_utf8(stdout).unwrap();
   let stderr = String::from_utf8(stderr).unwrap();
   if expect_success != status.success() {
@@ -591,14 +591,14 @@ pub fn new_deno_dir() -> TempDir {
   TempDir::new()
 }
 
-pub fn deno_cmd() -> TestCommandBuilder {
-  let deno_dir = new_deno_dir();
-  deno_cmd_with_deno_dir(&deno_dir)
+pub fn edno_cmd() -> TestCommandBuilder {
+  let edno_dir = new_deno_dir();
+  edno_cmd_with_deno_dir(&edno_dir)
 }
 
-pub fn deno_cmd_with_deno_dir(deno_dir: &TempDir) -> TestCommandBuilder {
-  TestCommandBuilder::new(deno_dir.clone())
-    .env("DENO_DIR", deno_dir.path())
+pub fn edno_cmd_with_deno_dir(edno_dir: &TempDir) -> TestCommandBuilder {
+  TestCommandBuilder::new(edno_dir.clone())
+    .env("EDNO_DIR", edno_dir.path())
     .env("NPM_CONFIG_REGISTRY", npm_registry_unset_url())
     .env("JSR_NPM_URL", npm_jsr_registry_unset_url())
     .env("NODEJS_ORG_MIRROR", nodejs_org_mirror_unset_url())
@@ -609,11 +609,11 @@ pub fn run_powershell_script_file(
   script_file_path: &str,
   args: Vec<&str>,
 ) -> std::result::Result<(), i64> {
-  let deno_dir = new_deno_dir();
+  let edno_dir = new_deno_dir();
   let mut command = Command::new("powershell.exe");
 
   command
-    .env("DENO_DIR", deno_dir.path())
+    .env("EDNO_DIR", edno_dir.path())
     .current_dir(testdata_path())
     .arg("-file")
     .arg(script_file_path);
@@ -695,9 +695,9 @@ impl CheckOutputIntegrationTest<'_> {
   }
 }
 
-pub fn with_pty(deno_args: &[&str], action: impl FnMut(Pty)) {
+pub fn with_pty(edno_args: &[&str], action: impl FnMut(Pty)) {
   let context = TestContextBuilder::default().use_temp_cwd().build();
-  context.new_command().args_vec(deno_args).with_pty(action);
+  context.new_command().args_vec(edno_args).with_pty(action);
 }
 
 pub(crate) mod colors {

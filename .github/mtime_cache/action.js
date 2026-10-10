@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // This file contains the implementation of a Github Action. Github uses
-// Node.js v20.x to run actions, so this is Node code and not Deno code.
+// Node.js v20.x to run actions, so this is Node code and not Edno code.
 
 const { spawn } = require("child_process");
 const { existsSync } = require("fs");

@@ -1,6 +1,6 @@
 {
   "tempDir": true,
-  "args": "x -y @denotest/bin hello world",
+  "args": "x -y @ednotest/bin hello world",
   "output": "ambiguous.out",
   "exitCode": 1
 }

@@ -72,7 +72,7 @@ const rawTraces = {json};
     clippy::disallowed_methods,
     reason = "debug tracing writes to temp directory"
   )]
-  let temp_file_path = std::env::temp_dir().join("deno-npm-trace.html");
+  let temp_file_path = std::env::temp_dir().join("edno-npm-trace.html");
   #[allow(
     clippy::disallowed_methods,
     reason = "debug tracing writes to temp directory"

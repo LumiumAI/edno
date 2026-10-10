@@ -18,7 +18,7 @@ fn linux_shared_libraries() {
 
   let ldd = std::process::Command::new("ldd")
     .arg("-L")
-    .arg(util::deno_exe_path())
+    .arg(util::edno_exe_path())
     .output()
     .expect("Failed to execute ldd");
 
@@ -42,7 +42,7 @@ fn linux_shared_libraries() {
 fn macos_shared_libraries() {
   use test_util as util;
 
-  // target/release/deno:
+  // target/release/edno:
   //  /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 1953.1.0)
   //  /System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices (compatibility version 1.0.0, current version 1228.0.0)
   //  /System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore (compatibility version 1.2.0, current version 1.11.0, weak)
@@ -106,7 +106,7 @@ fn macos_shared_libraries() {
 
   let otool = std::process::Command::new("otool")
     .arg("-L")
-    .arg(util::deno_exe_path())
+    .arg(util::edno_exe_path())
     .output()
     .expect("Failed to execute otool");
 

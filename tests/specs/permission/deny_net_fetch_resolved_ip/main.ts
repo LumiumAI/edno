@@ -1,12 +1,12 @@
 // Regression test: --deny-net=127.0.0.1 must block fetch() requests whose
 // hostname resolves to a denied IP, mirroring the post-resolution check that
-// Deno.connect already performs.
+// Edno.connect already performs.
 
-const server = Deno.serve(
+const server = Edno.serve(
   { hostname: "0.0.0.0", port: 0, onListen: () => {} },
   () => new Response("hello"),
 );
-const { port } = server.addr as Deno.NetAddr;
+const { port } = server.addr as Edno.NetAddr;
 
 try {
   await fetch(`http://127.0.0.1:${port}/`);
@@ -27,12 +27,12 @@ try {
 await server.shutdown();
 
 // The denial must happen before any socket is opened: a denied fetch() must
-// never complete a TCP handshake to the forbidden IP (matching Deno.connect,
+// never complete a TCP handshake to the forbidden IP (matching Edno.connect,
 // which denies before connecting). Use a raw listener so even a bare
 // handshake with no request bytes is detected. Bind to 0.0.0.0 (not denied)
 // so the listener itself is permitted; connections to 127.0.0.1 still land
 // on it.
-const listener = Deno.listen({ hostname: "0.0.0.0", port: 0 });
+const listener = Edno.listen({ hostname: "0.0.0.0", port: 0 });
 let handshakeCompleted = false;
 const accepted = listener.accept().then(
   (conn) => {

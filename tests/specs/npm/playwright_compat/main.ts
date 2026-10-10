@@ -4,4 +4,4 @@ import { chromium } from "npm:playwright";
 const browser = await chromium.launch({ timeout: 60000 });
 console.log("chromium launched");
 await browser.close();
-Deno.exit(0);
+Edno.exit(0);

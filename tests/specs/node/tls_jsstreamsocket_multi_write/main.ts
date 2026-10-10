@@ -72,7 +72,7 @@ server.listen(0, async () => {
 
   const timeout = setTimeout(() => {
     console.log("DEADLOCK");
-    Deno.exit(1);
+    Edno.exit(1);
   }, 10000);
 
   await new Promise<void>((resolve) =>

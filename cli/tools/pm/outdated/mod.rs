@@ -5,10 +5,10 @@ mod interactive;
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use deno_cache_dir::GlobalOrLocalHttpCache;
-use deno_cache_dir::file_fetcher::CacheSetting;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_cache_dir::GlobalOrLocalHttpCache;
+use edno_cache_dir::file_fetcher::CacheSetting;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 use deno_semver::StackString;
 use deno_semver::VersionReq;
 use deno_semver::package::PackageNv;
@@ -124,7 +124,7 @@ fn print_suggestion(compatible: bool) {
   log::info!(
     "{}",
     color_print::cformat!(
-      "<p(245)>Run</> <u>deno update{}</> <p(245)>to update to the latest {} versions,</>\n<p(245)>or</> <u>deno outdated --help</> <p(245)>for more information.</>",
+      "<p(245)>Run</> <u>edno update{}</> <p(245)>to update to the latest {} versions,</>\n<p(245)>or</> <u>edno outdated --help</> <p(245)>for more information.</>",
       cmd,
       txt,
     )
@@ -261,8 +261,8 @@ pub async fn outdated(
   let http_client = factory.http_client_provider();
   let deps_http_cache = factory.global_http_cache()?;
   let file_fetcher = create_cli_file_fetcher(
-    Arc::new(deno_runtime::deno_web::BlobStore::default())
-      as Arc<dyn deno_runtime::deno_web::BlobStoreTrait>,
+    Arc::new(edno_runtime::edno_web::BlobStore::default())
+      as Arc<dyn edno_runtime::edno_web::BlobStoreTrait>,
     GlobalOrLocalHttpCache::Global(deps_http_cache.clone()),
     http_client.clone(),
     factory.memory_files().clone(),
@@ -287,7 +287,7 @@ pub async fn outdated(
 
   if !cli_options.start_dir.has_deno_or_pkg_json() {
     bail!(
-      "No deno.json or package.json in \"{}\".",
+      "No edno.json or package.json in \"{}\".",
       cli_options.initial_cwd().display(),
     );
   }
@@ -525,7 +525,7 @@ async fn update(
   if !to_update.is_empty() {
     let lockfile_only = cache_options.lockfile_only;
     if lockfile_only {
-      // `--lockfile-only`: don't touch deno.json/package.json. Instead,
+      // `--lockfile-only`: don't touch edno.json/package.json. Instead,
       // remove the existing lockfile entries for the deps so the
       // following install re-resolves them to the latest version within
       // their existing ranges.
@@ -544,7 +544,7 @@ async fn update(
     // updated. The installer's re-resolution reads the npm registry cache with
     // the default `CacheSetting::Use`, so a stale cached packument can hide a
     // newer in-range version and leave the lockfile pinned to the old one --
-    // even though `deno outdated` (which fetches packuments fresh) reports the
+    // even though `edno outdated` (which fetches packuments fresh) reports the
     // update. Adding each such npm package to the cache blocklist makes
     // `cache_setting()` return `ReloadSome`, refetching metadata for only those
     // packages. See #35348.
@@ -652,7 +652,7 @@ async fn update(
     if lockfile_only && update_to_latest {
       let note = deno_terminal::colors::intense_blue("note");
       log::info!(
-        "{note}: --lockfile-only updates only within existing version requirements.\n      Drop --lockfile-only to update deno.json/package.json requirements.",
+        "{note}: --lockfile-only updates only within existing version requirements.\n      Drop --lockfile-only to update edno.json/package.json requirements.",
       );
     }
   } else {
@@ -699,9 +699,9 @@ async fn dep_manager_args(
 }
 
 pub(crate) mod filter {
-  use deno_core::anyhow::Context;
-  use deno_core::anyhow::anyhow;
-  use deno_core::error::AnyError;
+  use edno_core::anyhow::Context;
+  use edno_core::anyhow::anyhow;
+  use edno_core::error::AnyError;
   use deno_semver::VersionReq;
 
   enum FilterKind {

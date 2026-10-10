@@ -1,6 +1,6 @@
 {
-  "name": "@denotest/app",
+  "name": "@ednotest/app",
   "dependencies": {
-    "my-member": "workspace:@denotest/member@2.0.0"
+    "my-member": "workspace:@ednotest/member@2.0.0"
   }
 }

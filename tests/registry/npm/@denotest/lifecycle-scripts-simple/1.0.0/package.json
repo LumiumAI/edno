@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/lifecycle-scripts-simple",
+  "name": "@ednotest/lifecycle-scripts-simple",
   "version": "1.0.0",
   "bin": {
     "lifecycle-scripts-simple": "./main.js"

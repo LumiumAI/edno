@@ -1,7 +1,7 @@
-Deno.test("Deno.exitCode", () => {
-  Deno.exitCode = 5;
+Edno.test("Edno.exitCode", () => {
+  Edno.exitCode = 5;
   throw new Error("");
 });
 
-Deno.test("success", () => {
+Edno.test("success", () => {
 });

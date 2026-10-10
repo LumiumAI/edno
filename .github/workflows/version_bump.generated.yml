@@ -36,10 +36,10 @@ jobs:
           token: '${{ secrets.DENOBOT_PAT }}'
           submodules: recursive
       - uses: dsherret/rust-toolchain-file@3551321aa44dd44a0393eb3b6bdfbc5d25ecf621
-      - name: Install deno
+      - name: Install edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
         with:
-          deno-version: v2.x
+          edno-version: v2.x
       - name: Run version bump
         run: |-
           git remote add upstream https://github.com/denoland/deno

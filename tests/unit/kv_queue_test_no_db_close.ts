@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assert, assertEquals, assertNotEquals } from "./test_util.ts";
 
-Deno.test({
+Edno.test({
   sanitizeOps: false,
   sanitizeResources: false,
 }, async function queueTestNoDbClose() {
-  const db: Deno.Kv = await Deno.openKv(":memory:");
+  const db: Edno.Kv = await Edno.openKv(":memory:");
   const { promise, resolve } = Promise.withResolvers<void>();
   let dequeuedMessage: unknown = null;
   db.listenQueue((msg) => {

@@ -10,9 +10,9 @@ use indexmap::IndexMap;
 /// Render a Wasm module as a self-contained JavaScript module that, when run,
 /// instantiates the Wasm module and re-exports its exports.
 ///
-/// Deno natively treats a `.wasm` import as an ES module whose exports are the
-/// Wasm instance's exports (see `render_js_wasm_module` in `deno_core`). esbuild
-/// has no such loader, so for `deno bundle` we generate equivalent JavaScript
+/// Edno natively treats a `.wasm` import as an ES module whose exports are the
+/// Wasm instance's exports (see `render_js_wasm_module` in `edno_core`). esbuild
+/// has no such loader, so for `edno bundle` we generate equivalent JavaScript
 /// that:
 ///
 /// 1. imports the Wasm module's imports from their respective specifiers (these
@@ -25,7 +25,7 @@ use indexmap::IndexMap;
 /// synchronously at module-eval time (which blocks the thread for that module)
 /// and the base64 inline grows the output by ~1.33x. Async compilation isn't an
 /// option here because esbuild can't consume the source-phase
-/// `import source ... from` / `import.meta.WasmInstance` form Deno uses natively.
+/// `import source ... from` / `import.meta.WasmInstance` form Edno uses natively.
 pub fn render_js_wasm_module(
   bytes: &[u8],
 ) -> Result<String, wasm_dep_analyzer::ParseError> {

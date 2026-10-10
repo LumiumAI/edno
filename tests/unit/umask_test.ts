@@ -2,38 +2,38 @@
 import process from "node:process";
 import { assertEquals, assertThrows } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { sys: ["umask"] },
   },
   function umaskSuccess() {
-    const prevMask = Deno.umask(0o020);
-    const newMask = Deno.umask(prevMask);
-    const finalMask = Deno.umask();
+    const prevMask = Edno.umask(0o020);
+    const newMask = Edno.umask(prevMask);
+    const finalMask = Edno.umask();
     assertEquals(newMask, 0o020);
     assertEquals(finalMask, prevMask);
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { sys: false },
   },
   function umaskRequiresSysPermission() {
     assertThrows(() => {
-      Deno.umask();
-    }, Deno.errors.NotCapable);
+      Edno.umask();
+    }, Edno.errors.NotCapable);
     assertThrows(() => {
-      Deno.umask(0);
-    }, Deno.errors.NotCapable);
+      Edno.umask(0);
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { sys: ["umask"] },
   },
   function processUmaskSuccess() {
@@ -45,38 +45,38 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { sys: false },
   },
   function processUmaskRequiresSysPermission() {
     assertThrows(() => {
       process.umask();
-    }, Deno.errors.NotCapable);
+    }, Edno.errors.NotCapable);
     assertThrows(() => {
       process.umask(0);
-    }, Deno.errors.NotCapable);
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { sys: ["umask"] },
   },
   async function workerWithoutSysPermissionCannotUseUmask() {
-    const prevMask = Deno.umask(0o022);
+    const prevMask = Edno.umask(0o022);
     const workerUrl = URL.createObjectURL(
       new Blob([
         `
 const results = [];
 try {
-  Deno.umask();
+  Edno.umask();
   results.push("read");
 } catch (err) {
   results.push(
-    err instanceof Deno.errors.NotCapable
+    err instanceof Edno.errors.NotCapable
       ? "read NotCapable"
       : err instanceof Error
       ? err.name
@@ -84,11 +84,11 @@ try {
   );
 }
 try {
-  Deno.umask(0);
+  Edno.umask(0);
   results.push("changed");
 } catch (err) {
   results.push(
-    err instanceof Deno.errors.NotCapable
+    err instanceof Edno.errors.NotCapable
       ? "set NotCapable"
       : err instanceof Error
       ? err.name
@@ -101,7 +101,7 @@ postMessage(results);
     );
     const worker = new Worker(workerUrl, {
       type: "module",
-      deno: { permissions: "none" },
+      edno: { permissions: "none" },
     });
 
     try {
@@ -109,11 +109,11 @@ postMessage(results);
         worker.onmessage = (event) => resolve(event.data);
       });
       assertEquals(result, ["read NotCapable", "set NotCapable"]);
-      assertEquals(Deno.umask(), 0o022);
+      assertEquals(Edno.umask(), 0o022);
     } finally {
       worker.terminate();
       URL.revokeObjectURL(workerUrl);
-      Deno.umask(prevMask);
+      Edno.umask(prevMask);
     }
   },
 );

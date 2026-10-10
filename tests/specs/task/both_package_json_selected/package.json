@@ -4,6 +4,6 @@
     "output": "echo should never be called or shown"
   },
   "dependencies": {
-    "other": "npm:@denotest/bin@1.0"
+    "other": "npm:@ednotest/bin@1.0"
   }
 }

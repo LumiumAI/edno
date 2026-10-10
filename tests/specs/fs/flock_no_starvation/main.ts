@@ -6,13 +6,13 @@
 // to release the lock.
 
 const COUNTER_FILE = "./test.counter";
-await Deno.writeTextFile(COUNTER_FILE, "0");
+await Edno.writeTextFile(COUNTER_FILE, "0");
 
 async function incrementCounter() {
   // Open with write access so the handle can be locked on Windows, where
   // LockFileEx requires GENERIC_READ/GENERIC_WRITE (an append-only handle
   // would be rejected with ERROR_ACCESS_DENIED).
-  const lockFile = await Deno.open("./test.lock", {
+  const lockFile = await Edno.open("./test.lock", {
     read: true,
     write: true,
     create: true,
@@ -22,8 +22,8 @@ async function incrementCounter() {
 
   // These file operations would deadlock with the old implementation because
   // every blocking pool thread was occupied by a pending flock() call.
-  const counter = +(await Deno.readTextFile(COUNTER_FILE));
-  await Deno.writeTextFile(COUNTER_FILE, (counter + 1).toString());
+  const counter = +(await Edno.readTextFile(COUNTER_FILE));
+  await Edno.writeTextFile(COUNTER_FILE, (counter + 1).toString());
 
   await lockFile.unlock();
   lockFile.close();
@@ -39,5 +39,5 @@ for (let i = 0; i < 50; i++) {
 
 await Promise.all(promises);
 
-const finalCount = +(await Deno.readTextFile(COUNTER_FILE));
+const finalCount = +(await Edno.readTextFile(COUNTER_FILE));
 console.log(`final count: ${finalCount}`);

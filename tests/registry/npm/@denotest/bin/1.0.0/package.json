@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/bin",
+  "name": "@ednotest/bin",
   "version": "1.0.0",
   "bin": {
     "cli-esm": "./cli.mjs",

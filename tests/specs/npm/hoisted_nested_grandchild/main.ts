@@ -1,24 +1,24 @@
 const readVersion = (p: string) =>
-  JSON.parse(Deno.readTextFileSync(p + "/package.json")).version;
+  JSON.parse(Edno.readTextFileSync(p + "/package.json")).version;
 
 const exists = (p: string) => {
   try {
-    Deno.statSync(p);
+    Edno.statSync(p);
     return true;
   } catch {
     return false;
   }
 };
 
-const top = "node_modules/@denotest/different-nested-dep-child";
-const chainTop = "node_modules/@denotest/hoisted-nested-grandchild-chain";
-const parentTop = "node_modules/@denotest/hoisted-nested-grandchild-parent";
+const top = "node_modules/@ednotest/different-nested-dep-child";
+const chainTop = "node_modules/@ednotest/hoisted-nested-grandchild-chain";
+const parentTop = "node_modules/@ednotest/hoisted-nested-grandchild-parent";
 const nestedChain =
-  `${parentTop}/node_modules/@denotest/hoisted-nested-grandchild-chain`;
+  `${parentTop}/node_modules/@ednotest/hoisted-nested-grandchild-chain`;
 const nestedGrandchild =
-  `${nestedChain}/node_modules/@denotest/different-nested-dep-child`;
+  `${nestedChain}/node_modules/@ednotest/different-nested-dep-child`;
 const wrongPlacement =
-  `${chainTop}/node_modules/@denotest/different-nested-dep-child`;
+  `${chainTop}/node_modules/@ednotest/different-nested-dep-child`;
 
 console.log("top child:", readVersion(top));
 console.log("top chain:", readVersion(chainTop));

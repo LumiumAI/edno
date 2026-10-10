@@ -1,9 +1,9 @@
 {
-  "name": "@denotest/create",
+  "name": "@ednotest/create",
   "version": "1.0.0",
   "type": "module",
   "bin": "./index.js",
   "dependencies": {
-    "@denotest/add": "*"
+    "@ednotest/add": "*"
   }
 }

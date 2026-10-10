@@ -13,7 +13,7 @@ module.registerHooks({
   load(_url, _context, nextLoad) {
     const { source } = nextLoad(TARGET_FILE);
     console.log("ERROR: should not have loaded:", source);
-    Deno.exit(0);
+    Edno.exit(0);
   },
 });
 

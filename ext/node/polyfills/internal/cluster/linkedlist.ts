@@ -3,7 +3,7 @@
 
 // Ports lib/internal/linkedlist.js (only the small subset cluster uses).
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 function init(list: any) {

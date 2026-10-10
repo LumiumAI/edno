@@ -3,21 +3,21 @@ import { bar } from "./bar.ts";
 import { qux } from "./baz/qux.ts";
 import { quux } from "./baz/quux.ts";
 
-Deno.test("foo", () => {
+Edno.test("foo", () => {
   foo(true);
   foo(false);
 });
 
-Deno.test("bar", () => {
+Edno.test("bar", () => {
   bar(false);
 });
 
-Deno.test("qux", () => {
+Edno.test("qux", () => {
   qux(true);
   qux(false);
 });
 
-Deno.test("quux", () => {
+Edno.test("quux", () => {
   quux(false);
 });
 

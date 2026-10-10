@@ -2,11 +2,11 @@
   "tasks": {
     "build": {
       "description": "Build the project",
-      "command": "deno build"
+      "command": "edno build"
     },
     "test": {
       "description": "Test the project",
-      "command": "deno test"
+      "command": "edno test"
     },
     "dev": "echo dev"
   }

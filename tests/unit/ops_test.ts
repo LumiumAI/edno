@@ -7,11 +7,11 @@ const EXPECTED_WORKER_OP_COUNT = 20;
 
 function getExposedOpNames(): string[] {
   // @ts-ignore TS doesn't allow to index with symbol
-  const core = Deno[Deno.internal].core;
+  const core = Edno[Edno.internal].core;
   return Object.keys(core.ops);
 }
 
-Deno.test(function checkExposedOps() {
+Edno.test(function checkExposedOps() {
   const opNames = getExposedOpNames();
 
   if (opNames.length !== EXPECTED_OP_COUNT) {
@@ -26,9 +26,9 @@ Deno.test(function checkExposedOps() {
     throw new Error("Desktop update signature verification op is not exposed");
   }
 });
-Deno.test(function internalCoreOnlyHidesExtensionLoaders() {
+Edno.test(function internalCoreOnlyHidesExtensionLoaders() {
   // @ts-ignore TS doesn't allow to index with symbol
-  const core = Deno[Deno.internal].core;
+  const core = Edno[Edno.internal].core;
 
   for (const name of ["createLazyLoader", "loadExtScript"]) {
     if (name in core) {
@@ -43,13 +43,13 @@ Deno.test(function internalCoreOnlyHidesExtensionLoaders() {
   }
 });
 
-Deno.test(async function workerDoesNotExposeImportedOps() {
+Edno.test(async function workerDoesNotExposeImportedOps() {
   const mainOpNames = getExposedOpNames();
   const worker = new Worker(
     `data:application/javascript,${
       encodeURIComponent(`
         // @ts-ignore TS doesn't allow to index with symbol
-        const core = Deno[Deno.internal].core;
+        const core = Edno[Edno.internal].core;
         postMessage(Object.keys(core.ops));
       `)
     }`,

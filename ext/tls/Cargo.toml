@@ -1,20 +1,20 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_tls"
+name = "edno_tls"
 version = "0.246.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "TLS for Deno"
+description = "TLS for Edno"
 
 [lib]
 path = "lib.rs"
 
 [dependencies]
-deno_core.workspace = true
+edno_core.workspace = true
 deno_error.workspace = true
 deno_native_certs.workspace = true
 log.workspace = true

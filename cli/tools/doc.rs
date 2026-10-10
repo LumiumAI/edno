@@ -14,12 +14,12 @@ use deno_ast::diagnostics::DiagnosticSnippetHighlight;
 use deno_ast::diagnostics::DiagnosticSnippetHighlightStyle;
 use deno_ast::diagnostics::DiagnosticSourcePos;
 use deno_ast::diagnostics::DiagnosticSourceRange;
-use deno_config::glob::FilePatterns;
-use deno_config::glob::PathOrPatternSet;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
+use edno_config::glob::FilePatterns;
+use edno_config::glob::PathOrPatternSet;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
 use deno_doc as doc;
 use deno_doc::Document;
 use deno_doc::ParseOutput;
@@ -33,8 +33,8 @@ use deno_graph::ModuleSpecifier;
 use deno_graph::analysis::ModuleAnalyzer;
 use deno_graph::ast::EsParser;
 use deno_graph::source::NullFileSystem;
-use deno_lib::version::DENO_VERSION_INFO;
-use deno_npm_installer::graph::NpmCachingStrategy;
+use edno_lib::version::EDNO_VERSION_INFO;
+use edno_npm_installer::graph::NpmCachingStrategy;
 use doc::DocDiagnostic;
 use doc::html::ShortPath;
 use indexmap::IndexMap;
@@ -155,7 +155,7 @@ async fn generate_doc_nodes_for_builtin_types(
   analyzer: &dyn ModuleAnalyzer,
 ) -> Result<ParseOutput, AnyError> {
   let source_file_specifier =
-    ModuleSpecifier::parse("file:///lib.deno.d.ts").unwrap();
+    ModuleSpecifier::parse("file:///lib.edno.d.ts").unwrap();
   let content = get_types_declaration_file_text();
   let loader = deno_graph::source::MemoryLoader::new(
     vec![(
@@ -325,7 +325,7 @@ pub async fn doc(
         check_diagnostics(&diagnostics)?;
       }
 
-      let markdown_downloads = deno_core::futures::future::try_join_all(
+      let markdown_downloads = edno_core::futures::future::try_join_all(
         markdown_urls.into_iter().map(|url| async {
           // ok to skip permissions because these were provided on the CLI
           let file = file_fetcher.fetch_bypass_permissions(&url).await?;
@@ -353,16 +353,16 @@ pub async fn doc(
   };
 
   if let Some(html_options) = &doc_flags.html {
-    let deno_ns = if doc_flags.source_files != DocSourceFileFlag::Builtin {
-      let deno_ns = generate_doc_nodes_for_builtin_types(
+    let edno_ns = if doc_flags.source_files != DocSourceFileFlag::Builtin {
+      let edno_ns = generate_doc_nodes_for_builtin_types(
         doc_flags.clone(),
         &capturing_parser,
         &analyzer,
       )
       .await?;
-      let (_, deno_ns) = deno_ns.into_iter().next().unwrap();
+      let (_, edno_ns) = edno_ns.into_iter().next().unwrap();
 
-      Some(deno_ns)
+      Some(edno_ns)
     } else {
       None
     };
@@ -402,7 +402,7 @@ pub async fn doc(
       cli_options.initial_cwd(),
       documents_by_url,
       html_options,
-      deno_ns,
+      edno_ns,
       rewrite_map,
       main_entrypoint,
     )
@@ -430,7 +430,7 @@ pub async fn doc(
 }
 
 struct DocResolver {
-  deno_ns: std::collections::HashMap<Vec<String>, Option<Arc<ShortPath>>>,
+  edno_ns: std::collections::HashMap<Vec<String>, Option<Arc<ShortPath>>>,
   strip_trailing_html: bool,
 }
 
@@ -453,10 +453,10 @@ impl deno_doc::html::HrefResolver for DocResolver {
   }
 
   fn resolve_global_symbol(&self, symbol: &[String]) -> Option<String> {
-    if self.deno_ns.contains_key(symbol) {
+    if self.edno_ns.contains_key(symbol) {
       Some(format!(
         "https://deno.land/api@v{}?s={}",
-        DENO_VERSION_INFO.deno,
+        EDNO_VERSION_INFO.edno,
         symbol.join(".")
       ))
     } else {
@@ -488,7 +488,7 @@ impl deno_doc::html::HrefResolver for DocResolver {
     module: &str,
     _symbol: Option<&str>,
   ) -> Option<(String, String)> {
-    if let Ok(url) = deno_core::url::Url::parse(module) {
+    if let Ok(url) = edno_core::url::Url::parse(module) {
       match url.scheme() {
         "npm" => {
           let res =
@@ -581,7 +581,7 @@ fn generate_docs_directory(
     main_entrypoint,
     rewrite_map,
     href_resolver: Arc::new(DocResolver {
-      deno_ns: Default::default(),
+      edno_ns: Default::default(),
       strip_trailing_html: html_options.strip_trailing_html,
     }),
     usage_composer: Some(Arc::new(DocComposer)),
@@ -609,10 +609,10 @@ fn generate_docs_directory(
       deno_doc::html::GenerateOptions {
         package_name: None,
         main_entrypoint: Some(
-          ModuleSpecifier::parse("file:///lib.deno.d.ts").unwrap(),
+          ModuleSpecifier::parse("file:///lib.edno.d.ts").unwrap(),
         ),
         href_resolver: Arc::new(DocResolver {
-          deno_ns: Default::default(),
+          edno_ns: Default::default(),
           strip_trailing_html: false,
         }),
         usage_composer: Some(Arc::new(DocComposer)),
@@ -631,13 +631,13 @@ fn generate_docs_directory(
         symbol_listing_limit: None,
       },
       IndexMap::from([(
-        ModuleSpecifier::parse("file:///lib.deno.d.ts").unwrap(),
+        ModuleSpecifier::parse("file:///lib.edno.d.ts").unwrap(),
         built_in_types,
       )]),
       None,
     )?;
 
-    let deno_ns = deno_doc::html::compute_namespaced_symbols(
+    let edno_ns = deno_doc::html::compute_namespaced_symbols(
       &ctx,
       Box::new(
         ctx
@@ -651,7 +651,7 @@ fn generate_docs_directory(
     );
 
     options.href_resolver = Arc::new(DocResolver {
-      deno_ns,
+      edno_ns,
       strip_trailing_html: html_options.strip_trailing_html,
     });
   }
@@ -718,7 +718,7 @@ fn print_docs_to_stdout(
     )
   );
 
-  deno_print::drop_write_stdout(details.as_bytes());
+  edno_print::drop_write_stdout(details.as_bytes());
   Ok(())
 }
 

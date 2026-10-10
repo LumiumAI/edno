@@ -1,6 +1,6 @@
 {
   "nodeModulesDir": "manual",
   "imports": {
-    "chalk": "npm:@denotest/add"
+    "chalk": "npm:@ednotest/add"
   }
 }

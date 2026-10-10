@@ -1,6 +1,6 @@
 // Verify that numeric hostname aliases (decimal/hex representations of
 // 127.0.0.1) are denied by --deny-net after resolution, matching the
-// behavior of native Deno.connect().
+// behavior of native Edno.connect().
 
 import net from "node:net";
 

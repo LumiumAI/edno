@@ -2,13 +2,13 @@
   for (let i = 0; i < 1000; i++) {
     try {
       const resp = await fetch("http://localhost:12369/");
-      Deno.exit(0);
+      Edno.exit(0);
     } catch {
       await new Promise((r) => setTimeout(r, 10));
     }
   }
 
-  Deno.exit(2);
+  Edno.exit(2);
 })();
 
 export default {
@@ -18,4 +18,4 @@ export default {
   onListen(localAddr) {
     console.log(localAddr.doesNotExist); // This will throw an error
   },
-} satisfies Deno.ServeDefaultExport;
+} satisfies Edno.ServeDefaultExport;

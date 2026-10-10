@@ -5,12 +5,12 @@ use std::fmt::Write as _;
 use std::sync::Arc;
 
 use console_static_text::TextItem;
-use deno_config::deno_json::AllowScriptsConfig;
-use deno_config::deno_json::AllowScriptsValueConfig;
-use deno_core::anyhow;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_config::edno_json::AllowScriptsConfig;
+use edno_config::edno_json::AllowScriptsValueConfig;
+use edno_core::anyhow;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 use deno_path_util::url_to_file_path;
 use deno_semver::jsr::JsrDepPackageReq;
 use deno_semver::jsr::JsrDepPackageReqParseError;
@@ -48,16 +48,16 @@ pub async fn approve_scripts(
     factory = create_deno_json(&flags, options)?;
     options = factory.cli_options()?;
   }
-  let deno_json = options.workspace().root_deno_json().ok_or_else(|| {
-    anyhow::anyhow!("A deno.json file could not be found or created")
+  let edno_json = options.workspace().root_deno_json().ok_or_else(|| {
+    anyhow::anyhow!("A edno.json file could not be found or created")
   })?;
 
-  let deno_json_path = url_to_file_path(&deno_json.specifier)?;
+  let edno_json_path = url_to_file_path(&edno_json.specifier)?;
 
   let mut config_updater =
-    ConfigUpdater::new(ConfigKind::DenoJson, deno_json_path.clone())?;
+    ConfigUpdater::new(ConfigKind::EdnoJson, edno_json_path.clone())?;
 
-  let allow_scripts_config = deno_json.to_allow_scripts_config()?;
+  let allow_scripts_config = edno_json.to_allow_scripts_config()?;
 
   let (mut allow_list, mut deny_list) = match allow_scripts_config.allow {
     AllowScriptsValueConfig::All => {
@@ -188,12 +188,12 @@ fn parse_user_packages(
 
 fn find_script_candidates(
   npm_resolver: &CliNpmResolver,
-  system_info: &deno_npm::NpmSystemInfo,
+  system_info: &edno_npm::NpmSystemInfo,
   allow_list: &[JsrDepPackageReq],
   deny_list: &[PackageReq],
 ) -> Result<Vec<ScriptCandidate>, AnyError> {
   let managed_resolver = npm_resolver.as_managed().with_context(|| {
-    "Lifecycle script approval requires an npm resolution. Run `deno install` first to create one."
+    "Lifecycle script approval requires an npm resolution. Run `edno install` first to create one."
   })?;
   let snapshot = managed_resolver.resolution().snapshot();
   let mut candidates = Vec::new();

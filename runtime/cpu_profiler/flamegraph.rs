@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::BufWriter;
 use std::io::Write;
 
-use deno_core::serde_json;
+use edno_core::serde_json;
 
 use super::cpuprof::CpuProfile;
 use super::cpuprof::ProfileNode;

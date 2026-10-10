@@ -1,23 +1,23 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_bench_util::BenchOptions;
-use deno_bench_util::bench_js_sync_with;
-use deno_bench_util::bench_or_profile;
-use deno_bench_util::bencher::Bencher;
-use deno_bench_util::bencher::benchmark_group;
-use deno_core::Extension;
+use edno_bench_util::BenchOptions;
+use edno_bench_util::bench_js_sync_with;
+use edno_bench_util::bench_or_profile;
+use edno_bench_util::bencher::Bencher;
+use edno_bench_util::bencher::benchmark_group;
+use edno_core::Extension;
 
 fn setup() -> Vec<Extension> {
-  deno_core::extension!(
+  edno_core::extension!(
     bench_setup,
     js = ["ext:bench_setup/setup.js" = {
       source = r#"
         const hello = "hello world\n";
         const hello1k = hello.repeat(1e3);
         const hello1m = hello.repeat(1e6);
-        const helloEncoded = Deno.core.encode(hello);
-        const hello1kEncoded = Deno.core.encode(hello1k);
-        const hello1mEncoded = Deno.core.encode(hello1m);
+        const helloEncoded = Edno.core.encode(hello);
+        const hello1kEncoded = Edno.core.encode(hello1k);
+        const hello1mEncoded = Edno.core.encode(hello1m);
       "#
     }]
   );
@@ -28,7 +28,7 @@ fn setup() -> Vec<Extension> {
 fn bench_utf8_encode_12_b(b: &mut Bencher) {
   bench_js_sync_with(
     b,
-    r#"Deno.core.encode(hello);"#,
+    r#"Edno.core.encode(hello);"#,
     setup,
     BenchOptions {
       benching_inner: 1,
@@ -40,7 +40,7 @@ fn bench_utf8_encode_12_b(b: &mut Bencher) {
 fn bench_utf8_encode_12_kb(b: &mut Bencher) {
   bench_js_sync_with(
     b,
-    r#"Deno.core.encode(hello1k);"#,
+    r#"Edno.core.encode(hello1k);"#,
     setup,
     BenchOptions {
       benching_inner: 1,
@@ -52,7 +52,7 @@ fn bench_utf8_encode_12_kb(b: &mut Bencher) {
 fn bench_utf8_encode_12_mb(b: &mut Bencher) {
   bench_js_sync_with(
     b,
-    r#"Deno.core.encode(hello1m);"#,
+    r#"Edno.core.encode(hello1m);"#,
     setup,
     BenchOptions {
       benching_inner: 1,
@@ -65,7 +65,7 @@ fn bench_utf8_encode_12_mb(b: &mut Bencher) {
 fn bench_utf8_decode_12_b(b: &mut Bencher) {
   bench_js_sync_with(
     b,
-    r#"Deno.core.decode(helloEncoded);"#,
+    r#"Edno.core.decode(helloEncoded);"#,
     setup,
     BenchOptions {
       benching_inner: 1,
@@ -77,7 +77,7 @@ fn bench_utf8_decode_12_b(b: &mut Bencher) {
 fn bench_utf8_decode_12_kb(b: &mut Bencher) {
   bench_js_sync_with(
     b,
-    r#"Deno.core.decode(hello1kEncoded);"#,
+    r#"Edno.core.decode(hello1kEncoded);"#,
     setup,
     BenchOptions {
       benching_inner: 1,
@@ -89,7 +89,7 @@ fn bench_utf8_decode_12_kb(b: &mut Bencher) {
 fn bench_utf8_decode_12_mb(b: &mut Bencher) {
   bench_js_sync_with(
     b,
-    r#"Deno.core.decode(hello1mEncoded);"#,
+    r#"Edno.core.decode(hello1mEncoded);"#,
     setup,
     BenchOptions {
       benching_inner: 1,

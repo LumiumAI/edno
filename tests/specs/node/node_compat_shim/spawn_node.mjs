@@ -1,6 +1,6 @@
 // Spawns `node` the way native tools (e.g. Next.js Turbopack) do: a raw PATH
-// lookup that bypasses Deno's shell-level `node` interception. With no real
-// `node` on PATH, Deno should provide itself as `node` so this succeeds.
+// lookup that bypasses Edno's shell-level `node` interception. With no real
+// `node` on PATH, Edno should provide itself as `node` so this succeeds.
 import { spawnSync } from "node:child_process";
 
 const result = spawnSync("node", ["-e", "process.stdout.write('NODE_OK')"], {

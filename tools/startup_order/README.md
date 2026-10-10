@@ -1,6 +1,6 @@
 # Startup function ordering
 
-Deno release CI arranges startup functions close together in the final
+Edno release CI arranges startup functions close together in the final
 executable. The generated linker order is specific to one binary and is created
 during that binary's release job.
 
@@ -34,10 +34,10 @@ CI retains generated orders and reports as workflow artifacts for seven days.
 For each supported release target, CI:
 
 1. Builds a baseline release executable with the default linker layout.
-2. Copies that executable to `target/release/deno-before-startup-order`.
+2. Copies that executable to `target/release/edno-before-startup-order`.
 3. Runs the target-specific function tracer three times for every workload.
 4. Writes a linker order from the first-entry sequence.
-5. Relinks `deno` with the generated order.
+5. Relinks `edno` with the generated order.
 6. Compares symbol coverage and address-order conformance between the two
    executables.
 7. Uploads the order and reports before stripping, signing, and packaging.
@@ -47,12 +47,12 @@ The trace workloads cover:
 - an empty JavaScript module;
 - a small TypeScript module;
 - an active timer;
-- `Deno.serve` plus one request;
-- `deno test`;
+- `Edno.serve` plus one request;
+- `edno test`;
 - `node:crypto`; and
-- `deno fmt --check`.
+- `edno fmt --check`.
 
-Each generator creates temporary fixtures and a private `DENO_DIR`. The shared
+Each generator creates temporary fixtures and a private `EDNO_DIR`. The shared
 native runner suspends the generator while a workload executes so the
 generator's V8 threads cannot affect the trace.
 
@@ -100,11 +100,11 @@ The resulting order is passed to the Apple linker with `-order_file`.
 Build and preserve the baseline release executable:
 
 ```sh
-unset DENO_USE_STARTUP_ORDER DENO_STARTUP_ORDER_FILE
-DENO_SNAPSHOT_MINIFY_SOURCES=1 \
-  cargo build --release --locked -p deno --bin deno \
-    --features=deno/panic-trace
-cp -p target/release/deno target/release/deno-before-startup-order
+unset EDNO_USE_STARTUP_ORDER EDNO_STARTUP_ORDER_FILE
+EDNO_SNAPSHOT_MINIFY_SOURCES=1 \
+  cargo build --release --locked -p edno --bin edno \
+    --features=edno/panic-trace
+cp -p target/release/edno target/release/edno-before-startup-order
 ```
 
 Generate the Linux order:
@@ -112,9 +112,9 @@ Generate the Linux order:
 ```sh
 TARGET="$(uname -m)-unknown-linux-gnu"
 ORDER="$PWD/target/release/startup-order-$TARGET.order"
-target/release/deno run -A \
+target/release/edno run -A \
   tools/startup_order/generate_linux_function_orderfile.ts \
-  --binary "$PWD/target/release/deno-before-startup-order" \
+  --binary "$PWD/target/release/edno-before-startup-order" \
   --output "$ORDER" \
   --repeats 3 \
   --workload-profile run-first
@@ -124,30 +124,30 @@ Generate the macOS order:
 
 ```sh
 ORDER="$PWD/target/release/startup-order-aarch64-apple-darwin.order"
-target/release/deno run -A \
+target/release/edno run -A \
   tools/startup_order/generate_macos_function_orderfile.ts \
-  --binary "$PWD/target/release/deno-before-startup-order" \
+  --binary "$PWD/target/release/edno-before-startup-order" \
   --output "$ORDER" \
   --repeats 3 \
   --workload-profile run-first
 ```
 
-Relink `deno`:
+Relink `edno`:
 
 ```sh
-DENO_SNAPSHOT_MINIFY_SOURCES=1 \
-DENO_USE_STARTUP_ORDER=1 \
-DENO_STARTUP_ORDER_FILE="$ORDER" \
-  cargo build --release --locked -p deno --bin deno \
-    --features=deno/panic-trace
+EDNO_SNAPSHOT_MINIFY_SOURCES=1 \
+EDNO_USE_STARTUP_ORDER=1 \
+EDNO_STARTUP_ORDER_FILE="$ORDER" \
+  cargo build --release --locked -p edno --bin edno \
+    --features=edno/panic-trace
 ```
 
 Verify the result before stripping the executable:
 
 ```sh
-target/release/deno run -A tools/startup_order/verify_orderfile.ts \
-  --baseline-binary target/release/deno-before-startup-order \
-  --binary target/release/deno \
+target/release/edno run -A tools/startup_order/verify_orderfile.ts \
+  --baseline-binary target/release/edno-before-startup-order \
+  --binary target/release/edno \
   --order "$ORDER" \
   --output "$ORDER.verify.json"
 ```

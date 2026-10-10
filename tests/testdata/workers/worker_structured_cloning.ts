@@ -9,7 +9,7 @@ self.onmessage = () => {
     b: arr,
     c: set,
   };
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (selfReference as any).self = selfReference;
   self.postMessage(selfReference);
 };

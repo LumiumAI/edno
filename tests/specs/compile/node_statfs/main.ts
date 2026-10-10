@@ -2,12 +2,12 @@ import fs from "node:fs";
 import assert from "node:assert/strict";
 
 // `import.meta.filename` points at the embedded module inside the
-// `deno compile` virtual file system. Calling node:fs.statfs on it used to
+// `edno compile` virtual file system. Calling node:fs.statfs on it used to
 // fail because the implementation bypassed the FileSystem trait and called
 // libc / `GetDiskFreeSpaceW` directly on a path that does not exist on disk.
 const selfPath = import.meta.filename!;
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function assertValidStatFs(result: any) {
   assert.equal(typeof result.type, "number");
   assert.equal(typeof result.bsize, "number");

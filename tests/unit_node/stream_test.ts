@@ -16,9 +16,9 @@ import { TextEncoderStream } from "node:stream/web";
 import { createReadStream, createWriteStream } from "node:fs";
 import { EventEmitter } from "node:events";
 
-Deno.test("stream/promises pipeline", async () => {
+Edno.test("stream/promises pipeline", async () => {
   const filePath = relative(
-    Deno.cwd(),
+    Edno.cwd(),
     fromFileUrl(new URL("./testdata/lorem_ipsum.txt", import.meta.url)),
   );
   const input = createReadStream(filePath);
@@ -26,29 +26,29 @@ Deno.test("stream/promises pipeline", async () => {
 
   await pipeline(input, output);
 
-  const content = Deno.readTextFileSync("lorem_ipsum.txt.copy");
+  const content = Edno.readTextFileSync("lorem_ipsum.txt.copy");
   assert(content.startsWith("Lorem ipsum dolor sit amet"));
   try {
-    Deno.removeSync("lorem_ipsum.txt.copy");
+    Edno.removeSync("lorem_ipsum.txt.copy");
   } catch {
     // pass
   }
 });
 
-Deno.test("stream getDefaultHighWaterMark", () => {
+Edno.test("stream getDefaultHighWaterMark", () => {
   assertEquals(
     getDefaultHighWaterMark(false),
-    Deno.build.os === "windows" ? 16 * 1024 : 64 * 1024,
+    Edno.build.os === "windows" ? 16 * 1024 : 64 * 1024,
   );
   assertEquals(getDefaultHighWaterMark(true), 16);
 });
 
-Deno.test("stream is an instance of EventEmitter", () => {
+Edno.test("stream is an instance of EventEmitter", () => {
   const stream = new Stream();
   assert(stream instanceof EventEmitter);
 });
 
-Deno.test("finished on web streams", async () => {
+Edno.test("finished on web streams", async () => {
   const stream = new ReadableStream({
     start(controller) {
       controller.enqueue("asd");
@@ -62,7 +62,7 @@ Deno.test("finished on web streams", async () => {
   await promise;
 });
 
-Deno.test("finished cleanup removes web stream abort listener", async () => {
+Edno.test("finished cleanup removes web stream abort listener", async () => {
   let abortListener: EventListener | undefined;
   let removeCount = 0;
   const signal = {
@@ -99,7 +99,7 @@ Deno.test("finished cleanup removes web stream abort listener", async () => {
   assertEquals(callbackCount, 0);
 });
 
-Deno.test("finished promise cleanup works for web streams", async () => {
+Edno.test("finished promise cleanup works for web streams", async () => {
   let abortListener: EventListener | undefined;
   let removeCount = 0;
   const signal = {
@@ -130,7 +130,7 @@ Deno.test("finished promise cleanup works for web streams", async () => {
 });
 
 // https://github.com/denoland/deno/issues/28905
-Deno.test("Writable toWeb", async () => {
+Edno.test("Writable toWeb", async () => {
   const nodeWritable = new Writable({
     write(_chunk, _encoding, callback) {
       // Simulate the issue by delaying the callback slightly
@@ -154,7 +154,7 @@ Deno.test("Writable toWeb", async () => {
   await finished(nodeWritable);
 });
 
-Deno.test("Duplex fromWeb handles readable errors", async () => {
+Edno.test("Duplex fromWeb handles readable errors", async () => {
   let errorController!: ReadableStreamDefaultController;
   const readable = new ReadableStream({
     start(controller) {
@@ -178,7 +178,7 @@ Deno.test("Duplex fromWeb handles readable errors", async () => {
   assertEquals(error.message, "Network error");
 });
 
-Deno.test("Writable toWeb abort handles destroy context", async () => {
+Edno.test("Writable toWeb abort handles destroy context", async () => {
   const nodeWritable = new Writable({
     write(_chunk, _encoding, callback) {
       callback();
@@ -190,7 +190,7 @@ Deno.test("Writable toWeb abort handles destroy context", async () => {
   assert(nodeWritable.destroyed);
 });
 
-Deno.test("Writable fromWeb writev handles write rejection", async () => {
+Edno.test("Writable fromWeb writev handles write rejection", async () => {
   const writable = Writable.fromWeb(
     new WritableStream({
       write(chunk) {
@@ -218,7 +218,7 @@ Deno.test("Writable fromWeb writev handles write rejection", async () => {
   await closePromise;
 });
 
-Deno.test("Duplex fromWeb writev handles write rejection", async () => {
+Edno.test("Duplex fromWeb writev handles write rejection", async () => {
   const duplex = Duplex.fromWeb({
     readable: new ReadableStream(),
     writable: new WritableStream({
@@ -248,7 +248,7 @@ Deno.test("Duplex fromWeb writev handles write rejection", async () => {
 });
 
 // https://github.com/denoland/deno/issues/36275
-Deno.test("Readable toWeb applies backpressure", async () => {
+Edno.test("Readable toWeb applies backpressure", async () => {
   const CHUNK_SIZE = 16 * 1024;
   const TOTAL_CHUNKS = 64;
 
@@ -295,7 +295,7 @@ Deno.test("Readable toWeb applies backpressure", async () => {
 
 // String chunks (a non-objectMode Readable with an encoding set) have no
 // `byteLength`; they must still queue rather than error the stream.
-Deno.test("Readable toWeb handles string chunks", async () => {
+Edno.test("Readable toWeb handles string chunks", async () => {
   const readable = new Readable({
     encoding: "utf8",
     read() {
@@ -323,7 +323,7 @@ Deno.test("Readable toWeb handles string chunks", async () => {
 });
 
 // https://github.com/denoland/deno/issues/30423
-Deno.test("exported `promises` from node:stream works", async () => {
+Edno.test("exported `promises` from node:stream works", async () => {
   const stream = new ReadableStream({
     start(controller) {
       controller.enqueue("asd");

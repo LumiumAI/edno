@@ -2,8 +2,8 @@
 
 use std::process::Command;
 
-use test_util::deno_cmd;
-use test_util::deno_config_path;
+use test_util::edno_cmd;
+use test_util::edno_config_path;
 use test_util::println;
 use test_util::testdata_path;
 use test_util::tests_path;
@@ -21,7 +21,7 @@ fn build_sqlite_extension() {
   let tests_dir = tests_path();
   let extension_manifest =
     tests_dir.join("sqlite_extension").join("Cargo.toml");
-  // Output to the repo's target directory so the Deno tests can find it
+  // Output to the repo's target directory so the Edno tests can find it
   let target_dir = tests_dir.parent().join("target");
 
   let mut build_plugin_base = Command::new("cargo");
@@ -32,7 +32,7 @@ fn build_sqlite_extension() {
     .arg("--target-dir")
     .arg(target_dir.as_path())
     // Don't inherit RUSTFLAGS from the test environment - the sysroot
-    // configuration used for main Deno builds doesn't have libsqlite3
+    // configuration used for main Edno builds doesn't have libsqlite3
     .env_remove("RUSTFLAGS")
     .env_remove("RUSTDOCFLAGS");
 
@@ -61,13 +61,13 @@ fn sqlite_extension() {
 
   let extension_test_file = testdata_path().join("sqlite_extension_test.ts");
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .arg("test")
     .arg("--allow-read")
     .arg("--allow-write")
     .arg("--allow-ffi")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-check")
     .arg(extension_test_file.as_path())
     .env("NO_COLOR", "1")

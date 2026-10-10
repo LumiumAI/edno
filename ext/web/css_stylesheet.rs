@@ -4,7 +4,7 @@
 //! scripts (`import sheet from "./a.css" with { type: "css" }`):
 //! https://html.spec.whatwg.org/multipage/webappapis.html#css-module-script
 //!
-//! Deno has no DOM, so a sheet can't be adopted anywhere; the implementation
+//! Edno has no DOM, so a sheet can't be adopted anywhere; the implementation
 //! is backed by the raw CSS text. `cssRules` performs a naive top-level rule
 //! split (tracking braces, strings and comments) instead of real CSS parsing,
 //! which is enough to read rules back out for SSR-style serialization.
@@ -13,12 +13,12 @@
 use std::borrow::Cow;
 use std::cell::RefCell;
 
-use deno_core::GarbageCollected;
-use deno_core::cppgc;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::webidl::ContextFn;
-use deno_core::webidl::WebIdlConverter;
+use edno_core::GarbageCollected;
+use edno_core::cppgc;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::webidl::ContextFn;
+use edno_core::webidl::WebIdlConverter;
 
 pub struct CSSRule {
   text: String,
@@ -239,7 +239,7 @@ impl CSSStyleSheet {
         resolver.resolve(scope, this);
       }
       Err(err) => {
-        let exception = deno_core::error::to_v8_error(scope, &err);
+        let exception = edno_core::error::to_v8_error(scope, &err);
         resolver.reject(scope, exception);
       }
     }

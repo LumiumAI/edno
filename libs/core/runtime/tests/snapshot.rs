@@ -65,7 +65,7 @@ fn will_snapshot2() {
       .execute_script("check_b.js", "if (b != 5) throw Error('x')")
       .unwrap();
     runtime
-      .execute_script("check2.js", "if (!Deno.core) throw Error('x')")
+      .execute_script("check2.js", "if (!Edno.core) throw Error('x')")
       .unwrap();
   }
 }
@@ -79,15 +79,15 @@ fn test_snapshot_callbacks() {
       .execute_script(
         "a.js",
         r#"
-        Deno.core.queueNextTick({
+        Edno.core.queueNextTick({
           callback: () => {},
           args: undefined,
           snapshot: undefined,
         });
-        Deno.core.ops.op_set_format_exception_callback(()=> {
+        Edno.core.ops.op_set_format_exception_callback(()=> {
           return null;
         })
-        Deno.core.setUnhandledPromiseRejectionHandler(() => {
+        Edno.core.setUnhandledPromiseRejectionHandler(() => {
           return false;
         });
         a = 1 + 2;
@@ -172,7 +172,7 @@ if (typeof globalThis.capturedAtSnapshot !== "function") {
   throw new Error("snapshot-time captured constructor missing after restore");
 }
 const sab = new globalThis.capturedAtSnapshot(8);
-if (!Deno.core.isSharedArrayBuffer(sab)) {
+if (!Edno.core.isSharedArrayBuffer(sab)) {
   throw new Error("captured constructor did not produce a SharedArrayBuffer");
 }
 "#,
@@ -205,7 +205,7 @@ if (typeof SharedArrayBuffer !== "function") {
   throw new Error("SharedArrayBuffer primordial missing");
 }
 const sab = new SharedArrayBuffer(8);
-if (!Deno.core.isSharedArrayBuffer(sab)) {
+if (!Edno.core.isSharedArrayBuffer(sab)) {
   throw new Error("constructed value is not a SharedArrayBuffer");
 }
 if (SharedArrayBufferPrototypeGetByteLength(sab) !== 8) {
@@ -451,13 +451,13 @@ fn es_snapshot() {
 
   let source_code = r#"(async () => {
     const mod = await import("file:///400.js");
-    return mod.f400() + " " + Deno.core.ops.op_test();
+    return mod.f400() + " " + Edno.core.ops.op_test();
   })();"#;
   let val = runtime3.execute_script(".", source_code).unwrap();
   #[allow(deprecated, reason = "TODO: document")]
   let val = futures::executor::block_on(runtime3.resolve_value(val)).unwrap();
   {
-    deno_core::scope!(scope, runtime3);
+    edno_core::scope!(scope, runtime3);
     let value = v8::Local::new(scope, val);
     let str_ = value.to_string(scope).unwrap().to_rust_string_lossy(scope);
     assert_eq!(str_, "hello world test");
@@ -468,7 +468,7 @@ fn es_snapshot() {
 pub(crate) fn es_snapshot_without_runtime_module_loader() {
   let _snapshot_lock = super::snapshot_test_lock();
   let startup_data = {
-    deno_core::extension!(
+    edno_core::extension!(
       module_snapshot,
       esm_entry_point = "ext:module_snapshot/test.js",
       esm = ["ext:module_snapshot/test.js" =
@@ -494,7 +494,7 @@ pub(crate) fn es_snapshot_without_runtime_module_loader() {
 
   // Make sure the module was evaluated.
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let global_test: v8::Local<v8::String> =
       JsRuntime::eval(scope, "globalThis.TEST").unwrap();
     assert_eq!(
@@ -552,21 +552,21 @@ pub fn snapshot_with_additional_extensions() {
     "after".to_owned()
   }
 
-  deno_core::extension!(
+  edno_core::extension!(
     before_snapshot,
     ops = [op_before],
     esm_entry_point = "ext:module_snapshot/before.js",
     esm = ["ext:module_snapshot/before.js" =
       // If this throws, we accidentally tried to evaluate this module twice
-      { source = "if (globalThis.before) { throw 'twice?' } globalThis.before = () => { globalThis.BEFORE = Deno.core.ops.op_before(); };" },]
+      { source = "if (globalThis.before) { throw 'twice?' } globalThis.before = () => { globalThis.BEFORE = Edno.core.ops.op_before(); };" },]
   );
-  deno_core::extension!(
+  edno_core::extension!(
     after_snapshot,
     ops = [op_after],
     esm_entry_point = "ext:module_snapshot/after.js",
     esm = ["ext:module_snapshot/after.js" = {
       source =
-        "globalThis.before(); globalThis.AFTER = Deno.core.ops.op_after();"
+        "globalThis.before(); globalThis.AFTER = Edno.core.ops.op_after();"
     },]
   );
 
@@ -587,7 +587,7 @@ pub fn snapshot_with_additional_extensions() {
 
   // Make sure the module was evaluated.
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let global_test: v8::Local<v8::String> =
       JsRuntime::eval(scope, "globalThis.BEFORE + '/' + globalThis.AFTER")
         .unwrap();
@@ -602,7 +602,7 @@ pub fn snapshot_with_additional_extensions() {
 fn lazy_loaded_esm_not_snapshotted_but_metadata_survives() {
   let _snapshot_lock = super::snapshot_test_lock();
   let snapshot = {
-    deno_core::extension!(
+    edno_core::extension!(
       test_ext,
       lazy_loaded_esm =
         ["custom:lazy_mod" = { source = "export const value = 'lazy';" },]
@@ -632,7 +632,7 @@ fn lazy_loaded_esm_not_snapshotted_but_metadata_survives() {
   // When loading from the snapshot, the lazy ESM module should NOT
   // be in the module map (not compiled/instantiated), but the metadata
   // should be present in known_lazy_esm.
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     lazy_loaded_esm =
       ["custom:lazy_mod" = { source = "export const value = 'lazy';" },]
@@ -669,9 +669,9 @@ fn lazy_loaded_esm_not_snapshotted_but_metadata_survives() {
     .execute_script(
       "test.js",
       r#"
-      const mod = Deno.core.createLazyLoader("custom:lazy_mod")();
+      const mod = Edno.core.createLazyLoader("custom:lazy_mod")();
       if (mod.value !== "lazy") throw new Error("expected 'lazy', got " + mod.value);
-      Deno.core.print("lazy ESM survived snapshot without being snapshotted\n");
+      Edno.core.print("lazy ESM survived snapshot without being snapshotted\n");
       "#,
     )
     .unwrap();

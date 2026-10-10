@@ -99,7 +99,7 @@ fn error_if_invalid_cache() {
   output.assert_exit_code(0);
   output.skip_output_check();
 
-  // Modify the file between deno test and deno coverage, thus invalidating the cache
+  // Modify the file between edno test and edno coverage, thus invalidating the cache
   mod_after_path.copy(&mod_temp_path);
 
   let output = context
@@ -241,7 +241,7 @@ fn no_snaps_included(test_name: &str, extension: &str) {
       "--allow-read".to_string(),
       format!("--coverage={}", tempdir),
       "--config".to_string(),
-      "../config/deno.json".to_string(),
+      "../config/edno.json".to_string(),
       format!("coverage/no_snaps_included/{test_name}_test.{extension}"),
     ])
     .run();
@@ -283,7 +283,7 @@ fn no_tests_included(test_name: &str, extension: &str) {
       "--allow-read".to_string(),
       format!("--coverage={}", tempdir),
       "--config".to_string(),
-      "../config/deno.json".to_string(),
+      "../config/edno.json".to_string(),
       format!("coverage/no_tests_included/{test_name}.test.{extension}"),
     ])
     .run();
@@ -366,7 +366,7 @@ fn no_transpiled_lines() {
       "--quiet".to_string(),
       format!("--coverage={}", tempdir),
       "--config".to_string(),
-      "../config/deno.json".to_string(),
+      "../config/edno.json".to_string(),
       "coverage/no_transpiled_lines/".to_string(),
     ])
     .run();
@@ -507,8 +507,8 @@ fn test_html_reporter() {
   // This test case generates a html coverage report of test cases in /tests/testdata/coverage/multisource
   // You can get the same reports in ./cov_html by running the following command:
   // ```
-  // ./target/debug/deno test --coverage=cov_html tests/testdata/coverage/multisource
-  // ./target/debug/deno coverage --html cov_html
+  // ./target/debug/edno test --coverage=cov_html tests/testdata/coverage/multisource
+  // ./target/debug/edno coverage --html cov_html
   // ```
   let context = TestContext::default();
   let tempdir = context.temp_dir();

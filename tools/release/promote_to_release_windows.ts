@@ -1,25 +1,25 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S edno run -A
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
-import { patchver } from "jsr:@deno/patchver@0.5.1";
+import { patchver } from "jsr:@edno/patchver@0.5.1";
 
-const CHANNEL = Deno.args[0];
+const CHANNEL = Edno.args[0];
 if (CHANNEL !== "rc" && CHANNEL !== "lts") {
   throw new Error(`Invalid channel: ${CHANNEL}`);
 }
 
-const BINARIES = ["deno.exe", "denort.exe"];
+const BINARIES = ["edno.exe", "ednort.exe"];
 
 async function patchBinary(inputPath: string, channel: string) {
   console.log(`Patching ${inputPath}...`);
 
-  await Deno.rename(inputPath, `${inputPath}.bak`);
-  const input = await Deno.readFile(`${inputPath}.bak`);
+  await Edno.rename(inputPath, `${inputPath}.bak`);
+  const input = await Edno.readFile(`${inputPath}.bak`);
   const output = patchver(input, channel);
 
-  await Deno.writeFile(inputPath, output);
+  await Edno.writeFile(inputPath, output);
   console.log(`Created ${inputPath}`);
 }
 

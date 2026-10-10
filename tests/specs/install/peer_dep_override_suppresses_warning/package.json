@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@denotest/peer-dep-specific-constraint": "*",
-    "@denotest/add": "1"
+    "@ednotest/peer-dep-specific-constraint": "*",
+    "@ednotest/add": "1"
   },
   "overrides": {
-    "@denotest/add": "1"
+    "@ednotest/add": "1"
   }
 }

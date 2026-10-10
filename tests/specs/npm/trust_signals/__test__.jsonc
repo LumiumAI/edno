@@ -1,14 +1,14 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [
     {
       // the trust policy in the .npmrc forces the full packument to be
       // fetched, which is where the `_npmUser.trustedPublisher`
       // publishing-trust signal lives
-      "args": "install npm:@denotest/trusted-publisher",
+      "args": "install npm:@ednotest/trusted-publisher",
       "output": "[WILDCARD]"
     },
     {

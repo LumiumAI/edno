@@ -62,7 +62,7 @@
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync('deno.json', `{ \"nodeModulesDir\": \"auto\" }`)"
+            "Edno.writeTextFileSync('edno.json', `{ \"nodeModulesDir\": \"auto\" }`)"
           ],
           "output": "[WILDCARD]"
         },
@@ -73,7 +73,7 @@
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync(\"package.json\", JSON.stringify({ dependencies: { \"@denotest/bin\": \"0.7.0\" } }))"
+            "Edno.writeTextFileSync(\"package.json\", JSON.stringify({ dependencies: { \"@ednotest/bin\": \"0.7.0\" } }))"
           ],
           "output": ""
         },
@@ -106,7 +106,7 @@
         {
           "args": [
             "eval",
-            "Deno.statSync('lock.json')"
+            "Edno.statSync('lock.json')"
           ],
           "output": "[WILDCARD]NotFound[WILDCARD]",
           "exitCode": 1
@@ -123,7 +123,7 @@
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync('deno.json', JSON.stringify({ lock: { frozen: true }, ...JSON.parse(Deno.readTextFileSync('deno.json')) }))"
+            "Edno.writeTextFileSync('edno.json', JSON.stringify({ lock: { frozen: true }, ...JSON.parse(Edno.readTextFileSync('edno.json')) }))"
           ],
           "output": ""
         },

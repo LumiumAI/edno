@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-//! This mod provides DenoError to unify errors across Deno.
+//! This mod provides EdnoError to unify errors across Edno.
 use std::borrow::Cow;
 use std::fmt::Write as _;
 use std::sync::LazyLock;
@@ -8,9 +8,9 @@ use std::sync::atomic::Ordering;
 
 use color_print::cformat;
 use color_print::cstr;
-use deno_core::error::JsError;
-use deno_core::error::format_frame;
-use deno_core::url::Url;
+use edno_core::error::JsError;
+use edno_core::error::format_frame;
+use edno_core::url::Url;
 use deno_terminal::colors;
 
 /// Set to `true` when user code assigns to `Object.prototype.__proto__` while
@@ -103,16 +103,16 @@ impl<'a> FixSuggestion<'a> {
 
 struct AnsiColors;
 
-impl deno_core::error::ErrorFormat for AnsiColors {
+impl edno_core::error::ErrorFormat for AnsiColors {
   fn fmt_element(
-    element: deno_core::error::ErrorElement,
+    element: edno_core::error::ErrorElement,
     in_extension_code: bool,
     s: &str,
   ) -> std::borrow::Cow<'_, str> {
     if in_extension_code {
       return colors::dimmed_gray(s).to_string().into();
     }
-    use deno_core::error::ErrorElement::*;
+    use edno_core::error::ErrorElement::*;
     match element {
       Anonymous | NativeFrame | FileName | EvalOrigin => {
         colors::cyan(s).to_string().into()
@@ -258,7 +258,7 @@ fn format_aggregated_error(
   s
 }
 
-fn stack_frame_is_ext(frame: &deno_core::error::JsStackFrame) -> bool {
+fn stack_frame_is_ext(frame: &edno_core::error::JsStackFrame) -> bool {
   frame
     .file_name
     .as_ref()
@@ -340,7 +340,7 @@ fn format_js_error_inner(
         && let Some(fn_name) = &frame.function_name
         && (fn_name.starts_with("__node_internal_")
           || fn_name == "eventLoopTick"
-          || fn_name == "denoErrorToNodeError"
+          || fn_name == "ednoErrorToNodeError"
           || fn_name == "__drainNextTickAndMacrotasks")
       {
         continue;
@@ -435,13 +435,13 @@ fn get_suggestions_for_terminal_errors(e: &JsError) -> Vec<FixSuggestion<'_>> {
   // `__proto__` once (feature detection) and then crashed for another reason.
   let info = if PROTO_SET_ATTEMPTED.load(Ordering::Relaxed) {
     Some(cstr!(
-      "This program assigned to <u>Object.prototype.__proto__</>, which Deno disables by default."
+      "This program assigned to <u>Object.prototype.__proto__</>, which Edno disables by default."
     ))
   } else if PROTO_GET_ATTEMPTED.load(Ordering::Relaxed)
     && error_mentions_proto(e)
   {
     Some(cstr!(
-      "This program read <u>Object.prototype.__proto__</>, which Deno disables by default (it returns <i>undefined</>)."
+      "This program read <u>Object.prototype.__proto__</>, which Edno disables by default (it returns <i>undefined</>)."
     ))
   } else {
     None
@@ -491,7 +491,7 @@ fn get_message_suggestions_inner(
       return vec![
         FixSuggestion::info_multiline(&[
           cstr!(
-            "Deno supports CommonJS modules in <u>.cjs</> files, or when the closest"
+            "Edno supports CommonJS modules in <u>.cjs</> files, or when the closest"
           ),
           cstr!(
             "<u>package.json</> has a <i>\"type\": \"commonjs\"</> option."
@@ -525,21 +525,21 @@ fn get_message_suggestions_inner(
       ];
     } else if msg.contains("openKv is not a function") {
       return vec![
-        FixSuggestion::info("Deno.openKv() is an unstable API."),
+        FixSuggestion::info("Edno.openKv() is an unstable API."),
         FixSuggestion::hint(
           "Run again with `--unstable-kv` flag to enable this API.",
         ),
       ];
     } else if msg.contains("bundle is not a function") {
       return vec![
-        FixSuggestion::info("Deno.bundle() is an unstable API."),
+        FixSuggestion::info("Edno.bundle() is an unstable API."),
         FixSuggestion::hint(
           "Run again with `--unstable-bundle` flag to enable this API.",
         ),
       ];
     } else if msg.contains("cron is not a function") {
       return vec![
-        FixSuggestion::info("Deno.cron() is an unstable API."),
+        FixSuggestion::info("Edno.cron() is an unstable API."),
         FixSuggestion::hint(
           "Run again with `--unstable-cron` flag to enable this API.",
         ),
@@ -553,12 +553,12 @@ fn get_message_suggestions_inner(
       ];
     } else if msg.contains("window is not defined") {
       return vec![
-        FixSuggestion::info("window global is not available in Deno 2."),
+        FixSuggestion::info("window global is not available in Edno 2."),
         FixSuggestion::hint("Replace `window` with `globalThis`."),
       ];
     } else if msg.contains("UnsafeWindowSurface is not a constructor") {
       return vec![
-        FixSuggestion::info("Deno.UnsafeWindowSurface is an unstable API."),
+        FixSuggestion::info("Edno.UnsafeWindowSurface is an unstable API."),
         FixSuggestion::hint(
           "Run again with `--unstable-webgpu` flag to enable this API.",
         ),
@@ -578,18 +578,18 @@ fn get_message_suggestions_inner(
         ),
       ];
     } else if msg.contains("invalid peer certificate: UnknownIssuer") {
-      // The certificate chain isn't trusted by Deno's CA store (the default is
+      // The certificate chain isn't trusted by Edno's CA store (the default is
       // Mozilla's bundle). This commonly happens with `mkcert` dev certs or a
       // corporate TLS proxy, whose root is in the OS trust store but not
       // Mozilla's. See denoland/deno#25366.
       return vec![
         FixSuggestion::info(
-          "The TLS certificate could not be verified against Deno's trusted certificate authorities.",
+          "The TLS certificate could not be verified against Edno's trusted certificate authorities.",
         ),
         FixSuggestion::hint_multiline(&[
           "If the certificate is trusted by your operating system (for example, issued",
           cstr!(
-            "by <u>mkcert</> or a corporate proxy), run again with <u>DENO_TLS_CA_STORE=mozilla,system</>."
+            "by <u>mkcert</> or a corporate proxy), run again with <u>EDNO_TLS_CA_STORE=mozilla,system</>."
           ),
         ]),
         FixSuggestion::hint(cstr!(
@@ -601,10 +601,10 @@ fn get_message_suggestions_inner(
         "Run again with the `--unsafely-ignore-certificate-errors` flag to bypass certificate errors.",
       )];
     // `isolated-vm` is a native addon built directly on V8's C++ internals,
-    // which Deno does not expose. It fails either with a `Cannot find module
+    // which Edno does not expose. It fails either with a `Cannot find module
     // './out/isolated_vm'` error (when the addon was never built, the most
     // commonly reported case) or, if built, with the legacy native addon ABI
-    // error from `ext/napi`. Either way it cannot run in Deno, so point users
+    // error from `ext/napi`. Either way it cannot run in Edno, so point users
     // at the supported isolation primitives. See denoland/deno#25130.
     } else if (msg.contains("isolated_vm") || msg.contains("isolated-vm"))
       && (msg.contains("Cannot find module")
@@ -613,11 +613,11 @@ fn get_message_suggestions_inner(
       return vec![
         FixSuggestion::info_multiline(&[
           "`isolated-vm` is a native addon built directly on V8's C++ internals,",
-          "which Deno does not expose, so it cannot be loaded in Deno.",
+          "which Edno does not expose, so it cannot be loaded in Edno.",
         ]),
         FixSuggestion::hint_multiline(&[
           "To run code in a separate isolate, use a `Worker`: it executes in its",
-          "own isolate and thread and can be sandboxed via the `deno.permissions`",
+          "own isolate and thread and can be sandboxed via the `edno.permissions`",
           "option. For in-process sandboxing, the `node:vm` module is also available.",
         ]),
       ];
@@ -625,8 +625,8 @@ fn get_message_suggestions_inner(
     // ```
     // Uncaught Error: Cannot find module '../build/Release/canvas.node'
     // Require stack:
-    // - /.../deno/npm/registry.npmjs.org/canvas/2.11.2/lib/bindings.js
-    // - /.../.cache/deno/npm/registry.npmjs.org/canvas/2.11.2/lib/canvas.js
+    // - /.../edno/npm/registry.npmjs.org/canvas/2.11.2/lib/bindings.js
+    // - /.../.cache/edno/npm/registry.npmjs.org/canvas/2.11.2/lib/canvas.js
     // ```
     // as well as errors thrown by the `bindings` npm package (used by
     // libxmljs and many other native addons), like:
@@ -647,14 +647,14 @@ fn get_message_suggestions_inner(
           "these packages require local `node_modules` directory to be present.",
         ]),
         FixSuggestion::hint_multiline(&[
-          "Add `\"nodeModulesDir\": \"auto\" option to `deno.json`, and then run",
-          "`deno install --allow-scripts=npm:<package> --entrypoint <script>` to setup `node_modules` directory.",
+          "Add `\"nodeModulesDir\": \"auto\" option to `edno.json`, and then run",
+          "`edno install --allow-scripts=npm:<package> --entrypoint <script>` to setup `node_modules` directory.",
         ]),
       ];
     // Captures the error thrown by `ext/napi` when a native addon was built
     // against the legacy Node.js native addon ABI (the `NODE_MODULE` macro /
     // `nan`) instead of Node-API. Such addons link against V8's C++ internals,
-    // which Deno does not expose, so they cannot be loaded. See
+    // which Edno does not expose, so they cannot be loaded. See
     // denoland/deno#26034 (better-sqlite3) and denoland/deno#26656.
     } else if msg.contains("legacy Node.js native addon API") {
       // `better-sqlite3` is by far the most commonly reported offender, so
@@ -663,7 +663,7 @@ fn get_message_suggestions_inner(
         return vec![
           FixSuggestion::info_multiline(&[
             "`better-sqlite3` is built on the legacy V8/nan native addon ABI,",
-            "which depends on V8 internals that Deno does not expose.",
+            "which depends on V8 internals that Edno does not expose.",
           ]),
           FixSuggestion::hint_multiline(&[
             "Use a Node-API based alternative instead, such as the built-in",
@@ -675,8 +675,8 @@ fn get_message_suggestions_inner(
       return vec![
         FixSuggestion::info_multiline(&[
           "This native addon uses the legacy V8/nan addon ABI, which depends",
-          "on V8 internals that Deno does not expose. Only Node-API (N-API)",
-          "addons can be loaded by Deno.",
+          "on V8 internals that Edno does not expose. Only Node-API (N-API)",
+          "addons can be loaded by Edno.",
         ]),
         FixSuggestion::hint_multiline(&[
           "Switch to a package that uses Node-API (N-API), or ask the addon's",
@@ -686,11 +686,11 @@ fn get_message_suggestions_inner(
     } else if msg.contains("document is not defined") {
       return vec![
         FixSuggestion::info(cstr!(
-          "<u>document</> global is not available in Deno."
+          "<u>document</> global is not available in Edno."
         )),
         FixSuggestion::hint_multiline(&[
           cstr!(
-            "Use a library like <u>happy-dom</>, <u>deno_dom</>, <u>linkedom</> or <u>JSDom</>"
+            "Use a library like <u>happy-dom</>, <u>edno_dom</>, <u>linkedom</> or <u>JSDom</>"
           ),
           cstr!(
             "and setup the <u>document</> global according to the library documentation."
@@ -712,7 +712,7 @@ fn get_message_suggestions_inner(
 }
 
 static SHOULD_FILTER_FRAMES: LazyLock<bool> =
-  LazyLock::new(|| std::env::var("DENO_NO_FILTER_FRAMES").is_err());
+  LazyLock::new(|| std::env::var("EDNO_NO_FILTER_FRAMES").is_err());
 
 /// Format a [`JsError`] for terminal output.
 pub fn format_js_error(

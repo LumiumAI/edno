@@ -4,7 +4,7 @@
   "steps": [{
     "args": [
       "eval",
-      "Deno.mkdirSync('a'); Deno.copyFileSync('main.ts', 'a/main.ts');"
+      "Edno.mkdirSync('a'); Edno.copyFileSync('main.ts', 'a/main.ts');"
     ],
     "output": "[WILDCARD]"
   }, {
@@ -16,7 +16,7 @@
     "args": "compile --no-config --app-name app --output a.exe a/main.ts",
     "output": "[WILDCARD]"
   }, {
-    "args": ["eval", "Deno.renameSync('a', 'b')"],
+    "args": ["eval", "Edno.renameSync('a', 'b')"],
     "output": "[WILDCARD]"
   }, {
     "if": "unix",

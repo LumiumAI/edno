@@ -1,2 +1,2 @@
-import version from "@denotest/different-nested-dep-child";
+import version from "@ednotest/different-nested-dep-child";
 export default version;

@@ -1,2 +1,2 @@
 // @ts-expect-error - testing runtime validation
-Deno.test.each([[1], [2]])("name");
+Edno.test.each([[1], [2]])("name");

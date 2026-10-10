@@ -2,7 +2,7 @@
   "tempDir": true,
   "steps": [{
     "if": "unix",
-    "args": "install -g --allow-read --root ./bins npm:@denotest/multi-bin@1.0.0",
+    "args": "install -g --allow-read --root ./bins npm:@ednotest/multi-bin@1.0.0",
     "output": "install.out"
   }, {
     "if": "unix",
@@ -26,7 +26,7 @@
     "output": ""
   }, {
     "if": "windows",
-    "args": "install -g --allow-read --root ./bins npm:@denotest/multi-bin@1.0.0",
+    "args": "install -g --allow-read --root ./bins npm:@ednotest/multi-bin@1.0.0",
     "output": "install.out"
   }, {
     "if": "windows",

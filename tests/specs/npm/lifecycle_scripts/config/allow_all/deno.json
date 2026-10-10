@@ -1,7 +1,7 @@
 {
   "nodeModulesDir": "manual",
   "imports": {
-    "@denotest/node-addon": "npm:@denotest/node-addon@1.0.0",
-    "@denotest/node-lifecycle-scripts": "npm:@denotest/node-lifecycle-scripts"
+    "@ednotest/node-addon": "npm:@ednotest/node-addon@1.0.0",
+    "@ednotest/node-lifecycle-scripts": "npm:@ednotest/node-lifecycle-scripts"
   }
 }

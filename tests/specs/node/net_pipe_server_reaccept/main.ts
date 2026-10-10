@@ -8,9 +8,9 @@ import { connect, createServer } from "node:net";
 import { randomUUID } from "node:crypto";
 
 const suffix = randomUUID().slice(0, 8);
-const pipePath = Deno.build.os === "windows"
-  ? `\\\\.\\pipe\\deno_test_reaccept_${suffix}`
-  : `${Deno.makeTempDirSync()}/reaccept_${suffix}.sock`;
+const pipePath = Edno.build.os === "windows"
+  ? `\\\\.\\pipe\\edno_test_reaccept_${suffix}`
+  : `${Edno.makeTempDirSync()}/reaccept_${suffix}.sock`;
 
 let connectionCount = 0;
 

@@ -10,7 +10,7 @@ assertFileContains(
 );
 
 const jsCssFiles: string[] = [];
-Deno.readDirSync("./dist").forEach((entry) => {
+Edno.readDirSync("./dist").forEach((entry) => {
   if (entry.name.endsWith(".js") || entry.name.endsWith(".css")) {
     jsCssFiles.push("./dist/" + entry.name);
   }

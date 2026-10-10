@@ -31,29 +31,29 @@ const {
   TypedArrayPrototypeGetSymbolToStringTag,
   Uint8Array,
 } = primordials;
-const { _ws } = core.loadExtScript("ext:deno_http/02_websocket.ts");
-const { InnerBody } = core.loadExtScript("ext:deno_fetch/22_body.js");
-const { Event } = core.loadExtScript("ext:deno_web/02_event.js");
-const { BlobPrototype } = core.loadExtScript("ext:deno_web/09_file.js");
+const { _ws } = core.loadExtScript("ext:edno_http/02_websocket.ts");
+const { InnerBody } = core.loadExtScript("ext:edno_fetch/22_body.js");
+const { Event } = core.loadExtScript("ext:edno_web/02_event.js");
+const { BlobPrototype } = core.loadExtScript("ext:edno_web/09_file.js");
 const {
   ResponsePrototype,
   toInnerResponse,
   wireHeaderList,
-} = core.loadExtScript("ext:deno_fetch/23_response.js");
+} = core.loadExtScript("ext:edno_fetch/23_response.js");
 const {
   abortRequest,
   fromInnerRequest,
   newInnerRequest,
-} = core.loadExtScript("ext:deno_fetch/23_request.js");
+} = core.loadExtScript("ext:edno_fetch/23_request.js");
 const loadWebSocket = core.createLazyLoader(
-  "ext:deno_websocket/01_websocket.js",
+  "ext:edno_websocket/01_websocket.js",
 );
 const {
   getReadableStreamResourceBacking,
   readableStreamClose,
   readableStreamForRid,
   ReadableStreamPrototype,
-} = core.loadExtScript("ext:deno_web/06_streams.js");
+} = core.loadExtScript("ext:edno_web/06_streams.js");
 
 const connErrorSymbol = Symbol("connError");
 
@@ -109,7 +109,7 @@ class HttpConn {
       throw error;
     }
     if (nextRequest == null) {
-      // Work-around for servers (deno_std/http in particular) that call
+      // Work-around for servers (edno_std/http in particular) that call
       // `nextRequest()` before upgrading a previous request which has a
       // `connection: upgrade` header.
       await null;
@@ -176,7 +176,7 @@ class HttpConn {
   }
 
   [SymbolAsyncIterator]() {
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const httpConn = this;
     return {
       async next() {
@@ -206,7 +206,7 @@ function createRespondWith(
       // The Response prototype check above passes for Response-like objects
       // that don't carry the internal slot (e.g. `Object.create(Response.prototype)`
       // or a polyfilled/foreign-realm Response). Reject those here instead of
-      // crashing later on `innerResp.body`. Mirrors the Deno.serve guard
+      // crashing later on `innerResp.body`. Mirrors the Edno.serve guard
       // added in #34416.
       const innerResp = toInnerResponse(resp);
       if (innerResp === undefined) {
@@ -273,7 +273,7 @@ function createRespondWith(
           ObjectPrototypeIsPrototypeOf(BadResourcePrototype, error) &&
           connError != null
         ) {
-          // deno-lint-ignore no-ex-assign
+          // edno-lint-ignore no-ex-assign
           error = new connError.constructor(connError.message);
         }
         if (
@@ -314,7 +314,7 @@ function createRespondWith(
               ObjectPrototypeIsPrototypeOf(BadResourcePrototype, error) &&
               connError != null
             ) {
-              // deno-lint-ignore no-ex-assign
+              // edno-lint-ignore no-ex-assign
               error = new connError.constructor(connError.message);
             }
             await reader.cancel(error);
@@ -339,7 +339,7 @@ function createRespondWith(
                 ObjectPrototypeIsPrototypeOf(BadResourcePrototype, error) &&
                 connError != null
               ) {
-                // deno-lint-ignore no-ex-assign
+                // edno-lint-ignore no-ex-assign
                 error = new connError.constructor(connError.message);
               }
               await reader.cancel(error);

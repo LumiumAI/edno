@@ -1,6 +1,6 @@
 import { subtract } from "./mod.ts";
 
-Deno.test("subtract", () => {
+Edno.test("subtract", () => {
   if (subtract(3, 2) !== 1) {
     throw new Error("fail");
   }

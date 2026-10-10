@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 // https://github.com/nodeca/pako/blob/master/lib/zlib/constants.js
 (function () {

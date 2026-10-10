@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_resolver::cjs::analyzer::DenoCjsAnalysis;
-use deno_resolver::cjs::analyzer::NodeAnalysisCache;
-use deno_resolver::cjs::analyzer::NodeAnalysisCacheSourceHash;
-use deno_runtime::deno_webstorage::rusqlite::params;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_resolver::cjs::analyzer::EdnoCjsAnalysis;
+use edno_resolver::cjs::analyzer::NodeAnalysisCache;
+use edno_resolver::cjs::analyzer::NodeAnalysisCacheSourceHash;
+use edno_runtime::edno_webstorage::rusqlite::params;
 
 use super::CacheDBHash;
 use super::cache_db::CacheDB;
@@ -65,7 +65,7 @@ impl NodeAnalysisCache for SqliteNodeAnalysisCache {
     &self,
     specifier: &deno_ast::ModuleSpecifier,
     source_hash: NodeAnalysisCacheSourceHash,
-  ) -> Option<DenoCjsAnalysis> {
+  ) -> Option<EdnoCjsAnalysis> {
     Self::ensure_ok(
       self
         .inner
@@ -77,7 +77,7 @@ impl NodeAnalysisCache for SqliteNodeAnalysisCache {
     &self,
     specifier: &deno_ast::ModuleSpecifier,
     source_hash: NodeAnalysisCacheSourceHash,
-    analysis: &DenoCjsAnalysis,
+    analysis: &EdnoCjsAnalysis,
   ) {
     Self::ensure_ok(self.inner.set_cjs_analysis(
       specifier.as_str(),
@@ -101,7 +101,7 @@ impl NodeAnalysisCacheInner {
     &self,
     specifier: &str,
     expected_source_hash: CacheDBHash,
-  ) -> Result<Option<DenoCjsAnalysis>, AnyError> {
+  ) -> Result<Option<EdnoCjsAnalysis>, AnyError> {
     let query = "
       SELECT
         data
@@ -126,7 +126,7 @@ impl NodeAnalysisCacheInner {
     &self,
     specifier: &str,
     source_hash: CacheDBHash,
-    cjs_analysis: &DenoCjsAnalysis,
+    cjs_analysis: &EdnoCjsAnalysis,
   ) -> Result<(), AnyError> {
     let sql = "
       INSERT OR REPLACE INTO
@@ -147,7 +147,7 @@ impl NodeAnalysisCacheInner {
 
 #[cfg(test)]
 mod test {
-  use deno_resolver::cjs::analyzer::ModuleExportsAndReExports;
+  use edno_resolver::cjs::analyzer::ModuleExportsAndReExports;
 
   use super::*;
 
@@ -162,7 +162,7 @@ mod test {
         .unwrap()
         .is_none()
     );
-    let cjs_analysis = DenoCjsAnalysis::Cjs(ModuleExportsAndReExports {
+    let cjs_analysis = EdnoCjsAnalysis::Cjs(ModuleExportsAndReExports {
       exports: vec!["export1".to_string()],
       reexports: vec!["re-export1".to_string()],
       member_reexports: vec![],

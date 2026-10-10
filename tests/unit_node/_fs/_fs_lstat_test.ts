@@ -8,10 +8,10 @@ import {
 } from "../_test_utils.ts";
 import type { BigIntStats, Stats } from "node:fs";
 
-Deno.test({
+Edno.test({
   name: "ASYNC: get a file Stats (lstat)",
   async fn() {
-    const file = Deno.makeTempFileSync();
+    const file = Edno.makeTempFileSync();
     await new Promise<Stats>((resolve, reject) => {
       lstat(file, (err, stat) => {
         if (err) reject(err);
@@ -19,26 +19,26 @@ Deno.test({
       });
     })
       .then((stat) => {
-        assertStats(stat, Deno.lstatSync(file));
+        assertStats(stat, Edno.lstatSync(file));
       }, () => fail())
       .finally(() => {
-        Deno.removeSync(file);
+        Edno.removeSync(file);
       });
   },
 });
 
-Deno.test({
+Edno.test({
   name: "SYNC: get a file Stats (lstat)",
   fn() {
-    const file = Deno.makeTempFileSync();
-    assertStats(lstatSync(file), Deno.lstatSync(file));
+    const file = Edno.makeTempFileSync();
+    assertStats(lstatSync(file), Edno.lstatSync(file));
   },
 });
 
-Deno.test({
+Edno.test({
   name: "ASYNC: get a file BigInt Stats (lstat)",
   async fn() {
-    const file = Deno.makeTempFileSync();
+    const file = Edno.makeTempFileSync();
     await new Promise<BigIntStats>((resolve, reject) => {
       lstat(file, { bigint: true }, (err, stat) => {
         if (err) reject(err);
@@ -46,29 +46,29 @@ Deno.test({
       });
     })
       .then(
-        (stat) => assertStatsBigInt(stat, Deno.lstatSync(file)),
+        (stat) => assertStatsBigInt(stat, Edno.lstatSync(file)),
         () => fail(),
       )
-      .finally(() => Deno.removeSync(file));
+      .finally(() => Edno.removeSync(file));
   },
 });
 
-Deno.test({
+Edno.test({
   name: "SYNC: BigInt Stats (lstat)",
   fn() {
-    const file = Deno.makeTempFileSync();
-    assertStatsBigInt(lstatSync(file, { bigint: true }), Deno.lstatSync(file));
+    const file = Edno.makeTempFileSync();
+    assertStatsBigInt(lstatSync(file, { bigint: true }), Edno.lstatSync(file));
   },
 });
 
-Deno.test("[std/node/fs] lstat callback isn't called twice if error is thrown", async () => {
-  const tempFile = await Deno.makeTempFile();
+Edno.test("[std/node/fs] lstat callback isn't called twice if error is thrown", async () => {
+  const tempFile = await Edno.makeTempFile();
   const importUrl = new URL("node:fs", import.meta.url);
   await assertCallbackErrorUncaught({
     prelude: `import { lstat } from ${JSON.stringify(importUrl)}`,
     invocation: `lstat(${JSON.stringify(tempFile)}, `,
     async cleanup() {
-      await Deno.remove(tempFile);
+      await Edno.remove(tempFile);
     },
   });
 });

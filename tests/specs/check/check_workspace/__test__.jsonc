@@ -12,7 +12,7 @@
     },
     "config_flag": {
       "ignore": true,
-      "args": "check --config deno.json main.ts member/mod.ts",
+      "args": "check --config edno.json main.ts member/mod.ts",
       "output": "check_config_flag.out",
       "exitCode": 1
     }

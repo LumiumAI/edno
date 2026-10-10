@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-undef
+// edno-lint-ignore-file no-undef
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 import repl from "node:repl";
@@ -6,7 +6,7 @@ import { PassThrough } from "node:stream";
 import { Buffer } from "node:buffer";
 import { assert, assertEquals } from "@std/assert";
 
-Deno.test({
+Edno.test({
   name: "repl module exports",
   fn() {
     assert(typeof repl.REPLServer !== "undefined");
@@ -26,12 +26,12 @@ Deno.test({
 // inspector's `Runtime.evaluate({ throwOnSideEffect: true })` (see
 // `_createPreviewSession` in ext/node/polyfills/repl.ts), which catches
 // side-effectful expressions before they execute.
-Deno.test({
+Edno.test({
   name: "node:repl custom eval + preview:true does not run input mid-keystroke",
   async fn() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const input = new PassThrough() as any;
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const output = new PassThrough() as any;
     input.isTTY = true;
     output.isTTY = true;
@@ -39,7 +39,7 @@ Deno.test({
     output.rows = 24;
     output.on("data", () => {});
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     (globalThis as any).__replTestSideEffect = 0;
 
     let evalCount = 0;
@@ -51,7 +51,7 @@ Deno.test({
       preview: true,
       useGlobal: true,
       useColors: false,
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       eval: (_code: string, _ctx: any, _file: string, cb: any) => {
         evalCount++;
         cb(null);
@@ -68,7 +68,7 @@ Deno.test({
       await new Promise((r) => setTimeout(r, 150));
 
       assertEquals(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (globalThis as any).__replTestSideEffect,
         0,
         "preview must not execute user input mid-keystroke",
@@ -80,14 +80,14 @@ Deno.test({
 
       assertEquals(evalCount, 1, "custom eval runs exactly once per Enter");
       assertEquals(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (globalThis as any).__replTestSideEffect,
         0,
         "custom eval is a no-op, so the counter stays at 0",
       );
     } finally {
       server.close();
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       delete (globalThis as any).__replTestSideEffect;
     }
   },
@@ -97,12 +97,12 @@ Deno.test({
 // `preview: true` opt-in actually shows a preview for side-effect-free
 // expressions (matching Node). Custom-eval REPLs no longer silently
 // drop the explicit opt-in.
-Deno.test({
+Edno.test({
   name: "node:repl pure expression preview renders when preview:true",
   async fn() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const input = new PassThrough() as any;
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const output = new PassThrough() as any;
     input.isTTY = true;
     output.isTTY = true;
@@ -121,7 +121,7 @@ Deno.test({
       preview: true,
       useGlobal: true,
       useColors: false,
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       eval: (_code: string, _ctx: any, _file: string, cb: any) => cb(null),
     });
 
@@ -146,12 +146,12 @@ Deno.test({
 // Follow-up to #34360: matches Node's default. Custom eval without an
 // explicit `preview` opt-in must NOT show a preview, even though the
 // inspector probe is wired up.
-Deno.test({
+Edno.test({
   name: "node:repl custom eval defaults to no preview",
   async fn() {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const input = new PassThrough() as any;
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const output = new PassThrough() as any;
     input.isTTY = true;
     output.isTTY = true;
@@ -169,7 +169,7 @@ Deno.test({
       terminal: true,
       useGlobal: true,
       useColors: false,
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       eval: (_code: string, _ctx: any, _file: string, cb: any) => cb(null),
     });
 

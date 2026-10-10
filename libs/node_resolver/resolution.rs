@@ -13,9 +13,9 @@ use std::sync::atomic::Ordering;
 use anyhow::Error as AnyError;
 use anyhow::bail;
 use deno_media_type::MediaType;
-use deno_package_json::BrowserMapEntry;
-use deno_package_json::PackageJson;
-use deno_package_json::PackageJsonRc;
+use edno_package_json::BrowserMapEntry;
+use edno_package_json::PackageJson;
+use edno_package_json::PackageJsonRc;
 use deno_path_util::url_to_file_path;
 use deno_semver::Version;
 use deno_semver::VersionReq;
@@ -75,7 +75,7 @@ use crate::path::UrlOrPath;
 use crate::path::UrlOrPathRef;
 
 pub static IMPORT_CONDITIONS: &[Cow<'static, str>] = &[
-  Cow::Borrowed("deno"),
+  Cow::Borrowed("edno"),
   Cow::Borrowed("node"),
   Cow::Borrowed("import"),
   Cow::Borrowed("module-sync"),
@@ -92,7 +92,7 @@ pub struct NodeConditionOptions {
   pub conditions: Vec<Cow<'static, str>>,
   /// Provide a value to override the default import conditions.
   ///
-  /// Defaults to `["deno", "node", "import", "module-sync"]`
+  /// Defaults to `["edno", "node", "import", "module-sync"]`
   pub import_conditions_override: Option<Vec<Cow<'static, str>>>,
   /// Provide a value to override the default require conditions.
   ///
@@ -321,7 +321,7 @@ pub type NodeResolverRc<
   TIsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver,
   TSys,
-> = deno_maybe_sync::MaybeArc<
+> = edno_maybe_sync::MaybeArc<
   NodeResolver<
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
@@ -1114,10 +1114,10 @@ impl<
     // TODO(bartlomieju): skipped checking errors for commonJS resolution and
     // "preserveSymlinksMain"/"preserveSymlinks" options.
     let items = match bins {
-      deno_package_json::PackageJsonBins::Directory(path_buf) => {
+      edno_package_json::PackageJsonBins::Directory(path_buf) => {
         self.resolve_npm_commands_from_bin_dir(&path_buf)
       }
-      deno_package_json::PackageJsonBins::Bins(items) => items
+      edno_package_json::PackageJsonBins::Bins(items) => items
         .into_iter()
         .filter_map(|(command, path)| {
           let bin_value = read_bin_value(&path, &self.sys)?;
@@ -2613,7 +2613,7 @@ pub fn read_bin_value<TSys: FsOpen>(
 }
 
 /// This is not ideal, but it works ok because it allows us to bypass
-/// the shebang and execute the script directly with Deno.
+/// the shebang and execute the script directly with Edno.
 fn resolve_execution_path_from_npx_shim(
   file_path: Cow<Path>,
   text: &str,
@@ -3098,7 +3098,7 @@ fn find_package_root_from_node_modules(path: &Path) -> Option<PathBuf> {
 
 #[cfg(test)]
 mod tests {
-  use deno_package_json::PackageJsonBins;
+  use edno_package_json::PackageJsonBins;
   use serde_json::json;
   use sys_traits::FsCreateDirAll;
   use sys_traits::FsWrite;
@@ -3170,7 +3170,7 @@ mod tests {
       TestInNpmPackageChecker,
       TestBuiltInNodeModuleChecker,
       TestNpmPackageFolderResolver,
-      deno_maybe_sync::new_rc(PackageJsonResolver::new(sys.clone(), None)),
+      edno_maybe_sync::new_rc(PackageJsonResolver::new(sys.clone(), None)),
       NodeResolutionSys::new(sys, None),
       NodeResolverOptions::default(),
     )
@@ -3181,7 +3181,7 @@ mod tests {
     assert_eq!(
       IMPORT_CONDITIONS,
       &[
-        Cow::Borrowed("deno"),
+        Cow::Borrowed("edno"),
         Cow::Borrowed("node"),
         Cow::Borrowed("import"),
         Cow::Borrowed("module-sync"),

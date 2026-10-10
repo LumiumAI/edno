@@ -11,10 +11,10 @@ use std::sync::mpsc::RecvTimeoutError;
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
-use deno_core::CrossIsolateStore;
-use deno_core::Extension;
-use deno_core::JsRuntime;
-use deno_core::RuntimeOptions;
+use edno_core::CrossIsolateStore;
+use edno_core::Extension;
+use edno_core::JsRuntime;
+use edno_core::RuntimeOptions;
 
 use self::ops_worker::WorkerCloseWatcher;
 use self::ops_worker::WorkerHostSide;

@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/directories-bin",
+  "name": "@ednotest/directories-bin",
   "version": "1.0.0",
   "directories": {
     "bin": "./bins"

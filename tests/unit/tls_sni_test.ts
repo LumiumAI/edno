@@ -1,13 +1,13 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assertEquals, assertRejects } from "./test_util.ts";
 // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-const { resolverSymbol, serverNameSymbol } = Deno[Deno.internal];
+const { resolverSymbol, serverNameSymbol } = Edno[Edno.internal];
 
-const cert = Deno.readTextFileSync("tests/testdata/tls/localhost.crt");
-const key = Deno.readTextFileSync("tests/testdata/tls/localhost.key");
-const caCert = Deno.readTextFileSync("tests/testdata/tls/RootCA.pem");
-const certEcc = Deno.readTextFileSync("tests/testdata/tls/localhost_ecc.crt");
-const keyEcc = Deno.readTextFileSync("tests/testdata/tls/localhost_ecc.key");
+const cert = Edno.readTextFileSync("tests/testdata/tls/localhost.crt");
+const key = Edno.readTextFileSync("tests/testdata/tls/localhost.key");
+const caCert = Edno.readTextFileSync("tests/testdata/tls/RootCA.pem");
+const certEcc = Edno.readTextFileSync("tests/testdata/tls/localhost_ecc.crt");
+const keyEcc = Edno.readTextFileSync("tests/testdata/tls/localhost_ecc.key");
 
 async function resolvesWithin(promise: Promise<unknown>, ms: number) {
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -23,7 +23,7 @@ async function resolvesWithin(promise: Promise<unknown>, ms: number) {
   }
 }
 
-Deno.test(
+Edno.test(
   { permissions: { net: true, read: true } },
   async function listenResolver() {
     const sniRequests: string[] = [];
@@ -41,12 +41,12 @@ Deno.test(
       },
     };
     // @ts-ignore Trust me
-    const listener = Deno.listenTls(opts);
+    const listener = Edno.listenTls(opts);
 
     for (
       const server of ["server-1", "server-2", "fail-server-3", "fail-server-4"]
     ) {
-      const conn = await Deno.connectTls({
+      const conn = await Edno.connectTls({
         hostname: "localhost",
         [serverNameSymbol]: server,
         port: listener.addr.port,
@@ -73,7 +73,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { net: true, read: true } },
   async function listenResolverDoesNotBlockUnrelatedSni() {
     const slowStarted = Promise.withResolvers<void>();
@@ -93,10 +93,10 @@ Deno.test(
       },
     };
     // @ts-ignore Trust me
-    const listener = Deno.listenTls(opts);
+    const listener = Edno.listenTls(opts);
 
     try {
-      const slowClient = await Deno.connectTls({
+      const slowClient = await Edno.connectTls({
         hostname: "localhost",
         [serverNameSymbol]: "slow-server",
         port: listener.addr.port,
@@ -109,7 +109,7 @@ Deno.test(
 
       await slowStarted.promise;
 
-      const fastClient = await Deno.connectTls({
+      const fastClient = await Edno.connectTls({
         hostname: "localhost",
         [serverNameSymbol]: "fast-server",
         port: listener.addr.port,

@@ -1,1 +1,1 @@
-await Deno.bundle({ entrypoints: ["./main.ts"] });
+await Edno.bundle({ entrypoints: ["./main.ts"] });

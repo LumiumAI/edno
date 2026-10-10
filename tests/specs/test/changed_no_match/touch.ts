@@ -1,4 +1,4 @@
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   "unrelated.ts",
-  Deno.readTextFileSync("unrelated.ts") + "\n// changed\n",
+  Edno.readTextFileSync("unrelated.ts") + "\n// changed\n",
 );

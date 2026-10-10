@@ -6,7 +6,7 @@ const net = require("net");
 const path = require("path");
 const os = require("os");
 
-const sockPath = path.join(os.tmpdir(), `deno_pipe_read_${process.pid}.sock`);
+const sockPath = path.join(os.tmpdir(), `edno_pipe_read_${process.pid}.sock`);
 try {
   fs.unlinkSync(sockPath);
 } catch {}

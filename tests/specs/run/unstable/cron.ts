@@ -1,1 +1,1 @@
-Deno.cron();
+Edno.cron();

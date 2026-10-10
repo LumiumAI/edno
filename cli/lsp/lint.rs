@@ -6,14 +6,14 @@ use std::sync::Arc;
 
 use dashmap::DashMap;
 use deno_ast::SourceRangedForSpanned;
-use deno_config::glob::FilePatterns;
-use deno_config::workspace::WorkspaceDirLintConfig;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::url::Url;
+use edno_config::glob::FilePatterns;
+use edno_config::workspace::WorkspaceDirLintConfig;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::url::Url;
 use deno_lint::linter::LintConfig;
-use deno_resolver::deno_json::CompilerOptionsKey;
-use deno_runtime::tokio_util::create_basic_runtime;
+use edno_resolver::edno_json::CompilerOptionsKey;
+use edno_runtime::tokio_util::create_basic_runtime;
 use once_cell::sync::Lazy;
 use tower_lsp::lsp_types as lsp;
 
@@ -267,7 +267,7 @@ pub fn get_deno_lint_code_actions(
     }
   }
 
-  // Add deno-lint-ignore actions
+  // Add edno-lint-ignore actions
 
   let code = diagnostic
     .code
@@ -288,7 +288,7 @@ pub fn get_deno_lint_code_actions(
     uri.clone(),
     vec![lsp::TextEdit {
       new_text: prepend_whitespace(
-        format!("// deno-lint-ignore {code}\n"),
+        format!("// edno-lint-ignore {code}\n"),
         Some(line_content),
       ),
       range: lsp::Range {
@@ -344,7 +344,7 @@ pub fn get_deno_lint_code_actions(
     ps.comments().get_vec().iter().find_map(|c| {
       let comment_text = c.text.trim();
       comment_text.split_whitespace().next().and_then(|prefix| {
-        if prefix == "deno-lint-ignore-file" {
+        if prefix == "edno-lint-ignore-file" {
           Some(c.clone())
         } else {
           None
@@ -370,7 +370,7 @@ pub fn get_deno_lint_code_actions(
       end: position,
     };
   } else {
-    new_text = format!("// deno-lint-ignore-file {code}\n");
+    new_text = format!("// edno-lint-ignore-file {code}\n");
     range = next_leading_comment_range;
   }
 
@@ -396,7 +396,7 @@ pub fn get_deno_lint_code_actions(
   changes.insert(
     uri.clone(),
     vec![lsp::TextEdit {
-      new_text: "// deno-lint-ignore-file\n".to_string(),
+      new_text: "// edno-lint-ignore-file\n".to_string(),
       range: next_leading_comment_range,
     }],
   );

@@ -5,7 +5,7 @@
       "output": "publish.out"
     },
     "types_missing": {
-      "args": "publish --dry-run --config=deno_no_types.json",
+      "args": "publish --dry-run --config=edno_no_types.json",
       "output": "publish_no_types.out",
       "exitCode": 1
     }

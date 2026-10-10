@@ -1,6 +1,6 @@
 {
   "task": {
-    // should not execute this one because it's in a deno.json
+    // should not execute this one because it's in a edno.json
     // and not in the package.json
     "pretest": "echo 'should not be in output'"
   }

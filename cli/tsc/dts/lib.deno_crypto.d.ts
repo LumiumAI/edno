@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-var
+// edno-lint-ignore-file no-var
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
@@ -72,7 +72,7 @@ interface JsonWebKey {
   e?: string;
   ext?: boolean;
   k?: string;
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   key_ops?: string[];
   kty?: string;
   n?: string;

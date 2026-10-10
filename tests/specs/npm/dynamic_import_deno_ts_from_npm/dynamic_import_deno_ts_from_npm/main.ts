@@ -1,4 +1,4 @@
-import { dynamicImport } from "npm:@denotest/dynamic-import";
+import { dynamicImport } from "npm:@ednotest/dynamic-import";
 
 const { add } = await dynamicImport(new URL("./add.ts", import.meta.url));
 console.log(add(1, 2));

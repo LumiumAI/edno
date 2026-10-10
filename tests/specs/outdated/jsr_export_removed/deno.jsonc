@@ -1,5 +1,5 @@
 {
   "imports": {
-    "@denotest/multiple-exports": "jsr:@denotest/multiple-exports@^0.7.0"
+    "@ednotest/multiple-exports": "jsr:@ednotest/multiple-exports@^0.7.0"
   }
 }

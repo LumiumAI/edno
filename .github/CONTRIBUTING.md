@@ -9,16 +9,16 @@
 > multiple comments on issue or PRs that look AI generated, that are not
 > substantial, your account may be banned.
 
-This is the main repository that provides the `deno` CLI.
+This is the main repository that provides the `edno` CLI.
 
-If you want to fix a bug or add a new feature to `deno`, this is the repository
+If you want to fix a bug or add a new feature to `edno`, this is the repository
 to contribute to.
 
 Some systems, including a large part of the Node.js compatibility layer, are
 implemented in JavaScript and TypeScript modules. These are a good place to
 start if you are looking to make your first contribution.
 
-[Here](https://node-test-viewer.deno.deno.net/results/latest) is a list of
+[Here](https://node-test-viewer.edno.edno.net/results/latest) is a list of
 Node.js test cases, including both successful and failing ones. Reviewing these
 can provide valuable insight into how the compatibility layer works in practice,
 and where improvements might be needed. They can also serve as a useful guide
@@ -26,12 +26,12 @@ for identifying areas where contributions are most impactful.
 
 ## The `./x` tool
 
-Deno uses the `./x` developer CLI for common development tasks like building,
+Edno uses the `./x` developer CLI for common development tasks like building,
 testing, formatting, and linting. Run `./x --help` to see all available
 commands.
 
 ```sh
-./x build       # Build the deno binary (debug mode)
+./x build       # Build the edno binary (debug mode)
 ./x check       # Fast compile check (no linking)
 ./x fmt         # Format all code
 ./x lint        # Lint all code (JS/TS + Rust)
@@ -70,7 +70,7 @@ users, combine the following into your workspace file:
   "settings": {
     "rust-analyzer.cargo.features": ["hmr"],
     // Adds support for resolving internal `ext:*` modules
-    "deno.importMap": "tools/core_import_map.json"
+    "edno.importMap": "tools/core_import_map.json"
   }
 }
 ```
@@ -78,13 +78,13 @@ users, combine the following into your workspace file:
 To use a development version of the LSP in VSCode:
 
 1. Install and enable the
-   [Deno VSCode extension](https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno)
-2. Update your VSCode settings and point `deno.path` to your development binary:
+   [Edno VSCode extension](https://marketplace.visualstudio.com/items?itemName=ednoland.vscode-edno)
+2. Update your VSCode settings and point `edno.path` to your development binary:
 
 ```jsonc
 // .vscode/settings.json
 {
-  "deno.path": "/path/to/your/deno/target/debug/deno"
+  "edno.path": "/path/to/your/edno/target/debug/edno"
 }
 ```
 
@@ -101,13 +101,13 @@ JS/TS linting in one step.
 
 ## Building from source
 
-Below are instructions on how to build Deno from source. If you just want to use
-Deno you can download a prebuilt executable (more information in the
+Below are instructions on how to build Edno from source. If you just want to use
+Edno you can download a prebuilt executable (more information in the
 [`Getting Started`](https://docs.deno.com/runtime) chapter).
 
 ### Cloning the Repository
 
-> Deno uses submodules, so you must remember to clone using
+> Edno uses submodules, so you must remember to clone using
 > `--recurse-submodules`.
 
 **Linux(Debian)**/**Mac**/**WSL**:
@@ -132,7 +132,7 @@ git clone --recurse-submodules https://github.com/denoland/deno.git
 
 #### Rust
 
-> Deno requires a specific release of Rust. Deno may not support building on
+> Edno requires a specific release of Rust. Edno may not support building on
 > other versions, or on the Rust Nightly Releases. The version of Rust required
 > for a particular release is specified in the `rust-toolchain.toml` file.
 
@@ -146,7 +146,7 @@ cargo -V
 
 #### Native Compilers and Linkers
 
-Many components of Deno require a native compiler to build optimized native
+Many components of Edno require a native compiler to build optimized native
 functions.
 
 ##### Linux(Debian)/WSL
@@ -213,29 +213,29 @@ brew install llvm lld
 
 ### Python 3
 
-> Deno requires [Python 3](https://www.python.org/downloads) for running WPT
+> Edno requires [Python 3](https://www.python.org/downloads) for running WPT
 > tests. Ensure that a suffix-less `python`/`python.exe` exists in your `PATH`
 > and it refers to Python 3.
 
-### Building Deno
+### Building Edno
 
 _For WSL, make sure you have sufficient memory allocated in `.wslconfig`. It is
 recommended that you allocate at least 16GB._
 
-The recommended way to build Deno is using the `./x` tool:
+The recommended way to build Edno is using the `./x` tool:
 
 ```console
 ./x build
 ```
 
-This builds the debug binary at `./target/debug/deno`. You can also use cargo
+This builds the debug binary at `./target/debug/edno`. You can also use cargo
 directly:
 
 ```console
 cargo build -vv
 ```
 
-If you want to build Deno and V8 from source code (for lower-level V8
+If you want to build Edno and V8 from source code (for lower-level V8
 development, or on platforms without precompiled V8):
 
 ```console
@@ -261,7 +261,7 @@ cargo build -vv
 cargo clean && cargo build -vv
 
 # Run:
-./target/debug/deno run tests/testdata/run/002_hello.ts
+./target/debug/edno run tests/testdata/run/002_hello.ts
 ```
 
 ### Running the Tests
@@ -290,19 +290,19 @@ You can also run tests with cargo directly:
 cargo test -vv
 
 # Run tests in a specific package:
-cargo test -p deno_core
+cargo test -p edno_core
 ```
 
 ### Working with Multiple Crates
 
-If a change-set spans multiple Deno crates, you may want to build multiple
+If a change-set spans multiple Edno crates, you may want to build multiple
 crates together. It's suggested that you checkout all the required crates next
 to one another. For example:
 
 ```shell
-- denoland/
-  - deno/
-  - deno_core/
+- ednoland/
+  - edno/
+  - edno_core/
   - deno_ast/
   - ...
 ```

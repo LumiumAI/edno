@@ -1,12 +1,12 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 (function () {
 const { core, primordials } = __bootstrap;
 const { validateInteger } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
-const _mod1 = core.loadExtScript("ext:deno_node/internal/errors.ts");
+const _mod1 = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { ERR_INVALID_ARG_VALUE } = _mod1.codes;
 
 const {

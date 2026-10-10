@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assert, assertEquals } from "@std/assert";
 
-Deno.test("BroadcastChannel worker", async () => {
+Edno.test("BroadcastChannel worker", async () => {
   const intercom = new BroadcastChannel("intercom");
   let count = 0;
 
@@ -27,7 +27,7 @@ Deno.test("BroadcastChannel worker", async () => {
   await promise;
 });
 
-Deno.test("BroadcastChannel immediate close after post", () => {
+Edno.test("BroadcastChannel immediate close after post", () => {
   const bc = new BroadcastChannel("internal_notification");
   bc.postMessage("New listening connected!");
   bc.close();
@@ -37,7 +37,7 @@ Deno.test("BroadcastChannel immediate close after post", () => {
 // A SharedArrayBuffer posted to a BroadcastChannel must be deserializable by
 // *every* receiver, not just the first one. Here two channels in the same VM
 // listen on the same name, so the message fans out to both.
-Deno.test("BroadcastChannel SharedArrayBuffer to multiple receivers", async () => {
+Edno.test("BroadcastChannel SharedArrayBuffer to multiple receivers", async () => {
   const sab = new SharedArrayBuffer(4);
   new Uint32Array(sab)[0] = 12345;
 

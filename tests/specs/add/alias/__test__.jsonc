@@ -1,12 +1,12 @@
 {
   "tempDir": true,
   "steps": [{
-    "args": "install my-alias@npm:@denotest/add",
+    "args": "install my-alias@npm:@ednotest/add",
     "output": "[WILDCARD]"
   }, {
     "args": [
       "eval",
-      "console.log(Deno.readTextFileSync('package.json').trim())"
+      "console.log(Edno.readTextFileSync('package.json').trim())"
     ],
     "output": "package.json.out"
   }]

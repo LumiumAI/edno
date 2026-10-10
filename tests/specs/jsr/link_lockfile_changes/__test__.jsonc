@@ -6,7 +6,7 @@
   }, {
     "args": [
       "eval",
-      "console.log(Deno.readTextFileSync('deno.lock').trim()); Deno.renameSync('deno1.json', 'deno.json')"
+      "console.log(Edno.readTextFileSync('edno.lock').trim()); Edno.renameSync('edno1.json', 'edno.json')"
     ],
     "output": "lockfile1.out"
   }, {
@@ -15,14 +15,14 @@
   }, {
     "args": [
       "eval",
-      "console.log(Deno.readTextFileSync('deno.lock').trim()); Deno.renameSync('deno2.json', 'deno.json')"
+      "console.log(Edno.readTextFileSync('edno.lock').trim()); Edno.renameSync('edno2.json', 'edno.json')"
     ],
     "output": "lockfile2.out"
   }, {
     "args": "install",
     "output": "[WILDCARD]"
   }, {
-    "args": ["eval", "console.log(Deno.readTextFileSync('deno.lock').trim());"],
+    "args": ["eval", "console.log(Edno.readTextFileSync('edno.lock').trim());"],
     "output": "lockfile1.out"
   }]
 }

@@ -10,21 +10,21 @@ use std::sync::Arc;
 
 use deno_ast::SourceRange;
 use deno_ast::SourceTextInfo;
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::resolve_url;
-use deno_core::serde::Deserialize;
-use deno_core::serde::Serialize;
-use deno_core::serde_json;
-use deno_core::serde_json::json;
-use deno_core::url::Url;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::resolve_url;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Serialize;
+use edno_core::serde_json;
+use edno_core::serde_json::json;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 use deno_lint::diagnostic::LintDiagnosticRange;
-use deno_npm::NpmPackageId;
+use edno_npm::NpmPackageId;
 use deno_path_util::url_to_file_path;
-use deno_resolver::npm::managed::NpmResolutionCell;
-use deno_runtime::deno_node::PathClean;
+use edno_resolver::npm::managed::NpmResolutionCell;
+use edno_runtime::edno_node::PathClean;
 use deno_semver::SmallStackString;
 use deno_semver::StackString;
 use deno_semver::Version;
@@ -335,7 +335,7 @@ fn import_map_lookup_inner(
   None
 }
 
-/// Rewrites imports in quick fixes and code changes to be Deno specific.
+/// Rewrites imports in quick fixes and code changes to be Edno specific.
 pub struct TsResponseImportMapper<'a> {
   document_modules: &'a DocumentModules,
   scope: Option<Arc<ModuleSpecifier>>,
@@ -717,7 +717,7 @@ fn try_reverse_map_package_json_exports(
   target_path: &Path,
   exports: &serde_json::Map<String, serde_json::Value>,
 ) -> Option<String> {
-  use deno_core::serde_json::Value;
+  use edno_core::serde_json::Value;
 
   fn try_reverse_map_package_json_exports_inner(
     root_path: &Path,
@@ -890,7 +890,7 @@ pub fn fix_ts_import_changes_for_file_rename(
 }
 
 /// Fix tsc import code actions so that the module specifier is correct for
-/// resolution by Deno (includes the extension).
+/// resolution by Edno (includes the extension).
 fn fix_ts_import_action<'a>(
   action: &'a tsc::CodeFixAction,
   module: &DocumentModule,
@@ -1020,11 +1020,11 @@ impl TsFixActionCollector {
     if fix_action.commands.is_some() {
       // In theory, tsc can return actions that require "commands" to be applied
       // back into TypeScript.  Currently there is only one command, `install
-      // package` but Deno doesn't support that.  The problem is that the
+      // package` but Edno doesn't support that.  The problem is that the
       // `.applyCodeActionCommand()` returns a promise, and with the current way
       // we wrap tsc, we can't handle the asynchronous response, so it is
       // actually easier to return errors if we ever encounter one of these,
-      // which we really wouldn't expect from the Deno lsp.
+      // which we really wouldn't expect from the Edno lsp.
       return Err(
         JsErrorBox::new(
           "UnsupportedFix",
@@ -1263,7 +1263,7 @@ mod tests {
           range,
           severity: Some(lsp::DiagnosticSeverity::WARNING),
           code: Some(lsp::NumberOrString::String("code1".to_string())),
-          source: Some("deno-lint".to_string()),
+          source: Some("edno-lint".to_string()),
           message: "message1".to_string(),
           ..Default::default()
         },
@@ -1282,7 +1282,7 @@ mod tests {
           range,
           severity: Some(lsp::DiagnosticSeverity::WARNING),
           code: Some(lsp::NumberOrString::String("code2".to_string())),
-          source: Some("deno-lint".to_string()),
+          source: Some("edno-lint".to_string()),
           message: "message2\nhint2".to_string(),
           ..Default::default()
         },

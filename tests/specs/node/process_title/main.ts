@@ -1,6 +1,6 @@
 import process from "node:process";
 
-const mode = Deno.args[0];
+const mode = Edno.args[0];
 
 switch (mode) {
   case "default":

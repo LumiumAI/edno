@@ -3,7 +3,7 @@
 // server is shut down and restarted between requests.
 
 for (let round = 1; round <= 6; round++) {
-  const server = Deno.serve(
+  const server = Edno.serve(
     { hostname: "127.0.0.1", port: 4567, onListen() {} },
     () => new Response("ok"),
   );

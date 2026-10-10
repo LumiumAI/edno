@@ -1,3 +1,3 @@
-import crypto from "npm:@denotest/cjs-pkg-imports";
+import crypto from "npm:@ednotest/cjs-pkg-imports";
 
 console.log(crypto);

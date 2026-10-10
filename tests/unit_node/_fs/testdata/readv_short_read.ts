@@ -57,9 +57,9 @@ function readvAsync(
 }
 
 async function testFileReads() {
-  const file = Deno.makeTempFileSync();
+  const file = Edno.makeTempFileSync();
   try {
-    Deno.writeTextFileSync(file, "abc");
+    Edno.writeTextFileSync(file, "abc");
 
     const syncViews = makeBuffers();
     const syncFd = openSync(file, "r");
@@ -73,7 +73,7 @@ async function testFileReads() {
     const asyncEofResult = await readvAsync(asyncFd, [new Uint8Array(1)]);
     closeSync(asyncFd);
 
-    Deno.writeTextFileSync(file, "abcdef");
+    Edno.writeTextFileSync(file, "abcdef");
     const syncPositionBuffer = new Uint8Array(2);
     const syncCursorBuffer = new Uint8Array(1);
     const syncPositionFd = openSync(file, "r");
@@ -194,7 +194,7 @@ async function testFileReads() {
       },
     };
   } finally {
-    Deno.removeSync(file);
+    Edno.removeSync(file);
   }
 }
 
@@ -209,13 +209,13 @@ async function testPipeAsync() {
   let timerFired = false;
   setTimeout(() => {
     timerFired = true;
-    Deno.stderr.writeSync(new TextEncoder().encode("ready\n"));
+    Edno.stderr.writeSync(new TextEncoder().encode("ready\n"));
   }, 0);
   const result = await readvAsync(0, buffers);
   return { ...result, timerFired, buffers: buffers.map(viewBytes) };
 }
 
-const mode = Deno.args[0];
+const mode = Edno.args[0];
 let result;
 switch (mode) {
   case "file":
@@ -230,6 +230,6 @@ switch (mode) {
   default:
     throw new Error(`Unknown mode: ${mode}`);
 }
-Deno.stdout.writeSync(
+Edno.stdout.writeSync(
   new TextEncoder().encode(`${JSON.stringify(result)}\n`),
 );

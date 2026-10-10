@@ -5,29 +5,29 @@ use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_runtime::*;
+use edno_runtime::*;
 
 fn compress_decls(out_dir: &Path) {
   let decls = [
-    "lib.deno.ns.d.ts",
-    "lib.deno.unstable.d.ts",
-    "lib.deno.window.d.ts",
-    "lib.deno.worker.d.ts",
-    "lib.deno.shared_globals.d.ts",
-    "lib.deno.desktop.d.ts",
-    "lib.deno.unstable.d.ts",
-    "lib.deno_console.d.ts",
-    "lib.deno_url.d.ts",
-    "lib.deno_web.d.ts",
-    "lib.deno_fetch.d.ts",
-    "lib.deno_websocket.d.ts",
-    "lib.deno_webstorage.d.ts",
-    "lib.deno_webgpu.d.ts",
-    "lib.deno_canvas.d.ts",
-    "lib.deno_crypto.d.ts",
-    "lib.deno_cache.d.ts",
-    "lib.deno_net.d.ts",
-    "lib.deno_broadcast_channel.d.ts",
+    "lib.edno.ns.d.ts",
+    "lib.edno.unstable.d.ts",
+    "lib.edno.window.d.ts",
+    "lib.edno.worker.d.ts",
+    "lib.edno.shared_globals.d.ts",
+    "lib.edno.desktop.d.ts",
+    "lib.edno.unstable.d.ts",
+    "lib.edno_console.d.ts",
+    "lib.edno_url.d.ts",
+    "lib.edno_web.d.ts",
+    "lib.edno_fetch.d.ts",
+    "lib.edno_websocket.d.ts",
+    "lib.edno_webstorage.d.ts",
+    "lib.edno_webgpu.d.ts",
+    "lib.edno_canvas.d.ts",
+    "lib.edno_crypto.d.ts",
+    "lib.edno_cache.d.ts",
+    "lib.edno_net.d.ts",
+    "lib.edno_broadcast_channel.d.ts",
     "lib.decorators.d.ts",
     "lib.decorators.legacy.d.ts",
     "lib.dom.asynciterable.d.ts",
@@ -283,8 +283,8 @@ fn emit_laufey_version() {
   // During `cargo publish` the crate is verified in an isolated package dir
   // where the workspace lock is absent. The crate-local `Cargo.lock` cargo
   // bundles into the tarball is no help here either: `laufey` is a dependency
-  // of `denort_desktop`, not of the `deno` crate, so it never appears in the
-  // `deno` crate's own resolved lockfile. Fall back to the `# version:`
+  // of `ednort_desktop`, not of the `edno` crate, so it never appears in the
+  // `edno` crate's own resolved lockfile. Fall back to the `# version:`
   // directive committed in `cli/laufey_sums.lock`, which is always bundled into
   // the published tarball.
   if let Some(version) = laufey_version_from_lock(&workspace_lock) {
@@ -434,8 +434,8 @@ fn emit_dts_rerun_if_changed() {
 
 #[allow(clippy::disallowed_methods, reason = "build code")]
 fn emit_startup_order_link_args(out_dir: &Path) {
-  const ENABLE_ENV: &str = "DENO_USE_STARTUP_ORDER";
-  const ORDER_FILE_ENV: &str = "DENO_STARTUP_ORDER_FILE";
+  const ENABLE_ENV: &str = "EDNO_USE_STARTUP_ORDER";
+  const ORDER_FILE_ENV: &str = "EDNO_STARTUP_ORDER_FILE";
 
   println!("cargo:rerun-if-env-changed={ENABLE_ENV}");
   println!("cargo:rerun-if-env-changed={ORDER_FILE_ENV}");
@@ -521,15 +521,15 @@ fn emit_startup_order_link_args(out_dir: &Path) {
   let order_file = order_file.canonicalize().unwrap();
   match target.as_str() {
     "aarch64-apple-darwin" => println!(
-      "cargo:rustc-link-arg-bin=deno=-Wl,-order_file,{}",
+      "cargo:rustc-link-arg-bin=edno=-Wl,-order_file,{}",
       order_file.display()
     ),
     "aarch64-unknown-linux-gnu" | "x86_64-unknown-linux-gnu" => {
       println!(
-        "cargo:rustc-link-arg-bin=deno=-Wl,--symbol-ordering-file={}",
+        "cargo:rustc-link-arg-bin=edno=-Wl,--symbol-ordering-file={}",
         order_file.display()
       );
-      println!("cargo:rustc-link-arg-bin=deno=-Wl,--no-warn-symbol-ordering");
+      println!("cargo:rustc-link-arg-bin=edno=-Wl,--no-warn-symbol-ordering");
     }
     _ => unreachable!(),
   }
@@ -546,14 +546,14 @@ fn main() {
     return;
   }
 
-  deno_napi::print_linker_flags("deno");
-  deno_webgpu::print_linker_flags("deno");
+  edno_napi::print_linker_flags("edno");
+  edno_webgpu::print_linker_flags("edno");
 
   // Host snapshots won't work when cross compiling.
   let target = env::var("TARGET").unwrap();
   let host = env::var("HOST").unwrap();
   let skip_cross_check =
-    env::var("DENO_SKIP_CROSS_BUILD_CHECK").is_ok_and(|v| v == "1");
+    env::var("EDNO_SKIP_CROSS_BUILD_CHECK").is_ok_and(|v| v == "1");
   if !skip_cross_check && target != host {
     panic!("Cross compiling with snapshot is not supported.");
   }
@@ -573,10 +573,10 @@ fn main() {
     compress_sources(&out_dir);
   }
 
-  if let Ok(c) = env::var("DENO_CANARY") {
-    println!("cargo:rustc-env=DENO_CANARY={c}");
+  if let Ok(c) = env::var("EDNO_CANARY") {
+    println!("cargo:rustc-env=EDNO_CANARY={c}");
   }
-  println!("cargo:rerun-if-env-changed=DENO_CANARY");
+  println!("cargo:rerun-if-env-changed=EDNO_CANARY");
 
   println!("cargo:rustc-env=TARGET={}", env::var("TARGET").unwrap());
   println!("cargo:rustc-env=PROFILE={}", env::var("PROFILE").unwrap());
@@ -586,7 +586,7 @@ fn main() {
   #[cfg(target_os = "windows")]
   {
     let mut res = winres::WindowsResource::new();
-    res.set_icon("deno.ico");
+    res.set_icon("edno.ico");
     // 0x0409 == MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)
     res.set_language(0x0409);
     res.compile().unwrap();

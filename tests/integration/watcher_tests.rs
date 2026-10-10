@@ -8,7 +8,7 @@ use test_util::eprintln;
 use test_util::http_server;
 use test_util::test;
 use tokio::io::AsyncBufReadExt;
-use util::DenoChild;
+use util::EdnoChild;
 use util::assert_not_contains;
 
 /// Logs to stderr every time next_line() is called
@@ -127,7 +127,7 @@ where
 /// The file watcher takes a moment to start watching files due to
 /// asynchronicity. It is possible for the watched subcommand to finish before
 /// any files are being watched.
-/// deno must be running with --log-level=debug
+/// edno must be running with --log-level=debug
 /// file_name should be the file name and, optionally, extension. file_name
 /// may not be a full path, as it is not portable.
 async fn wait_for_watcher<R>(
@@ -197,7 +197,7 @@ where
   })
 }
 
-fn check_alive_then_kill(mut child: DenoChild) {
+fn check_alive_then_kill(mut child: EdnoChild) {
   assert!(child.try_wait().unwrap().is_none());
   child.kill().unwrap();
 }
@@ -246,7 +246,7 @@ async fn lint_watch_test() {
 
   badly_linted_original.copy(&badly_linted);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("lint")
     .arg(&badly_linted)
@@ -301,7 +301,7 @@ async fn lint_watch_without_args_test() {
 
   badly_linted_original.copy(&badly_linted);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("lint")
     .arg("--watch")
@@ -350,7 +350,7 @@ async fn lint_watch_picks_up_new_file_test() {
   let existing = t.path().join("existing.js");
   badly_linted_fixed1.copy(&existing);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("lint")
     .arg("--watch")
@@ -393,7 +393,7 @@ async fn lint_all_files_on_each_change_test() {
   badly_linted_fixed0.copy(&badly_linted_1);
   badly_linted_fixed1.copy(&badly_linted_2);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("lint")
     .arg(t.path())
@@ -430,7 +430,7 @@ async fn fmt_watch_test() {
   let badly_formatted = t.path().join("badly_formatted.js");
   badly_formatted_original.copy(&badly_formatted);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("fmt")
     .arg(&badly_formatted)
@@ -485,7 +485,7 @@ async fn fmt_watch_without_args_test() {
   let badly_formatted = t.path().join("badly_formatted.js");
   badly_formatted_original.copy(&badly_formatted);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("fmt")
     .arg("--watch")
@@ -541,7 +541,7 @@ async fn fmt_watch_picks_up_new_file_test() {
   let existing = t.path().join("existing.js");
   fixed.copy(&existing);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("fmt")
     .arg("--watch")
@@ -583,7 +583,7 @@ async fn fmt_check_all_files_on_each_change_test() {
   badly_formatted_original.copy(&badly_formatted_1);
   badly_formatted_original.copy(&badly_formatted_2);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("fmt")
     .arg(t.path())
@@ -612,13 +612,13 @@ async fn fmt_check_all_files_on_each_change_test() {
 }
 
 #[test(flaky)]
-#[ignore = "native check under --watch is not yet supported: it writes .deno artifacts into the watched dir, which retriggers the watcher (#35946)"]
+#[ignore = "native check under --watch is not yet supported: it writes .edno artifacts into the watched dir, which retriggers the watcher (#35946)"]
 async fn check_watch_test() {
   let t = TempDir::new();
   let file_to_check = t.path().join("main.ts");
   file_to_check.write("const x: number = \"hello\";\n");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("check")
     .arg(&file_to_check)
@@ -656,13 +656,13 @@ async fn compile_watch_test() {
   main.write(
     r#"import { message } from "./message.ts";
 console.log(message);
-console.log(Deno.readTextFileSync(new URL("./data.txt", import.meta.url)));
+console.log(Edno.readTextFileSync(new URL("./data.txt", import.meta.url)));
 "#,
   );
   message.write(r#"export const message = "before";"#);
   data.write("included before");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("compile")
     .arg("--watch")
@@ -717,7 +717,7 @@ async fn run_watch_no_dynamic() {
   let file_to_watch = t.path().join("file_to_watch.js");
   file_to_watch.write("console.log('Hello world');");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -800,7 +800,7 @@ async fn run_watch_preload_reruns() {
   let file_to_watch = t.path().join("file_to_watch.js");
   file_to_watch.write("console.log('main ran');");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -847,7 +847,7 @@ async fn serve_watch_all() {
   let another_file = t.path().join("another_file.js");
   another_file.write("");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("serve")
     .arg(format!("--watch={another_file}"))
@@ -909,7 +909,7 @@ async fn serve_watch_all() {
 }
 
 // Regression test for https://github.com/denoland/deno/issues/30382.
-// Ensures that `deno serve --watch` applies the import map from deno.json when
+// Ensures that `edno serve --watch` applies the import map from edno.json when
 // resolving the main module, so a bare specifier entrypoint resolves the same
 // way it does without `--watch`.
 #[test(flaky)]
@@ -925,7 +925,7 @@ async fn serve_watch_with_import_map() {
     };",
   );
 
-  t.path().join("deno.json").write(
+  t.path().join("edno.json").write(
     "{
       \"imports\": {
         \"app\": \"./server.js\"
@@ -933,7 +933,7 @@ async fn serve_watch_with_import_map() {
     }",
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("serve")
     .arg("--watch=.")
@@ -954,7 +954,7 @@ async fn serve_watch_with_import_map() {
 }
 
 // Regression test for https://github.com/denoland/deno/issues/26052
-// On a watcher restart, `deno serve --parallel` used to leave the previous
+// On a watcher restart, `edno serve --parallel` used to leave the previous
 // generation of workers running (the worker threads were never signalled and
 // the main worker task was detached), so requests kept being served by the old
 // code and the process would eventually panic with an isolate mismatch.
@@ -970,7 +970,7 @@ async fn serve_watch_parallel_stops_old_workers() {
     };",
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("serve")
     .arg("--parallel")
@@ -981,13 +981,13 @@ async fn serve_watch_parallel_stops_old_workers() {
     .arg("debug")
     .arg(&file_to_watch)
     .env("NO_COLOR", "1")
-    .env("DENO_JOBS", "4")
+    .env("EDNO_JOBS", "4")
     .piped_output()
     .spawn()
     .unwrap();
 
   // If anything in the test body panics (a timeout, a failed assertion), the
-  // child must still be killed before unwinding: a leaked `deno serve --watch`
+  // child must still be killed before unwinding: a leaked `edno serve --watch`
   // child never exits on its own, and on Windows tokio reads child pipes with
   // blocking threads, so dropping the test runtime during the unwind waits
   // forever on a stderr read that never completes. This wedged CI for the
@@ -1006,7 +1006,7 @@ async fn serve_watch_parallel_stops_old_workers() {
 
 async fn serve_watch_parallel_stops_old_workers_inner(
   t: &TempDir,
-  child: &mut DenoChild,
+  child: &mut EdnoChild,
 ) {
   let file_to_watch = t.path().join("server_file_to_watch.js");
   let (_stdout_lines, mut stderr_lines) = child_lines(child);
@@ -1150,7 +1150,7 @@ async fn serve_watch_parallel_stops_old_workers_inner(
 }
 
 // Regression test for https://github.com/denoland/deno/issues/30046
-// `deno serve` used to ignore `--watch-exclude` entirely, so writing to an
+// `edno serve` used to ignore `--watch-exclude` entirely, so writing to an
 // excluded file that's part of the module graph would trigger a restart.
 #[test(flaky)]
 async fn serve_watch_with_excluded_paths() {
@@ -1166,7 +1166,7 @@ async fn serve_watch_with_excluded_paths() {
     export default { fetch: () => new Response('ok') };",
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("serve")
     .arg("--watch")
@@ -1215,14 +1215,14 @@ async fn run_watch_npm_specifier() {
   let file_to_watch = t.path().join("file_to_watch.txt");
   file_to_watch.write("Hello world");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .envs(env_vars_for_npm_tests())
     .arg("run")
     .arg("--watch=file_to_watch.txt")
     .arg("-L")
     .arg("debug")
-    .arg("npm:@denotest/bin/cli-cjs")
+    .arg("npm:@ednotest/bin/cli-cjs")
     .arg("Hello world")
     .env("NO_COLOR", "1")
     .piped_output()
@@ -1260,7 +1260,7 @@ async fn run_watch_external_watch_files() {
   let external_file_to_watch_str = external_file_to_watch.to_string();
   watch_arg.push_str(&external_file_to_watch_str);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg(watch_arg)
@@ -1306,7 +1306,7 @@ async fn run_watch_load_unload_events() {
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -1357,7 +1357,7 @@ async fn run_watch_not_exit() {
   let file_to_watch = t.path().join("file_to_watch.js");
   file_to_watch.write("syntax error ^^");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -1413,7 +1413,7 @@ async fn run_watch_with_import_map_and_relative_paths() {
     "{\"imports\": {}}",
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(temp_directory.path())
     .arg("run")
     .arg("--watch")
@@ -1442,7 +1442,7 @@ async fn run_watch_with_ext_flag() {
   let file_to_watch = t.path().join("file_to_watch");
   file_to_watch.write("interface I{}; console.log(42);");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -1479,7 +1479,7 @@ async fn run_watch_error_messages() {
   file_to_watch
     .write("throw SyntaxError(`outer`, {cause: TypeError(`inner`)})");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -1506,7 +1506,7 @@ async fn run_watch_error_messages() {
 async fn test_watch_basic() {
   let t = TempDir::new();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("test")
     .arg("--watch")
@@ -1531,8 +1531,8 @@ async fn test_watch_basic() {
   let bar_test = t.path().join("bar_test.js");
   foo_file.write("export default function foo() { 1 + 1 }");
   bar_file.write("export default function bar() { 2 + 2 }");
-  foo_test.write("import foo from './foo.js'; Deno.test('foo', foo);");
-  bar_test.write("import bar from './bar.js'; Deno.test('bar', bar);");
+  foo_test.write("import foo from './foo.js'; Edno.test('foo', foo);");
+  bar_test.write("import bar from './bar.js'; Edno.test('bar', bar);");
 
   assert_eq!(next_line(&mut stdout_lines).await.unwrap(), "");
   assert_contains!(
@@ -1551,7 +1551,7 @@ async fn test_watch_basic() {
   wait_contains("Test finished", &mut stderr_lines).await;
 
   // Change content of the file
-  foo_test.write("import foo from './foo.js'; Deno.test('foobar', foo);");
+  foo_test.write("import foo from './foo.js'; Edno.test('foobar', foo);");
 
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Restarting");
   assert_contains!(
@@ -1566,7 +1566,7 @@ async fn test_watch_basic() {
 
   // Add test
   let another_test = t.path().join("new_test.js");
-  another_test.write("Deno.test('another one', () => 3 + 3)");
+  another_test.write("Edno.test('another one', () => 3 + 3)");
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Restarting");
   assert_contains!(
     next_line(&mut stdout_lines).await.unwrap(),
@@ -1579,7 +1579,7 @@ async fn test_watch_basic() {
   wait_contains("Test finished", &mut stderr_lines).await;
 
   // Confirm that restarting occurs when a new file is updated
-  another_test.write("Deno.test('another one', () => 3 + 3); Deno.test('another another one', () => 4 + 4)");
+  another_test.write("Edno.test('another one', () => 3 + 3); Edno.test('another another one', () => 4 + 4)");
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Restarting");
   assert_contains!(
     next_line(&mut stdout_lines).await.unwrap(),
@@ -1612,7 +1612,7 @@ async fn test_watch_basic() {
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Test failed");
 
   // Then restore the file
-  another_test.write("Deno.test('another one', () => 3 + 3)");
+  another_test.write("Edno.test('another one', () => 3 + 3)");
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Restarting");
   assert_contains!(
     next_line(&mut stdout_lines).await.unwrap(),
@@ -1662,7 +1662,7 @@ async fn test_watch_external_watch_files() {
   let t = TempDir::new();
 
   let test_file = t.path().join("test_file.ts");
-  test_file.write("Deno.test('hello', () => {});");
+  test_file.write("Edno.test('hello', () => {});");
 
   let external_file = t.path().join("external_file.txt");
   external_file.write("Hello world");
@@ -1671,7 +1671,7 @@ async fn test_watch_external_watch_files() {
   let external_file_str = external_file.to_string();
   watch_arg.push_str(&external_file_str);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("test")
     .arg(watch_arg)
@@ -1698,11 +1698,11 @@ async fn test_watch_external_watch_files() {
 async fn test_watch_doc() {
   let t = TempDir::new();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("test")
     .arg("--config")
-    .arg(util::deno_config_path())
+    .arg(util::edno_config_path())
     .arg("--watch")
     .arg("--doc")
     .arg(t.path())
@@ -1825,7 +1825,7 @@ async fn test_watch_doc() {
 }
 
 // Regression test for https://github.com/denoland/deno/issues/24558:
-// `deno test --doc --watch` panicked with a parse error on Markdown files
+// `edno test --doc --watch` panicked with a parse error on Markdown files
 // because the watcher passed them to the module graph builder as roots.
 #[test(flaky)]
 async fn test_watch_doc_markdown() {
@@ -1843,11 +1843,11 @@ console.log("Hello world");
 "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("test")
     .arg("--config")
-    .arg(util::deno_config_path())
+    .arg(util::edno_config_path())
     .arg("--watch")
     .arg("--doc")
     .arg(t.path())
@@ -1907,7 +1907,7 @@ async fn test_watch_module_graph_error_referrer() {
   let t = TempDir::new();
   let file_to_watch = t.path().join("file_to_watch.js");
   file_to_watch.write("import './nonexistent.js';");
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -1944,7 +1944,7 @@ async fn test_watch_unload_handler_error_on_drop() {
     });
     "#,
   );
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -1981,7 +1981,7 @@ async fn run_watch_blob_urls_reset() {
     }
     "#;
   file_to_watch.write(file_content);
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2001,7 +2001,7 @@ async fn run_watch_blob_urls_reset() {
 }
 
 // Regression test for https://github.com/denoland/deno/issues/25559 —
-// `Deno.chdir()` in the watched program must not break module
+// `Edno.chdir()` in the watched program must not break module
 // resolution on restart. The watcher should restore the original cwd
 // before re-running so the main module can still be loaded.
 #[test(flaky)]
@@ -2011,13 +2011,13 @@ async fn run_watch_chdir() {
   file_to_watch.write(
     r#"
 console.log("Files reloaded");
-console.log("cwd:", Deno.cwd());
-Deno.mkdirSync("temp", { recursive: true });
-Deno.chdir("temp");
+console.log("cwd:", Edno.cwd());
+Edno.mkdirSync("temp", { recursive: true });
+Edno.chdir("temp");
 "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2036,15 +2036,15 @@ Deno.chdir("temp");
   let initial_cwd_log = wait_contains("cwd:", &mut stdout_lines).await;
   wait_for_watcher("file_to_watch.js", &mut stderr_lines).await;
 
-  // Trigger a restart. The previous run changed cwd via `Deno.chdir`;
+  // Trigger a restart. The previous run changed cwd via `Edno.chdir`;
   // the watcher must restore the original cwd or this restart will
   // fail with "Module not found".
   file_to_watch.write(
     r#"
 console.log("Files reloaded");
-console.log("cwd:", Deno.cwd());
-Deno.mkdirSync("temp", { recursive: true });
-Deno.chdir("temp");
+console.log("cwd:", Edno.cwd());
+Edno.mkdirSync("temp", { recursive: true });
+Edno.chdir("temp");
 console.log("done");
 "#,
   );
@@ -2054,7 +2054,7 @@ console.log("done");
   let cwd_line_after = wait_contains("cwd:", &mut stdout_lines).await;
   wait_contains("done", &mut stdout_lines).await;
   // The cwd printed on restart must match the cwd printed on the
-  // first run — `Deno.chdir("temp")` from the previous iteration must
+  // first run — `Edno.chdir("temp")` from the previous iteration must
   // not leak across the watcher restart.
   assert_eq!(initial_cwd_log, cwd_line_after);
   check_alive_then_kill(child);
@@ -2071,7 +2071,7 @@ async fn test_watch_sigint() {
   let context = TestContext::default();
   let t = context.temp_dir();
   let file_to_watch = t.path().join("file_to_watch.js");
-  file_to_watch.write(r#"Deno.test("foo", () => {});"#);
+  file_to_watch.write(r#"Edno.test("foo", () => {});"#);
   let mut child = context
     .new_command()
     .args_vec(["test", "--watch", &file_to_watch.to_string_lossy()])
@@ -2101,7 +2101,7 @@ async fn run_watch_unload_on_restart() {
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2149,7 +2149,7 @@ async fn run_watch_process_exit_on_restart() {
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2228,7 +2228,7 @@ async fn wait_for_exit_code_and_watcher<R>(
   }
 }
 
-/// Shared body for the `Deno.exit()` / `process.exit()` under-watch tests: the
+/// Shared body for the `Edno.exit()` / `process.exit()` under-watch tests: the
 /// exit call ends the current run with the requested code, the `unload` event
 /// still fires, code after the exit call does not run, and the watcher stays
 /// alive and restarts on the next file change.
@@ -2248,7 +2248,7 @@ async fn run_watch_exit_keeps_watcher_alive(watch_flag: &str, exit_call: &str) {
     "#
   ));
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg(watch_flag)
@@ -2280,12 +2280,12 @@ async fn run_watch_exit_keeps_watcher_alive(watch_flag: &str, exit_call: &str) {
   check_alive_then_kill(child);
 }
 
-/// Test that a script calling `Deno.exit()` under `--watch` ends the current
+/// Test that a script calling `Edno.exit()` under `--watch` ends the current
 /// run without killing the watcher, which keeps watching and restarts the
 /// script on the next file change. See https://github.com/denoland/deno/issues/7590.
 #[test(flaky)]
 async fn run_watch_deno_exit() {
-  run_watch_exit_keeps_watcher_alive("--watch", "Deno.exit(42)").await;
+  run_watch_exit_keeps_watcher_alive("--watch", "Edno.exit(42)").await;
 }
 
 /// Like [`run_watch_deno_exit`], but using `process.exit()` from `node:process`,
@@ -2297,17 +2297,17 @@ async fn run_watch_process_exit() {
 
 /// Like [`run_watch_deno_exit`], but for HMR mode (`--watch-hmr`), which runs
 /// through `worker.run()` rather than `run_for_watcher`. A script calling
-/// `Deno.exit()` must still keep the watcher alive. See
+/// `Edno.exit()` must still keep the watcher alive. See
 /// https://github.com/denoland/deno/issues/7590.
 #[test(flaky)]
 async fn run_watch_hmr_deno_exit() {
-  run_watch_exit_keeps_watcher_alive("--watch-hmr", "Deno.exit(42)").await;
+  run_watch_exit_keeps_watcher_alive("--watch-hmr", "Edno.exit(42)").await;
 }
 
-/// Test that a served module calling `Deno.exit()` under `deno serve --watch`
+/// Test that a served module calling `Edno.exit()` under `edno serve --watch`
 /// ends the current run without killing the watcher, which keeps watching and
-/// restarts on the next file change. `deno serve --watch` shares the same exit
-/// handling as `deno run --watch`. See https://github.com/denoland/deno/issues/7590.
+/// restarts on the next file change. `edno serve --watch` shares the same exit
+/// handling as `edno run --watch`. See https://github.com/denoland/deno/issues/7590.
 #[test(flaky)]
 async fn serve_watch_deno_exit() {
   let t = TempDir::new();
@@ -2315,7 +2315,7 @@ async fn serve_watch_deno_exit() {
   main_file_to_watch.write(
     r#"
       console.log("started");
-      Deno.exit(42);
+      Edno.exit(42);
       export default {
         fetch(_request) {
           return new Response("not reached");
@@ -2324,7 +2324,7 @@ async fn serve_watch_deno_exit() {
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("serve")
     .arg("--watch")
@@ -2339,7 +2339,7 @@ async fn serve_watch_deno_exit() {
 
   wait_contains("Process started", &mut stderr_lines).await;
   wait_contains("started", &mut stdout_lines).await;
-  // The watcher must survive `Deno.exit()` instead of terminating the process,
+  // The watcher must survive `Edno.exit()` instead of terminating the process,
   // and the requested exit code is surfaced in the finished message.
   wait_for_exit_code_and_watcher(
     42,
@@ -2373,14 +2373,14 @@ async fn run_watch_sigterm_on_restart() {
   let file_to_watch = t.path().join("file_to_watch.js");
   file_to_watch.write(
     r#"
-      Deno.addSignalListener("SIGTERM", () => {
+      Edno.addSignalListener("SIGTERM", () => {
         console.log("received SIGTERM");
       });
       setInterval(() => {}, 1000);
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2399,7 +2399,7 @@ async fn run_watch_sigterm_on_restart() {
   // Trigger a restart by modifying the file (keep same behavior)
   file_to_watch.write(
     r#"
-      Deno.addSignalListener("SIGTERM", () => {
+      Edno.addSignalListener("SIGTERM", () => {
         console.log("received SIGTERM");
       });
       setInterval(() => {}, 1000);
@@ -2425,17 +2425,17 @@ async fn test_watch_sigint_and_sigterm_on_ctrlc() {
   let file_to_watch = t.path().join("file_to_watch.js");
   file_to_watch.write(
     r#"
-      Deno.addSignalListener("SIGINT", () => {
+      Edno.addSignalListener("SIGINT", () => {
         console.log("received SIGINT");
       });
-      Deno.addSignalListener("SIGTERM", () => {
+      Edno.addSignalListener("SIGTERM", () => {
         console.log("received SIGTERM");
       });
       setInterval(() => {}, 1000);
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2487,7 +2487,7 @@ async fn test_watch_sigint_during_blocking_sync_code() {
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2514,7 +2514,7 @@ async fn test_watch_sigint_during_blocking_sync_code() {
 async fn bench_watch_basic() {
   let t = TempDir::new();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("bench")
     .arg("--watch")
@@ -2541,8 +2541,8 @@ async fn bench_watch_basic() {
   let bar_bench = t.path().join("bar_bench.js");
   foo_file.write("export default function foo() { 1 + 1 }");
   bar_file.write("export default function bar() { 2 + 2 }");
-  foo_bench.write("import foo from './foo.js'; Deno.bench('foo bench', foo);");
-  bar_bench.write("import bar from './bar.js'; Deno.bench('bar bench', bar);");
+  foo_bench.write("import foo from './foo.js'; Edno.bench('foo bench', foo);");
+  bar_bench.write("import bar from './bar.js'; Edno.bench('bar bench', bar);");
 
   wait_contains("bar_bench.js", &mut stdout_lines).await;
   wait_contains("bar bench", &mut stdout_lines).await;
@@ -2551,7 +2551,7 @@ async fn bench_watch_basic() {
   wait_contains("Bench finished", &mut stderr_lines).await;
 
   // Change content of the file
-  foo_bench.write("import foo from './foo.js'; Deno.bench('foo asdf', foo);");
+  foo_bench.write("import foo from './foo.js'; Edno.bench('foo asdf', foo);");
 
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Restarting");
   loop {
@@ -2565,7 +2565,7 @@ async fn bench_watch_basic() {
 
   // Add bench
   let another_test = t.path().join("new_bench.js");
-  another_test.write("Deno.bench('another one', () => 3 + 3)");
+  another_test.write("Edno.bench('another one', () => 3 + 3)");
   loop {
     let line = next_line(&mut stdout_lines).await.unwrap();
     assert_not_contains!(line, "bar");
@@ -2577,7 +2577,7 @@ async fn bench_watch_basic() {
   wait_contains("Bench finished", &mut stderr_lines).await;
 
   // Confirm that restarting occurs when a new file is updated
-  another_test.write("Deno.bench('another one', () => 3 + 3); Deno.bench('another another one', () => 4 + 4)");
+  another_test.write("Edno.bench('another one', () => 3 + 3); Edno.bench('another another one', () => 4 + 4)");
   loop {
     let line = next_line(&mut stdout_lines).await.unwrap();
     assert_not_contains!(line, "bar");
@@ -2605,7 +2605,7 @@ async fn bench_watch_basic() {
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Bench failed");
 
   // Then restore the file
-  another_test.write("Deno.bench('another one', () => 3 + 3)");
+  another_test.write("Edno.bench('another one', () => 3 + 3)");
   assert_contains!(next_line(&mut stderr_lines).await.unwrap(), "Restarting");
   loop {
     let line = next_line(&mut stdout_lines).await.unwrap();
@@ -2635,7 +2635,7 @@ async fn run_watch_reload_once() {
     "#;
   file_to_watch.write(file_content);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--allow-import")
@@ -2671,7 +2671,7 @@ async fn run_watch_reload_once() {
   check_alive_then_kill(child);
 }
 
-/// Regression test for https://github.com/denoland/deno/issues/18960. Ensures that Deno.serve
+/// Regression test for https://github.com/denoland/deno/issues/18960. Ensures that Edno.serve
 /// operates properly after a watch restart.
 #[test(flaky)]
 async fn test_watch_serve() {
@@ -2679,11 +2679,11 @@ async fn test_watch_serve() {
   let file_to_watch = t.path().join("file_to_watch.js");
   let file_content = r#"
       console.error("serving");
-      await Deno.serve({port: 4600, handler: () => new Response("hello")});
+      await Edno.serve({port: 4600, handler: () => new Response("hello")});
     "#;
   file_to_watch.write(file_content);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2709,7 +2709,7 @@ async fn test_watch_serve() {
   check_alive_then_kill(child);
 }
 
-/// Ensures that Deno.serve with unix socket operates properly after a watch restart.
+/// Ensures that Edno.serve with unix socket operates properly after a watch restart.
 #[cfg(unix)]
 #[test(flaky)]
 async fn test_watch_serve_unix_socket() {
@@ -2719,13 +2719,13 @@ async fn test_watch_serve_unix_socket() {
   let file_content = format!(
     r#"
       console.error("serving");
-      await Deno.serve({{path: "{}"}}, () => new Response("hello"));
+      await Edno.serve({{path: "{}"}}, () => new Response("hello"));
     "#,
     socket_path.to_string().replace('\\', "\\\\")
   );
   file_to_watch.write(&file_content);
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2777,7 +2777,7 @@ async fn run_watch_dynamic_imports() {
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2853,7 +2853,7 @@ async fn run_watch_dynamic_raw_imports() {
   let raw_file = t.path().join("d.md");
   raw_file.write("hello v1\n");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2895,7 +2895,7 @@ async fn run_watch_inspect() {
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2940,7 +2940,7 @@ async fn run_watch_with_excluded_paths() {
   let mjs_file_to_exclude = t.path().join("file_to_exclude.mjs");
   mjs_file_to_exclude.write("export const foo = 0;");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -2978,7 +2978,7 @@ async fn run_watch_directory_with_excluded_file() {
   let file_to_exclude = t.path().join("file_to_exclude.txt");
   file_to_exclude.write("original content");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch=.")
@@ -3020,7 +3020,7 @@ async fn run_watch_directory_with_excluded_subdirectory() {
   let sub_file = sub_dir.join("data.txt");
   sub_file.write("data");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch=.")
@@ -3066,12 +3066,12 @@ function handler(_req) {
   return new Response("Hello world!");
 }
 
-Deno.serve({ port: 11111 }, handler);
+Edno.serve({ port: 11111 }, handler);
 console.log("Listening...")
     "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch-hmr")
@@ -3104,17 +3104,17 @@ function handler(_req) {
   return new Response("Hello world!");
 }
 
-Deno.serve({ port: 11111 }, handler);
+Edno.serve({ port: 11111 }, handler);
 console.log("Listening...")
     "#,
   );
 
   wait_contains("Replaced changed module", &mut stderr_lines).await;
-  // Re-evaluating the module calls `Deno.serve` again, so there is a window
+  // Re-evaluating the module calls `Edno.serve` again, so there is a window
   // right after the module is replaced where the listener has been closed and
   // not yet rebound and a connection is refused. Retry until it is accepting.
   //
-  // This used to spawn a fire-and-forget `deno eval` child that fetched once
+  // This used to spawn a fire-and-forget `edno eval` child that fetched once
   // and was never awaited: a refused connection there silently dropped the
   // request (leaving this test to hang until `wait_contains` timed out) and
   // printed `error sending request for url (http://localhost:11111/)` onto the
@@ -3161,7 +3161,7 @@ export function foo() {
 "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch-hmr")
@@ -3219,7 +3219,7 @@ export function foo() {
 "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch-hmr")
@@ -3261,7 +3261,7 @@ async fn run_hmr_unhandled_rejection() {
     r#"
 import { foo } from "./foo.jsx";
 
-// deno-lint-ignore require-await
+// edno-lint-ignore require-await
 async function rejection() {
   throw new Error("boom!");
 }
@@ -3284,7 +3284,7 @@ export function foo() {
 "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch-hmr")
@@ -3338,7 +3338,7 @@ setInterval(() => {
 "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch-hmr")
@@ -3386,7 +3386,7 @@ async fn bundle_watch() {
 "#,
   );
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("bundle")
     .arg("--watch")
@@ -3435,7 +3435,7 @@ console.log(styles);
   styles_css.write("div { color: red; }\n");
   let output = t.path().join("output.js");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("bundle")
     .arg("--watch")
@@ -3508,7 +3508,7 @@ async fn bundle_watch_html_entry() {
 
   let out_dir = t.path().join("dist");
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("bundle")
     .arg("--watch")
@@ -3571,14 +3571,14 @@ async fn run_watch_env_file_basic() {
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("BAR:", Deno.env.get("BAR"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("BAR:", Edno.env.get("BAR"));
 console.log("---");
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -3627,14 +3627,14 @@ async fn run_watch_env_file_process_env_precedence() {
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("BAR:", Deno.env.get("BAR"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("BAR:", Edno.env.get("BAR"));
 console.log("---");
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -3687,15 +3687,15 @@ async fn run_watch_env_file_multiple_files() {
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("BAR:", Deno.env.get("BAR"));
-console.log("BAZ:", Deno.env.get("BAZ"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("BAR:", Edno.env.get("BAR"));
+console.log("BAZ:", Edno.env.get("BAZ"));
 console.log("---");
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -3749,14 +3749,14 @@ async fn run_watch_env_file_removed() {
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("BAR:", Deno.env.get("BAR"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("BAR:", Edno.env.get("BAR"));
 console.log("---");
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -3816,14 +3816,14 @@ async fn run_watch_env_file_invalid_syntax() {
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("BAR:", Deno.env.get("BAR"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("BAR:", Edno.env.get("BAR"));
 console.log("---");
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -3871,7 +3871,7 @@ console.log("---");
 
   // Also check that a warning was logged about the invalid syntax
   // This assertion might reveal if error handling is actually working
-  // (depending on how Deno handles invalid .env syntax)
+  // (depending on how Edno handles invalid .env syntax)
 
   check_alive_then_kill(child);
 }
@@ -3889,14 +3889,14 @@ async fn run_watch_env_file_with_script_changes() {
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("BAR:", Deno.env.get("BAR"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("BAR:", Edno.env.get("BAR"));
 console.log("---");
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -3926,9 +3926,9 @@ console.log("---");
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("BAR:", Deno.env.get("BAR"));
-console.log("BAZ:", Deno.env.get("BAZ"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("BAR:", Edno.env.get("BAR"));
+console.log("BAZ:", Edno.env.get("BAZ"));
 console.log("---");
 "#,
   )
@@ -3983,15 +3983,15 @@ async fn run_watch_env_file_with_multiline_values() {
   std::fs::write(
     &main_script,
     r#"
-console.log("FOO:", Deno.env.get("FOO"));
-console.log("MULTILINE:", Deno.env.get("MULTILINE"));
-console.log("BAR:", Deno.env.get("BAR"));
+console.log("FOO:", Edno.env.get("FOO"));
+console.log("MULTILINE:", Edno.env.get("MULTILINE"));
+console.log("BAR:", Edno.env.get("BAR"));
 console.log("---");
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("run")
     .arg("--watch")
@@ -4018,7 +4018,7 @@ console.log("---");
     "Multiline values should be parsed correctly"
   );
   // Note: The newline in multiline might not appear as separate lines in console.log output
-  // This assertion might need adjustment based on how Deno actually handles multiline env vars
+  // This assertion might need adjustment based on how Edno actually handles multiline env vars
   wait_contains("BAR: another_value", &mut stdout_lines).await;
   wait_contains("---", &mut stdout_lines).await;
 
@@ -4057,15 +4057,15 @@ async fn test_watch_env_file() {
   std::fs::write(
     &test_file,
     r#"
-Deno.test("env test", () => {
-  console.log("FOO:", Deno.env.get("FOO"));
-  console.log("BAR:", Deno.env.get("BAR"));
+Edno.test("env test", () => {
+  console.log("FOO:", Edno.env.get("FOO"));
+  console.log("BAR:", Edno.env.get("BAR"));
 });
 "#,
   )
   .unwrap();
 
-  let mut child = util::deno_cmd()
+  let mut child = util::edno_cmd()
     .current_dir(t.path())
     .arg("test")
     .arg("--watch")

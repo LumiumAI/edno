@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [
     {
@@ -10,7 +10,7 @@
       // install manifest omits the `time` field. The full packument carries a
       // `scripts` map for every version, which should be stripped before it
       // is cached so the cached registry.json stays small.
-      "args": "install npm:@denotest/scripts-with-publish-date",
+      "args": "install npm:@ednotest/scripts-with-publish-date",
       "output": "[WILDCARD]"
     },
     {

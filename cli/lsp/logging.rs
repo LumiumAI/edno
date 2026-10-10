@@ -11,7 +11,7 @@ use std::time::SystemTime;
 
 use chrono::DateTime;
 use chrono::Utc;
-use deno_core::parking_lot::Mutex;
+use edno_core::parking_lot::Mutex;
 
 static LSP_DEBUG_FLAG: AtomicBool = AtomicBool::new(false);
 static LSP_LOG_LEVEL: AtomicUsize = AtomicUsize::new(log::Level::Info as usize);
@@ -62,7 +62,7 @@ pub fn init_log_file(enabled: bool, cwd: &Path) {
     let now = SystemTime::now();
     let now: DateTime<Utc> = now.into();
     let now = now.to_rfc3339().replace(':', "_");
-    let path = cwd.join(format!(".deno_lsp/log_{}.txt", now));
+    let path = cwd.join(format!(".edno_lsp/log_{}.txt", now));
     fs::create_dir_all(path.parent()?).ok()?;
     fs::write(&path, "").ok()?;
     Some(path)

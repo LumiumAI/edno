@@ -21,20 +21,20 @@ const {
   TypeError,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 const { HTTP_TOKEN_CODE_POINT_RE } = core.loadExtScript(
-  "ext:deno_web/00_infra.js",
+  "ext:edno_web/00_infra.js",
 );
-const { URL } = core.loadExtScript("ext:deno_web/00_url.js");
+const { URL } = core.loadExtScript("ext:edno_web/00_url.js");
 const { extractBody, mixinBody } = core.loadExtScript(
-  "ext:deno_fetch/22_body.js",
+  "ext:edno_fetch/22_body.js",
 );
-const { getLocationHref } = core.loadExtScript("ext:deno_web/12_location.js");
-const { extractMimeType } = core.loadExtScript("ext:deno_web/01_mimesniff.js");
-const { blobFromObjectUrl } = core.loadExtScript("ext:deno_web/09_file.js");
+const { getLocationHref } = core.loadExtScript("ext:edno_web/12_location.js");
+const { extractMimeType } = core.loadExtScript("ext:edno_web/01_mimesniff.js");
+const { blobFromObjectUrl } = core.loadExtScript("ext:edno_web/09_file.js");
 const {
   fillHeaders,
   getDecodeSplitHeader,
@@ -42,18 +42,18 @@ const {
   headerListFromHeaders,
   headersFromHeaderList,
   headersFromHeaderListLazyTarget,
-} = core.loadExtScript("ext:deno_fetch/20_headers.js");
+} = core.loadExtScript("ext:edno_fetch/20_headers.js");
 const { HttpClientPrototype } = core.loadExtScript(
-  "ext:deno_fetch/22_http_client.js",
+  "ext:edno_fetch/22_http_client.js",
 );
 const {
   createDependentAbortSignal,
   newSignal,
   signalAbort,
-} = core.loadExtScript("ext:deno_web/03_abort_signal.js");
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+} = core.loadExtScript("ext:edno_web/03_abort_signal.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 const { markNotSerializable } = core.loadExtScript(
-  "ext:deno_web/13_message_port.js",
+  "ext:edno_web/13_message_port.js",
 );
 const { internalRidSymbol } = core;
 
@@ -87,7 +87,7 @@ function processUrlList(urlList, urlListProcessed) {
  * Fields named `*Mode`, `mode`, `referrer*`, `integrity`, and `keepalive` are
  * only set on the inner object when the constructor's init bag customized
  * them away from the spec default. Leaving them off the object literal keeps
- * the V8 hidden class for `Deno.serve()`-created requests unchanged. The
+ * the V8 hidden class for `Edno.serve()`-created requests unchanged. The
  * getters substitute the spec defaults when a field is missing.
  *
  * @typedef InnerRequest
@@ -108,7 +108,7 @@ function processUrlList(urlList, urlListProcessed) {
  * @property {number} redirectCount
  * @property {(() => string)[]} urlList
  * @property {string[]} urlListProcessed
- * @property {number | null} clientRid NOTE: non standard extension for `Deno.HttpClient`.
+ * @property {number | null} clientRid NOTE: non standard extension for `Edno.HttpClient`.
  * @property {Blob | null} blobUrlEntry
  */
 
@@ -505,7 +505,7 @@ class Request {
       signal = init.signal;
     }
 
-    // NOTE: non standard extension. This handles Deno.HttpClient parameter
+    // NOTE: non standard extension. This handles Edno.HttpClient parameter
     if (init.client !== undefined) {
       if (
         init.client !== null &&
@@ -513,7 +513,7 @@ class Request {
       ) {
         throw webidl.makeException(
           TypeError,
-          "`client` must be a Deno.HttpClient",
+          "`client` must be a Edno.HttpClient",
           prefix,
           "Argument 2",
         );
@@ -689,7 +689,7 @@ class Request {
     return request;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,

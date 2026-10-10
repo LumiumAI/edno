@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/types-nested-js-dts",
+  "name": "@ednotest/types-nested-js-dts",
   "version": "1.0.0",
   "exports": {
     ".": {

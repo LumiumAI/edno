@@ -4,14 +4,14 @@
 const { core, primordials } = __bootstrap;
 
 const lazyFsUtils = core.createLazyLoader(
-  "ext:deno_node/internal/fs/utils.mjs",
+  "ext:edno_node/internal/fs/utils.mjs",
 );
 const { cpFn, throwCpError: _throwCpError } = core.loadExtScript(
-  "ext:deno_node/_fs/cp/cp.ts",
+  "ext:edno_node/_fs/cp/cp.ts",
 );
-const { cpSyncFn } = core.loadExtScript("ext:deno_node/_fs/cp/cp_sync.ts");
+const { cpSyncFn } = core.loadExtScript("ext:edno_node/_fs/cp/cp_sync.ts");
 const { makeCallback } = core.loadExtScript(
-  "ext:deno_node/_fs/_fs_common.ts",
+  "ext:edno_node/_fs/_fs_common.ts",
 );
 
 const { PromisePrototypeThen } = primordials;

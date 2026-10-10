@@ -116,7 +116,7 @@ pub type CjsModuleExportAnalyzerRc<
   TIsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver,
   TSys,
-> = deno_maybe_sync::MaybeArc<
+> = edno_maybe_sync::MaybeArc<
   CjsModuleExportAnalyzer<
     TCjsCodeAnalyzer,
     TInNpmPackageChecker,
@@ -294,7 +294,7 @@ impl<
           &entry.specifier,
           referrer,
           &[
-            Cow::Borrowed("deno"),
+            Cow::Borrowed("edno"),
             Cow::Borrowed("node"),
             Cow::Borrowed("require"),
             Cow::Borrowed("module-sync"),
@@ -387,9 +387,9 @@ impl<
               &reexport,
               &referrer,
               // FIXME(bartlomieju): check if these conditions are okay, probably
-              // should be `deno-require`, because `deno` is already used in `esm_resolver.rs`
+              // should be `edno-require`, because `edno` is already used in `esm_resolver.rs`
               &[
-                Cow::Borrowed("deno"),
+                Cow::Borrowed("edno"),
                 Cow::Borrowed("node"),
                 Cow::Borrowed("require"),
                 Cow::Borrowed("module-sync"),
@@ -724,7 +724,7 @@ pub type NodeCodeTranslatorRc<
   TIsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver,
   TSys,
-> = deno_maybe_sync::MaybeArc<
+> = edno_maybe_sync::MaybeArc<
   NodeCodeTranslator<
     TCjsCodeAnalyzer,
     TInNpmPackageChecker,

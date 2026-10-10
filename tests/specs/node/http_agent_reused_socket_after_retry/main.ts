@@ -42,7 +42,7 @@ strictEqual(r1, false, "R1 should not reuse socket");
 console.log("R1 reused:", r1);
 
 // Let the socket land in freeSockets, then FIN the idle connection from
-// the server side. Fire R2 synchronously before Deno processes the FIN,
+// the server side. Fire R2 synchronously before Edno processes the FIN,
 // so addRequest still sees the stale socket in the free pool.
 await Promise.resolve();
 server.closeAllConnections();

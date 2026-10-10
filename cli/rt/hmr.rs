@@ -13,12 +13,12 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicI32;
 use std::time::Duration;
 
-use deno_core::LocalInspectorSession;
-use deno_core::parking_lot::Mutex;
-use deno_core::serde_json::Value;
-use deno_core::serde_json::json;
-use deno_core::serde_json::{self};
-use deno_core::url::Url;
+use edno_core::LocalInspectorSession;
+use edno_core::parking_lot::Mutex;
+use edno_core::serde_json::Value;
+use edno_core::serde_json::json;
+use edno_core::serde_json::{self};
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 use notify::RecursiveMode;
 use notify::Watcher;
@@ -206,8 +206,8 @@ impl HmrState {
     })))
   }
 
-  pub fn callback(&self, msg: deno_core::InspectorMsg) {
-    let deno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
+  pub fn callback(&self, msg: edno_core::InspectorMsg) {
+    let edno_core::InspectorMsgKind::Message(msg_id) = msg.kind else {
       // Notifications: drop on parse failure rather than panic — the
       // inspector can ship payload shapes we don't model.
       match serde_json::from_str::<cdp::Notification>(&msg.content) {
@@ -362,7 +362,7 @@ impl DesktopHmrRunner {
 
     #[allow(
       clippy::disallowed_methods,
-      reason = "denort has no canonicalize helper; falls back to the original path"
+      reason = "ednort has no canonicalize helper; falls back to the original path"
     )]
     let watch_dir_canonical = watch_dir
       .canonicalize()
@@ -395,7 +395,7 @@ impl DesktopHmrRunner {
       .post_message::<()>(next_id(), "Runtime.enable", None);
   }
 
-  pub async fn run(&mut self) -> Result<(), deno_core::error::CoreError> {
+  pub async fn run(&mut self) -> Result<(), edno_core::error::CoreError> {
     loop {
       tokio::select! {
         biased;
@@ -475,7 +475,7 @@ impl DesktopHmrRunner {
   ) -> ChangeOutcome {
     #[allow(
       clippy::disallowed_methods,
-      reason = "denort has no canonicalize helper; non-canonicalizable paths are handled below"
+      reason = "ednort has no canonicalize helper; non-canonicalizable paths are handled below"
     )]
     let canonical = match (change, path.canonicalize()) {
       (FileChange::Updated, Ok(p)) => p,
@@ -659,7 +659,7 @@ impl DesktopHmrRunner {
 /// `watch_dir` is the original source directory on disk.
 /// `vfs_root` is the VFS root path that V8 scripts are registered under.
 pub fn setup_desktop_hmr(
-  worker: &mut deno_lib::worker::LibMainWorker,
+  worker: &mut edno_lib::worker::LibMainWorker,
   watch_dir: PathBuf,
   vfs_root: PathBuf,
 ) -> Result<DesktopHmrRunner, JsErrorBox> {

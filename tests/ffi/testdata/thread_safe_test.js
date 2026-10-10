@@ -1,15 +1,15 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
-const targetDir = Deno.execPath().replace(/[^\/\\]+$/, "");
+const targetDir = Edno.execPath().replace(/[^\/\\]+$/, "");
 const [libPrefix, libSuffix] = {
   darwin: ["lib", "dylib"],
   linux: ["lib", "so"],
   windows: ["", "dll"],
-}[Deno.build.os];
+}[Edno.build.os];
 const libPath = `${targetDir}/${libPrefix}test_ffi.${libSuffix}`;
 
-const dylib = Deno.dlopen(libPath, {
+const dylib = Edno.dlopen(libPath, {
   store_function: {
     parameters: ["function"],
     result: "void",
@@ -48,7 +48,7 @@ const sendWorkerMessage = async (data) => {
 
 // Test step 1: Register main thread callback, trigger on worker thread
 
-const mainThreadCallback = new Deno.UnsafeCallback(
+const mainThreadCallback = new Edno.UnsafeCallback(
   { parameters: [], result: "void" },
   () => {
     console.log("Callback on main thread");
@@ -76,9 +76,9 @@ await sendWorkerMessage("unref");
 worker.terminate();
 
 // Test step 3: Register a callback that will be the only thing left keeping the isolate from exiting.
-// Rely on it to keep Deno running until the callback comes in and unrefs the callback, after which Deno should exit.
+// Rely on it to keep Edno running until the callback comes in and unrefs the callback, after which Edno should exit.
 
-const cleanupCallback = new Deno.UnsafeCallback(
+const cleanupCallback = new Edno.UnsafeCallback(
   { parameters: [], result: "void" },
   () => {
     console.log("Callback being called");

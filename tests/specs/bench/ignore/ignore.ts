@@ -1,5 +1,5 @@
 for (let i = 0; i < 10; i++) {
-  Deno.bench({
+  Edno.bench({
     name: `bench${i}`,
     ignore: true,
     fn() {

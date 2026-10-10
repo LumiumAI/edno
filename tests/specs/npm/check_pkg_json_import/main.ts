@@ -1,5 +1,5 @@
-import { createContext } from "npm:@denotest/types-pkg-json-import";
-import { useContext } from "npm:@denotest/types-pkg-json-import/hooks";
+import { createContext } from "npm:@ednotest/types-pkg-json-import";
+import { useContext } from "npm:@ednotest/types-pkg-json-import/hooks";
 
 export interface Foo {
   foo: string;

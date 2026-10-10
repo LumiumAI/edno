@@ -1,4 +1,4 @@
-// Importing a non-Deno workspace member (package.json with an "exports" map) by
+// Importing a non-Edno workspace member (package.json with an "exports" map) by
 // its package name must honor the exports map in the compiled binary, both for
 // the root export and a subpath export. Regression test for #28926.
 import { greet } from "@repo/lib";

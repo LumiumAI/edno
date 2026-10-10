@@ -1,10 +1,10 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-//! Translation from yarn's `yarn.lock` to a deno.lock v5 JSON string.
+//! Translation from yarn's `yarn.lock` to a edno.lock v5 JSON string.
 //!
 //! Supports yarn classic (v1) only. Yarn berry (v2+) uses YAML with
 //! `checksum` fields that are typically xxhash rather than SRI-compatible
-//! sha-512 digests, so translating berry lockfiles to deno.lock without
+//! sha-512 digests, so translating berry lockfiles to edno.lock without
 //! losing integrity information is not possible without re-fetching the
 //! tarballs. Berry lockfiles are detected and rejected with a clear error.
 
@@ -23,7 +23,7 @@ pub enum YarnLockfileImportError {
   Empty,
 }
 
-/// Convert a yarn v1 `yarn.lock` string into a deno.lock v5 JSON string. Only
+/// Convert a yarn v1 `yarn.lock` string into a edno.lock v5 JSON string. Only
 /// the npm subset is populated.
 pub fn yarn_lock_to_deno_lock_v5(
   text: &str,
@@ -146,7 +146,7 @@ pub fn yarn_lock_to_deno_lock_v5(
 
   Ok(
     serde_json::to_string(&Value::Object(output))
-      .expect("serializing deno.lock v5"),
+      .expect("serializing edno.lock v5"),
   )
 }
 

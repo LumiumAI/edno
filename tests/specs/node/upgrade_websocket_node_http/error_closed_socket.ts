@@ -15,7 +15,7 @@ server.on("upgrade", (req, nodeSocket, head) => {
   nodeSocket.destroy();
 
   try {
-    Deno.upgradeWebSocket(
+    Edno.upgradeWebSocket(
       new Request("http://localhost/", { headers: req.headers as HeadersInit }),
       { socket: nodeSocket as Socket, head },
     );
@@ -40,6 +40,6 @@ server.listen(0, () => {
 
 const _t = setTimeout(() => {
   console.error("timeout - forcing exit");
-  Deno.exit(1);
+  Edno.exit(1);
 }, 10_000);
-Deno.unrefTimer(_t);
+Edno.unrefTimer(_t);

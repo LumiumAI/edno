@@ -1,3 +1,3 @@
-Deno.bench("Date.now", () => {
+Edno.bench("Date.now", () => {
   Date.now();
 });

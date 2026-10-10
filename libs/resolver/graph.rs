@@ -19,7 +19,7 @@ use deno_semver::npm::NpmPackageReqReference;
 use deno_semver::package::PackageReq;
 use deno_unsync::sync::AtomicFlag;
 use import_map::ImportMapErrorKind;
-use node_resolver::DenoIsBuiltInNodeModuleChecker;
+use node_resolver::EdnoIsBuiltInNodeModuleChecker;
 use node_resolver::InNpmPackageChecker;
 use node_resolver::IsBuiltInNodeModuleChecker;
 use node_resolver::NpmPackageFolderResolver;
@@ -28,11 +28,11 @@ use node_resolver::errors::NodeJsErrorCode;
 use node_resolver::errors::NodeJsErrorCoded;
 use url::Url;
 
-use crate::DenoResolveError;
-use crate::DenoResolverSys;
+use crate::EdnoResolveError;
+use crate::EdnoResolverSys;
 use crate::RawDenoResolverRc;
 use crate::cjs::CjsTracker;
-use crate::deno_json::JsxImportSourceConfigResolver;
+use crate::edno_json::JsxImportSourceConfigResolver;
 use crate::npm;
 use crate::npm::managed::ManagedResolvePkgFolderFromDenoReqError;
 use crate::workspace::MappedResolutionDiagnostic;
@@ -40,7 +40,7 @@ use crate::workspace::sloppy_imports_resolve;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type FoundPackageJsonDepFlagRc =
-  deno_maybe_sync::MaybeArc<FoundPackageJsonDepFlag>;
+  edno_maybe_sync::MaybeArc<FoundPackageJsonDepFlag>;
 
 /// A flag that indicates if a package.json dependency was
 /// found during resolution.
@@ -99,8 +99,8 @@ impl ResolveWithGraphError {
     use deno_graph::source::ResolveError;
 
     match self.into_kind() {
-      ResolveWithGraphErrorKind::Resolve(deno_resolve_error) => {
-        deno_resolve_error.into_deno_graph_error()
+      ResolveWithGraphErrorKind::Resolve(edno_resolve_error) => {
+        edno_resolve_error.into_deno_graph_error()
       }
       err => ResolveError::from_err(err),
     }
@@ -130,7 +130,7 @@ pub enum ResolveWithGraphErrorKind {
   Resolution(#[from] deno_graph::ResolutionError),
   #[error(transparent)]
   #[class(inherit)]
-  Resolve(#[from] DenoResolveError),
+  Resolve(#[from] EdnoResolveError),
   #[error(transparent)]
   #[class(inherit)]
   PathToUrl(#[from] deno_path_util::PathToUrlError),
@@ -159,7 +159,7 @@ pub struct MappedResolutionDiagnosticWithPosition<'a> {
 }
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type OnMappedResolutionDiagnosticFn = deno_maybe_sync::MaybeArc<
+pub type OnMappedResolutionDiagnosticFn = edno_maybe_sync::MaybeArc<
   dyn Fn(MappedResolutionDiagnosticWithPosition) + Send + Sync,
 >;
 
@@ -167,7 +167,7 @@ pub struct ResolveWithGraphOptions {
   pub mode: node_resolver::ResolutionMode,
   pub kind: node_resolver::NodeResolutionKind,
   /// Whether to maintain npm specifiers as-is. It's necessary for the
-  /// deno_core module loader to resolve npm specifiers as-is so that
+  /// edno_core module loader to resolve npm specifiers as-is so that
   /// the loader can properly dynamic import and install npm packages
   /// when managed.
   pub maintain_npm_specifiers: bool,
@@ -179,21 +179,21 @@ pub enum NpmTypesResolutionMode {
   FallbackToExecution,
 }
 
-pub type DefaultDenoResolverRc<TSys> = DenoResolverRc<
-  npm::DenoInNpmPackageChecker,
-  DenoIsBuiltInNodeModuleChecker,
+pub type DefaultDenoResolverRc<TSys> = EdnoResolverRc<
+  npm::EdnoInNpmPackageChecker,
+  EdnoIsBuiltInNodeModuleChecker,
   npm::NpmResolver<TSys>,
   TSys,
 >;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type DenoResolverRc<
+pub type EdnoResolverRc<
   TInNpmPackageChecker,
   TIsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver,
   TSys,
-> = deno_maybe_sync::MaybeArc<
-  DenoResolver<
+> = edno_maybe_sync::MaybeArc<
+  EdnoResolver<
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
     TNpmPackageFolderResolver,
@@ -203,11 +203,11 @@ pub type DenoResolverRc<
 
 /// The resolver used in the CLI for resolving and interfacing
 /// with deno_graph.
-pub struct DenoResolver<
+pub struct EdnoResolver<
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 > {
   resolver: RawDenoResolverRc<
     TInNpmPackageChecker,
@@ -217,7 +217,7 @@ pub struct DenoResolver<
   >,
   sys: TSys,
   found_package_json_dep_flag: FoundPackageJsonDepFlagRc,
-  warned_pkgs: deno_maybe_sync::MaybeDashSet<PackageReq>,
+  warned_pkgs: edno_maybe_sync::MaybeDashSet<PackageReq>,
   on_warning: Option<OnMappedResolutionDiagnosticFn>,
 }
 
@@ -225,9 +225,9 @@ impl<
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 > std::fmt::Debug
-  for DenoResolver<
+  for EdnoResolver<
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
     TNpmPackageFolderResolver,
@@ -235,7 +235,7 @@ impl<
   >
 {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.debug_struct("DenoResolver").finish()
+    f.debug_struct("EdnoResolver").finish()
   }
 }
 
@@ -243,9 +243,9 @@ impl<
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 >
-  DenoResolver<
+  EdnoResolver<
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
     TNpmPackageFolderResolver,
@@ -405,7 +405,7 @@ impl<
   /// snapshot, regardless of whether the referrer's `package.json` declares
   /// it.
   ///
-  /// `deno compile --bundle` follows `new Worker(new URL(...))` and similar
+  /// `edno compile --bundle` follows `new Worker(new URL(...))` and similar
   /// references into modules that can live outside the entrypoint's package
   /// scope (e.g. a worker authored in a sibling source tree, pulled in
   /// alongside a `dist/`-rooted entrypoint). A bare npm import from such a
@@ -453,7 +453,7 @@ impl<
     referrer_range_start: deno_graph::Position,
     resolution_mode: node_resolver::ResolutionMode,
     resolution_kind: node_resolver::NodeResolutionKind,
-  ) -> Result<Url, DenoResolveError> {
+  ) -> Result<Url, EdnoResolveError> {
     let resolution = self.resolver.resolve(
       raw_specifier,
       referrer,
@@ -495,14 +495,14 @@ impl<
     jsx_import_source_config_resolver: &'a JsxImportSourceConfigResolver,
     maybe_graph: Option<&'a deno_graph::ModuleGraph>,
     npm_types_resolution_mode: NpmTypesResolutionMode,
-  ) -> DenoGraphResolverAdapter<
+  ) -> EdnoGraphResolverAdapter<
     'a,
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
     TNpmPackageFolderResolver,
     TSys,
   > {
-    DenoGraphResolverAdapter {
+    EdnoGraphResolverAdapter {
       cjs_tracker,
       resolver: self,
       jsx_import_source_config_resolver,
@@ -512,15 +512,15 @@ impl<
   }
 }
 
-pub struct DenoGraphResolverAdapter<
+pub struct EdnoGraphResolverAdapter<
   'a,
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 > {
   cjs_tracker: &'a CjsTracker<TInNpmPackageChecker, TSys>,
-  resolver: &'a DenoResolver<
+  resolver: &'a EdnoResolver<
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
     TNpmPackageFolderResolver,
@@ -535,9 +535,9 @@ impl<
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 > std::fmt::Debug
-  for DenoGraphResolverAdapter<
+  for EdnoGraphResolverAdapter<
     '_,
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
@@ -546,7 +546,7 @@ impl<
   >
 {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.debug_struct("DenoGraphResolverAdapter").finish()
+    f.debug_struct("EdnoGraphResolverAdapter").finish()
   }
 }
 
@@ -554,9 +554,9 @@ impl<
   TInNpmPackageChecker: InNpmPackageChecker,
   TIsBuiltInNodeModuleChecker: IsBuiltInNodeModuleChecker,
   TNpmPackageFolderResolver: NpmPackageFolderResolver,
-  TSys: DenoResolverSys,
+  TSys: EdnoResolverSys,
 > deno_graph::source::Resolver
-  for DenoGraphResolverAdapter<
+  for EdnoGraphResolverAdapter<
     '_,
     TInNpmPackageChecker,
     TIsBuiltInNodeModuleChecker,
@@ -686,7 +686,7 @@ impl std::fmt::Display for EnhancedGraphError {
     f.write_str(&self.message)?;
     if let Some(range) = self.original.maybe_range()
       && self.mode == EnhanceGraphErrorMode::ShowRange
-      && !range.specifier.as_str().contains("/$deno$eval")
+      && !range.specifier.as_str().contains("/$edno$eval")
     {
       write!(f, "\n    at {}", format_range_with_colors(range))?;
     }
@@ -751,7 +751,7 @@ pub fn enhance_graph_error(
   }
 }
 
-/// Returns a link to relevant Deno documentation for known module graph
+/// Returns a link to relevant Edno documentation for known module graph
 /// errors so users can quickly find the recommended fix.
 fn maybe_docs_url_for_graph_error(
   error: &ModuleGraphError,
@@ -789,7 +789,7 @@ pub fn enhanced_resolution_error_message(
     get_import_prefix_missing_error(error).map(|specifier| {
       // If the specifier looks like a workspace member or linked package whose
       // declared name is scoped (e.g. importing "foo" when "@scope/foo" is
-      // linked), point at the real name instead of suggesting `deno add`.
+      // linked), point at the real name instead of suggesting `edno add`.
       if let Some(name) =
         maybe_matching_bare_pkg_name(specifier, bare_importable_pkg_names)
       {
@@ -798,17 +798,17 @@ pub fn enhanced_resolution_error_message(
         )
       } else if specifier.starts_with("@std/") {
         format!(
-          "If you want to use the JSR package, try running `deno add jsr:{}`",
+          "If you want to use the JSR package, try running `edno add jsr:{}`",
           specifier
         )
       } else if specifier.starts_with('@') {
         format!(
-          "If you want to use a JSR or npm package, try running `deno add jsr:{0}` or `deno add npm:{0}`",
+          "If you want to use a JSR or npm package, try running `edno add jsr:{0}` or `edno add npm:{0}`",
           specifier
         )
       } else {
         format!(
-          "If you want to use the npm package, try running `deno add npm:{0}`",
+          "If you want to use the npm package, try running `edno add npm:{0}`",
           specifier
         )
       }
@@ -877,7 +877,7 @@ pub fn enhanced_integrity_error_message(err: &ModuleError) -> Option<String> {
         "  Expected: {}\n\n",
         "If you modified your global cache, run again with the --reload flag to restore ",
         "its state. If you want to modify dependencies locally run again with the ",
-        "--vendor flag or specify `\"vendor\": true` in a deno.json then modify the contents ",
+        "--vendor flag or specify `\"vendor\": true` in a edno.json then modify the contents ",
         "of the vendor/ folder."
       ),
       specifier, checksum_err.actual, checksum_err.expected,
@@ -945,7 +945,7 @@ pub fn get_resolution_error_bare_node_specifier(
   error: &ResolutionError,
 ) -> Option<&str> {
   get_resolution_error_bare_specifier(error).filter(|specifier| {
-    DenoIsBuiltInNodeModuleChecker.is_builtin_node_module(specifier)
+    EdnoIsBuiltInNodeModuleChecker.is_builtin_node_module(specifier)
   })
 }
 
@@ -1049,7 +1049,7 @@ fn get_import_prefix_missing_error(error: &ResolutionError) -> Option<&str> {
 
   if let Some(specifier) = maybe_specifier {
     // NOTE(bartlomieju): For now, return None if a specifier contains a dot or a space. This is because
-    // suggesting to `deno add bad-module.ts` makes no sense and is worse than not providing
+    // suggesting to `edno add bad-module.ts` makes no sense and is worse than not providing
     // a suggestion at all. This should be improved further in the future
     if specifier.contains('.') || specifier.contains(' ') {
       return None;
@@ -1129,7 +1129,7 @@ mod test {
     let cases = vec![("fs", Some("fs")), ("other", None)];
     for (input, output) in cases {
       let import_map =
-        import_map::ImportMap::new(Url::parse("file:///deno.json").unwrap());
+        import_map::ImportMap::new(Url::parse("file:///edno.json").unwrap());
       let specifier = Url::parse("file:///file.ts").unwrap();
       let err = import_map.resolve(input, &specifier).err().unwrap();
       let err = ResolutionError::ResolverError {

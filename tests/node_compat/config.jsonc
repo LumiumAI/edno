@@ -5,23 +5,23 @@
     "abort/test-addon-uv-handle-leak.js": {},
     "abort/test-zlib-invalid-internals-usage.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal C++ binding (internalBinding('zlib').Zlib) which is not implemented in Deno"
+      "reason": "Tests Node.js internal C++ binding (internalBinding('zlib').Zlib) which is not implemented in Edno"
     },
     "client-proxy/test-use-env-proxy-cli-http.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "client-proxy/test-use-env-proxy-cli-https.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "es-module/test-cjs-legacyMainResolve.js": {
       "ignore": true,
-      "reason": "Tests `node:internal/modules/esm/resolve.legacyMainResolve`, a private CJS resolver helper Deno does not expose"
+      "reason": "Tests `node:internal/modules/esm/resolve.legacyMainResolve`, a private CJS resolver helper Edno does not expose"
     },
     "es-module/test-cjs-legacyMainResolve-permission.js": {
       "ignore": true,
-      "reason": "Tests `node:internal/modules/esm/resolve.legacyMainResolve` against Node's `--permission` model; neither is supported in Deno"
+      "reason": "Tests `node:internal/modules/esm/resolve.legacyMainResolve` against Node's `--permission` model; neither is supported in Edno"
     },
     "es-module/test-cjs-prototype-pollution.js": {},
     "es-module/test-esm-assert-strict.mjs": {},
@@ -43,13 +43,13 @@
     "es-module/test-esm-import-attributes-3.mjs": {},
     "es-module/test-esm-import-attributes-validation-text.js": {
       "ignore": true,
-      "reason": "Requires Node's internal `internal/modules/esm/assert` module, which Deno does not expose"
+      "reason": "Requires Node's internal `internal/modules/esm/assert` module, which Edno does not expose"
     },
     "es-module/test-esm-import-json-named-export.mjs": {},
     "es-module/test-esm-import-meta-main.mjs": {},
     "es-module/test-esm-import-text-disabled.mjs": {
       "ignore": true,
-      "reason": "Asserts that text imports are rejected when Node's --experimental-import-text flag is absent; Deno supports `with { type: 'text' }` unconditionally, so the imports resolve instead of rejecting"
+      "reason": "Asserts that text imports are rejected when Node's --experimental-import-text flag is absent; Edno supports `with { type: 'text' }` unconditionally, so the imports resolve instead of rejecting"
     },
     "es-module/test-esm-in-require-cache-2.mjs": {},
     "es-module/test-esm-in-require-cache.js": {},
@@ -63,7 +63,7 @@
     "es-module/test-esm-recursive-cjs-dependencies.mjs": {},
     "es-module/test-esm-repl-imports.js": {
       "ignore": true,
-      "reason": "requires `deno --interactive` flag (not yet implemented); previously passed only because the test runner did not await Node-style `done` callbacks, which masked the failing assertion"
+      "reason": "requires `edno --interactive` flag (not yet implemented); previously passed only because the test runner did not await Node-style `done` callbacks, which masked the failing assertion"
     },
     "es-module/test-esm-require-cache.mjs": {},
     "es-module/test-esm-scope-node-modules.mjs": {},
@@ -85,7 +85,7 @@
     "es-module/test-require-as-esm-interop.mjs": {},
     "es-module/test-require-module.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "es-module/test-require-module-cached-tla.js": {},
     "es-module/test-require-module-cycle-cjs-esm-esm.js": {},
@@ -95,33 +95,33 @@
     "es-module/test-require-module-dont-detect-cjs.js": {},
     "es-module/test-require-module-dynamic-import-1.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "es-module/test-require-module-dynamic-import-2.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "es-module/test-require-module-dynamic-import-3.js": {},
     "es-module/test-require-module-retry-import-evaluating.js": {},
     "es-module/test-require-module-dynamic-import-4.js": {},
     "es-module/test-require-module-feature-detect.js": {
       "ignore": true,
-      "reason": "Tests Node's process.features.require_module flag, which Deno does not expose."
+      "reason": "Tests Node's process.features.require_module flag, which Edno does not expose."
     },
     "es-module/test-require-module-instantiated.mjs": {},
     "es-module/test-require-module-preload.js": {
       "ignore": true,
-      "reason": "Tests Node's --require / --import preload CLI flags, which Deno does not implement."
+      "reason": "Tests Node's --require / --import preload CLI flags, which Edno does not implement."
     },
     "es-module/test-require-module-synchronous-rejection-handling.js": {},
     "es-module/test-require-module-tla-execution.js": {
       "ignore": true,
-      "reason": "Node 26.5 asserts the ERR_REQUIRE_ASYNC_MODULE hint names --experimental-print-required-tla; Deno points at --stack-trace-limit instead, as it does not implement that flag"
+      "reason": "Node 26.5 asserts the ERR_REQUIRE_ASYNC_MODULE hint names --experimental-print-required-tla; Edno points at --stack-trace-limit instead, as it does not implement that flag"
     },
     "es-module/test-require-module-tla-nested.js": {},
     "es-module/test-require-module-tla-print-execution.js": {
       "ignore": true,
-      "reason": "Requires Node's --experimental-print-required-tla CLI flag, which Deno does not implement."
+      "reason": "Requires Node's --experimental-print-required-tla CLI flag, which Edno does not implement."
     },
     "es-module/test-require-module-tla-rejected.js": {},
     "es-module/test-require-module-tla-resolved.js": {},
@@ -132,16 +132,16 @@
     "es-module/test-require-module-transpiled.js": {},
     "es-module/test-require-module-twice.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "es-module/test-require-module-warning.js": {
       "ignore": true,
-      "reason": "Tests Node's --trace-require-module / ExperimentalWarning stderr emissions, which Deno does not emit."
+      "reason": "Tests Node's --trace-require-module / ExperimentalWarning stderr emissions, which Edno does not emit."
     },
     "es-module/test-require-module-with-detection.js": {},
     "es-module/test-require-node-modules-warning.js": {
       "ignore": true,
-      "reason": "Tests Node's --trace-require-module / ExperimentalWarning stderr emissions, which Deno does not emit."
+      "reason": "Tests Node's --trace-require-module / ExperimentalWarning stderr emissions, which Edno does not emit."
     },
     "es-module/test-typescript-commonjs.mjs": {},
     "es-module/test-typescript-eval.mjs": {},
@@ -158,18 +158,18 @@
     "internet/test-tls-add-ca-cert.js": {},
     "internet/test-snapshot-dns-lookup.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "internet/test-snapshot-dns-resolve.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "module-hooks/test-module-hooks-create-require-with-url.mjs": {},
     "module-hooks/test-module-hooks-load-context-merged.js": {},
     "module-hooks/test-module-hooks-load-context-optional.js": {},
     "module-hooks/test-module-hooks-load-async-and-sync.js": {
       "ignore": true,
-      "reason": "Depends on deprecated module.register() loader hooks, which Deno intentionally does not implement"
+      "reason": "Depends on deprecated module.register() loader hooks, which Edno intentionally does not implement"
     },
     "module-hooks/test-module-hooks-load-builtin-override-commonjs.js": {},
     "module-hooks/test-module-hooks-load-builtin-override-json.js": {},
@@ -182,7 +182,7 @@
     "module-hooks/test-module-hooks-load-url-change-import.mjs": {},
     "module-hooks/test-module-hooks-preload.js": {
       "ignore": true,
-      "reason": "Depends on deprecated module.register() loader hooks, which Deno intentionally does not implement"
+      "reason": "Depends on deprecated module.register() loader hooks, which Edno intentionally does not implement"
     },
     "module-hooks/test-module-hooks-resolve-builtin-on-disk-require.js": {},
     "module-hooks/test-module-hooks-resolve-context-merged.js": {},
@@ -190,7 +190,7 @@
     "module-hooks/test-module-hooks-resolve-load-builtin-override-both.js": {},
     "module-hooks/test-module-hooks-resolve-require-resolve-loaded-with-source.js": {
       "ignore": true,
-      "reason": "Depends on deprecated module.register() loader hooks, which Deno intentionally does not implement"
+      "reason": "Depends on deprecated module.register() loader hooks, which Edno intentionally does not implement"
     },
     "module-hooks/test-module-hooks-resolve-short-circuit.js": {},
     "module-hooks/test-module-hooks-resolve-short-circuit-required-middle.js": {},
@@ -198,7 +198,7 @@
     "parallel/test-abort-controller-any-timeout.js": {},
     "parallel/test-abortcontroller-internal.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-abortsignal-any.mjs": {},
     "parallel/test-als-defaultvalue.js": {},
@@ -277,7 +277,7 @@
       "darwin": false,
       "linux": false,
       "windows": false,
-      "reason": "Deno does not allow heap-allocated ArrayBuffer, and we can't change it (for now)"
+      "reason": "Edno does not allow heap-allocated ArrayBuffer, and we can't change it (for now)"
     },
     "parallel/test-buffer-badhex.js": {},
     "parallel/test-buffer-bigint64.js": {},
@@ -410,7 +410,7 @@
     "parallel/test-child-process-prototype-tampering.mjs": {},
     "parallel/test-child-process-recv-handle.js": {
       "ignore": true,
-      "reason": "Uses internal/child_process kChannelHandle with readStop/readStart which is not exposed in Deno"
+      "reason": "Uses internal/child_process kChannelHandle with readStop/readStart which is not exposed in Edno"
     },
     "parallel/test-child-process-reject-null-bytes.js": {},
     "parallel/test-child-process-send-after-close.js": {},
@@ -467,72 +467,72 @@
     "parallel/test-child-process-validate-stdio.js": {},
     "parallel/test-cli-bad-options.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-eval-event.js": {},
     "parallel/test-cli-eval.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-node-cli-manpage-env-vars.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-node-cli-manpage-options.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-node-options-disallowed.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-node-options-docs.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-node-options.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-node-print-help.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-options-as-flags.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-options-negation.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-options-precedence.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-permission-deny-fs.js": {
       "ignore": true,
-      "reason": "Node.js permission model (--experimental-permission) is not implemented in Deno"
+      "reason": "Node.js permission model (--experimental-permission) is not implemented in Edno"
     },
     "parallel/test-cli-permission-multiple-allow.js": {
       "ignore": true,
-      "reason": "Node.js permission model (--experimental-permission) is not implemented in Deno"
+      "reason": "Node.js permission model (--experimental-permission) is not implemented in Edno"
     },
     "parallel/test-cli-print-promise.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-syntax-eval.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-syntax-piped-bad.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-cli-syntax-piped-good.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-client-request-destroy.js": {},
     "parallel/test-cluster-advanced-serialization.js": { "windows": false },
@@ -625,15 +625,15 @@
     "parallel/test-common-must-not-mutate-object-deep.mjs": {},
     "parallel/test-compile-cache-api-permission.js": {
       "ignore": true,
-      "reason": "Node.js permission model (--experimental-permission) is not implemented in Deno"
+      "reason": "Node.js permission model (--experimental-permission) is not implemented in Edno"
     },
     "parallel/test-compile-cache-permission-allowed.js": {
       "ignore": true,
-      "reason": "Node.js permission model (--experimental-permission) is not implemented in Deno"
+      "reason": "Node.js permission model (--experimental-permission) is not implemented in Edno"
     },
     "parallel/test-compile-cache-permission-disallowed.js": {
       "ignore": true,
-      "reason": "Node.js permission model (--experimental-permission) is not implemented in Deno"
+      "reason": "Node.js permission model (--experimental-permission) is not implemented in Edno"
     },
     "parallel/test-compile-cache-typescript-commonjs.js": {},
     "parallel/test-compile-cache-typescript-esm.js": {},
@@ -662,7 +662,7 @@
     "parallel/test-crypto-argon2.js": {},
     "parallel/test-crypto-async-sign-verify.js": {
       "ignore": true,
-      "reason": "Expects the BoringSSL-specific ERR_OSSL_EVP_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE error; Deno does not surface this error for the unsupported keytype/digest combination"
+      "reason": "Expects the BoringSSL-specific ERR_OSSL_EVP_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE error; Edno does not surface this error for the unsupported keytype/digest combination"
     },
     "parallel/test-crypto-authenticated-stream.js": {},
     "parallel/test-crypto-classes.js": {},
@@ -674,7 +674,7 @@
     "parallel/test-crypto-dh-constructor.js": {},
     "parallel/test-crypto-dh-curves.js": {
       "ignore": true,
-      "reason": "Requires DH_check() results exposed via DiffieHellman.verifyError for invalid groups, which Deno's BoringSSL-backed crypto does not expose"
+      "reason": "Requires DH_check() results exposed via DiffieHellman.verifyError for invalid groups, which Edno's BoringSSL-backed crypto does not expose"
     },
     "parallel/test-crypto-dh-errors.js": {},
     "parallel/test-crypto-dh-generate-keys.js": {},
@@ -687,11 +687,11 @@
     "parallel/test-crypto-dh-shared.js": {},
     "parallel/test-crypto-dh-stateless.js": {
       "ignore": true,
-      "reason": "Node 26 BoringSSL branch expects ERR_INVALID_ARG_VALUE naming options.privateKey.format/type; Deno's stateless diffieHellman reports a different objName/error"
+      "reason": "Node 26 BoringSSL branch expects ERR_INVALID_ARG_VALUE naming options.privateKey.format/type; Edno's stateless diffieHellman reports a different objName/error"
     },
     "parallel/test-crypto-dh.js": {
       "ignore": true,
-      "reason": "Node 26 BoringSSL branch expects createDiffieHellman with generator 0 to throw ERR_CRYPTO_OPERATION_FAILED; Deno's DH backend accepts it"
+      "reason": "Node 26 BoringSSL branch expects createDiffieHellman with generator 0 to throw ERR_CRYPTO_OPERATION_FAILED; Edno's DH backend accepts it"
     },
     "parallel/test-crypto-domain.js": {},
     "parallel/test-crypto-domains.js": {},
@@ -701,7 +701,7 @@
     "parallel/test-crypto-encoding-validation-error.js": {},
     "parallel/test-crypto-fips.js": {
       "ignore": true,
-      "reason": "Tests Node's FIPS mode (--enable-fips/--force-fips, OPENSSL_CONF, --openssl-config CLI flags) and uses internalBinding('crypto').testFipsCrypto via require('internal/test/binding'); FIPS is an OpenSSL-specific feature and Deno does not embed OpenSSL"
+      "reason": "Tests Node's FIPS mode (--enable-fips/--force-fips, OPENSSL_CONF, --openssl-config CLI flags) and uses internalBinding('crypto').testFipsCrypto via require('internal/test/binding'); FIPS is an OpenSSL-specific feature and Edno does not embed OpenSSL"
     },
     "parallel/test-crypto-from-binary.js": {},
     "parallel/test-crypto-gcm-implicit-short-tag.js": {},
@@ -715,7 +715,7 @@
     "parallel/test-crypto-hmac.js": {},
     "parallel/test-crypto-keygen.js": {
       "ignore": true,
-      "reason": "Node 26 BoringSSL branch expects a synchronous RangeError 'publicExponent is invalid' for invalid RSA publicExponent which Deno validates asynchronously in the op"
+      "reason": "Node 26 BoringSSL branch expects a synchronous RangeError 'publicExponent is invalid' for invalid RSA publicExponent which Edno validates asynchronously in the op"
     },
     "parallel/test-crypto-keygen-async-dsa.js": {
       "flaky": true,
@@ -760,7 +760,7 @@
     },
     "parallel/test-crypto-sign-verify.js": {
       "ignore": true,
-      "reason": "Uses the Node 26 raw-private/raw-public KeyObject export format, which Deno does not implement"
+      "reason": "Uses the Node 26 raw-private/raw-public KeyObject export format, which Edno does not implement"
     },
     "parallel/test-crypto-keygen-empty-passphrase-no-error.js": {},
     "parallel/test-crypto-keygen-empty-passphrase-no-prompt.js": {},
@@ -778,13 +778,13 @@
     "parallel/test-crypto-keygen-sync.js": {},
     "parallel/test-crypto-key-objects.js": {
       "ignore": true,
-      "reason": "Deno does not validate RSA JWK modulus consistency (n == p*q) on import"
+      "reason": "Edno does not validate RSA JWK modulus consistency (n == p*q) on import"
     },
     "parallel/test-crypto-scrypt.js": {},
     "parallel/test-crypto-key-objects-messageport.js": {},
     "parallel/test-crypto-key-objects-to-crypto-key.js": {
       "ignore": true,
-      "reason": "Uses ML-DSA (post-quantum) keygen + toCryptoKey, a new Node 26 algorithm not yet supported by Deno"
+      "reason": "Uses ML-DSA (post-quantum) keygen + toCryptoKey, a new Node 26 algorithm not yet supported by Edno"
     },
     "parallel/test-crypto-lazy-transform-writable.js": {},
     "parallel/test-crypto-negative-zero.js": {},
@@ -794,7 +794,7 @@
     "parallel/test-crypto-op-during-process-exit.js": {},
     "parallel/test-crypto-no-algorithm.js": {
       "ignore": true,
-      "reason": "Test gates on hasOpenSSL3 (skips if not OpenSSL 3.x), calls crypto.setFips(1) (FIPS mode is unsupported in Deno), asserts on OpenSSL-specific error strings ('digital envelope routines::unsupported', 'random number generator::unable to fetch drbg') and the err.opensslErrorStack field, and spawns a child with --openssl-config=...; none of these are available outside Node's OpenSSL-backed crypto"
+      "reason": "Test gates on hasOpenSSL3 (skips if not OpenSSL 3.x), calls crypto.setFips(1) (FIPS mode is unsupported in Edno), asserts on OpenSSL-specific error strings ('digital envelope routines::unsupported', 'random number generator::unable to fetch drbg') and the err.opensslErrorStack field, and spawns a child with --openssl-config=...; none of these are available outside Node's OpenSSL-backed crypto"
     },
     "parallel/test-crypto-padding.js": {},
     "parallel/test-crypto-padding-aes256.js": {},
@@ -810,9 +810,9 @@
       // The PKCS#1 v1.5 branch of this Node test depends on
       // `process.config.variables.node_shared_openssl`. Setting it here
       // (per-test, not globally) routes the test through the branch where
-      // Deno's aws-lc-rs/BoringSSL backend matches the externally-linked
+      // Edno's aws-lc-rs/BoringSSL backend matches the externally-linked
       // OpenSSL expectations, without affecting other tests' branches.
-      "env": { "DENO_INTERNAL_NODE_TEST_FORCE_SHARED_OPENSSL": "1" }
+      "env": { "EDNO_INTERNAL_NODE_TEST_FORCE_SHARED_OPENSSL": "1" }
     },
     "parallel/test-crypto-rsa-pss-default-salt-length.js": {},
     "parallel/test-crypto-sec-level.js": {},
@@ -821,7 +821,7 @@
       "darwin": false,
       "linux": false,
       "windows": false,
-      "reason": "Secure heap is OpenSSL specific, not in Deno"
+      "reason": "Secure heap is OpenSSL specific, not in Edno"
     },
     "parallel/test-crypto-stream.js": {},
     "parallel/test-crypto-subtle-cross-realm.js": {},
@@ -835,153 +835,153 @@
     "parallel/test-datetime-change-notify.js": {},
     "parallel/test-debugger-address.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-auto-resume.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-backtrace.js": {},
     "parallel/test-debugger-break.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-breakpoint-exists.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-clear-breakpoints.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-exceptions.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-exec-scope.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-exec.js": {},
     "parallel/test-debugger-extract-function-name.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-heap-profiler.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-help.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-invalid-json.mjs": {},
     "parallel/test-debugger-list.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-low-level.js": {},
     "parallel/test-debugger-object-type-remote-object.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-pid.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-preserve-breaks.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-max-hit-invalid.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-max-hit-miss.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-max-hit-partial.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-max-hit-shared.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-max-hit-text.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-max-hit.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-startup-pause.js": {
       "ignore": true,
-      "reason": "Requires Node's internal `internal/debugger/inspect_probe` module, part of the 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Requires Node's internal `internal/debugger/inspect_probe` module, part of the 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-probe-typescript.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-profile-command.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-profile.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-random-port-with-inspect-port.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-random-port.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-repeat-last.js": {},
     "parallel/test-debugger-restart-message.js": {},
     "parallel/test-debugger-run-after-quit-restart.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-run-restart-init.js": {
       "ignore": true,
-      "reason": "Requires Node's internal `internal/debugger/inspect_repl` module, part of the 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Requires Node's internal `internal/debugger/inspect_repl` module, part of the 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-sb-before-load.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-scripts.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-set-context-line-number.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-unavailable-port.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-use-strict.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-watch-validation.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-watchers.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-debugger-websocket-secret-mismatch.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "parallel/test-delayed-require.js": {},
     "parallel/test-destroy-socket-in-lookup.js": {},
@@ -1112,7 +1112,7 @@
     "parallel/test-dns-get-server.js": {},
     "parallel/test-dns-lookup.js": {
       "ignore": true,
-      "reason": "Fixture predates nodejs/node#39793 (Node 17): asserts that dns.lookup(false, {all:true}, cb) and the promise variant throw/reject with ERR_INVALID_ARG_VALUE, but current Node calls cb(null, []) / resolves with []. Deno matches current Node — see denoland/deno#34801."
+      "reason": "Fixture predates nodejs/node#39793 (Node 17): asserts that dns.lookup(false, {all:true}, cb) and the promise variant throw/reject with ERR_INVALID_ARG_VALUE, but current Node calls cb(null, []) / resolves with []. Edno matches current Node — see denoland/deno#34801."
     },
     "parallel/test-dns-lookup-promises.js": {},
     "parallel/test-dns-lookup-promises-options-deprecated.js": {},
@@ -1123,7 +1123,7 @@
     "parallel/test-dns-promises-exists.js": {},
     "parallel/test-dns-resolve-promises.js": {
       "ignore": true,
-      "reason": "Requires --expose-internals and internalBinding('cares_wrap') which is not supported in Deno"
+      "reason": "Requires --expose-internals and internalBinding('cares_wrap') which is not supported in Edno"
     },
     "parallel/test-dns-resolveany.js": {},
     "parallel/test-dns-resolveany-bad-ancount.js": {},
@@ -1156,43 +1156,43 @@
     "parallel/test-domain-nexttick.js": {},
     "parallel/test-domain-no-error-handler-abort-on-uncaught-0.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-1.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-2.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-3.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-4.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-5.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-6.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-7.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-8.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-no-error-handler-abort-on-uncaught-9.js": {
       "ignore": true,
-      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Deno does not support"
+      "reason": "Requires Node.js's --abort-on-uncaught-exception V8 flag (via common.childShouldThrowAndAbort), which Edno does not support"
     },
     "parallel/test-domain-run.js": {},
     "parallel/test-domain-safe-exit.js": {},
@@ -1207,11 +1207,11 @@
     "parallel/test-domexception-subclass.js": {},
     "parallel/test-dotenv-node-options.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-double-tls-client.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-dsa-fips-invalid-key.js": {},
     "parallel/test-env-newprotomethod-remove-unnecessary-prototypes.js": {},
@@ -1296,7 +1296,7 @@
       "darwin": false,
       "linux": false,
       "windows": false,
-      "reason": "EventSource global is always available in Deno (Web API)"
+      "reason": "EventSource global is always available in Edno (Web API)"
     },
     "parallel/test-eventtarget-brandcheck.js": {},
     "parallel/test-eventtarget-custom-inspect-does-not-throw.js": {},
@@ -1319,7 +1319,7 @@
     "parallel/test-finalization-registry-shutdown.js": {},
     "parallel/test-fixed-queue.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal `internal/fixed_queue` module which is not exposed in Deno"
+      "reason": "Tests Node.js internal `internal/fixed_queue` module which is not exposed in Edno"
     },
     "parallel/test-fs-append-file-flush.js": {},
     "parallel/test-fs-append-file-sync.js": {},
@@ -1658,21 +1658,21 @@
     "parallel/test-global-webcrypto.js": {},
     "parallel/test-global-webcrypto-classes.js": {
       "ignore": true,
-      "reason": "Runs with --expose-internals and requires Node's internal/crypto/webcrypto JS module to assert strict-equal identity against the global Crypto / CryptoKey / SubtleCrypto classes; Deno's WebCrypto is implemented in Rust (ext/crypto/) and has no internal JS module to compare against"
+      "reason": "Runs with --expose-internals and requires Node's internal/crypto/webcrypto JS module to assert strict-equal identity against the global Crypto / CryptoKey / SubtleCrypto classes; Edno's WebCrypto is implemented in Rust (ext/crypto/) and has no internal JS module to compare against"
     },
     "parallel/test-global-webstreams.js": {},
     "parallel/test-h2-large-header-cause-client-to-hangup.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-handle-wrap-close-abort.js": {},
     "parallel/test-heapsnapshot-near-heap-limit-by-api-in-worker.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-heapsnapshot-near-heap-limit-worker.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     // "parallel/test-heap-prof-basic.js": {},
     // "parallel/test-heap-prof-dir-absolute.js": {},
@@ -2098,7 +2098,7 @@
     "parallel/test-http2-date-header.js": {},
     "parallel/test-http2-debug.js": {
       "ignore": true,
-      "reason": "Asserts on NODE_DEBUG_NATIVE=http2 native debug log output that mirrors Node's C++ http2 binding diagnostic strings; Deno's http2 polyfill does not emit these native debug logs."
+      "reason": "Asserts on NODE_DEBUG_NATIVE=http2 native debug log output that mirrors Node's C++ http2 binding diagnostic strings; Edno's http2 polyfill does not emit these native debug logs."
     },
     "parallel/test-http2-destroy-after-write.js": {},
     "parallel/test-http2-dont-override.js": {},
@@ -2116,7 +2116,7 @@
     "parallel/test-http2-info-headers.js": {},
     "parallel/test-http2-info-headers-errors.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (internalBinding('http2')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (internalBinding('http2')) which are not exposed in Edno"
     },
     "parallel/test-http2-invalid-last-stream-id.js": {},
     "parallel/test-http2-invalidargtypes-errors.js": {},
@@ -2157,7 +2157,7 @@
     "parallel/test-http2-options-max-headers-block-length.js": {},
     "parallel/test-http2-options-max-headers-exceeds-nghttp2.js": {
       "ignore": true,
-      "reason": "Deno does not surface a client-side ERR_HTTP2_ERROR when the peer sends an oversized header block via additionalHeaders"
+      "reason": "Edno does not surface a client-side ERR_HTTP2_ERROR when the peer sends an oversized header block via additionalHeaders"
     },
     "parallel/test-http2-options-server-request.js": {},
     "parallel/test-http2-options-server-response.js": {},
@@ -2259,7 +2259,7 @@
       "darwin": false,
       "linux": false,
       "windows": false,
-      "reason": "Test pokes the internal http2 state buffers via internalBinding('http2').optionsBuffer; Deno's http2 binding intentionally does not expose these typed-array views over thread-local Rust state to JS"
+      "reason": "Test pokes the internal http2 state buffers via internalBinding('http2').optionsBuffer; Edno's http2 binding intentionally does not expose these typed-array views over thread-local Rust state to JS"
     },
     "parallel/test-http2-window-size.js": {},
     "parallel/test-http2-unbound-socket-proxy.js": {},
@@ -2281,7 +2281,7 @@
     "parallel/test-https-client-checkServerIdentity.js": {},
     "parallel/test-https-client-get-url.js": {
       "ignore": true,
-      "reason": "Test relies on NODE_TLS_REJECT_UNAUTHORIZED env var to disable TLS verification at runtime; Deno uses the --unsafely-ignore-certificate-errors CLI flag instead"
+      "reason": "Test relies on NODE_TLS_REJECT_UNAUTHORIZED env var to disable TLS verification at runtime; Edno uses the --unsafely-ignore-certificate-errors CLI flag instead"
     },
     "parallel/test-https-close.js": {},
     "parallel/test-https-connect-address-family.js": {},
@@ -2355,11 +2355,11 @@
     "parallel/test-inspector-connect-to-main-thread.js": {},
 
     // TODO(bartlomieju): mismatch in name of the default context,
-    // requires changes to `deno_core`.
+    // requires changes to `edno_core`.
     // "parallel/test-inspector-contexts.js": {},
 
     // TODO(bartlomieju): mismatch in name of the eval context,
-    // requires changes to `deno_core`.
+    // requires changes to `edno_core`.
     // "parallel/test-inspect-async-hook-setup-at-inspect.js": {},
 
     "parallel/test-inspector-enabled.js": {},
@@ -2372,7 +2372,7 @@
 
     "parallel/test-inspector-network-http.js": {
       "extraDenoArgs": ["--unsafely-ignore-certificate-errors"],
-      "reason": "Hits a local HTTPS server with a self-signed cert via node:https. The upstream test relies on a custom https Agent with rejectUnauthorized:false propagated to Deno's TLS layer; until that wiring is in place, disable cert validation only for this test."
+      "reason": "Hits a local HTTPS server with a self-signed cert via node:https. The upstream test relies on a custom https Agent with rejectUnauthorized:false propagated to Edno's TLS layer; until that wiring is in place, disable cert validation only for this test."
     },
     "parallel/test-inspector-emit-protocol-event.js": {},
 
@@ -2423,108 +2423,108 @@
     "parallel/test-instanceof.js": {},
     "parallel/test-internal-assert.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-async-context-frame-disable.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-async-context-frame-enabled.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-error-original-names.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-errors.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-fs-syncwritestream.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-fs.js": {},
     "parallel/test-internal-module-require.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-module-wrap.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-modules.js": {},
     "parallel/test-internal-net-isLoopback.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-only-binding.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-process-binding.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-socket-list-receive.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-socket-list-send.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-util-assertCrypto.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-util-construct-sab.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-util-decorate-error-stack.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-util-getCIDR.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-util-helpers.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-util-normalizeencoding.js": {},
     "parallel/test-internal-util-objects.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-util-weakreference.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-validators-validateoneof.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-validators-validateport.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-internal-webidl-converttoint.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-intl-v8BreakIterator.js": {},
     "parallel/test-intl.js": {},
     "parallel/test-is-internal-thread.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-js-stream-call-properties.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal C++ binding (internalBinding('js_stream').JSStream) which is not implemented in Deno"
+      "reason": "Tests Node.js internal C++ binding (internalBinding('js_stream').JSStream) which is not implemented in Edno"
     },
     "parallel/test-kill-segfault-freebsd.js": {},
     "parallel/test-listen-fd-detached-inherit.js": {},
@@ -2679,7 +2679,7 @@
     "parallel/test-net-socket-timeout.js": {},
     "parallel/test-net-socket-write-after-close.js": {
       "windows": false,
-      "reason": "On Windows Deno reports a write after close as EBADF where Node/libuv reports EPIPE"
+      "reason": "On Windows Edno reports a write after close as EBADF where Node/libuv reports EPIPE"
     },
     "parallel/test-net-socket-write-error.js": {},
     "parallel/test-net-stream.js": {},
@@ -2725,7 +2725,7 @@
     },
     "parallel/test-node-run.js": {
       "ignore": true,
-      "reason": "Tests node --run CLI subcommand which is not implemented in Deno"
+      "reason": "Tests node --run CLI subcommand which is not implemented in Edno"
     },
     "parallel/test-nodeeventtarget.js": {},
     "parallel/test-options-binding.js": {},
@@ -2775,183 +2775,183 @@
     "parallel/test-performance-measure-detail.js": {},
     "parallel/test-permission-allow-addons-cli.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-allow-child-process-cli.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-allow-inspector.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-allow-wasi-cli.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-allow-worker-cli.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-child-process-cli.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-child-process-inherit-flags.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-config-file.mjs": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-diagnostics-channel.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-absolute-path.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-internal-module-stat.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-read-entrypoint.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-read.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-relative-path.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-repeat-path.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-require.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-supported.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-symlink-relative.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-symlink-target-write.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-symlink.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-traversal-path.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-wildcard.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-windows-path.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-write-report.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-write-v8.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-fs-write.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-has.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-inspector-brk.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-inspector.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-allowed.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-dns.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-fetch.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-http.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-https.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-tcp.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-udp.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-uds.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-warning.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-net-websocket.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-no-addons.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-processbinding.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-sqlite-load-extension.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-warning-flags.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-wasi.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-permission-worker-threads-cli.js": {
       "ignore": true,
-      "reason": "Deno has its own permission system; Node.js --experimental-permission is not applicable"
+      "reason": "Edno has its own permission system; Node.js --experimental-permission is not applicable"
     },
     "parallel/test-pipe-abstract-socket.js": {},
     "parallel/test-pipe-abstract-socket-http.js": {},
@@ -2967,15 +2967,15 @@
     "parallel/test-preload-worker.js": {},
     "parallel/test-primordials-apply.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-primordials-promise.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-primordials-regexp.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Deno"
+      "reason": "Tests Node.js internal modules (require('internal/...')) which are not exposed in Edno"
     },
     "parallel/test-priority-queue.js": {},
     "parallel/test-process-abort.js": {},
@@ -3016,7 +3016,7 @@
     "parallel/test-process-exit-code-validation.js": {
       "flaky": true,
       "darwin": false,
-      "reason": "Spawns deno 34 times via spawnSync; cumulative startup overhead can exceed the 20s per-test timeout on slow macOS CI runners"
+      "reason": "Spawns edno 34 times via spawnSync; cumulative startup overhead can exceed the 20s per-test timeout on slow macOS CI runners"
     },
     "parallel/test-process-exit-from-before-exit.js": {},
     "parallel/test-process-exit-handler.js": {},
@@ -3157,7 +3157,7 @@
     "parallel/test-repl-load-multiline-from-history.js": {},
     "parallel/test-repl-mode.js": {
       "ignore": true,
-      "reason": "testStrictModeTerminal expects the REPL to render an inspector-driven error preview line (`// ReferenceError: xyz is not defined`) for partial strict-mode input. node:repl in deno catches preview eval errors and renders nothing (ext/node/polyfills/repl.ts try/catch around vm.Script.runInThisContext), so the assertion always fails. On v8 14.7 the failure was swallowed by _replCaptureCallback and the binary exited 0; v8 14.9 surfaces it as a fatal unhandled rejection. Needs an error-preview implementation in the polyfill to re-enable."
+      "reason": "testStrictModeTerminal expects the REPL to render an inspector-driven error preview line (`// ReferenceError: xyz is not defined`) for partial strict-mode input. node:repl in edno catches preview eval errors and renders nothing (ext/node/polyfills/repl.ts try/catch around vm.Script.runInThisContext), so the assertion always fails. On v8 14.7 the failure was swallowed by _replCaptureCallback and the binary exited 0; v8 14.9 surfaces it as a fatal unhandled rejection. Needs an error-preview implementation in the polyfill to re-enable."
     },
     "parallel/test-repl-multiline-navigation-while-adding.js": {},
     "parallel/test-repl-multiline-navigation.js": {},
@@ -3182,21 +3182,21 @@
     "parallel/test-require-dot.js": {},
     "parallel/test-require-empty-main.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "parallel/test-require-exceptions.js": {},
     "parallel/test-require-extension-over-directory.js": {},
     "parallel/test-require-extensions-main.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "parallel/test-require-extensions-same-filename-as-dir.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "parallel/test-require-extensions-same-filename-as-dir-trailing-slash.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "parallel/test-require-invalid-main-no-exports.js": {},
     "parallel/test-require-invalid-package.js": {},
@@ -3210,21 +3210,21 @@
     "parallel/test-require-resolve-opts-paths-relative.js": {},
     "parallel/test-require-unicode.js": {
       "ignore": true,
-      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Deno defaults to ESM."
+      "reason": "Test fixtures rely on Node's implicit CommonJS detection for .js files without a package.json; Edno defaults to ESM."
     },
     "parallel/test-runner-aftereach-runtime-skip.js": {},
     "parallel/test-runner-aliases.js": {},
     "parallel/test-runner-cli-concurrency.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-runner-cli-timeout.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-runner-cli.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     // TODO(bartlomieju): disabled during work on `node:inspector`, this test didn't actualy run before
     // "parallel/test-runner-coverage-source-map.js": {},
@@ -3236,11 +3236,11 @@
     "parallel/test-runner-root-after-with-refed-handles.js": {},
     "parallel/test-runner-snapshot-file-tests.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-runner-snapshot-tests.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     // TODO(bartlomieju): disabled during work on `node:inspector`, this test didn't actualy run before
     // "parallel/test-runner-inspect.mjs": {},
@@ -3254,35 +3254,35 @@
     "parallel/test-setproctitle.js": {},
     "parallel/test-shadow-realm-allowed-builtin-modules.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-shadow-realm-gc-module.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-shadow-realm-gc.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-shadow-realm-globals.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-shadow-realm-import-value-resolve.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-shadow-realm-module.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-shadow-realm-prepare-stack-trace.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-shadow-realm.js": {
       "ignore": true,
-      "reason": "Deno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
+      "reason": "Edno does not expose `ShadowRealm` globally; the spec is still TC39 Stage 2.7"
     },
     "parallel/test-sigint-infinite-loop.js": {},
     "parallel/test-signal-handler-remove-on-exit.js": {},
@@ -3290,103 +3290,103 @@
     "parallel/test-signal-unregister.js": {},
     "parallel/test-snapshot-api.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-argv1.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-basic.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-child-process-sync.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-cjs-main.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-config.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-console.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-cwd.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-dns-lookup-localhost-promise.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-dns-lookup-localhost.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-dns-resolve-localhost-promise.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-dns-resolve-localhost.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-error.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-eval.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-gzip.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-incompatible.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-namespaced-builtin.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-net.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-reproducible.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-stack-trace-limit.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-typescript.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-umd.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-warning.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-weak-reference.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "parallel/test-snapshot-worker.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     // "parallel/test-snapshot-coverage.js": {},
     "parallel/test-socket-address.js": {},
@@ -3476,7 +3476,7 @@
     "parallel/test-stream-filter.js": {},
     "parallel/test-stream-finished.js": {
       "ignore": true,
-      "reason": "Uses the new Node 26 internal API internal/streams/end-of-stream kEosNodeSynchronousCallback which Deno does not expose"
+      "reason": "Uses the new Node 26 internal API internal/streams/end-of-stream kEosNodeSynchronousCallback which Edno does not expose"
     },
     "parallel/test-stream-flatMap.js": {},
     "parallel/test-stream-forEach.js": {},
@@ -3682,7 +3682,7 @@
     "parallel/test-timers-interval-throw.js": {},
     "parallel/test-timers-linked-list.js": {
       "ignore": true,
-      "reason": "Tests internal/linkedlist which is a Node.js internal module not implemented in Deno"
+      "reason": "Tests internal/linkedlist which is a Node.js internal module not implemented in Edno"
     },
     "parallel/test-timers-max-duration-warning.js": {},
     "parallel/test-timers-nan-duration-emit-once-per-process.js": {},
@@ -3696,7 +3696,7 @@
     "parallel/test-timers-not-emit-duration-zero.js": {},
     "parallel/test-timers-now.js": {
       "ignore": true,
-      "reason": "Tests V8 natives syntax (%OptimizeFunctionOnNextCall) and fast API call counting which are not supported in Deno"
+      "reason": "Tests V8 natives syntax (%OptimizeFunctionOnNextCall) and fast API call counting which are not supported in Edno"
     },
     "parallel/test-timers-ordering.js": {},
     "parallel/test-timers-process-tampering.js": {},
@@ -3731,7 +3731,7 @@
     "parallel/test-tls-ca-concat.js": {},
     "parallel/test-tls-canonical-ip.js": {
       "ignore": true,
-      "reason": "Requires internalBinding('cares_wrap').canonicalizeIP, which is not implemented in Deno"
+      "reason": "Requires internalBinding('cares_wrap').canonicalizeIP, which is not implemented in Edno"
     },
     "parallel/test-tls-cert-chains-concat.js": {},
     "parallel/test-tls-cert-ext-encoding.js": {},
@@ -3768,7 +3768,7 @@
     "parallel/test-tls-destroy-whilst-write.js": {},
     "parallel/test-tls-dhe.js": {
       "ignore": true,
-      "reason": "Deno's rustls stack has no finite-field DHE ciphers and does not reject DHE-only cipher lists at secure-context creation like BoringSSL"
+      "reason": "Edno's rustls stack has no finite-field DHE ciphers and does not reject DHE-only cipher lists at secure-context creation like BoringSSL"
     },
     "parallel/test-tls-ecdh-auto.js": {},
     "parallel/test-tls-ecdh-multiple.js": {},
@@ -3830,11 +3830,11 @@
     "parallel/test-tls-peer-certificate.js": {},
     "parallel/test-tls-psk-server.js": {
       "ignore": true,
-      "reason": "PSK cipher suites are unsupported by Deno's rustls TLS backend"
+      "reason": "PSK cipher suites are unsupported by Edno's rustls TLS backend"
     },
     "parallel/test-tls-reduced-SECLEVEL-in-cipher.js": {
       "ignore": true,
-      "reason": "Deno emulates OpenSSL security levels (key-too-small and @SECLEVEL handling) rather than BoringSSL's no-security-levels behavior"
+      "reason": "Edno emulates OpenSSL security levels (key-too-small and @SECLEVEL handling) rather than BoringSSL's no-security-levels behavior"
     },
     "parallel/test-tls-reinitialize-listeners.js": {},
     "parallel/test-tls-request-timeout.js": {},
@@ -3851,7 +3851,7 @@
     "parallel/test-tls-session-timeout-errors.js": {},
     "parallel/test-tls-set-ciphers-error.js": {
       "ignore": true,
-      "reason": "Deno's cipher-list validation is syntactic and does not reject individual unsupported legacy ciphers like DES-CBC-SHA as no_cipher_match"
+      "reason": "Edno's cipher-list validation is syntactic and does not reject individual unsupported legacy ciphers like DES-CBC-SHA as no_cipher_match"
     },
     "parallel/test-tls-socket-failed-handshake-emits-error.js": {},
     "parallel/test-tls-set-default-ca-certificates-array-buffer.js": {},
@@ -3894,7 +3894,7 @@
     "parallel/test-trace-events-async-hooks-worker.js": {},
     "parallel/test-trace-events-bootstrap.js": {
       "ignore": true,
-      "reason": "Deno does not implement Node.js --trace-event-categories CLI flag, so node_trace.${rotation}.log is never emitted."
+      "reason": "Edno does not implement Node.js --trace-event-categories CLI flag, so node_trace.${rotation}.log is never emitted."
     },
     "parallel/test-trace-events-dynamic-enable-workers-disabled.js": {},
     // TODO(bartlomieju): disabled during work on `node:inspector`, this test didn't actualy run before
@@ -3911,7 +3911,7 @@
     "parallel/test-unhandled-exception-with-worker-inuse.js": {},
     "parallel/test-unicode-node-options.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "parallel/test-url-domain-ascii-unicode.js": {},
     "parallel/test-url-fileurltopath.js": {},
@@ -3945,7 +3945,7 @@
     "parallel/test-util-types-exists.js": {},
     "parallel/test-util-types.js": {
       "ignore": true,
-      "reason": "Tests Node.js internal C++ binding (internalBinding('js_stream').JSStream) which is not implemented in Deno"
+      "reason": "Tests Node.js internal C++ binding (internalBinding('js_stream').JSStream) which is not implemented in Edno"
     },
     "parallel/test-util.js": {},
     "parallel/test-uv-binding-constant.js": {},
@@ -4035,23 +4035,23 @@
     "parallel/test-webcrypto-derivebits.js": {},
     "parallel/test-webcrypto-derivebits-hkdf.js": {
       "ignore": true,
-      "reason": "deriveBits length 0 now conforms to w3c/webcrypto#380 (covered by WPT); remaining failure asserts OpenSSL's 1024-byte HKDF 'info' limit, an OpenSSL implementation quirk (not a WebCrypto spec requirement) that Deno's ring-based HKDF does not impose"
+      "reason": "deriveBits length 0 now conforms to w3c/webcrypto#380 (covered by WPT); remaining failure asserts OpenSSL's 1024-byte HKDF 'info' limit, an OpenSSL implementation quirk (not a WebCrypto spec requirement) that Edno's ring-based HKDF does not impose"
     },
     "parallel/test-webcrypto-derivebits-cfrg.js": {
       "ignore": true,
-      "reason": "Deno throws OperationError 'Invalid length' when more bits are requested than the shared secret provides; Node expects its custom /derived bit length is too small/ wording"
+      "reason": "Edno throws OperationError 'Invalid length' when more bits are requested than the shared secret provides; Node expects its custom /derived bit length is too small/ wording"
     },
     "parallel/test-webcrypto-derivebits-ecdh.js": {
       "ignore": true,
-      "reason": "Deno throws OperationError 'Invalid length' when more bits are requested than the shared secret provides; Node expects its custom /derived bit length is too small/ wording"
+      "reason": "Edno throws OperationError 'Invalid length' when more bits are requested than the shared secret provides; Node expects its custom /derived bit length is too small/ wording"
     },
     "parallel/test-webcrypto-derivekey.js": {
       "ignore": true,
-      "reason": "Deno throws TypeError 'Invalid KMAC length: 0' where Node expects its /KmacImportParams.length cannot be 0/ wording"
+      "reason": "Edno throws TypeError 'Invalid KMAC length: 0' where Node expects its /KmacImportParams.length cannot be 0/ wording"
     },
     "parallel/test-webcrypto-digest-turboshake.js": {
       "ignore": true,
-      "reason": "Deno throws 'Invalid XOF parameters' where Node expects its 'Invalid TurboShakeParams outputLength' wording"
+      "reason": "Edno throws 'Invalid XOF parameters' where Node expects its 'Invalid TurboShakeParams outputLength' wording"
     },
     "parallel/test-webcrypto-encap-decap-ml-kem.js": {
       "ignore": true,
@@ -4059,61 +4059,61 @@
     },
     "parallel/test-webcrypto-encrypt-decrypt-aes.js": {
       "ignore": true,
-      "reason": "Deno reports \"Encryption algorithm 'AES-OCB' does not match key algorithm\"; Node expects its generic /Key algorithm mismatch/ wording"
+      "reason": "Edno reports \"Encryption algorithm 'AES-OCB' does not match key algorithm\"; Node expects its generic /Key algorithm mismatch/ wording"
     },
     "parallel/test-webcrypto-encrypt-decrypt-chacha20-poly1305.js": {
       "ignore": true,
-      "reason": "Deno's WebCrypto uses a generic operation-not-valid message instead of Node's per-operation 'Unable to use this key to encrypt/decrypt' wording"
+      "reason": "Edno's WebCrypto uses a generic operation-not-valid message instead of Node's per-operation 'Unable to use this key to encrypt/decrypt' wording"
     },
     "parallel/test-webcrypto-encrypt-decrypt-rsa.js": {
       "ignore": true,
-      "reason": "Expects Node's custom WebCrypto error message ('Unable to use this key to decrypt/encrypt'); Deno emits the spec-aligned 'The requested operation is not valid for the provided key'"
+      "reason": "Expects Node's custom WebCrypto error message ('Unable to use this key to decrypt/encrypt'); Edno emits the spec-aligned 'The requested operation is not valid for the provided key'"
     },
     "parallel/test-webcrypto-encrypt-decrypt.js": {
       "ignore": true,
-      "reason": "Deno's WebCrypto uses a generic operation-not-valid message instead of Node's per-operation 'Unable to use this key to encrypt/decrypt' wording"
+      "reason": "Edno's WebCrypto uses a generic operation-not-valid message instead of Node's per-operation 'Unable to use this key to encrypt/decrypt' wording"
     },
     "parallel/test-webcrypto-export-import-cfrg.js": {
       "ignore": true,
-      "reason": "Deno throws 'Invalid key data' where Node expects its /Invalid key type/ wording"
+      "reason": "Edno throws 'Invalid key data' where Node expects its /Invalid key type/ wording"
     },
     "parallel/test-webcrypto-export-import-ec.js": {
       "ignore": true,
-      "reason": "Deno throws 'unsupported algorithm' where Node expects its /Invalid key type/ wording"
+      "reason": "Edno throws 'unsupported algorithm' where Node expects its /Invalid key type/ wording"
     },
     "parallel/test-webcrypto-export-import-ml-dsa.js": {
       "ignore": true,
-      "reason": "Deno WebCrypto returns a generic 'Unsupported key format' message instead of Node's 'Unable to import ... using raw format' for plain raw ML-DSA import"
+      "reason": "Edno WebCrypto returns a generic 'Unsupported key format' message instead of Node's 'Unable to import ... using raw format' for plain raw ML-DSA import"
     },
     "parallel/test-webcrypto-export-import-ml-kem.js": {
       "ignore": true,
-      "reason": "ML-KEM post-quantum WebCrypto import/export is not implemented in Deno"
+      "reason": "ML-KEM post-quantum WebCrypto import/export is not implemented in Edno"
     },
     "parallel/test-webcrypto-export-import-rsa.js": {
       "ignore": true,
-      "reason": "Deno throws 'unsupported algorithm' where Node expects its /Invalid key type/ wording"
+      "reason": "Edno throws 'unsupported algorithm' where Node expects its /Invalid key type/ wording"
     },
     "parallel/test-webcrypto-get-public-key.mjs": {
       "ignore": true,
-      "reason": "Deno throws 'Key usage must be empty' where Node expects its /Unsupported key usage/ wording"
+      "reason": "Edno throws 'Key usage must be empty' where Node expects its /Unsupported key usage/ wording"
     },
     "parallel/test-webcrypto-getRandomValues.js": {},
     "parallel/test-webcrypto-random.js": {},
     "parallel/test-webcrypto-keygen-kmac.js": {
       "ignore": true,
-      "reason": "Tests SubtleCrypto generateKey for KMAC128 / KMAC256, a Node-specific WebCrypto extension that requires OpenSSL >= 3 (test gates on hasOpenSSL(3)); Deno's ext/crypto/ does not register KMAC as a recognised SubtleCrypto algorithm. Could be revisited if KMAC is added — a SHA-3-based KMAC is implementable via the sha3 / cshake Rust crates"
+      "reason": "Tests SubtleCrypto generateKey for KMAC128 / KMAC256, a Node-specific WebCrypto extension that requires OpenSSL >= 3 (test gates on hasOpenSSL(3)); Edno's ext/crypto/ does not register KMAC as a recognised SubtleCrypto algorithm. Could be revisited if KMAC is added — a SHA-3-based KMAC is implementable via the sha3 / cshake Rust crates"
     },
     "parallel/test-webcrypto-sign-verify-eddsa.js": {
       "ignore": true,
-      "reason": "Deno emits the spec-aligned 'The requested operation is not valid for the provided key'; Node expects its /Unable to use this key to verify/ wording"
+      "reason": "Edno emits the spec-aligned 'The requested operation is not valid for the provided key'; Node expects its /Unable to use this key to verify/ wording"
     },
     "parallel/test-webcrypto-sign-verify-kmac.js": {
       "ignore": true,
-      "reason": "Deno emits the spec-aligned 'The requested operation is not valid for the provided key'; Node expects its /Unable to use this key to verify/ wording"
+      "reason": "Edno emits the spec-aligned 'The requested operation is not valid for the provided key'; Node expects its /Unable to use this key to verify/ wording"
     },
     "parallel/test-webcrypto-sign-verify-rsa.js": {
       "ignore": true,
-      "reason": "Deno emits the spec-aligned 'The requested operation is not valid for the provided key'; Node expects its /Unable to use this key to verify/ wording"
+      "reason": "Edno emits the spec-aligned 'The requested operation is not valid for the provided key'; Node expects its /Unable to use this key to verify/ wording"
     },
     "parallel/test-webcrypto-sign-verify-ml-dsa.js": {
       "ignore": true,
@@ -4121,19 +4121,19 @@
     },
     "parallel/test-webcrypto-util.js": {
       "ignore": true,
-      "reason": "Runs with --expose-internals and requires Node's internal/crypto/util JS module to whitebox-test the internal normalizeAlgorithm() helper; Deno's WebCrypto is implemented in Rust (ext/crypto/) and does not expose this Node-internal module"
+      "reason": "Runs with --expose-internals and requires Node's internal/crypto/util JS module to whitebox-test the internal normalizeAlgorithm() helper; Edno's WebCrypto is implemented in Rust (ext/crypto/) and does not expose this Node-internal module"
     },
     "parallel/test-webcrypto-supports.mjs": {
       "ignore": true,
-      "reason": "Requires the WebCrypto Level 2 SubtleCrypto.supports() static method, which Deno does not implement; the test also exercises algorithms Deno does not support (SHA-3, KMAC, Argon2, X448 KEM, encapsulateKey/decapsulateBits). Could be revisited if SubtleCrypto.supports lands in ext/crypto/ along with the algorithms it advertises"
+      "reason": "Requires the WebCrypto Level 2 SubtleCrypto.supports() static method, which Edno does not implement; the test also exercises algorithms Edno does not support (SHA-3, KMAC, Argon2, X448 KEM, encapsulateKey/decapsulateBits). Could be revisited if SubtleCrypto.supports lands in ext/crypto/ along with the algorithms it advertises"
     },
     "parallel/test-webcrypto-webidl.js": {
       "ignore": true,
-      "reason": "Tests Node's internal/crypto/webidl JS module (WebIDL converters such as converters.boolean, converters.DOMString, requiredArguments) via require('internal/crypto/webidl') with --expose-internals; Deno's WebCrypto is implemented in Rust (ext/crypto/) and does not expose this internal module"
+      "reason": "Tests Node's internal/crypto/webidl JS module (WebIDL converters such as converters.boolean, converters.DOMString, requiredArguments) via require('internal/crypto/webidl') with --expose-internals; Edno's WebCrypto is implemented in Rust (ext/crypto/) and does not expose this internal module"
     },
     "parallel/test-webcrypto-wrap-unwrap.js": {
       "ignore": true,
-      "reason": "Deno throws 'Wrapping algorithm does not match key algorithm' where Node expects its 'Key algorithm mismatch' wording"
+      "reason": "Edno throws 'Wrapping algorithm does not match key algorithm' where Node expects its 'Key algorithm mismatch' wording"
     },
     "parallel/test-websocket.js": {},
     "parallel/test-webstorage-without-sqlite.js": {},
@@ -4166,7 +4166,7 @@
     "parallel/test-whatwg-readablestream.mjs": {},
     "parallel/test-whatwg-webstreams-adapters-to-readablestream.js": {
       "ignore": true,
-      "reason": "Node 26 rewrote the to-ReadableStream adapter to attach a deduplicated error listener even for already-destroyed Readables; Deno short-circuits destroyed streams"
+      "reason": "Node 26 rewrote the to-ReadableStream adapter to attach a deduplicated error listener even for already-destroyed Readables; Edno short-circuits destroyed streams"
     },
     "parallel/test-whatwg-transformstream-cancel-write-race.js": {},
     "parallel/test-whatwg-url-canparse.js": {},
@@ -4195,7 +4195,7 @@
     "parallel/test-whatwg-url-override-hostname.js": {},
     "parallel/test-whatwg-url-properties.js": {},
     // Note: Node.js BroadcastChannel message dispatch ordering differs from the Web spec ordering.
-    // Deno follows the Web spec.
+    // Edno follows the Web spec.
     "parallel/test-whatwg-writablestream-close.js": {},
     "parallel/test-worker-abort-on-uncaught-exception.js": {},
     "parallel/test-worker-abort-on-uncaught-exception-terminate.js": {},
@@ -4273,7 +4273,7 @@
       "darwin": false,
       "linux": false,
       "windows": false,
-      "reason": "Depends on v8.getHeapSpaceStatistics() which is not yet implemented in Deno"
+      "reason": "Depends on v8.getHeapSpaceStatistics() which is not yet implemented in Edno"
     },
     "parallel/test-worker-stack-overflow.js": {},
     "parallel/test-worker-stdio-flush-inflight.js": {},
@@ -4309,7 +4309,7 @@
     "parallel/test-zlib-brotli-kmaxlength-rangeerror.js": {
       "exitCode": 1,
       "output": "[WILDCARD]assert.ok(err instanceof RangeError)[WILDCARD]",
-      "reason": "Deno's zlib error is not a RangeError instance (kMaxLength binding differs from Node.js CJS require)"
+      "reason": "Edno's zlib error is not a RangeError instance (kMaxLength binding differs from Node.js CJS require)"
     },
     "parallel/test-zlib-brotli.js": {},
     "parallel/test-zlib-close-after-error.js": {},
@@ -4343,7 +4343,7 @@
       "darwin": false,
       "linux": false,
       "windows": false,
-      "reason": "Deno pre-loads polyfills as ESM, so kMaxLength is a live binding that can't be snapshotted like Node.js CJS require"
+      "reason": "Edno pre-loads polyfills as ESM, so kMaxLength is a live binding that can't be snapshotted like Node.js CJS require"
     },
     "parallel/test-zlib-maxOutputLength.js": {},
     "parallel/test-zlib-no-stream.js": {},
@@ -4372,7 +4372,7 @@
       "darwin": false,
       "linux": false,
       "windows": false,
-      "reason": "Deno pre-loads polyfills as ESM, so kMaxLength is a live binding that can't be snapshotted like Node.js CJS require"
+      "reason": "Edno pre-loads polyfills as ESM, so kMaxLength is a live binding that can't be snapshotted like Node.js CJS require"
     },
     "parallel/test-zlib-zstd-pledged-src-size.js": {},
     "parallel/test-zlib-zstd.js": {},
@@ -4403,55 +4403,55 @@
     "pummel/test-fs-watch-system-limit.js": {},
     "pummel/test-heapdump-dns.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-env.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-fs-promise.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-http2.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-shadow-realm.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-tls.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-urlpattern.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-vm-script.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-worker.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapdump-zlib.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapsnapshot-near-heap-limit-big.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapsnapshot-near-heap-limit-by-api.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "pummel/test-heapsnapshot-near-heap-limit.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     // "pummel/test-heapdump-inspector.js": {},
     "pummel/test-process-hrtime.js": {},
@@ -4462,15 +4462,15 @@
     "sequential/test-cli-syntax-bad.js": {},
     "sequential/test-cli-syntax-file-not-found.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "sequential/test-cli-syntax-good.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "sequential/test-cli-syntax-require.js": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     // TODO(bartlomieju): disabled during work on `node:inspector`, this test didn't actualy run before
     // "sequential/test-cluster-inspect-brk.js": {},
@@ -4499,23 +4499,23 @@
     "sequential/test-debug-prompt.js": {},
     "sequential/test-debugger-custom-port.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "sequential/test-debugger-debug-brk.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "sequential/test-debugger-invalid-args.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "sequential/test-debugger-launch.mjs": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     "sequential/test-debugger-pid.js": {
       "ignore": true,
-      "reason": "Tests 'node inspect' CLI subcommand which Deno does not implement"
+      "reason": "Tests 'node inspect' CLI subcommand which Edno does not implement"
     },
     // TODO(bartlomieju): disabled during work on `node:inspector`, this test didn't actualy run before
     // "sequential/test-diagnostic-dir-cpu-prof.js": {},
@@ -4526,15 +4526,15 @@
     "sequential/test-fs-stat-sync-overflow.js": {},
     "sequential/test-get-heapsnapshot-options.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "sequential/test-heapdump-flag-custom-dir.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "sequential/test-heapdump-flag.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "sequential/test-heapdump.js": {
       "windows": false
@@ -4566,7 +4566,7 @@
     "sequential/test-tls-lookup.js": {},
     "sequential/test-tls-psk-client.js": {
       "ignore": true,
-      "reason": "PSK cipher suites are unsupported by Deno's rustls TLS backend"
+      "reason": "PSK cipher suites are unsupported by Edno's rustls TLS backend"
     },
     "sequential/test-tls-session-timeout.js": {},
     "sequential/test-vm-break-on-sigint.js": {},
@@ -4575,31 +4575,31 @@
     "sequential/test-worker-prof.js": {},
     "sequential/test-write-heapsnapshot-options.js": {
       "ignore": true,
-      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Deno"
+      "reason": "Node.js snapshot/heap profiling features (--build-snapshot, --heap-prof, --heapsnapshot-near-heap-limit) are not implemented in Edno"
     },
     "system-ca/test-native-intermediate-certs.mjs": {
       "ignore": true,
-      "reason": "Node.js system CA certificate handling is not implemented in Deno"
+      "reason": "Node.js system CA certificate handling is not implemented in Edno"
     },
     "system-ca/test-native-root-certs-env.mjs": {
       "ignore": true,
-      "reason": "Node.js system CA certificate handling is not implemented in Deno"
+      "reason": "Node.js system CA certificate handling is not implemented in Edno"
     },
     "system-ca/test-native-root-certs.mjs": {
       "ignore": true,
-      "reason": "Node.js system CA certificate handling is not implemented in Deno"
+      "reason": "Node.js system CA certificate handling is not implemented in Edno"
     },
     "system-ca/test-set-default-ca-certificates-append-system-ca.mjs": {
       "ignore": true,
-      "reason": "Node.js system CA certificate handling is not implemented in Deno"
+      "reason": "Node.js system CA certificate handling is not implemented in Edno"
     },
     "system-ca/test-set-default-ca-certificates-override-system.mjs": {
       "ignore": true,
-      "reason": "Node.js system CA certificate handling is not implemented in Deno"
+      "reason": "Node.js system CA certificate handling is not implemented in Edno"
     },
     "system-ca/test-set-default-ca-certificates-system-combinations.js": {
       "ignore": true,
-      "reason": "Node.js system CA certificate handling is not implemented in Deno"
+      "reason": "Node.js system CA certificate handling is not implemented in Edno"
     },
     "test-runner/test-output-arbitrary-output-colored.mjs": {},
     "test-runner/test-output-assertion-color-tty.mjs": {},
@@ -4628,7 +4628,7 @@
     },
     "test-runner/test-output-output-cli.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "test-runner/test-output-spec-reporter.mjs": {
       "exitCode": 1,
@@ -4636,7 +4636,7 @@
     },
     "test-runner/test-output-spec-reporter-cli.mjs": {
       "ignore": true,
-      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Deno"
+      "reason": "Tests Node.js-specific CLI flags/options that are not supported in Edno"
     },
     "test-runner/test-output-tap-escape.mjs": {},
     "test-runner/test-output-typescript-coverage.mjs": {},
@@ -4649,7 +4649,7 @@
     // "sequential/test-watch-mode-inspect.mjs": {},
     "wasm-allocation/test-wasm-allocation.js": {
       "ignore": true,
-      "reason": "Relies on an RLIMIT_AS virtual-memory ulimit (declared in the test header) to force WebAssembly.Memory allocation failures; Deno's node_compat runner does not apply that rlimit"
+      "reason": "Relies on an RLIMIT_AS virtual-memory ulimit (declared in the test header) to force WebAssembly.Memory allocation failures; Edno's node_compat runner does not apply that rlimit"
     },
 
     "wasi/test-wasi-options-validation.js": {},
@@ -4764,195 +4764,195 @@
     "internet/test-tls-autoselectfamily-servername.js": {},
     "module-hooks/test-async-loader-hooks-called-with-expected-args.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-called-with-register.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-globalpreload-no-warning-with-initialize.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-globalpreload-warning.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-initialize-in-sequence.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-initialize-invoke.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-initialize-never-settling.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-initialize-process-exit.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-initialize-rejecting.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-initialize-throw-null.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-mixed-opt-in.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-import-meta-resolve.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-load-cjs.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-load-esm-no-warning.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-load-esm-with-warning.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-race-cjs.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-race-esm.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-resolve-cjs.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-resolve-esm-no-warning.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-never-settling-resolve-esm-with-warning.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-no-leak-internals.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-process-exit-async.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-process-exit-sync.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-process-exit-top-level.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-register-with-cjs.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-register-with-import.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-register-with-ports.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-register-with-require.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-register-with-url-parenturl.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-remove-beforeexit-listener.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-require-resolve-default.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-require-resolve-opt-in.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-source-maps-cjs.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-bigint.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-boolean.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-empty-object.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-error.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-function.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-null.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-number.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-object.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-string.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-symbol.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-throw-undefined.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-use-hooks-require-esm.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-with-worker-permission-allowed.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-with-worker-permission-restricted.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "module-hooks/test-async-loader-hooks-without-worker-permission.mjs": {
       "ignore": true,
-      "reason": "Tests the deprecated `module.register()` async loader hooks API which Deno does not implement"
+      "reason": "Tests the deprecated `module.register()` async loader hooks API which Edno does not implement"
     },
     "parallel/test-async-hooks-vm-gc.js": {},
     "parallel/test-async-local-storage-http-parser-leak.js": {},
@@ -5225,11 +5225,11 @@
     "parallel/test-inspector-network-data-sent.js": {},
     "parallel/test-inspector-network-fetch.js": {
       "extraDenoArgs": ["--unsafely-ignore-certificate-errors"],
-      "reason": "Hits a local HTTPS server with a self-signed cert via fetch(). The upstream test bypasses cert checks by setting undici's global dispatcher with rejectUnauthorized:false; Deno's fetch doesn't honor that, so we disable cert validation only for this test."
+      "reason": "Hits a local HTTPS server with a self-signed cert via fetch(). The upstream test bypasses cert checks by setting undici's global dispatcher with rejectUnauthorized:false; Edno's fetch doesn't honor that, so we disable cert validation only for this test."
     },
     "parallel/test-inspector-network-websocket.js": {
       "ignore": true,
-      "reason": "Asserts the Network.webSocketCreated initiator stack contains a frame matching /undici/. Node's WebSocket is built on undici; Deno's is native (ext/websocket) so no such frame exists. The Network.* events themselves are emitted correctly."
+      "reason": "Asserts the Network.webSocketCreated initiator stack contains a frame matching /undici/. Node's WebSocket is built on undici; Edno's is native (ext/websocket) so no such frame exists. The Network.* events themselves are emitted correctly."
     },
     "parallel/test-listen-fd-cluster.js": {
       "linux": false,
@@ -5392,7 +5392,7 @@
     },
     "parallel/test-strace-openat-openssl.js": {
       "linux": false,
-      "reason": "error: Uncaught AssertionError: /opt/hostedtoolcache/deno/0.0.0-8ea25a3b12434ec8"
+      "reason": "error: Uncaught AssertionError: /opt/hostedtoolcache/edno/0.0.0-8ea25a3b12434ec8"
     },
     "parallel/test-stream-readable-async-iterators.js": {},
     "parallel/test-temporal-with-zoneinfo.js": {},
@@ -5463,7 +5463,7 @@
     },
     "parallel/test-watch-mode-kill-signal-default.mjs": {
       "ignore": true,
-      "reason": "Node runs --watch in a separate child process, so the test kills the watcher with SIGTERM while the script's own process.exit() stays independent. Deno runs --watch in the same process and, per #7590, process.exit()/Deno.exit() under --watch terminates the isolate so the watcher survives; the watcher process therefore never exits and the test times out"
+      "reason": "Node runs --watch in a separate child process, so the test kills the watcher with SIGTERM while the script's own process.exit() stays independent. Edno runs --watch in the same process and, per #7590, process.exit()/Edno.exit() under --watch terminates the isolate so the watcher survives; the watcher process therefore never exits and the test times out"
     },
     "parallel/test-watch-mode-kill-signal-invalid.mjs": {
       "linux": false,
@@ -5522,7 +5522,7 @@
     "pummel/test-crypto-pqc-sign-verify-slh-dsa.mjs": {},
     "pummel/test-webcrypto-derivebits-pbkdf2.js": {
       "ignore": true,
-      "reason": "deriveBits length 0 now conforms to w3c/webcrypto#380 (covered by WPT); remaining failure is a message-only mismatch: Deno throws \"'baseKey' usages does not contain 'deriveBits'\" where Node expects its /baseKey does not have deriveBits usage/ wording"
+      "reason": "deriveBits length 0 now conforms to w3c/webcrypto#380 (covered by WPT); remaining failure is a message-only mismatch: Edno throws \"'baseKey' usages does not contain 'deriveBits'\" where Node expects its /baseKey does not have deriveBits usage/ wording"
     },
     "pummel/test-fs-largefile.js": {
       "windows": false,

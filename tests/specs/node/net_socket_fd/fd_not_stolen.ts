@@ -15,7 +15,7 @@ const pipe = new Pipe(PipeConstants.SOCKET);
 const err = pipe.open(readFd);
 if (err !== 0) {
   console.log("FAIL: Pipe.open() returned", err);
-  Deno.exit(1);
+  Edno.exit(1);
 }
 console.log("Pipe.open() succeeded");
 

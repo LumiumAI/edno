@@ -21,8 +21,8 @@ use deno_error::JsErrorBox;
 use deno_graph::MediaType;
 use deno_graph::Module;
 use deno_graph::ModuleGraph;
-use deno_maybe_sync::MaybeSend;
-use deno_maybe_sync::MaybeSync;
+use edno_maybe_sync::MaybeSend;
+use edno_maybe_sync::MaybeSync;
 use futures::FutureExt;
 use futures::StreamExt;
 use futures::stream::FuturesUnordered;
@@ -33,9 +33,9 @@ use crate::cache::EmitCacheRc;
 use crate::cache::EmitCacheSys;
 use crate::cache::ParsedSourceCacheRc;
 use crate::cjs::CjsTrackerRc;
-use crate::deno_json::CompilerOptionsParseError;
-use crate::deno_json::CompilerOptionsResolverRc;
-use crate::deno_json::TranspileAndEmitOptions;
+use crate::edno_json::CompilerOptionsParseError;
+use crate::edno_json::CompilerOptionsResolverRc;
+use crate::edno_json::TranspileAndEmitOptions;
 
 #[allow(
   clippy::disallowed_types,
@@ -45,7 +45,7 @@ type ArcStr = std::sync::Arc<str>;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type EmitterRc<TInNpmPackageChecker, TSys> =
-  deno_maybe_sync::MaybeArc<Emitter<TInNpmPackageChecker, TSys>>;
+  edno_maybe_sync::MaybeArc<Emitter<TInNpmPackageChecker, TSys>>;
 
 #[sys_traits::auto_impl]
 pub trait EmitterSys: EmitCacheSys {}
@@ -154,7 +154,7 @@ impl<TInNpmPackageChecker: InNpmPackageChecker, TSys: EmitterSys>
     parsed_source: deno_ast::ParsedSource,
     module_kind: ModuleKind,
   ) -> Result<ArcStr, EmitParsedSourceHelperError> {
-    // note: this method is used in deno-js-loader
+    // note: this method is used in edno-js-loader
     self
       .maybe_emit_parsed_source_provider(parsed_source, module_kind)
       .await
@@ -545,7 +545,7 @@ fn transpile(
   // swc decorator pass otherwise hoists every computed class-member key into
   // a `var _computedKey; _computedKey = ...;` pair at module scope, which
   // looks like a side effect and blocks downstream tree-shaking (e.g. in
-  // `deno bundle`). See denoland/deno#30817.
+  // `edno bundle`). See denoland/deno#30817.
   let owned_options;
   let transpile_options = if !matches!(
     transpile_options.decorators,

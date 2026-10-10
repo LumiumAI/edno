@@ -18,7 +18,7 @@ const first = results[0];
 for (let i = 1; i < results.length; i++) {
   if (results[i] !== first) {
     console.error("ERROR: Got different module instances");
-    Deno.exit(1);
+    Edno.exit(1);
   }
 }
 

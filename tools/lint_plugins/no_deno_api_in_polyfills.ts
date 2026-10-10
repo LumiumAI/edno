@@ -1,16 +1,16 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// Deno lint plugin that flags usage of `Deno.*` APIs in ext/node/polyfills.
-// The goal is to migrate Node.js polyfills away from depending on the Deno
+// Edno lint plugin that flags usage of `Edno.*` APIs in ext/node/polyfills.
+// The goal is to migrate Node.js polyfills away from depending on the Edno
 // namespace, using internal ops or ext: imports instead.
 //
 // When you migrate a file, decrease its count below. When it reaches 0,
-// remove the entry entirely. Adding new Deno.* usage is not allowed --
+// remove the entry entirely. Adding new Edno.* usage is not allowed --
 // the lint check in tools/lint.js will fail if the actual count exceeds
 // the expected count.
 
 // Expected violation counts per file. This is the baseline -- the numbers
-// must only go down. Update this object when migrating Deno.* APIs away.
+// must only go down. Update this object when migrating Edno.* APIs away.
 // Paths are relative to the repo root.
 export const EXPECTED_VIOLATIONS: Record<string, number> = {
   "ext/node/polyfills/fs.ts": 53,
@@ -41,16 +41,16 @@ export const EXPECTED_VIOLATIONS: Record<string, number> = {
   "ext/node/polyfills/_fs/_fs_lutimes.ts": 1,
 };
 
-const plugin: Deno.lint.Plugin = {
+const plugin: Edno.lint.Plugin = {
   name: "node-polyfills",
   rules: {
-    "no-deno-api": {
+    "no-edno-api": {
       create(context) {
         return {
           MemberExpression(node) {
             if (
               node.object.type === "Identifier" &&
-              node.object.name === "Deno"
+              node.object.name === "Edno"
             ) {
               const property = node.property.type === "Identifier"
                 ? node.property.name
@@ -59,9 +59,9 @@ const plugin: Deno.lint.Plugin = {
               context.report({
                 node: node.object,
                 message: property
-                  ? `Usage of \`Deno.${property}\` in Node.js polyfill. ` +
+                  ? `Usage of \`Edno.${property}\` in Node.js polyfill. ` +
                     "Use internal ops or ext: imports instead."
-                  : "Usage of `Deno` namespace in Node.js polyfill. " +
+                  : "Usage of `Edno` namespace in Node.js polyfill. " +
                     "Use internal ops or ext: imports instead.",
               });
             }

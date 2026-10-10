@@ -8,24 +8,24 @@ use ::tokio_util::sync::CancellationToken;
 use deno_ast::ModuleSpecifier;
 use deno_ast::ParsedSource;
 use deno_ast::SourceTextInfo;
-use deno_core::FromV8;
-use deno_core::PollEventLoopOptions;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::error::JsError;
-use deno_core::futures::FutureExt;
-use deno_core::parking_lot::Mutex;
-use deno_core::v8;
+use edno_core::FromV8;
+use edno_core::PollEventLoopOptions;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::error::JsError;
+use edno_core::futures::FutureExt;
+use edno_core::parking_lot::Mutex;
+use edno_core::v8;
 use deno_lint::diagnostic::LintDiagnostic;
 use deno_path_util::resolve_url_or_path;
 use deno_path_util::url_from_file_path;
-use deno_runtime::WorkerExecutionMode;
-use deno_runtime::tokio_util;
-use deno_runtime::worker::MainWorker;
+use edno_runtime::WorkerExecutionMode;
+use edno_runtime::tokio_util;
+use edno_runtime::worker::MainWorker;
 use tokio::sync::mpsc;
 use tokio::sync::oneshot;
 
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::Flags;
 use crate::args::LintFlags;
 use crate::args::PermissionFlags;
@@ -88,7 +88,7 @@ impl PluginLogger {
 macro_rules! v8_static_strings {
   ($($ident:ident = $str:literal),* $(,)?) => {
     $(
-      pub static $ident: deno_core::FastStaticString = deno_core::ascii_str!($str);
+      pub static $ident: edno_core::FastStaticString = edno_core::ascii_str!($str);
     )*
   };
 }
@@ -131,7 +131,7 @@ async fn create_plugin_runner_inner(
   rx_req: mpsc::Receiver<PluginHostRequest>,
 ) -> Result<PluginHost, AnyError> {
   let flags = Flags {
-    subcommand: DenoSubcommand::Lint(LintFlags::default()),
+    subcommand: EdnoSubcommand::Lint(LintFlags::default()),
     // Lint plugins have unconditional access to env vars and file reading.
     permissions: PermissionFlags {
       allow_env: Some(vec![]),
@@ -145,7 +145,7 @@ async fn create_plugin_runner_inner(
   let factory = CliFactory::from_flags(flags.clone());
   let cli_options = factory.cli_options()?;
   let main_module =
-    resolve_url_or_path("./$deno$lint.mts", cli_options.initial_cwd()).unwrap();
+    resolve_url_or_path("./$edno$lint.mts", cli_options.initial_cwd()).unwrap();
   let permissions = factory.root_permissions_container()?.clone();
   // let npm_resolver = factory.npm_resolver().await?.clone();
   // let resolver = factory.resolver().await?.clone();
@@ -156,9 +156,9 @@ async fn create_plugin_runner_inner(
       // TODO(bartlomieju): add "lint" execution mode
       WorkerExecutionMode::Run,
       main_module.clone(),
-      // `deno lint` doesn't support preloading modules
+      // `edno lint` doesn't support preloading modules
       vec![],
-      // `deno lint` doesn't support require modules
+      // `edno lint` doesn't support require modules
       vec![],
       permissions,
       vec![crate::ops::lint::deno_lint_ext::init(logger.clone())],
@@ -170,11 +170,11 @@ async fn create_plugin_runner_inner(
   let mut worker = worker.into_main_worker();
   let runtime = &mut worker.js_runtime;
 
-  let obj = runtime.execute_script("lint.js", "Deno[Deno.internal]")?;
+  let obj = runtime.execute_script("lint.js", "Edno[Edno.internal]")?;
 
   log::debug!("Lint plugins loaded, capturing default exports");
   let (install_plugins_fn, run_plugins_for_file_fn) = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let module_exports: v8::Local<v8::Object> =
       v8::Local::new(scope, obj).try_into().unwrap();
 
@@ -329,7 +329,7 @@ impl PluginHost {
       );
     }
 
-    deno_core::scope!(scope, &mut self.worker.js_runtime);
+    edno_core::scope!(scope, &mut self.worker.js_runtime);
     let file_name_v8: v8::Local<v8::Value> =
       v8::String::new(scope, &file_path.display().to_string())
         .unwrap()
@@ -393,7 +393,7 @@ impl PluginHost {
     for (fut, mod_id) in load_futures {
       fut.await?;
       let module = self.worker.js_runtime.get_module_namespace(mod_id).unwrap();
-      deno_core::scope!(scope, &mut self.worker.js_runtime);
+      edno_core::scope!(scope, &mut self.worker.js_runtime);
       let module_local = v8::Local::new(scope, module);
       let default_export_str = DEFAULT.v8_string(scope).unwrap();
       let default_export =
@@ -402,7 +402,7 @@ impl PluginHost {
       plugin_handles.push(default_export_global);
     }
 
-    deno_core::scope!(scope, &mut self.worker.js_runtime);
+    edno_core::scope!(scope, &mut self.worker.js_runtime);
     let install_plugins_local = v8::Local::new(scope, &self.install_plugins_fn);
     let exclude_v8: v8::Local<v8::Value> =
       exclude.map_or(v8::null(scope).into(), |v| {

@@ -9,11 +9,11 @@ const { promise, resolve } = Promise.withResolvers();
 const hostname = "localhost";
 const port = 3505;
 
-const listener = Deno.listenTls({
+const listener = Edno.listenTls({
   hostname,
   port,
-  cert: Deno.readTextFileSync("./localhost.crt"),
-  key: Deno.readTextFileSync("./localhost.key"),
+  cert: Edno.readTextFileSync("./localhost.crt"),
+  key: Edno.readTextFileSync("./localhost.key"),
 });
 
 const response = encoder.encode(
@@ -33,7 +33,7 @@ listener.accept().then(
   },
 );
 
-const conn = await Deno.connectTls({
+const conn = await Edno.connectTls({
   hostname,
   port,
 });

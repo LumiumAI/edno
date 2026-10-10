@@ -1,4 +1,4 @@
-const filename = Deno.args[0];
-using file = await Deno.open(filename);
+const filename = Edno.args[0];
+using file = await Edno.open(filename);
 
-await file.readable.pipeTo(Deno.stdout.writable);
+await file.readable.pipeTo(Edno.stdout.writable);

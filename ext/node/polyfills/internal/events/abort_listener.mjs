@@ -4,9 +4,9 @@
 const { core, primordials } = __bootstrap;
 const { queueMicrotask, SymbolDispose } = primordials;
 const { validateAbortSignal, validateFunction } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
-const { codes } = core.loadExtScript("ext:deno_node/internal/errors.ts");
+const { codes } = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { ERR_INVALID_ARG_TYPE } = codes;
 
 /**

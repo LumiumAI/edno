@@ -2,9 +2,9 @@
 
 import { assertNotEquals, execCode } from "./test_util.ts";
 
-Deno.test("[unrefOpPromise] unref'ing invalid ops does not have effects", async () => {
+Edno.test("[unrefOpPromise] unref'ing invalid ops does not have effects", async () => {
   const [statusCode, _] = await execCode(`
-    Deno[Deno.internal].core.unrefOpPromise(new Promise(r => null));
+    Edno[Edno.internal].core.unrefOpPromise(new Promise(r => null));
     setTimeout(() => { throw new Error() }, 10)
   `);
   // Invalid unrefOpPromise call doesn't affect exit condition of event loop

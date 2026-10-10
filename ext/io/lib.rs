@@ -21,25 +21,25 @@ use std::rc::Rc;
 #[cfg(windows)]
 use std::sync::Arc;
 
-use deno_core::AsyncMutFuture;
-use deno_core::AsyncRefCell;
-use deno_core::AsyncResult;
-use deno_core::BufMutView;
-use deno_core::BufView;
-use deno_core::CancelHandle;
-use deno_core::CancelTryFuture;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceHandle;
-use deno_core::ResourceHandleFd;
-use deno_core::futures::TryFutureExt;
-use deno_core::op2;
-use deno_core::unsync::TaskQueue;
-use deno_core::unsync::spawn_blocking;
+use edno_core::AsyncMutFuture;
+use edno_core::AsyncRefCell;
+use edno_core::AsyncResult;
+use edno_core::BufMutView;
+use edno_core::BufView;
+use edno_core::CancelHandle;
+use edno_core::CancelTryFuture;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceHandle;
+use edno_core::ResourceHandleFd;
+use edno_core::futures::TryFutureExt;
+use edno_core::op2;
+use edno_core::unsync::TaskQueue;
+use edno_core::unsync::spawn_blocking;
 use deno_error::JsErrorBox;
 #[cfg(windows)]
-use deno_subprocess_windows::Stdio as StdStdio;
+use edno_subprocess_windows::Stdio as StdStdio;
 use fs::FileResource;
 use fs::FsError;
 use fs::FsResult;
@@ -84,11 +84,11 @@ pub use pipe::PipeWrite;
 pub use pipe::RawPipeHandle;
 pub use pipe::pipe;
 
-/// Env var used by the Node `child_process` spawn path to tell a Deno child
-/// which extra numeric stdio fd slots it inherited. Both `deno_process` (which
-/// sets it) and `deno_io` (which consumes it at startup) reference this single
+/// Env var used by the Node `child_process` spawn path to tell a Edno child
+/// which extra numeric stdio fd slots it inherited. Both `edno_process` (which
+/// sets it) and `edno_io` (which consumes it at startup) reference this single
 /// constant so the name has one source of truth.
-pub const DENO_EXTRA_STDIO_FDS_ENV_VAR: &str = "DENO_EXTRA_STDIO_FDS";
+pub const EDNO_EXTRA_STDIO_FDS_ENV_VAR: &str = "EDNO_EXTRA_STDIO_FDS";
 
 /// Abstraction over `AsRawFd` (unix) and `AsRawHandle` (windows)
 pub trait AsRawIoHandle {
@@ -231,19 +231,19 @@ fn inherited_extra_stdio_fd(fd: i32) -> Option<StdFile> {
 
 #[cfg(unix)]
 fn register_inherited_extra_stdio_fds(fd_table: &mut FdTable) {
-  let Ok(fds) = std::env::var(DENO_EXTRA_STDIO_FDS_ENV_VAR) else {
+  let Ok(fds) = std::env::var(EDNO_EXTRA_STDIO_FDS_ENV_VAR) else {
     return;
   };
   // Consume the marker so it does not leak into the child's own environment
-  // (`Deno.env.toObject()`) and get inherited by grandchildren spawned through
+  // (`Edno.env.toObject()`) and get inherited by grandchildren spawned through
   // paths that bypass `create_command` (FFI exec, embedders, native modules),
   // where the stale fd numbers would no longer be valid.
   // SAFETY: this runs synchronously on the main thread during extension init,
   // before any user JS (or worker/FFI/native code) that could read or write the
   // environment runs, so there is no concurrent access to race with. This is
-  // the same startup env-mutation invariant Deno relies on elsewhere.
+  // the same startup env-mutation invariant Edno relies on elsewhere.
   unsafe {
-    std::env::remove_var(DENO_EXTRA_STDIO_FDS_ENV_VAR);
+    std::env::remove_var(EDNO_EXTRA_STDIO_FDS_ENV_VAR);
   }
   for fd in fds.split(',').filter_map(|fd| fd.parse::<i32>().ok()) {
     if fd_table.contains(fd) {
@@ -270,8 +270,8 @@ fn stdio_fd(fd: i32) -> StdFile {
   unsafe { StdFile::from_raw_handle(GetStdHandle(std_handle)) }
 }
 
-deno_core::extension!(deno_io,
-  deps = [ deno_web ],
+edno_core::extension!(edno_io,
+  deps = [ edno_web ],
   lazy_loaded_js = [ "12_io.js" ],
   options = {
     stdio: Option<Stdio>,
@@ -416,7 +416,7 @@ pub struct Stdio {
 
 /// Holds the effective stdout/stderr handles for child process inheritance.
 ///
-/// When the runtime redirects stdout/stderr (e.g. during `deno test` for
+/// When the runtime redirects stdout/stderr (e.g. during `edno test` for
 /// output capture), child processes spawned with `stdio: "inherit"` need
 /// to inherit the redirected handles, not the original OS stdout/stderr.
 /// This struct is stored in `OpState` during IO extension init and read
@@ -513,7 +513,7 @@ impl Resource for ChildStdinResource {
     "childStdin".into()
   }
 
-  deno_core::impl_writable!();
+  edno_core::impl_writable!();
 
   fn shutdown(self: Rc<Self>) -> AsyncResult<()> {
     Box::pin(self.shutdown().map_err(JsErrorBox::from_err))
@@ -523,7 +523,7 @@ impl Resource for ChildStdinResource {
 pub type ChildStdoutResource = ReadOnlyResource<process::ChildStdout>;
 
 impl Resource for ChildStdoutResource {
-  deno_core::impl_readable_byob!();
+  edno_core::impl_readable_byob!();
 
   fn name(&self) -> Cow<'_, str> {
     "childStdout".into()
@@ -545,7 +545,7 @@ impl Resource for ChildStdoutResource {
 pub type ChildStderrResource = ReadOnlyResource<process::ChildStderr>;
 
 impl Resource for ChildStderrResource {
-  deno_core::impl_readable_byob!();
+  edno_core::impl_readable_byob!();
 
   fn name(&self) -> Cow<'_, str> {
     "childStderr".into()
@@ -656,7 +656,7 @@ where
     let (action_tx, action_rx) = std::sync::mpsc::channel::<F>();
     let (result_tx, result_rx) = tokio::sync::oneshot::channel();
     let spawn_result = std::thread::Builder::new()
-      .name("deno-flock".to_string())
+      .name("edno-flock".to_string())
       // these threads only sit in a single syscall, so the default 2MB stack is
       // wasteful when many locks are pending at once
       .stack_size(256 * 1024)
@@ -857,7 +857,7 @@ impl StdFileResourceInner {
       )]
       let fut = self.with_inner_blocking_task(move |file| {
         let _terminal_input_guard =
-          deno_permissions::prompter::lock_terminal_input();
+          edno_permissions::prompter::lock_terminal_input();
         /* Start reading, and set the reading flag to true */
         state.lock().reading = true;
         let nread = match file.read(&mut buf) {
@@ -974,7 +974,7 @@ impl crate::fs::File for StdFileResourceInner {
         // of fd 0. Retry on WouldBlock to avoid surfacing EAGAIN to JS.
         self.with_sync(|file| {
           let _terminal_input_guard =
-            deno_permissions::prompter::lock_terminal_input();
+            edno_permissions::prompter::lock_terminal_input();
           loop {
             match file.read(buf) {
               Ok(nread) => return Ok(nread),
@@ -1055,13 +1055,13 @@ impl crate::fs::File for StdFileResourceInner {
   async fn write(
     self: Rc<Self>,
     view: BufView,
-  ) -> FsResult<deno_core::WriteOutcome> {
+  ) -> FsResult<edno_core::WriteOutcome> {
     match self.kind {
       StdFileResourceKind::File => {
         self
           .with_inner_blocking_task(|file| {
             let nwritten = file.write(&view)?;
-            Ok(deno_core::WriteOutcome::Partial { nwritten, view })
+            Ok(edno_core::WriteOutcome::Partial { nwritten, view })
           })
           .await
       }
@@ -1075,7 +1075,7 @@ impl crate::fs::File for StdFileResourceInner {
             let mut stdout = std::io::stdout().lock();
             let nwritten = stdout.write(&view)?;
             stdout.flush()?;
-            Ok(deno_core::WriteOutcome::Partial { nwritten, view })
+            Ok(edno_core::WriteOutcome::Partial { nwritten, view })
           })
           .await
       }
@@ -1086,7 +1086,7 @@ impl crate::fs::File for StdFileResourceInner {
             let mut stderr = std::io::stderr().lock();
             let nwritten = stderr.write(&view)?;
             stderr.flush()?;
-            Ok(deno_core::WriteOutcome::Partial { nwritten, view })
+            Ok(edno_core::WriteOutcome::Partial { nwritten, view })
           })
           .await
       }
@@ -1422,7 +1422,7 @@ impl crate::fs::File for StdFileResourceInner {
         self
           .with_inner_blocking_task(|file| {
             let _terminal_input_guard =
-              deno_permissions::prompter::lock_terminal_input();
+              edno_permissions::prompter::lock_terminal_input();
             loop {
               match file.read(&mut buf) {
                 Ok(nread) => return Ok((nread, buf)),

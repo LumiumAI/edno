@@ -10,7 +10,7 @@ Before submitting a PR, please read https://docs.deno.com/runtime/manual/referen
   Examples of good title:
     - fix(ext/net): fix race condition in TCP listener
     - docs(runtime): update permissions API docstrings
-    - feat(cli): add --env-file flag to `deno run`
+    - feat(cli): add --env-file flag to `edno run`
     - refactor(ext/node): simplify Buffer.from() implementation
     - test(ext/fs): add spec tests for symlink resolution
 

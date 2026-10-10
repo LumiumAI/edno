@@ -9,9 +9,9 @@ use std::sync::Arc;
 
 use anyhow::Context;
 use anyhow::bail;
-use deno_core::RuntimeOptions;
-use deno_core::anyhow::Error;
-use deno_core_testing::create_runtime_from_snapshot;
+use edno_core::RuntimeOptions;
+use edno_core::anyhow::Error;
+use edno_core_testing::create_runtime_from_snapshot;
 
 static SNAPSHOT: &[u8] =
   include_bytes!(concat!(env!("OUT_DIR"), "/SNAPSHOT.bin"));
@@ -23,7 +23,7 @@ use crate::metrics::create_metrics;
 
 fn main() -> Result<(), Error> {
   eprintln!(
-    "🛑 deno_core binary is meant for development and testing purposes."
+    "🛑 edno_core binary is meant for development and testing purposes."
   );
 
   let args = match Args::parse(std::env::args().skip(1)) {
@@ -64,7 +64,7 @@ fn main() -> Result<(), Error> {
         create_metrics(args.strace_ops, args.strace_ops_summary);
 
       let (runtime, worker_host_side) =
-        deno_core_testing::create_runtime_from_snapshot_with_options(
+        edno_core_testing::create_runtime_from_snapshot_with_options(
           SNAPSHOT,
           inspector_server.is_some(),
           None,
@@ -88,14 +88,14 @@ fn main() -> Result<(), Error> {
   js_runtime
     .op_state()
     .borrow_mut()
-    .put(deno_core::error::InitialCwd(Arc::new(
-      deno_core::url::Url::from_directory_path(
+    .put(edno_core::error::InitialCwd(Arc::new(
+      edno_core::url::Url::from_directory_path(
         std::env::current_dir().context("Unable to get CWD")?,
       )
       .unwrap(),
     )));
 
-  let main_module: deno_core::url::Url = deno_core::resolve_path(
+  let main_module: edno_core::url::Url = edno_core::resolve_path(
     &file_path,
     &std::env::current_dir().context("Unable to get CWD")?,
   )?;
@@ -282,7 +282,7 @@ fn init_v8_flags(v8_flags: &[String]) {
     .any(|flag| flag == "-help" || flag == "--help");
   // Keep in sync with `standalone.rs`.
   let v8_flags = construct_v8_flags(v8_flags, env_v8_flags);
-  let unrecognized_v8_flags = deno_core::v8_set_flags(v8_flags)
+  let unrecognized_v8_flags = edno_core::v8_set_flags(v8_flags)
     .into_iter()
     .skip(1)
     .collect::<Vec<_>>();

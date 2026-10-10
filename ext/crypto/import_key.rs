@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 use base64::Engine;
-use deno_core::JsBuffer;
-use deno_core::ToV8;
-use deno_core::convert::Uint8Array;
+use edno_core::JsBuffer;
+use edno_core::ToV8;
+use edno_core::convert::Uint8Array;
 use elliptic_curve::pkcs8::PrivateKeyInfo;
 use p256::pkcs8::EncodePrivateKey;
 use rsa::pkcs1::UintRef;

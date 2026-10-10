@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and Node.js contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -25,42 +25,42 @@ const {
   validateFunction,
   validateInteger,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const {
   ERR_CRYPTO_INVALID_DIGEST,
   ERR_CRYPTO_INVALID_KEYLEN,
   ERR_INVALID_ARG_TYPE,
   ERR_OUT_OF_RANGE,
   hideStackFrames,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   kHandle,
   toBuf,
   validateByteSource,
-} = core.loadExtScript("ext:deno_node/internal/crypto/util.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/util.ts");
 const {
   createSecretKey,
-} = core.loadExtScript("ext:deno_node/internal/crypto/keys.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/keys.ts");
 const { kMaxLength } = core.loadExtScript(
-  "ext:deno_node/internal/buffer.mjs",
+  "ext:edno_node/internal/buffer.mjs",
 );
 const {
   isAnyArrayBuffer,
   isArrayBufferView,
-} = core.loadExtScript("ext:deno_node/internal/util/types.ts");
+} = core.loadExtScript("ext:edno_node/internal/util/types.ts");
 const { isKeyObject } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/_keys.ts",
+  "ext:edno_node/internal/crypto/_keys.ts",
 );
 const { getHashes } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/hash.ts",
+  "ext:edno_node/internal/crypto/hash.ts",
 );
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 
 // Consume raw bytes for any ArrayBufferView/ArrayBuffer; strings via toBuf.
 function toRawBytes(x: unknown): Buffer {
   if (isArrayBufferView(x)) {
     const v = x as ArrayBufferView;
-    // deno-lint-ignore deno-internal/prefer-primordials -- v is ArrayBufferView (TypedArray | DataView); buffer/byteOffset/byteLength getters are polymorphic
+    // edno-lint-ignore edno-internal/prefer-primordials -- v is ArrayBufferView (TypedArray | DataView); buffer/byteOffset/byteLength getters are polymorphic
     return Buffer.from(v.buffer, v.byteOffset, v.byteLength);
   }
   if (isAnyArrayBuffer(x)) {

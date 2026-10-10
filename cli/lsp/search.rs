@@ -2,7 +2,7 @@
 
 use std::sync::Arc;
 
-use deno_core::error::AnyError;
+use edno_core::error::AnyError;
 use deno_semver::Version;
 use deno_semver::package::PackageNv;
 
@@ -18,7 +18,7 @@ pub trait PackageSearchApi {
 pub mod tests {
   use std::collections::BTreeMap;
 
-  use deno_core::anyhow::anyhow;
+  use edno_core::anyhow::anyhow;
 
   use super::*;
 

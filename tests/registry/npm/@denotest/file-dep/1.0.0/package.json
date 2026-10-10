@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/file-dep",
+  "name": "@ednotest/file-dep",
   "version": "1.0.0",
   "type": "module",
   "main": "main.mjs",

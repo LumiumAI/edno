@@ -3,10 +3,10 @@
 import { assertEquals, assertThrows } from "./test_util.ts";
 
 // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-const { pathFromURL } = Deno[Deno.internal];
+const { pathFromURL } = Edno[Edno.internal];
 
-Deno.test(
-  { ignore: Deno.build.os === "windows" },
+Edno.test(
+  { ignore: Edno.build.os === "windows" },
   function pathFromURLPosix() {
     assertEquals(
       pathFromURL(new URL("file:///test/directory")),
@@ -17,8 +17,8 @@ Deno.test(
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "windows" },
+Edno.test(
+  { ignore: Edno.build.os !== "windows" },
   function pathFromURLWin32() {
     assertEquals(
       pathFromURL(new URL("file:///c:/windows/test")),

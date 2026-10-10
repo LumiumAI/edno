@@ -1,5 +1,5 @@
 [WILDCARD]
-Download http://localhost:4260/@denotest%2fadd
-[WILDCARD] Respected etag for packument '@denotest/add'[WILDCARD]
-Download http://localhost:4260/@denotest/add/1.0.0.tgz
+Download http://localhost:4260/@ednotest%2fadd
+[WILDCARD] Respected etag for packument '@ednotest/add'[WILDCARD]
+Download http://localhost:4260/@ednotest/add/1.0.0.tgz
 [WILDCARD]

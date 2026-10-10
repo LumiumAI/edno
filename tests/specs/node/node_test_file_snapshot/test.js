@@ -1,11 +1,11 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 //
 // Regression coverage for `t.assert.fileSnapshot(value, path[, options])`
 // (Node.js issue parity: https://github.com/denoland/deno/issues/35413).
 //
 // The test seeds each expected snapshot file inline with `fs.writeFileSync`
 // and then asserts that `fileSnapshot` reads it back and matches. That way
-// the spec runs hermetically in a single `deno test` invocation without
+// the spec runs hermetically in a single `edno test` invocation without
 // depending on `--update-snapshots` behavior.
 
 import assert from "node:assert";

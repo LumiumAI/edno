@@ -3,7 +3,7 @@
   // Packages brought in via the "links" (formerly "patch") feature are
   // third-party dependencies replacing a registry version, so they must not
   // appear in the user's coverage report (matching how npm packages are
-  // excluded). Before the fix, "flag/mod.ts" from the linked "@denotest/flag"
+  // excluded). Before the fix, "flag/mod.ts" from the linked "@ednotest/flag"
   // package showed up in the report; after, only the user's "main.ts" does.
   "tempDir": true,
   "steps": [

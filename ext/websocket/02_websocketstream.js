@@ -32,20 +32,20 @@ const {
   TypedArrayPrototypeGetSymbolToStringTag,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 const { Deferred, writableStreamClose } = core.loadExtScript(
-  "ext:deno_web/06_streams.js",
+  "ext:edno_web/06_streams.js",
 );
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
-const { add, remove } = core.loadExtScript("ext:deno_web/03_abort_signal.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
+const { add, remove } = core.loadExtScript("ext:edno_web/03_abort_signal.js");
 const {
   fillHeaders,
   headerListFromHeaders,
   headersFromHeaderList,
-} = core.loadExtScript("ext:deno_fetch/20_headers.js");
+} = core.loadExtScript("ext:edno_fetch/20_headers.js");
 
 webidl.converters.WebSocketStreamOptions = webidl.createDictionaryConverter(
   "WebSocketStreamOptions",
@@ -430,7 +430,7 @@ class WebSocketStream {
     }
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,
@@ -509,7 +509,7 @@ class WebSocketError extends DOMException {
     return this.#reason;
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,

@@ -4,11 +4,11 @@
 (function () {
 const { core } = __bootstrap;
 const {
-  denoErrorToNodeError,
+  ednoErrorToNodeError,
   ERR_INVALID_RETURN_VALUE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { op_node_cp_sync } = core.ops;
-const { throwCpError } = core.loadExtScript("ext:deno_node/_fs/cp/cp.ts");
+const { throwCpError } = core.loadExtScript("ext:edno_node/_fs/cp/cp.ts");
 
 const {
   isPromise,
@@ -21,7 +21,7 @@ function cpSyncFn(
 ) {
   try {
     if (opts.filter) {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       const shouldCopy = opts.filter(src, dest);
       if (isPromise(shouldCopy)) {
         throw new ERR_INVALID_RETURN_VALUE("boolean", "filter", shouldCopy);
@@ -43,7 +43,7 @@ function cpSyncFn(
     );
   } catch (err) {
     if (typeof err?.os_errno === "number") {
-      throw denoErrorToNodeError(err, {
+      throw ednoErrorToNodeError(err, {
         path: err.path,
         dest: err.dest,
         syscall: err.syscall,

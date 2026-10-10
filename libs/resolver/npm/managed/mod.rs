@@ -9,13 +9,13 @@ use std::borrow::Cow;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_config::deno_json::NodeModulesLinkerMode;
-use deno_npm::NpmPackageCacheFolderId;
-use deno_npm::NpmPackageId;
-use deno_npm::NpmSystemInfo;
-use deno_npm::resolution::PackageCacheFolderIdNotFoundError;
-use deno_npm::resolution::PackageNvNotFoundError;
-use deno_npm::resolution::PackageReqNotFoundError;
+use edno_config::edno_json::NodeModulesLinkerMode;
+use edno_npm::NpmPackageCacheFolderId;
+use edno_npm::NpmPackageId;
+use edno_npm::NpmSystemInfo;
+use edno_npm::resolution::PackageCacheFolderIdNotFoundError;
+use edno_npm::resolution::PackageNvNotFoundError;
+use edno_npm::resolution::PackageReqNotFoundError;
 use deno_path_util::fs::canonicalize_path_maybe_not_exists;
 use deno_semver::Version;
 use deno_semver::package::PackageReq;
@@ -104,7 +104,7 @@ pub trait ManagedNpmResolverSys: GlobalNpmPackageResolverSys + Clone {}
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type ManagedNpmResolverRc<TSys> =
-  deno_maybe_sync::MaybeArc<ManagedNpmResolver<TSys>>;
+  edno_maybe_sync::MaybeArc<ManagedNpmResolver<TSys>>;
 
 #[derive(Debug)]
 pub struct ManagedNpmResolver<TSys: ManagedNpmResolverSys> {

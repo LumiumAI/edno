@@ -4,7 +4,7 @@ import { assertEquals, assertThrows, loadTestLibrary } from "./common.js";
 
 const bi = loadTestLibrary();
 
-Deno.test("cases", function () {
+Edno.test("cases", function () {
   const cases = [
     0n,
     -0n,
@@ -38,7 +38,7 @@ Deno.test("cases", function () {
   }
 });
 
-Deno.test(
+Edno.test(
   // TODO(bartlomieju): fix this test
   { ignore: true },
   function tooBigBigInt() {
@@ -50,7 +50,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   // TODO(bartlomieju): fix this test
   { ignore: true },
   function exceptionForwarding() {

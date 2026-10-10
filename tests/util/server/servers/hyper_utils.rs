@@ -148,7 +148,7 @@ async fn hyper_serve_connection<I, F, S>(
   let result: Result<(), anyhow::Error> = match kind {
     ServerKind::Auto => {
       let builder =
-        hyper_util::server::conn::auto::Builder::new(DenoUnsyncExecutor);
+        hyper_util::server::conn::auto::Builder::new(EdnoUnsyncExecutor);
       builder
         .serve_connection(io, service)
         .await
@@ -163,7 +163,7 @@ async fn hyper_serve_connection<I, F, S>(
     }
     ServerKind::OnlyHttp2 => {
       let builder =
-        hyper::server::conn::http2::Builder::new(DenoUnsyncExecutor);
+        hyper::server::conn::http2::Builder::new(EdnoUnsyncExecutor);
       builder
         .serve_connection(io, service)
         .await
@@ -180,9 +180,9 @@ async fn hyper_serve_connection<I, F, S>(
 }
 
 #[derive(Clone)]
-struct DenoUnsyncExecutor;
+struct EdnoUnsyncExecutor;
 
-impl<Fut> hyper::rt::Executor<Fut> for DenoUnsyncExecutor
+impl<Fut> hyper::rt::Executor<Fut> for EdnoUnsyncExecutor
 where
   Fut: Future + 'static,
   Fut::Output: 'static,

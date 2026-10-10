@@ -24,11 +24,11 @@
 const { core, primordials } = __bootstrap;
 
 const { ownerSymbol } = core.loadExtScript(
-  "ext:deno_node/internal/async_hooks.ts",
+  "ext:edno_node/internal/async_hooks.ts",
 );
-// deno-lint-ignore no-unused-vars
+// edno-lint-ignore no-unused-vars
 const { HandleWrap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/handle_wrap.ts",
+  "ext:edno_node/internal_binding/handle_wrap.ts",
 );
 const {
   kArrayBufferOffset,
@@ -37,20 +37,20 @@ const {
   kReadBytesOrError,
   streamBaseState,
   WriteWrap,
-} = core.loadExtScript("ext:deno_node/internal_binding/stream_wrap.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/stream_wrap.ts");
 const { errnoException } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const lazyInternalTimers = () =>
-  core.loadExtScript("ext:deno_node/internal/timers.mjs");
+  core.loadExtScript("ext:edno_node/internal/timers.mjs");
 const lazyTimers = core.createLazyLoader("node:timers");
-const { codeMap } = core.loadExtScript("ext:deno_node/internal_binding/uv.ts");
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { codeMap } = core.loadExtScript("ext:edno_node/internal_binding/uv.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const { isUint8Array } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const { validateFunction } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 
 const {
@@ -73,7 +73,7 @@ const kBuffer = Symbol("kBuffer");
 const kBufferGen = Symbol("kBufferGen");
 const kBufferCb = Symbol("kBufferCb");
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function handleWriteReq(req: any, data: any, encoding: string) {
   const { handle } = req;
 
@@ -113,7 +113,7 @@ function handleWriteReq(req: any, data: any, encoding: string) {
   }
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function onWriteComplete(this: any, status: number) {
   let stream = this.handle[ownerSymbol];
 
@@ -166,9 +166,9 @@ function createWriteWrap(
 }
 
 function writevGeneric(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   owner: any,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   data: any,
   cb: (err?: Error | null) => void,
 ) {
@@ -219,9 +219,9 @@ function writevGeneric(
 }
 
 function writeGeneric(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   owner: any,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   data: any,
   encoding: string,
   cb: (err?: Error | null) => void,
@@ -235,7 +235,7 @@ function writeGeneric(
 }
 
 function afterWriteDispatched(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   req: any,
   err: number,
   cb: (err?: Error | null) => void,
@@ -254,10 +254,10 @@ function afterWriteDispatched(
 
 // Here we differ from Node slightly. Node makes use of the `kReadBytesOrError`
 // entry of the `streamBaseState` array from the `stream_wrap` internal binding.
-// Here we pass the `nread` value directly to this method as async Deno APIs
+// Here we pass the `nread` value directly to this method as async Edno APIs
 // don't grant us the ability to rely on some mutable array entry setting.
 function onStreamRead(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
   arrayBuffer: Uint8Array,
   nread?: number,
@@ -267,7 +267,7 @@ function onStreamRead(
   if (nread === undefined) {
     nread = streamBaseState[kReadBytesOrError];
   }
-  // deno-lint-ignore no-this-alias
+  // edno-lint-ignore no-this-alias
   const handle = this;
 
   let stream = this[ownerSymbol];
@@ -317,7 +317,7 @@ function onStreamRead(
       );
       // Ignore use of primordial here. The `push` method is from a `Readable`
       // stream instance.
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       result = stream.push(buf);
     }
 
@@ -370,14 +370,14 @@ function onStreamRead(
     // `end` -> `close`
     // Ignore use of primordial. The `push` method is from a `Readable` stream
     // instance.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     stream.push(null);
     stream.read(0);
   }
 }
 
 function setStreamTimeout(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   this: any,
   msecs: number,
   callback?: () => void,

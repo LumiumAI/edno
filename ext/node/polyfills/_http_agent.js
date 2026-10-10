@@ -6,29 +6,29 @@ import { op_get_env_no_permission_check } from "ext:core/ops";
 import * as net from "node:net";
 import httpProxy from "node:_http_proxy";
 const lazyTls = core.createLazyLoader("node:tls");
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const { debuglog } = core.loadExtScript(
-  "ext:deno_node/internal/util/debuglog.ts",
+  "ext:edno_node/internal/util/debuglog.ts",
 );
 let debug = debuglog("http", (fn) => {
   debug = fn;
 });
-const { AsyncResource } = core.loadExtScript("ext:deno_node/async_hooks.ts");
+const { AsyncResource } = core.loadExtScript("ext:edno_node/async_hooks.ts");
 const {
   emitDestroy,
   emitInit,
   executionAsyncId,
   symbols,
-} = core.loadExtScript("ext:deno_node/internal/async_hooks.ts");
+} = core.loadExtScript("ext:edno_node/internal/async_hooks.ts");
 const { async_id_symbol } = symbols;
 const { kEmptyObject, once } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const {
   validateNumber,
   validateOneOf,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 
 const {
   ArrayPrototypeIncludes,
@@ -127,7 +127,7 @@ const providerTypeNames = [
 ];
 
 function freeSocketErrorListener(err) {
-  // deno-lint-ignore no-this-alias
+  // edno-lint-ignore no-this-alias
   const socket = this;
   debug("SOCKET ERROR on FREE socket:", err.message, err.stack);
   socket.destroy();
@@ -192,7 +192,7 @@ export function Agent(options) {
     // and could cause unhandled exception.
 
     // In Node.js, nextTick (where 'free' is emitted) always runs before I/O,
-    // so the socket is guaranteed to be writable here. In Deno, I/O can
+    // so the socket is guaranteed to be writable here. In Edno, I/O can
     // interleave with nextTick, so a server FIN may arrive before 'free'
     // runs, making the socket non-writable but not yet destroyed.
     if (socket.destroyed) {
@@ -269,7 +269,7 @@ function maybeEnableKeylog(eventName) {
   if (eventName === "keylog") {
     this.removeListener("newListener", maybeEnableKeylog);
     // Future sockets will listen on keylog at creation.
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const agent = this;
     this[kOnKeylog] = function onkeylog(keylog) {
       agent.emit("keylog", keylog, this);

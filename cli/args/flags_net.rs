@@ -2,9 +2,9 @@
 
 use std::str::FromStr;
 
-use deno_cli_parser::CliError;
-use deno_cli_parser::CliErrorKind;
-use deno_runtime::deno_permissions::NetDescriptor;
+use edno_cli_parser::CliError;
+use edno_cli_parser::CliErrorKind;
+use edno_runtime::edno_permissions::NetDescriptor;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct ParsePortError(String);
@@ -83,7 +83,7 @@ mod bare_port_tests {
 
   #[test]
   fn bare_port_parse_error4() {
-    let actual = "Deno".parse::<BarePort>();
+    let actual = "Edno".parse::<BarePort>();
     assert!(actual.is_err());
   }
 

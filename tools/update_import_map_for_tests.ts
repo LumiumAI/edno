@@ -1,7 +1,7 @@
-#!/usr/bin/env -S deno run -RW
+#!/usr/bin/env -S edno run -RW
 
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 /**
  * This script generates the `import_map.json` file based on `tests/util/std/*` packages.
@@ -9,16 +9,16 @@
  * Run this script when you updated the git submodule at `tests/util/std`.
  */
 
-import denoConfig from "../tests/util/std/deno.json" with { type: "json" };
+import ednoConfig from "../tests/util/std/edno.json" with { type: "json" };
 import { join } from "jsr:@std/path@1/posix/join";
 
 const rootImportMap: { imports: Record<string, string> } = { imports: {} };
 const coreImportMap: { imports: Record<string, string> } = JSON.parse(
-  Deno.readTextFileSync("./tools/core_import_map.json"),
+  Edno.readTextFileSync("./tools/core_import_map.json"),
 );
-for (const workspace of denoConfig.workspace) {
+for (const workspace of ednoConfig.workspace) {
   const { default: pkgDenoConfig } = await import(
-    `../tests/util/std/${workspace}/deno.json`,
+    `../tests/util/std/${workspace}/edno.json`,
     {
       with: { type: "json" },
     }
@@ -40,12 +40,12 @@ rootImportMap.imports = sortObjectByKey(rootImportMap.imports);
 coreImportMap.imports = sortObjectByKey(coreImportMap.imports);
 
 console.log("Writing to ./import_map.json");
-await Deno.writeTextFile(
+await Edno.writeTextFile(
   "./import_map.json",
   JSON.stringify(rootImportMap, null, 2) + "\n",
 );
 console.log("Writing to ./tools/core_import_map.json");
-await Deno.writeTextFile(
+await Edno.writeTextFile(
   "./tools/core_import_map.json",
   JSON.stringify(coreImportMap, null, 2) + "\n",
 );

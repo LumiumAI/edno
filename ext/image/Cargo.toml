@@ -1,21 +1,21 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_image"
+name = "edno_image"
 version = "0.35.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Image handling implementation for Deno"
+description = "Image handling implementation for Edno"
 
 [lib]
 path = "lib.rs"
 
 [dependencies]
 bytemuck.workspace = true
-deno_core.workspace = true
+edno_core.workspace = true
 deno_error.workspace = true
 image = { workspace = true, features = ["png", "jpeg", "bmp", "ico", "webp", "gif"] }
 # NOTE: The qcms is a color space conversion crate which parses ICC profiles that used in Gecko,

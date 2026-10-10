@@ -6,7 +6,7 @@ import nodeFixtures from "../testdata/crypto_digest_fixtures.json" with {
   type: "json",
 };
 
-Deno.test("crypto.hkdfSync - compare with node", async (t) => {
+Edno.test("crypto.hkdfSync - compare with node", async (t) => {
   const DATA = "Hello, world!";
   const SALT = "salt";
   const INFO = "info";
@@ -35,7 +35,7 @@ Deno.test("crypto.hkdfSync - compare with node", async (t) => {
   }
 });
 
-Deno.test("crypto.hkdfSync - TypedArray byte representation fix", () => {
+Edno.test("crypto.hkdfSync - TypedArray byte representation fix", () => {
   const secret = "secret";
   const keyLen = 10;
 
@@ -156,7 +156,7 @@ Deno.test("crypto.hkdfSync - TypedArray byte representation fix", () => {
   }
 });
 
-Deno.test("crypto.hkdfSync - DataView inputs", () => {
+Edno.test("crypto.hkdfSync - DataView inputs", () => {
   const secret = "secret";
   const saltBuffer = Buffer.from("salt");
   const infoBuffer = Buffer.from("info");
@@ -218,7 +218,7 @@ Deno.test("crypto.hkdfSync - DataView inputs", () => {
   );
 });
 
-Deno.test("crypto.hkdfSync - edge cases and error conditions", () => {
+Edno.test("crypto.hkdfSync - edge cases and error conditions", () => {
   const secret = "secret";
   const keyLen = 10;
 
@@ -306,7 +306,7 @@ function hkdfAsyncP(
   length: number,
 ): Promise<ArrayBuffer | Uint8Array> {
   return new Promise((resolve, reject) => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     hkdf(digest, secret, salt as any, info as any, length, (err, derived) => {
       if (err) return reject(err);
       resolve(derived!);
@@ -319,7 +319,7 @@ function asHex(ab: ArrayBuffer | Uint8Array): string {
   return Buffer.from(u8).toString("hex");
 }
 
-Deno.test("crypto.hkdf (async) - strings match sync", async () => {
+Edno.test("crypto.hkdf (async) - strings match sync", async () => {
   const secret = "secret", keyLen = 10;
   const syncHex = asHex(hkdfSync("sha256", secret, "salt", "info", keyLen));
   const asyncHex = asHex(
@@ -328,7 +328,7 @@ Deno.test("crypto.hkdf (async) - strings match sync", async () => {
   assertEquals(asyncHex, syncHex);
 });
 
-Deno.test("crypto.hkdf (async) - TypedArray array-like inputs match sync", async () => {
+Edno.test("crypto.hkdf (async) - TypedArray array-like inputs match sync", async () => {
   const secret = "secret", keyLen = 10;
   const cases = [
     {
@@ -375,7 +375,7 @@ Deno.test("crypto.hkdf (async) - TypedArray array-like inputs match sync", async
   }
 });
 
-Deno.test("crypto.hkdf (async) - mixed TypedArray types match sync", async () => {
+Edno.test("crypto.hkdf (async) - mixed TypedArray types match sync", async () => {
   const secret = "secret", keyLen = 10;
 
   // Uint16 salt + Uint8 info (array-like)
@@ -417,7 +417,7 @@ Deno.test("crypto.hkdf (async) - mixed TypedArray types match sync", async () =>
   }
 });
 
-Deno.test("crypto.hkdf (async) - DataView inputs match sync", async () => {
+Edno.test("crypto.hkdf (async) - DataView inputs match sync", async () => {
   const secret = "secret", keyLen = 10;
   const salt = Buffer.from("salt");
   const info = Buffer.from("info");
@@ -431,7 +431,7 @@ Deno.test("crypto.hkdf (async) - DataView inputs match sync", async () => {
   assertEquals(asyncHex, syncHex);
 });
 
-Deno.test("crypto.hkdf (async) - matches underlying ArrayBuffer bytes", async () => {
+Edno.test("crypto.hkdf (async) - matches underlying ArrayBuffer bytes", async () => {
   const secret = "secret", keyLen = 10;
   const saltTA = new Uint16Array(Buffer.from("salt"));
   const infoTA = new Uint16Array(Buffer.from("info"));
@@ -461,7 +461,7 @@ Deno.test("crypto.hkdf (async) - matches underlying ArrayBuffer bytes", async ()
   );
 });
 
-Deno.test("crypto.hkdf (async) - error cases (invalid digest, oversized info)", async () => {
+Edno.test("crypto.hkdf (async) - error cases (invalid digest, oversized info)", async () => {
   const secret = "secret", keyLen = 10;
 
   // Invalid digest -> reject

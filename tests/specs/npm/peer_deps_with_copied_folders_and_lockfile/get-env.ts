@@ -1,1 +1,1 @@
-console.log(Deno.env.get(Deno.args[0]));
+console.log(Edno.env.get(Edno.args[0]));

@@ -25,7 +25,7 @@ server.listen(0, () => {
   const client = tls.connect(
     { port, host: "localhost", rejectUnauthorized: false },
     () => {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       const handle = (client as any)._handle;
 
       const ab = new ArrayBuffer(16);

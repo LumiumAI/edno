@@ -1,6 +1,6 @@
 // Regression test: the node-compat PipeWrap handle (the native backing for
 // node:net unix sockets, reachable via process.binding("pipe_wrap")) must
-// honor Deno's filesystem permission model. Binding a unix-domain socket
+// honor Edno's filesystem permission model. Binding a unix-domain socket
 // creates a socket inode on disk, so it requires read+write permission for
 // the path. Without it, bind() must throw NotCapable, which in turn means the
 // path is never recorded and the fchmod/unlink-on-close paths that operate on
@@ -10,7 +10,7 @@
 
 import process from "node:process";
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const { Pipe, constants } = (process as any).binding("pipe_wrap");
 
 function tryBind(path: string): string {
@@ -29,7 +29,7 @@ function tryBind(path: string): string {
 // so permission-less code cannot create a socket inode on disk.
 console.log(
   "create:",
-  tryBind("/tmp/deno-pwn.sock") === "denied" ? "PASS" : "FAIL",
+  tryBind("/tmp/edno-pwn.sock") === "denied" ? "PASS" : "FAIL",
 );
 
 // (b)/(c): a denied bind must NOT record the path, so a subsequent fchmod or

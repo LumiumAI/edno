@@ -1,3 +1,3 @@
 export function sayHelloOnInstall() {
-  return '@denotest/say-hello-on-install';
+  return '@ednotest/say-hello-on-install';
 }

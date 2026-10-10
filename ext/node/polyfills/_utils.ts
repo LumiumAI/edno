@@ -15,15 +15,15 @@ const {
   SafeArrayIterator,
 } = primordials;
 const { TextDecoder, TextEncoder } = core.loadExtScript(
-  "ext:deno_web/08_text_encoding.js",
+  "ext:edno_web/08_text_encoding.js",
 );
-const { errorMap } = core.loadExtScript("ext:deno_node/internal_binding/uv.ts");
-const { codes } = core.loadExtScript("ext:deno_node/internal/error_codes.ts");
+const { errorMap } = core.loadExtScript("ext:edno_node/internal_binding/uv.ts");
+const { codes } = core.loadExtScript("ext:edno_node/internal/error_codes.ts");
 const { ERR_NOT_IMPLEMENTED } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const { validateNumber } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 
 type BinaryEncodings = "binary";
@@ -50,7 +50,7 @@ function warnNotImplemented(msg?: string) {
   const message = msg
     ? `Warning: Not implemented: ${msg}`
     : "Warning: Not implemented";
-  // deno-lint-ignore no-console
+  // edno-lint-ignore no-console
   console.warn(message);
 }
 
@@ -67,10 +67,10 @@ type MaybeDefined<T> = T | undefined;
 type MaybeEmpty<T> = T | null | undefined;
 
 function intoCallbackAPI<T>(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   func: (...args: any[]) => Promise<T>,
   cb: MaybeEmpty<(err: MaybeNull<Error>, value?: MaybeEmpty<T>) => void>,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   ...args: any[]
 ) {
   PromisePrototypeThen(
@@ -81,11 +81,11 @@ function intoCallbackAPI<T>(
 }
 
 function intoCallbackAPIWithIntercept<T1, T2>(
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   func: (...args: any[]) => Promise<T1>,
   interceptor: (v: T1) => T2,
   cb: MaybeEmpty<(err: MaybeNull<Error>, value?: MaybeEmpty<T2>) => void>,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   ...args: any[]
 ) {
   PromisePrototypeThen(

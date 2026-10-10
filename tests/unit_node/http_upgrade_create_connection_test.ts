@@ -8,7 +8,7 @@ import type { Duplex } from "node:stream";
 
 import { assert, assertStrictEquals } from "@std/assert";
 
-Deno.test({
+Edno.test({
   name: "[node/https] client upgrade reuses TLSSocket from createConnection",
   // TODO(bartlomieju): temporarily disabled during migration from resources to native handles
   ignore: true,
@@ -20,8 +20,8 @@ Deno.test({
     ],
   },
 }, async () => {
-  const cert = Deno.readTextFileSync("tests/testdata/tls/localhost.crt");
-  const key = Deno.readTextFileSync("tests/testdata/tls/localhost.key");
+  const cert = Edno.readTextFileSync("tests/testdata/tls/localhost.crt");
+  const key = Edno.readTextFileSync("tests/testdata/tls/localhost.key");
   let serverSocket: Duplex | undefined;
 
   const server = https.createServer({ cert, key });

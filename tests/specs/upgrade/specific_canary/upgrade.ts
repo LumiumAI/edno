@@ -2,9 +2,9 @@
 // Fetch the latest canary hash and upgrade to it.
 const hash =
   (await (await fetch("https://dl.deno.land/canary-latest.txt")).text()).trim();
-const { code } = await new Deno.Command("./deno_copy", {
+const { code } = await new Edno.Command("./edno_copy", {
   args: ["upgrade", "--force", "--canary", "--version", hash],
   stdout: "inherit",
   stderr: "inherit",
 }).output();
-Deno.exit(code);
+Edno.exit(code);

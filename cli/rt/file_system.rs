@@ -16,35 +16,35 @@ use std::sync::Mutex;
 use std::time::Duration;
 use std::time::SystemTime;
 
-use deno_core::BufMutView;
-use deno_core::BufView;
-use deno_core::ResourceHandleFd;
-use deno_lib::standalone::virtual_fs::FileSystemCaseSensitivity;
-use deno_lib::standalone::virtual_fs::OffsetWithLength;
-use deno_lib::standalone::virtual_fs::VfsEntry;
-use deno_lib::standalone::virtual_fs::VfsEntryRef;
-use deno_lib::standalone::virtual_fs::VirtualDirectory;
-use deno_lib::standalone::virtual_fs::VirtualFile;
-use deno_runtime::deno_fs::FileSystem;
-use deno_runtime::deno_fs::FsDirEntry;
-use deno_runtime::deno_fs::FsFileType;
-use deno_runtime::deno_fs::FsReadDir;
-use deno_runtime::deno_fs::FsReadDirRc;
-use deno_runtime::deno_fs::OpenOptions;
-use deno_runtime::deno_fs::RealFs;
-use deno_runtime::deno_fs::sync::new_rc;
-use deno_runtime::deno_io;
-use deno_runtime::deno_io::fs::File as DenoFile;
-use deno_runtime::deno_io::fs::FsError;
-use deno_runtime::deno_io::fs::FsResult;
-use deno_runtime::deno_io::fs::FsStat;
-use deno_runtime::deno_io::fs::FsStatFs;
-use deno_runtime::deno_napi::DenoRtNativeAddonLoader;
-use deno_runtime::deno_napi::DenoRtNativeAddonLoaderRc;
-use deno_runtime::deno_permissions::CheckedPath;
-use deno_runtime::deno_permissions::CheckedPathBuf;
+use edno_core::BufMutView;
+use edno_core::BufView;
+use edno_core::ResourceHandleFd;
+use edno_lib::standalone::virtual_fs::FileSystemCaseSensitivity;
+use edno_lib::standalone::virtual_fs::OffsetWithLength;
+use edno_lib::standalone::virtual_fs::VfsEntry;
+use edno_lib::standalone::virtual_fs::VfsEntryRef;
+use edno_lib::standalone::virtual_fs::VirtualDirectory;
+use edno_lib::standalone::virtual_fs::VirtualFile;
+use edno_runtime::edno_fs::FileSystem;
+use edno_runtime::edno_fs::FsDirEntry;
+use edno_runtime::edno_fs::FsFileType;
+use edno_runtime::edno_fs::FsReadDir;
+use edno_runtime::edno_fs::FsReadDirRc;
+use edno_runtime::edno_fs::OpenOptions;
+use edno_runtime::edno_fs::RealFs;
+use edno_runtime::edno_fs::sync::new_rc;
+use edno_runtime::edno_io;
+use edno_runtime::edno_io::fs::File as EdnoFile;
+use edno_runtime::edno_io::fs::FsError;
+use edno_runtime::edno_io::fs::FsResult;
+use edno_runtime::edno_io::fs::FsStat;
+use edno_runtime::edno_io::fs::FsStatFs;
+use edno_runtime::edno_napi::EdnoRtNativeAddonLoader;
+use edno_runtime::edno_napi::EdnoRtNativeAddonLoaderRc;
+use edno_runtime::edno_permissions::CheckedPath;
+use edno_runtime::edno_permissions::CheckedPathBuf;
 #[cfg(windows)]
-use deno_subprocess_windows::Stdio as StdStdio;
+use edno_subprocess_windows::Stdio as StdStdio;
 use sys_traits::FsCopy;
 use sys_traits::boxed::BoxedFsDirEntry;
 use sys_traits::boxed::BoxedFsMetadataValue;
@@ -53,12 +53,12 @@ use sys_traits::boxed::FsReadDirBoxed;
 use url::Url;
 
 #[derive(Debug, Clone)]
-pub struct DenoRtSys {
+pub struct EdnoRtSys {
   vfs: Arc<FileBackedVfs>,
   self_extracting: bool,
 }
 
-impl DenoRtSys {
+impl EdnoRtSys {
   pub fn new(vfs: Arc<FileBackedVfs>) -> Self {
     Self {
       vfs,
@@ -73,7 +73,7 @@ impl DenoRtSys {
     }
   }
 
-  pub fn maybe_native_addon_loader(&self) -> Option<DenoRtNativeAddonLoaderRc> {
+  pub fn maybe_native_addon_loader(&self) -> Option<EdnoRtNativeAddonLoaderRc> {
     if self.self_extracting {
       // native addons are already on disk, no need for VFS extraction
       None
@@ -134,7 +134,7 @@ impl DenoRtSys {
 }
 
 #[async_trait::async_trait(?Send)]
-impl FileSystem for DenoRtSys {
+impl FileSystem for EdnoRtSys {
   fn cwd(&self) -> FsResult<PathBuf> {
     RealFs.cwd()
   }
@@ -150,7 +150,7 @@ impl FileSystem for DenoRtSys {
       // Next.js standalone builds) commonly chdir into their own directory.
       // Verify the target exists and is a directory in the VFS and treat the
       // change as a no-op rather than failing with NotSupported. Note that
-      // Deno.cwd() still reports the previous (real) working directory.
+      // Edno.cwd() still reports the previous (real) working directory.
       if self.vfs.stat(path)?.as_fs_stat().is_directory {
         Ok(())
       } else {
@@ -172,7 +172,7 @@ impl FileSystem for DenoRtSys {
     &self,
     path: &CheckedPath,
     options: OpenOptions,
-  ) -> FsResult<Rc<dyn DenoFile>> {
+  ) -> FsResult<Rc<dyn EdnoFile>> {
     if self.is_vfs_path(path) {
       Ok(Rc::new(self.vfs.open_file(path)?))
     } else {
@@ -183,7 +183,7 @@ impl FileSystem for DenoRtSys {
     &'a self,
     path: CheckedPathBuf,
     options: OpenOptions,
-  ) -> FsResult<Rc<dyn DenoFile>> {
+  ) -> FsResult<Rc<dyn EdnoFile>> {
     if self.is_vfs_path(&path) {
       Ok(Rc::new(self.vfs.open_file(&path)?))
     } else {
@@ -614,14 +614,14 @@ impl FsReadDir for VfsReadDir {
   }
 }
 
-impl sys_traits::BaseFsHardLink for DenoRtSys {
+impl sys_traits::BaseFsHardLink for EdnoRtSys {
   #[inline]
   fn base_fs_hard_link(&self, src: &Path, dst: &Path) -> std::io::Result<()> {
     self
       .link_sync(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(src)),
         &CheckedPath::unsafe_new(Cow::Borrowed(dst)),
       )
@@ -629,14 +629,14 @@ impl sys_traits::BaseFsHardLink for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsRead for DenoRtSys {
+impl sys_traits::BaseFsRead for EdnoRtSys {
   #[inline]
   fn base_fs_read(&self, path: &Path) -> std::io::Result<Cow<'static, [u8]>> {
     self
       .read_file_sync(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(path)),
         OpenOptions::read(),
       )
@@ -738,7 +738,7 @@ fn not_supported(name: &str) -> std::io::Error {
   std::io::Error::new(
     ErrorKind::Unsupported,
     format!(
-      "{} is not supported for an embedded deno compile file",
+      "{} is not supported for an embedded edno compile file",
       name
     ),
   )
@@ -764,7 +764,7 @@ impl sys_traits::FsDirEntry for FileBackedVfsDirEntry {
   }
 }
 
-impl sys_traits::BaseFsReadDir for DenoRtSys {
+impl sys_traits::BaseFsReadDir for EdnoRtSys {
   type ReadDirEntry = BoxedFsDirEntry;
 
   fn base_fs_read_dir(
@@ -788,21 +788,21 @@ impl sys_traits::BaseFsReadDir for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsCanonicalize for DenoRtSys {
+impl sys_traits::BaseFsCanonicalize for EdnoRtSys {
   #[inline]
   fn base_fs_canonicalize(&self, path: &Path) -> std::io::Result<PathBuf> {
     self
       .realpath_sync(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(path)),
       )
       .map_err(|err| err.into_io_error())
   }
 }
 
-impl sys_traits::BaseFsMetadata for DenoRtSys {
+impl sys_traits::BaseFsMetadata for EdnoRtSys {
   type Metadata = BoxedFsMetadataValue;
 
   #[inline]
@@ -835,7 +835,7 @@ impl sys_traits::BaseFsMetadata for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsCopy for DenoRtSys {
+impl sys_traits::BaseFsCopy for EdnoRtSys {
   #[inline]
   fn base_fs_copy(&self, from: &Path, to: &Path) -> std::io::Result<u64> {
     self
@@ -844,8 +844,8 @@ impl sys_traits::BaseFsCopy for DenoRtSys {
     if self.is_vfs_path(from) {
       self.copy_to_real_path(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(from)),
         &CheckedPath::unsafe_new(Cow::Borrowed(to)),
       )
@@ -859,7 +859,7 @@ impl sys_traits::BaseFsCopy for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsCloneFile for DenoRtSys {
+impl sys_traits::BaseFsCloneFile for EdnoRtSys {
   fn base_fs_clone_file(
     &self,
     _from: &Path,
@@ -870,7 +870,7 @@ impl sys_traits::BaseFsCloneFile for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsCreateDir for DenoRtSys {
+impl sys_traits::BaseFsCreateDir for EdnoRtSys {
   #[inline]
   fn base_fs_create_dir(
     &self,
@@ -880,8 +880,8 @@ impl sys_traits::BaseFsCreateDir for DenoRtSys {
     self
       .mkdir_sync(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(path)),
         options.recursive,
         options.mode,
@@ -890,14 +890,14 @@ impl sys_traits::BaseFsCreateDir for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsRemoveFile for DenoRtSys {
+impl sys_traits::BaseFsRemoveFile for EdnoRtSys {
   #[inline]
   fn base_fs_remove_file(&self, path: &Path) -> std::io::Result<()> {
     self
       .remove_sync(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(path)),
         false,
       )
@@ -905,14 +905,14 @@ impl sys_traits::BaseFsRemoveFile for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsRename for DenoRtSys {
+impl sys_traits::BaseFsRename for EdnoRtSys {
   #[inline]
   fn base_fs_rename(&self, from: &Path, to: &Path) -> std::io::Result<()> {
     self
       .rename_sync(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(from)),
         &CheckedPath::unsafe_new(Cow::Borrowed(to)),
       )
@@ -1086,7 +1086,7 @@ impl sys_traits::FsFileIsTerminal for FsFileAdapter {
   }
 }
 
-impl sys_traits::BaseFsOpen for DenoRtSys {
+impl sys_traits::BaseFsOpen for EdnoRtSys {
   type File = FsFileAdapter;
 
   fn base_fs_open(
@@ -1108,13 +1108,13 @@ impl sys_traits::BaseFsOpen for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseFsSymlinkDir for DenoRtSys {
+impl sys_traits::BaseFsSymlinkDir for EdnoRtSys {
   fn base_fs_symlink_dir(&self, src: &Path, dst: &Path) -> std::io::Result<()> {
     self
       .symlink_sync(
         // PERMISSIONS: this is ok because JS code will never use sys_traits. Probably
-        // we should flip this so that the `deno_fs::FileSystem` implementation uses `sys_traits`
-        // rather than this calling into `deno_fs::FileSystem`
+        // we should flip this so that the `edno_fs::FileSystem` implementation uses `sys_traits`
+        // rather than this calling into `edno_fs::FileSystem`
         &CheckedPath::unsafe_new(Cow::Borrowed(src)),
         &CheckedPath::unsafe_new(Cow::Borrowed(dst)),
         Some(FsFileType::Directory),
@@ -1123,7 +1123,7 @@ impl sys_traits::BaseFsSymlinkDir for DenoRtSys {
   }
 }
 
-impl sys_traits::SystemRandom for DenoRtSys {
+impl sys_traits::SystemRandom for EdnoRtSys {
   #[inline]
   fn sys_random(&self, buf: &mut [u8]) -> std::io::Result<()> {
     #[allow(
@@ -1134,7 +1134,7 @@ impl sys_traits::SystemRandom for DenoRtSys {
   }
 }
 
-impl sys_traits::SystemTimeNow for DenoRtSys {
+impl sys_traits::SystemTimeNow for EdnoRtSys {
   #[inline]
   fn sys_time_now(&self) -> SystemTime {
     #[allow(
@@ -1145,7 +1145,7 @@ impl sys_traits::SystemTimeNow for DenoRtSys {
   }
 }
 
-impl sys_traits::ThreadSleep for DenoRtSys {
+impl sys_traits::ThreadSleep for EdnoRtSys {
   #[inline]
   fn thread_sleep(&self, dur: Duration) {
     #[allow(
@@ -1156,7 +1156,7 @@ impl sys_traits::ThreadSleep for DenoRtSys {
   }
 }
 
-impl sys_traits::EnvCurrentDir for DenoRtSys {
+impl sys_traits::EnvCurrentDir for EdnoRtSys {
   #[inline]
   fn env_current_dir(&self) -> std::io::Result<PathBuf> {
     #[allow(
@@ -1167,7 +1167,7 @@ impl sys_traits::EnvCurrentDir for DenoRtSys {
   }
 }
 
-impl sys_traits::EnvHomeDir for DenoRtSys {
+impl sys_traits::EnvHomeDir for EdnoRtSys {
   #[inline]
   fn env_home_dir(&self) -> Option<PathBuf> {
     #[allow(
@@ -1178,7 +1178,7 @@ impl sys_traits::EnvHomeDir for DenoRtSys {
   }
 }
 
-impl sys_traits::BaseEnvVar for DenoRtSys {
+impl sys_traits::BaseEnvVar for EdnoRtSys {
   fn base_env_var_os(
     &self,
     key: &std::ffi::OsStr,
@@ -1251,9 +1251,9 @@ impl VfsRoot {
         // "outside root" is the common host-FS fallback path in
         // desktop --hmr / runtime-dynamic imports. Don't print at all
         // by default; the caller falls through to a real filesystem
-        // read. Set DENO_LOG=denort=debug to see it.
+        // read. Set EDNO_LOG=ednort=debug to see it.
         log::debug!(
-          target: "denort",
+          target: "ednort",
           "[VFS] path outside root '{}': {}",
           self.root_path.display(),
           path.display(),
@@ -1408,7 +1408,7 @@ impl FileBackedVfsFile {
 }
 
 #[async_trait::async_trait(?Send)]
-impl deno_io::fs::File for FileBackedVfsFile {
+impl edno_io::fs::File for FileBackedVfsFile {
   fn maybe_path(&self) -> Option<&Path> {
     // ok because a vfs file will never be written to and this
     // method is only used for checking write permissions
@@ -1433,7 +1433,7 @@ impl deno_io::fs::File for FileBackedVfsFile {
   async fn write(
     self: Rc<Self>,
     _buf: BufView,
-  ) -> FsResult<deno_core::WriteOutcome> {
+  ) -> FsResult<edno_core::WriteOutcome> {
     Err(FsError::NotSupported)
   }
 
@@ -1585,7 +1585,7 @@ impl deno_io::fs::File for FileBackedVfsFile {
   fn backing_fd(self: Rc<Self>) -> Option<ResourceHandleFd> {
     None
   }
-  fn try_clone_inner(self: Rc<Self>) -> FsResult<Rc<dyn deno_io::fs::File>> {
+  fn try_clone_inner(self: Rc<Self>) -> FsResult<Rc<dyn edno_io::fs::File>> {
     Ok(self)
   }
 }
@@ -1855,7 +1855,7 @@ impl FileBackedVfs {
   }
 }
 
-impl DenoRtNativeAddonLoader for FileBackedVfs {
+impl EdnoRtNativeAddonLoader for FileBackedVfs {
   fn load_if_in_vfs(&self, path: &Path) -> Option<Cow<'static, [u8]>> {
     if !self.is_path_within(path) {
       return None;
@@ -1869,7 +1869,7 @@ impl DenoRtNativeAddonLoader for FileBackedVfs {
 mod test {
   use std::io::Write;
 
-  use deno_lib::standalone::virtual_fs::VfsBuilder;
+  use edno_lib::standalone::virtual_fs::VfsBuilder;
   use test_util::TempDir;
   use test_util::assert_contains;
 

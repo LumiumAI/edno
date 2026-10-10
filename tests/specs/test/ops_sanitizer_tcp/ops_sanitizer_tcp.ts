@@ -1,4 +1,4 @@
-Deno.test(function testLeakTcpOps() {
-  const listener1 = Deno.listen({ port: 0 });
+Edno.test(function testLeakTcpOps() {
+  const listener1 = Edno.listen({ port: 0 });
   listener1.accept();
 });

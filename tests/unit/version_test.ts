@@ -2,9 +2,9 @@
 
 import { assert, assertEquals } from "./test_util.ts";
 
-Deno.test(function version() {
+Edno.test(function version() {
   const pattern = /^\d+\.\d+\.\d+/;
-  assert(pattern.test(Deno.version.deno));
-  assert(pattern.test(Deno.version.v8));
-  assertEquals(Deno.version.typescript, "6.0.3");
+  assert(pattern.test(Edno.version.edno));
+  assert(pattern.test(Edno.version.v8));
+  assertEquals(Edno.version.typescript, "6.0.3");
 });

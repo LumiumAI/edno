@@ -1,5 +1,5 @@
-const path = Deno.args[0];
-const pattern = Deno.args[1];
+const path = Edno.args[0];
+const pattern = Edno.args[1];
 
 declare global {
   interface RegExpConstructor {
@@ -7,7 +7,7 @@ declare global {
   }
 }
 
-const contents = Deno.readTextFileSync(path);
+const contents = Edno.readTextFileSync(path);
 
 let matcher: RegExp | string = pattern;
 if (pattern.startsWith("regex:")) {

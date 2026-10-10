@@ -10,12 +10,12 @@ use test_util::test;
 #[test]
 fn xdg_cache_home_dir() {
   let context = TestContext::with_http_server();
-  let deno_dir = context.temp_dir();
-  let xdg_cache_home = deno_dir.path().join("cache");
+  let edno_dir = context.temp_dir();
+  let xdg_cache_home = edno_dir.path().join("cache");
   context
     .new_command()
     .env_remove("HOME")
-    .env_remove("DENO_DIR")
+    .env_remove("EDNO_DIR")
     .env_clear()
     .env("XDG_CACHE_HOME", &xdg_cache_home)
     .args(
@@ -35,7 +35,7 @@ fn cache_matching_package_json_dep_should_not_install_all() {
   let temp_dir = context.temp_dir();
   temp_dir.write(
     "package.json",
-    r#"{ "dependencies": { "@types/node": "22.12.0", "@denotest/esm-basic": "*" } }"#,
+    r#"{ "dependencies": { "@types/node": "22.12.0", "@ednotest/esm-basic": "*" } }"#,
   );
   let output = context
     .new_command()
@@ -116,7 +116,7 @@ fn web_cache_is_stored_under_deno_dir() {
     .assert_exit_code(0);
 
   let web_cache_dir = test_context
-    .deno_dir()
+    .edno_dir()
     .path()
     .join("location_data")
     .join("web_cache");

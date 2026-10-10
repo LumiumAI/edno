@@ -6,7 +6,7 @@ import { pseudoRandomBytes, randomBytes } from "node:crypto";
 const MAX_RANDOM_VALUES = 65536;
 const MAX_SIZE = 4294967295;
 
-Deno.test("randomBytes sync works correctly", function () {
+Edno.test("randomBytes sync works correctly", function () {
   assertEquals(randomBytes(0).length, 0, "len: " + 0);
   assertEquals(randomBytes(3).length, 3, "len: " + 3);
   assertEquals(randomBytes(30).length, 30, "len: " + 30);
@@ -25,7 +25,7 @@ Deno.test("randomBytes sync works correctly", function () {
   assertThrows(() => randomBytes(-1));
 });
 
-Deno.test("randomBytes async works correctly", async function () {
+Edno.test("randomBytes async works correctly", async function () {
   randomBytes(0, function (err, resp) {
     assert(!err);
     assertEquals(resp?.length, 0, "len: " + 0);
@@ -78,7 +78,7 @@ Deno.test("randomBytes async works correctly", async function () {
   );
 });
 
-Deno.test("[std/node/crypto] randomBytes callback isn't called twice if error is thrown", async () => {
+Edno.test("[std/node/crypto] randomBytes callback isn't called twice if error is thrown", async () => {
   const importUrl = new URL("node:crypto", import.meta.url);
   await assertCallbackErrorUncaught({
     prelude: `import { randomBytes } from ${JSON.stringify(importUrl)}`,
@@ -88,7 +88,7 @@ Deno.test("[std/node/crypto] randomBytes callback isn't called twice if error is
 
 // https://github.com/denoland/deno/issues/32047
 // randomBytes should return a buffer with its own ArrayBuffer, not a shared pool
-Deno.test("randomBytes buffer has correct byteLength and unique values", function () {
+Edno.test("randomBytes buffer has correct byteLength and unique values", function () {
   // Test that the underlying ArrayBuffer has the expected size
   const buf8 = randomBytes(8);
   assertEquals(
@@ -112,7 +112,7 @@ Deno.test("randomBytes buffer has correct byteLength and unique values", functio
 });
 
 // https://github.com/denoland/deno/issues/21632
-Deno.test("pseudoRandomBytes works", function () {
+Edno.test("pseudoRandomBytes works", function () {
   assertEquals(pseudoRandomBytes(0).length, 0, "len: " + 0);
   assertEquals(pseudoRandomBytes(3).length, 3, "len: " + 3);
   assertEquals(pseudoRandomBytes(30).length, 30, "len: " + 30);

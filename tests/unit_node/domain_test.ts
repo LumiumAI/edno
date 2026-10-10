@@ -53,14 +53,14 @@ async function expectUncaughtException(
 }
 
 async function runFatalDomainEval(source: string) {
-  return await new Deno.Command(Deno.execPath(), {
+  return await new Edno.Command(Edno.execPath(), {
     args: ["eval", source],
     stderr: "piped",
     stdout: "piped",
   }).output();
 }
 
-Deno.test("should work on throws", async function () {
+Edno.test("should work on throws", async function () {
   const deferred = Promise.withResolvers<void>();
   const d = domain.create();
 
@@ -75,7 +75,7 @@ Deno.test("should work on throws", async function () {
   await deferred.promise;
 });
 
-Deno.test("should be able to add emitters", async function () {
+Edno.test("should be able to add emitters", async function () {
   const deferred = Promise.withResolvers<void>();
   const d = domain.create();
   const emitter = new EventEmitter();
@@ -90,7 +90,7 @@ Deno.test("should be able to add emitters", async function () {
   await deferred.promise;
 });
 
-Deno.test("should be able to remove emitters", async function () {
+Edno.test("should be able to remove emitters", async function () {
   const deferred = Promise.withResolvers<void>();
   const emitter = new EventEmitter();
   const d = domain.create();
@@ -120,7 +120,7 @@ Deno.test("should be able to remove emitters", async function () {
   await deferred.promise;
 });
 
-Deno.test("bind should work", async function () {
+Edno.test("bind should work", async function () {
   const deferred = Promise.withResolvers<void>();
   const d = domain.create();
 
@@ -137,7 +137,7 @@ Deno.test("bind should work", async function () {
   await deferred.promise;
 });
 
-Deno.test("intercept should work", async function () {
+Edno.test("intercept should work", async function () {
   const deferred = Promise.withResolvers<void>();
   const d = domain.create();
   let count = 0;
@@ -165,7 +165,7 @@ Deno.test("intercept should work", async function () {
   await deferred.promise;
 });
 
-Deno.test("handled async errors clear manually entered domains", async () => {
+Edno.test("handled async errors clear manually entered domains", async () => {
   const outer = domain.create();
   const inner = domain.create();
   const laterTurn = checkNoDomainOnLaterTurn();
@@ -185,7 +185,7 @@ Deno.test("handled async errors clear manually entered domains", async () => {
   await laterTurn.check;
 });
 
-Deno.test("errors from a nested domain handler reach its parent", async () => {
+Edno.test("errors from a nested domain handler reach its parent", async () => {
   const parent = domain.create();
   const child = domain.create();
   const laterTurn = checkNoDomainOnLaterTurn();
@@ -210,7 +210,7 @@ Deno.test("errors from a nested domain handler reach its parent", async () => {
   await laterTurn.check;
 });
 
-Deno.test("errors from a child without a handler reach its parent", async () => {
+Edno.test("errors from a child without a handler reach its parent", async () => {
   const parent = domain.create();
   const child = domain.create();
   const laterTurn = checkNoDomainOnLaterTurn();
@@ -231,7 +231,7 @@ Deno.test("errors from a child without a handler reach its parent", async () => 
   await laterTurn.check;
 });
 
-Deno.test("handled errors clear non-adjacent repeated domains", async () => {
+Edno.test("handled errors clear non-adjacent repeated domains", async () => {
   const outer = domain.create();
   const inner = domain.create();
   const laterTurn = checkNoDomainOnLaterTurn();
@@ -252,7 +252,7 @@ Deno.test("handled errors clear non-adjacent repeated domains", async () => {
   await laterTurn.check;
 });
 
-Deno.test("errors traverse three nested domain handlers", async () => {
+Edno.test("errors traverse three nested domain handlers", async () => {
   const grandparent = domain.create();
   const parent = domain.create();
   const child = domain.create();
@@ -284,7 +284,7 @@ Deno.test("errors traverse three nested domain handlers", async () => {
   await laterTurn.check;
 });
 
-Deno.test("top-level domains without handlers reach uncaughtException", async () => {
+Edno.test("top-level domains without handlers reach uncaughtException", async () => {
   const topLevel = domain.create();
 
   await expectUncaughtException("top-level callback failed", () => {
@@ -298,7 +298,7 @@ Deno.test("top-level domains without handlers reach uncaughtException", async ()
   assertNoActiveDomain();
 });
 
-Deno.test("errors from top-level domain handlers remain fatal", async () => {
+Edno.test("errors from top-level domain handlers remain fatal", async () => {
   const output = await runFatalDomainEval(`
     import domain from "node:domain";
     const topLevel = domain.create();
@@ -320,7 +320,7 @@ Deno.test("errors from top-level domain handlers remain fatal", async () => {
   );
 });
 
-Deno.test("disposed domains rethrow uncaught errors", async () => {
+Edno.test("disposed domains rethrow uncaught errors", async () => {
   const output = await runFatalDomainEval(`
     import domain from "node:domain";
     const parent = domain.create();
@@ -343,7 +343,7 @@ Deno.test("disposed domains rethrow uncaught errors", async () => {
   );
 });
 
-Deno.test("balanced domain entries preserve their parent", () => {
+Edno.test("balanced domain entries preserve their parent", () => {
   const parent = domain.create();
   const child = domain.create();
 

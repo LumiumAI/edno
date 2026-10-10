@@ -1,3 +1,3 @@
-Deno.hostname();
-await Deno.makeTempDir();
-Deno.env.get("FOO");
+Edno.hostname();
+await Edno.makeTempDir();
+Edno.env.get("FOO");

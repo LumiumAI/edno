@@ -10,10 +10,10 @@ use std::rc::Weak;
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use deno_core::futures;
-use deno_core::futures::FutureExt;
-use deno_core::unsync::JoinHandle;
-use deno_core::unsync::spawn;
+use edno_core::futures;
+use edno_core::futures::FutureExt;
+use edno_core::unsync::JoinHandle;
+use edno_core::unsync::spawn;
 use tokio::sync::OwnedSemaphorePermit;
 use tokio::sync::Semaphore;
 use tokio::sync::mpsc;
@@ -324,7 +324,7 @@ impl CronHandle for CronExecutionHandle {
 fn compute_next_deadline(cron_expression: &str) -> Result<u64, CronError> {
   let now = chrono::Utc::now();
 
-  if let Ok(test_schedule) = env::var("DENO_CRON_TEST_SCHEDULE_OFFSET")
+  if let Ok(test_schedule) = env::var("EDNO_CRON_TEST_SCHEDULE_OFFSET")
     && let Ok(offset) = test_schedule.parse::<u64>()
   {
     return Ok(now.timestamp_millis() as u64 + offset);

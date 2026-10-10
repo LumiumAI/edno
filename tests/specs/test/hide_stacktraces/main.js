@@ -1,4 +1,4 @@
-Deno.test("assert a b", () => {
+Edno.test("assert a b", () => {
   class AssertionError extends Error {
     name = "AssertionError";
   }

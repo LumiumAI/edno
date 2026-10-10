@@ -12,10 +12,10 @@ const privateConstructor = Symbol();
 let parentWorker: Worker | null = null;
 
 export class Worker {
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   #worker: any;
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   constructor(privateParent: symbol, worker: any);
   constructor(baseUrl: string, url: string);
   constructor(arg1: unknown, arg2: unknown) {

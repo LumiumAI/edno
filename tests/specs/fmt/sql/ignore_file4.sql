@@ -1,3 +1,3 @@
--- deno-fmt-ignore-file Foo bar biz
+-- edno-fmt-ignore-file Foo bar biz
 
   foo%!

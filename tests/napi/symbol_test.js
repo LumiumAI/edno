@@ -4,7 +4,7 @@ import { assert, assertEquals, loadTestLibrary } from "./common.js";
 
 const testSymbol = loadTestLibrary();
 
-Deno.test("napi symbol1", () => {
+Edno.test("napi symbol1", () => {
   const sym = testSymbol.symbolNew("test");
   assertEquals(sym.toString(), "Symbol(test)");
 
@@ -19,7 +19,7 @@ Deno.test("napi symbol1", () => {
   assertEquals(myObj[otherSym], "bing");
 });
 
-Deno.test("napi symbol2", () => {
+Edno.test("napi symbol2", () => {
   const sym = testSymbol.symbolNew("test");
   assertEquals(sym.toString(), "Symbol(test)");
 
@@ -33,7 +33,7 @@ Deno.test("napi symbol2", () => {
   assertEquals(Object.getOwnPropertySymbols(myObj), [fooSym]);
 });
 
-Deno.test("napi symbol3", () => {
+Edno.test("napi symbol3", () => {
   assert(testSymbol.symbolNew() !== testSymbol.symbolNew());
   assert(testSymbol.symbolNew("foo") !== testSymbol.symbolNew("foo"));
   assert(testSymbol.symbolNew("foo") !== testSymbol.symbolNew("bar"));
@@ -48,7 +48,7 @@ Deno.test("napi symbol3", () => {
   assertEquals(object[foo2], 2);
 });
 
-Deno.test("napi symbol_for", () => {
+Edno.test("napi symbol_for", () => {
   const sym1 = testSymbol.symbolFor("shared");
   const sym2 = testSymbol.symbolFor("shared");
   // symbol_for with the same key returns the same symbol (like Symbol.for)

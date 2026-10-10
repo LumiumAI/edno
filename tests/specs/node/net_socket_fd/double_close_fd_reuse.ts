@@ -19,8 +19,8 @@ const require = createRequire(import.meta.url);
 const { TCP, constants: TCPConstants } = require("internal/test/binding")
   .internalBinding("tcp_wrap");
 
-const libName = Deno.build.os === "darwin" ? "libSystem.B.dylib" : "libc.so.6";
-const lib = Deno.dlopen(libName, {
+const libName = Edno.build.os === "darwin" ? "libSystem.B.dylib" : "libc.so.6";
+const lib = Edno.dlopen(libName, {
   socket: { parameters: ["i32", "i32", "i32"], result: "i32" },
   close: { parameters: ["i32"], result: "i32" },
 });
@@ -32,14 +32,14 @@ const SOCK_STREAM = 1;
 const sockFd = lib.symbols.socket(AF_INET, SOCK_STREAM, 0) as number;
 if (sockFd < 0) {
   console.log("FAIL: socket() failed");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 const tcp = new TCP(TCPConstants.SOCKET);
 if (tcp.open(sockFd) !== 0) {
   console.log("FAIL: TCP.open(fd) returned error");
   lib.symbols.close(sockFd);
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // First close: drops the UvOwned entry and frees the OS fd. Wait for the
@@ -48,7 +48,7 @@ if (tcp.open(sockFd) !== 0) {
 await new Promise<void>((resolve) => tcp.close(() => resolve()));
 
 // Force the OS to reuse the freed fd number for a real (TableOwned) file.
-const tmpFile = path.join(os.tmpdir(), `deno-tcp-doubleclose-${process.pid}`);
+const tmpFile = path.join(os.tmpdir(), `edno-tcp-doubleclose-${process.pid}`);
 fs.writeFileSync(tmpFile, "test data");
 const openedFds: number[] = [];
 let reusedFd = -1;

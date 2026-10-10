@@ -1,6 +1,6 @@
 import process from "node:process";
 
-//deno-lint-ignore no-undef
+//edno-lint-ignore no-undef
 process.on("exit", () => {
   console.log(1);
 });
@@ -8,12 +8,12 @@ process.on("exit", () => {
 function unexpected() {
   console.log(null);
 }
-//deno-lint-ignore no-undef
+//edno-lint-ignore no-undef
 process.on("exit", unexpected);
-//deno-lint-ignore no-undef
+//edno-lint-ignore no-undef
 process.removeListener("exit", unexpected);
 
-//deno-lint-ignore no-undef
+//edno-lint-ignore no-undef
 process.on("exit", () => {
   console.log(2);
 });

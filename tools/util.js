@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import {
   dirname,
@@ -33,7 +33,7 @@ function isJjRepo() {
 }
 
 async function getFilesFromGit(baseDir, args) {
-  const { success, stdout } = await new Deno.Command("git", {
+  const { success, stdout } = await new Edno.Command("git", {
     stderr: "inherit",
     args,
   }).output();
@@ -47,7 +47,7 @@ async function getFilesFromGit(baseDir, args) {
     .filter((line) => line.length > 0)
     .map((filePath) => {
       try {
-        return Deno.realPathSync(join(baseDir, filePath));
+        return Edno.realPathSync(join(baseDir, filePath));
       } catch {
         return null;
       }
@@ -120,14 +120,14 @@ function gitGlobsToJjFileset(patterns) {
 }
 
 async function getFilesFromJj(baseDir, patterns) {
-  baseDir = Deno.realPathSync(baseDir);
+  baseDir = Edno.realPathSync(baseDir);
   const jjPatterns = gitGlobsToJjFileset(patterns);
   const cmd = [
     "file",
     "list",
     ...jjPatterns,
   ];
-  const { success, stdout } = await new Deno.Command(
+  const { success, stdout } = await new Edno.Command(
     "jj",
     {
       stderr: "inherit",
@@ -142,7 +142,7 @@ async function getFilesFromJj(baseDir, patterns) {
   const files = output.split("\n").filter((line) => line.length > 0)
     .map((filePath) => {
       try {
-        return Deno.realPathSync(join(baseDir, filePath));
+        return Edno.realPathSync(join(baseDir, filePath));
       } catch {
         return null;
       }
@@ -155,7 +155,7 @@ export function gitLsFiles(baseDir, patterns) {
   if (isJjRepo()) {
     return getFilesFromJj(baseDir, patterns);
   }
-  baseDir = Deno.realPathSync(baseDir);
+  baseDir = Edno.realPathSync(baseDir);
   const cmd = [
     "-C",
     baseDir,
@@ -173,7 +173,7 @@ export function gitLsFiles(baseDir, patterns) {
 
 /** List all files staged for commit */
 function gitStaged(baseDir, patterns) {
-  baseDir = Deno.realPathSync(baseDir);
+  baseDir = Edno.realPathSync(baseDir);
   const cmd = [
     "-C",
     baseDir,
@@ -201,7 +201,7 @@ function gitStaged(baseDir, patterns) {
  * only staged sources will be returned.
  */
 export async function getSources(baseDir, patterns) {
-  const stagedOnly = Deno.args.includes("--staged");
+  const stagedOnly = Edno.args.includes("--staged");
 
   if (stagedOnly) {
     return await gitStaged(baseDir, patterns);
@@ -211,7 +211,7 @@ export async function getSources(baseDir, patterns) {
 }
 
 export function buildMode() {
-  if (Deno.args.includes("--release")) {
+  if (Edno.args.includes("--release")) {
     return "release";
   }
 
@@ -226,18 +226,18 @@ const platformDirName = {
   "windows": "win",
   "darwin": "mac",
   "linux": "linux64",
-}[Deno.build.os];
+}[Edno.build.os];
 
-const executableSuffix = Deno.build.os === "windows" ? ".exe" : "";
+const executableSuffix = Edno.build.os === "windows" ? ".exe" : "";
 
 async function sanityCheckPrebuiltFile(toolPath) {
-  const stat = await Deno.stat(toolPath);
+  const stat = await Edno.stat(toolPath);
   if (stat.size < PREBUILT_MINIMUM_SIZE) {
     throw new Error(
       `File size ${stat.size} is less than expected minimum file size ${PREBUILT_MINIMUM_SIZE}`,
     );
   }
-  const file = await Deno.open(toolPath, { read: true });
+  const file = await Edno.open(toolPath, { read: true });
   const buffer = new Uint8Array(1024);
   let n = 0;
   while (n < 1024) {
@@ -331,7 +331,7 @@ export async function downloadPrebuilt(toolName) {
   const tempFile = `${toolPath}.temp`;
 
   try {
-    await Deno.mkdir(PREBUILT_TOOL_DIR, { recursive: true });
+    await Edno.mkdir(PREBUILT_TOOL_DIR, { recursive: true });
 
     let url = `${downloadUrl}/${toolName}${executableSuffix}`;
     if (compressed.has(toolName)) {
@@ -339,8 +339,8 @@ export async function downloadPrebuilt(toolName) {
     }
 
     const headers = new Headers();
-    if (Deno.env.has("GITHUB_TOKEN")) {
-      headers.append("authorization", `Bearer ${Deno.env.get("GITHUB_TOKEN")}`);
+    if (Edno.env.has("GITHUB_TOKEN")) {
+      headers.append("authorization", `Bearer ${Edno.env.get("GITHUB_TOKEN")}`);
     }
 
     const resp = await fetchPrebuilt(url, headers);
@@ -348,7 +348,7 @@ export async function downloadPrebuilt(toolName) {
       throw new Error(`Non-successful response from ${url}: ${resp.status}`);
     }
 
-    const file = await Deno.open(tempFile, {
+    const file = await Edno.open(tempFile, {
       create: true,
       write: true,
       mode: 0o755,
@@ -366,11 +366,11 @@ export async function downloadPrebuilt(toolName) {
     console.error("Successfully downloaded:", toolName);
     try {
       // necessary on Windows it seems
-      await Deno.remove(toolPath);
+      await Edno.remove(toolPath);
     } catch {
       // ignore
     }
-    await Deno.rename(tempFile, toolPath);
+    await Edno.rename(tempFile, toolPath);
   } catch (e) {
     downloadDeferred.reject(e);
     throw e;
@@ -393,7 +393,7 @@ export class InputHasher {
   /** Create a hasher pre-seeded with the current CLI args. */
   static newWithCliArgs() {
     const hasher = new InputHasher();
-    for (const arg of Deno.args) {
+    for (const arg of Edno.args) {
       hasher.writeSync(arg);
     }
     return hasher;
@@ -407,7 +407,7 @@ export class InputHasher {
   /** Hash a single file's contents (streamed). Skips if file doesn't exist. */
   async hashFile(path) {
     try {
-      const file = await Deno.open(path);
+      const file = await Edno.open(path);
       for await (const chunk of file.readable) {
         this.#hash.update(chunk);
       }
@@ -429,7 +429,7 @@ export class InputHasher {
         this.writeSync(entryPath.slice(path.length));
       }
       try {
-        const file = await Deno.open(entryPath);
+        const file = await Edno.open(entryPath);
         for await (const chunk of file.readable) {
           this.#hash.update(chunk);
         }
@@ -449,7 +449,7 @@ export class InputHasher {
 function collectEntriesRecursive(dir, out) {
   let entries;
   try {
-    entries = Deno.readDirSync(dir);
+    entries = Edno.readDirSync(dir);
   } catch {
     return;
   }
@@ -463,7 +463,7 @@ function collectEntriesRecursive(dir, out) {
   }
 }
 
-const HASHY_URL = "https://hashy.deno.deno.net";
+const HASHY_URL = "https://hashy.edno.edno.net";
 
 /**
  * Check if tests can be skipped on CI by comparing input hashes
@@ -477,7 +477,7 @@ const HASHY_URL = "https://hashy.deno.deno.net";
  */
 export async function checkCiHash(name, configure) {
   const noop = { skip: false, commit: async () => {} };
-  if (!Deno.env.get("CI")) {
+  if (!Edno.env.get("CI")) {
     return noop;
   }
 
@@ -531,6 +531,6 @@ export async function checkCiHash(name, configure) {
 }
 
 function isMainOrTag() {
-  const ref = Deno.env.get("GITHUB_REF") ?? "";
+  const ref = Edno.env.get("GITHUB_REF") ?? "";
   return ref === "refs/heads/main" || ref.startsWith("refs/tags/");
 }

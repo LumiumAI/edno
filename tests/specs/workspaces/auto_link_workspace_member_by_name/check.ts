@@ -9,9 +9,9 @@ function assertMissing(path: string) {
   let exists = true;
   try {
     // lstat (not stat) so even a dangling symlink counts as present.
-    Deno.lstatSync(path);
+    Edno.lstatSync(path);
   } catch (err) {
-    if (err instanceof Deno.errors.NotFound) {
+    if (err instanceof Edno.errors.NotFound) {
       exists = false;
     } else {
       throw err;
@@ -24,7 +24,7 @@ function assertMissing(path: string) {
 
 // (a) The member is linked into the root `node_modules` under its real,
 // scoped package name.
-const stat = Deno.statSync("node_modules/@workspace/env");
+const stat = Edno.statSync("node_modules/@workspace/env");
 if (!stat.isDirectory) {
   throw new Error(
     "expected node_modules/@workspace/env to resolve to the member",
@@ -32,12 +32,12 @@ if (!stat.isDirectory) {
 }
 
 // and its on-disk subpath resolves through the link back to the member's files.
-const mod = Deno.readTextFileSync("node_modules/@workspace/env/mod.js");
+const mod = Edno.readTextFileSync("node_modules/@workspace/env/mod.js");
 if (!mod.includes("env-value")) {
   throw new Error("expected the linked member's mod.js to resolve");
 }
 const pkg = JSON.parse(
-  Deno.readTextFileSync("node_modules/@workspace/env/package.json"),
+  Edno.readTextFileSync("node_modules/@workspace/env/package.json"),
 );
 if (pkg.name !== "@workspace/env") {
   throw new Error(`expected @workspace/env, got ${pkg.name}`);

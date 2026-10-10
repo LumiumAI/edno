@@ -8,14 +8,14 @@ const os = require("os");
 
 const tmpFile = path.join(
   os.tmpdir(),
-  `deno_pipe_write_test_${process.pid}.txt`,
+  `edno_pipe_write_test_${process.pid}.txt`,
 );
 
 // Create a pipe (FIFO) to get a PIPE-type fd, or just use a socketpair.
 // Simplest: write to a file via child process using inherited fd.
 // Actually, the simplest test: create a unix socket server, connect,
 // and verify data flows through a socket fd wrapped in net.Socket.
-const sockPath = path.join(os.tmpdir(), `deno_pipe_write_${process.pid}.sock`);
+const sockPath = path.join(os.tmpdir(), `edno_pipe_write_${process.pid}.sock`);
 try {
   fs.unlinkSync(sockPath);
 } catch {}

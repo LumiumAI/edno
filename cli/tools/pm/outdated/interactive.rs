@@ -5,7 +5,7 @@ use std::collections::HashSet;
 use std::fmt::Write as _;
 
 use console_static_text::TextItem;
-use deno_core::anyhow;
+use edno_core::anyhow;
 use deno_semver::Version;
 use deno_semver::VersionReq;
 use deno_terminal::colors;

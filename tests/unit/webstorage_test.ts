@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 import { assert, assertEquals, assertThrows } from "./test_util.ts";
 
-Deno.test({ permissions: "none" }, function webStoragesReassignable() {
+Edno.test({ permissions: "none" }, function webStoragesReassignable() {
   // Can reassign to web storages
   globalThis.localStorage = 1 as any;
   globalThis.sessionStorage = 1 as any;
@@ -12,7 +12,7 @@ Deno.test({ permissions: "none" }, function webStoragesReassignable() {
   assert(globalThis.sessionStorage instanceof globalThis.Storage);
 });
 
-Deno.test(function webstorageSizeLimit() {
+Edno.test(function webstorageSizeLimit() {
   localStorage.clear();
   assertThrows(
     () => {
@@ -41,7 +41,7 @@ Deno.test(function webstorageSizeLimit() {
   );
 });
 
-Deno.test(function webstorageProxy() {
+Edno.test(function webstorageProxy() {
   localStorage.clear();
   localStorage.foo = "foo";
   assertEquals(localStorage.foo, "foo");
@@ -51,12 +51,12 @@ Deno.test(function webstorageProxy() {
   assertEquals(symbol in localStorage, true);
 });
 
-Deno.test(function webstorageConstructorName() {
+Edno.test(function webstorageConstructorName() {
   assertEquals(localStorage.constructor.name, "Storage");
   assertEquals(sessionStorage.constructor.name, "Storage");
 });
 
-Deno.test(function webstorageGetOwnPropertyDescriptorSymbol() {
+Edno.test(function webstorageGetOwnPropertyDescriptorSymbol() {
   localStorage.clear();
   Object.getOwnPropertyDescriptor(localStorage, Symbol("foo"));
 });

@@ -29,7 +29,7 @@ const {
   TypeError,
 } = primordials;
 
-const { Event, EventTarget } = core.loadExtScript("ext:deno_web/02_event.js");
+const { Event, EventTarget } = core.loadExtScript("ext:edno_web/02_event.js");
 
 const windowDispatchEvent = FunctionPrototypeBind(
   EventTarget.prototype.dispatchEvent,
@@ -84,7 +84,7 @@ function exit(code) {
   }
 
   // Dispatches `unload` only when it's not dispatched yet.
-  if (!globalThis[SymbolFor("Deno.isUnloadDispatched")]) {
+  if (!globalThis[SymbolFor("Edno.isUnloadDispatched")]) {
     // Invokes the `unload` hooks before exiting
     // ref: https://github.com/denoland/deno/issues/3603
     windowDispatchEvent(new Event("unload"));

@@ -4,13 +4,13 @@
 // Ports lib/internal/cluster/worker.js.
 
 // TODO(petamoriken): enable prefer-primordials for node polyfills
-// deno-lint-ignore-file no-explicit-any deno-internal/prefer-primordials
+// edno-lint-ignore-file no-explicit-any edno-internal/prefer-primordials
 
 (function () {
 const { core, primordials } = __bootstrap;
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const { kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 
 const { FunctionPrototypeCall, ObjectSetPrototypeOf, ReflectApply } =

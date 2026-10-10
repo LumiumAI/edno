@@ -1794,7 +1794,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }
@@ -1860,7 +1860,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }
@@ -1926,7 +1926,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }
@@ -1992,7 +1992,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }
@@ -2046,7 +2046,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }
@@ -2100,7 +2100,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }
@@ -2176,7 +2176,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }
@@ -2215,7 +2215,7 @@
             },
             "severity": 1,
             "code": 1308,
-            "source": "deno-ts",
+            "source": "edno-ts",
             "message": "'await' expressions are only allowed within async functions and at the top levels of modules.",
             "relatedInformation": []
           }

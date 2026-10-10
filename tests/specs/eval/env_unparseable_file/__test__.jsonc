@@ -1,4 +1,4 @@
 {
-  "args": "eval --env-file=env_unparseable console.log(Deno.env.get(\"ANOTHER_FOO\"));",
+  "args": "eval --env-file=env_unparseable console.log(Edno.env.get(\"ANOTHER_FOO\"));",
   "output": "main.out"
 }

@@ -1,4 +1,4 @@
 {
-  "args": "eval --env-file=invalid_utf8_env console.log(Deno.env.get(\"BAR\"))",
+  "args": "eval --env-file=invalid_utf8_env console.log(Edno.env.get(\"BAR\"))",
   "output": "main.out"
 }

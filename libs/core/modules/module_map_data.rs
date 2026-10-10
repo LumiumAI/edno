@@ -215,7 +215,7 @@ pub(crate) struct ModuleMapData {
   pub(crate) residual_lazy_script_sources:
     &'static [(&'static str, &'static str)],
   /// Results of `load_ext_script` evaluations. Populated on first
-  /// evaluation so later callers (`Deno.core.loadExtScript()` from JS,
+  /// evaluation so later callers (`Edno.core.loadExtScript()` from JS,
   /// the `synthetic_esm` dispatch from Rust) share a single evaluated
   /// exports value — the source is removed from `lazy_script_sources`
   /// on first eval, so subsequent reads come from here. Runtime-only —
@@ -223,7 +223,7 @@ pub(crate) struct ModuleMapData {
   pub(crate) loaded_script_results:
     Rc<RefCell<HashMap<ModuleName, v8::Global<v8::Value>>>>,
   /// `synthetic_esm` registry: module specifier (e.g. `node:worker_threads`)
-  /// to backing-script specifier (e.g. `ext:deno_node/worker_threads.ts`).
+  /// to backing-script specifier (e.g. `ext:edno_node/worker_threads.ts`).
   /// Populated at extension init from each extension's
   /// `synthetic_esm_files` list. Runtime-only — not snapshotted.
   pub(crate) synthetic_esm_modules:

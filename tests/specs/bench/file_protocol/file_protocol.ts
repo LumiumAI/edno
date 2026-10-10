@@ -1,1 +1,1 @@
-Deno.bench("bench0", () => {});
+Edno.bench("bench0", () => {});

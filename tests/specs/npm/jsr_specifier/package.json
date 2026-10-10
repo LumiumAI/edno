@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@denotest/add": "jsr:^1"
+    "@ednotest/add": "jsr:^1"
   }
 }

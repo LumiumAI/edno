@@ -7,13 +7,13 @@ use deno_ast::ParsedSource;
 use deno_ast::SourceRangedForSpanned;
 use deno_ast::SourceTextInfo;
 use deno_ast::swc::common::comments::CommentKind;
-use deno_core::error::AnyError;
-use deno_core::url::Url;
+use edno_core::error::AnyError;
+use edno_core::url::Url;
 use deno_graph::ModuleEntryRef;
 use deno_graph::ModuleGraph;
 use deno_graph::ResolutionResolved;
 use deno_graph::WalkOptions;
-use deno_resolver::cache::ParsedSourceCache;
+use edno_resolver::cache::ParsedSourceCache;
 use deno_semver::jsr::JsrPackageReqReference;
 use deno_semver::npm::NpmPackageReqReference;
 

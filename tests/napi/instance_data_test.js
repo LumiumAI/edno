@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { assertEquals, loadTestLibrary } from "./common.js";
 
@@ -10,12 +10,12 @@ if (import.meta.main) {
   properties.setInstanceData();
   console.log("set instance data");
 } else {
-  Deno.test("napi instance data Release", async () => {
-    const { stdout, stderr, code } = await new Deno.Command(Deno.execPath(), {
+  Edno.test("napi instance data Release", async () => {
+    const { stdout, stderr, code } = await new Edno.Command(Edno.execPath(), {
       args: [
         "run",
         "--config",
-        Deno.realPathSync("../config/deno.json"),
+        Edno.realPathSync("../config/edno.json"),
         "--no-lock",
         "-A",
         "--unstable-ffi",

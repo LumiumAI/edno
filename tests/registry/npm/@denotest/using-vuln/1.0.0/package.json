@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/using-vuln",
+  "name": "@ednotest/using-vuln",
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@denotest/with-vuln2": "1.5.0"
+    "@ednotest/with-vuln2": "1.5.0"
   }
 }

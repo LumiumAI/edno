@@ -1,6 +1,6 @@
-# deno_os
+# edno_os
 
-This crate implements OS specific APIs for Deno
+This crate implements OS specific APIs for Edno
 
 `loadavg`
 

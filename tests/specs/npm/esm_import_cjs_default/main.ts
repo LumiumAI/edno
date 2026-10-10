@@ -1,18 +1,18 @@
 // @ts-check
 import cjsDefault, {
   MyClass as MyCjsClass,
-} from "npm:@denotest/cjs-default-export";
-import * as cjsNamespace from "npm:@denotest/cjs-default-export";
-import esmDefault from "npm:@denotest/esm-import-cjs-default";
-import * as esmNamespace from "npm:@denotest/esm-import-cjs-default";
+} from "npm:@ednotest/cjs-default-export";
+import * as cjsNamespace from "npm:@ednotest/cjs-default-export";
+import esmDefault from "npm:@ednotest/esm-import-cjs-default";
+import * as esmNamespace from "npm:@ednotest/esm-import-cjs-default";
 
-console.log("Deno esm importing node cjs");
+console.log("Edno esm importing node cjs");
 console.log("===========================");
 console.log(cjsDefault);
 console.log(cjsNamespace);
 console.log("===========================");
 
-console.log("Deno esm importing node esm");
+console.log("Edno esm importing node esm");
 console.log("===========================");
 console.log(esmDefault);
 console.log(esmNamespace);

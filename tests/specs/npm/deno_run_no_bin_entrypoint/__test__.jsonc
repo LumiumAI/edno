@@ -1,5 +1,5 @@
 {
-  "args": "run -A --quiet npm:@denotest/esm-basic",
-  "output": "deno_run_no_bin_entrypoint.out",
+  "args": "run -A --quiet npm:@ednotest/esm-basic",
+  "output": "edno_run_no_bin_entrypoint.out",
   "exitCode": 1
 }

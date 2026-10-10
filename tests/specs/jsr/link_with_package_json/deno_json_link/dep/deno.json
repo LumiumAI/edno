@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/dep",
+  "name": "@ednotest/dep",
   "version": "1.0.0",
   "exports": "./mod.ts"
 }

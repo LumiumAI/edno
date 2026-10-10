@@ -6,9 +6,9 @@ use std::sync::Arc;
 use deno_error::JsErrorBox;
 use deno_graph::NpmLoadError;
 use deno_graph::NpmResolvePkgReqsResult;
-use deno_npm::resolution::NpmResolutionError;
-use deno_npm_cache::NpmCacheHttpClient;
-use deno_resolver::graph::FoundPackageJsonDepFlag;
+use edno_npm::resolution::NpmResolutionError;
+use edno_npm_cache::NpmCacheHttpClient;
+use edno_resolver::graph::FoundPackageJsonDepFlag;
 use deno_semver::package::PackageReq;
 
 use crate::NpmInstaller;
@@ -142,7 +142,7 @@ impl<TNpmCacheHttpClient: NpmCacheHttpClient, TSys: NpmInstallerSys>
           }
         } else {
           let err =
-            Arc::new(JsErrorBox::from_err(deno_resolver::npm::NoNpmError));
+            Arc::new(JsErrorBox::from_err(edno_resolver::npm::NoNpmError));
           NpmResolvePkgReqsResult {
             results: package_reqs
               .iter()

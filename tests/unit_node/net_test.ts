@@ -12,7 +12,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 
-Deno.test("[node/net] close event emits after error event - when host is not found", async () => {
+Edno.test("[node/net] close event emits after error event - when host is not found", async () => {
   const socket = net.createConnection(27009, "doesnotexist");
   const events: ("error" | "close")[] = [];
   const errorEmitted = Promise.withResolvers<void>();
@@ -34,9 +34,9 @@ Deno.test("[node/net] close event emits after error event - when host is not fou
 // Regression for https://github.com/denoland/deno/issues/33879. When a handle
 // exposes `getAsyncId` borrowed from `TCP.prototype` (or any AsyncWrap-derived
 // prototype) but isn't itself a real AsyncWrap, Node silently falls back to a
-// fresh async id rather than throwing. The Deno op2 brand check throws
+// fresh async id rather than throwing. The Edno op2 brand check throws
 // `TypeError: expected AsyncWrap`, so `_getNewAsyncId` has to swallow that.
-Deno.test("[node/net] Socket falls back when handle.getAsyncId has wrong receiver", () => {
+Edno.test("[node/net] Socket falls back when handle.getAsyncId has wrong receiver", () => {
   const { TCP } = require("internal/test/binding").internalBinding("tcp_wrap");
   const socket = new net.Socket({
     handle: {
@@ -44,12 +44,12 @@ Deno.test("[node/net] Socket falls back when handle.getAsyncId has wrong receive
     },
     readable: false,
     writable: false,
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
   } as any);
   socket.destroy();
 });
 
-Deno.test("[node/net] close event emits after error event - when connection is refused", async () => {
+Edno.test("[node/net] close event emits after error event - when connection is refused", async () => {
   const socket = net.createConnection(27009, "127.0.0.1");
   const events: ("error" | "close")[] = [];
   const errorEmitted = Promise.withResolvers<void>();
@@ -73,7 +73,7 @@ Deno.test("[node/net] close event emits after error event - when connection is r
 // SO_KEEPALIVE on the underlying socket instead of silently no-op'ing.
 // Libraries such as `tedious`/`mssql` enable keepalive right after connecting
 // to keep tunneled connections alive; losing it surfaced as ECONNRESET.
-Deno.test("[node/net] socket.setKeepAlive() reaches the handle", async () => {
+Edno.test("[node/net] socket.setKeepAlive() reaches the handle", async () => {
   const server = net.createServer((socket) => {
     socket.end();
   });
@@ -85,7 +85,7 @@ Deno.test("[node/net] socket.setKeepAlive() reaches the handle", async () => {
   const done = Promise.withResolvers<void>();
   const socket = net.connect(port, "127.0.0.1", () => {
     // The handle backing a connected TCP socket must implement setKeepAlive.
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     assertEquals(typeof (socket as any)._handle.setKeepAlive, "function");
     // Must not throw and must return the socket for chaining (Node API).
     assertEquals(socket.setKeepAlive(true, 30000), socket);
@@ -97,7 +97,7 @@ Deno.test("[node/net] socket.setKeepAlive() reaches the handle", async () => {
   server.close();
 });
 
-Deno.test("[node/net] the port is available immediately after close callback", async () => {
+Edno.test("[node/net] the port is available immediately after close callback", async () => {
   const deferred = Promise.withResolvers<void>();
 
   // This simulates what get-port@5.1.1 does.
@@ -106,7 +106,7 @@ Deno.test("[node/net] the port is available immediately after close callback", a
       const server = net.createServer();
       server.on("error", reject);
       server.listen({ port }, () => {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         const { port } = server.address() as any;
         server.close(() => {
           resolve(port);
@@ -124,15 +124,15 @@ Deno.test("[node/net] the port is available immediately after close callback", a
   await deferred.promise;
 });
 
-Deno.test("[node/net] net.connect().unref() works", async () => {
+Edno.test("[node/net] net.connect().unref() works", async () => {
   const ctl = new AbortController();
-  const server = Deno.serve({
+  const server = Edno.serve({
     signal: ctl.signal,
     port: 0, // any available port will do
     handler: () => new Response("hello"),
     onListen: async ({ port, hostname }) => {
-      hostname = Deno.build.os === "windows" ? "localhost" : hostname;
-      const { stdout, stderr } = await new Deno.Command(Deno.execPath(), {
+      hostname = Edno.build.os === "windows" ? "localhost" : hostname;
+      const { stdout, stderr } = await new Edno.Command(Edno.execPath(), {
         args: [
           "eval",
           `
@@ -157,7 +157,7 @@ Deno.test("[node/net] net.connect().unref() works", async () => {
   await server.finished;
 });
 
-Deno.test({
+Edno.test({
   name: "[node/net] throws permission error instead of unknown error",
   permissions: "none",
   fn: () => {
@@ -165,12 +165,12 @@ Deno.test({
       const s = new net.Server();
       s.listen(3000);
     } catch (e) {
-      assert(e instanceof Deno.errors.NotCapable);
+      assert(e instanceof Edno.errors.NotCapable);
     }
   },
 });
 
-Deno.test("[node/net] connection event has socket value", async () => {
+Edno.test("[node/net] connection event has socket value", async () => {
   const deferred = Promise.withResolvers<void>();
   const deferred2 = Promise.withResolvers<void>();
 
@@ -184,10 +184,10 @@ Deno.test("[node/net] connection event has socket value", async () => {
     });
   });
   server.listen(async () => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const { port } = server.address() as any;
 
-    const conn = await Deno.connect({
+    const conn = await Edno.connect({
       port,
       transport: "tcp",
     });
@@ -204,7 +204,7 @@ Deno.test("[node/net] connection event has socket value", async () => {
 
 /// We need to make sure that any shared buffers are never used concurrently by two reads.
 // https://github.com/denoland/deno/issues/20188
-Deno.test("[node/net] multiple Sockets should get correct server data", async () => {
+Edno.test("[node/net] multiple Sockets should get correct server data", async () => {
   const socketCount = 9;
 
   class TestSocket {
@@ -235,7 +235,7 @@ Deno.test("[node/net] multiple Sockets should get correct server data", async ()
   }
 
   server.listen(async () => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const { port } = server.address() as any;
 
     for (let i = 0; i < socketCount; i++) {
@@ -275,13 +275,13 @@ Deno.test("[node/net] multiple Sockets should get correct server data", async ()
   }
 });
 
-Deno.test("[node/net] BlockList doesn't leak resources", () => {
+Edno.test("[node/net] BlockList doesn't leak resources", () => {
   const blockList = new net.BlockList();
   blockList.addAddress("1.1.1.1");
   assert(blockList.check("1.1.1.1"));
 });
 
-Deno.test("[node/net] BlockList stores large ranges compactly", () => {
+Edno.test("[node/net] BlockList stores large ranges compactly", () => {
   const blockList = new net.BlockList();
   blockList.addRange("0.0.0.0", "255.255.255.255");
   assert(blockList.check("1.2.3.4"));
@@ -289,14 +289,14 @@ Deno.test("[node/net] BlockList stores large ranges compactly", () => {
   assertEquals(blockList.rules, ["Range: IPv4 0.0.0.0-255.255.255.255"]);
 });
 
-Deno.test("[node/net] net.Server can listen on the same port immediately after it's closed", async () => {
+Edno.test("[node/net] net.Server can listen on the same port immediately after it's closed", async () => {
   const serverClosed = Promise.withResolvers<void>();
   const server = net.createServer();
   server.on("error", (e) => {
     console.error(e);
   });
   server.listen(0, () => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const { port } = server.address() as any;
     server.close();
     server.listen(port, () => {
@@ -308,7 +308,7 @@ Deno.test("[node/net] net.Server can listen on the same port immediately after i
   await serverClosed.promise;
 });
 
-Deno.test("dns.resolve with ttl", async () => {
+Edno.test("dns.resolve with ttl", async () => {
   const d1 = Promise.withResolvers();
   dns.resolve4("www.example.com", { ttl: true }, (err, addresses) => {
     if (err) {
@@ -317,7 +317,7 @@ Deno.test("dns.resolve with ttl", async () => {
       d1.resolve(addresses);
     }
   });
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const ret1 = await d1.promise as any[];
   assert(ret1.length > 0);
   assert(typeof ret1[0].ttl === "number");
@@ -335,7 +335,7 @@ Deno.test("dns.resolve with ttl", async () => {
   assert(typeof ret2[0] === "string");
 });
 
-Deno.test("[node/dns] dns.lookup (all=true) util promisify", async () => {
+Edno.test("[node/dns] dns.lookup (all=true) util promisify", async () => {
   const lookup = util.promisify(dns.lookup);
   const result = await lookup("localhost", { all: true });
   assert(Array.isArray(result));
@@ -343,7 +343,7 @@ Deno.test("[node/dns] dns.lookup (all=true) util promisify", async () => {
   assert(typeof result[0].family === "number");
 });
 
-Deno.test("[node/dns] resolve IPv6 addresses", async () => {
+Edno.test("[node/dns] resolve IPv6 addresses", async () => {
   const resolveResults = await dnsPromises.resolve("deno.land", "AAAA");
   for (const address of resolveResults) {
     await dnsPromises.lookup(address);
@@ -362,7 +362,7 @@ Deno.test("[node/dns] resolve IPv6 addresses", async () => {
   }
 });
 
-Deno.test("[node/net] Socket.remoteFamily returns string", async () => {
+Edno.test("[node/net] Socket.remoteFamily returns string", async () => {
   const deferred = Promise.withResolvers<void>();
   const server = net.createServer((socket) => {
     // Default-host listen() binds dual-stack, so IPv4 connections arrive

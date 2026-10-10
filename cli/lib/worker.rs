@@ -6,65 +6,65 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use boxed_error::Boxed;
-use deno_bundle_runtime::BundleProvider;
-use deno_core::ModuleSpecifier;
-use deno_core::error::JsError;
-use deno_node::NodeRequireLoaderRc;
-use deno_node::ops::ipc::ChildIpcSerialization;
+use edno_bundle_runtime::BundleProvider;
+use edno_core::ModuleSpecifier;
+use edno_core::error::JsError;
+use edno_node::NodeRequireLoaderRc;
+use edno_node::ops::ipc::ChildIpcSerialization;
 use deno_path_util::url_from_file_path;
 use deno_path_util::url_to_file_path;
-use deno_resolver::npm::DenoInNpmPackageChecker;
-use deno_resolver::npm::NpmResolver;
-use deno_runtime::BootstrapOptions;
-use deno_runtime::CpuProfilerConfig;
-use deno_runtime::FeatureChecker;
-use deno_runtime::UNSTABLE_FEATURES;
-use deno_runtime::WorkerExecutionMode;
-use deno_runtime::WorkerLogLevel;
-use deno_runtime::colors;
-use deno_runtime::deno_core;
-use deno_runtime::deno_core::CompiledWasmModuleStore;
-use deno_runtime::deno_core::Extension;
-use deno_runtime::deno_core::JsRuntime;
-use deno_runtime::deno_core::LocalInspectorSession;
-use deno_runtime::deno_core::ModuleLoader;
-use deno_runtime::deno_core::SharedArrayBufferStore;
-use deno_runtime::deno_core::error::CoreError;
-use deno_runtime::deno_core::v8;
-use deno_runtime::deno_fs;
-use deno_runtime::deno_inspector_server::MainInspectorSessionChannel;
-use deno_runtime::deno_napi::DenoRtNativeAddonLoaderRc;
-use deno_runtime::deno_node::NodeExtInitServices;
-use deno_runtime::deno_node::NodeRequireLoader;
-use deno_runtime::deno_node::NodeResolver;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::deno_process::NpmProcessStateProviderRc;
-use deno_runtime::deno_telemetry::OtelConfig;
-use deno_runtime::deno_tls::RootCertStoreProvider;
-use deno_runtime::deno_web::Blob;
-use deno_runtime::deno_web::BlobStoreTrait;
-use deno_runtime::deno_web::InMemoryBroadcastChannel;
-use deno_runtime::fmt_errors::format_js_error;
-use deno_runtime::ops::worker_host::CreateWebWorkerCb;
-use deno_runtime::web_worker::WebWorker;
-use deno_runtime::web_worker::WebWorkerOptions;
-use deno_runtime::web_worker::WebWorkerServiceOptions;
-use deno_runtime::worker::MainWorker;
-use deno_runtime::worker::WorkerOptions;
-use deno_runtime::worker::WorkerServiceOptions;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
+use edno_resolver::npm::NpmResolver;
+use edno_runtime::BootstrapOptions;
+use edno_runtime::CpuProfilerConfig;
+use edno_runtime::FeatureChecker;
+use edno_runtime::UNSTABLE_FEATURES;
+use edno_runtime::WorkerExecutionMode;
+use edno_runtime::WorkerLogLevel;
+use edno_runtime::colors;
+use edno_runtime::edno_core;
+use edno_runtime::edno_core::CompiledWasmModuleStore;
+use edno_runtime::edno_core::Extension;
+use edno_runtime::edno_core::JsRuntime;
+use edno_runtime::edno_core::LocalInspectorSession;
+use edno_runtime::edno_core::ModuleLoader;
+use edno_runtime::edno_core::SharedArrayBufferStore;
+use edno_runtime::edno_core::error::CoreError;
+use edno_runtime::edno_core::v8;
+use edno_runtime::edno_fs;
+use edno_runtime::edno_inspector_server::MainInspectorSessionChannel;
+use edno_runtime::edno_napi::EdnoRtNativeAddonLoaderRc;
+use edno_runtime::edno_node::NodeExtInitServices;
+use edno_runtime::edno_node::NodeRequireLoader;
+use edno_runtime::edno_node::NodeResolver;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::edno_process::NpmProcessStateProviderRc;
+use edno_runtime::edno_telemetry::OtelConfig;
+use edno_runtime::edno_tls::RootCertStoreProvider;
+use edno_runtime::edno_web::Blob;
+use edno_runtime::edno_web::BlobStoreTrait;
+use edno_runtime::edno_web::InMemoryBroadcastChannel;
+use edno_runtime::fmt_errors::format_js_error;
+use edno_runtime::ops::worker_host::CreateWebWorkerCb;
+use edno_runtime::web_worker::WebWorker;
+use edno_runtime::web_worker::WebWorkerOptions;
+use edno_runtime::web_worker::WebWorkerServiceOptions;
+use edno_runtime::worker::MainWorker;
+use edno_runtime::worker::WorkerOptions;
+use edno_runtime::worker::WorkerServiceOptions;
 use node_resolver::UrlOrPath;
 use node_resolver::errors::ResolvePkgJsonBinExportError;
 use url::Url;
 
 use crate::args::has_trace_permissions_enabled;
-use crate::sys::DenoLibSys;
+use crate::sys::EdnoLibSys;
 use crate::util::checksum;
 
 pub struct CreateModuleLoaderResult {
   pub module_loader: Rc<dyn ModuleLoader>,
   pub node_require_loader: Rc<dyn NodeRequireLoader>,
   pub hook_registry:
-    Option<deno_runtime::deno_node::ops::module_hooks::LoaderHookRegistry>,
+    Option<edno_runtime::edno_node::ops::module_hooks::LoaderHookRegistry>,
 }
 
 pub trait ModuleLoaderFactory: Send + Sync {
@@ -111,7 +111,7 @@ impl StorageKeyResolver {
   /// app gets a single persistent store, independent of the main module URL
   /// (which is not stable across differently named binaries). The `app:`
   /// prefix namespaces this key from URL-derived keys so a compiled app and a
-  /// `deno run` of the same origin can't collide in the shared, temp-backed
+  /// `edno run` of the same origin can't collide in the shared, temp-backed
   /// `caches` directory (which is keyed by the hash of this string rather than
   /// by the per-app data directory).
   pub fn from_compile_app_name(app_name: &str) -> Self {
@@ -141,7 +141,7 @@ impl StorageKeyResolver {
   }
 }
 
-/// Returns the persistent Cache API storage root beneath Deno's origin data
+/// Returns the persistent Cache API storage root beneath Edno's origin data
 /// directory. Each storage key uses a hashed child directory of this root.
 pub fn get_cache_storage_dir(origin_data_folder_path: &Path) -> PathBuf {
   origin_data_folder_path.join("web_cache")
@@ -157,9 +157,9 @@ fn get_cache_storage_dir_for_key(
 
 /// By default V8 uses 1.4Gb heap limit which is meant for browser tabs.
 /// Instead probe for the total memory on the system and use it instead
-/// as a default. In case the platform is Linux and `DENO_USE_CGROUPS` is set,
+/// as a default. In case the platform is Linux and `EDNO_USE_CGROUPS` is set,
 /// parse cgroup config to get the cgroup-constrained memory limit.
-pub fn create_isolate_create_params<TSys: DenoLibSys>(
+pub fn create_isolate_create_params<TSys: EdnoLibSys>(
   #[allow(
     unused_variables,
     reason = "used only in Linux to get cgroup-constrained memory limit"
@@ -175,7 +175,7 @@ pub fn create_isolate_create_params<TSys: DenoLibSys>(
   }
   #[cfg(not(any(target_os = "android", target_os = "linux")))]
   {
-    let maybe_mem_info = deno_runtime::deno_os::sys_info::mem_info();
+    let maybe_mem_info = edno_runtime::edno_os::sys_info::mem_info();
     maybe_mem_info.map(|mem_info| {
       v8::CreateParams::default()
         .heap_limits_from_system_memory(mem_info.total, 0)
@@ -185,18 +185,18 @@ pub fn create_isolate_create_params<TSys: DenoLibSys>(
 
 #[cfg(any(target_os = "android", target_os = "linux"))]
 mod linux {
-  use deno_runtime::deno_node::ops::process::cgroup::CgroupVersion;
-  use deno_runtime::deno_node::ops::process::cgroup::parse_self_cgroup;
+  use edno_runtime::edno_node::ops::process::cgroup::CgroupVersion;
+  use edno_runtime::edno_node::ops::process::cgroup::parse_self_cgroup;
 
   /// Get memory limit with cgroup (either v1 or v2) taken into account.
-  pub(super) fn get_memory_limit<TSys: crate::sys::DenoLibSys>(
+  pub(super) fn get_memory_limit<TSys: crate::sys::EdnoLibSys>(
     sys: &TSys,
   ) -> Option<u64> {
-    let system_total_memory = deno_runtime::deno_os::sys_info::mem_info()
+    let system_total_memory = edno_runtime::edno_os::sys_info::mem_info()
       .map(|mem_info| mem_info.total);
 
-    // For performance, parse cgroup config only when DENO_USE_CGROUPS is set
-    if sys.env_var_os("DENO_USE_CGROUPS").is_none() {
+    // For performance, parse cgroup config only when EDNO_USE_CGROUPS is set
+    if sys.env_var_os("EDNO_USE_CGROUPS").is_none() {
       return system_total_memory;
     }
 
@@ -273,7 +273,7 @@ pub struct LibMainWorkerOptions {
   pub inspect_wait: bool,
   pub trace_ops: Option<Vec<String>>,
   pub is_inspecting: bool,
-  /// If this is a `deno compile`-ed executable.
+  /// If this is a `edno compile`-ed executable.
   pub is_standalone: bool,
   // If the runtime should try to use `export default { fetch }`
   pub auto_serve: bool,
@@ -308,20 +308,20 @@ pub struct LibWorkerFactoryRoots {
   pub shared_array_buffer_store: SharedArrayBufferStore,
 }
 
-struct LibWorkerFactorySharedState<TSys: DenoLibSys> {
+struct LibWorkerFactorySharedState<TSys: EdnoLibSys> {
   blob_store: Arc<dyn BlobStoreTrait>,
   broadcast_channel: InMemoryBroadcastChannel,
-  code_cache: Option<Arc<dyn deno_runtime::code_cache::CodeCache>>,
+  code_cache: Option<Arc<dyn edno_runtime::code_cache::CodeCache>>,
   compiled_wasm_module_store: CompiledWasmModuleStore,
-  deno_rt_native_addon_loader: Option<DenoRtNativeAddonLoaderRc>,
+  edno_rt_native_addon_loader: Option<EdnoRtNativeAddonLoaderRc>,
   feature_checker: Arc<FeatureChecker>,
-  fs: Arc<dyn deno_fs::FileSystem>,
+  fs: Arc<dyn edno_fs::FileSystem>,
   maybe_coverage_dir: Option<PathBuf>,
   maybe_cpu_prof_config: Option<CpuProfilerConfig>,
   main_inspector_session_tx: MainInspectorSessionChannel,
   module_loader_factory: Box<dyn ModuleLoaderFactory>,
   node_resolver:
-    Arc<NodeResolver<DenoInNpmPackageChecker, NpmResolver<TSys>, TSys>>,
+    Arc<NodeResolver<EdnoInNpmPackageChecker, NpmResolver<TSys>, TSys>>,
   npm_process_state_provider: NpmProcessStateProviderRc,
   pkg_json_resolver: Arc<node_resolver::PackageJsonResolver<TSys>>,
   root_cert_store_provider: Arc<dyn RootCertStoreProvider>,
@@ -332,7 +332,7 @@ struct LibWorkerFactorySharedState<TSys: DenoLibSys> {
   bundle_provider: Option<Arc<dyn BundleProvider>>,
 }
 
-impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
+impl<TSys: EdnoLibSys> LibWorkerFactorySharedState<TSys> {
   fn resolve_unstable_features(
     &self,
     feature_checker: &FeatureChecker,
@@ -349,7 +349,7 @@ impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
   fn create_node_init_services(
     &self,
     node_require_loader: NodeRequireLoaderRc,
-  ) -> NodeExtInitServices<DenoInNpmPackageChecker, NpmResolver<TSys>, TSys> {
+  ) -> NodeExtInitServices<EdnoInNpmPackageChecker, NpmResolver<TSys>, TSys> {
     NodeExtInitServices {
       node_require_loader,
       node_resolver: self.node_resolver.clone(),
@@ -360,7 +360,7 @@ impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
 
   fn create_web_worker_callback(
     self: &Arc<Self>,
-    stdio: deno_runtime::deno_io::Stdio,
+    stdio: edno_runtime::edno_io::Stdio,
   ) -> Arc<CreateWebWorkerCb> {
     let shared = self.clone();
     Arc::new(move |args| {
@@ -397,7 +397,7 @@ impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
         shared.resolve_unstable_features(feature_checker.as_ref());
 
       let services = WebWorkerServiceOptions {
-        deno_rt_native_addon_loader: shared.deno_rt_native_addon_loader.clone(),
+        edno_rt_native_addon_loader: shared.edno_rt_native_addon_loader.clone(),
         root_cert_store_provider: Some(shared.root_cert_store_provider.clone()),
         module_loader,
         fs: shared.fs.clone(),
@@ -452,7 +452,7 @@ impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
         // unspecified fields), matching Node.js behavior.
         // Note: integer division truncates sub-MB fractions, which is fine
         // since V8 and Node.js both work in whole-MB granularity here.
-        let resolved = deno_node::ops::worker_threads::ResolvedResourceLimits {
+        let resolved = edno_node::ops::worker_threads::ResolvedResourceLimits {
           max_young_generation_size_mb: params
             .max_young_generation_size_in_bytes()
             / mb,
@@ -461,7 +461,7 @@ impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
           code_range_size_mb: params.code_range_size_in_bytes() / mb,
           stack_size_mb: limits
             .stack_size_mb
-            .unwrap_or(deno_node::ops::worker_threads::DEFAULT_STACK_SIZE_MB),
+            .unwrap_or(edno_node::ops::worker_threads::DEFAULT_STACK_SIZE_MB),
         };
 
         (Some(params), Some(resolved))
@@ -474,18 +474,18 @@ impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
         main_module: args.main_module.clone(),
         worker_id: args.worker_id,
         bootstrap: BootstrapOptions {
-          deno_version: crate::version::DENO_VERSION_INFO.deno.to_string(),
+          edno_version: crate::version::EDNO_VERSION_INFO.edno.to_string(),
           args: shared.options.argv.clone(),
           cpu_count: std::thread::available_parallelism()
             .map(|p| p.get())
             .unwrap_or(1),
           log_level: shared.options.log_level,
           enable_testing_features: shared.options.enable_testing_features,
-          locale: deno_core::v8::icu::get_language_tag(),
+          locale: edno_core::v8::icu::get_language_tag(),
           location: Some(args.main_module),
           color_level: colors::get_color_level(),
           unstable_features,
-          user_agent: crate::version::DENO_VERSION_INFO.user_agent.to_string(),
+          user_agent: crate::version::EDNO_VERSION_INFO.user_agent.to_string(),
           inspect: shared.options.is_inspecting,
           is_standalone: shared.options.is_standalone,
           auto_serve: shared.options.auto_serve,
@@ -577,23 +577,23 @@ impl<TSys: DenoLibSys> LibWorkerFactorySharedState<TSys> {
   }
 }
 
-pub struct LibMainWorkerFactory<TSys: DenoLibSys> {
+pub struct LibMainWorkerFactory<TSys: EdnoLibSys> {
   shared: Arc<LibWorkerFactorySharedState<TSys>>,
 }
 
-impl<TSys: DenoLibSys> LibMainWorkerFactory<TSys> {
+impl<TSys: EdnoLibSys> LibMainWorkerFactory<TSys> {
   #[allow(clippy::too_many_arguments, reason = "construction")]
   pub fn new(
     blob_store: Arc<dyn BlobStoreTrait>,
-    code_cache: Option<Arc<dyn deno_runtime::code_cache::CodeCache>>,
-    deno_rt_native_addon_loader: Option<DenoRtNativeAddonLoaderRc>,
+    code_cache: Option<Arc<dyn edno_runtime::code_cache::CodeCache>>,
+    edno_rt_native_addon_loader: Option<EdnoRtNativeAddonLoaderRc>,
     feature_checker: Arc<FeatureChecker>,
-    fs: Arc<dyn deno_fs::FileSystem>,
+    fs: Arc<dyn edno_fs::FileSystem>,
     maybe_coverage_dir: Option<PathBuf>,
     maybe_cpu_prof_config: Option<CpuProfilerConfig>,
     module_loader_factory: Box<dyn ModuleLoaderFactory>,
     node_resolver: Arc<
-      NodeResolver<DenoInNpmPackageChecker, NpmResolver<TSys>, TSys>,
+      NodeResolver<EdnoInNpmPackageChecker, NpmResolver<TSys>, TSys>,
     >,
     npm_process_state_provider: NpmProcessStateProviderRc,
     pkg_json_resolver: Arc<node_resolver::PackageJsonResolver<TSys>>,
@@ -610,7 +610,7 @@ impl<TSys: DenoLibSys> LibMainWorkerFactory<TSys> {
         broadcast_channel: Default::default(),
         code_cache,
         compiled_wasm_module_store: roots.compiled_wasm_module_store,
-        deno_rt_native_addon_loader,
+        edno_rt_native_addon_loader,
         feature_checker,
         fs,
         maybe_coverage_dir,
@@ -659,8 +659,8 @@ impl<TSys: DenoLibSys> LibMainWorkerFactory<TSys> {
     require_modules: Vec<Url>,
     permissions: PermissionsContainer,
     custom_extensions: Vec<Extension>,
-    stdio: deno_runtime::deno_io::Stdio,
-    unconfigured_runtime: Option<deno_runtime::UnconfiguredRuntime>,
+    stdio: edno_runtime::edno_io::Stdio,
+    unconfigured_runtime: Option<edno_runtime::UnconfiguredRuntime>,
   ) -> Result<LibMainWorker, CoreError> {
     let shared = &self.shared;
     let CreateModuleLoaderResult {
@@ -697,7 +697,7 @@ impl<TSys: DenoLibSys> LibMainWorkerFactory<TSys> {
     });
 
     let services = WorkerServiceOptions {
-      deno_rt_native_addon_loader: shared.deno_rt_native_addon_loader.clone(),
+      edno_rt_native_addon_loader: shared.edno_rt_native_addon_loader.clone(),
       root_cert_store_provider: Some(shared.root_cert_store_provider.clone()),
       module_loader,
       fs: shared.fs.clone(),
@@ -724,18 +724,18 @@ impl<TSys: DenoLibSys> LibMainWorkerFactory<TSys> {
 
     let options = WorkerOptions {
       bootstrap: BootstrapOptions {
-        deno_version: crate::version::DENO_VERSION_INFO.deno.to_string(),
+        edno_version: crate::version::EDNO_VERSION_INFO.edno.to_string(),
         args: shared.options.argv.clone(),
         cpu_count: std::thread::available_parallelism()
           .map(|p| p.get())
           .unwrap_or(1),
         log_level: shared.options.log_level,
         enable_testing_features: shared.options.enable_testing_features,
-        locale: deno_core::v8::icu::get_language_tag(),
+        locale: edno_core::v8::icu::get_language_tag(),
         location: shared.options.location.clone(),
         color_level: colors::get_color_level(),
         unstable_features,
-        user_agent: crate::version::DENO_VERSION_INFO.user_agent.to_string(),
+        user_agent: crate::version::EDNO_VERSION_INFO.user_agent.to_string(),
         inspect: shared.options.is_inspecting,
         is_standalone: shared.options.is_standalone,
         auto_serve: shared.options.auto_serve,
@@ -910,7 +910,7 @@ impl LibMainWorker {
   #[inline]
   pub fn create_inspector_session(
     &mut self,
-    cb: deno_core::InspectorSessionSend,
+    cb: edno_core::InspectorSessionSend,
   ) -> LocalInspectorSession {
     self.worker.create_inspector_session(cb)
   }
@@ -1095,7 +1095,7 @@ mod test {
 
   #[test]
   fn cache_storage_dir_is_under_origin_data() {
-    let origin_data_dir = PathBuf::from("deno_dir").join("location_data");
+    let origin_data_dir = PathBuf::from("edno_dir").join("location_data");
     let key = "file:///project/main.ts";
 
     assert_eq!(

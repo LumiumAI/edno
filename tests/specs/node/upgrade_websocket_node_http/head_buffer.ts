@@ -27,7 +27,7 @@ const server = http.createServer();
 server.on("upgrade", (req, nodeSocket, head) => {
   console.log(`server: head has ${head.length} bytes`);
 
-  const { socket } = Deno.upgradeWebSocket(
+  const { socket } = Edno.upgradeWebSocket(
     new Request("http://localhost/", { headers: req.headers as HeadersInit }),
     { socket: nodeSocket as net.Socket, head },
   );
@@ -37,7 +37,7 @@ server.on("upgrade", (req, nodeSocket, head) => {
     // The raw client can't do the WebSocket close handshake,
     // so just shut down directly.
     server.close();
-    setTimeout(() => Deno.exit(0), 200);
+    setTimeout(() => Edno.exit(0), 200);
   };
 });
 
@@ -63,6 +63,6 @@ server.listen(0, () => {
 
 const _t = setTimeout(() => {
   console.error("timeout - forcing exit");
-  Deno.exit(1);
+  Edno.exit(1);
 }, 10_000);
-Deno.unrefTimer(_t);
+Edno.unrefTimer(_t);

@@ -26,7 +26,7 @@ test(async function testManyTimers() {
 test(async function testManyIntervals() {
   const expected = 1000;
   let n = 0;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const intervals: any[] = [];
   for (let i = 0; i < 100; i++) {
     let count = 0;
@@ -40,7 +40,7 @@ test(async function testManyIntervals() {
     }, 1);
     intervals.push(timer);
   }
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   let checker: any;
   await new Promise((r) =>
     checker = setInterval(() => {
@@ -83,7 +83,7 @@ test(async function testTimerException() {
   globalThis.onerror = ((e: ErrorEvent) => {
     resolve(e.error);
     e.preventDefault();
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
   }) as any;
   try {
     setTimeout(() => {
@@ -96,7 +96,7 @@ test(async function testTimerException() {
 });
 
 test(async function testCancellationDuringDispatch() {
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const timers: any[] = [];
   let timeouts = 0;
 

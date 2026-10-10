@@ -96,7 +96,7 @@ pub struct OpCommonCtx {
 ///
 // Note: This struct is allocated once per op per realm and stored in a
 // contiguous array, so its size is multiplied by the number of registered ops
-// (~700 in a full Deno build). Everything that is identical across ops lives in
+// (~700 in a full Edno build). Everything that is identical across ops lives in
 // the shared `OpCommonCtx`, and the `OpDecl` is borrowed from the realm's
 // declaration storage (static tables where possible) rather than copied in.
 pub struct OpCtx {
@@ -278,7 +278,7 @@ pub struct OpCtxs {
 
 /// A contiguous run of op declarations, in op-registration order.
 ///
-/// Declarations that already live in static memory (deno_core's `BUILTIN_OPS`,
+/// Declarations that already live in static memory (edno_core's `BUILTIN_OPS`,
 /// an extension's method tables, and any extension whose op table is
 /// `Cow::Borrowed` — which `extension!` emits for every extension, generic or
 /// not, a generic one getting one static table per monomorphization) are
@@ -458,7 +458,7 @@ impl DerefMut for OpState {
 mod tests {
   use super::*;
 
-  /// `OpCtx` is instantiated once per op per realm (~700 ops in a full Deno
+  /// `OpCtx` is instantiated once per op per realm (~700 ops in a full Edno
   /// build), so growth here is multiplied by the op count. Everything that is
   /// the same for every op belongs in `OpCommonCtx` instead.
   #[test]

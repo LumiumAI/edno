@@ -4,8 +4,8 @@ use deno_ast::MediaType;
 use deno_ast::TokenOrComment;
 use deno_ast::swc::parser::token::Token;
 use deno_ast::swc::parser::token::Word;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::op2;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 
 #[op2]

@@ -8,7 +8,7 @@ const moduleDir = path.dirname(path.fromFileUrl(import.meta.url));
 const testData = path.resolve(moduleDir, "testdata", "hello.txt");
 const decoder = new TextDecoder();
 
-Deno.test("readFileSuccess", async function () {
+Edno.test("readFileSuccess", async function () {
   const fileHandle = await fs.open(testData);
   const data = await fileHandle.readFile();
 
@@ -18,7 +18,7 @@ Deno.test("readFileSuccess", async function () {
   await fileHandle.close();
 });
 
-Deno.test("read", async function () {
+Edno.test("read", async function () {
   const fileHandle = await fs.open(testData);
   const byteLength = "hello world".length;
 
@@ -30,7 +30,7 @@ Deno.test("read", async function () {
   await fileHandle.close();
 });
 
-Deno.test("read specify opt", async function () {
+Edno.test("read specify opt", async function () {
   const fileHandle = await fs.open(testData);
   const byteLength = "hello world".length;
 
@@ -64,37 +64,37 @@ Deno.test("read specify opt", async function () {
   await fileHandle.close();
 });
 
-Deno.test("[node/fs filehandle.write] Write from Buffer", async function () {
-  const tempFile: string = await Deno.makeTempFile();
+Edno.test("[node/fs filehandle.write] Write from Buffer", async function () {
+  const tempFile: string = await Edno.makeTempFile();
   const fileHandle = await fs.open(tempFile, "a+");
 
   const buffer = Buffer.from("hello world");
   const res = await fileHandle.write(buffer, 0, 5, 0);
 
-  const data = Deno.readFileSync(tempFile);
-  await Deno.remove(tempFile);
+  const data = Edno.readFileSync(tempFile);
+  await Edno.remove(tempFile);
   await fileHandle.close();
 
   assertEquals(res.bytesWritten, 5);
   assertEquals(decoder.decode(data), "hello");
 });
 
-Deno.test("[node/fs filehandle.write] Write from string", async function () {
-  const tempFile: string = await Deno.makeTempFile();
+Edno.test("[node/fs filehandle.write] Write from string", async function () {
+  const tempFile: string = await Edno.makeTempFile();
   const fileHandle = await fs.open(tempFile, "a+");
 
   const str = "hello world";
   const res = await fileHandle.write(str);
 
-  const data = Deno.readFileSync(tempFile);
-  await Deno.remove(tempFile);
+  const data = Edno.readFileSync(tempFile);
+  await Edno.remove(tempFile);
   await fileHandle.close();
 
   assertEquals(res.bytesWritten, 11);
   assertEquals(decoder.decode(data), "hello world");
 });
 
-Deno.test("[node/fs filehandle.stat] Get file status", async function () {
+Edno.test("[node/fs filehandle.stat] Get file status", async function () {
   const fileHandle = await fs.open(testData);
   const stat = await fileHandle.stat();
 
@@ -104,32 +104,32 @@ Deno.test("[node/fs filehandle.stat] Get file status", async function () {
   await fileHandle.close();
 });
 
-Deno.test("[node/fs filehandle.writeFile] Write to file", async function () {
-  const tempFile: string = await Deno.makeTempFile();
+Edno.test("[node/fs filehandle.writeFile] Write to file", async function () {
+  const tempFile: string = await Edno.makeTempFile();
   const fileHandle = await fs.open(tempFile, "w");
 
   const str = "hello world";
   await fileHandle.writeFile(str);
 
-  const data = Deno.readFileSync(tempFile);
-  await Deno.remove(tempFile);
+  const data = Edno.readFileSync(tempFile);
+  await Edno.remove(tempFile);
   await fileHandle.close();
 
   assertEquals(decoder.decode(data), "hello world");
 });
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.writev] Write array of buffers to file",
   async function () {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     const fileHandle = await fs.open(tempFile, "w");
 
     const buffer1 = Buffer.from("hello ");
     const buffer2 = Buffer.from("world");
     const res = await fileHandle.writev([buffer1, buffer2]);
 
-    const data = Deno.readFileSync(tempFile);
-    await Deno.remove(tempFile);
+    const data = Edno.readFileSync(tempFile);
+    await Edno.remove(tempFile);
     await fileHandle.close();
 
     assertEquals(res.bytesWritten, 11);
@@ -137,10 +137,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.writev] Write array of buffers to file with position",
   async function () {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     const fileHandle = await fs.open(tempFile, "w");
 
     const buffer1 = Buffer.from("hello ");
@@ -149,15 +149,15 @@ Deno.test(
     const buffer3 = Buffer.from("lorem ipsum");
     await fileHandle.writev([buffer3], 6);
 
-    const data = Deno.readFileSync(tempFile);
-    await Deno.remove(tempFile);
+    const data = Edno.readFileSync(tempFile);
+    await Edno.remove(tempFile);
     await fileHandle.close();
 
     assertEquals(decoder.decode(data), "hello lorem ipsum");
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readv] Read into array of buffers from file",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -174,7 +174,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readv] Read into array of buffers with position",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -189,54 +189,54 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.truncate] Truncate file with length",
   async function () {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     const fileHandle = await fs.open(tempFile, "w+");
 
     await fileHandle.writeFile("hello world");
 
     await fileHandle.truncate(5);
 
-    const data = Deno.readFileSync(tempFile);
-    await Deno.remove(tempFile);
+    const data = Edno.readFileSync(tempFile);
+    await Edno.remove(tempFile);
     await fileHandle.close();
 
     assertEquals(decoder.decode(data), "hello");
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.truncate] Truncate file without length",
   async function () {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     const fileHandle = await fs.open(tempFile, "w+");
 
     await fileHandle.writeFile("hello world");
 
     await fileHandle.truncate();
 
-    const data = Deno.readFileSync(tempFile);
-    await Deno.remove(tempFile);
+    const data = Edno.readFileSync(tempFile);
+    await Edno.remove(tempFile);
     await fileHandle.close();
 
     assertEquals(decoder.decode(data), "");
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.truncate] Truncate file with extension",
   async function () {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     const fileHandle = await fs.open(tempFile, "w+");
 
     await fileHandle.writeFile("hi");
 
     await fileHandle.truncate(5);
 
-    const data = Deno.readFileSync(tempFile);
-    await Deno.remove(tempFile);
+    const data = Edno.readFileSync(tempFile);
+    await Edno.remove(tempFile);
     await fileHandle.close();
 
     const expected = new Uint8Array(5);
@@ -252,18 +252,18 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.truncate] Truncate file with negative length",
   async function () {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     const fileHandle = await fs.open(tempFile, "w+");
 
     await fileHandle.writeFile("hello world");
 
     await fileHandle.truncate(-1);
 
-    const data = Deno.readFileSync(tempFile);
-    await Deno.remove(tempFile);
+    const data = Edno.readFileSync(tempFile);
+    await Edno.remove(tempFile);
     await fileHandle.close();
 
     assertEquals(decoder.decode(data), "");
@@ -271,25 +271,25 @@ Deno.test(
   },
 );
 
-Deno.test({
+Edno.test({
   name: "[node/fs filehandle.chmod] Change the permissions of the file",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   async fn() {
     const fileHandle = await fs.open(testData);
 
     const readOnly = 0o444;
     await fileHandle.chmod(readOnly.toString(8));
-    assertEquals(Deno.statSync(testData).mode! & 0o777, readOnly);
+    assertEquals(Edno.statSync(testData).mode! & 0o777, readOnly);
 
     const readWrite = 0o666;
     await fileHandle.chmod(readWrite.toString(8));
-    assertEquals(Deno.statSync(testData).mode! & 0o777, readWrite);
+    assertEquals(Edno.statSync(testData).mode! & 0o777, readWrite);
 
     await fileHandle.close();
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/fs filehandle.utimes] Change the file system timestamps of the file",
   async fn() {
@@ -302,16 +302,16 @@ Deno.test({
     const mtime = new Date(0);
 
     await fileHandle.utimes(atime, mtime);
-    assertEquals(Deno.statSync(testData).atime!.getTime(), atime.getTime());
-    assertEquals(Deno.statSync(testData).mtime!.getTime(), mtime.getTime());
+    assertEquals(Edno.statSync(testData).atime!.getTime(), atime.getTime());
+    assertEquals(Edno.statSync(testData).mtime!.getTime(), mtime.getTime());
 
     await fileHandle.close();
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/fs filehandle.chown] Change owner of the file",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   async fn() {
     const fileHandle = await fs.open(testData);
 
@@ -320,23 +320,23 @@ Deno.test({
 
     await assertRejects(
       async () => await fileHandle.chown(nobodyUid, nobodyGid),
-      Deno.errors.PermissionDenied,
+      Edno.errors.PermissionDenied,
       "Operation not permitted",
     );
 
-    const realUid = Deno.uid() || 1000;
-    const realGid = Deno.gid() || 1000;
+    const realUid = Edno.uid() || 1000;
+    const realGid = Edno.gid() || 1000;
 
     await fileHandle.chown(realUid, realGid);
 
-    assertEquals(Deno.statSync(testData).uid, realUid);
-    assertEquals(Deno.statSync(testData).gid, realGid);
+    assertEquals(Edno.statSync(testData).uid, realUid);
+    assertEquals(Edno.statSync(testData).gid, realGid);
 
     await fileHandle.close();
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/fs filehandle.sync] Request that all data for the open file descriptor is flushed to the storage device",
   async fn() {
@@ -353,7 +353,7 @@ Deno.test({
   },
 });
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.createReadStream] Create a read stream",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -387,10 +387,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.createWriteStream] Create a write stream",
   async function () {
-    const tempFile: string = await Deno.makeTempFile();
+    const tempFile: string = await Edno.makeTempFile();
     try {
       const fileHandle = await fs.open(tempFile, "w");
       const stream = fileHandle.createWriteStream();
@@ -398,14 +398,14 @@ Deno.test(
       stream.on("close", resolve);
       stream.end("a\n", "utf8");
       await promise;
-      assertEquals(await Deno.readTextFile(tempFile), "a\n");
+      assertEquals(await Edno.readTextFile(tempFile), "a\n");
     } finally {
-      await Deno.remove(tempFile);
+      await Edno.remove(tempFile);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readableWebStream] Create a readable web stream",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -413,7 +413,7 @@ Deno.test(
 
     assert(webStream instanceof ReadableStream);
     assertEquals(
-      Deno.inspect(webStream),
+      Edno.inspect(webStream),
       'ReadableStream { locked: false, state: "readable", supportsBYOB: true }',
     );
 
@@ -441,7 +441,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readableWebStream] With autoClose option",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -481,7 +481,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readableWebStream] Throws when called twice",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -507,7 +507,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readableWebStream] cancel without autoClose keeps fd open",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -527,7 +527,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readableWebStream] cancel with autoClose closes fd",
   async function () {
     const fileHandle = await fs.open(testData);
@@ -548,7 +548,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/fs filehandle.readableWebStream] close FileHandle while reader is active",
   async function () {
     const fileHandle = await fs.open(testData);

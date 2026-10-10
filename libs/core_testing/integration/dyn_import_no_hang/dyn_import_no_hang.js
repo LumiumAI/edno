@@ -12,4 +12,4 @@ await import("./dynamic.js");
 console.log("module imported");
 
 // unref to let the event loop exit
-Deno.core.unrefOpPromise(prom);
+Edno.core.unrefOpPromise(prom);

@@ -1,3 +1,3 @@
-Deno.writeTextFileSync("./b.ts", "console.log(1);");
+Edno.writeTextFileSync("./b.ts", "console.log(1);");
 await import("./a.ts");
-Deno.writeTextFileSync("./b.ts", "console.log(2);");
+Edno.writeTextFileSync("./b.ts", "console.log(2);");

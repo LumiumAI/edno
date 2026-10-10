@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_lib::version::DENO_VERSION_INFO;
+use edno_lib::version::EDNO_VERSION_INFO;
 use serde::Serialize;
 
 use super::*;
@@ -31,7 +31,7 @@ impl Default for JsonReporterOutput {
   fn default() -> Self {
     Self {
       version: JSON_SCHEMA_VERSION,
-      runtime: format!("{} {}", DENO_VERSION_INFO.user_agent, env!("TARGET")),
+      runtime: format!("{} {}", EDNO_VERSION_INFO.user_agent, env!("TARGET")),
       cpu: mitata::cpu::name(),
       benches: vec![],
     }
@@ -158,8 +158,8 @@ impl BenchReporter for ConsoleReporter {
       println!(
         "{}\n",
         colors::gray(format!(
-          "Runtime | Deno {} ({})",
-          DENO_VERSION_INFO.deno,
+          "Runtime | Edno {} ({})",
+          EDNO_VERSION_INFO.edno,
           env!("TARGET")
         ))
       );

@@ -4,20 +4,20 @@
     "package_json": {
       "steps": [
         {
-          "args": "add --save-optional npm:@denotest/esm-basic",
+          "args": "add --save-optional npm:@ednotest/esm-basic",
           "output": "[WILDCARD]"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('package.json').trim())"
+            "console.log(Edno.readTextFileSync('package.json').trim())"
           ],
           "output": "package.json.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.statSync('node_modules/@denotest/esm-basic').isDirectory)"
+            "console.log(Edno.statSync('node_modules/@ednotest/esm-basic').isDirectory)"
           ],
           "output": "true\n"
         }
@@ -28,25 +28,25 @@
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync('package.json', JSON.stringify({ dependencies: { '@denotest/esm-basic': '^1.0.0' } }, null, 2))"
+            "Edno.writeTextFileSync('package.json', JSON.stringify({ dependencies: { '@ednotest/esm-basic': '^1.0.0' } }, null, 2))"
           ],
           "output": ""
         },
         {
-          "args": "add -O npm:@denotest/esm-basic",
+          "args": "add -O npm:@ednotest/esm-basic",
           "output": "[WILDCARD]"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('package.json').trim())"
+            "console.log(Edno.readTextFileSync('package.json').trim())"
           ],
           "output": "moved.package.json.out"
         }
       ]
     },
     "conflicts_with_dev": {
-      "args": "add --save-optional --dev npm:@denotest/esm-basic",
+      "args": "add --save-optional --dev npm:@ednotest/esm-basic",
       "output": "conflict.out",
       "exitCode": 1
     }

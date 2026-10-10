@@ -8,12 +8,12 @@ import {
   unreachable,
 } from "@std/assert";
 
-Deno.test("fragment", () => {
+Edno.test("fragment", () => {
   assertThrows(() => new WebSocketStream("ws://localhost:4242/#"));
   assertThrows(() => new WebSocketStream("ws://localhost:4242/#foo"));
 });
 
-Deno.test("duplicate protocols", () => {
+Edno.test("duplicate protocols", () => {
   assertThrows(() =>
     new WebSocketStream("ws://localhost:4242", {
       protocols: ["foo", "foo"],
@@ -21,7 +21,7 @@ Deno.test("duplicate protocols", () => {
   );
 });
 
-Deno.test(
+Edno.test(
   "connect & close custom valid code",
   { sanitizeOps: false },
   async () => {
@@ -32,7 +32,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "connect & close custom invalid reason",
   { sanitizeOps: false },
   async () => {
@@ -44,7 +44,7 @@ Deno.test(
   },
 );
 
-Deno.test("echo string", { sanitizeOps: false }, async () => {
+Edno.test("echo string", { sanitizeOps: false }, async () => {
   const ws = new WebSocketStream("ws://localhost:4242");
   const { readable, writable } = await ws.opened;
   await writable.getWriter().write("foo");
@@ -55,7 +55,7 @@ Deno.test("echo string", { sanitizeOps: false }, async () => {
 });
 
 // TODO(mmastrac): This fails -- perhaps it isn't respecting the TLS settings?
-Deno.test("echo string tls", { ignore: true }, async () => {
+Edno.test("echo string tls", { ignore: true }, async () => {
   const ws = new WebSocketStream("wss://localhost:4243");
   const { readable, writable } = await ws.opened;
   await writable.getWriter().write("foo");
@@ -65,25 +65,25 @@ Deno.test("echo string tls", { ignore: true }, async () => {
   await ws.closed;
 });
 
-Deno.test("websocket error", { sanitizeOps: false }, async () => {
+Edno.test("websocket error", { sanitizeOps: false }, async () => {
   const ws = new WebSocketStream("wss://localhost:4242");
   await Promise.all([
     // TODO(mmastrac): this exception should be tested
     assertRejects(
       () => ws.opened,
-      // Deno.errors.UnexpectedEof,
+      // Edno.errors.UnexpectedEof,
       // "tls handshake eof",
     ),
     // TODO(mmastrac): this exception should be tested
     assertRejects(
       () => ws.closed,
-      // Deno.errors.UnexpectedEof,
+      // Edno.errors.UnexpectedEof,
       // "tls handshake eof",
     ),
   ]);
 });
 
-Deno.test("echo uint8array", { sanitizeOps: false }, async () => {
+Edno.test("echo uint8array", { sanitizeOps: false }, async () => {
   const ws = new WebSocketStream("ws://localhost:4242");
   const { readable, writable } = await ws.opened;
   const uint = new Uint8Array([102, 111, 111]);
@@ -94,7 +94,7 @@ Deno.test("echo uint8array", { sanitizeOps: false }, async () => {
   await ws.closed;
 });
 
-Deno.test("aborting immediately throws an AbortError", async () => {
+Edno.test("aborting immediately throws an AbortError", async () => {
   const controller = new AbortController();
   const wss = new WebSocketStream("ws://localhost:4242", {
     signal: controller.signal,
@@ -118,7 +118,7 @@ Deno.test("aborting immediately throws an AbortError", async () => {
   );
 });
 
-Deno.test("aborting immediately with a reason throws that reason", async () => {
+Edno.test("aborting immediately with a reason throws that reason", async () => {
   const controller = new AbortController();
   const wss = new WebSocketStream("ws://localhost:4242", {
     signal: controller.signal,
@@ -137,7 +137,7 @@ Deno.test("aborting immediately with a reason throws that reason", async () => {
   );
 });
 
-Deno.test("aborting immediately with a primitive as reason throws that primitive", async () => {
+Edno.test("aborting immediately with a primitive as reason throws that primitive", async () => {
   const controller = new AbortController();
   const wss = new WebSocketStream("ws://localhost:4242", {
     signal: controller.signal,
@@ -153,14 +153,14 @@ Deno.test("aborting immediately with a primitive as reason throws that primitive
   );
 });
 
-Deno.test("headers", { sanitizeOps: false }, async () => {
-  const listener = Deno.listen({ port: 4512 });
+Edno.test("headers", { sanitizeOps: false }, async () => {
+  const listener = Edno.listen({ port: 4512 });
   const promise = (async () => {
     const conn = await listener.accept();
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
     const { request, respondWith } = (await httpConn.nextRequest())!;
     assertEquals(request.headers.get("x-some-header"), "foo");
-    const { response, socket } = Deno.upgradeWebSocket(request);
+    const { response, socket } = Edno.upgradeWebSocket(request);
     socket.onopen = () => socket.close();
     const p = new Promise<void>((resolve) => {
       socket.onopen = () => socket.close();
@@ -179,7 +179,7 @@ Deno.test("headers", { sanitizeOps: false }, async () => {
   listener.close();
 });
 
-Deno.test("forbidden headers", async () => {
+Edno.test("forbidden headers", async () => {
   const forbiddenHeaders = [
     "sec-websocket-accept",
     "sec-websocket-extensions",
@@ -190,15 +190,15 @@ Deno.test("forbidden headers", async () => {
     "connection",
   ];
 
-  const listener = Deno.listen({ port: 4512 });
+  const listener = Edno.listen({ port: 4512 });
   const promise = (async () => {
     const conn = await listener.accept();
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
     const { request, respondWith } = (await httpConn.nextRequest())!;
     for (const [key] of request.headers) {
       assertNotEquals(key, "foo");
     }
-    const { response, socket } = Deno.upgradeWebSocket(request);
+    const { response, socket } = Edno.upgradeWebSocket(request);
     const p = new Promise<void>((resolve) => {
       socket.onopen = () => socket.close();
       socket.onclose = () => resolve();
@@ -216,13 +216,13 @@ Deno.test("forbidden headers", async () => {
   listener.close();
 });
 
-Deno.test("sync close with empty stream", { sanitizeOps: false }, async () => {
-  const listener = Deno.listen({ port: 4512 });
+Edno.test("sync close with empty stream", { sanitizeOps: false }, async () => {
+  const listener = Edno.listen({ port: 4512 });
   const promise = (async () => {
     const conn = await listener.accept();
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
     const { request, respondWith } = (await httpConn.nextRequest())!;
-    const { response, socket } = Deno.upgradeWebSocket(request);
+    const { response, socket } = Edno.upgradeWebSocket(request);
     const p = new Promise<void>((resolve) => {
       socket.onopen = () => {
         socket.send("first message");
@@ -247,16 +247,16 @@ Deno.test("sync close with empty stream", { sanitizeOps: false }, async () => {
   listener.close();
 });
 
-Deno.test(
+Edno.test(
   "sync close with unread messages in stream",
   { sanitizeOps: false },
   async () => {
-    const listener = Deno.listen({ port: 4512 });
+    const listener = Edno.listen({ port: 4512 });
     const promise = (async () => {
       const conn = await listener.accept();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const { request, respondWith } = (await httpConn.nextRequest())!;
-      const { response, socket } = Deno.upgradeWebSocket(request);
+      const { response, socket } = Edno.upgradeWebSocket(request);
       const p = new Promise<void>((resolve) => {
         socket.onopen = () => {
           socket.send("first message");
@@ -285,13 +285,13 @@ Deno.test(
 );
 
 // TODO(mmastrac): Failed on CI, disabled
-Deno.test("async close with empty stream", { ignore: true }, async () => {
-  const listener = Deno.listen({ port: 4512 });
+Edno.test("async close with empty stream", { ignore: true }, async () => {
+  const listener = Edno.listen({ port: 4512 });
   const promise = (async () => {
     const conn = await listener.accept();
-    const httpConn = Deno.serveHttp(conn);
+    const httpConn = Edno.serveHttp(conn);
     const { request, respondWith } = (await httpConn.nextRequest())!;
-    const { response, socket } = Deno.upgradeWebSocket(request);
+    const { response, socket } = Edno.upgradeWebSocket(request);
     const p = new Promise<void>((resolve) => {
       socket.onopen = () => {
         socket.send("first message");
@@ -319,16 +319,16 @@ Deno.test("async close with empty stream", { ignore: true }, async () => {
 });
 
 // TODO(mmastrac): Failed on CI, disabled
-Deno.test(
+Edno.test(
   "async close with unread messages in stream",
   { ignore: true },
   async () => {
-    const listener = Deno.listen({ port: 4512 });
+    const listener = Edno.listen({ port: 4512 });
     const promise = (async () => {
       const conn = await listener.accept();
-      const httpConn = Deno.serveHttp(conn);
+      const httpConn = Edno.serveHttp(conn);
       const { request, respondWith } = (await httpConn.nextRequest())!;
-      const { response, socket } = Deno.upgradeWebSocket(request);
+      const { response, socket } = Edno.upgradeWebSocket(request);
       const p = new Promise<void>((resolve) => {
         socket.onopen = () => {
           socket.send("first message");

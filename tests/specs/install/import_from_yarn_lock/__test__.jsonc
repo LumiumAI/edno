@@ -2,7 +2,7 @@
   "tempDir": true,
   "steps": [
     {
-      // No deno.lock, no package-lock.json, no pnpm-lock.yaml — fall back
+      // No edno.lock, no package-lock.json, no pnpm-lock.yaml — fall back
       // to translating yarn.lock.
       "args": "install",
       "output": "install.out"
@@ -10,9 +10,9 @@
     {
       "args": [
         "eval",
-        "console.log(Deno.readTextFileSync('deno.lock').trim())"
+        "console.log(Edno.readTextFileSync('edno.lock').trim())"
       ],
-      "output": "deno.lock.out"
+      "output": "edno.lock.out"
     },
     {
       "args": "run --cached-only main.js",

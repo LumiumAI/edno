@@ -8,11 +8,11 @@ use std::future::Future;
 use std::future::poll_fn;
 use std::rc::Rc;
 
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::V8TaskSpawner;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::V8TaskSpawner;
+use edno_core::op2;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 
 use super::Output;

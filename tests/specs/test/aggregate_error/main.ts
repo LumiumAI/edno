@@ -1,4 +1,4 @@
-Deno.test("aggregate", function () {
+Edno.test("aggregate", function () {
   const error1 = new Error("Error 1");
   const error2 = new Error("Error 2");
 

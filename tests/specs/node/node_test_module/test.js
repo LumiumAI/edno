@@ -2,7 +2,7 @@
 
 // Ported from https://github.com/nodejs/node/blob/d396a041f71cc055ad60b0abc63ad81c0ee6a574/test/fixtures/test-runner/output/output.js
 
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 import assert from "node:assert";
 import test, { describe, it, suite } from "node:test";

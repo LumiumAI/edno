@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { LogLevel, WebClient } from "npm:@slack/web-api@7.8.0";
 import {
@@ -8,8 +8,8 @@ import {
 } from "./add_day_summary_to_month_summary.ts";
 import { parse as parseJsonc } from "@std/jsonc";
 
-const token = Deno.env.get("SLACK_TOKEN");
-const channel = Deno.env.get("SLACK_CHANNEL");
+const token = Edno.env.get("SLACK_TOKEN");
+const channel = Edno.env.get("SLACK_CHANNEL");
 
 if (!token) {
   console.error("SLACK_TOKEN is required");
@@ -28,7 +28,7 @@ const OS_NAMES: OSName[] = ["linux", "windows", "darwin"];
 /** Minimal type for the full report with per-test results. */
 interface FullReport {
   date: string;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   results: Record<string, [boolean | string, ...any[]]>;
 }
 
@@ -102,7 +102,7 @@ function createMessage(monthSummary: MonthSummary) {
   })\n`;
 
   mrkdwn +=
-    `<https://node-test-viewer.deno.deno.net/results/${date}|(Full report)>`;
+    `<https://node-test-viewer.edno.edno.net/results/${date}|(Full report)>`;
 
   return [
     {
@@ -162,7 +162,7 @@ function formatOsList(oses: OSName[]): string {
   return oses.length === OS_NAMES.length ? "all" : oses.join(", ");
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 type Block = { type: string; text: { type: string; text: string } } | any;
 
 const MAX_NEWLY_PASSING = 30;
@@ -357,7 +357,7 @@ async function generateUnabledPassingBlocks(
   console.log("Checking for passing-but-not-enabled tests...");
 
   // Read config.jsonc to get enabled test names
-  const configText = await Deno.readTextFile(
+  const configText = await Edno.readTextFile(
     "tests/node_compat/config.jsonc",
   );
   const config = parseJsonc(configText) as { tests: Record<string, unknown> };
@@ -414,7 +414,7 @@ async function generateUnabledPassingBlocks(
 }
 
 async function main() {
-  const monthSummary = await Deno.readTextFile("tests/node_compat/summary.json")
+  const monthSummary = await Edno.readTextFile("tests/node_compat/summary.json")
     .then(JSON.parse) as MonthSummary;
 
   try {

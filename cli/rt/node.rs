@@ -3,62 +3,62 @@
 use std::borrow::Cow;
 use std::sync::Arc;
 
-use deno_core::url::Url;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
-use deno_lib::standalone::binary::CjsExportAnalysisEntry;
+use edno_lib::standalone::binary::CjsExportAnalysisEntry;
 use deno_media_type::MediaType;
-use deno_resolver::loader::NpmModuleLoader;
-use deno_resolver::npm::DenoInNpmPackageChecker;
-use deno_resolver::npm::NpmReqResolver;
-use node_resolver::DenoIsBuiltInNodeModuleChecker;
+use edno_resolver::loader::NpmModuleLoader;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
+use edno_resolver::npm::NpmReqResolver;
+use node_resolver::EdnoIsBuiltInNodeModuleChecker;
 use node_resolver::analyze::CjsAnalysis;
 use node_resolver::analyze::CjsAnalysisExports;
 use node_resolver::analyze::EsmAnalysisMode;
 use node_resolver::analyze::NodeCodeTranslator;
 
 use crate::binary::StandaloneModules;
-use crate::file_system::DenoRtSys;
+use crate::file_system::EdnoRtSys;
 
-pub type DenoRtCjsTracker =
-  deno_resolver::cjs::CjsTracker<DenoInNpmPackageChecker, DenoRtSys>;
-pub type DenoRtNpmResolver = deno_resolver::npm::NpmResolver<DenoRtSys>;
-pub type DenoRtNpmModuleLoader = NpmModuleLoader<
+pub type EdnoRtCjsTracker =
+  edno_resolver::cjs::CjsTracker<EdnoInNpmPackageChecker, EdnoRtSys>;
+pub type EdnoRtNpmResolver = edno_resolver::npm::NpmResolver<EdnoRtSys>;
+pub type EdnoRtNpmModuleLoader = NpmModuleLoader<
   CjsCodeAnalyzer,
-  DenoInNpmPackageChecker,
-  DenoIsBuiltInNodeModuleChecker,
-  DenoRtNpmResolver,
-  DenoRtSys,
+  EdnoInNpmPackageChecker,
+  EdnoIsBuiltInNodeModuleChecker,
+  EdnoRtNpmResolver,
+  EdnoRtSys,
 >;
-pub type DenoRtNodeCodeTranslator = NodeCodeTranslator<
+pub type EdnoRtNodeCodeTranslator = NodeCodeTranslator<
   CjsCodeAnalyzer,
-  DenoInNpmPackageChecker,
-  DenoIsBuiltInNodeModuleChecker,
-  DenoRtNpmResolver,
-  DenoRtSys,
+  EdnoInNpmPackageChecker,
+  EdnoIsBuiltInNodeModuleChecker,
+  EdnoRtNpmResolver,
+  EdnoRtSys,
 >;
-pub type DenoRtNodeResolver = deno_runtime::deno_node::NodeResolver<
-  DenoInNpmPackageChecker,
-  DenoRtNpmResolver,
-  DenoRtSys,
+pub type EdnoRtNodeResolver = edno_runtime::edno_node::NodeResolver<
+  EdnoInNpmPackageChecker,
+  EdnoRtNpmResolver,
+  EdnoRtSys,
 >;
-pub type DenoRtNpmReqResolver = NpmReqResolver<
-  DenoInNpmPackageChecker,
-  DenoIsBuiltInNodeModuleChecker,
-  DenoRtNpmResolver,
-  DenoRtSys,
+pub type EdnoRtNpmReqResolver = NpmReqResolver<
+  EdnoInNpmPackageChecker,
+  EdnoIsBuiltInNodeModuleChecker,
+  EdnoRtNpmResolver,
+  EdnoRtSys,
 >;
 
 pub struct CjsCodeAnalyzer {
-  cjs_tracker: Arc<DenoRtCjsTracker>,
+  cjs_tracker: Arc<EdnoRtCjsTracker>,
   modules: Arc<StandaloneModules>,
-  sys: DenoRtSys,
+  sys: EdnoRtSys,
 }
 
 impl CjsCodeAnalyzer {
   pub fn new(
-    cjs_tracker: Arc<DenoRtCjsTracker>,
+    cjs_tracker: Arc<EdnoRtCjsTracker>,
     modules: Arc<StandaloneModules>,
-    sys: DenoRtSys,
+    sys: EdnoRtSys,
   ) -> Self {
     Self {
       cjs_tracker,
@@ -119,7 +119,7 @@ impl CjsCodeAnalyzer {
             // the compile step skipped analysis for this file — bug.
             if log::log_enabled!(log::Level::Debug) {
               log::debug!(
-                "No CJS export analysis was stored for '{}'. Assuming ESM. This might indicate a bug in Deno.",
+                "No CJS export analysis was stored for '{}'. Assuming ESM. This might indicate a bug in Edno.",
                 specifier
               );
             }
@@ -150,13 +150,13 @@ impl CjsCodeAnalyzer {
 /// files read from the host filesystem (HMR / dev mode) which have no
 /// pre-computed analysis embedded in the VFS.
 ///
-/// Mirrors what `DenoCjsCodeAnalyzer` does at compile time, minus the
+/// Mirrors what `EdnoCjsCodeAnalyzer` does at compile time, minus the
 /// re-export resolution (the loader walks reexports separately). The
 /// `compute_is_script` + `is_cjs_with_known_is_script` two-step is the
 /// same one the compile-time analyzer uses; without it, ESM files that
 /// happen to look CJS-ish would be mis-classified.
 fn analyze_cjs_live<'a>(
-  cjs_tracker: &DenoRtCjsTracker,
+  cjs_tracker: &EdnoRtCjsTracker,
   specifier: &Url,
   media_type: MediaType,
   source: Cow<'a, str>,

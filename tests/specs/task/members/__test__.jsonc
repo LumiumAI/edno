@@ -3,17 +3,17 @@
     // `--members` runs the task in all workspace members, but not in the
     // workspace root, even when the root config has a `name` field (which
     // would be matched by `--filter *`).
-    "deno_members": {
-      "cwd": "./deno",
+    "edno_members": {
+      "cwd": "./edno",
       "args": "task --members dev",
-      "output": "deno_members.out"
+      "output": "edno_members.out"
     },
     // Without a task name, `--members` lists tasks from the workspace
     // members only.
-    "deno_members_no_task": {
-      "cwd": "./deno",
+    "edno_members_no_task": {
+      "cwd": "./edno",
       "args": "task --members",
-      "output": "deno_members_no_task.out"
+      "output": "edno_members_no_task.out"
     },
     "npm_members": {
       "cwd": "./npm",

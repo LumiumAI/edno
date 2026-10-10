@@ -1,4 +1,4 @@
-import mod from "npm:@denotest/no-types-cjs";
+import mod from "npm:@ednotest/no-types-cjs";
 
 // it actually returns a `number` and has that in its
 // jsdocs, but the jsdocs should not have been resolved so

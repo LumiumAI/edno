@@ -29,10 +29,10 @@ jobs:
           git config --global fetch.parallel 32
       - name: Clone repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - name: Install deno
+      - name: Install edno
         uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282
         with:
-          deno-version: v2.x
+          edno-version: v2.x
       - name: Create Gist URL
         env:
           GITHUB_TOKEN: '${{ secrets.DENOBOT_GIST_PAT }}'

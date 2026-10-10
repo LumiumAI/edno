@@ -2,10 +2,10 @@
 
 // @ts-check
 /// <reference path="./compiler.d.ts" />
-// deno-lint-ignore-file no-undef
+// edno-lint-ignore-file no-undef
 
-/** @type {DenoCore} */
-const core = globalThis.Deno.core;
+/** @type {EdnoCore} */
+const core = globalThis.Edno.core;
 const ops = core.ops;
 
 let logDebug = false;
@@ -44,9 +44,9 @@ const unstableDenoProps = new Set([
   "QuicSendStream",
 ]);
 const unstableMsgSuggestion =
-  "If not, try changing the 'lib' compiler option to include 'deno.unstable' " +
+  "If not, try changing the 'lib' compiler option to include 'edno.unstable' " +
   "or add a triple-slash directive to the top of your entrypoint (main file): " +
-  '/// <reference lib="deno.unstable" />';
+  '/// <reference lib="edno.unstable" />';
 
 /**
  * @param {unknown} value
@@ -182,10 +182,10 @@ function isNodeSourceFile(sourceFile) {
   return isNodeSourceFile;
 }
 
-// NOTE: Deno now uses a stock (unforked) TypeScript build, which has a single
+// NOTE: Edno now uses a stock (unforked) TypeScript build, which has a single
 // global symbol table. Web-global coexistence with @types/node is handled in
 // the libs via the lib.dom-style conditional-deferral pattern, so the fork's
-// dual node/deno global tables and the `ts.deno.*` global hooks are gone.
+// dual node/edno global tables and the `ts.edno.*` global hooks are gone.
 
 /**
  * @param msg {string}
@@ -194,18 +194,18 @@ function isNodeSourceFile(sourceFile) {
 function formatMessage(msg, code) {
   switch (code) {
     case 2304: {
-      if (msg === "Cannot find name 'Deno'.") {
+      if (msg === "Cannot find name 'Edno'.") {
         msg += " Do you need to change your target library? " +
-          "Try changing the 'lib' compiler option to include 'deno.ns' " +
+          "Try changing the 'lib' compiler option to include 'edno.ns' " +
           "or add a triple-slash directive to the top of your entrypoint " +
-          '(main file): /// <reference lib="deno.ns" />';
+          '(main file): /// <reference lib="edno.ns" />';
       }
       return msg;
     }
     case 2339: {
       const property = getProperty();
       if (property && unstableDenoProps.has(property)) {
-        return `${msg} 'Deno.${property}' is an unstable API. ${unstableMsgSuggestion}`;
+        return `${msg} 'Edno.${property}' is an unstable API. ${unstableMsgSuggestion}`;
       }
       return msg;
     }
@@ -214,7 +214,7 @@ function formatMessage(msg, code) {
       if (property && unstableDenoProps.has(property)) {
         const suggestion = getMsgSuggestion();
         if (suggestion) {
-          return `${msg} 'Deno.${property}' is an unstable API. Did you mean '${suggestion}'? ${unstableMsgSuggestion}`;
+          return `${msg} 'Edno.${property}' is an unstable API. Did you mean '${suggestion}'? ${unstableMsgSuggestion}`;
         }
       }
       return msg;
@@ -222,7 +222,7 @@ function formatMessage(msg, code) {
   }
 
   function getProperty() {
-    return /Property '([^']+)' does not exist on type 'typeof Deno'/
+    return /Property '([^']+)' does not exist on type 'typeof Edno'/
       .exec(msg)?.[1];
   }
 
@@ -305,7 +305,7 @@ export const ASSETS_URL_PREFIX = "asset:///";
 const CACHE_URL_PREFIX = "cache:///";
 
 /** Diagnostics that are intentionally ignored when compiling TypeScript in
- * Deno, as they provide misleading or incorrect information. */
+ * Edno, as they provide misleading or incorrect information. */
 const TSC_CONSTANTS = ops.op_tsc_constants();
 const IGNORED_DIAGNOSTICS = TSC_CONSTANTS.ignoredDiagnosticCodes;
 
@@ -349,7 +349,7 @@ export function clearScriptNamesCache() {
 }
 
 /** An object literal of the incremental compiler host, which provides the
- * specific "bindings" to the Deno environment that tsc needs to work.
+ * specific "bindings" to the Edno environment that tsc needs to work.
  *
  * @type {ts.CompilerHost & ts.LanguageServiceHost} */
 const hostImpl = {
@@ -440,7 +440,7 @@ const hostImpl = {
         impliedNodeFormat: isCjs
           ? ts.ModuleKind.CommonJS
           : ts.ModuleKind.ESNext,
-        // no need to parse docs for `deno check`
+        // no need to parse docs for `edno check`
         jsDocParsingMode: ts.JSDocParsingMode.ParseForTypeErrors,
       },
       false,
@@ -719,7 +719,7 @@ const hostImpl = {
   getNearestAncestorDirectoryWithPackageJson() {
     // always return `undefined` in order to short-circuit
     // a codepath in the TypeScript compiler that always
-    // ends up returning `undefined` in Deno anyway
+    // ends up returning `undefined` in Edno anyway
     return undefined;
   },
 };
@@ -752,7 +752,7 @@ for (const [key, value] of Object.entries(hostImpl)) {
   }
 }
 
-// override the npm install @types package diagnostics to be deno specific
+// override the npm install @types package diagnostics to be edno specific
 ts.setLocalizedDiagnosticMessages((() => {
   const nodeMessage = "Cannot find name '{0}'."; // don't offer any suggestions
   const jqueryMessage =
@@ -798,7 +798,7 @@ export function filterMapDiagnostic(diagnostic) {
     // declarations are shared between cells. As a side effect, declaring a
     // top-level binding whose name matches an ambient global from the default
     // libraries (e.g. `const name = ...` shadowing `declare var name` in
-    // `lib.deno.window.d.ts`) is reported as a redeclaration, even though it's
+    // `lib.edno.window.d.ts`) is reported as a redeclaration, even though it's
     // valid in a notebook. Suppress these when the conflicting declaration
     // lives in a default library.
     // See https://github.com/denoland/deno/issues/22628.
@@ -929,13 +929,13 @@ function getModuleLiteralImportKind(node) {
 function appendRawImportFragment(specifier, rawKind) {
   const fragmentIndex = specifier.indexOf("#");
   if (fragmentIndex === -1) {
-    specifier += `#denoRawImport=${rawKind}.ts`;
+    specifier += `#ednoRawImport=${rawKind}.ts`;
   } else if (
     !specifier.substring(fragmentIndex).includes(
-      `denoRawImport=${rawKind}.ts`,
+      `ednoRawImport=${rawKind}.ts`,
     )
   ) {
-    specifier += `&denoRawImport=${rawKind}.ts`;
+    specifier += `&ednoRawImport=${rawKind}.ts`;
   }
   return specifier;
 }

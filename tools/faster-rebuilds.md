@@ -1,6 +1,6 @@
 # Faster rebuilds with [`cargo-plonk`](https://crates.io/crates/cargo-plonk)
 
-This document describes how to use `cargo plonk` to speed up Deno rebuilds for
+This document describes how to use `cargo plonk` to speed up Edno rebuilds for
 faster dev cycles.
 
 ```
@@ -14,20 +14,20 @@ crates.
 
 ## Usage
 
-First, compile Deno normally.
+First, compile Edno normally.
 
 ```
-cargo build -p deno [--release]
+cargo build -p edno [--release]
 ```
 
 Run the following command to start watching for changes in `ext/webgpu` crate
-and hot swap `init_ops_and_esm` function into the previously built `deno` bin.
+and hot swap `init_ops_and_esm` function into the previously built `edno` bin.
 
 ```
 cargo plonk run \
-  --package deno_webgpu \
+  --package edno_webgpu \
   --symbol init_ops_and_esm \
-  --bin deno \
+  --bin edno \
   --watch
 ```
 
@@ -40,9 +40,9 @@ You can use `cargo plonk run` to re-run commands on changes.
 
 ```
 cargo plonk run -v \
-  -p deno_webgpu \
+  -p edno_webgpu \
   -s init_ops_and_esm \
-  -b deno \
+  -b edno \
   --watch \
   -- eval "await navigator.gpu.requestAdapter()" --unstable
 ```
@@ -60,8 +60,8 @@ Use the `-v`/`--verbose` flag to turn on debug info.
 
 ```
     Finished dev [unoptimized + debuginfo] target(s) in 8.86s
-[*] Running: DYLD_INSERT_LIBRARIES="/Users/divy/gh/plonk/target/release/build/cargo-plonk-dd0f08c90ca82109/out/inject.dylib" DYLD_LIBRARY_PATH="/Users/divy/.rustup/toolchains/1.75.0-aarch64-apple-darwin/lib" NEW_SYMBOL="_ZN11deno_webgpu11deno_webgpu16init_ops_and_esm17h683ed96f45027bc1E" PLONK_BINARY="/Users/divy/gh/deno/target/debug/deno" PLONK_LIBRARY="/Users/divy/gh/deno/target/debug/libdeno_webgpu.dylib" SYMBOL="_ZN11deno_webgpu11deno_webgpu16init_ops_and_esm17h6907fcd8be7e215eE" VERBOSE="y" "/Users/divy/gh/deno/target/debug/deno" "eval" "await navigator.gpu.requestAdapter()" "--unstable"
-[*] Plonking _ZN11deno_webgpu11deno_webgpu16init_ops_and_esm17h6907fcd8be7e215eE in /Users/divy/gh/deno/target/debug/libdeno_webgpu.dylib
+[*] Running: DYLD_INSERT_LIBRARIES="/Users/divy/gh/plonk/target/release/build/cargo-plonk-dd0f08c90ca82109/out/inject.dylib" DYLD_LIBRARY_PATH="/Users/divy/.rustup/toolchains/1.75.0-aarch64-apple-darwin/lib" NEW_SYMBOL="_ZN11deno_webgpu11deno_webgpu16init_ops_and_esm17h683ed96f45027bc1E" PLONK_BINARY="/Users/divy/gh/edno/target/debug/edno" PLONK_LIBRARY="/Users/divy/gh/edno/target/debug/libdeno_webgpu.dylib" SYMBOL="_ZN11deno_webgpu11deno_webgpu16init_ops_and_esm17h6907fcd8be7e215eE" VERBOSE="y" "/Users/divy/gh/edno/target/debug/edno" "eval" "await navigator.gpu.requestAdapter()" "--unstable"
+[*] Plonking _ZN11deno_webgpu11deno_webgpu16init_ops_and_esm17h6907fcd8be7e215eE in /Users/divy/gh/edno/target/debug/libdeno_webgpu.dylib
 [*] Old address: 0x105fcff2c
 [*] New address: 0x128511424
 ===

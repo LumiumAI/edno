@@ -1,5 +1,5 @@
 import { branch } from "./branch.ts";
 
-Deno.test("branch", function () {
+Edno.test("branch", function () {
   branch(true);
 });

@@ -62,7 +62,7 @@ const {
   SafeWeakMap,
 } = primordials;
 
-const { pathFromURL } = core.loadExtScript("ext:deno_web/00_infra.js");
+const { pathFromURL } = core.loadExtScript("ext:edno_web/00_infra.js");
 
 /**
  * @param {BufferSource} source
@@ -393,7 +393,7 @@ function getTypeSizeAndAlignment(type, cache = new SafeMap()) {
 
 class UnsafeCallback {
   #refcount;
-  // Internal promise only meant to keep Deno from exiting
+  // Internal promise only meant to keep Edno from exiting
   #refpromise;
   #rid;
   definition;

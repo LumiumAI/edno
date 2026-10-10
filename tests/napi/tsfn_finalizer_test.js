@@ -23,7 +23,7 @@ import { assert, loadTestLibrary } from "./common.js";
 
 const lib = loadTestLibrary();
 
-Deno.test({
+Edno.test({
   name: "napi wrap finalizers run at most once (#36499)",
   // The threadsafe function intentionally outlives the test body.
   sanitizeOps: false,

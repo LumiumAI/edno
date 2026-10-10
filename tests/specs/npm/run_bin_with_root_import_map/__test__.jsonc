@@ -6,11 +6,11 @@
     // absolute imports) must not rewrite the npm bin entrypoint, whose resolved
     // file URL lives in the global npm cache outside the project directory.
     "esm_bin": {
-      "args": "run -A --quiet npm:@denotest/bin/cli-esm this is a test",
+      "args": "run -A --quiet npm:@ednotest/bin/cli-esm this is a test",
       "output": "esm.out"
     },
     "cjs_bin": {
-      "args": "run -A --quiet npm:@denotest/bin/cli-cjs this is a test",
+      "args": "run -A --quiet npm:@ednotest/bin/cli-cjs this is a test",
       "output": "cjs.out"
     }
   }

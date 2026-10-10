@@ -1,16 +1,16 @@
-Download http://localhost:4260/@denotest%2fadd
-Download http://localhost:4260/@denotest%2fpeer-dep-specific-constraint
+Download http://localhost:4260/@ednotest%2fadd
+Download http://localhost:4260/@ednotest%2fpeer-dep-specific-constraint
 Warning The following peer dependency issues were found:
-└─┬ @denotest/peer-dep-specific-constraint@1.0.0
-  └── peer @denotest/add@0.5: resolved to 1.0.0
+└─┬ @ednotest/peer-dep-specific-constraint@1.0.0
+  └── peer @ednotest/add@0.5: resolved to 1.0.0
 
-These packages were resolved to a version that does not satisfy a peer dependency constraint, which can cause runtime errors. To silence this warning, install a compatible version or add an "overrides" entry to your package.json or deno.json.
+These packages were resolved to a version that does not satisfy a peer dependency constraint, which can cause runtime errors. To silence this warning, install a compatible version or add an "overrides" entry to your package.json or edno.json.
 Learn more: https://docs.deno.com/go/peer-deps
 [UNORDERED_START]
-Download http://localhost:4260/@denotest/peer-dep-specific-constraint/1.0.0.tgz
-Download http://localhost:4260/@denotest/add/1.0.0.tgz
-Initialize @denotest/peer-dep-specific-constraint@1.0.0
-Initialize @denotest/add@1.0.0
+Download http://localhost:4260/@ednotest/peer-dep-specific-constraint/1.0.0.tgz
+Download http://localhost:4260/@ednotest/add/1.0.0.tgz
+Initialize @ednotest/peer-dep-specific-constraint@1.0.0
+Initialize @ednotest/add@1.0.0
 [UNORDERED_END]
 Installed [WILDLINE] packages in [WILDCARD]
 Reused [WILDLINE] packages from cache

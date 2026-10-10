@@ -11,7 +11,7 @@ import {
   performance,
 } from "node:perf_hooks";
 
-Deno.test("[node/perf_hooks] performance.timerify()", () => {
+Edno.test("[node/perf_hooks] performance.timerify()", () => {
   function sayHello() {
     return "hello world";
   }
@@ -24,7 +24,7 @@ Deno.test("[node/perf_hooks] performance.timerify()", () => {
   }
 });
 
-Deno.test("[node/perf_hooks] histogram parity regressions", () => {
+Edno.test("[node/perf_hooks] histogram parity regressions", () => {
   assertEquals("Histogram" in perfHooks, false);
   assertEquals("RecordableHistogram" in perfHooks, false);
 
@@ -61,7 +61,7 @@ Deno.test("[node/perf_hooks] histogram parity regressions", () => {
   assertEquals(eld.percentiles, new Map([[100, 0]]));
 });
 
-Deno.test("[node/perf_hooks] timerify requires a real RecordableHistogram", () => {
+Edno.test("[node/perf_hooks] timerify requires a real RecordableHistogram", () => {
   assertThrows(
     () =>
       performance.timerify(() => {}, {
@@ -72,7 +72,7 @@ Deno.test("[node/perf_hooks] timerify requires a real RecordableHistogram", () =
   );
 });
 
-Deno.test("[node/timers setTimeout]", () => {
+Edno.test("[node/timers setTimeout]", () => {
   {
     const { clearTimeout, setTimeout } = timers;
     const id = setTimeout(() => {});
@@ -85,7 +85,7 @@ Deno.test("[node/timers setTimeout]", () => {
   }
 });
 
-Deno.test("[node/timers setInterval]", () => {
+Edno.test("[node/timers setInterval]", () => {
   {
     const { clearInterval, setInterval } = timers;
     const id = setInterval(() => {});
@@ -98,7 +98,7 @@ Deno.test("[node/timers setInterval]", () => {
   }
 });
 
-Deno.test("[node/timers setImmediate]", async () => {
+Edno.test("[node/timers setImmediate]", async () => {
   {
     const { clearImmediate, setImmediate } = timers;
     const imm = setImmediate(() => {});
@@ -126,7 +126,7 @@ Deno.test("[node/timers setImmediate]", async () => {
   }
 });
 
-Deno.test("[node/timers/promises setTimeout]", () => {
+Edno.test("[node/timers/promises setTimeout]", () => {
   const { setTimeout } = timersPromises;
   const p = setTimeout(0);
 
@@ -134,7 +134,7 @@ Deno.test("[node/timers/promises setTimeout]", () => {
   return p;
 });
 
-Deno.test("[node/timers/promises scheduler.wait]", async () => {
+Edno.test("[node/timers/promises scheduler.wait]", async () => {
   const { scheduler } = timersPromises;
   let resolved = false;
   timers.setTimeout(() => (resolved = true), 20);
@@ -145,7 +145,7 @@ Deno.test("[node/timers/promises scheduler.wait]", async () => {
   assert(resolved);
 });
 
-Deno.test("[node/timers/promises scheduler.yield]", async () => {
+Edno.test("[node/timers/promises scheduler.yield]", async () => {
   const { scheduler } = timersPromises;
   let resolved = false;
   timers.setImmediate(() => resolved = true);
@@ -158,7 +158,7 @@ Deno.test("[node/timers/promises scheduler.yield]", async () => {
 });
 
 // Regression test for https://github.com/denoland/deno/issues/17981
-Deno.test("[node/timers refresh cancelled timer]", () => {
+Edno.test("[node/timers refresh cancelled timer]", () => {
   const { setTimeout, clearTimeout } = timers;
   const p = setTimeout(() => {
     fail();
@@ -167,17 +167,17 @@ Deno.test("[node/timers refresh cancelled timer]", () => {
   p.refresh();
 });
 
-Deno.test("[node/timers] clearTimeout with number", () => {
+Edno.test("[node/timers] clearTimeout with number", () => {
   const timer = +timers.setTimeout(() => fail(), 10);
   timers.clearTimeout(timer);
 });
 
-Deno.test("[node/timers] clearInterval with number", () => {
+Edno.test("[node/timers] clearInterval with number", () => {
   const timer = +timers.setInterval(() => fail(), 10);
   timers.clearInterval(timer);
 });
 
-Deno.test("[node/timers setImmediate returns Immediate object]", () => {
+Edno.test("[node/timers setImmediate returns Immediate object]", () => {
   const { clearImmediate, setImmediate } = timers;
 
   const imm = setImmediate(() => {});
@@ -187,7 +187,7 @@ Deno.test("[node/timers setImmediate returns Immediate object]", () => {
   clearImmediate(imm);
 });
 
-Deno.test({
+Edno.test({
   name: "setInterval yields correct values at expected intervals",
   async fn() {
     // Test configuration
@@ -195,7 +195,7 @@ Deno.test({
       expectedValue: 42,
       intervalMs: 100,
       iterations: 3,
-      tolerancePercent: Deno.env.get("CI") != null ? 75 : 50,
+      tolerancePercent: Edno.env.get("CI") != null ? 75 : 50,
     };
 
     const { setInterval } = timersPromises;
@@ -271,13 +271,13 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "setInterval with AbortSignal stops after expected duration",
   async fn() {
     const INTERVAL_MS = 500;
     const TOTAL_DURATION_MS = 3000;
     const TOLERANCE_MS = 500;
-    const DELTA_TOLERANCE_MS = Deno.env.get("CI") != null ? 100 : 50;
+    const DELTA_TOLERANCE_MS = Edno.env.get("CI") != null ? 100 : 50;
 
     const abortController = new AbortController();
     const { setInterval } = timersPromises;
@@ -338,7 +338,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[timers/promises] setTimeout aborted by AbortSignal",
   async fn() {
     const timerPromise = new Promise((resolve, reject) => {

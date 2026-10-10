@@ -4,7 +4,7 @@ try {
 } catch {
   console.log("fail");
 }
-Deno.writeTextFileSync("a.ts", "");
+Edno.writeTextFileSync("a.ts", "");
 try {
   await import(file);
 } catch {

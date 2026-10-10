@@ -1,25 +1,25 @@
-// With DENO_TRUST_PROXY_HEADERS=1, the x-deno-client-address request header
+// With EDNO_TRUST_PROXY_HEADERS=1, the x-edno-client-address request header
 // overrides the remote address reported to the handler and is stripped from
 // the request headers.
-const server = Deno.serve(
+const server = Edno.serve(
   { port: 0, onListen: () => {} },
   (req, info) => {
     console.log("remoteAddr:", JSON.stringify(info.remoteAddr));
     console.log(
       "header visible:",
-      req.headers.has("x-deno-client-address"),
+      req.headers.has("x-edno-client-address"),
     );
     return new Response("ok");
   },
 );
 
 const res = await fetch(`http://127.0.0.1:${server.addr.port}/`, {
-  headers: { "x-deno-client-address": "10.1.2.3:4567" },
+  headers: { "x-edno-client-address": "10.1.2.3:4567" },
 });
 await res.body?.cancel();
 console.log(
   "environment after first request:",
-  Deno.env.get("DENO_TRUST_PROXY_HEADERS"),
+  Edno.env.get("EDNO_TRUST_PROXY_HEADERS"),
 );
 
 // A request with a body exercises the streaming/prebuffered raw record
@@ -27,7 +27,7 @@ console.log(
 const res2 = await fetch(`http://127.0.0.1:${server.addr.port}/`, {
   method: "POST",
   body: "hello",
-  headers: { "x-deno-client-address": "10.1.2.3:4567" },
+  headers: { "x-edno-client-address": "10.1.2.3:4567" },
 });
 await res2.body?.cancel();
 

@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -67,12 +67,12 @@
 const { core, primordials } = __bootstrap;
 const lazyProcess = core.createLazyLoader("node:process");
 const process = lazyProcess().default;
-const _mod1 = core.loadExtScript("ext:deno_node/internal/errors.ts");
+const _mod1 = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const Duplex = core.loadExtScript(
-  "ext:deno_node/internal/streams/duplex.js",
+  "ext:edno_node/internal/streams/duplex.js",
 ).default;
 const { getHighWaterMark } = core.loadExtScript(
-  "ext:deno_node/internal/streams/state.js",
+  "ext:edno_node/internal/streams/state.js",
 );
 
 const {

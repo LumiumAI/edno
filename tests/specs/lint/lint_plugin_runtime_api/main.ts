@@ -9,4 +9,4 @@ const plugin = {
   },
 };
 
-Deno.lint.runPlugin(plugin, "source.ts", "export default {}");
+Edno.lint.runPlugin(plugin, "source.ts", "export default {}");

@@ -6,9 +6,9 @@ const { core, primordials } = __bootstrap;
 const { Array } = primordials;
 
 const { validateFunction } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
-const { _exiting } = core.loadExtScript("ext:deno_node/_process/exiting.ts");
+const { _exiting } = core.loadExtScript("ext:edno_node/_process/exiting.ts");
 const {
   emitAfter,
   emitBefore,
@@ -16,7 +16,7 @@ const {
   emitInit,
   executionAsyncId,
   newAsyncId: nextAsyncId,
-} = core.loadExtScript("ext:deno_node/internal/async_hooks.ts");
+} = core.loadExtScript("ext:edno_node/internal/async_hooks.ts");
 
 const {
   getAsyncContext,

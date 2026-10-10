@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and Node.js contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -47,8 +47,8 @@ const {
 const {
   validateFunction,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 
 const lazyWritable = core.createLazyLoader("node:_stream_writable");
 
@@ -59,15 +59,15 @@ const {
   prepareAsymmetricKey,
   PrivateKeyObject,
   PublicKeyObject,
-} = core.loadExtScript("ext:deno_node/internal/crypto/keys.ts");
+} = core.loadExtScript("ext:edno_node/internal/crypto/keys.ts");
 const { createHash } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/hash.ts",
+  "ext:edno_node/internal/crypto/hash.ts",
 );
 const {
   ERR_CRYPTO_SIGN_KEY_REQUIRED,
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const FastBuffer = Buffer[SymbolSpecies];
 
@@ -218,7 +218,7 @@ class SignImpl {
       }
       throw err;
     }
-    // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) is not a primordial
+    // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding) is not a primordial
     return encoding && encoding !== "buffer" ? ret.toString(encoding) : ret;
   }
 

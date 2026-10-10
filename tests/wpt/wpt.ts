@@ -1,9 +1,9 @@
-#!/usr/bin/env -S deno run -RWNE --allow-run --lock=tools/deno.lock.json --config=tests/config/deno.json --unsafely-ignore-certificate-errors
+#!/usr/bin/env -S edno run -RWNE --allow-run --lock=tools/edno.lock.json --config=tests/config/edno.json --unsafely-ignore-certificate-errors
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
-// This script is used to run WPT tests for Deno.
+// This script is used to run WPT tests for Edno.
 
 import {
   runSingleTest,
@@ -87,7 +87,7 @@ class TestFilter {
   }
 }
 
-const command = Deno.args[0];
+const command = Edno.args[0];
 
 switch (command) {
   case "setup":
@@ -103,7 +103,7 @@ switch (command) {
     if (ciHash.skip) break;
     const exitCode = await run();
     if (exitCode === 0) await ciHash.commit();
-    Deno.exit(exitCode);
+    Edno.exit(exitCode);
     break;
   }
 
@@ -131,13 +131,13 @@ More details at https://docs.deno.com/runtime/manual/references/contributing/web
 }
 
 async function setup() {
-  const hostsPath = Deno.build.os == "windows"
-    ? `${Deno.env.get("SystemRoot")}\\System32\\drivers\\etc\\hosts`
+  const hostsPath = Edno.build.os == "windows"
+    ? `${Edno.env.get("SystemRoot")}\\System32\\drivers\\etc\\hosts`
     : "/etc/hosts";
   // TODO(lucacsonato): use this when 1.7.1 is released.
-  // const records = await Deno.resolveDns("web-platform.test", "A");
+  // const records = await Edno.resolveDns("web-platform.test", "A");
   // const etcHostsConfigured = records[0] == "127.0.0.1";
-  const hostsFile = await Deno.readTextFile(hostsPath);
+  const hostsFile = await Edno.readTextFile(hostsPath);
   const etcHostsConfigured = hostsFile.includes("web-platform.test");
 
   if (etcHostsConfigured) {
@@ -153,8 +153,8 @@ async function setup() {
       }).output();
       assert(success, "wpt make-hosts-file should not fail");
       const entries = new TextDecoder().decode(stdout);
-      const file = await Deno.open(hostsPath, { append: true }).catch((err) => {
-        if (err instanceof Deno.errors.PermissionDenied) {
+      const file = await Edno.open(hostsPath, { append: true }).catch((err) => {
+        if (err instanceof Edno.errors.PermissionDenied) {
           throw new Error(
             `Failed to open ${hostsPath} (permission error). Please run this command again with sudo, or configure the entries manually.`,
           );
@@ -165,13 +165,13 @@ async function setup() {
       await writeAll(
         file,
         new TextEncoder().encode(
-          "\n\n# Configured for Web Platform Tests (Deno)\n" + entries,
+          "\n\n# Configured for Web Platform Tests (Edno)\n" + entries,
         ),
       );
       console.log(`Updated ${hostsPath}`);
     } else {
       console.log(`Please configure the ${hostsPath} entries manually.`);
-      if (Deno.build.os == "windows") {
+      if (Edno.build.os == "windows") {
         console.log("To do this run the following command in PowerShell:");
         console.log("");
         console.log("    cd tests/wpt/suite/");
@@ -208,7 +208,7 @@ interface TestToRun {
 }
 
 function getTestTimeout(test: TestToRun) {
-  if (Deno.env.get("CI")) {
+  if (Edno.env.get("CI")) {
     // Don't give expected failures the full time
     if (test.expectation === false) {
       return { long: 60_000, default: 10_000 };
@@ -236,15 +236,15 @@ Either specify test filters or use --all to run the entire suite:
 Options:
     --all              Run all tests
     --quiet            Only print failing test cases
-    --release          Use the release build of Deno
-    --binary=<path>    Use a specific Deno binary
+    --release          Use the release build of Edno
+    --binary=<path>    Use a specific Edno binary
     --json=<file>      Write test results as JSON
     --wptreport=<file> Write results in wptreport format
     --inspect-brk      Attach V8 inspector to each test
     --no-ignore        Include tests marked with {"ignore": true}
     --exit-zero        Exit with code 0 even on failures
 `);
-    Deno.exit(1);
+    Edno.exit(1);
   }
   const startTime = Date.now();
   const expectation = getExpectation();
@@ -348,19 +348,19 @@ Options:
       };
       minifiedResults.push(minified);
     }
-    await Deno.writeTextFile(json, JSON.stringify(minifiedResults) + "\n");
+    await Edno.writeTextFile(json, JSON.stringify(minifiedResults) + "\n");
   }
 
   if (wptreport) {
     const report = await generateWptReport(results, startTime, endTime);
-    await Deno.writeTextFile(wptreport, JSON.stringify(report) + "\n");
+    await Edno.writeTextFile(wptreport, JSON.stringify(report) + "\n");
   }
 
   const newExpectations = newExpectation(results);
-  const tmpDir = Deno.makeTempDirSync();
+  const tmpDir = Edno.makeTempDirSync();
   // Write each suite to its own file in the tmp directory for diffing
   for (const [key, value] of Object.entries(newExpectations)) {
-    Deno.writeTextFileSync(
+    Edno.writeTextFileSync(
       `${tmpDir}/${key}.json`,
       JSON.stringify(value, undefined, "  ") + "\n",
     );
@@ -370,19 +370,19 @@ Options:
 
   // Copy non-expectation files (like schema.json) into the tmp dir so
   // git diff --no-index doesn't show them as spurious deletions.
-  for await (const entry of Deno.readDir(EXPECTATIONS_DIR)) {
+  for await (const entry of Edno.readDir(EXPECTATIONS_DIR)) {
     if (!entry.isFile || !entry.name.endsWith(".json")) continue;
     const tmpPath = `${tmpDir}/${entry.name}`;
     try {
-      await Deno.stat(tmpPath);
+      await Edno.stat(tmpPath);
     } catch {
-      await Deno.copyFile(`${EXPECTATIONS_DIR}/${entry.name}`, tmpPath);
+      await Edno.copyFile(`${EXPECTATIONS_DIR}/${entry.name}`, tmpPath);
     }
   }
 
   // Run git diff to see what changed
   await runGitDiff(["--no-index", EXPECTATIONS_DIR, tmpDir]);
-  Deno.removeSync(tmpDir, { recursive: true });
+  Edno.removeSync(tmpDir, { recursive: true });
 
   return code;
 }
@@ -497,7 +497,7 @@ function assertAllExpectationsHaveTests(
     );
     console.log("");
     console.log(missingTests.join("\n"));
-    Deno.exit(1);
+    Edno.exit(1);
   }
 }
 
@@ -517,13 +517,13 @@ Either specify test filters or use --all to update the entire suite:
 Options:
     --all              Run all tests
     --quiet            Only print failing test cases
-    --release          Use the release build of Deno
-    --binary=<path>    Use a specific Deno binary
+    --release          Use the release build of Edno
+    --binary=<path>    Use a specific Edno binary
     --json=<file>      Write test results as JSON
     --inspect-brk      Attach V8 inspector to each test
     --no-ignore        Include tests marked with {"ignore": true}
 `);
-    Deno.exit(1);
+    Edno.exit(1);
   }
   const startTime = Date.now();
   const filter = new TestFilter(rest);
@@ -551,7 +551,7 @@ Options:
   const endTime = Date.now();
 
   if (json) {
-    await Deno.writeTextFile(json, JSON.stringify(results) + "\n");
+    await Edno.writeTextFile(json, JSON.stringify(results) + "\n");
   }
 
   const newExpectations = newExpectation(results);
@@ -561,7 +561,7 @@ Options:
 
   console.log(blue("Updated expectations to match reality."));
 
-  Deno.exit(0);
+  Edno.exit(0);
 }
 
 function newExpectation(
@@ -750,7 +750,7 @@ function reportFinal(
 
   // We ignore the exit code of the test run because the CI job reports the
   // results to WPT.fyi, and we still want to report failure.
-  if (Deno.args.includes("--exit-zero")) {
+  if (Edno.args.includes("--exit-zero")) {
     return 0;
   }
 
@@ -898,7 +898,7 @@ function createReportTestCase(expectation: boolean | TestExpectation) {
         break;
     }
 
-    writeAllSync(Deno.stdout, new TextEncoder().encode(simpleMessage + "\n"));
+    writeAllSync(Edno.stdout, new TextEncoder().encode(simpleMessage + "\n"));
   };
 }
 

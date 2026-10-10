@@ -14,45 +14,45 @@ use std::sync::Arc;
 
 use deno_ast::MediaType;
 use deno_ast::ModuleSpecifier;
-use deno_cache_dir::file_fetcher::CacheSetting;
-pub use deno_config::deno_json::BenchConfig;
-pub use deno_config::deno_json::CompilerOptions;
-pub use deno_config::deno_json::ConfigFile;
-pub use deno_config::deno_json::CoverageThresholds;
-use deno_config::deno_json::FmtConfig;
-pub use deno_config::deno_json::FmtOptionsConfig;
-pub use deno_config::deno_json::LintRulesConfig;
-use deno_config::deno_json::PermissionConfigValue;
-use deno_config::deno_json::PermissionsObjectWithBase;
-pub use deno_config::deno_json::ProseWrap;
-use deno_config::deno_json::TestConfig;
-pub use deno_config::glob::FilePatterns;
-pub use deno_config::workspace::TsTypeLib;
-use deno_config::workspace::Workspace;
-use deno_config::workspace::WorkspaceDirLintConfig;
-use deno_config::workspace::WorkspaceDirectory;
-use deno_config::workspace::WorkspaceDirectoryRc;
-use deno_config::workspace::WorkspaceLintConfig;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_cache_dir::file_fetcher::CacheSetting;
+pub use edno_config::edno_json::BenchConfig;
+pub use edno_config::edno_json::CompilerOptions;
+pub use edno_config::edno_json::ConfigFile;
+pub use edno_config::edno_json::CoverageThresholds;
+use edno_config::edno_json::FmtConfig;
+pub use edno_config::edno_json::FmtOptionsConfig;
+pub use edno_config::edno_json::LintRulesConfig;
+use edno_config::edno_json::PermissionConfigValue;
+use edno_config::edno_json::PermissionsObjectWithBase;
+pub use edno_config::edno_json::ProseWrap;
+use edno_config::edno_json::TestConfig;
+pub use edno_config::glob::FilePatterns;
+pub use edno_config::workspace::TsTypeLib;
+use edno_config::workspace::Workspace;
+use edno_config::workspace::WorkspaceDirLintConfig;
+use edno_config::workspace::WorkspaceDirectory;
+use edno_config::workspace::WorkspaceDirectoryRc;
+use edno_config::workspace::WorkspaceLintConfig;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 use deno_graph::GraphKind;
-use deno_lib::args::has_flag_env_var;
-use deno_lib::args::npm_pkg_req_ref_to_binary_command;
-use deno_lib::args::npm_process_state;
-use deno_lib::version::DENO_VERSION_INFO;
-use deno_lib::worker::StorageKeyResolver;
-use deno_npm::NpmSystemInfo;
-use deno_npm_installer::LifecycleScriptsConfig;
-use deno_npm_installer::graph::NpmCachingStrategy;
-use deno_resolver::factory::resolve_jsr_url;
-use deno_runtime::deno_node::ops::ipc::ChildIpcSerialization;
-use deno_runtime::deno_permissions::AllowRunDescriptor;
-use deno_runtime::deno_permissions::PathDescriptor;
-use deno_runtime::deno_permissions::PermissionsOptions;
+use edno_lib::args::has_flag_env_var;
+use edno_lib::args::npm_pkg_req_ref_to_binary_command;
+use edno_lib::args::npm_process_state;
+use edno_lib::version::EDNO_VERSION_INFO;
+use edno_lib::worker::StorageKeyResolver;
+use edno_npm::NpmSystemInfo;
+use edno_npm_installer::LifecycleScriptsConfig;
+use edno_npm_installer::graph::NpmCachingStrategy;
+use edno_resolver::factory::resolve_jsr_url;
+use edno_runtime::edno_node::ops::ipc::ChildIpcSerialization;
+use edno_runtime::edno_permissions::AllowRunDescriptor;
+use edno_runtime::edno_permissions::PathDescriptor;
+use edno_runtime::edno_permissions::PermissionsOptions;
 use deno_semver::StackString;
 use deno_semver::npm::NpmPackageReqReference;
-use deno_telemetry::OtelConfig;
+use edno_telemetry::OtelConfig;
 use deno_terminal::colors;
 pub use flags::*;
 use once_cell::sync::Lazy;
@@ -62,7 +62,7 @@ use crate::sys::CliSys;
 use crate::util::fs::canonicalize_path;
 use crate::util::path::resolve_url_or_path_normalized;
 
-pub type CliLockfile = deno_resolver::lockfile::LockfileLock<CliSys>;
+pub type CliLockfile = edno_resolver::lockfile::LockfileLock<CliSys>;
 
 pub fn jsr_url() -> &'static Url {
   static JSR_URL: Lazy<Url> = Lazy::new(|| resolve_jsr_url(&CliSys::default()));
@@ -190,7 +190,7 @@ fn resolve_fmt_options(
     options.semi_colons = Some(!no_semis);
   }
 
-  // `--no-editorconfig` takes precedence over the deno.json
+  // `--no-editorconfig` takes precedence over the edno.json
   // `useEditorConfig` field. When the flag is absent the config value
   // (or its `None` default of "on") is left untouched.
   if fmt_flags.no_editorconfig {
@@ -229,7 +229,7 @@ impl WorkspaceTestOptions {
     // The CLI flag, env var, and config layers are enable-only: any of them
     // setting `true` turns the sanitizer on, and none of them can turn it
     // back off. To disable a sanitizer that was enabled by one of these
-    // layers, opt out from JS via `Deno.test.sanitizer({ ops: false })` at
+    // layers, opt out from JS via `Edno.test.sanitizer({ ops: false })` at
     // the module level, or `{ sanitizeOps: false }` on the individual test.
     let config_sanitize_ops =
       test_config.and_then(|c| c.sanitize_ops).unwrap_or(false);
@@ -249,10 +249,10 @@ impl WorkspaceTestOptions {
       shard: test_flags.shard,
       trace_leaks: test_flags.trace_leaks,
       sanitize_ops: test_flags.sanitize_ops
-        || std::env::var("DENO_TEST_SANITIZE_OPS").ok().as_deref() == Some("1")
+        || std::env::var("EDNO_TEST_SANITIZE_OPS").ok().as_deref() == Some("1")
         || config_sanitize_ops,
       sanitize_resources: test_flags.sanitize_resources
-        || std::env::var("DENO_TEST_SANITIZE_RESOURCES")
+        || std::env::var("EDNO_TEST_SANITIZE_RESOURCES")
           .ok()
           .as_deref()
           == Some("1")
@@ -398,14 +398,14 @@ fn resolve_lint_rules_options(
 }
 
 pub struct WorkspaceMainModuleResolver {
-  workspace_resolver: Arc<deno_resolver::workspace::WorkspaceResolver<CliSys>>,
+  workspace_resolver: Arc<edno_resolver::workspace::WorkspaceResolver<CliSys>>,
   node_resolver: Arc<crate::node::CliNodeResolver>,
 }
 
 impl WorkspaceMainModuleResolver {
   pub fn new(
     workspace_resolver: Arc<
-      deno_resolver::workspace::WorkspaceResolver<CliSys>,
+      edno_resolver::workspace::WorkspaceResolver<CliSys>,
     >,
     node_resolver: Arc<crate::node::CliNodeResolver>,
   ) -> Self {
@@ -424,17 +424,17 @@ impl WorkspaceMainModuleResolver {
     let resolution = self.workspace_resolver.resolve(
       specifier,
       cwd,
-      deno_resolver::workspace::ResolutionKind::Execution,
+      edno_resolver::workspace::ResolutionKind::Execution,
     )?;
     let url = match resolution {
-      deno_resolver::workspace::MappedResolution::Normal {
+      edno_resolver::workspace::MappedResolution::Normal {
         specifier, ..
       } => specifier,
-      deno_resolver::workspace::MappedResolution::WorkspaceJsrPackage {
+      edno_resolver::workspace::MappedResolution::WorkspaceJsrPackage {
         specifier,
         ..
       } => specifier,
-      deno_resolver::workspace::MappedResolution::WorkspaceNpmPackage {
+      edno_resolver::workspace::MappedResolution::WorkspaceNpmPackage {
         target_pkg_json,
         sub_path,
         ..
@@ -448,7 +448,7 @@ impl WorkspaceMainModuleResolver {
           node_resolver::NodeResolutionKind::Execution,
         )?
         .into_url()?,
-      deno_resolver::workspace::MappedResolution::PackageJson {
+      edno_resolver::workspace::MappedResolution::PackageJson {
         sub_path,
         dep_result,
         alias,
@@ -456,20 +456,20 @@ impl WorkspaceMainModuleResolver {
       } => {
         let result = dep_result
           .as_ref()
-          .map_err(|e| deno_core::anyhow::anyhow!("{e}"))?;
+          .map_err(|e| edno_core::anyhow::anyhow!("{e}"))?;
         match result {
-          deno_package_json::PackageJsonDepValue::File(file) => {
+          edno_package_json::PackageJsonDepValue::File(file) => {
             let cwd_path = deno_path_util::url_to_file_path(cwd)?;
             deno_path_util::resolve_path(file, &cwd_path)?
           }
-          deno_package_json::PackageJsonDepValue::Req(package_req) => {
+          edno_package_json::PackageJsonDepValue::Req(package_req) => {
             ModuleSpecifier::parse(&format!(
               "npm:{}{}",
               package_req,
               sub_path.map(|s| format!("/{}", s)).unwrap_or_default()
             ))?
           }
-          deno_package_json::PackageJsonDepValue::Workspace {
+          edno_package_json::PackageJsonDepValue::Workspace {
             name,
             version_req,
           } => {
@@ -490,7 +490,7 @@ impl WorkspaceMainModuleResolver {
               )?
               .into_url()?
           }
-          deno_package_json::PackageJsonDepValue::Catalog(catalog_name) => {
+          edno_package_json::PackageJsonDepValue::Catalog(catalog_name) => {
             match self
               .workspace_resolver
               .resolve_catalog_dep(alias, catalog_name)
@@ -501,7 +501,7 @@ impl WorkspaceMainModuleResolver {
                 sub_path.map(|s| format!("/{}", s)).unwrap_or_default()
               ))?,
               None => {
-                return Err(deno_core::anyhow::anyhow!(
+                return Err(edno_core::anyhow::anyhow!(
                   "Package '{}' not found in catalog",
                   alias
                 ));
@@ -510,7 +510,7 @@ impl WorkspaceMainModuleResolver {
           }
         }
       }
-      deno_resolver::workspace::MappedResolution::PackageJsonImport {
+      edno_resolver::workspace::MappedResolution::PackageJsonImport {
         pkg_json,
       } => self
         .node_resolver
@@ -614,35 +614,35 @@ impl CliOptions {
 
   pub fn graph_kind(&self) -> GraphKind {
     match self.sub_command() {
-      DenoSubcommand::Add(_) => GraphKind::All,
-      DenoSubcommand::Cache(_) => GraphKind::All,
-      DenoSubcommand::Check(_) => GraphKind::TypesOnly,
-      DenoSubcommand::Ci(_) => GraphKind::All,
-      DenoSubcommand::Install(InstallFlags::Local(
+      EdnoSubcommand::Add(_) => GraphKind::All,
+      EdnoSubcommand::Cache(_) => GraphKind::All,
+      EdnoSubcommand::Check(_) => GraphKind::TypesOnly,
+      EdnoSubcommand::Ci(_) => GraphKind::All,
+      EdnoSubcommand::Install(InstallFlags::Local(
         InstallFlagsLocal::Entrypoints(flags),
         _,
       )) if flags.production => GraphKind::CodeOnly,
-      DenoSubcommand::Install(InstallFlags::Local(_, _)) => GraphKind::All,
+      EdnoSubcommand::Install(InstallFlags::Local(_, _)) => GraphKind::All,
       // These edit the dependency requirements and then re-resolve them into
       // the lockfile. A code-only graph never walks `import type` edges, so
       // the packages reached only that way would be left out of the lockfile
       // they rewrite.
-      DenoSubcommand::Outdated(_) => GraphKind::All,
-      DenoSubcommand::Remove(_) => GraphKind::All,
+      EdnoSubcommand::Outdated(_) => GraphKind::All,
+      EdnoSubcommand::Remove(_) => GraphKind::All,
       _ => graph_kind(self.type_check_mode()),
     }
   }
 
   pub fn ts_type_lib_window(&self) -> TsTypeLib {
     if self.flags.internal.is_desktop {
-      TsTypeLib::DenoDesktop
+      TsTypeLib::EdnoDesktop
     } else {
-      TsTypeLib::DenoWindow
+      TsTypeLib::EdnoWindow
     }
   }
 
   pub fn ts_type_lib_worker(&self) -> TsTypeLib {
-    TsTypeLib::DenoWorker
+    TsTypeLib::EdnoWorker
   }
 
   pub fn cache_setting(&self) -> CacheSetting {
@@ -679,11 +679,11 @@ impl CliOptions {
     &self,
     sys: &CliSys,
   ) -> Result<Option<(i64, ChildIpcSerialization)>, AnyError> {
-    deno_lib::args::node_ipc_init(sys)
+    edno_lib::args::node_ipc_init(sys)
   }
 
   pub fn serve_port(&self) -> Option<u16> {
-    if let DenoSubcommand::Serve(flags) = self.sub_command() {
+    if let EdnoSubcommand::Serve(flags) = self.sub_command() {
       Some(flags.port)
     } else {
       None
@@ -691,7 +691,7 @@ impl CliOptions {
   }
 
   pub fn serve_host(&self) -> Option<String> {
-    if let DenoSubcommand::Serve(flags) = self.sub_command() {
+    if let EdnoSubcommand::Serve(flags) = self.sub_command() {
       Some(flags.host.clone())
     } else {
       None
@@ -702,7 +702,7 @@ impl CliOptions {
     self.flags.eszip
   }
 
-  /// Set by `deno compile --bundle` after rewriting the bundle's absolute
+  /// Set by `edno compile --bundle` after rewriting the bundle's absolute
   /// CJS paths; signals the standalone binary writer that the npm tree
   /// must still ship alongside the bundle.
   pub fn compile_bundle_embed_node_modules(&self) -> bool {
@@ -748,7 +748,7 @@ impl CliOptions {
     self
       .env_file_names()
       .flat_map(|env_file| {
-        deno_dotenv::candidate_paths(&self.initial_cwd, env_file)
+        edno_dotenv::candidate_paths(&self.initial_cwd, env_file)
       })
       .filter_map(|p| canonicalize_path(&p).ok())
   }
@@ -825,33 +825,33 @@ impl CliOptions {
       .main_module_cell
       .get_or_init(|| {
         Ok(match &self.flags.subcommand {
-          DenoSubcommand::Compile(compile_flags) => {
+          EdnoSubcommand::Compile(compile_flags) => {
             resolve_url_or_path_normalized(
               &compile_flags.source_file,
               self.initial_cwd(),
             )?
           }
-          DenoSubcommand::Desktop(desktop_flags) => {
+          EdnoSubcommand::Desktop(desktop_flags) => {
             resolve_url_or_path_normalized(
               &desktop_flags.source_file,
               self.initial_cwd(),
             )?
           }
-          DenoSubcommand::Eval(_) => {
+          EdnoSubcommand::Eval(_) => {
             let specifier = format!(
-              "./$deno$eval.{}",
+              "./$edno$eval.{}",
               self.flags.ext.as_deref().unwrap_or("mts")
             );
             deno_path_util::resolve_path(&specifier, self.initial_cwd())?
           }
-          DenoSubcommand::Repl(_) => deno_path_util::resolve_path(
-            "./$deno$repl.mts",
+          EdnoSubcommand::Repl(_) => deno_path_util::resolve_path(
+            "./$edno$repl.mts",
             self.initial_cwd(),
           )?,
-          DenoSubcommand::Run(run_flags) => {
+          EdnoSubcommand::Run(run_flags) => {
             if run_flags.is_stdin() {
               let specifier = format!(
-                "./$deno$stdin.{}",
+                "./$edno$stdin.{}",
                 self.flags.ext.as_deref().unwrap_or("mts")
               );
               deno_path_util::resolve_path(&specifier, self.initial_cwd())?
@@ -883,7 +883,7 @@ impl CliOptions {
               )?
             }
           }
-          DenoSubcommand::Serve(run_flags) => self
+          EdnoSubcommand::Serve(run_flags) => self
             .resolve_main_module_with_resolver_if_bare(
               &run_flags.script,
               resolver,
@@ -901,7 +901,7 @@ impl CliOptions {
         })
       })
       .as_ref()
-      .map_err(|err| deno_core::anyhow::anyhow!("{}", err))
+      .map_err(|err| edno_core::anyhow::anyhow!("{}", err))
   }
 
   pub fn resolve_main_module(&self) -> Result<&ModuleSpecifier, AnyError> {
@@ -932,8 +932,8 @@ impl CliOptions {
   pub fn resolve_storage_key_resolver(&self) -> StorageKeyResolver {
     if let Some(location) = &self.flags.location {
       StorageKeyResolver::from_flag(location)
-    } else if let Some(deno_json) = self.start_dir.member_or_root_deno_json() {
-      StorageKeyResolver::from_config_file_url(&deno_json.specifier)
+    } else if let Some(edno_json) = self.start_dir.member_or_root_deno_json() {
+      StorageKeyResolver::from_config_file_url(&edno_json.specifier)
     } else {
       StorageKeyResolver::new_use_main_module()
     }
@@ -954,7 +954,7 @@ impl CliOptions {
     &self,
   ) -> Result<
     Option<NodeModulesDirMode>,
-    deno_config::deno_json::NodeModulesDirParseError,
+    edno_config::edno_json::NodeModulesDirParseError,
   > {
     if let Some(flag) = self.flags.node_modules_dir {
       return Ok(Some(flag));
@@ -977,7 +977,7 @@ impl CliOptions {
 
     Some((
       host,
-      DENO_VERSION_INFO.user_agent,
+      EDNO_VERSION_INFO.user_agent,
       self.flags.inspect_publish_uid.unwrap_or_default(),
     ))
   }
@@ -1033,7 +1033,7 @@ impl CliOptions {
     Ok(result)
   }
 
-  /// Resolves the coverage thresholds configured in `deno.json`'s `coverage`
+  /// Resolves the coverage thresholds configured in `edno.json`'s `coverage`
   /// section. CLI flags are layered on top of this by the caller.
   pub fn resolve_coverage_thresholds(
     &self,
@@ -1045,7 +1045,7 @@ impl CliOptions {
     &self,
     test_flags: &TestFlags,
   ) -> WorkspaceTestOptions {
-    // Get sanitizer config from deno.json if available
+    // Get sanitizer config from edno.json if available
     let test_config = self
       .start_dir
       .to_test_config(FilePatterns::new_with_base(
@@ -1111,16 +1111,16 @@ impl CliOptions {
 
   pub fn coverage_dir(&self) -> Option<PathBuf> {
     match &self.flags.subcommand {
-      DenoSubcommand::Test(test) => test
+      EdnoSubcommand::Test(test) => test
         .coverage_dir
         .as_ref()
         .map(|dir| self.initial_cwd.join(dir))
-        .or_else(|| env::var_os("DENO_COVERAGE_DIR").map(PathBuf::from)),
-      DenoSubcommand::Run(flags) => flags
+        .or_else(|| env::var_os("EDNO_COVERAGE_DIR").map(PathBuf::from)),
+      EdnoSubcommand::Run(flags) => flags
         .coverage_dir
         .as_ref()
         .map(|dir| self.initial_cwd.join(dir))
-        .or_else(|| env::var_os("DENO_COVERAGE_DIR").map(PathBuf::from)),
+        .or_else(|| env::var_os("EDNO_COVERAGE_DIR").map(PathBuf::from)),
       _ => None,
     }
   }
@@ -1215,7 +1215,7 @@ impl CliOptions {
       config_permissions,
     )?;
     self.augment_import_permissions(&mut permissions_options);
-    if let DenoSubcommand::Serve(serve_flags) = &self.flags.subcommand {
+    if let EdnoSubcommand::Serve(serve_flags) = &self.flags.subcommand {
       augment_permissions_with_serve_flags(
         &mut permissions_options,
         serve_flags,
@@ -1240,7 +1240,7 @@ impl CliOptions {
   /// empty deny list: these rules decide whether code may be loaded at all, so
   /// failing to read them has to fail the command, not quietly load the code.
   /// Callers that build options whose config cannot see the user's `-P` set
-  /// (`deno x` generates a temp `deno.json`) are responsible for carrying the
+  /// (`edno x` generates a temp `edno.json`) are responsible for carrying the
   /// resolved rules over themselves — see `x::resolve_import_deny_rules`.
   pub fn import_deny_permissions_options(
     &self,
@@ -1264,11 +1264,11 @@ impl CliOptions {
     let config_permissions = if let Some(name) = &self.flags.permission_set {
       if name.is_empty() {
         let maybe_subcommand_permissions = match &self.flags.subcommand {
-          DenoSubcommand::Bench(_) => dir.to_bench_permissions_config()?,
-          DenoSubcommand::Compile(_) | DenoSubcommand::Desktop(_) => {
+          EdnoSubcommand::Bench(_) => dir.to_bench_permissions_config()?,
+          EdnoSubcommand::Compile(_) | EdnoSubcommand::Desktop(_) => {
             dir.to_compile_permissions_config()?
           }
-          DenoSubcommand::Test(_) => dir.to_test_permissions_config()?,
+          EdnoSubcommand::Test(_) => dir.to_test_permissions_config()?,
           _ => None,
         };
         match maybe_subcommand_permissions {
@@ -1283,15 +1283,15 @@ impl CliOptions {
     } else {
       if !self.flags.has_permission() {
         let set_config_permission_name = match &self.flags.subcommand {
-          DenoSubcommand::Bench(_) => dir
+          EdnoSubcommand::Bench(_) => dir
             .to_bench_permissions_config()?
             .filter(|permissions| !permissions.permissions.is_empty())
             .map(|permissions| ("Bench", &permissions.base)),
-          DenoSubcommand::Compile(_) | DenoSubcommand::Desktop(_) => dir
+          EdnoSubcommand::Compile(_) | EdnoSubcommand::Desktop(_) => dir
             .to_compile_permissions_config()?
             .filter(|permissions| !permissions.permissions.is_empty())
             .map(|permissions| ("Compile", &permissions.base)),
-          DenoSubcommand::Test(_) => dir
+          EdnoSubcommand::Test(_) => dir
             .to_test_permissions_config()?
             .filter(|permissions| !permissions.permissions.is_empty())
             .map(|permissions| ("Test", &permissions.base)),
@@ -1370,26 +1370,26 @@ impl CliOptions {
       .ok()
       .map(|url| vec![Cow::Borrowed(url)])
       .or_else(|| match &self.flags.subcommand {
-        DenoSubcommand::Cache(cache_flags) => {
+        EdnoSubcommand::Cache(cache_flags) => {
           Some(files_to_urls(&cache_flags.files))
         }
-        DenoSubcommand::Check(check_flags) => {
+        EdnoSubcommand::Check(check_flags) => {
           Some(files_to_urls(&check_flags.files))
         }
-        DenoSubcommand::Install(InstallFlags::Global(flags)) => flags
+        EdnoSubcommand::Install(InstallFlags::Global(flags)) => flags
           .module_urls
           .first()
           .and_then(|url| file_to_url(url))
           .map(|url| vec![url]),
-        DenoSubcommand::Install(InstallFlags::Local(
+        EdnoSubcommand::Install(InstallFlags::Local(
           InstallFlagsLocal::Entrypoints(flags),
           _,
         )) => Some(files_to_urls(&flags.entrypoints)),
-        DenoSubcommand::Doc(DocFlags {
+        EdnoSubcommand::Doc(DocFlags {
           source_files: DocSourceFileFlag::Paths(paths),
           ..
         }) => Some(files_to_urls(paths)),
-        DenoSubcommand::Info(InfoFlags {
+        EdnoSubcommand::Info(InfoFlags {
           file: Some(file), ..
         }) => file_to_url(file).map(|url| vec![url]),
         _ => None,
@@ -1405,7 +1405,7 @@ impl CliOptions {
     self.flags.seed
   }
 
-  pub fn sub_command(&self) -> &DenoSubcommand {
+  pub fn sub_command(&self) -> &EdnoSubcommand {
     &self.flags.subcommand
   }
 
@@ -1415,8 +1415,8 @@ impl CliOptions {
 
   pub fn take_binary_npm_command_name(&self) -> Option<String> {
     match self.sub_command() {
-      DenoSubcommand::Run(flags) => {
-        const NPM_CMD_NAME_ENV_VAR_NAME: &str = "DENO_INTERNAL_NPM_CMD_NAME";
+      EdnoSubcommand::Run(flags) => {
+        const NPM_CMD_NAME_ENV_VAR_NAME: &str = "EDNO_INTERNAL_NPM_CMD_NAME";
         match std::env::var(NPM_CMD_NAME_ENV_VAR_NAME) {
           Ok(var) => {
             // remove the env var so that child sub processes won't pick this up
@@ -1449,7 +1449,7 @@ impl CliOptions {
 
   pub fn detect_cjs(&self) -> bool {
     // only enabled when there's a package.json in order to not have a
-    // perf penalty for non-npm Deno projects of searching for the closest
+    // perf penalty for non-npm Edno projects of searching for the closest
     // package.json beside each module
     self.workspace().package_jsons().next().is_some() || self.is_node_main()
   }
@@ -1486,7 +1486,7 @@ impl CliOptions {
       .collect::<Vec<_>>();
 
     if !unstable_features.is_empty() {
-      let all_valid_unstable_flags: Vec<&str> = deno_runtime::UNSTABLE_FEATURES
+      let all_valid_unstable_flags: Vec<&str> = edno_runtime::UNSTABLE_FEATURES
         .iter()
         .map(|feature| feature.name)
         .chain(["fmt-component", "fmt-sql", "npm-lazy-caching"])
@@ -1510,13 +1510,13 @@ impl CliOptions {
 
   /// Returns unstable feature flags as CLI arguments (e.g., "--unstable-unsafe-proto").
   /// This includes features from both CLI flags and config file. Features that
-  /// are only valid in `deno.json` (e.g. `fmt-component`, `fmt-sql`) and don't
+  /// are only valid in `edno.json` (e.g. `fmt-component`, `fmt-sql`) and don't
   /// have a registered CLI flag are filtered out, otherwise child processes
-  /// spawned with these args (e.g. via `deno x`) would reject them with
+  /// spawned with these args (e.g. via `edno x`) would reject them with
   /// "unexpected argument".
   pub fn unstable_args(&self) -> Vec<String> {
     let cli_flag_names: std::collections::HashSet<&str> =
-      deno_runtime::UNSTABLE_FEATURES
+      edno_runtime::UNSTABLE_FEATURES
         .iter()
         .map(|f| f.name)
         .collect();
@@ -1563,9 +1563,9 @@ impl CliOptions {
     }
 
     for (_, folder) in self.workspace().config_folders() {
-      if let Some(deno_json) = &folder.deno_json
-        && deno_json.specifier.scheme() == "file"
-        && let Ok(path) = deno_json.specifier.to_file_path()
+      if let Some(edno_json) = &folder.edno_json
+        && edno_json.specifier.scheme() == "file"
+        && let Ok(path) = edno_json.specifier.to_file_path()
       {
         full_paths.push(path);
       }
@@ -1585,9 +1585,9 @@ impl CliOptions {
       root_dir: self.workspace().root_dir_path(),
       explicit_install: matches!(
         self.sub_command(),
-        DenoSubcommand::Install(_)
-          | DenoSubcommand::Cache(_)
-          | DenoSubcommand::Add(_)
+        EdnoSubcommand::Install(_)
+          | EdnoSubcommand::Cache(_)
+          | EdnoSubcommand::Add(_)
       ),
     }
   }
@@ -1600,7 +1600,7 @@ impl CliOptions {
   pub fn default_npm_caching_strategy(&self) -> NpmCachingStrategy {
     if matches!(
       self.sub_command(),
-      DenoSubcommand::Install(InstallFlags::Local(
+      EdnoSubcommand::Install(InstallFlags::Local(
         InstallFlagsLocal::TopLevel(_)
           | InstallFlagsLocal::Add(_)
           | InstallFlagsLocal::Entrypoints(InstallEntrypointsFlags {
@@ -1608,9 +1608,9 @@ impl CliOptions {
             ..
           }),
         _,
-      )) | DenoSubcommand::Add(_)
-        | DenoSubcommand::List(_)
-        | DenoSubcommand::Outdated(_)
+      )) | EdnoSubcommand::Add(_)
+        | EdnoSubcommand::List(_)
+        | EdnoSubcommand::Outdated(_)
     ) {
       NpmCachingStrategy::Manual
     } else if self.unstable_npm_lazy_caching() {
@@ -1684,7 +1684,7 @@ fn resolve_import_map_specifier(
 
 /// Resolves the no_prompt value based on the cli flags and environment.
 pub fn resolve_no_prompt(flags: &PermissionFlags) -> bool {
-  flags.no_prompt || has_flag_env_var(&CliSys::default(), "DENO_NO_PROMPT")
+  flags.no_prompt || has_flag_env_var(&CliSys::default(), "EDNO_NO_PROMPT")
 }
 
 pub fn config_to_deno_graph_workspace_member(
@@ -1721,7 +1721,7 @@ pub fn get_default_v8_flags() -> Vec<String> {
 pub fn parallelism_count(parallel: bool) -> NonZeroUsize {
   parallel
     .then(|| {
-      if let Ok(value) = env::var("DENO_JOBS") {
+      if let Ok(value) = env::var("EDNO_JOBS") {
         value.parse::<NonZeroUsize>().ok()
       } else {
         std::thread::available_parallelism().ok()
@@ -1982,9 +1982,9 @@ fn augment_permissions_with_serve_flags(
 
 #[cfg(test)]
 mod test {
-  use deno_config::deno_json::AllowDenyIgnorePermissionConfig;
-  use deno_config::deno_json::AllowDenyPermissionConfig;
-  use deno_config::deno_json::PermissionsObject;
+  use edno_config::edno_json::AllowDenyIgnorePermissionConfig;
+  use edno_config::edno_json::AllowDenyPermissionConfig;
+  use edno_config::edno_json::PermissionsObject;
   use pretty_assertions::assert_eq;
 
   use super::*;
@@ -1996,7 +1996,7 @@ mod test {
       "importMap": "import_map.json"
     }"#;
     let cwd = &resolve_cwd(None).unwrap();
-    let config_specifier = Url::parse("file:///deno/deno.jsonc").unwrap();
+    let config_specifier = Url::parse("file:///edno/edno.jsonc").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     let actual = resolve_import_map_specifier(
       Some("import-map.json"),
@@ -2014,7 +2014,7 @@ mod test {
   #[test]
   fn resolve_import_map_none() {
     let config_text = r#"{}"#;
-    let config_specifier = Url::parse("file:///deno/deno.jsonc").unwrap();
+    let config_specifier = Url::parse("file:///edno/edno.jsonc").unwrap();
     let config_file = ConfigFile::new(config_text, config_specifier).unwrap();
     let actual =
       resolve_import_map_specifier(None, Some(&config_file), Path::new("/"));
@@ -2067,7 +2067,7 @@ mod test {
     {
       let flags = PermissionFlags::default();
       let config = PermissionsObjectWithBase {
-        base: deno_path_util::url_from_file_path(&base_dir.join("deno.json"))
+        base: deno_path_util::url_from_file_path(&base_dir.join("edno.json"))
           .unwrap(),
         permissions: PermissionsObject {
           all: None,
@@ -2236,7 +2236,7 @@ mod test {
         ..Default::default()
       };
       let config = PermissionsObjectWithBase {
-        base: deno_path_util::url_from_file_path(&base_dir.join("deno.json"))
+        base: deno_path_util::url_from_file_path(&base_dir.join("edno.json"))
           .unwrap(),
         permissions: PermissionsObject {
           // will use all permissions except for the explicitly specified permissions

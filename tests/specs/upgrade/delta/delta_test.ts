@@ -2,17 +2,17 @@
 // Exercises: adjacent version check, delta download, patch application,
 // hash verification, and fallback to full download.
 
-const target = Deno.build.target;
-const currentVersion = Deno.version.deno;
+const target = Edno.build.target;
+const currentVersion = Edno.version.edno;
 
 async function runUpgrade(
   args: string[],
 ): Promise<{ stdout: string; stderr: string; code: number }> {
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["upgrade", ...args],
     env: {
-      ...Deno.env.toObject(),
-      DENO_TESTING_UPGRADE: "1",
+      ...Edno.env.toObject(),
+      EDNO_TESTING_UPGRADE: "1",
     },
     stdout: "piped",
     stderr: "piped",
@@ -61,7 +61,7 @@ console.log("\n=== Test 2: Non-adjacent version skips delta ===");
   // Should NOT attempt delta for non-adjacent versions
   if (combined.includes("delta patch")) {
     console.log("FAIL: delta was attempted for non-adjacent version");
-    Deno.exit(1);
+    Edno.exit(1);
   }
   console.log("PASS: delta skipped for non-adjacent version");
 }
@@ -79,7 +79,7 @@ console.log("\n=== Test 3: --no-delta flag disables delta ===");
   const combined = result.stdout + result.stderr;
   if (combined.includes("delta patch")) {
     console.log("FAIL: delta was attempted despite --no-delta");
-    Deno.exit(1);
+    Edno.exit(1);
   }
   console.log("PASS: --no-delta disables delta path");
 }

@@ -3,10 +3,10 @@
   "if": "notSlowCiShard",
   // Regression test for https://github.com/denoland/deno/issues/33115
   // Config-file-only unstable features (here `fmt-component`) must not be
-  // forwarded to the spawned `deno run` invocation as `--unstable-*` flags;
+  // forwarded to the spawned `edno run` invocation as `--unstable-*` flags;
   // doing so previously errored with "unexpected argument
   // '--unstable-fmt-component'".
   "cwd": "./config_only",
-  "args": "x -y jsr:@denotest/bin-package one two",
+  "args": "x -y jsr:@ednotest/bin-package one two",
   "output": "ok.out"
 }

@@ -5,17 +5,17 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_config::deno_json::NodeModulesLinkerMode;
+use edno_config::edno_json::NodeModulesLinkerMode;
 use deno_error::JsErrorBox;
-use deno_npm::NpmSystemInfo;
-use deno_npm::registry::NpmPackageInfo;
-use deno_npm::registry::NpmRegistryPackageInfoLoadError;
-use deno_npm::resolution::UnmetPeerDepDiagnostic;
-use deno_npm_cache::NpmCache;
-use deno_npm_cache::NpmCacheHttpClient;
-use deno_resolver::lockfile::LockfileLock;
-use deno_resolver::npm::managed::NpmResolutionCell;
-use deno_resolver::workspace::WorkspaceNpmLinkPackagesRc;
+use edno_npm::NpmSystemInfo;
+use edno_npm::registry::NpmPackageInfo;
+use edno_npm::registry::NpmRegistryPackageInfoLoadError;
+use edno_npm::resolution::UnmetPeerDepDiagnostic;
+use edno_npm_cache::NpmCache;
+use edno_npm_cache::NpmCacheHttpClient;
+use edno_resolver::lockfile::LockfileLock;
+use edno_resolver::npm::managed::NpmResolutionCell;
+use edno_resolver::workspace::WorkspaceNpmLinkPackagesRc;
 use deno_semver::package::PackageNv;
 use deno_semver::package::PackageReq;
 
@@ -90,7 +90,7 @@ pub struct LifecycleScriptsConfig {
   pub denied: Vec<PackageReq>,
   pub initial_cwd: PathBuf,
   pub root_dir: PathBuf,
-  /// Part of an explicit `deno install`
+  /// Part of an explicit `edno install`
   pub explicit_install: bool,
 }
 
@@ -192,7 +192,7 @@ impl<TNpmCacheHttpClient: NpmCacheHttpClient, TSys: NpmInstallerSys>
     npm_cache: Arc<NpmCache<TSys>>,
     npm_install_deps_provider: Arc<NpmInstallDepsProvider>,
     npm_registry_info_provider: Arc<
-      dyn deno_npm::registry::NpmRegistryApi + Send + Sync,
+      dyn edno_npm::registry::NpmRegistryApi + Send + Sync,
     >,
     npm_resolution: Arc<NpmResolutionCell>,
     npm_resolution_initializer: Arc<NpmResolutionInitializer<TSys>>,
@@ -201,7 +201,7 @@ impl<TNpmCacheHttpClient: NpmCacheHttpClient, TSys: NpmInstallerSys>
     >,
     reporter: &TReporter,
     sys: TSys,
-    tarball_cache: Arc<deno_npm_cache::TarballCache<TNpmCacheHttpClient, TSys>>,
+    tarball_cache: Arc<edno_npm_cache::TarballCache<TNpmCacheHttpClient, TSys>>,
     options: NpmInstallerOptions<TSys>,
   ) -> Self {
     let fs_installer: Arc<dyn NpmPackageFsInstaller> =
@@ -400,7 +400,7 @@ impl<TNpmCacheHttpClient: NpmCacheHttpClient, TSys: NpmInstallerSys>
     if uncached.is_empty() {
       // Even when every requested package is already cached we still need to
       // sync the node_modules directory for a full install (e.g. after
-      // `deno remove`), otherwise stale packages are left on disk. Only do this
+      // `edno remove`), otherwise stale packages are left on disk. Only do this
       // for `All` caching so the hot path of running a script (which caches a
       // specific subset) keeps short-circuiting.
       if matches!(caching, PackageCaching::All) {
@@ -445,14 +445,14 @@ impl<TNpmCacheHttpClient: NpmCacheHttpClient, TSys: NpmInstallerSys>
   ) -> Result<(), EnsurePackageJsonDepsError> {
     for err in self.npm_install_deps_provider.pkg_json_dep_errors() {
       match err.source.as_kind() {
-        deno_package_json::PackageJsonDepValueParseErrorKind::JsrRequiresScope { .. } |
-        deno_package_json::PackageJsonDepValueParseErrorKind::VersionReq { .. } => {
+        edno_package_json::PackageJsonDepValueParseErrorKind::JsrRequiresScope { .. } |
+        edno_package_json::PackageJsonDepValueParseErrorKind::VersionReq { .. } => {
           return Err(Box::new(err.clone()).into());
         }
-        deno_package_json::PackageJsonDepValueParseErrorKind::Unsupported {
+        edno_package_json::PackageJsonDepValueParseErrorKind::Unsupported {
           ..
         }
-        | deno_package_json::PackageJsonDepValueParseErrorKind::EmptyName => {
+        | edno_package_json::PackageJsonDepValueParseErrorKind::EmptyName => {
           // only warn for these
           log::warn!(
             "{} {}\n    at {}",
@@ -464,7 +464,7 @@ impl<TNpmCacheHttpClient: NpmCacheHttpClient, TSys: NpmInstallerSys>
       }
     }
     // A `workspace:<range>` whose member version doesn't satisfy the range is
-    // always a hard error, the same way `deno run` rejects it during
+    // always a hard error, the same way `edno run` rejects it during
     // resolution.
     if let Some(err) = self
       .npm_install_deps_provider

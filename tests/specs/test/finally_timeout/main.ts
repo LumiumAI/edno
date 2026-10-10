@@ -1,4 +1,4 @@
-Deno.test("error", function () {
+Edno.test("error", function () {
   const timer = setTimeout(() => null, 10000);
   try {
     throw new Error("fail");
@@ -7,5 +7,5 @@ Deno.test("error", function () {
   }
 });
 
-Deno.test("success", function () {
+Edno.test("success", function () {
 });

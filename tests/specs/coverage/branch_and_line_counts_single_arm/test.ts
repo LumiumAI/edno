@@ -5,6 +5,6 @@ import { f } from "./mod.ts";
 // `else` arm never ran. Before the fix, a single reached edge of a line let an
 // uncovered sibling range zero the whole line, so this junction counted as
 // covered only when both arms ran in the same test process.
-Deno.test("f", () => {
+Edno.test("f", () => {
   f(true);
 });

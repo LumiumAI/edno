@@ -1,7 +1,7 @@
 let testCount = 0;
 const logs: string[] = [];
 
-Deno.test.beforeEach(() => {
+Edno.test.beforeEach(() => {
   testCount++;
   logs.push(`beforeEach executed for test ${testCount}`);
 
@@ -11,25 +11,25 @@ Deno.test.beforeEach(() => {
   }
 });
 
-Deno.test.beforeEach(() => {
+Edno.test.beforeEach(() => {
   logs.push(`beforeEach2 executed for test ${testCount}`);
 });
 
-Deno.test.afterEach(() => {
+Edno.test.afterEach(() => {
   logs.push(`afterEach executed for test ${testCount}`);
 });
 
-Deno.test("first test", () => {
+Edno.test("first test", () => {
   logs.push("first test executed");
 });
 
 // This test should fail because beforeEach throws
-Deno.test("second test", () => {
+Edno.test("second test", () => {
   logs.push("second test executed");
 });
 
 // This test should still run
-Deno.test("third test", () => {
+Edno.test("third test", () => {
   logs.push("third test executed");
 });
 

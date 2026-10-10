@@ -1,4 +1,4 @@
-Deno.bench("error", function () {
+Edno.bench("error", function () {
   const timer = setTimeout(() => null, 10000);
   try {
     throw new Error("fail");
@@ -7,5 +7,5 @@ Deno.bench("error", function () {
   }
 });
 
-Deno.bench("success", function () {
+Edno.bench("success", function () {
 });

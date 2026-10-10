@@ -32,9 +32,9 @@
       "args": "run -A --unstable-detect-cjs main.js numeric",
       "output": "numeric_args.out"
     },
-    "deno_subcommand_passthrough": {
-      "args": "run -A --unstable-detect-cjs main.js deno_subcommand",
-      "output": "deno_subcommand.out"
+    "edno_subcommand_passthrough": {
+      "args": "run -A --unstable-detect-cjs main.js edno_subcommand",
+      "output": "edno_subcommand.out"
     },
     "permission_passthrough": {
       "args": "run -A --unstable-detect-cjs main.js permission_passthrough",

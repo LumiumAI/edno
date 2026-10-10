@@ -1,4 +1,4 @@
-// Asserts the output of `deno sync-types` in global-cache mode.
+// Asserts the output of `edno sync-types` in global-cache mode.
 
 function fail(msg: string): never {
   throw new Error(msg);
@@ -18,9 +18,9 @@ function assertPathsResolve(
       const star = target.indexOf("*");
       const probe = star === -1 ? target : target.slice(0, star);
       try {
-        Deno.statSync(probe);
+        Edno.statSync(probe);
       } catch (e) {
-        if (e instanceof Deno.errors.NotFound) {
+        if (e instanceof Edno.errors.NotFound) {
           fail(
             `${cfgPath}: paths[${JSON.stringify(key)}] -> ${target} missing`,
           );
@@ -33,48 +33,48 @@ function assertPathsResolve(
 
 // Global-cache mode must not materialize a node_modules tree.
 try {
-  Deno.statSync("node_modules");
+  Edno.statSync("node_modules");
   fail("node_modules should not exist in global-cache mode");
 } catch (e) {
-  if (!(e instanceof Deno.errors.NotFound)) throw e;
+  if (!(e instanceof Edno.errors.NotFound)) throw e;
 }
 
 // The root config's own `paths` (jsr:/npm:/http mappings) must resolve too.
 {
-  const root = JSON.parse(Deno.readTextFileSync(".deno/tsconfig.json"));
-  assertPathsResolve(".deno/tsconfig.json", root.compilerOptions?.paths ?? {});
+  const root = JSON.parse(Edno.readTextFileSync(".edno/tsconfig.json"));
+  assertPathsResolve(".edno/tsconfig.json", root.compilerOptions?.paths ?? {});
 }
 
 // A per-package referenced project is generated for every resolved npm cache
-// copy under `.deno/npm/<folder>/tsconfig.json`.
-const projectsRoot = ".deno/npm";
+// copy under `.edno/npm/<folder>/tsconfig.json`.
+const projectsRoot = ".edno/npm";
 const configs: string[] = [];
-for (const entry of Deno.readDirSync(projectsRoot)) {
+for (const entry of Edno.readDirSync(projectsRoot)) {
   if (!entry.isDirectory) continue;
   const cfg = `${projectsRoot}/${entry.name}/tsconfig.json`;
-  Deno.statSync(cfg); // throws if the tsconfig is missing
+  Edno.statSync(cfg); // throws if the tsconfig is missing
   configs.push(cfg);
 }
 if (configs.length === 0) fail("no generated npm cache projects");
 
-// The dependency edge `@denotest/dual-cjs-esm-dep -> @denotest/dual-cjs-esm`
+// The dependency edge `@ednotest/dual-cjs-esm-dep -> @ednotest/dual-cjs-esm`
 // must appear in a generated project's `paths`, resolved through the
 // dependency's package.json rather than a raw node_modules lookup, and every
 // generated project's paths + declaration files must exist on disk.
 let sawDependencyPath = false;
 for (const cfg of configs) {
-  const json = JSON.parse(Deno.readTextFileSync(cfg));
+  const json = JSON.parse(Edno.readTextFileSync(cfg));
   const paths = json.compilerOptions?.paths ?? {};
-  if ("@denotest/dual-cjs-esm" in paths) {
+  if ("@ednotest/dual-cjs-esm" in paths) {
     sawDependencyPath = true;
   }
   assertPathsResolve(cfg, paths);
   // The project's declaration `files` must exist as well.
   for (const file of json.files ?? []) {
     try {
-      Deno.statSync(file);
+      Edno.statSync(file);
     } catch (e) {
-      if (e instanceof Deno.errors.NotFound) {
+      if (e instanceof Edno.errors.NotFound) {
         fail(`${cfg}: files entry ${file} missing`);
       }
       throw e;
@@ -82,7 +82,7 @@ for (const cfg of configs) {
   }
 }
 if (!sawDependencyPath) {
-  fail("expected a generated project mapping @denotest/dual-cjs-esm in paths");
+  fail("expected a generated project mapping @ednotest/dual-cjs-esm in paths");
 }
 
 console.log("ok");

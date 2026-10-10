@@ -5,7 +5,7 @@
  *
  * ```ts
  * const path = import.meta.filename!;
- * const content = await Deno.readTextFile(path);
+ * const content = await Edno.readTextFile(path);
  * console.log(path.endsWith("mod.ts"));
  * console.log(content.includes("export function add"));
  * ```

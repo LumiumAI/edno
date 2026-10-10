@@ -1,1 +1,1 @@
-/// <reference types="@denotest/augments-global/import-meta" />
+/// <reference types="@ednotest/augments-global/import-meta" />

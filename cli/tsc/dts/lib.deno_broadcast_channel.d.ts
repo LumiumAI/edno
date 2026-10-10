@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-explicit-any no-var
+// edno-lint-ignore-file no-explicit-any no-var
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
@@ -15,7 +15,7 @@ interface BroadcastChannelEventMap {
 
 /** Represents a named channel that any
  * {@linkcode BroadcastChannel} with the same name (across workers or isolates
- * in the same Deno process) can use to send and receive messages, allowing
+ * in the same Edno process) can use to send and receive messages, allowing
  * one-to-many communication between execution contexts.
  *
  * @category Messaging

@@ -1,1 +1,1 @@
-console.log(Deno.readTextFileSync("main.d.ts"));
+console.log(Edno.readTextFileSync("main.d.ts"));

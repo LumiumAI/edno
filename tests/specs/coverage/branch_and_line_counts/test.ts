@@ -1,6 +1,6 @@
 import { f } from "./mod.ts";
 
-Deno.test("f", () => {
+Edno.test("f", () => {
   f(true);
   f(false);
 });

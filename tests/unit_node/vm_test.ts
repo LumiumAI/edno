@@ -12,7 +12,7 @@ import vm, {
   SyntheticModule,
 } from "node:vm";
 
-Deno.test({
+Edno.test({
   name: "vm runInNewContext",
   fn() {
     const two = runInNewContext("1 + 1");
@@ -20,7 +20,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "vm new Script()",
   fn() {
     const script = new Script(`
@@ -37,7 +37,7 @@ x
 });
 
 // https://github.com/denoland/deno/issues/23186
-Deno.test({
+Edno.test({
   name: "vm runInNewContext sandbox",
   fn() {
     const sandbox = { fromAnotherRealm: false };
@@ -48,7 +48,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/22395
-Deno.test({
+Edno.test({
   name: "vm runInewContext with context object",
   fn() {
     const context = { a: 1, b: 2 };
@@ -58,7 +58,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/18299
-Deno.test({
+Edno.test({
   name: "vm createContext and runInContext",
   fn() {
     // @ts-expect-error implicit any
@@ -73,7 +73,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "vm runInThisContext Error rethrow",
   fn() {
     assertThrows(
@@ -94,7 +94,7 @@ Deno.test({
 });
 
 // https://github.com/webpack/webpack/blob/87660921808566ef3b8796f8df61bd79fc026108/lib/javascript/JavascriptParser.js#L4329
-Deno.test({
+Edno.test({
   name: "vm runInNewContext webpack magic comments",
   fn() {
     const webpackCommentRegExp = new RegExp(
@@ -124,7 +124,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/18315
-Deno.test({
+Edno.test({
   name: "vm isContext",
   fn() {
     // Currently we do not expose VM contexts so this is always false.
@@ -137,7 +137,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/23297
-Deno.test({
+Edno.test({
   name: "vm context promise rejection",
   fn() {
     const code = `
@@ -158,7 +158,7 @@ reject().catch(() => {})
 // `importModuleDynamically` callback must reject with
 // `ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING`, matching Node — otherwise a
 // sandboxed script could escape via dynamic import.
-Deno.test({
+Edno.test({
   name: "vm runInNewContext module loader",
   async fn() {
     const code =
@@ -182,7 +182,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "vm default loader does not trust internal scheme filenames",
   async fn() {
     await assertRejects(
@@ -240,7 +240,7 @@ function referrerName(referrer: unknown) {
     ?.constructor?.name;
 }
 
-Deno.test({
+Edno.test({
   name: "vm importModuleDynamically callback resolves modules",
   async fn() {
     const seen: string[] = [];
@@ -289,7 +289,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "vm importModuleDynamically callback works for compileFunction",
   async fn() {
     let referrer: unknown;
@@ -305,7 +305,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "vm createContext importModuleDynamically callback is inherited",
   async fn() {
     const context = createContext({ Promise }, {
@@ -321,7 +321,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "vm SourceTextModule importModuleDynamically callback resolves modules",
   async fn() {
     let referrer: unknown;
@@ -348,7 +348,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/31783
-Deno.test({
+Edno.test({
   name: "vm SourceTextModule default import evaluates namespace",
   async fn() {
     const context = vm.createContext({});
@@ -367,7 +367,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/23913
-Deno.test({
+Edno.test({
   name: "vm memory leak crash",
   fn() {
     const script = new Script("returnValue = 2+2");
@@ -379,7 +379,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/23852
-Deno.test({
+Edno.test({
   name: "vm runInThisContext global.foo",
   fn() {
     const result = runInThisContext(`global.foo = 1`);
@@ -388,7 +388,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/34185
-Deno.test({
+Edno.test({
   name:
     "vm createContext/runInContext in a tight loop does not panic at teardown",
   fn() {
@@ -410,7 +410,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/32921
-Deno.test({
+Edno.test({
   name: "vm in operator walks prototype chain of sandbox",
   fn() {
     class EventTarget {
@@ -419,12 +419,12 @@ Deno.test({
 
     const windowPrototype = Object.create(EventTarget.prototype);
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     function Window(this: any) {
       createContext(this);
       this._globalProxy = runInContext("this", this);
       Object.setPrototypeOf(this, windowPrototype);
-      // deno-lint-ignore no-this-alias
+      // edno-lint-ignore no-this-alias
       const window = this;
       Object.defineProperty(this, "window", {
         get() {
@@ -452,8 +452,8 @@ Deno.test({
 // native ContextifyContext wrapper must stay alive with the context, otherwise
 // invoking the function triggers a use-after-free in the global proxy
 // interceptor. Runs in a subprocess so a regression surfaces as a crash.
-Deno.test("vm contextified sandbox survives detached function after gc", async () => {
-  const command = new Deno.Command(Deno.execPath(), {
+Edno.test("vm contextified sandbox survives detached function after gc", async () => {
+  const command = new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--quiet",

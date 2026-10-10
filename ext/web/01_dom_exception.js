@@ -2,10 +2,10 @@
 
 // @ts-check
 /// <reference path="../../core/internal.d.ts" />
-/// <reference path="../../core/lib.deno_core.d.ts" />
+/// <reference path="../../core/lib.edno_core.d.ts" />
 /// <reference path="../webidl/internal.d.ts" />
 /// <reference path="../web/internal.d.ts" />
-/// <reference path="../../cli/tsc/dts/lib.deno_web.d.ts" />
+/// <reference path="../../cli/tsc/dts/lib.edno_web.d.ts" />
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -25,7 +25,7 @@ const {
   SymbolFor,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 
 // Lazy-load createFilteredInspectProxy from console to avoid
 // circular dependency at load time. Only needed for custom inspect.
@@ -33,7 +33,7 @@ let _createFilteredInspectProxy;
 function getCreateFilteredInspectProxy() {
   if (!_createFilteredInspectProxy) {
     _createFilteredInspectProxy = core.loadExtScript(
-      "ext:deno_web/01_console.js",
+      "ext:edno_web/01_console.js",
     ).createFilteredInspectProxy;
   }
   return _createFilteredInspectProxy;
@@ -187,7 +187,7 @@ class DOMException {
     return this[_code];
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     if (ObjectHasOwn(this, "stack")) {
       const stack = this.stack;
       if (typeof stack === "string") {

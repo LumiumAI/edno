@@ -6,84 +6,84 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test({ permissions: { env: true } }, function envSuccess() {
-  Deno.env.set("TEST_VAR", "A");
-  const env = Deno.env.toObject();
-  Deno.env.set("TEST_VAR", "B");
+Edno.test({ permissions: { env: true } }, function envSuccess() {
+  Edno.env.set("TEST_VAR", "A");
+  const env = Edno.env.toObject();
+  Edno.env.set("TEST_VAR", "B");
   assertEquals(env["TEST_VAR"], "A");
-  assertNotEquals(Deno.env.get("TEST_VAR"), env["TEST_VAR"]);
+  assertNotEquals(Edno.env.get("TEST_VAR"), env["TEST_VAR"]);
 });
 
-Deno.test({ permissions: { env: true } }, function envNotFound() {
-  const r = Deno.env.get("env_var_does_not_exist!");
+Edno.test({ permissions: { env: true } }, function envNotFound() {
+  const r = Edno.env.get("env_var_does_not_exist!");
   assertEquals(r, undefined);
 });
 
-Deno.test({ permissions: { env: true } }, function deleteEnv() {
-  Deno.env.set("TEST_VAR", "A");
-  assertEquals(Deno.env.get("TEST_VAR"), "A");
-  assertEquals(Deno.env.delete("TEST_VAR"), undefined);
-  assertEquals(Deno.env.get("TEST_VAR"), undefined);
+Edno.test({ permissions: { env: true } }, function deleteEnv() {
+  Edno.env.set("TEST_VAR", "A");
+  assertEquals(Edno.env.get("TEST_VAR"), "A");
+  assertEquals(Edno.env.delete("TEST_VAR"), undefined);
+  assertEquals(Edno.env.get("TEST_VAR"), undefined);
 });
 
-Deno.test({ permissions: { env: true } }, function hasEnv() {
-  Deno.env.set("TEST_VAR", "A");
-  assert(Deno.env.has("TEST_VAR"));
-  Deno.env.delete("TEST_VAR");
-  assert(!Deno.env.has("TEST_VAR"));
+Edno.test({ permissions: { env: true } }, function hasEnv() {
+  Edno.env.set("TEST_VAR", "A");
+  assert(Edno.env.has("TEST_VAR"));
+  Edno.env.delete("TEST_VAR");
+  assert(!Edno.env.has("TEST_VAR"));
 });
 
-Deno.test({ permissions: { env: true } }, function avoidEmptyNamedEnv() {
-  assertThrows(() => Deno.env.set("", "v"), TypeError);
-  assertThrows(() => Deno.env.set("a=a", "v"), TypeError);
-  assertThrows(() => Deno.env.set("a\0a", "v"), TypeError);
-  assertThrows(() => Deno.env.set("TEST_VAR", "v\0v"), TypeError);
+Edno.test({ permissions: { env: true } }, function avoidEmptyNamedEnv() {
+  assertThrows(() => Edno.env.set("", "v"), TypeError);
+  assertThrows(() => Edno.env.set("a=a", "v"), TypeError);
+  assertThrows(() => Edno.env.set("a\0a", "v"), TypeError);
+  assertThrows(() => Edno.env.set("TEST_VAR", "v\0v"), TypeError);
 
-  assertThrows(() => Deno.env.get(""), TypeError);
-  assertThrows(() => Deno.env.get("a=a"), TypeError);
-  assertThrows(() => Deno.env.get("a\0a"), TypeError);
+  assertThrows(() => Edno.env.get(""), TypeError);
+  assertThrows(() => Edno.env.get("a=a"), TypeError);
+  assertThrows(() => Edno.env.get("a\0a"), TypeError);
 
-  assertThrows(() => Deno.env.delete(""), TypeError);
-  assertThrows(() => Deno.env.delete("a=a"), TypeError);
-  assertThrows(() => Deno.env.delete("a\0a"), TypeError);
+  assertThrows(() => Edno.env.delete(""), TypeError);
+  assertThrows(() => Edno.env.delete("a=a"), TypeError);
+  assertThrows(() => Edno.env.delete("a\0a"), TypeError);
 });
 
 // Regression test for https://github.com/denoland/deno/issues/23443
 // Every key returned by `toObject()` must be one that `get()` accepts.
 // On Windows, cmd.exe injects hidden per-drive cwd variables such as `=C:`
 // that contain `=`, which used to be enumerated but were not gettable.
-Deno.test({ permissions: { env: true } }, function envToObjectKeysAreValid() {
-  for (const key of Object.keys(Deno.env.toObject())) {
+Edno.test({ permissions: { env: true } }, function envToObjectKeysAreValid() {
+  for (const key of Object.keys(Edno.env.toObject())) {
     assert(key.length > 0, "toObject() returned an empty key");
     assert(!key.includes("="), `toObject() returned an invalid key: ${key}`);
     assert(!key.includes("\0"), `toObject() returned an invalid key: ${key}`);
     // Must not throw.
-    Deno.env.get(key);
+    Edno.env.get(key);
   }
 });
 
-Deno.test({ permissions: { env: false } }, function envPerm1() {
+Edno.test({ permissions: { env: false } }, function envPerm1() {
   assertThrows(() => {
-    Deno.env.toObject();
-  }, Deno.errors.NotCapable);
+    Edno.env.toObject();
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { env: false } }, function envPerm2() {
+Edno.test({ permissions: { env: false } }, function envPerm2() {
   assertThrows(() => {
-    Deno.env.get("PATH");
-  }, Deno.errors.NotCapable);
+    Edno.env.get("PATH");
+  }, Edno.errors.NotCapable);
 });
 
 // This test verifies that on Windows, environment variables are
 // case-insensitive. Case normalization needs be done using the collation
 // that Windows uses, rather than naively using String.toLowerCase().
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os !== "windows",
+    ignore: Edno.build.os !== "windows",
     permissions: { read: true, env: true, run: true },
   },
   async function envCaseInsensitive() {
-    // Utility function that runs a Deno subprocess with the environment
+    // Utility function that runs a Edno subprocess with the environment
     // specified in `inputEnv`. The subprocess reads the environment variables
     // which are in the keys of `expectedEnv` and writes them to stdout as JSON.
     // It is then verified that these match with the values of `expectedEnv`.
@@ -95,9 +95,9 @@ Deno.test(
       console.log(
         ${
         JSON.stringify(Object.keys(expectedEnv))
-      }.map(k => Deno.env.get(k) ?? null)
+      }.map(k => Edno.env.get(k) ?? null)
       )`;
-      const { success, stdout } = await new Deno.Command(Deno.execPath(), {
+      const { success, stdout } = await new Edno.Command(Edno.execPath(), {
         args: ["eval", src],
         env: { ...inputEnv, NO_COLOR: "1" },
       }).output();
@@ -107,8 +107,8 @@ Deno.test(
       assertEquals(actualValues, expectedValues);
     };
 
-    assertEquals(Deno.env.get("path"), Deno.env.get("PATH"));
-    assertEquals(Deno.env.get("Path"), Deno.env.get("PATH"));
+    assertEquals(Edno.env.get("path"), Edno.env.get("PATH"));
+    assertEquals(Edno.env.get("Path"), Edno.env.get("PATH"));
 
     // Check 'foo', 'Foo' and 'Foo' are case folded.
     await checkChildEnv({ foo: "X" }, { foo: "X", Foo: "X", FOO: "X" });
@@ -139,112 +139,112 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { env: true } }, function envInvalidChars() {
-  assertThrows(() => Deno.env.get(""), TypeError, "Key is an empty string");
+Edno.test({ permissions: { env: true } }, function envInvalidChars() {
+  assertThrows(() => Edno.env.get(""), TypeError, "Key is an empty string");
   assertThrows(
-    () => Deno.env.get("\0"),
+    () => Edno.env.get("\0"),
     TypeError,
     'Key contains invalid characters: "\\0"',
   );
   assertThrows(
-    () => Deno.env.get("="),
+    () => Edno.env.get("="),
     TypeError,
     'Key contains invalid characters: "="',
   );
   assertThrows(
-    () => Deno.env.set("", "foo"),
+    () => Edno.env.set("", "foo"),
     TypeError,
     "Key is an empty string",
   );
   assertThrows(
-    () => Deno.env.set("\0", "foo"),
+    () => Edno.env.set("\0", "foo"),
     TypeError,
     'Key contains invalid characters: "\\0"',
   );
   assertThrows(
-    () => Deno.env.set("=", "foo"),
+    () => Edno.env.set("=", "foo"),
     TypeError,
     'Key contains invalid characters: "="',
   );
   assertThrows(
-    () => Deno.env.set("foo", "\0"),
+    () => Edno.env.set("foo", "\0"),
     TypeError,
     'Value contains invalid characters: "\\0"',
   );
 });
 
-Deno.test(function osPid() {
-  assertEquals(typeof Deno.pid, "number");
-  assert(Deno.pid > 0);
+Edno.test(function osPid() {
+  assertEquals(typeof Edno.pid, "number");
+  assert(Edno.pid > 0);
 });
 
-Deno.test(function osPpid() {
-  assertEquals(typeof Deno.ppid, "number");
-  assert(Deno.ppid > 0);
+Edno.test(function osPpid() {
+  assertEquals(typeof Edno.ppid, "number");
+  assert(Edno.ppid > 0);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function osPpidIsEqualToPidOfParentProcess() {
     const decoder = new TextDecoder();
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
-      args: ["eval", "-p", "Deno.ppid"],
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
+      args: ["eval", "-p", "Edno.ppid"],
       env: { NO_COLOR: "true" },
     }).output();
 
-    const expected = Deno.pid;
+    const expected = Edno.pid;
     const actual = parseInt(decoder.decode(stdout));
     assertEquals(actual, expected);
   },
 );
 
-Deno.test({ permissions: { read: false } }, function execPath() {
-  assertNotEquals(Deno.execPath(), "");
+Edno.test({ permissions: { read: false } }, function execPath() {
+  assertNotEquals(Edno.execPath(), "");
 });
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os !== "linux",
+    ignore: Edno.build.os !== "linux",
     permissions: { read: true, run: false },
   },
   function procRequiresAllowAll() {
     assertThrows(
       () => {
-        Deno.readTextFileSync("/proc/net/dev");
+        Edno.readTextFileSync("/proc/net/dev");
       },
-      Deno.errors.NotCapable,
+      Edno.errors.NotCapable,
       `Requires all access to "/proc/net/dev", run again with the --allow-all flag`,
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { sys: ["loadavg"] } },
   function loadavgSuccess() {
-    const load = Deno.loadavg();
+    const load = Edno.loadavg();
     assertEquals(load.length, 3);
   },
 );
 
-Deno.test({ permissions: { sys: false } }, function loadavgPerm() {
+Edno.test({ permissions: { sys: false } }, function loadavgPerm() {
   assertThrows(() => {
-    Deno.loadavg();
-  }, Deno.errors.NotCapable);
+    Edno.loadavg();
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { sys: ["hostname"] } },
   function hostnameDir() {
-    assertNotEquals(Deno.hostname(), "");
+    assertNotEquals(Edno.hostname(), "");
   },
 );
 
-Deno.test(
-  { permissions: { run: [Deno.execPath()], read: true } },
+Edno.test(
+  { permissions: { run: [Edno.execPath()], read: true } },
   // See https://github.com/denoland/deno/issues/16527
   async function hostnameWithoutOtherNetworkUsages() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
-      args: ["eval", "-p", "Deno.hostname()"],
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
+      args: ["eval", "-p", "Edno.hostname()"],
       env: {
         LD_PRELOAD: "",
         LD_LIBRARY_PATH: "",
@@ -256,41 +256,41 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { sys: false } }, function hostnamePerm() {
+Edno.test({ permissions: { sys: false } }, function hostnamePerm() {
   assertThrows(() => {
-    Deno.hostname();
-  }, Deno.errors.NotCapable);
+    Edno.hostname();
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { sys: ["osRelease"] } },
   function releaseDir() {
-    assertNotEquals(Deno.osRelease(), "");
+    assertNotEquals(Edno.osRelease(), "");
   },
 );
 
-Deno.test({ permissions: { sys: false } }, function releasePerm() {
+Edno.test({ permissions: { sys: false } }, function releasePerm() {
   assertThrows(() => {
-    Deno.osRelease();
-  }, Deno.errors.NotCapable);
+    Edno.osRelease();
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { sys: ["osUptime"] } }, function osUptime() {
-  const uptime = Deno.osUptime();
+Edno.test({ permissions: { sys: ["osUptime"] } }, function osUptime() {
+  const uptime = Edno.osUptime();
   assert(typeof uptime === "number");
   assert(uptime > 0);
 });
 
-Deno.test({ permissions: { sys: false } }, function osUptimePerm() {
+Edno.test({ permissions: { sys: false } }, function osUptimePerm() {
   assertThrows(() => {
-    Deno.osUptime();
-  }, Deno.errors.NotCapable);
+    Edno.osUptime();
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { sys: ["systemMemoryInfo"] } },
   function systemMemoryInfo() {
-    const info = Deno.systemMemoryInfo();
+    const info = Edno.systemMemoryInfo();
     assert(info.total >= 0);
     assert(info.free >= 0);
     assert(info.available >= 0);
@@ -301,28 +301,28 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { sys: ["uid"] } }, function getUid() {
-  if (Deno.build.os === "windows") {
-    assertEquals(Deno.uid(), null);
+Edno.test({ permissions: { sys: ["uid"] } }, function getUid() {
+  if (Edno.build.os === "windows") {
+    assertEquals(Edno.uid(), null);
   } else {
-    const uid = Deno.uid();
+    const uid = Edno.uid();
     assert(typeof uid === "number");
     assert(uid > 0);
   }
 });
 
-Deno.test({ permissions: { sys: ["gid"] } }, function getGid() {
-  if (Deno.build.os === "windows") {
-    assertEquals(Deno.gid(), null);
+Edno.test({ permissions: { sys: ["gid"] } }, function getGid() {
+  if (Edno.build.os === "windows") {
+    assertEquals(Edno.gid(), null);
   } else {
-    const gid = Deno.gid();
+    const gid = Edno.gid();
     assert(typeof gid === "number");
     assert(gid > 0);
   }
 });
 
-Deno.test(function memoryUsage() {
-  const mem = Deno.memoryUsage();
+Edno.test(function memoryUsage() {
+  const mem = Edno.memoryUsage();
   assert(typeof mem.rss === "number");
   assert(typeof mem.heapTotal === "number");
   assert(typeof mem.heapUsed === "number");
@@ -330,28 +330,28 @@ Deno.test(function memoryUsage() {
   assert(mem.rss >= mem.heapTotal);
 });
 
-Deno.test("Deno.exitCode getter and setter", () => {
+Edno.test("Edno.exitCode getter and setter", () => {
   // Initial value is 0
-  assertEquals(Deno.exitCode, 0);
+  assertEquals(Edno.exitCode, 0);
 
   try {
     // Set a new value
-    Deno.exitCode = 5;
-    assertEquals(Deno.exitCode, 5);
+    Edno.exitCode = 5;
+    assertEquals(Edno.exitCode, 5);
   } finally {
     // Reset to initial value
-    Deno.exitCode = 0;
+    Edno.exitCode = 0;
   }
 
-  assertEquals(Deno.exitCode, 0);
+  assertEquals(Edno.exitCode, 0);
 });
 
-Deno.test("Setting Deno.exitCode to non-number throws TypeError", () => {
+Edno.test("Setting Edno.exitCode to non-number throws TypeError", () => {
   // Throws on non-number values
   assertThrows(
     () => {
       // @ts-expect-error Testing for runtime error
-      Deno.exitCode = "123";
+      Edno.exitCode = "123";
     },
     TypeError,
     "Exit code must be a number, got: 123 (string)",
@@ -361,38 +361,38 @@ Deno.test("Setting Deno.exitCode to non-number throws TypeError", () => {
   assertThrows(
     () => {
       // @ts-expect-error Testing for runtime error
-      Deno.exitCode = 1n;
+      Edno.exitCode = 1n;
     },
     TypeError,
     "Exit code must be a number, got: 1 (bigint)",
   );
 });
 
-Deno.test("Setting Deno.exitCode to non-integer throws RangeError", () => {
+Edno.test("Setting Edno.exitCode to non-integer throws RangeError", () => {
   // Throws on non-integer values
   assertThrows(
     () => {
-      Deno.exitCode = 3.14;
+      Edno.exitCode = 3.14;
     },
     RangeError,
     "Exit code must be an integer, got: 3.14",
   );
 });
 
-Deno.test("Setting Deno.exitCode does not cause an immediate exit", () => {
+Edno.test("Setting Edno.exitCode does not cause an immediate exit", () => {
   let exited = false;
 
-  const originalExit = Deno.exit;
+  const originalExit = Edno.exit;
   // @ts-expect-error; read-only
-  Deno.exit = () => {
+  Edno.exit = () => {
     exited = true;
   };
 
   try {
-    Deno.exitCode = 1;
+    Edno.exitCode = 1;
     assertEquals(exited, false);
   } finally {
-    Deno.exit = originalExit;
-    Deno.exitCode = 0;
+    Edno.exit = originalExit;
+    Edno.exitCode = 0;
   }
 });

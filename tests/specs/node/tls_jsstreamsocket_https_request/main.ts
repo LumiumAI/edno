@@ -47,7 +47,7 @@ server.listen(0, () => {
 
   const timeout = setTimeout(() => {
     console.log("TIMEOUT");
-    Deno.exit(1);
+    Edno.exit(1);
   }, 10000);
 
   const req = https.request({

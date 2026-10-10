@@ -41,11 +41,11 @@ const {
   TypeError,
   decodeURIComponent,
 } = primordials;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const {
   ERR_INVALID_ARG_TYPE,
   ERR_PROXY_INVALID_CONFIG,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 // Lowercase keys that we look for, in priority order (lowercase
 // first to match Node's `http_proxy` > `HTTP_PROXY` precedence).
@@ -152,7 +152,7 @@ function parseProxyUrl(raw, kind, mode) {
     username,
     password,
     auth: username
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.from()/.toString(encoding) are not primordials.
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.from()/.toString(encoding) are not primordials.
       ? "Basic " + Buffer.from(`${username}:${password}`).toString("base64")
       : undefined,
   };
@@ -364,7 +364,7 @@ function maybeInitFromEnv() {
   const env = readPrivilegedEnv();
   // CLI flags (parsed at startup) override the env var, but if the flag
   // wasn't set, fall back to NODE_USE_ENV_PROXY.
-  const cliOverride = globalThis[SymbolFor("Deno.internal.useEnvProxy")];
+  const cliOverride = globalThis[SymbolFor("Edno.internal.useEnvProxy")];
   let enabled;
   if (cliOverride === true || cliOverride === false) {
     enabled = cliOverride;

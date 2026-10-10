@@ -10,7 +10,7 @@
 
 // An HTTP server that resolves an op for every request
 const { promise, resolve } = Promise.withResolvers();
-const server = Deno.serve({
+const server = Edno.serve({
   port: 0,
   onListen: ({ port }) => resolve(port),
   handler: () => new Response("ok"),
@@ -18,8 +18,8 @@ const server = Deno.serve({
 const port = await promise;
 
 // A TCP listener loop
-const listener = Deno.listen({ port: 0 });
-const conn1 = await Deno.connect({ port: listener.addr.port });
+const listener = Edno.listen({ port: 0 });
+const conn1 = await Edno.connect({ port: listener.addr.port });
 const conn2 = await listener.accept();
 
 // Note: we need to ensure that these read/write ops are balanced at the top-level to avoid triggering
@@ -37,7 +37,7 @@ const conn2 = await listener.accept();
   }
 })();
 
-Deno.test(async function waits() {
+Edno.test(async function waits() {
   // Trigger the server to restart its op
   await (await fetch(`http://127.0.0.1:${port}/`)).text();
   // Let the IIFEs run for a bit

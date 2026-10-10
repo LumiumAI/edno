@@ -1,7 +1,7 @@
 import { trace } from "npm:@opentelemetry/api@1.9.0";
 
 let port: number;
-const server = Deno.serve(
+const server = Edno.serve(
   {
     port: 0,
     onListen: (addr) => {

@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assertEquals, assertThrows, delay } from "./test_util.ts";
 
-Deno.test(
-  { ignore: Deno.build.os !== "windows" },
+Edno.test(
+  { ignore: Edno.build.os !== "windows" },
   function windowsUnsupportedSignalsTest() {
     // These signals are Unix-only and not supported on Windows at all.
     const unsupported = [
@@ -19,7 +19,7 @@ Deno.test(
     for (const sig of unsupported) {
       assertThrows(
         () => {
-          Deno.addSignalListener(sig as Deno.Signal, () => {});
+          Edno.addSignalListener(sig as Edno.Signal, () => {});
         },
         Error,
         `Invalid signal: ${sig}`,
@@ -28,29 +28,29 @@ Deno.test(
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "windows" },
+Edno.test(
+  { ignore: Edno.build.os !== "windows" },
   function windowsForbiddenSignalsTest() {
     // These signals exist on Windows but are forbidden to listen for
     // (uncatchable/fatal signals).
     assertThrows(
-      () => Deno.addSignalListener("SIGKILL", () => {}),
+      () => Edno.addSignalListener("SIGKILL", () => {}),
       TypeError,
       "Binding to signal 'SIGKILL' is not allowed",
     );
     assertThrows(
-      () => Deno.addSignalListener("SIGABRT", () => {}),
+      () => Edno.addSignalListener("SIGABRT", () => {}),
       TypeError,
       "Binding to signal 'SIGABRT' is not allowed",
     );
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "windows" },
+Edno.test(
+  { ignore: Edno.build.os !== "windows" },
   function windowsSupportedSignalsTest() {
     // These signals should be registerable on Windows.
-    const supported: Deno.Signal[] = [
+    const supported: Edno.Signal[] = [
       "SIGINT",
       "SIGBREAK",
       "SIGHUP",
@@ -60,15 +60,15 @@ Deno.test(
     ];
     for (const sig of supported) {
       const listener = () => {};
-      Deno.addSignalListener(sig, listener);
-      Deno.removeSignalListener(sig, listener);
+      Edno.addSignalListener(sig, listener);
+      Edno.removeSignalListener(sig, listener);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { run: true },
   },
   async function signalListenerTest() {
@@ -79,24 +79,24 @@ Deno.test(
     // This test needs to be careful that it doesn't accidentally aggregate multiple
     // signals into one. Sending two or more SIGxxx before the handler can be run will
     // result in signal coalescing.
-    Deno.addSignalListener("SIGUSR1", listener);
+    Edno.addSignalListener("SIGUSR1", listener);
     // Sends SIGUSR1 3 times.
     for (let i = 1; i <= 3; i++) {
       await delay(1);
-      Deno.kill(Deno.pid, "SIGUSR1");
+      Edno.kill(Edno.pid, "SIGUSR1");
       while (c < i) {
         await delay(20);
       }
     }
-    Deno.removeSignalListener("SIGUSR1", listener);
+    Edno.removeSignalListener("SIGUSR1", listener);
     await delay(100);
     assertEquals(c, 3);
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { run: true },
   },
   async function multipleSignalListenerTest() {
@@ -110,24 +110,24 @@ Deno.test(
     // This test needs to be careful that it doesn't accidentally aggregate multiple
     // signals into one. Sending two or more SIGxxx before the handler can be run will
     // result in signal coalescing.
-    Deno.addSignalListener("SIGUSR2", listener0);
-    Deno.addSignalListener("SIGUSR2", listener1);
+    Edno.addSignalListener("SIGUSR2", listener0);
+    Edno.addSignalListener("SIGUSR2", listener1);
 
     // Sends SIGUSR2 3 times.
     for (let i = 1; i <= 3; i++) {
       await delay(1);
-      Deno.kill(Deno.pid, "SIGUSR2");
+      Edno.kill(Edno.pid, "SIGUSR2");
       while (c.length < i * 2) {
         await delay(20);
       }
     }
 
-    Deno.removeSignalListener("SIGUSR2", listener1);
+    Edno.removeSignalListener("SIGUSR2", listener1);
 
     // Sends SIGUSR2 3 times.
     for (let i = 1; i <= 3; i++) {
       await delay(1);
-      Deno.kill(Deno.pid, "SIGUSR2");
+      Edno.kill(Edno.pid, "SIGUSR2");
       while (c.length < 6 + i) {
         await delay(20);
       }
@@ -139,20 +139,20 @@ Deno.test(
     const irrelevant = () => {
       count++;
     };
-    Deno.addSignalListener("SIGUSR1", irrelevant);
+    Edno.addSignalListener("SIGUSR1", irrelevant);
     for (const _ of Array(3)) {
       await delay(20);
-      Deno.kill(Deno.pid, "SIGUSR1");
+      Edno.kill(Edno.pid, "SIGUSR1");
     }
     while (count < 3) {
       await delay(20);
     }
-    Deno.removeSignalListener("SIGUSR1", irrelevant);
+    Edno.removeSignalListener("SIGUSR1", irrelevant);
 
     // No change
     assertEquals(c, "010101000");
 
-    Deno.removeSignalListener("SIGUSR2", listener0);
+    Edno.removeSignalListener("SIGUSR2", listener0);
 
     await delay(100);
 
@@ -163,30 +163,30 @@ Deno.test(
 );
 
 // This tests that pending op_signal_poll doesn't block the runtime from exiting the process.
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
   },
   async function canExitWhileListeningToSignal() {
-    const { code } = await new Deno.Command(Deno.execPath(), {
+    const { code } = await new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "Deno.addSignalListener('SIGINT', () => {})",
+        "Edno.addSignalListener('SIGINT', () => {})",
       ],
     }).output();
     assertEquals(code, 0);
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { run: true },
   },
   async function workerSignalListenerIsRemovedOnTerminate() {
     const childCode = `
       const workerCode = \`
-        Deno.addSignalListener("SIGTERM", () => {});
+        Edno.addSignalListener("SIGTERM", () => {});
         self.postMessage("registered");
         setInterval(() => {}, 1000);
       \`;
@@ -203,7 +203,7 @@ Deno.test(
       setInterval(() => {}, 1000);
     `;
 
-    const child = new Deno.Command(Deno.execPath(), {
+    const child = new Edno.Command(Edno.execPath(), {
       args: ["eval", childCode],
       stdout: "piped",
       stderr: "piped",
@@ -245,15 +245,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os !== "windows",
+    ignore: Edno.build.os !== "windows",
     permissions: { run: true },
   },
   function windowsThrowsOnNegativeProcessIdTest() {
     assertThrows(
       () => {
-        Deno.kill(-1, "SIGKILL");
+        Edno.kill(-1, "SIGKILL");
       },
       TypeError,
       "Invalid pid",
@@ -261,17 +261,17 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os !== "windows",
+    ignore: Edno.build.os !== "windows",
     permissions: { run: true },
   },
   function noOpenSystemIdleProcessTest() {
-    let signal: Deno.Signal = "SIGKILL";
+    let signal: Edno.Signal = "SIGKILL";
 
     assertThrows(
       () => {
-        Deno.kill(0, signal);
+        Edno.kill(0, signal);
       },
       TypeError,
       `Invalid pid`,
@@ -280,7 +280,7 @@ Deno.test(
     signal = "SIGTERM";
     assertThrows(
       () => {
-        Deno.kill(0, signal);
+        Edno.kill(0, signal);
       },
       TypeError,
       `Invalid pid`,
@@ -288,78 +288,78 @@ Deno.test(
   },
 );
 
-Deno.test(function signalInvalidHandlerTest() {
+Edno.test(function signalInvalidHandlerTest() {
   assertThrows(() => {
-    // deno-lint-ignore no-explicit-any
-    Deno.addSignalListener("SIGINT", "handler" as any);
+    // edno-lint-ignore no-explicit-any
+    Edno.addSignalListener("SIGINT", "handler" as any);
   });
   assertThrows(() => {
-    // deno-lint-ignore no-explicit-any
-    Deno.removeSignalListener("SIGINT", "handler" as any);
+    // edno-lint-ignore no-explicit-any
+    Edno.removeSignalListener("SIGINT", "handler" as any);
   });
 });
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { run: true },
   },
   function signalForbiddenSignalTest() {
     assertThrows(
-      () => Deno.addSignalListener("SIGKILL", () => {}),
+      () => Edno.addSignalListener("SIGKILL", () => {}),
       TypeError,
       "Binding to signal 'SIGKILL' is not allowed",
     );
     assertThrows(
-      () => Deno.addSignalListener("SIGSTOP", () => {}),
+      () => Edno.addSignalListener("SIGSTOP", () => {}),
       TypeError,
       "Binding to signal 'SIGSTOP' is not allowed",
     );
     assertThrows(
-      () => Deno.addSignalListener("SIGILL", () => {}),
+      () => Edno.addSignalListener("SIGILL", () => {}),
       TypeError,
       "Binding to signal 'SIGILL' is not allowed",
     );
     assertThrows(
-      () => Deno.addSignalListener("SIGFPE", () => {}),
+      () => Edno.addSignalListener("SIGFPE", () => {}),
       TypeError,
       "Binding to signal 'SIGFPE' is not allowed",
     );
     assertThrows(
-      () => Deno.addSignalListener("SIGSEGV", () => {}),
+      () => Edno.addSignalListener("SIGSEGV", () => {}),
       TypeError,
       "Binding to signal 'SIGSEGV' is not allowed",
     );
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "linux" },
+Edno.test(
+  { ignore: Edno.build.os !== "linux" },
   function signalAliasLinux() {
     const i = () => {};
-    Deno.addSignalListener("SIGUNUSED", i);
-    Deno.addSignalListener("SIGPOLL", i);
+    Edno.addSignalListener("SIGUNUSED", i);
+    Edno.addSignalListener("SIGPOLL", i);
 
-    Deno.removeSignalListener("SIGUNUSED", i);
-    Deno.removeSignalListener("SIGPOLL", i);
+    Edno.removeSignalListener("SIGUNUSED", i);
+    Edno.removeSignalListener("SIGPOLL", i);
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
     permissions: { run: true },
   },
   function killWithSignalZero() {
     // This should not throw for the current process
-    Deno.kill(Deno.pid, 0);
+    Edno.kill(Edno.pid, 0);
 
     // Test with a non-existent PID (very high number unlikely to exist)
     assertThrows(
       () => {
-        Deno.kill(999999, 0);
+        Edno.kill(999999, 0);
       },
-      Deno.errors.NotFound,
+      Edno.errors.NotFound,
     );
   },
 );

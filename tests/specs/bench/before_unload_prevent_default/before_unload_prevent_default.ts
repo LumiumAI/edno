@@ -3,4 +3,4 @@ addEventListener("beforeunload", (e) => {
   e.preventDefault();
 });
 
-Deno.bench("foo", () => {});
+Edno.bench("foo", () => {});

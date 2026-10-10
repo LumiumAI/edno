@@ -1,4 +1,4 @@
-import { add } from "@denotest/add";
+import { add } from "@ednotest/add";
 import * as fs from "fs";
 
 const fileName = `./${add(1, 2)}`;

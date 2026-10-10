@@ -1,11 +1,11 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [
     {
-      // `@denotest3/gitlab-pkg` is on a registry that only serves metadata to
+      // `@ednotest3/gitlab-pkg` is on a registry that only serves metadata to
       // requests with the npm `Accept` header, so the full packument that
       // minimumDependencyAge wants can't be fetched and the abbreviated
       // install manifest is used instead

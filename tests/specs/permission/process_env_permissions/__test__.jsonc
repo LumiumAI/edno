@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "tests": {
-    "deno_env_wildcard_tests": {
+    "edno_env_wildcard_tests": {
       "envs": {
         "MYAPP_HELLO": "Hello\tworld,",
         "MYAPP_GOODBYE": "farewell",

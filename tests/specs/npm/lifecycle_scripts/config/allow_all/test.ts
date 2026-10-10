@@ -1,43 +1,43 @@
-const kind = Deno.args[0];
+const kind = Edno.args[0];
 
 switch (kind) {
   case "all": {
     modify(true);
     install({
       expected: [
-        "@denotest/node-addon@1.0.0",
-        "@denotest/node-lifecycle-scripts@1.0.0",
+        "@ednotest/node-addon@1.0.0",
+        "@ednotest/node-lifecycle-scripts@1.0.0",
       ],
     });
     break;
   }
   case "some": {
-    modify(["npm:@denotest/node-addon@1.0.0"]);
+    modify(["npm:@ednotest/node-addon@1.0.0"]);
     install({
-      expected: ["@denotest/node-addon@1.0.0"],
+      expected: ["@ednotest/node-addon@1.0.0"],
     });
     break;
   }
   case "deny": {
     modify({
       allow: true,
-      deny: ["npm:@denotest/node-addon@1.0.0"],
+      deny: ["npm:@ednotest/node-addon@1.0.0"],
     });
     install({
-      expected: ["@denotest/node-lifecycle-scripts@1.0.0"],
+      expected: ["@ednotest/node-lifecycle-scripts@1.0.0"],
     });
     break;
   }
   case "arg": {
     modify({
       allow: true,
-      deny: ["npm:@denotest/node-addon@1.0.0"],
+      deny: ["npm:@ednotest/node-addon@1.0.0"],
     });
     install({
       additionalArgs: ["--allow-scripts"],
       expected: [
-        "@denotest/node-addon@1.0.0",
-        "@denotest/node-lifecycle-scripts@1.0.0",
+        "@ednotest/node-addon@1.0.0",
+        "@ednotest/node-lifecycle-scripts@1.0.0",
       ],
     });
     break;
@@ -47,21 +47,21 @@ switch (kind) {
 }
 
 function modify(value: any) {
-  const obj = JSON.parse(Deno.readTextFileSync("deno.json"));
+  const obj = JSON.parse(Edno.readTextFileSync("edno.json"));
   obj.allowScripts = value;
-  Deno.writeTextFileSync("deno.json", JSON.stringify(obj));
+  Edno.writeTextFileSync("edno.json", JSON.stringify(obj));
 }
 
 function install(options: {
   expected: (
-    | "@denotest/node-addon@1.0.0"
-    | "@denotest/node-lifecycle-scripts@1.0.0"
+    | "@ednotest/node-addon@1.0.0"
+    | "@ednotest/node-lifecycle-scripts@1.0.0"
   )[];
   additionalArgs?: string[];
 }) {
   const args = ["install", ...(options.additionalArgs ?? [])];
   console.error("args", args);
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args,
     stderr: "piped",
     stdout: "piped",
@@ -80,8 +80,8 @@ function install(options: {
 
   for (
     const packageId of [
-      "@denotest/node-addon@1.0.0",
-      "@denotest/node-lifecycle-scripts@1.0.0",
+      "@ednotest/node-addon@1.0.0",
+      "@ednotest/node-lifecycle-scripts@1.0.0",
     ]
   ) {
     if (!options.expected.includes(packageId)) {

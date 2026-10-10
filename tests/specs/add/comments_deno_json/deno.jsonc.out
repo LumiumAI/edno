@@ -1,9 +1,9 @@
 // Testing four space indents too
-// deno-fmt-ignore
+// edno-fmt-ignore
 {
     "imports": {
-        "@denotest/add": "jsr:@denotest/add@^1.0.0",
-        "@denotest/add2": "npm:@denotest/add", // some comment
-        "@denotest/esm-basic": "npm:@denotest/esm-basic@^1.0.0"
+        "@ednotest/add": "jsr:@ednotest/add@^1.0.0",
+        "@ednotest/add2": "npm:@ednotest/add", // some comment
+        "@ednotest/esm-basic": "npm:@ednotest/esm-basic@^1.0.0"
     }
 }

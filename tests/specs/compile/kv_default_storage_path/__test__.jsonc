@@ -24,7 +24,7 @@
       "if": "unix",
       "commandName": "./out",
       "args": ["get"],
-      "output": "value: hi deno team.\n"
+      "output": "value: hi edno team.\n"
     },
     {
       "if": "windows",
@@ -41,7 +41,7 @@
       "if": "windows",
       "commandName": "./out.exe",
       "args": ["get"],
-      "output": "value: hi deno team.\n"
+      "output": "value: hi edno team.\n"
     }
   ]
 }

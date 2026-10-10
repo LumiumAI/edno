@@ -6,61 +6,61 @@ const {
   formatToCronSchedule,
   parseScheduleToString,
   // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-} = Deno[Deno.internal];
+} = Edno[Edno.internal];
 
 const sleep = (time: number) => new Promise((r) => setTimeout(r, time));
 
-Deno.test(function noNameTest() {
+Edno.test(function noNameTest() {
   assertThrows(
     // @ts-ignore test
-    () => Deno.cron(),
+    () => Edno.cron(),
     TypeError,
     "Cannot create cron job, a unique name is required: received 'undefined'",
   );
 });
 
-Deno.test(function noSchedule() {
+Edno.test(function noSchedule() {
   assertThrows(
     // @ts-ignore test
-    () => Deno.cron("foo"),
+    () => Edno.cron("foo"),
     TypeError,
     "Cannot create cron job, a schedule is required: received 'undefined'",
   );
 });
 
-Deno.test(function noHandler() {
+Edno.test(function noHandler() {
   assertThrows(
     // @ts-ignore test
-    () => Deno.cron("foo", "*/1 * * * *"),
+    () => Edno.cron("foo", "*/1 * * * *"),
     TypeError,
     "Cannot create cron job: a handler is required",
   );
 });
 
-Deno.test(function invalidNameTest() {
+Edno.test(function invalidNameTest() {
   assertThrows(
-    () => Deno.cron("abc[]", "*/1 * * * *", () => {}),
+    () => Edno.cron("abc[]", "*/1 * * * *", () => {}),
     TypeError,
     "Invalid cron name",
   );
   assertThrows(
-    () => Deno.cron("a**bc", "*/1 * * * *", () => {}),
+    () => Edno.cron("a**bc", "*/1 * * * *", () => {}),
     TypeError,
     "Invalid cron name",
   );
   assertThrows(
-    () => Deno.cron("abc<>", "*/1 * * * *", () => {}),
+    () => Edno.cron("abc<>", "*/1 * * * *", () => {}),
     TypeError,
     "Invalid cron name",
   );
   assertThrows(
-    () => Deno.cron(";']", "*/1 * * * *", () => {}),
+    () => Edno.cron(";']", "*/1 * * * *", () => {}),
     TypeError,
     "Invalid cron name",
   );
   assertThrows(
     () =>
-      Deno.cron(
+      Edno.cron(
         "0000000000000000000000000000000000000000000000000000000000000000000000",
         "*/1 * * * *",
         () => {},
@@ -70,33 +70,33 @@ Deno.test(function invalidNameTest() {
   );
 });
 
-Deno.test(function invalidScheduleTest() {
+Edno.test(function invalidScheduleTest() {
   assertThrows(
-    () => Deno.cron("abc", "bogus", () => {}),
+    () => Edno.cron("abc", "bogus", () => {}),
     TypeError,
     "Invalid cron schedule",
   );
   assertThrows(
-    () => Deno.cron("abc", "* * * * * *", () => {}),
+    () => Edno.cron("abc", "* * * * * *", () => {}),
     TypeError,
     "Invalid cron schedule",
   );
   assertThrows(
-    () => Deno.cron("abc", "* * * *", () => {}),
+    () => Edno.cron("abc", "* * * *", () => {}),
     TypeError,
     "Invalid cron schedule",
   );
   assertThrows(
-    () => Deno.cron("abc", "m * * * *", () => {}),
+    () => Edno.cron("abc", "m * * * *", () => {}),
     TypeError,
     "Invalid cron schedule",
   );
 });
 
-Deno.test(function invalidBackoffScheduleTest() {
+Edno.test(function invalidBackoffScheduleTest() {
   assertThrows(
     () =>
-      Deno.cron(
+      Edno.cron(
         "abc",
         "*/1 * * * *",
         { backoffSchedule: [1, 1, 1, 1, 1, 1] },
@@ -107,17 +107,17 @@ Deno.test(function invalidBackoffScheduleTest() {
   );
   assertThrows(
     () =>
-      Deno.cron("abc", "*/1 * * * *", { backoffSchedule: [3600001] }, () => {}),
+      Edno.cron("abc", "*/1 * * * *", { backoffSchedule: [3600001] }, () => {}),
     TypeError,
     "Invalid backoff schedule",
   );
 });
 
-Deno.test(async function tooManyCrons() {
+Edno.test(async function tooManyCrons() {
   const crons: Promise<void>[] = [];
   const ac = new AbortController();
   for (let i = 0; i <= 100; i++) {
-    const c = Deno.cron(
+    const c = Edno.cron(
       `abc_${i}`,
       "*/1 * * * *",
       { signal: ac.signal },
@@ -129,7 +129,7 @@ Deno.test(async function tooManyCrons() {
   try {
     assertThrows(
       () => {
-        Deno.cron("next-cron", "*/1 * * * *", { signal: ac.signal }, () => {});
+        Edno.cron("next-cron", "*/1 * * * *", { signal: ac.signal }, () => {});
       },
       TypeError,
       "Too many crons",
@@ -142,12 +142,12 @@ Deno.test(async function tooManyCrons() {
   }
 });
 
-Deno.test(async function duplicateCrons() {
+Edno.test(async function duplicateCrons() {
   const ac = new AbortController();
-  const c = Deno.cron("abc", "*/20 * * * *", { signal: ac.signal }, () => {});
+  const c = Edno.cron("abc", "*/20 * * * *", { signal: ac.signal }, () => {});
   try {
     assertThrows(
-      () => Deno.cron("abc", "*/20 * * * *", () => {}),
+      () => Edno.cron("abc", "*/20 * * * *", () => {}),
       TypeError,
       "Cron with this name already exists",
     );
@@ -157,13 +157,13 @@ Deno.test(async function duplicateCrons() {
   }
 });
 
-Deno.test(async function basicTest() {
-  Deno.env.set("DENO_CRON_TEST_SCHEDULE_OFFSET", "100");
+Edno.test(async function basicTest() {
+  Edno.env.set("EDNO_CRON_TEST_SCHEDULE_OFFSET", "100");
 
   let count = 0;
   const { promise, resolve } = Promise.withResolvers<void>();
   const ac = new AbortController();
-  const c = Deno.cron("abc", "*/20 * * * *", { signal: ac.signal }, () => {
+  const c = Edno.cron("abc", "*/20 * * * *", { signal: ac.signal }, () => {
     count++;
     if (count > 5) {
       resolve();
@@ -177,13 +177,13 @@ Deno.test(async function basicTest() {
   }
 });
 
-Deno.test(async function basicTestWithJsonFormatScheduleExpression() {
-  Deno.env.set("DENO_CRON_TEST_SCHEDULE_OFFSET", "100");
+Edno.test(async function basicTestWithJsonFormatScheduleExpression() {
+  Edno.env.set("EDNO_CRON_TEST_SCHEDULE_OFFSET", "100");
 
   let count = 0;
   const { promise, resolve } = Promise.withResolvers<void>();
   const ac = new AbortController();
-  const c = Deno.cron(
+  const c = Edno.cron(
     "abc",
     { minute: { every: 20 } },
     { signal: ac.signal },
@@ -202,8 +202,8 @@ Deno.test(async function basicTestWithJsonFormatScheduleExpression() {
   }
 });
 
-Deno.test(async function multipleCrons() {
-  Deno.env.set("DENO_CRON_TEST_SCHEDULE_OFFSET", "100");
+Edno.test(async function multipleCrons() {
+  Edno.env.set("EDNO_CRON_TEST_SCHEDULE_OFFSET", "100");
 
   let count0 = 0;
   let count1 = 0;
@@ -214,13 +214,13 @@ Deno.test(async function multipleCrons() {
     void
   >();
   const ac = new AbortController();
-  const c0 = Deno.cron("abc", "*/20 * * * *", { signal: ac.signal }, () => {
+  const c0 = Edno.cron("abc", "*/20 * * * *", { signal: ac.signal }, () => {
     count0++;
     if (count0 > 5) {
       resolve0();
     }
   });
-  const c1 = Deno.cron("xyz", "*/20 * * * *", { signal: ac.signal }, () => {
+  const c1 = Edno.cron("xyz", "*/20 * * * *", { signal: ac.signal }, () => {
     count1++;
     if (count1 > 5) {
       resolve1();
@@ -236,8 +236,8 @@ Deno.test(async function multipleCrons() {
   }
 });
 
-Deno.test(async function overlappingExecutions() {
-  Deno.env.set("DENO_CRON_TEST_SCHEDULE_OFFSET", "100");
+Edno.test(async function overlappingExecutions() {
+  Edno.env.set("EDNO_CRON_TEST_SCHEDULE_OFFSET", "100");
 
   let count = 0;
   const { promise: promise0, resolve: resolve0 } = Promise.withResolvers<
@@ -247,7 +247,7 @@ Deno.test(async function overlappingExecutions() {
     void
   >();
   const ac = new AbortController();
-  const c = Deno.cron(
+  const c = Edno.cron(
     "abc",
     "*/20 * * * *",
     { signal: ac.signal },
@@ -268,12 +268,12 @@ Deno.test(async function overlappingExecutions() {
   assertEquals(count, 1);
 });
 
-Deno.test(async function retriesWithBackoffSchedule() {
-  Deno.env.set("DENO_CRON_TEST_SCHEDULE_OFFSET", "5000");
+Edno.test(async function retriesWithBackoffSchedule() {
+  Edno.env.set("EDNO_CRON_TEST_SCHEDULE_OFFSET", "5000");
 
   let count = 0;
   const ac = new AbortController();
-  const c = Deno.cron("abc", "*/20 * * * *", {
+  const c = Edno.cron("abc", "*/20 * * * *", {
     signal: ac.signal,
     backoffSchedule: [10, 20],
   }, async () => {
@@ -292,12 +292,12 @@ Deno.test(async function retriesWithBackoffSchedule() {
   assertEquals(count, 3);
 });
 
-Deno.test(async function retriesWithBackoffScheduleOldApi() {
-  Deno.env.set("DENO_CRON_TEST_SCHEDULE_OFFSET", "5000");
+Edno.test(async function retriesWithBackoffScheduleOldApi() {
+  Edno.env.set("EDNO_CRON_TEST_SCHEDULE_OFFSET", "5000");
 
   let count = 0;
   const ac = new AbortController();
-  const c = Deno.cron("abc2", "*/20 * * * *", {
+  const c = Edno.cron("abc2", "*/20 * * * *", {
     signal: ac.signal,
     backoffSchedule: [10, 20],
   }, async () => {
@@ -317,47 +317,47 @@ Deno.test(async function retriesWithBackoffScheduleOldApi() {
   assertEquals(count, 3);
 });
 
-Deno.test("formatToCronSchedule - undefined value", () => {
+Edno.test("formatToCronSchedule - undefined value", () => {
   const result = formatToCronSchedule();
   assertEquals(result, "*");
 });
 
-Deno.test("formatToCronSchedule - number value", () => {
+Edno.test("formatToCronSchedule - number value", () => {
   const result = formatToCronSchedule(5);
   assertEquals(result, "5");
 });
 
-Deno.test("formatToCronSchedule - exact array value", () => {
+Edno.test("formatToCronSchedule - exact array value", () => {
   const result = formatToCronSchedule({ exact: [1, 2, 3] });
   assertEquals(result, "1,2,3");
 });
 
-Deno.test("formatToCronSchedule - exact number value", () => {
+Edno.test("formatToCronSchedule - exact number value", () => {
   const result = formatToCronSchedule({ exact: 5 });
   assertEquals(result, "5");
 });
 
-Deno.test("formatToCronSchedule - start, end, every values", () => {
+Edno.test("formatToCronSchedule - start, end, every values", () => {
   const result = formatToCronSchedule({ start: 1, end: 10, every: 2 });
   assertEquals(result, "1-10/2");
 });
 
-Deno.test("formatToCronSchedule - start, end values", () => {
+Edno.test("formatToCronSchedule - start, end values", () => {
   const result = formatToCronSchedule({ start: 1, end: 10 });
   assertEquals(result, "1-10");
 });
 
-Deno.test("formatToCronSchedule - start, every values", () => {
+Edno.test("formatToCronSchedule - start, every values", () => {
   const result = formatToCronSchedule({ start: 1, every: 2 });
   assertEquals(result, "1/2");
 });
 
-Deno.test("formatToCronSchedule - start value", () => {
+Edno.test("formatToCronSchedule - start value", () => {
   const result = formatToCronSchedule({ start: 1 });
   assertEquals(result, "1/1");
 });
 
-Deno.test("formatToCronSchedule - end, every values", () => {
+Edno.test("formatToCronSchedule - end, every values", () => {
   assertThrows(
     () => formatToCronSchedule({ end: 10, every: 2 }),
     TypeError,
@@ -365,7 +365,7 @@ Deno.test("formatToCronSchedule - end, every values", () => {
   );
 });
 
-Deno.test("Parse CronSchedule to string", () => {
+Edno.test("Parse CronSchedule to string", () => {
   const result = parseScheduleToString({
     minute: { exact: [1, 2, 3] },
     hour: { start: 1, end: 10, every: 2 },
@@ -376,23 +376,23 @@ Deno.test("Parse CronSchedule to string", () => {
   assertEquals(result, "1,2,3 1-10/2 5 1-10 1/2");
 });
 
-Deno.test("Parse schedule to string - string", () => {
+Edno.test("Parse schedule to string - string", () => {
   const result = parseScheduleToString("* * * * *");
   assertEquals(result, "* * * * *");
 });
 
-Deno.test("error on two handlers", () => {
+Edno.test("error on two handlers", () => {
   assertThrows(
     () => {
       // @ts-ignore test
-      Deno.cron("abc", "* * * * *", () => {}, () => {});
+      Edno.cron("abc", "* * * * *", () => {}, () => {});
     },
     TypeError,
     "Cannot create cron job, a single handler is required: two handlers were specified",
   );
 });
 
-Deno.test("Parse test", () => {
+Edno.test("Parse test", () => {
   assertEquals(
     parseScheduleToString({
       minute: 3,

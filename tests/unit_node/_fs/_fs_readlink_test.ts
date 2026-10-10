@@ -5,17 +5,17 @@ import { assert, assertEquals } from "@std/assert";
 import * as path from "@std/path";
 import { Buffer } from "node:buffer";
 
-const testDir = Deno.makeTempDirSync();
+const testDir = Edno.makeTempDirSync();
 const oldname = path.join(testDir, "oldname");
 const newname = path.join(testDir, "newname");
 
-if (Deno.build.os === "windows") {
-  Deno.symlinkSync(oldname, newname, { type: "file" });
+if (Edno.build.os === "windows") {
+  Edno.symlinkSync(oldname, newname, { type: "file" });
 } else {
-  Deno.symlinkSync(oldname, newname);
+  Edno.symlinkSync(oldname, newname);
 }
 
-Deno.test({
+Edno.test({
   name: "readlinkSuccess",
   async fn() {
     const data = await new Promise((res, rej) => {
@@ -32,7 +32,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "readlinkEncodeBufferSuccess",
   async fn() {
     const data = await new Promise((res, rej) => {
@@ -49,7 +49,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "readlinkSyncSuccess",
   fn() {
     const data = readlinkSync(newname);
@@ -58,7 +58,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "readlinkEncodeBufferSuccess",
   fn() {
     const data = readlinkSync(newname, { encoding: "buffer" });
@@ -67,7 +67,7 @@ Deno.test({
   },
 });
 
-Deno.test("[std/node/fs] readlink callback isn't called twice if error is thrown", async () => {
+Edno.test("[std/node/fs] readlink callback isn't called twice if error is thrown", async () => {
   const importUrl = new URL("node:fs", import.meta.url);
   await assertCallbackErrorUncaught({
     prelude: `import { readlink } from ${JSON.stringify(importUrl)}`,
@@ -75,7 +75,7 @@ Deno.test("[std/node/fs] readlink callback isn't called twice if error is thrown
   });
 });
 
-Deno.test("[node/fs] readlink accepts Buffer as path", async () => {
+Edno.test("[node/fs] readlink accepts Buffer as path", async () => {
   const data = await new Promise((res, rej) => {
     readlink(Buffer.from(newname), (err, data) => {
       if (err) {
@@ -87,7 +87,7 @@ Deno.test("[node/fs] readlink accepts Buffer as path", async () => {
   assertEquals(data, oldname);
 });
 
-Deno.test("[node/fs] readlinkSync accepts Buffer as path", () => {
+Edno.test("[node/fs] readlinkSync accepts Buffer as path", () => {
   const data = readlinkSync(Buffer.from(newname));
   assertEquals(data, oldname);
 });

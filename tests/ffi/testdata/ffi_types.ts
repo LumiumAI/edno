@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file
-// Only for testing types. Invoke with `deno install --entrypoint`
+// edno-lint-ignore-file
+// Only for testing types. Invoke with `edno install --entrypoint`
 
-const remote = Deno.dlopen("dummy_lib.so", {
+const remote = Edno.dlopen("dummy_lib.so", {
   method1: { parameters: ["usize", "bool"], result: "void" },
   method2: { parameters: [], result: "void" },
   method3: { parameters: ["usize"], result: "void" },
@@ -68,7 +68,7 @@ const remote = Deno.dlopen("dummy_lib.so", {
   },
 });
 
-Deno.dlopen("dummy_lib_2.so", {
+Edno.dlopen("dummy_lib_2.so", {
   wrong_method1: {
     parameters: [],
     result: "function",
@@ -142,7 +142,7 @@ remote.symbols.method15("foo");
 // @ts-expect-error: Invalid argument
 remote.symbols.method15(new Uint16Array(1));
 remote.symbols.method15(null);
-remote.symbols.method15({} as Deno.PointerValue);
+remote.symbols.method15({} as Edno.PointerValue);
 
 const result = remote.symbols.method16();
 // @ts-expect-error: Invalid argument
@@ -156,16 +156,16 @@ result2.then((_1: bigint) => {});
 
 const result3 = remote.symbols.method18();
 // @ts-expect-error: Invalid argument
-let r3_0: Deno.BufferSource = result3;
-let r3_1: null | Deno.UnsafePointer = result3;
+let r3_0: Edno.BufferSource = result3;
+let r3_1: null | Edno.UnsafePointer = result3;
 
 const result4 = remote.symbols.method19();
 // @ts-expect-error: Invalid argument
-result4.then((_0: Deno.BufferSource) => {});
-result4.then((_1: null | Deno.UnsafePointer) => {});
+result4.then((_0: Edno.BufferSource) => {});
+result4.then((_1: null | Edno.UnsafePointer) => {});
 
-const fnptr = new Deno.UnsafeFnPointer(
-  {} as Deno.PointerObject<Deno.ForeignFunction<["u32", "pointer"], "void">>,
+const fnptr = new Edno.UnsafeFnPointer(
+  {} as Edno.PointerObject<Edno.ForeignFunction<["u32", "pointer"], "void">>,
   {
     parameters: ["u32", "pointer"],
     result: "void",
@@ -175,7 +175,7 @@ const fnptr = new Deno.UnsafeFnPointer(
 fnptr.call(null, null);
 fnptr.call(0, null);
 
-const unsafe_callback_wrong1 = new Deno.UnsafeCallback(
+const unsafe_callback_wrong1 = new Edno.UnsafeCallback(
   {
     parameters: ["i8"],
     result: "void",
@@ -183,23 +183,23 @@ const unsafe_callback_wrong1 = new Deno.UnsafeCallback(
   // @ts-expect-error: i8 is not a pointer
   (_: bigint) => {},
 );
-const unsafe_callback_wrong2 = new Deno.UnsafeCallback(
+const unsafe_callback_wrong2 = new Edno.UnsafeCallback(
   {
     parameters: ["pointer"],
     result: "u64",
   },
   // @ts-expect-error: must return a number or bigint
-  (_: Deno.UnsafePointer) => {},
+  (_: Edno.UnsafePointer) => {},
 );
-const unsafe_callback_wrong3 = new Deno.UnsafeCallback(
+const unsafe_callback_wrong3 = new Edno.UnsafeCallback(
   {
     parameters: [],
     result: "void",
   },
   // @ts-expect-error: no parameters
-  (_: Deno.UnsafePointer) => {},
+  (_: Edno.UnsafePointer) => {},
 );
-const unsafe_callback_wrong4 = new Deno.UnsafeCallback(
+const unsafe_callback_wrong4 = new Edno.UnsafeCallback(
   {
     parameters: ["u64"],
     result: "void",
@@ -207,21 +207,21 @@ const unsafe_callback_wrong4 = new Deno.UnsafeCallback(
   // @ts-expect-error: Callback's 64bit parameters are either number or bigint
   (_: number) => {},
 );
-const unsafe_callback_right1 = new Deno.UnsafeCallback(
+const unsafe_callback_right1 = new Edno.UnsafeCallback(
   {
     parameters: ["u8", "u32", "pointer"],
     result: "void",
   },
-  (_1: number, _2: number, _3: null | Deno.PointerValue) => {},
+  (_1: number, _2: number, _3: null | Edno.PointerValue) => {},
 );
-const unsafe_callback_right2 = new Deno.UnsafeCallback(
+const unsafe_callback_right2 = new Edno.UnsafeCallback(
   {
     parameters: [],
     result: "u8",
   },
   () => 3,
 );
-const unsafe_callback_right3 = new Deno.UnsafeCallback(
+const unsafe_callback_right3 = new Edno.UnsafeCallback(
   {
     parameters: [],
     result: "function",
@@ -229,19 +229,19 @@ const unsafe_callback_right3 = new Deno.UnsafeCallback(
   // Callbacks can return other callbacks' pointers, if really wanted.
   () => unsafe_callback_right2.pointer,
 );
-const unsafe_callback_right4 = new Deno.UnsafeCallback(
+const unsafe_callback_right4 = new Edno.UnsafeCallback(
   {
     parameters: ["u8", "u32", "pointer"],
     result: "u8",
   },
-  (_1: number, _2: number, _3: null | Deno.PointerValue) => 3,
+  (_1: number, _2: number, _3: null | Edno.PointerValue) => 3,
 );
-const unsafe_callback_right5 = new Deno.UnsafeCallback(
+const unsafe_callback_right5 = new Edno.UnsafeCallback(
   {
     parameters: ["u8", "i32", "pointer"],
     result: "void",
   },
-  (_1: number, _2: number, _3: null | Deno.PointerValue) => {},
+  (_1: number, _2: number, _3: null | Edno.PointerValue) => {},
 );
 
 // @ts-expect-error: Must pass callback
@@ -258,18 +258,18 @@ remote.symbols.method23(new Uint8Array(1));
 
 // A non-`ArrayBuffer`-backed `Uint8Array<ArrayBufferLike>` (the default
 // inferred form for an untyped `Uint8Array` parameter in TS 5.9+) must still
-// be accepted by buffer parameters and `Deno.UnsafePointer.of()`.
+// be accepted by buffer parameters and `Edno.UnsafePointer.of()`.
 // See https://github.com/denoland/deno/issues/32063
 function takesGenericU8(buf: Uint8Array) {
   remote.symbols.method23(buf);
-  Deno.UnsafePointer.of(buf);
+  Edno.UnsafePointer.of(buf);
 }
 takesGenericU8(new Uint8Array(1));
 
 // `SharedArrayBuffer` (and `SharedArrayBuffer`-backed views) are also valid
 // buffer arguments.
-Deno.UnsafePointer.of(new SharedArrayBuffer(1));
-Deno.UnsafePointer.of(new Uint8Array(new SharedArrayBuffer(1)));
+Edno.UnsafePointer.of(new SharedArrayBuffer(1));
+Edno.UnsafePointer.of(new Uint8Array(new SharedArrayBuffer(1)));
 remote.symbols.method23(new Uint8Array(new SharedArrayBuffer(1)));
 
 // @ts-expect-error: Cannot pass pointer values as buffer.
@@ -302,7 +302,7 @@ const static1_wrong: number = remote.symbols.static1;
 const static1_right: bigint = remote.symbols.static1;
 // @ts-expect-error: Invalid member type
 const static2_wrong: null = remote.symbols.static2;
-const static2_right: null | Deno.UnsafePointer = remote.symbols.static2;
+const static2_right: null | Edno.UnsafePointer = remote.symbols.static2;
 // @ts-expect-error: Invalid member type
 const static3_wrong: number = remote.symbols.static3;
 const static3_right: bigint = remote.symbols.static3;
@@ -372,39 +372,39 @@ const enum FooEnum {
   Foo,
   Bar,
 }
-const foo = "u8" as Deno.NativeU8Enum<FooEnum>;
+const foo = "u8" as Edno.NativeU8Enum<FooEnum>;
 
 declare const brand: unique symbol;
 class MyPointerClass {}
-type MyPointer = Deno.PointerObject & { [brand]: MyPointerClass };
-const myPointer = "pointer" as Deno.NativeTypedPointer<MyPointer>;
-type MyFunctionDefinition = Deno.UnsafeCallbackDefinition<
+type MyPointer = Edno.PointerObject & { [brand]: MyPointerClass };
+const myPointer = "pointer" as Edno.NativeTypedPointer<MyPointer>;
+type MyFunctionDefinition = Edno.UnsafeCallbackDefinition<
   [typeof foo, "u32"],
   typeof myPointer
 >;
-const myFunction = "function" as Deno.NativeTypedFunction<MyFunctionDefinition>;
+const myFunction = "function" as Edno.NativeTypedFunction<MyFunctionDefinition>;
 
 type __Tests__ = [
   empty: AssertEqual<
     { symbols: Record<never, never>; close(): void },
-    Deno.DynamicLibrary<Record<never, never>>
+    Edno.DynamicLibrary<Record<never, never>>
   >,
   basic: AssertEqual<
     { symbols: { add: (n1: number, n2: number) => number }; close(): void },
-    Deno.DynamicLibrary<{ add: { parameters: ["i32", "u8"]; result: "i32" } }>
+    Edno.DynamicLibrary<{ add: { parameters: ["i32", "u8"]; result: "i32" } }>
   >,
   higher_order_params: AssertEqual<
     {
       symbols: {
         pushBuf: (
           buf: AllowSharedBufferSource | null,
-          ptr: Deno.PointerValue | null,
-          func: Deno.PointerValue | null,
+          ptr: Edno.PointerValue | null,
+          func: Edno.PointerValue | null,
         ) => void;
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{
+    Edno.DynamicLibrary<{
       pushBuf: {
         parameters: ["buffer", "pointer", "function"];
         result: "void";
@@ -416,13 +416,13 @@ type __Tests__ = [
       symbols: {
         pushBuf: (
           buf: AllowSharedBufferSource | null,
-          ptr: Deno.PointerValue,
-          func: Deno.PointerValue,
-        ) => Deno.PointerValue;
+          ptr: Edno.PointerValue,
+          func: Edno.PointerValue,
+        ) => Edno.PointerValue;
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{
+    Edno.DynamicLibrary<{
       pushBuf: {
         parameters: ["buffer", "pointer", "function"];
         result: "pointer";
@@ -432,11 +432,11 @@ type __Tests__ = [
   non_exact_params: AssertEqual<
     {
       symbols: {
-        foo: (...args: (number | Deno.PointerValue | null)[]) => bigint;
+        foo: (...args: (number | Edno.PointerValue | null)[]) => bigint;
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{
+    Edno.DynamicLibrary<{
       foo: { parameters: ("i32" | "pointer")[]; result: "u64" };
     }>
   >,
@@ -447,7 +447,7 @@ type __Tests__ = [
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{ foo: { parameters: []; result: "i32" } }>
+    Edno.DynamicLibrary<{ foo: { parameters: []; result: "i32" } }>
   >,
   non_exact_params_empty: AssertNotEqual<
     {
@@ -456,7 +456,7 @@ type __Tests__ = [
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{ foo: { parameters: []; result: "i32" } }>
+    Edno.DynamicLibrary<{ foo: { parameters: []; result: "i32" } }>
   >,
   enum_param: AssertEqual<
     {
@@ -465,7 +465,7 @@ type __Tests__ = [
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{ foo: { parameters: [typeof foo]; result: "void" } }>
+    Edno.DynamicLibrary<{ foo: { parameters: [typeof foo]; result: "void" } }>
   >,
   enum_return: AssertEqual<
     {
@@ -474,7 +474,7 @@ type __Tests__ = [
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{ foo: { parameters: []; result: typeof foo } }>
+    Edno.DynamicLibrary<{ foo: { parameters: []; result: typeof foo } }>
   >,
   typed_pointer_param: AssertEqual<
     {
@@ -483,7 +483,7 @@ type __Tests__ = [
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{
+    Edno.DynamicLibrary<{
       foo: { parameters: [typeof myPointer]; result: "void" };
     }>
   >,
@@ -494,26 +494,26 @@ type __Tests__ = [
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{ foo: { parameters: []; result: typeof myPointer } }>
+    Edno.DynamicLibrary<{ foo: { parameters: []; result: typeof myPointer } }>
   >,
   typed_function_param: AssertEqual<
     {
       symbols: {
-        foo: (arg: Deno.PointerObject<MyFunctionDefinition> | null) => void;
+        foo: (arg: Edno.PointerObject<MyFunctionDefinition> | null) => void;
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{
+    Edno.DynamicLibrary<{
       foo: { parameters: [typeof myFunction]; result: "void" };
     }>
   >,
   typed_function_return: AssertEqual<
     {
       symbols: {
-        foo: () => Deno.PointerObject<MyFunctionDefinition> | null;
+        foo: () => Edno.PointerObject<MyFunctionDefinition> | null;
       };
       close(): void;
     },
-    Deno.DynamicLibrary<{ foo: { parameters: []; result: typeof myFunction } }>
+    Edno.DynamicLibrary<{ foo: { parameters: []; result: typeof myFunction } }>
   >,
 ];

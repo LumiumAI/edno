@@ -6,10 +6,10 @@ use std::rc::Rc;
 use async_stream::try_stream;
 use base64::Engine;
 use bytes::Bytes;
-use deno_core::BufMutView;
-use deno_core::Resource;
-use deno_core::convert::ByteString;
-use deno_core::unsync::spawn;
+use edno_core::BufMutView;
+use edno_core::Resource;
+use edno_core::convert::ByteString;
+use edno_core::unsync::spawn;
 use futures::StreamExt;
 use futures::TryStreamExt;
 use http::HeaderMap;
@@ -312,7 +312,7 @@ impl LscBackend {
     Err(CacheError::KeysNotSupported)
   }
 }
-impl deno_core::Resource for LscBackend {
+impl edno_core::Resource for LscBackend {
   fn name(&self) -> std::borrow::Cow<'_, str> {
     "LscBackend".into()
   }

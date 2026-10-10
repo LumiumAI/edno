@@ -11,7 +11,7 @@ const chunk = new Uint8Array(64);
 // Many enqueue/read pairs on a default ReadableStream. Exercises the default
 // reader read path (stream[_state] cached) and the underlying
 // _readRequests/_queue handling.
-Deno.bench("readable_stream_default_read", { n: 1e4 }, async () => {
+Edno.bench("readable_stream_default_read", { n: 1e4 }, async () => {
   const stream = new ReadableStream({
     start(controller) {
       for (let i = 0; i < 16; i++) controller.enqueue(chunk);
@@ -27,7 +27,7 @@ Deno.bench("readable_stream_default_read", { n: 1e4 }, async () => {
 
 // Many concurrent writes drain through the _writeRequests queue. Before the
 // Queue conversion each completion was ArrayPrototypeShift (O(n) per write).
-Deno.bench("writable_stream_many_writes", { n: 5e3 }, async () => {
+Edno.bench("writable_stream_many_writes", { n: 5e3 }, async () => {
   const stream = new WritableStream({ write() {} });
   const writer = stream.getWriter();
   const promises = [];
@@ -39,7 +39,7 @@ Deno.bench("writable_stream_many_writes", { n: 5e3 }, async () => {
 // Stress the BYOB pull-into pipeline: many pending pull-intos are queued and
 // then satisfied as bytes arrive. Exercises _pendingPullIntos enqueue/peek/
 // dequeue and _readIntoRequests handling.
-Deno.bench("readable_byte_stream_byob_read", { n: 2e3 }, async () => {
+Edno.bench("readable_byte_stream_byob_read", { n: 2e3 }, async () => {
   const stream = new ReadableStream({
     type: "bytes",
     pull(controller) {
@@ -55,7 +55,7 @@ Deno.bench("readable_byte_stream_byob_read", { n: 2e3 }, async () => {
 
 // Pipe-through with a TransformStream. Exercises both the readable and
 // writable sides plus the default controller enqueue path on every chunk.
-Deno.bench("transform_stream_pipe_through", { n: 1e3 }, async () => {
+Edno.bench("transform_stream_pipe_through", { n: 1e3 }, async () => {
   const src = new ReadableStream({
     start(controller) {
       for (let i = 0; i < 64; i++) controller.enqueue(chunk);

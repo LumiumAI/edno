@@ -21,16 +21,16 @@ use std::sync::atomic::Ordering;
 
 use async_trait::async_trait;
 use deno_ast::ParsedSource;
-use deno_config::deno_json::NewLineKind;
-use deno_config::glob::FileCollector;
-use deno_config::glob::FilePatterns;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::anyhow;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::futures;
-use deno_core::parking_lot::Mutex;
-use deno_core::unsync::spawn_blocking;
+use edno_config::edno_json::NewLineKind;
+use edno_config::glob::FileCollector;
+use edno_config::glob::FilePatterns;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::anyhow;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::futures;
+use edno_core::parking_lot::Mutex;
+use edno_core::unsync::spawn_blocking;
 use log::debug;
 use log::info;
 use log::warn;
@@ -213,7 +213,7 @@ fn maybe_show_format_confirmation(
 ) -> Result<(), AnyError> {
   if fmt_flags.check
     || !fmt_flags.files.include.is_empty()
-    || cli_options.workspace().deno_jsons().next().is_some()
+    || cli_options.workspace().edno_jsons().next().is_some()
     || cli_options.workspace().package_jsons().next().is_some()
   {
     return Ok(());
@@ -233,7 +233,7 @@ fn maybe_show_format_confirmation(
     Ok(())
   } else {
     bail!(
-      "Did not format non-workspace directory. Run again specifying the current directory (ex. `deno fmt .`)"
+      "Did not format non-workspace directory. Run again specifying the current directory (ex. `edno fmt .`)"
     )
   }
 }
@@ -349,7 +349,7 @@ fn format_markdown(
         };
 
         let fake_filename =
-          PathBuf::from(format!("deno_fmt_stdin.{extension}"));
+          PathBuf::from(format!("edno_fmt_stdin.{extension}"));
         match extension {
           "json" | "jsonc" => {
             let mut json_config = get_resolved_json_config(fmt_options);
@@ -401,7 +401,7 @@ fn format_markdown(
   )
 }
 
-/// Formats JSON and JSONC using the rules provided by .deno()
+/// Formats JSON and JSONC using the rules provided by .edno()
 /// of configuration builder of <https://github.com/dprint/dprint-plugin-json>.
 /// See <https://github.com/dprint/dprint-plugin-json/blob/cfa1052dbfa0b54eb3d814318034cdc514c813d7/src/configuration/builder.rs#L87> for configuration.
 pub fn format_json(
@@ -433,8 +433,8 @@ fn get_resolved_lax_css_config(
     use_tabs: options.use_tabs.unwrap_or_default(),
     indent_width: options.indent_width.unwrap_or(2),
     new_line_kind: dprint_core::configuration::NewLineKind::LineFeed,
-    ignore_node_comment_text: "deno-fmt-ignore".to_string(),
-    ignore_file_comment_text: "deno-fmt-ignore-file".to_string(),
+    ignore_node_comment_text: "edno-fmt-ignore".to_string(),
+    ignore_file_comment_text: "edno-fmt-ignore-file".to_string(),
     single_line: false,
   }
 }
@@ -451,7 +451,7 @@ fn format_yaml(
         .strip_prefix('#')
         .unwrap()
         .trim()
-        .starts_with("deno-fmt-ignore-file")
+        .starts_with("edno-fmt-ignore-file")
     });
 
   if ignore_file {
@@ -580,7 +580,7 @@ fn create_external_formatter_for_typescript(
   &str,
   String,
   &dprint_plugin_typescript::configuration::Configuration,
-) -> deno_core::anyhow::Result<Option<String>>
+) -> edno_core::anyhow::Result<Option<String>>
 + use<> {
   let unstable_sql = unstable_options.sql;
   move |lang, text, config| match lang {
@@ -611,14 +611,14 @@ fn create_external_formatter_for_typescript(
 fn format_embedded_css(
   text: &str,
   config: &dprint_plugin_typescript::configuration::Configuration,
-) -> deno_core::anyhow::Result<Option<String>> {
+) -> edno_core::anyhow::Result<Option<String>> {
   let lax_css_config = lax_css::configuration::Configuration {
     line_width: config.line_width,
     use_tabs: config.use_tabs,
     indent_width: config.indent_width,
     new_line_kind: dprint_core::configuration::NewLineKind::LineFeed,
-    ignore_node_comment_text: "deno-fmt-ignore".to_string(),
-    ignore_file_comment_text: "deno-fmt-ignore-file".to_string(),
+    ignore_node_comment_text: "edno-fmt-ignore".to_string(),
+    ignore_file_comment_text: "edno-fmt-ignore-file".to_string(),
     single_line: false,
   };
   // lax-css prints custom property values verbatim, keeping the leading
@@ -652,14 +652,14 @@ fn format_embedded_html(
   _lang: &str,
   text: &str,
   config: &dprint_plugin_typescript::configuration::Configuration,
-) -> deno_core::anyhow::Result<Option<String>> {
+) -> edno_core::anyhow::Result<Option<String>> {
   let markup_config = lax_markup::configuration::Configuration {
     line_width: config.line_width,
     use_tabs: config.use_tabs,
     indent_width: config.indent_width,
     new_line_kind: dprint_core::configuration::NewLineKind::LineFeed,
-    ignore_node_comment_text: "deno-fmt-ignore".to_string(),
-    ignore_file_comment_text: "deno-fmt-ignore-file".to_string(),
+    ignore_node_comment_text: "edno-fmt-ignore".to_string(),
+    ignore_file_comment_text: "edno-fmt-ignore-file".to_string(),
   };
   // code inside markup that is itself inside a tagged template is kept as
   // written
@@ -727,7 +727,7 @@ fn dedent_embedded(text: &str) -> String {
 fn format_embedded_sql(
   text: &str,
   config: &dprint_plugin_typescript::configuration::Configuration,
-) -> deno_core::anyhow::Result<Option<String>> {
+) -> edno_core::anyhow::Result<Option<String>> {
   let sql_config = get_resolved_lax_sql_config(
     config.line_width,
     config.use_tabs,
@@ -759,8 +759,8 @@ fn get_resolved_lax_sql_config(
     // matches the previous sqlformat behavior of uppercasing keywords
     keyword_case: lax_sql::configuration::KeywordCase::Upper,
     clause_style: lax_sql::configuration::ClauseStyle::Fill,
-    ignore_node_comment_text: "deno-fmt-ignore".to_string(),
-    ignore_file_comment_text: "deno-fmt-ignore-file".to_string(),
+    ignore_node_comment_text: "edno-fmt-ignore".to_string(),
+    ignore_file_comment_text: "edno-fmt-ignore-file".to_string(),
   }
 }
 
@@ -880,14 +880,14 @@ trait Formatter {
 
 /// Returns a per-file [`FmtOptionsConfig`], merging values from
 /// `.editorconfig` (lowest priority) under the resolved `base` config
-/// (which already incorporates `deno.json` plus CLI flags).
+/// (which already incorporates `edno.json` plus CLI flags).
 fn resolve_per_file_options(
   base: &FmtOptionsConfig,
   editorconfig_cache: &EditorConfigCache,
   file_path: &Path,
 ) -> FmtOptionsConfig {
   // `.editorconfig` reading is on by default; `useEditorConfig: false` in
-  // deno.json or `--no-editorconfig` on the CLI opts out (the latter takes
+  // edno.json or `--no-editorconfig` on the CLI opts out (the latter takes
   // precedence, resolved upstream in `resolve_fmt_options`).
   if base.use_editor_config == Some(false) {
     return base.clone();
@@ -998,7 +998,7 @@ impl Formatter for CheckFormatter {
             }
             let _g = output_lock.lock();
             let diff =
-              deno_resolver::display::diff(&file.text, &formatted_text);
+              edno_resolver::display::diff(&file.text, &formatted_text);
             info!("");
             info!("{} {}:", colors::bold("from"), file_path.display());
             if file.had_bom {
@@ -1010,7 +1010,7 @@ impl Formatter for CheckFormatter {
             // When checking formatting, only update the incremental cache when
             // the file is the same since we don't bother checking for stable
             // formatting here. Additionally, ensure this is done during check
-            // so that CIs that cache the DENO_DIR will get the benefit of
+            // so that CIs that cache the EDNO_DIR will get the benefit of
             // incremental formatting
             incremental_cache.update_file(&file_path, &cache_text);
           }
@@ -1285,12 +1285,12 @@ fn files_str(len: usize) -> &'static str {
 fn get_typescript_config_builder(
   options: &FmtOptionsConfig,
 ) -> dprint_plugin_typescript::configuration::ConfigurationBuilder {
-  use deno_config::deno_json::*;
+  use edno_config::edno_json::*;
   use dprint_plugin_typescript::configuration as dprint_config;
 
   let mut builder =
     dprint_plugin_typescript::configuration::ConfigurationBuilder::new();
-  builder.deno();
+  builder.edno();
 
   if let Some(use_tabs) = options.use_tabs {
     builder.use_tabs(use_tabs);
@@ -1412,7 +1412,7 @@ fn get_typescript_config_builder(
       OperatorPosition::NextLine => dprint_config::OperatorPosition::NextLine,
       OperatorPosition::SameLine => dprint_config::OperatorPosition::SameLine,
     };
-    // Because Deno's defaults are set at AST specific options, we need to
+    // Because Edno's defaults are set at AST specific options, we need to
     // set them to AST specific options to override them.
     builder.binary_expression_operator_position(option);
     builder.conditional_expression_operator_position(option);
@@ -1504,7 +1504,7 @@ fn get_resolved_markdown_config(
   let mut builder =
     dprint_plugin_markdown::configuration::ConfigurationBuilder::new();
 
-  builder.deno();
+  builder.edno();
 
   if let Some(line_width) = options.line_width {
     builder.line_width(line_width);
@@ -1549,13 +1549,13 @@ fn get_resolved_markdown_config(
 fn get_resolved_json_config(
   options: &FmtOptionsConfig,
 ) -> dprint_plugin_json::configuration::Configuration {
-  use deno_config::deno_json::JsonTrailingCommaKind;
+  use edno_config::edno_json::JsonTrailingCommaKind;
   use dprint_plugin_json::configuration::TrailingCommaKind;
 
   let mut builder =
     dprint_plugin_json::configuration::ConfigurationBuilder::new();
 
-  builder.deno();
+  builder.edno();
   if let Some(json_trailing_commas) = options.json_trailing_commas {
     builder.trailing_commas(match json_trailing_commas {
       JsonTrailingCommaKind::Always => TrailingCommaKind::Always,
@@ -1607,8 +1607,8 @@ fn get_resolved_lax_markup_config(
     use_tabs: options.use_tabs.unwrap_or_default(),
     indent_width: options.indent_width.unwrap_or(2),
     new_line_kind: dprint_core::configuration::NewLineKind::LineFeed,
-    ignore_node_comment_text: "deno-fmt-ignore".to_string(),
-    ignore_file_comment_text: "deno-fmt-ignore-file".to_string(),
+    ignore_node_comment_text: "edno-fmt-ignore".to_string(),
+    ignore_file_comment_text: "edno-fmt-ignore-file".to_string(),
   }
 }
 
@@ -1640,7 +1640,7 @@ fn get_resolved_yaml_config(
     flow_map_prefer_single_line: None,
     trim_trailing_whitespaces: true,
     trim_trailing_zero: false,
-    ignore_comment_directive: "deno-fmt-ignore".into(),
+    ignore_comment_directive: "edno-fmt-ignore".into(),
   };
 
   FormatOptions {
@@ -1725,7 +1725,7 @@ where
 }
 
 /// This function is similar to is_supported_ext but adds additional extensions
-/// supported by `deno fmt`.
+/// supported by `edno fmt`.
 fn is_supported_ext_fmt(path: &Path) -> bool {
   get_extension(path).is_some_and(|ext| {
     matches!(
@@ -1768,7 +1768,7 @@ fn is_supported_ext_fmt(path: &Path) -> bool {
 
 #[cfg(test)]
 mod test {
-  use deno_config::deno_json::JsonTrailingCommaKind;
+  use edno_config::edno_json::JsonTrailingCommaKind;
   use test_util::assert_starts_with;
 
   use super::*;

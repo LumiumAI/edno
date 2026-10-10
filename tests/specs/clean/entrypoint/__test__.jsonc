@@ -5,35 +5,35 @@
     "npm": {
       "steps": [
         {
-          "envs": { "DENO_DIR": "./denodir" },
-          "args": "install --node-modules-dir npm:chalk npm:@denotest/add",
+          "envs": { "EDNO_DIR": "./ednodir" },
+          "args": "install --node-modules-dir npm:chalk npm:@ednotest/add",
           "output": "[WILDCARD]"
         },
         {
-          "args": "run -A ./print-dir.ts --max-level=5 ./denodir --max-level=5 ./node_modules",
+          "args": "run -A ./print-dir.ts --max-level=5 ./ednodir --max-level=5 ./node_modules",
           "output": "npm_init.out"
         },
         {
-          "envs": { "DENO_DIR": "./denodir" },
-          "args": "clean -e --node-modules-dir npm:@denotest/add",
+          "envs": { "EDNO_DIR": "./ednodir" },
+          "args": "clean -e --node-modules-dir npm:@ednotest/add",
           "output": "Removed [WILDCARD] files, [WILDCARD] from [WILDCARD]\n"
         },
         {
-          "args": "run -A ./print-dir.ts --max-level=5 ./denodir --max-level=5 ./node_modules",
+          "args": "run -A ./print-dir.ts --max-level=5 ./ednodir --max-level=5 ./node_modules",
           "output": "npm_cleaned.out"
         },
         {
-          "envs": { "DENO_DIR": "./denodir" },
-          "args": "install --node-modules-dir npm:chalk npm:@denotest/add",
+          "envs": { "EDNO_DIR": "./ednodir" },
+          "args": "install --node-modules-dir npm:chalk npm:@ednotest/add",
           "output": "[WILDCARD]"
         },
         {
-          "args": "run -A ./print-dir.ts --max-level=5 ./denodir --max-level=5 ./node_modules",
+          "args": "run -A ./print-dir.ts --max-level=5 ./ednodir --max-level=5 ./node_modules",
           "output": "npm_init.out"
         },
         {
-          "envs": { "DENO_DIR": "./denodir" },
-          "args": "clean -e --node-modules-dir --dry-run npm:@denotest/add",
+          "envs": { "EDNO_DIR": "./ednodir" },
+          "args": "clean -e --node-modules-dir --dry-run npm:@ednotest/add",
           "output": "npm_clean_dry_run.out"
         }
       ]
@@ -41,35 +41,35 @@
     "jsr_http": {
       "steps": [
         {
-          "envs": { "DENO_DIR": "./denodir" },
+          "envs": { "EDNO_DIR": "./ednodir" },
           "args": "run -A jsr_http1.ts",
           "output": "[WILDCARD]"
         },
         {
-          "args": "run -A ./print-dir.ts ./denodir",
+          "args": "run -A ./print-dir.ts ./ednodir",
           "output": "jsr_http_init.out"
         },
         {
-          "envs": { "DENO_DIR": "./denodir" },
+          "envs": { "EDNO_DIR": "./ednodir" },
           "args": "run -A jsr_http2.ts",
           "output": "[WILDCARD]"
         },
         {
-          "envs": { "DENO_DIR": "./denodir" },
+          "envs": { "EDNO_DIR": "./ednodir" },
           "args": "clean -e jsr_http2.ts",
           "output": "[WILDCARD]"
         },
         {
-          "args": "run -A ./print-dir.ts ./denodir",
+          "args": "run -A ./print-dir.ts ./ednodir",
           "output": "jsr_http_cleaned.out"
         },
         {
-          "envs": { "DENO_DIR": "./denodir" },
+          "envs": { "EDNO_DIR": "./ednodir" },
           "args": "run -A jsr_http2.ts",
           "output": "" // nothing downloaded
         },
         {
-          "args": "run -A ./print-dir.ts ./denodir",
+          "args": "run -A ./print-dir.ts ./ednodir",
           "output": "jsr_http_cleaned.out" // no new cache files
         }
       ]
@@ -77,21 +77,21 @@
     "vendor": {
       "steps": [
         {
-          "envs": { "DENO_DIR": "./denodir" },
+          "envs": { "EDNO_DIR": "./ednodir" },
           "args": "run -A --node-modules-dir --vendor vendor1.ts",
           "output": "[WILDCARD]"
         },
         {
-          "args": "run -A ./print-dir.ts ./denodir --max-level=5 ./node_modules ./vendor",
+          "args": "run -A ./print-dir.ts ./ednodir --max-level=5 ./node_modules ./vendor",
           "output": "vendor_init.out"
         },
         {
-          "envs": { "DENO_DIR": "./denodir" },
+          "envs": { "EDNO_DIR": "./ednodir" },
           "args": "clean -e --node-modules-dir --vendor vendor2.ts",
           "output": "vendor_clean_output.out"
         },
         {
-          "args": "run -A ./print-dir.ts ./denodir --max-level=5 ./node_modules ./vendor",
+          "args": "run -A ./print-dir.ts ./ednodir --max-level=5 ./node_modules ./vendor",
           "output": "vendor_cleaned.out"
         }
       ]

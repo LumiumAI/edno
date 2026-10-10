@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-console no-process-global
+// edno-lint-ignore-file no-console no-process-global
 
 const queueMicrotask = globalThis.queueMicrotask || process.nextTick;
-let [total, count] = typeof Deno !== "undefined"
-  ? Deno.args
+let [total, count] = typeof Edno !== "undefined"
+  ? Edno.args
   : [process.argv[2], process.argv[3]];
 
 total = total ? parseInt(total, 0) : 50;

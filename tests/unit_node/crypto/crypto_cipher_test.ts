@@ -6,10 +6,10 @@ import { buffer, text } from "node:stream/consumers";
 import { assert, assertEquals, assertThrows } from "@std/assert";
 import { AssertionError } from "node:assert";
 
-const rsaPrivateKey = Deno.readTextFileSync(
+const rsaPrivateKey = Edno.readTextFileSync(
   new URL("../testdata/rsa_private.pem", import.meta.url),
 );
-const rsaPublicKey = Deno.readTextFileSync(
+const rsaPublicKey = Edno.readTextFileSync(
   new URL("../testdata/rsa_public.pem", import.meta.url),
 );
 
@@ -19,7 +19,7 @@ function zeros(length: number): Uint8Array {
   return new Uint8Array(length);
 }
 
-Deno.test({
+Edno.test({
   name: "rsa public encrypt and private decrypt",
   fn() {
     const encrypted = crypto.publicEncrypt(Buffer.from(rsaPublicKey), input);
@@ -33,7 +33,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "rsa public encrypt (options) and private decrypt",
   fn() {
     const encrypted = crypto.publicEncrypt(
@@ -48,7 +48,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "rsa private encrypt and public decrypt",
   fn() {
     const encrypted = crypto.privateEncrypt(rsaPrivateKey, input);
@@ -62,7 +62,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "encrypt decrypt with KeyObject",
   fn() {
     const pair = crypto.generateKeyPairSync("rsa", { modulusLength: 512 });
@@ -75,7 +75,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "rsa public decrypt fail",
   fn() {
     const encrypted = crypto.publicEncrypt(rsaPublicKey, input);
@@ -86,7 +86,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - multiple chunk inputs",
   fn() {
     const cipher = crypto.createCipheriv(
@@ -110,7 +110,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - algorithms",
   fn() {
     const table = [
@@ -170,7 +170,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - input encoding",
   fn() {
     {
@@ -202,7 +202,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - transform stream",
   async fn() {
     const result = await buffer(
@@ -212,7 +212,7 @@ Deno.test({
         new Uint8Array(16),
       )),
     );
-    // deno-fmt-ignore
+    // edno-fmt-ignore
     assertEquals([...result], [
       129,  19, 202, 142, 137,  51,  23,  53, 198,  33,
       214, 125,  17,   5, 128,  57, 162, 217, 220,  53,
@@ -223,7 +223,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createDecipheriv - algorithms",
   fn() {
     const table = [
@@ -277,11 +277,11 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createDecipheriv - transform stream",
   async fn() {
     const stream = Readable.from([
-      // deno-fmt-ignore
+      // edno-fmt-ignore
       new Uint8Array([
         129,  19, 202, 142, 137,  51,  23,  53, 198,  33,
         214, 125,  17,   5, 128,  57, 162, 217, 220,  53,
@@ -298,7 +298,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - invalid algorithm",
   fn() {
     assertThrows(
@@ -310,7 +310,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - invalid inputs",
   fn() {
     const enum Invalid {
@@ -353,7 +353,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createDecipheriv - invalid algorithm",
   fn() {
     assertThrows(
@@ -365,7 +365,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createDecipheriv - invalid inputs",
   fn() {
     const enum Invalid {
@@ -406,7 +406,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "getCiphers",
   fn() {
     assertEquals(crypto.getCiphers().includes("aes-128-cbc"), true);
@@ -439,7 +439,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "getCipherInfo",
   fn() {
     const info = crypto.getCipherInfo("aes-128-cbc")!;
@@ -454,7 +454,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "createDecipheriv - handling of the last chunk when auto padding enabled/disabled",
   fn() {
@@ -492,7 +492,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createDecipheriv - invalid final block len",
   fn() {
     const algorithm = "aes-256-cbc";
@@ -514,7 +514,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Cipheriv - change encoding after first update",
   fn() {
     const cipher = crypto.createCipheriv(
@@ -535,7 +535,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Decipheriv - change encoding after first update",
   fn() {
     const decipher = crypto.createDecipheriv(
@@ -557,7 +557,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/30722
-Deno.test({
+Edno.test({
   name: "base64 cipher/decipher with non multiple of 4 char length",
   fn() {
     const aes256Encrypt = (plaintext: string, key: string) => {
@@ -594,7 +594,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - setAutoPadding behavior",
   fn() {
     const algorithm = "aes-256-cbc";
@@ -617,7 +617,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createCipheriv - cipher lockdown after final()",
   fn() {
     const key = crypto.randomBytes(32);
@@ -645,7 +645,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createDecipheriv - decipher lockdown after final()",
   fn() {
     const key = crypto.randomBytes(32);
@@ -679,7 +679,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes-256-cbc setAutoPadding(false) roundtrip",
   fn() {
     const key = Buffer.alloc(32, 0x01);
@@ -702,7 +702,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "publicEncrypt/privateDecrypt with DER keys",
   fn() {
     const pair = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
@@ -729,7 +729,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes-128-cbc setAutoPadding(false) roundtrip",
   fn() {
     const key = Buffer.alloc(16, 0x03);
@@ -752,7 +752,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "publicEncrypt/privateDecrypt with PKCS#1 DER keys",
   fn() {
     const pair = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
@@ -780,7 +780,7 @@ Deno.test({
 });
 
 // Regression test for https://github.com/denoland/deno/issues/31957
-Deno.test({
+Edno.test({
   name: "createDecipheriv - setAutoPadding(false) with empty final input",
   fn() {
     // Test aes-256-ecb (the original issue)
@@ -850,7 +850,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "createDecipheriv - setAutoPadding(false) with invalid block length should error",
   fn() {
@@ -949,7 +949,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createDecipheriv - invalid PKCS7 padding throws bad decrypt",
   fn() {
     const key = Buffer.alloc(16, 0x01);
@@ -981,7 +981,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "chacha20-poly1305 repeated setAAD produces correct tag",
   fn() {
     const key = Buffer.alloc(32, 0x42);
@@ -991,9 +991,9 @@ Deno.test({
     const aad2 = Buffer.from("second");
     const fullAad = Buffer.concat([aad1, aad2]);
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const createCipher = (crypto.createCipheriv as any).bind(crypto);
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const createDecipher = (crypto.createDecipheriv as any).bind(crypto);
     const opts = { authTagLength: 16 };
 
@@ -1022,7 +1022,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "chacha20 matches the RFC 8439 test vector and round-trips",
   fn() {
     // RFC 8439 §2.4.2. Node/OpenSSL's chacha20 IV is the 4-byte
@@ -1057,7 +1057,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "chacha20 keeps keystream position across chunked updates",
   fn() {
     const key = Buffer.alloc(32, 1);
@@ -1111,7 +1111,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "chacha20 rejects invalid key and iv lengths",
   fn() {
     for (const keyLen of [16, 31, 33]) {
@@ -1131,7 +1131,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "chacha20 is listed in getCiphers and getCipherInfo",
   fn() {
     assert(crypto.getCiphers().includes("chacha20"));
@@ -1160,10 +1160,10 @@ function assertUpdateRejects(
     for (
       const factory of [crypto.createCipheriv, crypto.createDecipheriv]
     ) {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       const stream = (factory as any)(algorithm, key, iv);
       const err = assertThrows(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         () => stream.update(value as any),
         TypeError,
         'The "data" argument must be of type string or an instance of ' +
@@ -1177,7 +1177,7 @@ function assertUpdateRejects(
   }
 }
 
-Deno.test({
+Edno.test({
   name:
     "Cipheriv/Decipheriv update() throws ERR_INVALID_ARG_TYPE for invalid data type",
   fn() {
@@ -1205,7 +1205,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "Cipheriv/Decipheriv update() accepts string, Buffer, and TypedArray without throwing",
   fn() {
@@ -1242,7 +1242,7 @@ function viewToBuffer(view: ArrayBufferView): Buffer {
   return Buffer.from(view.buffer, view.byteOffset, view.byteLength);
 }
 
-Deno.test({
+Edno.test({
   name:
     "Cipheriv/Decipheriv update() uses byteLength for ArrayBufferView inputs",
   fn() {
@@ -1301,7 +1301,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "chacha20-poly1305 update() is not affected by Buffer.allocUnsafe override",
   fn() {
@@ -1340,7 +1340,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "Cipheriv/Decipheriv update() leaves stream usable after type-error throw",
   fn() {
@@ -1352,7 +1352,7 @@ Deno.test({
     // against the validation accidentally finalizing the cipher state.
     const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
     assertThrows(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       () => cipher.update(42 as any),
       TypeError,
     );
@@ -1360,7 +1360,7 @@ Deno.test({
 
     const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
     assertThrows(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       () => decipher.update(42 as any),
       TypeError,
     );
@@ -1369,7 +1369,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "Cipheriv/Decipheriv final(encoding) flushes StringDecoder for stream ciphers",
   fn() {
@@ -1412,7 +1412,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Decipheriv final(utf8) flushes a truncated multibyte tail as U+FFFD",
   fn() {
     // Exercises the Decipheriv-side final() flush directly: the plaintext
@@ -1434,7 +1434,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "Cipheriv/Decipheriv AES key wrap flushes StringDecoder in final()",
   fn() {
     // The AES key-wrap path computes its whole output in update() and takes
@@ -1466,7 +1466,7 @@ Deno.test({
     const bad = crypto.createCipheriv("aes256-wrap", kek, iv);
     bad.update(keyToWrap);
     assertThrows(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       () => bad.final("not-an-encoding" as any),
       Error,
       "Unknown encoding",

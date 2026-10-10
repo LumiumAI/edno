@@ -14,19 +14,19 @@ use std::sync::LazyLock;
 use std::sync::OnceLock;
 
 use deno_ast::MediaType;
-use deno_core::ModuleSpecifier;
-use deno_core::serde::Deserialize;
-use deno_core::serde::Deserializer;
-use deno_core::serde::Serialize;
-use deno_core::serde::Serializer;
-use deno_core::url::Url;
+use edno_core::ModuleSpecifier;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Deserializer;
+use edno_core::serde::Serialize;
+use edno_core::serde::Serializer;
+use edno_core::url::Url;
 use deno_graph::Module;
 use deno_graph::ModuleGraph;
-use deno_lib::util::checksum;
-use deno_lib::util::hash::FastInsecureHasher;
-use deno_resolver::deno_json::JsxImportSourceConfigResolver;
-use deno_resolver::npm::ResolvePkgFolderFromDenoReqError;
-use deno_resolver::npm::managed::ResolvePkgFolderFromDenoModuleError;
+use edno_lib::util::checksum;
+use edno_lib::util::hash::FastInsecureHasher;
+use edno_resolver::edno_json::JsxImportSourceConfigResolver;
+use edno_resolver::npm::ResolvePkgFolderFromDenoReqError;
+use edno_resolver::npm::managed::ResolvePkgFolderFromDenoModuleError;
 use deno_semver::npm::NpmPackageReqReference;
 use indexmap::IndexMap;
 use node_resolver::NodeResolutionKind;
@@ -59,32 +59,32 @@ pub use self::js::TscConstants;
 
 pub fn get_types_declaration_file_text() -> String {
   concat_lib_texts(&[
-    "deno.ns",
-    "deno.console",
-    "deno.url",
-    "deno.web",
-    "deno.fetch",
-    "deno.webgpu",
-    "deno.websocket",
-    "deno.webstorage",
-    "deno.canvas",
-    "deno.crypto",
-    "deno.broadcast_channel",
-    "deno.net",
-    "deno.shared_globals",
-    "deno.cache",
+    "edno.ns",
+    "edno.console",
+    "edno.url",
+    "edno.web",
+    "edno.fetch",
+    "edno.webgpu",
+    "edno.websocket",
+    "edno.webstorage",
+    "edno.canvas",
+    "edno.crypto",
+    "edno.broadcast_channel",
+    "edno.net",
+    "edno.shared_globals",
+    "edno.cache",
     "esnext.temporal",
-    "deno.window",
-    "deno.unstable",
+    "edno.window",
+    "edno.unstable",
   ])
 }
 
-/// The `Deno` namespace only, without Deno's web-platform globals (`fetch`,
+/// The `Edno` namespace only, without Edno's web-platform globals (`fetch`,
 /// `FormData`, `console`, WebGPU, ...). For projects that opt into the `dom`
-/// lib those globals come from `dom` instead, and including Deno's copies too
-/// collides. Mirrors the userland `"lib": ["deno.ns", "dom"]` pattern.
+/// lib those globals come from `dom` instead, and including Edno's copies too
+/// collides. Mirrors the userland `"lib": ["edno.ns", "dom"]` pattern.
 pub fn get_deno_ns_declaration_file_text() -> String {
-  concat_lib_texts(&["deno.ns", "deno.net"])
+  concat_lib_texts(&["edno.ns", "edno.net"])
 }
 
 fn concat_lib_texts(lib_names: &[&str]) -> String {
@@ -205,30 +205,30 @@ pub static LAZILY_LOADED_STATIC_ASSETS: Lazy<
 > = Lazy::new(|| {
   Vec::from([
     // compressed in build.rs
-    maybe_compressed_lib!("lib.deno.console.d.ts", "lib.deno_console.d.ts"),
-    maybe_compressed_lib!("lib.deno.url.d.ts", "lib.deno_url.d.ts"),
-    maybe_compressed_lib!("lib.deno.web.d.ts", "lib.deno_web.d.ts"),
-    maybe_compressed_lib!("lib.deno.fetch.d.ts", "lib.deno_fetch.d.ts"),
-    maybe_compressed_lib!("lib.deno.websocket.d.ts", "lib.deno_websocket.d.ts"),
+    maybe_compressed_lib!("lib.edno.console.d.ts", "lib.edno_console.d.ts"),
+    maybe_compressed_lib!("lib.edno.url.d.ts", "lib.edno_url.d.ts"),
+    maybe_compressed_lib!("lib.edno.web.d.ts", "lib.edno_web.d.ts"),
+    maybe_compressed_lib!("lib.edno.fetch.d.ts", "lib.edno_fetch.d.ts"),
+    maybe_compressed_lib!("lib.edno.websocket.d.ts", "lib.edno_websocket.d.ts"),
     maybe_compressed_lib!(
-      "lib.deno.webstorage.d.ts",
-      "lib.deno_webstorage.d.ts"
+      "lib.edno.webstorage.d.ts",
+      "lib.edno_webstorage.d.ts"
     ),
-    maybe_compressed_lib!("lib.deno.canvas.d.ts", "lib.deno_canvas.d.ts"),
-    maybe_compressed_lib!("lib.deno.crypto.d.ts", "lib.deno_crypto.d.ts"),
+    maybe_compressed_lib!("lib.edno.canvas.d.ts", "lib.edno_canvas.d.ts"),
+    maybe_compressed_lib!("lib.edno.crypto.d.ts", "lib.edno_crypto.d.ts"),
     maybe_compressed_lib!(
-      "lib.deno.broadcast_channel.d.ts",
-      "lib.deno_broadcast_channel.d.ts"
+      "lib.edno.broadcast_channel.d.ts",
+      "lib.edno_broadcast_channel.d.ts"
     ),
-    maybe_compressed_lib!("lib.deno.net.d.ts", "lib.deno_net.d.ts"),
-    maybe_compressed_lib!("lib.deno.cache.d.ts", "lib.deno_cache.d.ts"),
-    maybe_compressed_lib!("lib.deno.webgpu.d.ts", "lib.deno_webgpu.d.ts"),
-    maybe_compressed_lib!("lib.deno.window.d.ts"),
-    maybe_compressed_lib!("lib.deno.worker.d.ts"),
-    maybe_compressed_lib!("lib.deno.desktop.d.ts"),
-    maybe_compressed_lib!("lib.deno.shared_globals.d.ts"),
-    maybe_compressed_lib!("lib.deno.ns.d.ts"),
-    maybe_compressed_lib!("lib.deno.unstable.d.ts"),
+    maybe_compressed_lib!("lib.edno.net.d.ts", "lib.edno_net.d.ts"),
+    maybe_compressed_lib!("lib.edno.cache.d.ts", "lib.edno_cache.d.ts"),
+    maybe_compressed_lib!("lib.edno.webgpu.d.ts", "lib.edno_webgpu.d.ts"),
+    maybe_compressed_lib!("lib.edno.window.d.ts"),
+    maybe_compressed_lib!("lib.edno.worker.d.ts"),
+    maybe_compressed_lib!("lib.edno.desktop.d.ts"),
+    maybe_compressed_lib!("lib.edno.shared_globals.d.ts"),
+    maybe_compressed_lib!("lib.edno.ns.d.ts"),
+    maybe_compressed_lib!("lib.edno.unstable.d.ts"),
     maybe_compressed_lib!("lib.decorators.d.ts"),
     maybe_compressed_lib!("lib.decorators.legacy.d.ts"),
     maybe_compressed_lib!("lib.dom.asynciterable.d.ts"),
@@ -372,7 +372,7 @@ pub fn lib_names() -> Vec<String> {
     let lib = key
       .replace("lib.", "")
       .replace(".d.ts", "")
-      .replace("deno_", "deno.");
+      .replace("edno_", "edno.");
     out.push(lib);
   }
   out
@@ -544,7 +544,7 @@ pub struct Request {
 
   pub initial_cwd: PathBuf,
   /// When true, .d.ts and .d.ts.map files emitted by TSC will be captured
-  /// in the response. Only set this for `deno transpile --declaration`.
+  /// in the response. Only set this for `edno transpile --declaration`.
   pub capture_emitted_files: bool,
 }
 
@@ -600,7 +600,7 @@ pub enum LoadError {
   ResolveUrlOrPathError(#[from] deno_path_util::ResolveUrlOrPathError),
   #[class(inherit)]
   #[error("Error converting a string module specifier for \"op_resolve\": {0}")]
-  ModuleResolution(#[from] deno_core::ModuleResolutionError),
+  ModuleResolution(#[from] edno_core::ModuleResolutionError),
   #[class(inherit)]
   #[error("{0}")]
   ClosestPkgJson(#[from] node_resolver::errors::PackageJsonLoadError),
@@ -631,7 +631,7 @@ pub enum RawImportKind {
 }
 
 /// We store the raw import kind in the fragment of the Url
-/// like `#denoRawImport=text`. This is necessary because
+/// like `#ednoRawImport=text`. This is necessary because
 /// TypeScript can't handle different modules at the same
 /// specifier.
 fn get_specifier_raw_import(specifier: &Url) -> Option<RawImportKind> {
@@ -639,7 +639,7 @@ fn get_specifier_raw_import(specifier: &Url) -> Option<RawImportKind> {
   // code less complex. If someone is doing something to cause this to
   // incorrectly match then they most likely deserve the bug they sought.
   let fragment = specifier.fragment()?;
-  let key_text = "denoRawImport=";
+  let key_text = "ednoRawImport=";
   let raw_import_index = fragment.find(key_text)?;
   let remaining = &fragment[raw_import_index + key_text.len()..];
   if remaining.starts_with("text") {
@@ -657,7 +657,7 @@ fn get_specifier_raw_import(specifier: &Url) -> Option<RawImportKind> {
 pub enum ResolveError {
   #[class(inherit)]
   #[error("Error converting a string module specifier for \"op_resolve\": {0}")]
-  ModuleResolution(#[from] deno_core::ModuleResolutionError),
+  ModuleResolution(#[from] edno_core::ModuleResolutionError),
   #[class(inherit)]
   #[error(transparent)]
   FilePathToUrl(#[from] deno_path_util::PathToUrlError),
@@ -899,7 +899,7 @@ pub enum ExecError {
   ResponseNotSet,
   #[class(inherit)]
   #[error(transparent)]
-  Js(Box<deno_core::error::JsError>),
+  Js(Box<edno_core::error::JsError>),
 }
 
 #[derive(Clone)]
@@ -949,7 +949,7 @@ pub(crate) fn decompress_source(contents: &[u8]) -> Arc<str> {
 /// optionally an updated TypeScript build info.
 pub fn exec(
   request: Request,
-  code_cache: Option<Arc<dyn deno_runtime::code_cache::CodeCache>>,
+  code_cache: Option<Arc<dyn edno_runtime::code_cache::CodeCache>>,
 ) -> Result<Response, ExecError> {
   // tsc cannot handle root specifiers that don't have one of the "acceptable"
   // extensions.  Therefore, we have to check the root modules against their
@@ -1285,7 +1285,7 @@ pub fn load_for_tsc<T: LoadContent, M: Mapper>(
           if module.specifier.scheme() != "file" {
             None
           } else {
-            // means it's Deno code importing an npm module
+            // means it's Edno code importing an npm module
             let specifier = resolve_specifier_into_node_modules(
               &CliSys::default(),
               &module.specifier,
@@ -1370,7 +1370,7 @@ pub static IGNORED_DIAGNOSTIC_CODES: LazyLock<HashSet<u64>> =
       // so we will ignore complaints about this compiler setting.
       5070,
       // TS6200: Definitions of the following identifiers conflict with those in another file.
-      // Deno provides its own web API types (WebAssembly, BufferSource, etc.) that intentionally
+      // Edno provides its own web API types (WebAssembly, BufferSource, etc.) that intentionally
       // overlap with lib.dom.d.ts or @types/node. This is expected when both are loaded together.
       6200,
       // TS7016: Could not find a declaration file for module '...'. '...'
@@ -1378,7 +1378,7 @@ pub static IGNORED_DIAGNOSTIC_CODES: LazyLock<HashSet<u64>> =
       // default but importing of a JavaScript module.
       7016,
       // TS18060: Deferred imports are only supported when the '--module' flag
-      // is set to 'esnext' or 'preserve'. Deno uses its own module resolution
+      // is set to 'esnext' or 'preserve'. Edno uses its own module resolution
       // and supports import defer natively.
       18060,
     ]
@@ -1386,10 +1386,10 @@ pub static IGNORED_DIAGNOSTIC_CODES: LazyLock<HashSet<u64>> =
     .collect()
   });
 
-// Names of globals that `@types/node` redeclares but that Deno already
-// declares natively (typically in `lib.deno.web.d.ts`). When the TypeScript
+// Names of globals that `@types/node` redeclares but that Edno already
+// declares natively (typically in `lib.edno.web.d.ts`). When the TypeScript
 // fork merges `@types/node` into the global symbol table, declarations for
-// these names are dropped so the user-visible global remains Deno's.
+// these names are dropped so the user-visible global remains Edno's.
 //
 // This keeps `new AbortController().signal` assignable to the `AbortSignal`
 // parameters of `node:fs`, `node:timers/promises`, etc., and avoids the

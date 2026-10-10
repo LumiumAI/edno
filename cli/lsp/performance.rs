@@ -8,10 +8,10 @@ use std::sync::Arc;
 use std::time::Duration;
 use std::time::Instant;
 
-use deno_core::parking_lot::Mutex;
-use deno_core::serde::Deserialize;
-use deno_core::serde::Serialize;
-use deno_core::serde_json::json;
+use edno_core::parking_lot::Mutex;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Serialize;
+use edno_core::serde_json::json;
 
 use super::logging::lsp_debug;
 

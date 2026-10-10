@@ -2,7 +2,7 @@
 // Writing an empty (zero-length) Uint8Array through TLSWrap should not
 // panic. A zero-length ArrayBuffer has a null backing-store data pointer,
 // so `ArrayBuffer::data()` returns `None`; the write ops must skip such
-// chunks instead of unwrapping. This is the path hit by @deno/sandbox.
+// chunks instead of unwrapping. This is the path hit by @edno/sandbox.
 
 import * as tls from "node:tls";
 import * as net from "node:net";
@@ -27,7 +27,7 @@ server.listen(0, () => {
   const client = tls.connect(
     { port, host: "localhost", rejectUnauthorized: false },
     () => {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       const handle = (client as any)._handle;
 
       // A zero-length view: its ArrayBuffer's data pointer is null, so
@@ -48,7 +48,7 @@ server.listen(0, () => {
       handle.writev({}, [empty, "utf8", "hello", "utf8"], false);
 
       // The natural socket.write() path with empty buffers (what a library
-      // such as @deno/sandbox triggers). cork()/uncork() batches the writes
+      // such as @edno/sandbox triggers). cork()/uncork() batches the writes
       // into a single writev with an empty chunk interleaved.
       client.cork();
       client.write(new Uint8Array(0));

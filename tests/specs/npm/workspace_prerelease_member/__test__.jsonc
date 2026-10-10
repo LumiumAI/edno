@@ -6,7 +6,7 @@
       "output": "[WILDCARD]"
     },
     {
-      "args": "run -A npm:@denotest/prerelease-member",
+      "args": "run -A npm:@ednotest/prerelease-member",
       "cwd": "app",
       "output": "run.out"
     }

@@ -2,7 +2,7 @@
 (function () {
 const { core, primordials } = __bootstrap;
 const { ERR_INVALID_URI } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const {
   Array,
@@ -21,7 +21,7 @@ for (let i = 0; i < 256; ++i) {
     );
 }
 
-// deno-fmt-ignore
+// edno-fmt-ignore
 const isHexTable = new Int8Array([
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0 - 15
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16 - 31

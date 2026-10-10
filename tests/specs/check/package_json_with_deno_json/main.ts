@@ -1,5 +1,5 @@
 import { NUMBER_VALUE } from "other";
-import * as test from "@denotest/esm-basic";
+import * as test from "@ednotest/esm-basic";
 
 test.setValue(2);
 console.log(test.getValue());

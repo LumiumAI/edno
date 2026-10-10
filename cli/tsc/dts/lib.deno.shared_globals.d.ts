@@ -5,16 +5,16 @@
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
-/// <reference lib="deno.console" />
-/// <reference lib="deno.url" />
-/// <reference lib="deno.web" />
-/// <reference lib="deno.webgpu" />
-/// <reference lib="deno.canvas" />
-/// <reference lib="deno.fetch" />
-/// <reference lib="deno.websocket" />
-/// <reference lib="deno.crypto" />
-/// <reference lib="deno.ns" />
-/// <reference lib="deno.broadcast_channel" />
+/// <reference lib="edno.console" />
+/// <reference lib="edno.url" />
+/// <reference lib="edno.web" />
+/// <reference lib="edno.webgpu" />
+/// <reference lib="edno.canvas" />
+/// <reference lib="edno.fetch" />
+/// <reference lib="edno.websocket" />
+/// <reference lib="edno.crypto" />
+/// <reference lib="edno.ns" />
+/// <reference lib="edno.broadcast_channel" />
 /// <reference lib="node" />
 
 /** The `WebAssembly` JavaScript object acts as the namespace for all
@@ -499,7 +499,7 @@ interface UALowEntropyJSON {
 interface NavigatorUAData {
   /** A list of the runtime's brand and major version. */
   readonly brands: NavigatorUABrandVersion[];
-  /** Whether the runtime reports itself as a mobile device. Always `false` in Deno. */
+  /** Whether the runtime reports itself as a mobile device. Always `false` in Edno. */
   readonly mobile: boolean;
   /** The platform the runtime is running on (e.g. `"Linux"`, `"macOS"`, `"Windows"`). */
   readonly platform: string;
@@ -517,7 +517,7 @@ interface NavigatorUAData {
  * Constructor for {@linkcode NavigatorUAData} objects.
  *
  * Note: This constructor cannot be used to create new `NavigatorUAData`
- * instances in Deno.
+ * instances in Edno.
  *
  * @category Platform
  */
@@ -821,7 +821,7 @@ interface Performance extends EventTarget {
    * performance timeline and sets the size of the performance resource data
    * buffer to zero.
    *
-   * Note: Deno does not currently track resource timings, so this method has
+   * Note: Edno does not currently track resource timings, so this method has
    * no observable effect. It is provided for API compatibility.
    */
   clearResourceTimings(): void;
@@ -829,7 +829,7 @@ interface Performance extends EventTarget {
   /** Sets the desired size of the browser's resource timing buffer which
    * stores the "resource" performance entries.
    *
-   * Note: Deno does not currently track resource timings, so this method has
+   * Note: Edno does not currently track resource timings, so this method has
    * no observable effect. It is provided for API compatibility.
    */
   setResourceTimingBufferSize(maxSize: number): void;
@@ -855,7 +855,7 @@ interface Performance extends EventTarget {
     endMark?: string,
   ): PerformanceMeasure;
 
-  /** Returns a current time from Deno's start in fractional milliseconds.
+  /** Returns a current time from Edno's start in fractional milliseconds.
    *
    * ```ts
    * const t = performance.now();
@@ -1099,7 +1099,7 @@ interface ErrorConstructor {
 }
 
 /** The [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
- * which also supports setting a {@linkcode Deno.HttpClient} which provides a
+ * which also supports setting a {@linkcode Edno.HttpClient} which provides a
  * way to connect via proxies and use custom TLS certificates.
  *
  * @tags allow-net, allow-read
@@ -1107,7 +1107,7 @@ interface ErrorConstructor {
  */
 declare function fetch(
   input: RequestInfo | URL,
-  init?: RequestInit & { client?: Deno.HttpClient },
+  init?: RequestInit & { client?: Edno.HttpClient },
 ): Promise<Response>;
 
 /** @category Platform */

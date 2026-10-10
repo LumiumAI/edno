@@ -1,7 +1,7 @@
 import { assertThrows } from "@std/assert/throws";
 import "http://localhost:4545/run/import_meta/other.ts";
 import "./other.ts";
-import "@denotest/add";
+import "@ednotest/add";
 
 console.log(
   "main",
@@ -52,22 +52,22 @@ console.log(
   import.meta.resolve("npm:preact"),
 );
 console.log(
-  "Resolving existing npm:@denotest/add@1.0 specifier",
-  import.meta.resolve("npm:@denotest/add@1.0"),
+  "Resolving existing npm:@ednotest/add@1.0 specifier",
+  import.meta.resolve("npm:@ednotest/add@1.0"),
 );
 // these ones aren't used anywhere in the graph, but it should still resolve
 console.log(
-  "Resolving compatible npm:@denotest/add@1 specifier",
-  import.meta.resolve("npm:@denotest/add@1"),
+  "Resolving compatible npm:@ednotest/add@1 specifier",
+  import.meta.resolve("npm:@ednotest/add@1"),
 );
 console.log(
-  "Resolving compatible npm:@denotest/add@1.0.0 specifier",
-  import.meta.resolve("npm:@denotest/add@1.0.0"),
+  "Resolving compatible npm:@ednotest/add@1.0.0 specifier",
+  import.meta.resolve("npm:@ednotest/add@1.0.0"),
 );
 // this shouldn't throw even though the package export isn't resolved
 console.log(
-  "Resolving non-existent export npm:@denotest/add@1.0.0/non-existent.js",
-  import.meta.resolve("npm:@denotest/add@1.0.0/non-existent.js"),
+  "Resolving non-existent export npm:@ednotest/add@1.0.0/non-existent.js",
+  import.meta.resolve("npm:@ednotest/add@1.0.0/non-existent.js"),
 );
 // also shouldn't throw even though it's non-existent
 console.log(

@@ -51,16 +51,16 @@ const {
   TypeError,
 } = primordials;
 
-const { URL } = core.loadExtScript("ext:deno_web/00_url.js");
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const { URL } = core.loadExtScript("ext:edno_web/00_url.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 const { HTTP_TOKEN_CODE_POINT_RE, byteLowerCase, forgivingBase64Encode } = core
   .loadExtScript(
-    "ext:deno_web/00_infra.js",
+    "ext:edno_web/00_infra.js",
   );
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 const {
   CloseEvent,
   defineEventHandler,
@@ -70,23 +70,23 @@ const {
   EventTarget,
   MessageEvent,
   setIsTrusted,
-} = core.loadExtScript("ext:deno_web/02_event.js");
-const { Blob, BlobPrototype } = core.loadExtScript("ext:deno_web/09_file.js");
-const { getLocationHref } = core.loadExtScript("ext:deno_web/12_location.js");
+} = core.loadExtScript("ext:edno_web/02_event.js");
+const { Blob, BlobPrototype } = core.loadExtScript("ext:edno_web/09_file.js");
+const { getLocationHref } = core.loadExtScript("ext:edno_web/12_location.js");
 const {
   fillHeaders,
   headerListFromHeaders,
   headersFromHeaderList,
-} = core.loadExtScript("ext:deno_fetch/20_headers.js");
+} = core.loadExtScript("ext:edno_fetch/20_headers.js");
 const { HttpClientPrototype } = core.loadExtScript(
-  "ext:deno_fetch/22_http_client.js",
+  "ext:edno_fetch/22_http_client.js",
 );
 
 const kNodeUndiciDispatcherOptions = SymbolFor(
-  "Deno.internal.node.undici.dispatcherOptions",
+  "Edno.internal.node.undici.dispatcherOptions",
 );
 const kNodeUndiciGlobalDispatcher = SymbolFor(
-  "Deno.internal.node.undici.globalDispatcher",
+  "Edno.internal.node.undici.globalDispatcher",
 );
 
 webidl.converters["WebSocketInit"] = webidl.createDictionaryConverter(
@@ -340,7 +340,7 @@ class WebSocket extends EventTarget {
         fillHeaders(headers, initOrProtocols.headers);
       }
 
-      // NOTE: non standard extension. This handles Deno.HttpClient parameter
+      // NOTE: non standard extension. This handles Edno.HttpClient parameter
       if (initOrProtocols.client !== undefined) {
         if (
           initOrProtocols.client !== null &&
@@ -351,7 +351,7 @@ class WebSocket extends EventTarget {
         ) {
           throw webidl.makeException(
             TypeError,
-            "`client` must be a Deno.HttpClient",
+            "`client` must be a Edno.HttpClient",
             prefix,
             "Argument 2",
           );
@@ -795,7 +795,7 @@ class WebSocket extends EventTarget {
           }
 
           this[_serverHandleIdleTimeout]();
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           const buffer = d.buffer;
           emitWebSocketFrame(this, "frameReceived", 2, buffer);
           let data;
@@ -893,7 +893,7 @@ class WebSocket extends EventTarget {
         op_ws_send_binary_ab(this[_rid], data);
         emitWebSocketFrame(this, "frameSent", 2, data);
       } else if (ObjectPrototypeIsPrototypeOf(BlobPrototype, data)) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const ab = await data.slice().arrayBuffer();
         op_ws_send_binary_ab(this[_rid], ab);
         emitWebSocketFrame(this, "frameSent", 2, ab);
@@ -962,7 +962,7 @@ class WebSocket extends EventTarget {
     }
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,

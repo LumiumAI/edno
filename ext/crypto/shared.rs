@@ -2,9 +2,9 @@
 
 use std::borrow::Cow;
 
-use deno_core::JsBuffer;
-use deno_core::ToV8;
-use deno_core::convert::Uint8Array;
+use edno_core::JsBuffer;
+use edno_core::ToV8;
+use edno_core::convert::Uint8Array;
 use elliptic_curve::sec1::ToEncodedPoint;
 use p256::pkcs8::DecodePrivateKey;
 use rsa::RsaPrivateKey;

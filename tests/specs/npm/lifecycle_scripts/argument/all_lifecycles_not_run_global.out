@@ -2,9 +2,9 @@ Download [WILDCARD]
 ╭ Warning
 │
 │  Ignored build scripts for packages:
-│  npm:@denotest/node-lifecycle-scripts@1.0.0
+│  npm:@ednotest/node-lifecycle-scripts@1.0.0
 │
 │  Lifecycle scripts are only supported when using a `node_modules` directory.
-│  Enable it in your deno config file:
+│  Enable it in your edno config file:
 │  "nodeModulesDir": "auto"
 ╰─

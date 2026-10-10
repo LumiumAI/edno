@@ -28,10 +28,10 @@ fn main() {
   // Handle --help specially for CLI
   if parsed_args.options.print_help {
     println!(
-      "This is a shim that translates Node CLI arguments to Deno CLI arguments."
+      "This is a shim that translates Node CLI arguments to Edno CLI arguments."
     );
     println!(
-      "Use exactly like you would use Node.js, but it will run with Deno."
+      "Use exactly like you would use Node.js, but it will run with Edno."
     );
     process::exit(0);
   }
@@ -39,43 +39,43 @@ fn main() {
   let options = TranslateOptions::for_node_cli();
   let result = translate_to_deno_args(parsed_args, &options);
 
-  // Set DENO_TLS_CA_STORE if needed
+  // Set EDNO_TLS_CA_STORE if needed
   if result.use_system_ca {
     // SAFETY: This is set before any threads are spawned.
-    unsafe { std::env::set_var("DENO_TLS_CA_STORE", "system") };
+    unsafe { std::env::set_var("EDNO_TLS_CA_STORE", "system") };
   }
 
-  let mut deno_args = result.deno_args;
+  let mut edno_args = result.edno_args;
 
   // Handle entrypoint resolution for run commands
   node_shim::resolve_run_entrypoint(
-    std::path::Path::new("deno"),
-    &mut deno_args,
+    std::path::Path::new("edno"),
+    &mut edno_args,
   );
 
   if std::env::var("NODE_SHIM_DEBUG").is_ok() {
-    eprintln!("deno {:?}", deno_args);
+    eprintln!("edno {:?}", edno_args);
     process::exit(0);
   }
 
-  // Execute deno with the translated arguments
+  // Execute edno with the translated arguments
   #[cfg(unix)]
   {
     use std::os::unix::process::CommandExt;
-    let err = process::Command::new("deno")
-      .arg0(&deno_args[0])
-      .args(&deno_args[1..])
+    let err = process::Command::new("edno")
+      .arg0(&edno_args[0])
+      .args(&edno_args[1..])
       .exec();
-    eprintln!("Failed to execute deno: {}", err);
+    eprintln!("Failed to execute edno: {}", err);
     process::exit(1);
   }
 
   #[cfg(not(unix))]
   {
-    let status = process::Command::new("deno")
-      .args(&deno_args[1..])
+    let status = process::Command::new("edno")
+      .args(&edno_args[1..])
       .status()
-      .expect("Failed to execute deno");
+      .expect("Failed to execute edno");
     process::exit(status.code().unwrap_or(1));
   }
 }

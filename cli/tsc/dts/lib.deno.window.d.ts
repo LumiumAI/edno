@@ -1,15 +1,15 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 /// <reference no-default-lib="true" />
-/// <reference lib="deno.ns" />
-/// <reference lib="deno.shared_globals" />
-/// <reference lib="deno.webstorage" />
+/// <reference lib="edno.ns" />
+/// <reference lib="edno.shared_globals" />
+/// <reference lib="edno.webstorage" />
 /// <reference lib="esnext" />
-/// <reference lib="deno.cache" />
+/// <reference lib="edno.cache" />
 
 /**
  * Defines the mapping between event names and their corresponding event types
- * for the `Window` interface in Deno.
+ * for the `Window` interface in Edno.
  *
  * This interface provides type safety for event handlers by associating event names
  * with their proper event types.
@@ -23,9 +23,9 @@ interface WindowEventMap {
 }
 
 /**
- * Represents the global window object in the Deno runtime environment.
+ * Represents the global window object in the Edno runtime environment.
  *
- * While Deno doesn't have a browser window, this interface mimics browser window
+ * While Edno doesn't have a browser window, this interface mimics browser window
  * functionality for compatibility with web APIs. It provides access to global
  * properties and methods such as timers, storage, and event handling.
  *
@@ -60,7 +60,7 @@ interface Window extends EventTarget {
   alert: (message?: string) => void;
   confirm: (message?: string) => boolean;
   prompt: (message?: string, defaultValue?: string) => string | null;
-  Deno: typeof Deno;
+  Edno: typeof Edno;
   Navigator: typeof Navigator;
   navigator: Navigator;
   Location: typeof Location;
@@ -101,7 +101,7 @@ interface Window extends EventTarget {
 /**
  * Constructor for `Window` objects.
  *
- * Note: This constructor cannot be used to create new `Window` instances in Deno.
+ * Note: This constructor cannot be used to create new `Window` instances in Edno.
  * The global `window` object is pre-defined in the runtime environment.
  *
  * @category Platform
@@ -112,7 +112,7 @@ declare var Window: {
 };
 
 /**
- * The window variable was removed in Deno 2. This declaration should be
+ * The window variable was removed in Edno 2. This declaration should be
  * removed at some point, but we're leaving it in out of caution.
  * @ignore
  * @category Platform
@@ -129,27 +129,27 @@ declare var self: Window & typeof globalThis;
 
 /**
  * Indicates whether the current window (context) is closed.
- * In Deno, this property is primarily for API compatibility with browsers.
+ * In Edno, this property is primarily for API compatibility with browsers.
  *
  * @category Platform
  */
 declare var closed: boolean;
 
 /**
- * Exits the current Deno process.
+ * Exits the current Edno process.
  *
  * This function terminates the process by signaling the runtime to exit.
  * Similar to exit(0) in posix. Its behavior is similar to the `window.close()`
- * method in the browser, but specific to the Deno runtime.
+ * method in the browser, but specific to the Edno runtime.
  *
  * Note: Use this function cautiously, as it will stop the execution of the
- * entire Deno program immediately.
+ * entire Edno program immediately.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/close
  *
  * @example
  * ```ts
- * console.log("About to close the Deno process.");
+ * console.log("About to close the Edno process.");
  * close(); // The process will terminate here.
  * console.log("This will not be logged."); // This line will never execute.
  * ```
@@ -176,7 +176,7 @@ declare var onerror: ((this: Window, ev: ErrorEvent) => any) | null;
 
 /**
  * Load event handler for the window.
- * In Deno, this is primarily for API compatibility with browsers.
+ * In Edno, this is primarily for API compatibility with browsers.
  *
  * @category Events
  */
@@ -184,7 +184,7 @@ declare var onload: ((this: Window, ev: Event) => any) | null;
 
 /**
  * Before unload event handler for the window.
- * In Deno, this is primarily for API compatibility with browsers.
+ * In Edno, this is primarily for API compatibility with browsers.
  *
  * @category Events
  */
@@ -192,7 +192,7 @@ declare var onbeforeunload: ((this: Window, ev: Event) => any) | null;
 
 /**
  * Unload event handler for the window.
- * In Deno, this is primarily for API compatibility with browsers.
+ * In Edno, this is primarily for API compatibility with browsers.
  *
  * @category Events
  */
@@ -220,9 +220,9 @@ declare var onunhandledrejection:
   | null;
 
 /**
- * Deno's `localStorage` API provides a way to store key-value pairs in a
+ * Edno's `localStorage` API provides a way to store key-value pairs in a
  * web-like environment, similar to the Web Storage API found in browsers.
- * It allows developers to persist data across sessions in a Deno application.
+ * It allows developers to persist data across sessions in a Edno application.
  * This API is particularly useful for applications that require a simple
  * and effective way to store data locally.
  *
@@ -264,7 +264,7 @@ declare var onunhandledrejection:
 declare var localStorage: Storage;
 
 /**
- * Deno's `sessionStorage` API operates similarly to the {@linkcode localStorage} API,
+ * Edno's `sessionStorage` API operates similarly to the {@linkcode localStorage} API,
  * but it is intended for storing data temporarily for the duration of a session.
  * Data stored in sessionStorage is cleared when the application session or
  * process ends. This makes it suitable for temporary data that you do not need
@@ -338,9 +338,9 @@ declare var sessionStorage: Storage;
 declare var caches: CacheStorage;
 
 /**
- * Provides information about the Deno runtime environment and the system
+ * Provides information about the Edno runtime environment and the system
  * on which it's running. Similar to the browser `Navigator` object but
- * adapted for the Deno context.
+ * adapted for the Edno context.
  *
  * @example
  * ```ts
@@ -369,7 +369,7 @@ interface Navigator {
 /**
  * Constructor for `Navigator` objects.
  *
- * Note: This constructor cannot be used to create new `Navigator` instances in Deno.
+ * Note: This constructor cannot be used to create new `Navigator` instances in Edno.
  * The global `navigator` object is pre-defined in the runtime environment.
  *
  * @category Platform
@@ -381,7 +381,7 @@ declare var Navigator: typeof globalThis extends
 };
 
 /**
- * Provides access to the Deno runtime's `Navigator` interface, which contains
+ * Provides access to the Edno runtime's `Navigator` interface, which contains
  * information about the environment in which the script is running.
  *
  * @example
@@ -532,60 +532,60 @@ interface Location {
    * browsing contexts, from the parent browsing context to the top-level
    * browsing context.
    *
-   * Always empty in Deno. */
+   * Always empty in Edno. */
   readonly ancestorOrigins: DOMStringList;
   /** Returns the Location object's URL's fragment (includes leading "#" if
    * non-empty).
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   hash: string;
   /** Returns the Location object's URL's host and port (if different from the
    * default port for the scheme).
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   host: string;
   /** Returns the Location object's URL's host.
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   hostname: string;
   /** Returns the Location object's URL.
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   href: string;
   toString(): string;
   /** Returns the Location object's URL's origin. */
   readonly origin: string;
   /** Returns the Location object's URL's path.
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   pathname: string;
   /** Returns the Location object's URL's port.
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   port: string;
   /** Returns the Location object's URL's scheme.
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   protocol: string;
   /** Returns the Location object's URL's query (includes leading "?" if
    * non-empty).
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   search: string;
   /** Navigates to the given URL.
    *
-   * Cannot be set in Deno. */
+   * Cannot be set in Edno. */
   assign(url: string): void;
   /** Reloads the current page.
    *
-   * Disabled in Deno. */
+   * Disabled in Edno. */
   reload(): void;
   /** @deprecated */
   reload(forcedReload: boolean): void;
   /** Removes the current page from the session history and navigates to the
    * given URL.
    *
-   * Disabled in Deno. */
+   * Disabled in Edno. */
   replace(url: string): void;
 }
 
@@ -613,23 +613,23 @@ declare var location: Location;
 
 /** Gets or sets the name of the global scope's browsing context.
  *
- * Provided for web compatibility; Deno has no browsing context, so this is an
+ * Provided for web compatibility; Edno has no browsing context, so this is an
  * empty string by default.
  *
  * @category Platform */
 declare var name: string;
 
 // EXPERIMENT (feat/stock-globals-experiment): phantom global markers so stock
-// @types/node defers its web-platform globals to Deno's, mirroring how it
+// @types/node defers its web-platform globals to Edno's, mirroring how it
 // defers to lib.dom. @types/node guards each web global with
 // `typeof globalThis extends { <marker>; <Name>: infer T } ? T : <fallback>`,
 // where the markers are `onmessage` (most), `onabort` (Storage) and
 // `ReportingObserver` (Compression/DecompressionStream). Declaring them here
-// makes those probes resolve to Deno's own globals. Each marker itself uses the
+// makes those probes resolve to Edno's own globals. Each marker itself uses the
 // document-deferral form so it still merges cleanly when real lib.dom is loaded.
 // (Worker context already declares `onmessage`; these are for the main scope.)
 
-/** Marker used so that `@types/node` defers its web-platform globals to Deno's.
+/** Marker used so that `@types/node` defers its web-platform globals to Edno's.
  * The main scope has no message event handler, so this is `null`.
  *
  * @category Platform */
@@ -637,7 +637,7 @@ declare var onmessage: typeof globalThis extends
   { document: any; onmessage: infer T } ? T
   : ((this: void, ev: MessageEvent) => unknown) | null;
 
-/** Marker used so that `@types/node` defers its `Storage` global to Deno's.
+/** Marker used so that `@types/node` defers its `Storage` global to Edno's.
  * The main scope has no abort event handler, so this is `null`.
  *
  * @category Platform */
@@ -646,7 +646,7 @@ declare var onabort: typeof globalThis extends
   : ((this: void, ev: Event) => unknown) | null;
 
 /** Marker used so that `@types/node` defers its `CompressionStream` and
- * `DecompressionStream` globals to Deno's.
+ * `DecompressionStream` globals to Edno's.
  *
  * @category Platform */
 declare var ReportingObserver: typeof globalThis extends

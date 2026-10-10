@@ -1,5 +1,5 @@
 {
-  "args": "test --quiet --allow-read main.ts --config=deno_custom_jsx.json",
+  "args": "test --quiet --allow-read main.ts --config=edno_custom_jsx.json",
   "output": "main.out",
   "exitCode": 0
 }

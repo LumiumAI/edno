@@ -8,7 +8,7 @@
       "output": "Checked 1 file\n"
     },
     "infers_indent_size_negative": {
-      // Without reading editorconfig, deno's default 2-space indent would
+      // Without reading editorconfig, edno's default 2-space indent would
       // refuse the file. With editorconfig support, --indent-width=2 on the
       // CLI overrides the editorconfig value, so check still fails.
       "args": "fmt --check --indent-width=2 indent_size_4.ts",
@@ -22,13 +22,13 @@
     },
     "infers_max_line_length": {
       // .editorconfig in long_lines/ sets max_line_length=200, allowing a
-      // long line that would otherwise exceed deno's default 80.
+      // long line that would otherwise exceed edno's default 80.
       "args": "fmt --check long_lines/file.ts",
       "output": "Checked 1 file\n"
     },
-    "deno_json_takes_precedence": {
-      // deno.json explicitly sets indentWidth=2; editorconfig must NOT override.
-      "args": "fmt --check --config with_deno_json/deno.json with_deno_json/file.ts",
+    "edno_json_takes_precedence": {
+      // edno.json explicitly sets indentWidth=2; editorconfig must NOT override.
+      "args": "fmt --check --config with_deno_json/edno.json with_deno_json/file.ts",
       "output": "Checked 1 file\n"
     },
     "nested_overrides_parent": {
@@ -41,18 +41,18 @@
     },
     "no_editorconfig_flag_opts_out": {
       // --no-editorconfig disables reading .editorconfig, so the root
-      // .editorconfig (indent_size=4) is ignored and deno's default 2-space
+      // .editorconfig (indent_size=4) is ignored and edno's default 2-space
       // indent applies. The 4-space file then fails --check. (Without the
       // flag this same invocation passes; see infers_indent_size.)
       "args": "fmt --check --no-editorconfig indent_size_4.ts",
       "output": "[WILDCARD]Found 1 not formatted file in 1 file\n",
       "exitCode": 1
     },
-    "deno_json_use_editor_config_false_opts_out": {
-      // "fmt": { "useEditorConfig": false } in deno.json disables reading
+    "edno_json_use_editor_config_false_opts_out": {
+      // "fmt": { "useEditorConfig": false } in edno.json disables reading
       // .editorconfig, so the indent_size=4 setting is ignored and the
-      // 4-space file fails deno's default 2-space check.
-      "args": "fmt --check --config opt_out/deno.json opt_out/file.ts",
+      // 4-space file fails edno's default 2-space check.
+      "args": "fmt --check --config opt_out/edno.json opt_out/file.ts",
       "output": "[WILDCARD]Found 1 not formatted file in 1 file\n",
       "exitCode": 1
     },
@@ -67,7 +67,7 @@
     },
     "stdin_no_editorconfig_flag_opts_out": {
       // --no-editorconfig disables reading .editorconfig for stdin too, so
-      // deno's default 2-space indent applies and the already-2-space input
+      // edno's default 2-space indent applies and the already-2-space input
       // is left unchanged.
       "args": "fmt --no-editorconfig -",
       "input": "function greet(name: string) {\n  return \"hello \" + name;\n}\n",
@@ -82,11 +82,11 @@
       "output": "Not formatted stdin\n"
     },
     "stdin_deno_json_use_editor_config_false_opts_out": {
-      // "useEditorConfig": false in deno.json disables .editorconfig for stdin
-      // too, so the root indent_size=4 is ignored and deno's default 2-space
-      // indent leaves the already-2-space input unchanged. Locks the deno.json
+      // "useEditorConfig": false in edno.json disables .editorconfig for stdin
+      // too, so the root indent_size=4 is ignored and edno's default 2-space
+      // indent leaves the already-2-space input unchanged. Locks the edno.json
       // opt-out for stdin, not just the --no-editorconfig CLI flag.
-      "args": "fmt --config opt_out/deno.json -",
+      "args": "fmt --config opt_out/edno.json -",
       "input": "function greet(name: string) {\n  return \"hello \" + name;\n}\n",
       "output": "function greet(name: string) {\n  return \"hello \" + name;\n}\n"
     },
@@ -112,7 +112,7 @@
           // Flip the .editorconfig to indent_size=2 without touching file.ts.
           "args": [
             "eval",
-            "Deno.writeTextFileSync('cache_invalidation/.editorconfig', 'root = true\\n[*.ts]\\nindent_size = 2\\n')"
+            "Edno.writeTextFileSync('cache_invalidation/.editorconfig', 'root = true\\n[*.ts]\\nindent_size = 2\\n')"
           ],
           "output": ""
         },

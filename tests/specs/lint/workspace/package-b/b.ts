@@ -1,7 +1,7 @@
 eval("");
 
 for (let i = 0; i < 10; i++) {
-  await Deno.open("test");
+  await Edno.open("test");
 }
 
 const unused = 1;

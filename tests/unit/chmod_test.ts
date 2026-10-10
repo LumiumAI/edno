@@ -9,7 +9,7 @@ import {
 let modeAsync: number;
 let modeSync: number;
 // On Windows chmod is only able to manipulate write permission
-if (Deno.build.os === "windows") {
+if (Edno.build.os === "windows") {
   modeAsync = 0o444; // read-only
   modeSync = 0o666; // read-write
 } else {
@@ -17,179 +17,179 @@ if (Deno.build.os === "windows") {
   modeSync = 0o644;
 }
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   function chmodSyncSuccess() {
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const filename = tempDir + "/test.txt";
-    Deno.writeFileSync(filename, data, { mode: 0o666 });
+    Edno.writeFileSync(filename, data, { mode: 0o666 });
 
-    Deno.chmodSync(filename, modeSync);
+    Edno.chmodSync(filename, modeSync);
 
-    const fileInfo = Deno.statSync(filename);
+    const fileInfo = Edno.statSync(filename);
     assert(fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeSync);
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   function chmodSyncUrl() {
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const fileUrl = new URL(`file://${tempDir}/test.txt`);
-    Deno.writeFileSync(fileUrl, data, { mode: 0o666 });
+    Edno.writeFileSync(fileUrl, data, { mode: 0o666 });
 
-    Deno.chmodSync(fileUrl, modeSync);
+    Edno.chmodSync(fileUrl, modeSync);
 
-    const fileInfo = Deno.statSync(fileUrl);
+    const fileInfo = Edno.statSync(fileUrl);
     assert(fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeSync);
 
-    Deno.removeSync(tempDir, { recursive: true });
+    Edno.removeSync(tempDir, { recursive: true });
   },
 );
 
 // Check symlink when not on windows
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   function chmodSyncSymlinkSuccess() {
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
 
     const filename = tempDir + "/test.txt";
-    Deno.writeFileSync(filename, data, { mode: 0o666 });
+    Edno.writeFileSync(filename, data, { mode: 0o666 });
     const symlinkName = tempDir + "/test_symlink.txt";
-    Deno.symlinkSync(filename, symlinkName);
+    Edno.symlinkSync(filename, symlinkName);
 
-    let symlinkInfo = Deno.lstatSync(symlinkName);
+    let symlinkInfo = Edno.lstatSync(symlinkName);
     assert(symlinkInfo.mode);
     const symlinkMode = symlinkInfo.mode & 0o777; // platform dependent
 
-    Deno.chmodSync(symlinkName, modeSync);
+    Edno.chmodSync(symlinkName, modeSync);
 
     // Change actual file mode, not symlink
-    const fileInfo = Deno.statSync(filename);
+    const fileInfo = Edno.statSync(filename);
     assert(fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeSync);
 
-    symlinkInfo = Deno.lstatSync(symlinkName);
+    symlinkInfo = Edno.lstatSync(symlinkName);
     assert(symlinkInfo.mode);
     assertEquals(symlinkInfo.mode & 0o777, symlinkMode);
   },
 );
 
-Deno.test({ permissions: { write: true } }, function chmodSyncFailure() {
+Edno.test({ permissions: { write: true } }, function chmodSyncFailure() {
   const filename = "/badfile.txt";
   assertThrows(
     () => {
-      Deno.chmodSync(filename, 0o777);
+      Edno.chmodSync(filename, 0o777);
     },
-    Deno.errors.NotFound,
+    Edno.errors.NotFound,
     `chmod '${filename}'`,
   );
 });
 
-Deno.test({ permissions: { write: false } }, function chmodSyncPerm() {
+Edno.test({ permissions: { write: false } }, function chmodSyncPerm() {
   assertThrows(() => {
-    Deno.chmodSync("/somefile.txt", 0o777);
-  }, Deno.errors.NotCapable);
+    Edno.chmodSync("/somefile.txt", 0o777);
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   async function chmodSuccess() {
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const filename = tempDir + "/test.txt";
-    Deno.writeFileSync(filename, data, { mode: 0o666 });
+    Edno.writeFileSync(filename, data, { mode: 0o666 });
 
-    await Deno.chmod(filename, modeAsync);
+    await Edno.chmod(filename, modeAsync);
 
-    const fileInfo = Deno.statSync(filename);
+    const fileInfo = Edno.statSync(filename);
     assert(fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeAsync);
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   async function chmodUrl() {
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const fileUrl = new URL(`file://${tempDir}/test.txt`);
-    Deno.writeFileSync(fileUrl, data, { mode: 0o666 });
+    Edno.writeFileSync(fileUrl, data, { mode: 0o666 });
 
-    await Deno.chmod(fileUrl, modeAsync);
+    await Edno.chmod(fileUrl, modeAsync);
 
-    const fileInfo = Deno.statSync(fileUrl);
+    const fileInfo = Edno.statSync(fileUrl);
     assert(fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeAsync);
 
-    Deno.removeSync(tempDir, { recursive: true });
+    Edno.removeSync(tempDir, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
   },
   async function chmodSymlinkSuccess() {
     const enc = new TextEncoder();
     const data = enc.encode("Hello");
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
 
     const filename = tempDir + "/test.txt";
-    Deno.writeFileSync(filename, data, { mode: 0o666 });
+    Edno.writeFileSync(filename, data, { mode: 0o666 });
     const symlinkName = tempDir + "/test_symlink.txt";
-    Deno.symlinkSync(filename, symlinkName);
+    Edno.symlinkSync(filename, symlinkName);
 
-    let symlinkInfo = Deno.lstatSync(symlinkName);
+    let symlinkInfo = Edno.lstatSync(symlinkName);
     assert(symlinkInfo.mode);
     const symlinkMode = symlinkInfo.mode & 0o777; // platform dependent
 
-    await Deno.chmod(symlinkName, modeAsync);
+    await Edno.chmod(symlinkName, modeAsync);
 
     // Just change actual file mode, not symlink
-    const fileInfo = Deno.statSync(filename);
+    const fileInfo = Edno.statSync(filename);
     assert(fileInfo.mode);
     assertEquals(fileInfo.mode & 0o777, modeAsync);
 
-    symlinkInfo = Deno.lstatSync(symlinkName);
+    symlinkInfo = Edno.lstatSync(symlinkName);
     assert(symlinkInfo.mode);
     assertEquals(symlinkInfo.mode & 0o777, symlinkMode);
   },
 );
 
-Deno.test({ permissions: { write: true } }, async function chmodFailure() {
+Edno.test({ permissions: { write: true } }, async function chmodFailure() {
   const filename = "/badfile.txt";
   await assertRejects(
     async () => {
-      await Deno.chmod(filename, 0o777);
+      await Edno.chmod(filename, 0o777);
     },
-    Deno.errors.NotFound,
+    Edno.errors.NotFound,
     `chmod '${filename}'`,
   );
 });
 
-Deno.test({ permissions: { write: false } }, async function chmodPerm() {
+Edno.test({ permissions: { write: false } }, async function chmodPerm() {
   await assertRejects(async () => {
-    await Deno.chmod("/somefile.txt", 0o777);
-  }, Deno.errors.NotCapable);
+    await Edno.chmod("/somefile.txt", 0o777);
+  }, Edno.errors.NotCapable);
 });

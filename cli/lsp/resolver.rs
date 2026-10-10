@@ -9,52 +9,52 @@ use std::sync::Arc;
 
 use dashmap::DashMap;
 use deno_ast::MediaType;
-use deno_cache_dir::HttpCache;
-use deno_cache_dir::npm::NpmCacheDir;
-use deno_core::parking_lot::Mutex;
-use deno_core::url::Url;
+use edno_cache_dir::HttpCache;
+use edno_cache_dir::npm::NpmCacheDir;
+use edno_core::parking_lot::Mutex;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 use deno_graph::ModuleSpecifier;
 use deno_graph::Range;
-use deno_npm::NpmSystemInfo;
-use deno_npm::resolution::NpmVersionResolver;
-use deno_npm_cache::TarballCache;
-use deno_npm_installer::LifecycleScriptsConfig;
-use deno_npm_installer::initializer::NpmResolutionInitializer;
-use deno_npm_installer::initializer::NpmResolverManagedSnapshotOption;
-use deno_npm_installer::lifecycle_scripts::NullLifecycleScriptsExecutor;
-use deno_npm_installer::package_json::NpmInstallDepsProvider;
-use deno_npm_installer::resolution::NpmResolutionInstaller;
+use edno_npm::NpmSystemInfo;
+use edno_npm::resolution::NpmVersionResolver;
+use edno_npm_cache::TarballCache;
+use edno_npm_installer::LifecycleScriptsConfig;
+use edno_npm_installer::initializer::NpmResolutionInitializer;
+use edno_npm_installer::initializer::NpmResolverManagedSnapshotOption;
+use edno_npm_installer::lifecycle_scripts::NullLifecycleScriptsExecutor;
+use edno_npm_installer::package_json::NpmInstallDepsProvider;
+use edno_npm_installer::resolution::NpmResolutionInstaller;
 use deno_path_util::url_to_file_path;
-use deno_resolver::DenoResolverOptions;
-use deno_resolver::NodeAndNpmResolvers;
-use deno_resolver::cjs::IsCjsResolutionMode;
-use deno_resolver::deno_json::CompilerOptionsModuleResolution;
-use deno_resolver::deno_json::CompilerOptionsResolver;
-use deno_resolver::deno_json::JsxImportSourceConfig;
-use deno_resolver::factory::npm_overrides_from_workspace;
-use deno_resolver::graph::FoundPackageJsonDepFlag;
-use deno_resolver::npm::CreateInNpmPkgCheckerOptions;
-use deno_resolver::npm::DenoInNpmPackageChecker;
-use deno_resolver::npm::NpmReqResolverOptions;
-use deno_resolver::npm::managed::ManagedInNpmPkgCheckerCreateOptions;
-use deno_resolver::npm::managed::ManagedNpmResolverCreateOptions;
-use deno_resolver::npm::managed::NpmResolutionCell;
-use deno_resolver::npmrc::create_default_npmrc;
-use deno_resolver::workspace::CreateResolverOptions;
-use deno_resolver::workspace::FsCacheOptions;
-use deno_resolver::workspace::PackageJsonDepResolution;
-use deno_resolver::workspace::SloppyImportsOptions;
-use deno_resolver::workspace::WorkspaceNpmLinkPackagesRc;
-use deno_resolver::workspace::WorkspaceResolver;
-use deno_runtime::tokio_util::create_basic_runtime;
+use edno_resolver::EdnoResolverOptions;
+use edno_resolver::NodeAndNpmResolvers;
+use edno_resolver::cjs::IsCjsResolutionMode;
+use edno_resolver::edno_json::CompilerOptionsModuleResolution;
+use edno_resolver::edno_json::CompilerOptionsResolver;
+use edno_resolver::edno_json::JsxImportSourceConfig;
+use edno_resolver::factory::npm_overrides_from_workspace;
+use edno_resolver::graph::FoundPackageJsonDepFlag;
+use edno_resolver::npm::CreateInNpmPkgCheckerOptions;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
+use edno_resolver::npm::NpmReqResolverOptions;
+use edno_resolver::npm::managed::ManagedInNpmPkgCheckerCreateOptions;
+use edno_resolver::npm::managed::ManagedNpmResolverCreateOptions;
+use edno_resolver::npm::managed::NpmResolutionCell;
+use edno_resolver::npmrc::create_default_npmrc;
+use edno_resolver::workspace::CreateResolverOptions;
+use edno_resolver::workspace::FsCacheOptions;
+use edno_resolver::workspace::PackageJsonDepResolution;
+use edno_resolver::workspace::SloppyImportsOptions;
+use edno_resolver::workspace::WorkspaceNpmLinkPackagesRc;
+use edno_resolver::workspace::WorkspaceResolver;
+use edno_runtime::tokio_util::create_basic_runtime;
 use deno_semver::jsr::JsrPackageReqReference;
 use deno_semver::npm::NpmPackageReqReference;
 use deno_semver::package::PackageNv;
 use deno_semver::package::PackageReq;
 use indexmap::IndexMap;
 use indexmap::IndexSet;
-use node_resolver::DenoIsBuiltInNodeModuleChecker;
+use node_resolver::EdnoIsBuiltInNodeModuleChecker;
 use node_resolver::NodeResolutionKind;
 use node_resolver::NodeResolverOptions;
 use node_resolver::PackageJson;
@@ -110,7 +110,7 @@ fn scope_has_bundler_module_resolution(
       (None, Some(_)) => continue,
       (Some(_), None) => continue,
       (Some(scope_url), Some(entry_url)) => {
-        // Match the scope itself, or any tsconfig/deno.json located inside it.
+        // Match the scope itself, or any tsconfig/edno.json located inside it.
         if entry_url.as_str().starts_with(scope_url.as_str()) {
           return true;
         }
@@ -128,7 +128,7 @@ pub struct ImportMapHover {
   pub key: String,
   /// The value the key maps to, as written in the import map.
   pub value: String,
-  /// The location of the import map (e.g. the `deno.json`).
+  /// The location of the import map (e.g. the `edno.json`).
   pub base_url: Url,
 }
 
@@ -136,7 +136,7 @@ pub struct ImportMapHover {
 pub struct LspScopedResolver {
   resolver: Arc<CliResolver>,
   workspace_resolver: Arc<WorkspaceResolver<CliSys>>,
-  in_npm_pkg_checker: DenoInNpmPackageChecker,
+  in_npm_pkg_checker: EdnoInNpmPackageChecker,
   is_cjs_resolver: Arc<CliIsCjsResolver>,
   jsr_resolver: Option<Arc<JsrCacheResolver>>,
   npm_installer: Option<Arc<CliNpmInstaller>>,
@@ -282,7 +282,7 @@ impl LspScopedResolver {
                 npm_resolution: factory.services.npm_resolution.clone(),
                 npm_system_info: NpmSystemInfo::default(),
                 linker_mode:
-                  deno_config::deno_json::NodeModulesLinkerMode::default(),
+                  edno_config::edno_json::NodeModulesLinkerMode::default(),
               }
             })
           }
@@ -310,7 +310,7 @@ impl LspScopedResolver {
     })
   }
 
-  pub fn as_in_npm_pkg_checker(&self) -> &DenoInNpmPackageChecker {
+  pub fn as_in_npm_pkg_checker(&self) -> &EdnoInNpmPackageChecker {
     &self.in_npm_pkg_checker
   }
 
@@ -514,13 +514,13 @@ impl LspScopedResolver {
     self.npm_installer_reqs.lock().clone()
   }
 
-  pub fn deno_types_to_code_resolution(
+  pub fn edno_types_to_code_resolution(
     &self,
     specifier: &ModuleSpecifier,
   ) -> Option<ModuleSpecifier> {
     let dep_info = self.dep_info.lock();
     dep_info
-      .deno_types_to_code_resolutions
+      .edno_types_to_code_resolutions
       .get(specifier)
       .cloned()
   }
@@ -764,7 +764,7 @@ impl LspResolver {
 
 #[derive(Debug, Default, Clone)]
 pub struct ScopeDepInfo {
-  pub deno_types_to_code_resolutions: HashMap<ModuleSpecifier, ModuleSpecifier>,
+  pub edno_types_to_code_resolutions: HashMap<ModuleSpecifier, ModuleSpecifier>,
   pub has_node_specifier: bool,
 }
 
@@ -982,7 +982,7 @@ struct ResolverFactoryServices {
   cli_resolver: Deferred<Arc<CliResolver>>,
   workspace_resolver: Deferred<Arc<WorkspaceResolver<CliSys>>>,
   found_pkg_json_dep_flag: Arc<FoundPackageJsonDepFlag>,
-  in_npm_pkg_checker: Deferred<DenoInNpmPackageChecker>,
+  in_npm_pkg_checker: Deferred<EdnoInNpmPackageChecker>,
   is_cjs_resolver: Deferred<Arc<CliIsCjsResolver>>,
   node_resolver: Deferred<Option<Arc<CliNodeResolver>>>,
   npm_installer: Option<Arc<CliNpmInstaller>>,
@@ -1050,7 +1050,7 @@ impl<'a> ResolverFactory<'a> {
         .unwrap_or_else(|| Arc::new(create_default_npmrc(&sys)));
       let npm_cache_dir = Arc::new(NpmCacheDir::new(
         &sys,
-        cache.deno_dir().npm_folder_path(),
+        cache.edno_dir().npm_folder_path(),
         npmrc.get_all_known_registries_urls(),
       ));
       let npm_cache = Arc::new(CliNpmCache::new(
@@ -1060,7 +1060,7 @@ impl<'a> ResolverFactory<'a> {
         // user do an explicit "cache" command and prevent
         // the cache from being filled with lots of packages while
         // the user is typing.
-        deno_npm_cache::NpmCacheSetting::Only,
+        edno_npm_cache::NpmCacheSetting::Only,
         npmrc.clone(),
       ));
       let pb = ProgressBar::new(ProgressBarStyle::TextOnly);
@@ -1139,11 +1139,11 @@ impl<'a> ResolverFactory<'a> {
         &pb,
         sys.clone(),
         tarball_cache.clone(),
-        deno_npm_installer::NpmInstallerOptions {
+        edno_npm_installer::NpmInstallerOptions {
           clean_on_install: false,
           maybe_lockfile,
           maybe_node_modules_path: maybe_node_modules_path.clone(),
-          linker_mode: deno_config::deno_json::NodeModulesLinkerMode::default(),
+          linker_mode: edno_config::edno_json::NodeModulesLinkerMode::default(),
           lifecycle_scripts: Arc::new(LifecycleScriptsConfig::default()),
           system_info: NpmSystemInfo::default(),
           workspace_link_packages: link_packages,
@@ -1164,7 +1164,7 @@ impl<'a> ResolverFactory<'a> {
         npmrc,
         npm_resolution: self.services.npm_resolution.clone(),
         npm_system_info: NpmSystemInfo::default(),
-        linker_mode: deno_config::deno_json::NodeModulesLinkerMode::default(),
+        linker_mode: edno_config::edno_json::NodeModulesLinkerMode::default(),
       })
     };
     self.set_npm_resolver(CliNpmResolver::<CliSys>::new(options));
@@ -1185,8 +1185,8 @@ impl<'a> ResolverFactory<'a> {
   pub fn cli_resolver(&self) -> &Arc<CliResolver> {
     self.services.cli_resolver.get_or_init(|| {
       let npm_req_resolver = self.npm_pkg_req_resolver().cloned();
-      let deno_resolver =
-        Arc::new(deno_resolver::RawDenoResolver::new(DenoResolverOptions {
+      let edno_resolver =
+        Arc::new(edno_resolver::RawDenoResolver::new(EdnoResolverOptions {
           in_npm_pkg_checker: self.in_npm_pkg_checker().clone(),
           node_and_req_resolver: match (
             self.node_resolver(),
@@ -1211,7 +1211,7 @@ impl<'a> ResolverFactory<'a> {
             .and_then(|d| d.vendor_dir.as_ref()),
         }));
       Arc::new(CliResolver::new(
-        deno_resolver,
+        edno_resolver,
         CliSys::default(),
         self.services.found_pkg_json_dep_flag.clone(),
         Some(Arc::new(on_resolve_diagnostic)),
@@ -1225,7 +1225,7 @@ impl<'a> ResolverFactory<'a> {
         .config_data
         .map(|d| {
           let unstable_sloppy_imports =
-            std::env::var("DENO_UNSTABLE_SLOPPY_IMPORTS").is_ok()
+            std::env::var("EDNO_UNSTABLE_SLOPPY_IMPORTS").is_ok()
               || d.unstable.contains("sloppy-imports");
           let pkg_json_dep_resolution = if d.byonm {
             PackageJsonDepResolution::Disabled
@@ -1309,9 +1309,9 @@ impl<'a> ResolverFactory<'a> {
     &self.pkg_json_resolver
   }
 
-  pub fn in_npm_pkg_checker(&self) -> &DenoInNpmPackageChecker {
+  pub fn in_npm_pkg_checker(&self) -> &EdnoInNpmPackageChecker {
     self.services.in_npm_pkg_checker.get_or_init(|| {
-      DenoInNpmPackageChecker::new(match &self.services.npm_resolver {
+      EdnoInNpmPackageChecker::new(match &self.services.npm_resolver {
         Some(CliNpmResolver::Byonm(_)) | None => {
           CreateInNpmPkgCheckerOptions::Byonm
         }
@@ -1352,7 +1352,7 @@ impl<'a> ResolverFactory<'a> {
         let npm_resolver = self.services.npm_resolver.as_ref()?;
         Some(Arc::new(CliNodeResolver::new(
           self.in_npm_pkg_checker().clone(),
-          DenoIsBuiltInNodeModuleChecker,
+          EdnoIsBuiltInNodeModuleChecker,
           npm_resolver.clone(),
           self.pkg_json_resolver.clone(),
           self.node_resolution_sys.clone(),
@@ -1360,7 +1360,7 @@ impl<'a> ResolverFactory<'a> {
             conditions: Default::default(),
             typescript_version: Some(
               deno_semver::Version::parse_standard(
-                deno_lib::version::DENO_VERSION_INFO.typescript,
+                edno_lib::version::EDNO_VERSION_INFO.typescript,
               )
               .unwrap(),
             ),
@@ -1610,7 +1610,7 @@ impl AddNpmReqsThread {
         while let Some((npm_installer, reqs, response_tx)) =
           request_rx.recv().await
         {
-          deno_core::unsync::spawn(async move {
+          edno_core::unsync::spawn(async move {
             let result = npm_installer.add_package_reqs_no_cache(&reqs).await;
             response_tx.send(result).unwrap();
           });

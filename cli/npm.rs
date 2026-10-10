@@ -11,36 +11,36 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use dashmap::DashMap;
-use deno_core::error::AnyError;
-use deno_core::futures::StreamExt;
-use deno_core::serde_json;
-use deno_core::url::Url;
+use edno_core::error::AnyError;
+use edno_core::futures::StreamExt;
+use edno_core::serde_json;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
-use deno_lib::version::DENO_VERSION_INFO;
-use deno_npm::NpmResolutionPackage;
-use deno_npm::registry::NpmPackageInfo;
-use deno_npm::registry::NpmPackageVersionInfosIterator;
-use deno_npm::resolution::NpmResolutionSnapshot;
-use deno_npm::resolution::NpmVersionResolver;
-use deno_npm_cache::NpmCacheHttpClientBytesResponse;
-use deno_npm_cache::NpmCacheHttpClientResponse;
-use deno_npm_installer::BinEntries;
-use deno_npm_installer::CachedNpmPackageExtraInfoProvider;
-use deno_npm_installer::ExpectedExtraInfo;
-use deno_npm_installer::lifecycle_scripts::LIFECYCLE_SCRIPTS_RUNNING_ENV_VAR;
-use deno_npm_installer::lifecycle_scripts::LifecycleScriptsExecutor;
-use deno_npm_installer::lifecycle_scripts::LifecycleScriptsExecutorOptions;
-use deno_npm_installer::lifecycle_scripts::PackageWithScript;
-use deno_npm_installer::lifecycle_scripts::ResolvePkgFolderFn;
-use deno_npm_installer::lifecycle_scripts::compute_lifecycle_script_layers;
-use deno_npm_installer::lifecycle_scripts::is_broken_default_install_script;
-use deno_npmrc::RegistryConfig;
-use deno_npmrc::ResolvedNpmRc;
-use deno_resolver::file_fetcher::FetchOptions;
-use deno_resolver::file_fetcher::FetchPermissionsOptionRef;
-use deno_resolver::npm::ByonmNpmResolverCreateOptions;
-use deno_resolver::npm::ManagedNpmResolverRc;
-use deno_runtime::deno_io::FromRawIoHandle;
+use edno_lib::version::EDNO_VERSION_INFO;
+use edno_npm::NpmResolutionPackage;
+use edno_npm::registry::NpmPackageInfo;
+use edno_npm::registry::NpmPackageVersionInfosIterator;
+use edno_npm::resolution::NpmResolutionSnapshot;
+use edno_npm::resolution::NpmVersionResolver;
+use edno_npm_cache::NpmCacheHttpClientBytesResponse;
+use edno_npm_cache::NpmCacheHttpClientResponse;
+use edno_npm_installer::BinEntries;
+use edno_npm_installer::CachedNpmPackageExtraInfoProvider;
+use edno_npm_installer::ExpectedExtraInfo;
+use edno_npm_installer::lifecycle_scripts::LIFECYCLE_SCRIPTS_RUNNING_ENV_VAR;
+use edno_npm_installer::lifecycle_scripts::LifecycleScriptsExecutor;
+use edno_npm_installer::lifecycle_scripts::LifecycleScriptsExecutorOptions;
+use edno_npm_installer::lifecycle_scripts::PackageWithScript;
+use edno_npm_installer::lifecycle_scripts::ResolvePkgFolderFn;
+use edno_npm_installer::lifecycle_scripts::compute_lifecycle_script_layers;
+use edno_npm_installer::lifecycle_scripts::is_broken_default_install_script;
+use edno_npmrc::RegistryConfig;
+use edno_npmrc::ResolvedNpmRc;
+use edno_resolver::file_fetcher::FetchOptions;
+use edno_resolver::file_fetcher::FetchPermissionsOptionRef;
+use edno_resolver::npm::ByonmNpmResolverCreateOptions;
+use edno_resolver::npm::ManagedNpmResolverRc;
+use edno_runtime::edno_io::FromRawIoHandle;
 use deno_semver::package::PackageNv;
 use deno_semver::package::PackageReq;
 use deno_task_shell::KillSignal;
@@ -54,35 +54,35 @@ use crate::task_runner::TaskStdio;
 use crate::util::progress_bar::ProgressBar;
 use crate::util::progress_bar::ProgressMessagePrompt;
 
-pub type CliNpmInstallerFactory = deno_npm_installer::NpmInstallerFactory<
+pub type CliNpmInstallerFactory = edno_npm_installer::NpmInstallerFactory<
   CliNpmCacheHttpClient,
   ProgressBar,
   CliSys,
 >;
 pub type CliNpmCacheServices =
-  deno_npm_installer::NpmCacheServices<CliNpmCacheHttpClient, CliSys>;
+  edno_npm_installer::NpmCacheServices<CliNpmCacheHttpClient, CliSys>;
 pub type CliNpmInstaller =
-  deno_npm_installer::NpmInstaller<CliNpmCacheHttpClient, CliSys>;
-pub type CliNpmCache = deno_npm_cache::NpmCache<CliSys>;
+  edno_npm_installer::NpmInstaller<CliNpmCacheHttpClient, CliSys>;
+pub type CliNpmCache = edno_npm_cache::NpmCache<CliSys>;
 pub type CliNpmRegistryInfoProvider =
-  deno_npm_cache::RegistryInfoProvider<CliNpmCacheHttpClient, CliSys>;
-pub type CliNpmResolver<TSys = CliSys> = deno_resolver::npm::NpmResolver<TSys>;
-pub type CliManagedNpmResolver = deno_resolver::npm::ManagedNpmResolver<CliSys>;
+  edno_npm_cache::RegistryInfoProvider<CliNpmCacheHttpClient, CliSys>;
+pub type CliNpmResolver<TSys = CliSys> = edno_resolver::npm::NpmResolver<TSys>;
+pub type CliManagedNpmResolver = edno_resolver::npm::ManagedNpmResolver<CliSys>;
 pub type CliNpmResolverCreateOptions =
-  deno_resolver::npm::NpmResolverCreateOptions<CliSys>;
+  edno_resolver::npm::NpmResolverCreateOptions<CliSys>;
 pub type CliByonmNpmResolverCreateOptions =
   ByonmNpmResolverCreateOptions<CliSys>;
-pub type CliNpmGraphResolver = deno_npm_installer::graph::NpmDenoGraphResolver<
+pub type CliNpmGraphResolver = edno_npm_installer::graph::NpmDenoGraphResolver<
   CliNpmCacheHttpClient,
   CliSys,
 >;
 
-pub use deno_npm_cache::NpmPackumentFormat;
-pub use deno_npm_cache::NpmPackumentRequestFormat;
+pub use edno_npm_cache::NpmPackumentFormat;
+pub use edno_npm_cache::NpmPackumentRequestFormat;
 
 /// `Accept` header sent when fetching npm package metadata in the abbreviated
 /// install manifest format. Also used for metadata lookups done by
-/// `deno outdated`, `deno add`, etc. so registries that content-negotiate
+/// `edno outdated`, `edno add`, etc. so registries that content-negotiate
 /// (or redirect non-npm-client requests elsewhere) behave the same.
 const NPM_PACKAGE_INFO_ACCEPT: &str =
   "application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*";
@@ -122,7 +122,7 @@ impl CliNpmCacheHttpClient {
 }
 
 #[async_trait::async_trait(?Send)]
-impl deno_npm_cache::NpmCacheHttpClient for CliNpmCacheHttpClient {
+impl edno_npm_cache::NpmCacheHttpClient for CliNpmCacheHttpClient {
   async fn download_with_retries_on_any_tokio_runtime(
     &self,
     url: Url,
@@ -130,7 +130,7 @@ impl deno_npm_cache::NpmCacheHttpClient for CliNpmCacheHttpClient {
     maybe_etag: Option<String>,
     maybe_registry_config: Option<&RegistryConfig>,
     maybe_packument_format: Option<NpmPackumentRequestFormat>,
-  ) -> Result<NpmCacheHttpClientResponse, deno_npm_cache::DownloadError> {
+  ) -> Result<NpmCacheHttpClientResponse, edno_npm_cache::DownloadError> {
     // say when the more expensive full packument is being downloaded
     // since the same url may have just been downloaded abbreviated
     let progress_message = match maybe_packument_format {
@@ -142,7 +142,7 @@ impl deno_npm_cache::NpmCacheHttpClient for CliNpmCacheHttpClient {
     let guard = self.progress_bar.update(&progress_message);
     let client = self
       .get_or_create_http_client(maybe_registry_config)
-      .map_err(|err| deno_npm_cache::DownloadError {
+      .map_err(|err| edno_npm_cache::DownloadError {
         status_code: None,
         error: err,
       })?;
@@ -198,7 +198,7 @@ impl deno_npm_cache::NpmCacheHttpClient for CliNpmCacheHttpClient {
             Some(bad_response_error.status_code.as_u16())
           }
         };
-        deno_npm_cache::DownloadError {
+        edno_npm_cache::DownloadError {
           status_code,
           error: JsErrorBox::from_err(err),
         }
@@ -213,11 +213,11 @@ impl deno_npm_cache::NpmCacheHttpClient for CliNpmCacheHttpClient {
         {
           tokio::task::spawn_blocking(move || decompress_gzip(body))
             .await
-            .map_err(|e| deno_npm_cache::DownloadError {
+            .map_err(|e| edno_npm_cache::DownloadError {
               status_code: None,
               error: JsErrorBox::generic(e.to_string()),
             })?
-            .map_err(|e| deno_npm_cache::DownloadError {
+            .map_err(|e| edno_npm_cache::DownloadError {
               status_code: None,
               error: e,
             })?
@@ -256,7 +256,7 @@ fn decompress_gzip(compressed: Vec<u8>) -> Result<Vec<u8>, JsErrorBox> {
 }
 
 /// Why fetching package metadata for a single package failed. Used to surface
-/// actionable diagnostics (e.g. in `deno outdated`) instead of silently
+/// actionable diagnostics (e.g. in `edno outdated`) instead of silently
 /// dropping packages that live on unreachable or unauthorized registries.
 #[derive(Clone, Debug)]
 pub struct PackageInfoLoadError {
@@ -296,7 +296,7 @@ impl NpmFetchResolver {
   /// Fill in the `exports` subpath keys of each package version when parsing
   /// registry metadata. Only the LSP needs them (for npm import-specifier
   /// completion); every other consumer leaves them off so nothing is retained.
-  /// See [`deno_npm::registry::NpmPackageInfo::fill_export_keys`].
+  /// See [`edno_npm::registry::NpmPackageInfo::fill_export_keys`].
   pub fn with_export_keys(mut self) -> Self {
     self.deserialize_export_keys = true;
     self
@@ -365,10 +365,10 @@ impl NpmFetchResolver {
     &self,
     name: &str,
   ) -> Result<NpmPackageInfo, String> {
-    let info_url = deno_npm_cache::get_package_url(&self.npmrc, name);
+    let info_url = edno_npm_cache::get_package_url(&self.npmrc, name);
     let registry_config = self.npmrc.get_registry_config(name);
     let maybe_auth_header =
-      deno_npm_cache::maybe_auth_header_value_for_npm_registry(registry_config)
+      edno_npm_cache::maybe_auth_header_value_for_npm_registry(registry_config)
         .map_err(AnyError::from)
         .and_then(|value| match value {
           Some(value) => Ok(Some((
@@ -382,8 +382,8 @@ impl NpmFetchResolver {
     // serve package metadata to requests that send the npm `Accept` header and
     // otherwise redirect to registry.npmjs.org, which drops the auth header on
     // the cross-origin redirect and 404s for private packages. The npm install
-    // path sends this same header, so matching it keeps `deno outdated`/`deno
-    // add` working wherever `deno install` does.
+    // path sends this same header, so matching it keeps `edno outdated`/`edno
+    // add` working wherever `edno install` does.
     // See https://github.com/denoland/deno/issues/31924
     //
     // Mirror the install path's tradeoff: this header requests the abbreviated
@@ -442,16 +442,16 @@ pub static NPM_CONFIG_USER_AGENT_ENV_VAR: &str = "npm_config_user_agent";
 
 pub fn get_npm_config_user_agent() -> String {
   format!(
-    "deno/{} npm/? deno/{} {} {}",
-    DENO_VERSION_INFO.deno,
-    DENO_VERSION_INFO.deno,
+    "edno/{} npm/? edno/{} {} {}",
+    EDNO_VERSION_INFO.edno,
+    EDNO_VERSION_INFO.edno,
     std::env::consts::OS,
     std::env::consts::ARCH
   )
 }
 
 #[derive(Debug, thiserror::Error, deno_error::JsError)]
-pub enum DenoTaskLifecycleScriptsError {
+pub enum EdnoTaskLifecycleScriptsError {
   #[class(inherit)]
   #[error(transparent)]
   Io(#[from] std::io::Error),
@@ -468,10 +468,10 @@ pub enum DenoTaskLifecycleScriptsError {
   RunScripts(Vec<String>),
 }
 
-pub struct DenoTaskLifeCycleScriptsExecutor {
+pub struct EdnoTaskLifeCycleScriptsExecutor {
   progress_bar: ProgressBar,
   npm_resolver: ManagedNpmResolverRc<CliSys>,
-  system_info: deno_npm::NpmSystemInfo,
+  system_info: edno_npm::NpmSystemInfo,
 }
 
 struct PackageScriptResult<'a> {
@@ -480,7 +480,7 @@ struct PackageScriptResult<'a> {
 }
 
 #[async_trait::async_trait(?Send)]
-impl LifecycleScriptsExecutor for DenoTaskLifeCycleScriptsExecutor {
+impl LifecycleScriptsExecutor for EdnoTaskLifeCycleScriptsExecutor {
   async fn execute(
     &self,
     options: LifecycleScriptsExecutorOptions<'_>,
@@ -533,7 +533,7 @@ impl LifecycleScriptsExecutor for DenoTaskLifeCycleScriptsExecutor {
       );
 
       let mut results =
-        deno_core::futures::stream::iter(layer.iter().map(|pkg| {
+        edno_core::futures::stream::iter(layer.iter().map(|pkg| {
           self.run_single_package_scripts(
             pkg,
             &env_vars,
@@ -574,7 +574,7 @@ impl LifecycleScriptsExecutor for DenoTaskLifeCycleScriptsExecutor {
       Ok(())
     } else {
       Err(
-        DenoTaskLifecycleScriptsError::RunScripts(
+        EdnoTaskLifecycleScriptsError::RunScripts(
           failed_packages
             .iter()
             .map(|p| p.to_string())
@@ -586,11 +586,11 @@ impl LifecycleScriptsExecutor for DenoTaskLifeCycleScriptsExecutor {
   }
 }
 
-impl DenoTaskLifeCycleScriptsExecutor {
+impl EdnoTaskLifeCycleScriptsExecutor {
   pub fn new(
     npm_resolver: ManagedNpmResolverRc<CliSys>,
     progress_bar: ProgressBar,
-    system_info: deno_npm::NpmSystemInfo,
+    system_info: edno_npm::NpmSystemInfo,
   ) -> Self {
     Self {
       npm_resolver,
@@ -628,15 +628,15 @@ impl DenoTaskLifeCycleScriptsExecutor {
     };
 
     // each concurrent package gets its own temp file to avoid fd races
-    let temp_file_fd = deno_runtime::deno_process::npm_process_state_tempfile(
+    let temp_file_fd = edno_runtime::edno_process::npm_process_state_tempfile(
       options.process_state.as_bytes(),
     )
-    .map_err(DenoTaskLifecycleScriptsError::CreateNpmProcessState)?;
+    .map_err(EdnoTaskLifecycleScriptsError::CreateNpmProcessState)?;
     // SAFETY: fd/handle is valid
     let _temp_file = unsafe { std::fs::File::from_raw_io_handle(temp_file_fd) };
     let mut env_vars = env_vars.clone();
     env_vars.insert(
-      deno_runtime::deno_process::NPM_RESOLUTION_STATE_FD_ENV_VAR_NAME.into(),
+      edno_runtime::edno_process::NPM_RESOLUTION_STATE_FD_ENV_VAR_NAME.into(),
       (temp_file_fd as usize).to_string().into(),
     );
 
@@ -691,7 +691,7 @@ impl DenoTaskLifeCycleScriptsExecutor {
               kill_signal: kill_signal.clone(),
             })
             .await
-            .map_err(DenoTaskLifecycleScriptsError::Task)?;
+            .map_err(EdnoTaskLifecycleScriptsError::Task)?;
           let stdout = stdout.unwrap();
           let stderr = stderr.unwrap();
           if exit_code != 0 {
@@ -788,7 +788,7 @@ impl DenoTaskLifeCycleScriptsExecutor {
     for package in packages {
       // prefer the installer-provided resolver, which knows the layout
       // being installed (e.g. hoisted); the npm resolver assumes the
-      // isolated `.deno` layout
+      // isolated `.edno` layout
       let package_path = match resolve_pkg_folder {
         Some(resolve_pkg_folder) => match resolve_pkg_folder(&package.id) {
           Some(path) => path,

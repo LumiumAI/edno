@@ -1,19 +1,19 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 // TODO(petamoriken): enable prefer-primordials for node polyfills
-// deno-lint-ignore-file ban-types no-this-alias
+// edno-lint-ignore-file ban-types no-this-alias
 
 (function () {
 const { core, primordials } = __bootstrap;
 const { WasiContext } = core.ops;
-const { statSync } = core.loadExtScript("ext:deno_node/fs.ts");
-const { exit } = core.loadExtScript("ext:deno_os/30_os.js");
+const { statSync } = core.loadExtScript("ext:edno_node/fs.ts");
+const { exit } = core.loadExtScript("ext:edno_os/30_os.js");
 const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
   ERR_WASI_ALREADY_STARTED,
   ERR_WASI_NOT_STARTED,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 let warningEmitted = false;
 function emitExperimentalWarning() {
@@ -22,7 +22,7 @@ function emitExperimentalWarning() {
   // Match Node's "WASI is an experimental feature ..." warning. The
   // node_compat test runner asserts on this exact message via
   // common.expectWarning('ExperimentalWarning', ...).
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const proc = (globalThis as any).process;
   if (proc && typeof proc.emitWarning === "function") {
     proc.emitWarning(
@@ -130,11 +130,11 @@ function validateString(
   }
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 type WasiOptions = any;
 
 // WASI preopens use direct host filesystem access in the native ops. They do
-// not read from the in-memory VFS that `deno compile` uses for embedded files.
+// not read from the in-memory VFS that `edno compile` uses for embedded files.
 class WASI {
   #ctx;
   #version: string;
@@ -668,7 +668,7 @@ class WASI {
     if (!this.#memory) {
       throw new ERR_WASI_NOT_STARTED();
     }
-    // deno-lint-ignore deno-internal/prefer-primordials -- WebAssembly.Memory.prototype.buffer getter; no primordial equivalent
+    // edno-lint-ignore edno-internal/prefer-primordials -- WebAssembly.Memory.prototype.buffer getter; no primordial equivalent
     return new Uint8Array(this.#memory.buffer);
   }
 

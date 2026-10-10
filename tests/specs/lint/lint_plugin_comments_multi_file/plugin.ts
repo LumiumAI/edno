@@ -7,7 +7,7 @@ export default {
           Program(node) {
             const comments = node.comments;
             const values = comments.map((
-              c: Deno.lint.LineComment | Deno.lint.BlockComment,
+              c: Edno.lint.LineComment | Edno.lint.BlockComment,
             ) => c.value.trim());
             console.log(`${ctx.filename}: ${JSON.stringify(values)}`);
           },
@@ -15,4 +15,4 @@ export default {
       },
     },
   },
-} satisfies Deno.lint.Plugin;
+} satisfies Edno.lint.Plugin;

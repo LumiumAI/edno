@@ -63,17 +63,17 @@ const {
   op_node_getnameinfo,
 } = core.ops;
 const { isIPv4, isIPv6 } = core.loadExtScript(
-  "ext:deno_node/internal/net.ts",
+  "ext:edno_node/internal/net.ts",
 );
 const { codeMap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/uv.ts",
+  "ext:edno_node/internal_binding/uv.ts",
 );
 const {
   AsyncWrap,
   providerType,
-} = core.loadExtScript("ext:deno_node/internal_binding/async_wrap.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/async_wrap.ts");
 const { ares_strerror } = core.loadExtScript(
-  "ext:deno_node/internal_binding/ares.ts",
+  "ext:edno_node/internal_binding/ares.ts",
 );
 
 interface LookupAddress {
@@ -154,7 +154,7 @@ function getaddrinfo(
         error = codeMap.get("EAI_NODATA")!;
       }
     } catch (e) {
-      if (ObjectPrototypeIsPrototypeOf(Deno.errors.NotCapable.prototype, e)) {
+      if (ObjectPrototypeIsPrototypeOf(Edno.errors.NotCapable.prototype, e)) {
         error = codeMap.get("EPERM")!;
       } else if (
         typeof (e as { uv_errcode?: number })?.uv_errcode === "number" &&
@@ -248,15 +248,15 @@ class QueryReqWrap extends AsyncWrap {
 
   callback!: (
     err: ErrnoException | null,
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     records?: any,
   ) => void;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   resolve!: (records: any) => void;
   reject!: (err: ErrnoException | null) => void;
   oncomplete!: (
     err: number,
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     records: any,
     ttls?: number[],
   ) => void;
@@ -320,12 +320,12 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
 
   async #query(
     query: string,
-    recordType: Deno.RecordType,
+    recordType: Edno.RecordType,
     ttl?: boolean,
   ) {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     let code: any;
-    let ret: Awaited<ReturnType<typeof Deno.resolveDns>>;
+    let ret: Awaited<ReturnType<typeof Edno.resolveDns>>;
 
     if (this.#servers !== null && this.#servers.length) {
       for (const server of new SafeArrayIterator(this.#servers)) {
@@ -362,20 +362,20 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
 
   async #resolve(
     query: string,
-    recordType: Deno.RecordType,
-    resolveOptions?: Deno.ResolveDnsOptions,
+    recordType: Edno.RecordType,
+    resolveOptions?: Edno.ResolveDnsOptions,
     ttl?: boolean,
   ): Promise<{
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     code: any;
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     ret: any[];
   }> {
     const tries = this.#tries > 0 ? this.#tries : 1;
 
     for (let attempt = 0; attempt < tries; attempt++) {
       let ret = [];
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       let code: any = 0;
 
       // Always create a cancel handle so cancel() can abort in-flight ops.
@@ -417,7 +417,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
         return { code, ret };
       } catch (e) {
         if (
-          ObjectPrototypeIsPrototypeOf(Deno.errors.Interrupted.prototype, e)
+          ObjectPrototypeIsPrototypeOf(Edno.errors.Interrupted.prototype, e)
         ) {
           if (timedOut) {
             // Our own timeout timer aborted the op - this is a timeout, so
@@ -428,7 +428,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
           // in both cases stop and report a timeout.
           code = "ETIMEOUT";
         } else if (
-          ObjectPrototypeIsPrototypeOf(Deno.errors.TimedOut.prototype, e)
+          ObjectPrototypeIsPrototypeOf(Edno.errors.TimedOut.prototype, e)
         ) {
           // TimedOut from hickory - retry if attempts remain
           if (attempt < tries - 1) continue;
@@ -443,7 +443,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
           // `code` (and `errno: undefined`) as Node.js.
           code = (e as { ares_code: string }).ares_code;
         } else if (
-          ObjectPrototypeIsPrototypeOf(Deno.errors.NotFound.prototype, e)
+          ObjectPrototypeIsPrototypeOf(Edno.errors.NotFound.prototype, e)
         ) {
           // A "not found" error without a more specific c-ares code, e.g. an
           // empty answer. Report `ENOTFOUND`, matching Node.js.
@@ -467,7 +467,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
     SetPrototypeAdd(this.#pendingQueries, req);
 
     PromisePrototypeThen(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       this.#query(name, "ANY" as any, true),
       ({ code, ret }) => {
         if (!SetPrototypeHas(this.#pendingQueries, req)) return;
@@ -580,7 +580,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
       let recordsWithTtl;
       if (req.ttl) {
         recordsWithTtl = ArrayPrototypeMap(
-          ret as Deno.RecordWithTtl[],
+          ret as Edno.RecordWithTtl[],
           (val) => ({
             address: val?.data,
             ttl: val?.ttl,
@@ -606,7 +606,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
         let recordsWithTtl;
         if (req.ttl) {
           recordsWithTtl = ArrayPrototypeMap(
-            ret as Deno.RecordWithTtl[],
+            ret as Edno.RecordWithTtl[],
             (val) => ({
               address: val?.data as string,
               ttl: val?.ttl,
@@ -629,7 +629,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
       SetPrototypeDelete(this.#pendingQueries, req);
 
       const records = ArrayPrototypeMap(
-        ret as Deno.CaaRecord[],
+        ret as Edno.CaaRecord[],
         ({ critical, tag, value }) => ({
           [tag]: value,
           critical: +critical && 128,
@@ -663,7 +663,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
       SetPrototypeDelete(this.#pendingQueries, req);
 
       const records = ArrayPrototypeMap(
-        ret as Deno.MxRecord[],
+        ret as Edno.MxRecord[],
         ({ preference, exchange }) => ({
           priority: preference,
           exchange: fqdnToHostname(exchange),
@@ -684,7 +684,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
       SetPrototypeDelete(this.#pendingQueries, req);
 
       const records = ArrayPrototypeMap(
-        ret as Deno.NaptrRecord[],
+        ret as Edno.NaptrRecord[],
         ({ order, preference, flags, services, regexp, replacement }) => ({
           flags,
           service: services,
@@ -748,7 +748,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
 
       if (ret.length) {
         const { mname, rname, serial, refresh, retry, expire, minimum } =
-          ret[0] as Deno.SoaRecord;
+          ret[0] as Edno.SoaRecord;
 
         record = {
           nsname: fqdnToHostname(mname),
@@ -775,7 +775,7 @@ class ChannelWrap extends AsyncWrap implements ChannelWrapQuery {
       SetPrototypeDelete(this.#pendingQueries, req);
 
       const records = ArrayPrototypeMap(
-        ret as Deno.SrvRecord[],
+        ret as Edno.SrvRecord[],
         ({ priority, weight, port, target }) => ({
           priority,
           weight,

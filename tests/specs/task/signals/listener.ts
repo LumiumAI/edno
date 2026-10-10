@@ -1,10 +1,10 @@
 import { signals } from "./signals.ts";
 
 for (const signal of signals) {
-  Deno.addSignalListener(signal, () => {
+  Edno.addSignalListener(signal, () => {
     console.log("Received", signal);
     if (signal === "SIGTERM") {
-      Deno.exit(0);
+      Edno.exit(0);
     }
   });
 }

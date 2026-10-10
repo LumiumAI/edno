@@ -1,10 +1,10 @@
 try {
-  await new Deno.Command("ls").output();
+  await new Edno.Command("ls").output();
 } catch (e) {
   console.log(e);
 }
 
-const { success } = await new Deno.Command("curl", {
+const { success } = await new Edno.Command("curl", {
   args: ["--help"],
   stdout: "null",
   stderr: "inherit",

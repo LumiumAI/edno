@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S edno run -A
 
 interface PermissionAuditRequest {
   id: number;
@@ -10,19 +10,19 @@ interface PermissionAuditRequest {
 
 async function createUnixSocketServer(socketPath: string): Promise<void> {
   try {
-    await Deno.remove(socketPath);
+    await Edno.remove(socketPath);
   } catch {
     // Socket file doesn't exist, which is fine
   }
 
-  const listener = Deno.listen({ transport: "unix", path: socketPath });
+  const listener = Edno.listen({ transport: "unix", path: socketPath });
   console.log(`Permission broker listening on Unix socket: ${socketPath}`);
 
   for await (const conn of listener) {
     handleConnection(conn);
   }
 
-  async function handleConnection(conn: Deno.Conn): Promise<void> {
+  async function handleConnection(conn: Edno.Conn): Promise<void> {
     console.log("New client connected");
 
     try {
@@ -70,8 +70,8 @@ async function createUnixSocketServer(socketPath: string): Promise<void> {
 async function createWindowsNamedPipeServer(spec: string): Promise<void> {
   const pipePath = normalizePipePath(spec);
 
-  // Deno FFI bindings
-  const k32 = Deno.dlopen(
+  // Edno FFI bindings
+  const k32 = Edno.dlopen(
     "kernel32.dll",
     {
       CreateNamedPipeW: {
@@ -158,7 +158,7 @@ async function createWindowsNamedPipeServer(spec: string): Promise<void> {
     }
   }
 
-  function handlePipeClient(hPipe: Deno.PointerValue): void {
+  function handlePipeClient(hPipe: Edno.PointerValue): void {
     console.log("New client connected");
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
@@ -217,7 +217,7 @@ async function createWindowsNamedPipeServer(spec: string): Promise<void> {
     console.log("Client disconnected");
   }
 
-  function writeAll(hPipe: Deno.PointerValue, data: Uint8Array): void {
+  function writeAll(hPipe: Edno.PointerValue, data: Uint8Array): void {
     const nWrote = new Uint32Array(1);
     const nWroteBuf = new Uint8Array(nWrote.buffer);
 
@@ -248,12 +248,12 @@ async function createWindowsNamedPipeServer(spec: string): Promise<void> {
   }
 
   function normalizePipePath(spec: string): string {
-    // Accept either a bare name ("deno-permission-broker") or a full path.
+    // Accept either a bare name ("edno-permission-broker") or a full path.
     if (spec.startsWith("\\\\.\\")) return spec;
     return `\\\\.\\pipe\\${spec}`;
   }
 
-  function isInvalidHandle(h: Deno.PointerValue): boolean {
+  function isInvalidHandle(h: Edno.PointerValue): boolean {
     // INVALID_HANDLE_VALUE == (void*)-1
     if (typeof h === "bigint") {
       return h === 0n || h === 0xffffffffffffffffn;
@@ -273,18 +273,18 @@ async function createWindowsNamedPipeServer(spec: string): Promise<void> {
   }
 }
 
-const args = Deno.args;
+const args = Edno.args;
 
 if (args.length !== 1) {
-  console.error("Usage: deno run -A broker.ts <socket_path>");
-  Deno.exit(1);
+  console.error("Usage: edno run -A broker.ts <socket_path>");
+  Edno.exit(1);
 }
 
 const socketPath = args[0];
-const promise = Deno.build.os === "windows"
+const promise = Edno.build.os === "windows"
   ? createWindowsNamedPipeServer(socketPath)
   : createUnixSocketServer(socketPath);
 promise.catch((error) => {
   console.error("Server error:", error);
-  Deno.exit(1);
+  Edno.exit(1);
 });

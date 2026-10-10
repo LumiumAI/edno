@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/raw-imports",
+  "name": "@ednotest/raw-imports",
   "version": "0.0.0",
   "exports": "./text_main.ts",
   "license": "MIT"

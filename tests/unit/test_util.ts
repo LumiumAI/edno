@@ -31,7 +31,7 @@ import type { Reader, Writer, WriterSync } from "@std/io/types";
 export function pathToAbsoluteFileUrl(path: string): URL {
   path = resolve(path);
 
-  return new URL(`file://${Deno.build.os === "windows" ? "/" : ""}${path}`);
+  return new URL(`file://${Edno.build.os === "windows" ? "/" : ""}${path}`);
 }
 
 export function execCode(code: string): Promise<readonly [number, string]> {
@@ -39,7 +39,7 @@ export function execCode(code: string): Promise<readonly [number, string]> {
 }
 
 export function execCode3(cmd: string, args: string[]) {
-  const command = new Deno.Command(cmd, {
+  const command = new Edno.Command(cmd, {
     args,
     stdout: "piped",
     stderr: "inherit",
@@ -81,16 +81,16 @@ export function execCode3(cmd: string, args: string[]) {
 }
 
 export function execCode2(code: string) {
-  return execCode3(Deno.execPath(), ["eval", code]);
+  return execCode3(Edno.execPath(), ["eval", code]);
 }
 
 export function tmpUnixSocketPath(): string {
-  const folder = Deno.makeTempDirSync();
+  const folder = Edno.makeTempDirSync();
   return join(folder, "socket");
 }
 
 export async function curlRequest(args: string[]) {
-  const { success, stdout, stderr } = await new Deno.Command("curl", {
+  const { success, stdout, stderr } = await new Edno.Command("curl", {
     args,
     stdout: "piped",
     stderr: "piped",
@@ -106,7 +106,7 @@ export async function curlRequest(args: string[]) {
 }
 
 export async function curlRequestWithStdErr(args: string[]) {
-  const { success, stdout, stderr } = await new Deno.Command("curl", {
+  const { success, stdout, stderr } = await new Edno.Command("curl", {
     args,
     stdout: "piped",
     stderr: "piped",
@@ -922,7 +922,7 @@ export abstract class AbstractBufBase {
  * accepted and all subsequent writes, and flush(), will return the error.
  * After all data has been written, the client should call the
  * flush() method to guarantee all data has been forwarded to
- * the underlying deno.Writer.
+ * the underlying edno.Writer.
  *
  * @example Usage
  * ```ts
@@ -1134,12 +1134,12 @@ export class BufWriter extends AbstractBufBase implements Writer {
 }
 
 /**
- * BufWriterSync implements buffering for a deno.WriterSync object.
+ * BufWriterSync implements buffering for a edno.WriterSync object.
  * If an error occurs writing to a WriterSync, no more data will be
  * accepted and all subsequent writes, and flush(), will return the error.
  * After all data has been written, the client should call the
  * flush() method to guarantee all data has been forwarded to
- * the underlying deno.WriterSync.
+ * the underlying edno.WriterSync.
  *
  * @example Usage
  * ```ts

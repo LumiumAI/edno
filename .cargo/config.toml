@@ -21,7 +21,7 @@ rustflags = [
   "-C",
   # On Windows a thread created without an explicit stack size — including the
   # process main thread — gets the PE header's reserve, and MSVC defaults that
-  # to 1MB. The main V8 isolate runs on the main thread (deno::main ->
+  # to 1MB. The main V8 isolate runs on the main thread (edno::main ->
   # create_and_run_current_thread -> a tokio current_thread runtime runs its
   # spawned task on the thread that calls block_on), and 1MB is not enough for
   # it: it overflows when launching sub commands, and it leaves no headroom

@@ -87,7 +87,7 @@ fn pty_primordials_protected_from_object_prototype_properties() {
   util::with_pty(&["repl"], |mut console| {
     console.write_line("Object.prototype.get = function () {}");
     console.expect("[Function (anonymous)]");
-    console.write_line("new Deno.Command(\"whoami\")");
+    console.write_line("new Edno.Command(\"whoami\")");
     console.expect("Command");
   });
 }
@@ -171,7 +171,7 @@ fn pty_complete_primitives() {
 #[test(flaky)]
 fn pty_complete_expression() {
   util::with_pty(&["repl"], |mut console| {
-    console.write_raw("Deno.\t\t");
+    console.write_raw("Edno.\t\t");
     console.expect("Display all");
     console.write_raw("y");
     console.expect_all(&["symlink", "args", "permissions", "exit"]);
@@ -209,10 +209,10 @@ fn pty_assign_global_this() {
 fn pty_assign_deno_keys_and_deno() {
   util::with_pty(&["repl"], |mut console| {
     console.write_line(
-      "Object.keys(Deno).forEach((key)=>{try{Deno[key] = undefined} catch {}})",
+      "Object.keys(Edno).forEach((key)=>{try{Edno[key] = undefined} catch {}})",
     );
     console.expect("undefined");
-    console.write_line("delete globalThis.Deno");
+    console.write_line("delete globalThis.Edno");
     console.expect("true");
     console.write_line("console.log('testing ' + 'this out');");
     console.expect("testing this out");
@@ -341,7 +341,7 @@ fn repl_cwd() {
     .new_command()
     .args_vec(["repl", "-A"])
     .with_pty(|mut console| {
-      console.write_line("Deno.cwd()");
+      console.write_line("Edno.cwd()");
       console.expect(
         temp_dir
           .path()
@@ -387,10 +387,10 @@ fn typescript_decorators() {
   let context = TestContextBuilder::default().use_temp_cwd().build();
   let temp_dir = context.temp_dir();
   temp_dir.write(
-    "./deno.json",
+    "./edno.json",
     r#"{ "compilerOptions": { "experimentalDecorators": true } }"#,
   );
-  let config_path = temp_dir.target_path().join("./deno.json");
+  let config_path = temp_dir.target_path().join("./edno.json");
   util::with_pty(
     &["repl", "--config", config_path.to_string_lossy().as_ref()],
     |mut console| {
@@ -445,7 +445,7 @@ fn close_command() {
 #[test(flaky)]
 fn function() {
   util::with_pty(&["repl"], |mut console| {
-    console.write_line("Deno.writeFileSync");
+    console.write_line("Edno.writeFileSync");
     console.expect("[Function: writeFileSync]");
   });
 }
@@ -616,18 +616,18 @@ fn lexical_scoped_variable() {
 fn missing_deno_dir() {
   use std::fs::read_dir;
   let temp_dir = TempDir::new();
-  let deno_dir_path = temp_dir.path().join("deno");
+  let edno_dir_path = temp_dir.path().join("edno");
   let (out, err) = util::run_and_collect_output(
     true,
     "repl",
     Some(vec!["1"]),
     Some(vec![
-      ("DENO_DIR".to_owned(), deno_dir_path.to_string()),
+      ("EDNO_DIR".to_owned(), edno_dir_path.to_string()),
       ("NO_COLOR".to_owned(), "1".to_owned()),
     ]),
     false,
   );
-  assert!(read_dir(deno_dir_path).is_ok());
+  assert!(read_dir(edno_dir_path).is_ok());
   assert_ends_with!(out, "1\n");
   assert!(err.is_empty());
 }
@@ -642,7 +642,7 @@ fn custom_history_path() {
     "repl",
     Some(vec!["1"]),
     Some(vec![
-      ("DENO_REPL_HISTORY".to_owned(), history_path.to_string()),
+      ("EDNO_REPL_HISTORY".to_owned(), history_path.to_string()),
       ("NO_COLOR".to_owned(), "1".to_owned()),
     ]),
     false,
@@ -654,15 +654,15 @@ fn custom_history_path() {
 
 #[test(flaky)]
 fn disable_history_file() {
-  let deno_dir = util::new_deno_dir();
-  let default_history_path = deno_dir.path().join("deno_history.txt");
+  let edno_dir = util::new_deno_dir();
+  let default_history_path = edno_dir.path().join("edno_history.txt");
   let (out, err) = util::run_and_collect_output(
     true,
     "repl",
     Some(vec!["1"]),
     Some(vec![
-      ("DENO_DIR".to_owned(), deno_dir.path().to_string()),
-      ("DENO_REPL_HISTORY".to_owned(), "".to_owned()),
+      ("EDNO_DIR".to_owned(), edno_dir.path().to_string()),
+      ("EDNO_REPL_HISTORY".to_owned(), "".to_owned()),
       ("NO_COLOR".to_owned(), "1".to_owned()),
     ]),
     false,
@@ -721,7 +721,7 @@ fn custom_inspect() {
   util::with_pty(&["repl"], |mut console| {
     console.write_line(
       r#"const o = {
-      [Symbol.for("Deno.customInspect")]() {
+      [Symbol.for("Edno.customInspect")]() {
         throw new Error('Oops custom inspect error');
       },
     };"#,
@@ -948,7 +948,7 @@ fn repl_with_quiet_flag() {
     Some(vec![("NO_COLOR".to_owned(), "1".to_owned())]),
     false,
   );
-  assert!(!out.contains("Deno"));
+  assert!(!out.contains("Edno"));
   assert!(!out.contains("exit using ctrl+d, ctrl+c, or close()"));
   assert_ends_with!(out, "\"done\"\n");
   assert!(err.is_empty(), "Error: {}", err);
@@ -960,11 +960,11 @@ fn repl_deno_test() {
     console.write_line_raw(
       "\
         console.log('Hello from outside of test!'); \
-        Deno.test('test1', async (t) => { \
+        Edno.test('test1', async (t) => { \
           console.log('Hello from inside of test!'); \
           await t.step('step1', () => {}); \
         }); \
-        Deno.test('test2', () => { \
+        Edno.test('test2', () => { \
           throw new Error('some message'); \
         }); \
         console.log('Hello again from outside of test!'); \
@@ -987,7 +987,7 @@ fn repl_deno_test() {
     console.expect("FAILED | 1 passed (1 step) | 1 failed (");
     console.expect("undefined");
 
-    console.write_line("Deno.test('test2', () => {});");
+    console.write_line("Edno.test('test2', () => {});");
 
     console.expect("test2 ... ok (");
     console.expect("ok | 1 passed | 0 failed (");
@@ -1000,7 +1000,7 @@ fn npm_packages() {
   let mut env_vars = util::env_vars_for_npm_tests();
   env_vars.push(("NO_COLOR".to_owned(), "1".to_owned()));
   let temp_dir = TempDir::new();
-  env_vars.push(("DENO_DIR".to_string(), temp_dir.path().to_string()));
+  env_vars.push(("EDNO_DIR".to_string(), temp_dir.path().to_string()));
 
   {
     let (out, err) = util::run_and_collect_output_with_args(
@@ -1104,12 +1104,12 @@ fn package_json_uncached_no_error() {
     .env("RUST_BACKTRACE", "1")
     .build();
   let temp_dir = test_context.temp_dir();
-  temp_dir.write("deno.json", "{ \"nodeModulesDir\": \"auto\" }");
+  temp_dir.write("edno.json", "{ \"nodeModulesDir\": \"auto\" }");
   temp_dir.write(
     "package.json",
     r#"{
   "dependencies": {
-    "@denotest/esm-basic": "1.0.0"
+    "@ednotest/esm-basic": "1.0.0"
   }
 }
 "#,
@@ -1124,7 +1124,7 @@ fn package_json_uncached_no_error() {
 
     // should support getting the package now though
     console
-      .write_line("import { getValue, setValue } from '@denotest/esm-basic';");
+      .write_line("import { getValue, setValue } from '@ednotest/esm-basic';");
     console.expect("undefined");
     console.write_line("setValue(12 + 30);");
     console.expect("undefined");
@@ -1144,7 +1144,7 @@ fn env_file() {
       "--env=env",
       "--allow-env",
       "--eval",
-      "console.log(Deno.env.get('FOO'))",
+      "console.log(Edno.env.get('FOO'))",
     ])
     .with_pty(|console| {
       assert_contains!(console.all_output(), "BAR",);
@@ -1267,15 +1267,15 @@ server.on("exit", () => process.exit(0));
 #[test(flaky)]
 fn pty_lint_run_plugin_disabled() {
   // Regression test for https://github.com/denoland/deno/issues/28264
-  // `Deno.lint.runPlugin` is not available outside of `deno test`, so calling
+  // `Edno.lint.runPlugin` is not available outside of `edno test`, so calling
   // it in the REPL should throw a helpful error instead of a cryptic
   // "op_lint_create_serialized_ast is not a function".
   util::with_pty(&["repl"], |mut console| {
     console.write_line(
-      "Deno.lint.runPlugin({ name: \"x\", rules: {} }, \"x.ts\", \"\");",
+      "Edno.lint.runPlugin({ name: \"x\", rules: {} }, \"x.ts\", \"\");",
     );
     console.expect(
-      "`Deno.lint.runPlugin` is only available in `deno test` subcommand.",
+      "`Edno.lint.runPlugin` is only available in `edno test` subcommand.",
     );
   });
 }

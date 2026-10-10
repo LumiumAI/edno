@@ -1,13 +1,13 @@
 import { emptyDir } from "@std/fs/empty-dir";
 
 const DIR = "./coverage";
-const COMMAND = new Deno.Command(Deno.execPath(), {
+const COMMAND = new Edno.Command(Edno.execPath(), {
   args: ["test", "--coverage", "--clean", "--coverage-raw-data-only"],
   stdout: "null",
 });
 
 async function getCoverageFiles() {
-  return await Array.fromAsync(Deno.readDir(DIR), ({ name }) => name);
+  return await Array.fromAsync(Edno.readDir(DIR), ({ name }) => name);
 }
 
 await emptyDir(DIR);
@@ -20,4 +20,4 @@ const files2 = new Set(await getCoverageFiles());
 console.log(files1.size === files2.size);
 console.log(files1.intersection(files2).size === 0);
 await emptyDir(DIR);
-await Deno.remove(DIR);
+await Edno.remove(DIR);

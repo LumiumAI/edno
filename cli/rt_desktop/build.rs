@@ -58,7 +58,7 @@ fn print_cdylib_napi_linker_flags() {
     // `__cxa_guard_acquire` (and friends) to the host's libstdc++, whose guard
     // layout differs — the runtime aborts at static init with
     // "libc++abi: __cxa_guard_acquire failed to acquire mutex" before
-    // `Deno.serve` ever runs (denoland/deno#35381).
+    // `Edno.serve` ever runs (denoland/deno#35381).
     //
     // `--exclude-libs,ALL` localizes every static-archive symbol (including the
     // bundled libc++abi) so our calls resolve to our own copy. The NAPI/uv

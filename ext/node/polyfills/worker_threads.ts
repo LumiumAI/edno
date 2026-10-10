@@ -39,9 +39,9 @@ const {
   serializeMessageData,
   setMessagePortId,
   unrefParentPort,
-} = core.loadExtScript("ext:deno_web/13_message_port.js");
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
-const { notImplemented } = core.loadExtScript("ext:deno_node/_utils.ts");
+} = core.loadExtScript("ext:edno_web/13_message_port.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
+const { notImplemented } = core.loadExtScript("ext:edno_node/_utils.ts");
 const {
   ERR_CLOSED_MESSAGE_PORT,
   ERR_CONSTRUCT_CALL_REQUIRED,
@@ -55,24 +55,24 @@ const {
   ERR_WORKER_MESSAGING_TIMEOUT,
   ERR_WORKER_NOT_RUNNING,
   ERR_WORKER_PATH,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   validateArray,
   validateInteger,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const { channel: createDiagnosticsChannel } = core.loadExtScript(
-  "ext:deno_node/diagnostics_channel.js",
+  "ext:edno_node/diagnostics_channel.js",
 );
 const workerThreadsChannel = createDiagnosticsChannel("worker_threads");
 const lazyStream = core.createLazyLoader("node:stream");
 const {
   BroadcastChannel: WebBroadcastChannel,
   refBroadcastChannel,
-} = core.loadExtScript("ext:deno_web/01_broadcast_channel.js");
+} = core.loadExtScript("ext:edno_web/01_broadcast_channel.js");
 const { untransferableSymbol } = core.loadExtScript(
-  "ext:deno_node/internal_binding/util.ts",
+  "ext:edno_node/internal_binding/util.ts",
 );
 const lazyProcess = core.createLazyLoader("node:process");
 const lazyUrl = core.createLazyLoader("node:url");
@@ -147,7 +147,7 @@ const workerCpuUsageBuffer = new Float64Array(2);
 const debugWorkerThreads = false;
 function debugWT(...args) {
   if (debugWorkerThreads) {
-    // deno-lint-ignore deno-internal/prefer-primordials no-console
+    // edno-lint-ignore edno-internal/prefer-primordials no-console
     console.log(...args);
   }
 }
@@ -164,13 +164,13 @@ function isWorkerOnlineMsg(data: unknown): data is WorkerOnlineMsg {
 
 interface WorkerStdioMsg {
   type: "WORKER_STDERR" | "WORKER_STDOUT";
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   data: any;
 }
 
 interface WorkerStdinMsg {
   type: "WORKER_STDIN";
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   data: any;
 }
 
@@ -221,7 +221,7 @@ const workerDisallowedFlags = new SafeSet([
   "--report-uncaught-exception",
 ]);
 
-// V8 profiling flags Node accepts in worker execArgv. Deno doesn't wire up
+// V8 profiling flags Node accepts in worker execArgv. Edno doesn't wire up
 // the underlying profiling integration, but rejecting them with
 // ERR_WORKER_INVALID_EXEC_ARGV breaks scripts that pass them unconditionally,
 // so accept and ignore.
@@ -279,13 +279,13 @@ class NodeWorker extends EventEmitter {
   // https://nodejs.org/api/worker_threads.html#workerresourcelimits
   resourceLimits: WorkerOptions["resourceLimits"] = {};
   // https://nodejs.org/api/worker_threads.html#workerstdin
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   stdin: any = null;
   // https://nodejs.org/api/worker_threads.html#workerstdout
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   stdout: any = new (lazyStream().Readable)({ read() {} });
   // https://nodejs.org/api/worker_threads.html#workerstderr
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   stderr: any = new (lazyStream().Readable)({ read() {} });
 
   constructor(specifier: URL | string, options?: WorkerOptions) {
@@ -425,7 +425,7 @@ class NodeWorker extends EventEmitter {
         );
       }
       // Snapshot the provided env, coercing values to strings like Node.js.
-      // This also handles passing `lazyProcess().default.env` (a Proxy in Deno) by
+      // This also handles passing `lazyProcess().default.env` (a Proxy in Edno) by
       // producing a plain object that can be structured-cloned.
       const envObj = {};
       const keys = ObjectKeys(envOpt);
@@ -437,7 +437,7 @@ class NodeWorker extends EventEmitter {
       // Default: snapshot current lazyProcess().default.env so the worker gets an
       // isolated copy, not a live reference to the OS environment.
       // Wrap in try/catch because accessing lazyProcess().default.env requires
-      // --allow-env permission in Deno. If unavailable, fall back to
+      // --allow-env permission in Edno. If unavailable, fall back to
       // shared OS env (env_ stays undefined).
       try {
         const envObj = {};
@@ -451,7 +451,7 @@ class NodeWorker extends EventEmitter {
       }
     }
     // When envOpt === SHARE_ENV, env_ stays undefined and the worker
-    // will use the default lazyProcess().default.env backed by Deno.env (shared OS env).
+    // will use the default lazyProcess().default.env backed by Edno.env (shared OS env).
 
     // Handle the `argv` option: must be an array or undefined.
     // Values are coerced to strings like Node.js does.
@@ -500,10 +500,10 @@ class NodeWorker extends EventEmitter {
       // `require` is already available from the Node worker bootstrap.
       // See: https://github.com/denoland/deno/issues/26739
       sourceCode = `var __filename = ${
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         JSON.stringify(lazyProcess().default.cwd() + "/[worker eval]")};\n` +
         `var __dirname = ${
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           JSON.stringify(lazyProcess().default.cwd())};\n` +
         `var module = { exports: {} };\n` +
         `var exports = module.exports;\n` +
@@ -513,7 +513,7 @@ class NodeWorker extends EventEmitter {
     } else if (
       !(typeof specifier === "object" && specifier.protocol === "data:")
     ) {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       specifier = specifier.toString();
       specifier = op_worker_threads_filename(specifier) ?? specifier;
     }
@@ -528,7 +528,7 @@ class NodeWorker extends EventEmitter {
 
     const id = op_create_worker(
       {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         specifier: specifier.toString(),
         hasSourceCode,
         sourceCode,
@@ -548,7 +548,7 @@ class NodeWorker extends EventEmitter {
     }
 
     if (options?.stdin) {
-      // deno-lint-ignore no-this-alias
+      // edno-lint-ignore no-this-alias
       const worker = this;
       this.stdin = new (lazyStream().Writable)({
         write(chunk, _encoding, callback) {
@@ -946,11 +946,11 @@ interface NodeEventTarget extends
   > {
   setMaxListeners(n: number): void;
   getMaxListeners(): number;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   off(eventName: string, listener: (...args: any[]) => void): NodeEventTarget;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   on(eventName: string, listener: (...args: any[]) => void): NodeEventTarget;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   once(eventName: string, listener: (...args: any[]) => void): NodeEventTarget;
   addListener: NodeEventTarget["on"];
   removeListener: NodeEventTarget["off"];
@@ -968,7 +968,7 @@ interface ParentPort extends NodeEventTarget {
     listener: EventListenerOrEventListenerObject,
   ): void;
   onmessage: ((ev: Event) => void) | null;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   emit(...args: any[]): any;
   removeAllListeners(): void;
   setMaxListeners(n: number): void;
@@ -980,7 +980,7 @@ interface ParentPort extends NodeEventTarget {
   [key: symbol]: unknown;
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 let parentPort: ParentPort = null as any;
 
 internals.__initWorkerThreads = (
@@ -1003,7 +1003,7 @@ internals.__initWorkerThreads = (
     if (moduleSpecifier) {
       globalThis.require = lazyModule().createRequire(
         StringPrototypeStartsWith(moduleSpecifier, "data:")
-          ? `${Deno.cwd()}/[worker eval]`
+          ? `${Edno.cwd()}/[worker eval]`
           : moduleSpecifier,
       );
     }
@@ -1012,7 +1012,7 @@ internals.__initWorkerThreads = (
     // passed to parentPort.on twice for the same event registers only
     // once, matching Node MessagePort behavior. Maps are created on
     // demand since parentPort accepts any event name.
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     type ListenerMap = SafeMap<(...args: any[]) => void, (ev: any) => any>;
     const parentPortListeners: Record<string, ListenerMap> = ObjectCreate(null);
     const getParentPortListenerMap = (name: string): ListenerMap => {
@@ -1083,7 +1083,7 @@ internals.__initWorkerThreads = (
     });
 
     // Only intercept globalThis.onmessage for Node worker threads
-    // (not plain Deno web workers) to prevent double message delivery
+    // (not plain Edno web workers) to prevent double message delivery
     // when both parentPort.on('message') and self.onmessage are set.
     if (maybeWorkerMetadata) {
       let storedOnmessage: ((ev: Event) => void) | null = null;
@@ -1170,7 +1170,7 @@ internals.__initWorkerThreads = (
         if (metadata.execArgv) {
           lazyProcess().default.execArgv = metadata.execArgv;
           core.loadExtScript(
-            "ext:deno_node/internal_binding/node_options.ts",
+            "ext:edno_node/internal_binding/node_options.ts",
           ).setOptionSourceExecArgv(metadata.execArgv);
           for (let i = 0; i < metadata.execArgv.length; i++) {
             if (metadata.execArgv[i] === "--trace-warnings") {
@@ -1191,11 +1191,11 @@ internals.__initWorkerThreads = (
           const stdinHandler = (ev) => {
             const msg = ev.data;
             if (isWorkerStdinMsg(msg)) {
-              // deno-lint-ignore deno-internal/prefer-primordials
+              // edno-lint-ignore edno-internal/prefer-primordials
               workerStdin.push(msg.data);
               ev.stopImmediatePropagation();
             } else if (isWorkerStdinEndMsg(msg)) {
-              // deno-lint-ignore deno-internal/prefer-primordials
+              // edno-lint-ignore edno-internal/prefer-primordials
               workerStdin.push(null);
               parentPort.removeEventListener("message", stdinHandler);
               ev.stopImmediatePropagation();
@@ -1280,7 +1280,7 @@ internals.__initWorkerThreads = (
         // match Node MessagePort behavior.
         return parentPort;
       }
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       const _listener = (ev: any) => {
         const message = ev.data;
         patchMessagePortIfFound(message);
@@ -1297,7 +1297,7 @@ internals.__initWorkerThreads = (
       if (map.has(listener)) {
         return parentPort;
       }
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       const _listener = (ev: any) => {
         map.delete(listener);
         if (name === "message") messageListenerCount--;
@@ -1727,7 +1727,7 @@ function isMarkedAsUntransferable(obj: unknown): boolean {
 function markAsUncloneable(obj: unknown) {
   return webMarkAsUncloneable(obj);
 }
-const lazyVm = () => core.loadExtScript("ext:deno_node/vm.js");
+const lazyVm = () => core.loadExtScript("ext:edno_node/vm.js");
 
 // Move a MessagePort into a vm.Context. The returned object lives in the
 // target context (so its prototype chain is in that realm and it is *not*
@@ -1818,7 +1818,7 @@ function moveMessagePortToContext(
           const err = new Error(
             "Message could not be deserialized in the target context",
           );
-          // deno-lint-ignore no-explicit-any
+          // edno-lint-ignore no-explicit-any
           (err as any).code = "ERR_MESSAGE_TARGET_CONTEXT_UNAVAILABLE";
           dispatchMessageError(err);
           continue;
@@ -1872,7 +1872,7 @@ function receiveMessageOnPort(port: MessagePort): object | undefined {
 // our Node-style `ERR_CONSTRUCT_CALL_REQUIRED` instead of V8's default
 // "Class constructor X cannot be invoked without 'new'" -- the node_compat
 // suite asserts the specific code/constructor for both forms.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function NodeMessageChannel(this: any) {
   if (new.target === undefined) {
     throw new ERR_CONSTRUCT_CALL_REQUIRED("MessageChannel");
@@ -1933,13 +1933,13 @@ const nodePortListenersSymbol = Symbol("nodePortListeners");
 // still works regardless of whether the user got the global MessageChannel
 // (NodeMessageChannel) or the web one. Port1/port2 own properties on each
 // instance shadow the prototype's getters.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 (NodeMessageChannel as any).prototype = MessageChannel.prototype;
 function webMessagePortToNodeMessagePort(port: MessagePort) {
   // Patch idempotently: a port can be reached more than once through
   // patchMessagePortIfFound (e.g. when included in a nested message
   // payload). Re-patching would discard tracked listeners.
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   if ((port as any)[nodePortListenersSymbol]) return port;
   // Track listeners per port and per event name so the same handler
   // reference passed to `on` twice registers only once (Node parity),
@@ -1951,7 +1951,7 @@ function webMessagePortToNodeMessagePort(port: MessagePort) {
   // routed through addEventListener; everything else falls through to a
   // plain EventEmitter-like dispatch that runs the registered functions
   // with whatever args `emit` was given.
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   type ListenerMap = SafeMap<(...args: any[]) => void, (ev: any) => any>;
   const portListeners: Record<string | symbol, ListenerMap> = ObjectCreate(
     null,
@@ -1968,7 +1968,7 @@ function webMessagePortToNodeMessagePort(port: MessagePort) {
   // Web event names) -- they don't go through EventTarget's dispatch path.
   const customEventListeners = new SafeMap<
     string | symbol,
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     Array<(...a: any[]) => void>
   >();
   const isWebEvent = (name: string | symbol): boolean =>
@@ -2002,7 +2002,7 @@ function webMessagePortToNodeMessagePort(port: MessagePort) {
       // deliveries.
       return this;
     }
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const _listener = (ev: any) => {
       patchMessagePortIfFound(ev.data);
       listener(ev.data);
@@ -2048,14 +2048,14 @@ function webMessagePortToNodeMessagePort(port: MessagePort) {
   // Node's MessagePort mixes in `emit` from EventEmitter so calling
   // `port.emit('foo', arg)` invokes listeners registered via `port.on`
   // *and* dispatches the equivalent Event for addEventListener listeners.
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   port.emit = function (this: MessagePort, name, ...args: any[]) {
     // Dispatch an Event so addEventListener listeners fire too. Use a
     // minimal Event with `detail` copied from the first arg to match the
     // common Node pattern of `emit('foo', payload)`.
     const ev = new Event(String(name));
     if (args.length > 0) {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       (ev as any).detail = args[0];
     }
     port.dispatchEvent(ev);
@@ -2125,7 +2125,7 @@ function webMessagePortToNodeMessagePort(port: MessagePort) {
         const e = new TypeError(
           "Optional transferList argument must be an iterable",
         );
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (e as any).code = "ERR_INVALID_ARG_TYPE";
         throw e;
       } else if (transferOrOptions[SymbolIterator] !== undefined) {
@@ -2165,7 +2165,7 @@ function webMessagePortToNodeMessagePort(port: MessagePort) {
             const e = new TypeError(
               "Optional options.transfer argument must be an iterable",
             );
-            // deno-lint-ignore no-explicit-any
+            // edno-lint-ignore no-explicit-any
             (e as any).code = "ERR_INVALID_ARG_TYPE";
             throw e;
           }
@@ -2214,7 +2214,7 @@ function webMessagePortToNodeMessagePort(port: MessagePort) {
 // properties seems slow.
 // Maybe there is a way we can patch the prototype of MessagePort _only_
 // inside worker_threads? For now correctness is more important than perf.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function patchMessagePortIfFound(data: any, seen = new SafeSet<any>()) {
   if (data === null || typeof data !== "object" || seen.has(data)) {
     return;
@@ -2244,7 +2244,7 @@ class BroadcastChannel extends WebBroadcastChannel {
   }
 }
 
-const { locks } = core.createLazyLoader("ext:deno_web/locks.js")();
+const { locks } = core.createLazyLoader("ext:edno_web/locks.js")();
 
 // Node's `worker_threads.MessagePort` is a function (not a class) that throws
 // `ERR_CONSTRUCT_CALL_INVALID` whether called as `MessagePort()` or
@@ -2253,13 +2253,13 @@ const { locks } = core.createLazyLoader("ext:deno_web/locks.js")();
 // by routing through the web MessagePort's prototype. Named "MessagePort"
 // so that `port.constructor.name === "MessagePort"` and the default
 // inspect output reads as MessagePort, not the wrapper.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const NodeMessagePort: any = {
   MessagePort: function MessagePort() {
     const err = new TypeError(
       "Constructor for class MessagePort cannot be invoked",
     );
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     (err as any).code = "ERR_CONSTRUCT_CALL_INVALID";
     throw err;
   },
@@ -2286,7 +2286,7 @@ ObjectAssign(exportsObj, {
   threadId: 0,
   workerData: null,
   isMainThread: true,
-  // Deno has no internal Node worker threads (e.g. module loader threads),
+  // Edno has no internal Node worker threads (e.g. module loader threads),
   // so this is always false in the main thread and user-created workers.
   isInternalThread: false,
   // Main-thread default ({}). `__initWorkerThreads` overwrites it (with the

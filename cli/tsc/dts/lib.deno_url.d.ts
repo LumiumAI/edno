@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-explicit-any no-var
+// edno-lint-ignore-file no-explicit-any no-var
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
@@ -202,7 +202,7 @@ declare var URLSearchParams: typeof globalThis extends
   /**
    * Creates a new URLSearchParams object for parsing query strings.
    *
-   * URLSearchParams is Deno's built-in query string parser, providing a standard
+   * URLSearchParams is Edno's built-in query string parser, providing a standard
    * way to parse, manipulate, and stringify URL query parameters. Instead of manually
    * parsing query strings with regex or string operations, use this API for robust
    * handling of URL query parameters.
@@ -247,10 +247,10 @@ declare var URLSearchParams: typeof globalThis extends
 };
 
 /** The URL interface represents an object providing static methods used for
- * creating, parsing, and manipulating URLs in Deno.
+ * creating, parsing, and manipulating URLs in Edno.
  *
  * Use the URL API for safely parsing, constructing, normalizing, and encoding URLs.
- * This is the preferred way to work with URLs in Deno rather than manual string
+ * This is the preferred way to work with URLs in Edno rather than manual string
  * manipulation which can lead to errors and security issues.
  *
  * @see https://developer.mozilla.org/docs/Web/API/URL
@@ -435,10 +435,10 @@ interface URL {
    * @example
    * ```ts
    * // Parse and access query parameters from a URL
-   * const myURL = new URL('https://example.org/search?term=deno&page=2&sort=desc');
+   * const myURL = new URL('https://example.org/search?term=edno&page=2&sort=desc');
    * const params = myURL.searchParams;
    *
-   * console.log(params.get('term'));  // Logs "deno"
+   * console.log(params.get('term'));  // Logs "edno"
    * console.log(params.get('page'));  // Logs "2"
    *
    * // Check if a parameter exists
@@ -593,7 +593,7 @@ declare var URL: typeof globalThis extends { document: any; URL: infer T } ? T
      * const url = URL.createObjectURL(blob);
      * console.log(url);  // Logs something like "blob:null/1234-5678-9101-1121"
      *
-     * // Dynamic web worker creation in Deno
+     * // Dynamic web worker creation in Edno
      * const workerCode = `
      *   self.onmessage = (e) => {
      *     self.postMessage(e.data.toUpperCase());
@@ -604,7 +604,7 @@ declare var URL: typeof globalThis extends { document: any; URL: infer T } ? T
      * const worker = new Worker(workerUrl, { type: "module" });
      *
      * worker.onmessage = (e) => console.log(e.data);
-     * worker.postMessage("hello from deno");
+     * worker.postMessage("hello from edno");
      *
      * // Always revoke when done to prevent memory leaks
      * URL.revokeObjectURL(workerUrl);
@@ -623,7 +623,7 @@ declare var URL: typeof globalThis extends { document: any; URL: infer T } ? T
      * - The browser/runtime is allowed to release the memory or resources associated with it
      * - Workers created via the URL will continue to run, but the URL becomes invalid for new creations
      *
-     * For security and performance in Deno applications, always revoke object URLs as soon as
+     * For security and performance in Edno applications, always revoke object URLs as soon as
      * they're no longer needed, especially when processing large files or generating many URLs.
      *
      * @see https://developer.mozilla.org/docs/Web/API/URL/revokeObjectURL_static
@@ -856,7 +856,7 @@ interface URLPattern {
 // `@types/node` rather than declared here. Unlike its sibling web globals,
 // `@types/node` declares `var URLPattern` *unconditionally* (no
 // `typeof globalThis extends { document: any; ... }` guard, unlike
-// `URLSearchParams`), so it cannot defer to a Deno declaration and a second
+// `URLSearchParams`), so it cannot defer to a Edno declaration and a second
 // `declare var URLPattern` here would collide (TS2403) - this also breaks
-// stock `@types/node` + `lib.dom`. Deno keeps the `URLPattern` interface (the
+// stock `@types/node` + `lib.dom`. Edno keeps the `URLPattern` interface (the
 // instance type) and lets `@types/node` own the constructor.

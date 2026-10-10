@@ -4,6 +4,6 @@ export default {
   },
   onListen() {
     console.log("Listening");
-    Deno.exit(0);
+    Edno.exit(0);
   },
-} satisfies Deno.ServeDefaultExport;
+} satisfies Edno.ServeDefaultExport;

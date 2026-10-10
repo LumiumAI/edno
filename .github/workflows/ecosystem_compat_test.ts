@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --check --allow-write=. --allow-read=. --lock=./tools/deno.lock.json
+#!/usr/bin/env -S edno run --check --allow-write=. --allow-read=. --lock=./tools/edno.lock.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 import {
   conditions,
@@ -26,9 +26,9 @@ const testJob = job("test", {
       with: { submodules: true },
     }),
     step({
-      name: "Setup Deno",
+      name: "Setup Edno",
       uses: "denoland/setup-deno@v2",
-      with: { "deno-version": "canary" },
+      with: { "edno-version": "canary" },
     }),
     step({
       name: "Install Python",
@@ -37,7 +37,7 @@ const testJob = job("test", {
     }),
     step({
       name: "Run tests",
-      run: "deno -A tools/ecosystem_compat_tests.ts",
+      run: "edno -A tools/ecosystem_compat_tests.ts",
     }),
     step({
       name: "Upload the report to dl.deno.land",
@@ -48,7 +48,7 @@ const testJob = job("test", {
         AWS_DEFAULT_REGION: "${{vars.S3_REGION }}",
       },
       run:
-        "aws s3 cp tools/ecosystem_report.json s3://dl-deno-land/ecosystem-compat-test/$(date +%F)/report-${{matrix.os}}.json",
+        "aws s3 cp tools/ecosystem_report.json s3://dl-edno-land/ecosystem-compat-test/$(date +%F)/report-${{matrix.os}}.json",
     }),
   ],
 });
@@ -73,7 +73,7 @@ const workflow = createWorkflow({
           with: { submodules: true },
         }),
         step({
-          name: "Setup Deno",
+          name: "Setup Edno",
           uses: "denoland/setup-deno@v2",
         }),
         step({
@@ -83,7 +83,7 @@ const workflow = createWorkflow({
         }),
         step({
           name: "Post message to slack channel",
-          run: "deno -A tools/ecosystem_compat_slack.ts",
+          run: "edno -A tools/ecosystem_compat_slack.ts",
           env: {
             SLACK_TOKEN: "${{ secrets.NODE_COMPAT_SLACK_TOKEN }}",
             SLACK_CHANNEL: "${{ secrets.NODE_COMPAT_SLACK_CHANNEL }}",

@@ -1,5 +1,5 @@
 {
-  "args": "task --config deno.json other",
-  "output": "deno_selected.out",
+  "args": "task --config edno.json other",
+  "output": "edno_selected.out",
   "exitCode": 0
 }

@@ -1,1 +1,1 @@
-Deno.bench();
+Edno.bench();

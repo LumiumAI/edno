@@ -1,3 +1,3 @@
-Deno.test("missing entry", async (t) => {
+Edno.test("missing entry", async (t) => {
   await t.assertSnapshot(1);
 });

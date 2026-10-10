@@ -8,8 +8,8 @@
 //! through the Rust `raw-secret` import path
 //! ([`crate::subtle_import_key::run`]).
 
-use deno_core::ToV8;
-use deno_core::v8;
+use edno_core::ToV8;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 
 use crate::CryptoError;

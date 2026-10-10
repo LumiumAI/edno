@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // This file mostly mirrors the utils in
-// https://github.com/denoland/node_test_viewer/blob/a642f725f2d9595bc8cf217c41967c446814a79e/util/report.ts
+// https://github.com/ednoland/node_test_viewer/blob/a642f725f2d9595bc8cf217c41967c446814a79e/util/report.ts
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import type {
   SingleResult,
@@ -74,11 +74,11 @@ function extractMetadata(
   if (!report) {
     return undefined;
   }
-  const { date, denoVersion, os, arch, nodeVersion, runId, total, pass } =
+  const { date, ednoVersion, os, arch, nodeVersion, runId, total, pass } =
     report;
   return {
     date,
-    denoVersion,
+    ednoVersion,
     os,
     arch,
     nodeVersion,
@@ -166,7 +166,7 @@ async function main() {
   const summaryPath = "tests/node_compat/summary.json";
   // Store the results in a JSON file
   console.log("Writing month summary to file", summaryPath);
-  await Deno.writeTextFile(summaryPath, JSON.stringify(monthSummary));
+  await Edno.writeTextFile(summaryPath, JSON.stringify(monthSummary));
 }
 
 if (import.meta.main) {

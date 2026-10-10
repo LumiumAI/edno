@@ -1,13 +1,13 @@
 import { complex } from "./complex.ts";
 
-Deno.test("complex", function () {
+Edno.test("complex", function () {
   complex("foo", "bar", "baz");
 });
 
-Deno.test("sub process with stdin", async () => {
-  // ensure launching deno run with stdin doesn't affect coverage
+Edno.test("sub process with stdin", async () => {
+  // ensure launching edno run with stdin doesn't affect coverage
   const code = "console.log('5')";
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "-"],
     stdin: "piped",
     stdout: "piped",
@@ -23,10 +23,10 @@ Deno.test("sub process with stdin", async () => {
   }
 });
 
-Deno.test("sub process with deno eval", () => {
-  // ensure launching deno eval doesn't affect coverage
+Edno.test("sub process with edno eval", () => {
+  // ensure launching edno eval doesn't affect coverage
   const code = "console.log('5')";
-  const { stdout } = new Deno.Command(Deno.execPath(), {
+  const { stdout } = new Edno.Command(Edno.execPath(), {
     args: ["eval", code],
   }).outputSync();
   const output = new TextDecoder().decode(stdout);
@@ -35,13 +35,13 @@ Deno.test("sub process with deno eval", () => {
   }
 });
 
-Deno.test("DENO_COVERAGE_DIR is set and passed down to child process", () => {
-  const coverageDir = Deno.env.get("DENO_COVERAGE_DIR");
+Edno.test("EDNO_COVERAGE_DIR is set and passed down to child process", () => {
+  const coverageDir = Edno.env.get("EDNO_COVERAGE_DIR");
   if (coverageDir === undefined) {
-    throw new Error("DENO_COVERAGE_DIR is not set");
+    throw new Error("EDNO_COVERAGE_DIR is not set");
   }
-  const code = "console.log(Deno.env.get('DENO_COVERAGE_DIR'))";
-  const { stdout } = new Deno.Command(Deno.execPath(), {
+  const code = "console.log(Edno.env.get('EDNO_COVERAGE_DIR'))";
+  const { stdout } = new Edno.Command(Edno.execPath(), {
     args: ["eval", code],
   }).outputSync();
   const output = new TextDecoder().decode(stdout);

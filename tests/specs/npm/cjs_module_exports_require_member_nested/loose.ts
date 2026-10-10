@@ -2,6 +2,6 @@
 // property of the member the wrapper re-exports. The entry module
 // re-exports the wrapper, so `loose` must not be advertised through
 // the recursive re-export chain either.
-import { loose } from "npm:@denotest/cjs-module-exports-require-member-nested";
+import { loose } from "npm:@ednotest/cjs-module-exports-require-member-nested";
 
 console.log(loose);

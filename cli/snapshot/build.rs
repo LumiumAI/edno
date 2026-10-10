@@ -8,8 +8,8 @@ fn main() {
   // toggled (see libs/core/modules/import_graph.rs).
   #[allow(clippy::print_stdout, reason = "build script output")]
   {
-    println!("cargo:rerun-if-env-changed=DENO_SNAPSHOT_IMPORT_GRAPH");
-    println!("cargo:rerun-if-env-changed=DENO_SNAPSHOT_MINIFY_SOURCES");
+    println!("cargo:rerun-if-env-changed=EDNO_SNAPSHOT_IMPORT_GRAPH");
+    println!("cargo:rerun-if-env-changed=EDNO_SNAPSHOT_MINIFY_SOURCES");
   }
   #[cfg(not(feature = "disable"))]
   {
@@ -28,16 +28,16 @@ fn create_cli_snapshot(
   use std::collections::HashSet;
   use std::io::Write;
 
-  use deno_runtime::ops::bootstrap::SnapshotOptions;
-  use deno_runtime::snapshot::LazyExtensionFileKind;
+  use edno_runtime::ops::bootstrap::SnapshotOptions;
+  use edno_runtime::snapshot::LazyExtensionFileKind;
 
   let snapshot_options = SnapshotOptions {
     ts_version: shared::TS_VERSION.to_string(),
-    v8_version: deno_runtime::deno_core::v8::VERSION_STRING,
+    v8_version: edno_runtime::edno_core::v8::VERSION_STRING,
     target: std::env::var("TARGET").unwrap(),
   };
 
-  let output = deno_runtime::snapshot::create_runtime_snapshot(
+  let output = edno_runtime::snapshot::create_runtime_snapshot(
     snapshot_path,
     snapshot_options,
     vec![],
@@ -55,7 +55,7 @@ fn create_cli_snapshot(
   let residual_sources_dir = out_dir.join("residual_sources");
   std::fs::create_dir_all(&residual_sources_dir).unwrap();
   let minify_sources =
-    std::env::var_os("DENO_SNAPSHOT_MINIFY_SOURCES").is_some();
+    std::env::var_os("EDNO_SNAPSHOT_MINIFY_SOURCES").is_some();
 
   let mut residual_js: Vec<(&str, std::path::PathBuf)> = Vec::new();
   let mut residual_esm: Vec<(&str, std::path::PathBuf)> = Vec::new();
@@ -117,7 +117,7 @@ fn create_cli_snapshot(
 /// module. Captured at the time PR #34450 landed. The heavy node-polyfill
 /// closure (process / stream / net / tty / require / the ~118 polyfill modules)
 /// is deliberately *absent* — it is `lazy_loaded_esm`, deserialized only on
-/// first `node:*` use, so non-node `deno run` / `eval` never pay for it.
+/// first `node:*` use, so non-node `edno run` / `eval` never pay for it.
 ///
 /// Anything reaching the eager graph that is NOT in this list regresses
 /// empty/ESM startup (each leaked module adds snapshot deserialization the
@@ -131,62 +131,62 @@ fn create_cli_snapshot(
 /// widening this list. See PR #34450.
 #[cfg(not(feature = "disable"))]
 const EXPECTED_CONSUMED: &[&str] = &[
-  "ext:deno_crypto/00_crypto.js",
-  "ext:deno_fetch/22_http_client.js",
-  "ext:deno_ffi/00_ffi.js",
-  "ext:deno_fs/30_fs.js",
-  "ext:deno_io/12_io.js",
-  "ext:deno_net/01_net.js",
-  "ext:deno_net/02_tls.js",
-  "ext:deno_node/02_register_cloneable.js",
-  "ext:deno_node/_util/os.ts",
-  "ext:deno_node/internal/async_hooks.ts",
-  "ext:deno_node/internal/buffer.mjs",
-  "ext:deno_node/internal/crypto/_keys.ts",
-  "ext:deno_node/internal/crypto/constants.ts",
-  "ext:deno_node/internal/error_codes.ts",
-  "ext:deno_node/internal/errors.ts",
-  "ext:deno_node/internal/hide_stack_frames.ts",
-  "ext:deno_node/internal/normalize_encoding.ts",
-  "ext:deno_node/internal/options.ts",
-  "ext:deno_node/internal/primordials.mjs",
-  "ext:deno_node/internal/timers.mjs",
-  "ext:deno_node/internal/util.mjs",
-  "ext:deno_node/internal/util/colorize.mjs",
-  "ext:deno_node/internal/util/inspect.mjs",
-  "ext:deno_node/internal/util/types.ts",
-  "ext:deno_node/internal/validators.mjs",
-  "ext:deno_node/internal_binding/_libuv_winerror.ts",
-  "ext:deno_node/internal_binding/_node.ts",
-  "ext:deno_node/internal_binding/_utils.ts",
-  "ext:deno_node/internal_binding/async_wrap.ts",
-  "ext:deno_node/internal_binding/buffer.ts",
-  "ext:deno_node/internal_binding/constants.ts",
-  "ext:deno_node/internal_binding/node_options.ts",
-  "ext:deno_node/internal_binding/string_decoder.ts",
-  "ext:deno_node/internal_binding/symbols.ts",
-  "ext:deno_node/internal_binding/types.ts",
-  "ext:deno_node/internal_binding/util.ts",
-  "ext:deno_node/internal_binding/uv.ts",
-  "ext:deno_node/timers.ts",
-  "ext:deno_os/30_os.js",
-  "ext:deno_os/40_signals.js",
-  "ext:deno_web/00_infra.js",
-  "ext:deno_web/00_url.js",
-  "ext:deno_web/01_console.js",
-  "ext:deno_web/01_dom_exception.js",
-  "ext:deno_web/02_event.js",
-  "ext:deno_web/02_timers.js",
-  "ext:deno_web/03_abort_signal.js",
-  "ext:deno_web/04_global_interfaces.js",
-  "ext:deno_web/05_base64.js",
-  "ext:deno_web/08_text_encoding.js",
-  "ext:deno_web/09_file.js",
-  "ext:deno_web/12_location.js",
-  "ext:deno_web/13_message_port.js",
-  "ext:deno_web/15_performance.js",
-  "ext:deno_webgpu/00_init.js",
-  "ext:deno_webidl/00_webidl.js",
+  "ext:edno_crypto/00_crypto.js",
+  "ext:edno_fetch/22_http_client.js",
+  "ext:edno_ffi/00_ffi.js",
+  "ext:edno_fs/30_fs.js",
+  "ext:edno_io/12_io.js",
+  "ext:edno_net/01_net.js",
+  "ext:edno_net/02_tls.js",
+  "ext:edno_node/02_register_cloneable.js",
+  "ext:edno_node/_util/os.ts",
+  "ext:edno_node/internal/async_hooks.ts",
+  "ext:edno_node/internal/buffer.mjs",
+  "ext:edno_node/internal/crypto/_keys.ts",
+  "ext:edno_node/internal/crypto/constants.ts",
+  "ext:edno_node/internal/error_codes.ts",
+  "ext:edno_node/internal/errors.ts",
+  "ext:edno_node/internal/hide_stack_frames.ts",
+  "ext:edno_node/internal/normalize_encoding.ts",
+  "ext:edno_node/internal/options.ts",
+  "ext:edno_node/internal/primordials.mjs",
+  "ext:edno_node/internal/timers.mjs",
+  "ext:edno_node/internal/util.mjs",
+  "ext:edno_node/internal/util/colorize.mjs",
+  "ext:edno_node/internal/util/inspect.mjs",
+  "ext:edno_node/internal/util/types.ts",
+  "ext:edno_node/internal/validators.mjs",
+  "ext:edno_node/internal_binding/_libuv_winerror.ts",
+  "ext:edno_node/internal_binding/_node.ts",
+  "ext:edno_node/internal_binding/_utils.ts",
+  "ext:edno_node/internal_binding/async_wrap.ts",
+  "ext:edno_node/internal_binding/buffer.ts",
+  "ext:edno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/node_options.ts",
+  "ext:edno_node/internal_binding/string_decoder.ts",
+  "ext:edno_node/internal_binding/symbols.ts",
+  "ext:edno_node/internal_binding/types.ts",
+  "ext:edno_node/internal_binding/util.ts",
+  "ext:edno_node/internal_binding/uv.ts",
+  "ext:edno_node/timers.ts",
+  "ext:edno_os/30_os.js",
+  "ext:edno_os/40_signals.js",
+  "ext:edno_web/00_infra.js",
+  "ext:edno_web/00_url.js",
+  "ext:edno_web/01_console.js",
+  "ext:edno_web/01_dom_exception.js",
+  "ext:edno_web/02_event.js",
+  "ext:edno_web/02_timers.js",
+  "ext:edno_web/03_abort_signal.js",
+  "ext:edno_web/04_global_interfaces.js",
+  "ext:edno_web/05_base64.js",
+  "ext:edno_web/08_text_encoding.js",
+  "ext:edno_web/09_file.js",
+  "ext:edno_web/12_location.js",
+  "ext:edno_web/13_message_port.js",
+  "ext:edno_web/15_performance.js",
+  "ext:edno_webgpu/00_init.js",
+  "ext:edno_webidl/00_webidl.js",
   "ext:runtime/01_errors.js",
   "ext:runtime/01_version.ts",
   "ext:runtime/06_util.js",
@@ -213,8 +213,8 @@ fn assert_consumed_set_unchanged(consumed: &std::collections::HashSet<&str>) {
   assert!(
     leaked.is_empty(),
     "lazy module(s) newly pulled into the eager snapshot: {leaked:?}.\nEach \
-     adds snapshot deserialization to the common `deno run` / `eval` startup \
-     path. If a `node:*` / `ext:deno_node/*` module leaked, an eager `esm` \
+     adds snapshot deserialization to the common `edno run` / `eval` startup \
+     path. If a `node:*` / `ext:edno_node/*` module leaked, an eager `esm` \
      entry or a static import from an eager module is dragging the node \
      polyfill closure into startup — fix it in ext/node/lib.rs. If the entry \
      is genuinely meant to be eager, add it to EXPECTED_CONSUMED. See \
@@ -229,10 +229,10 @@ fn transpile_residual_source(
   src_path: &std::path::Path,
   minify: bool,
 ) -> std::path::PathBuf {
-  use deno_runtime::deno_core::ModuleCodeString;
-  use deno_runtime::deno_core::ModuleName;
-  use deno_runtime::transpile::maybe_transpile_and_minify_source;
-  use deno_runtime::transpile::maybe_transpile_source;
+  use edno_runtime::edno_core::ModuleCodeString;
+  use edno_runtime::edno_core::ModuleName;
+  use edno_runtime::transpile::maybe_transpile_and_minify_source;
+  use edno_runtime::transpile::maybe_transpile_source;
 
   let source = std::fs::read_to_string(src_path).unwrap_or_else(|e| {
     panic!(
@@ -252,7 +252,7 @@ fn transpile_residual_source(
   });
 
   // Sanitize the specifier into a filesystem-safe name. Specifiers look like
-  // `ext:deno_node/https.ts`, which we want to round-trip into a unique file.
+  // `ext:edno_node/https.ts`, which we want to round-trip into a unique file.
   let sanitized: String = specifier
     .chars()
     .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
@@ -264,7 +264,7 @@ fn transpile_residual_source(
 
 #[cfg(not(feature = "disable"))]
 fn wrap_residual_js_source(path: &std::path::Path) {
-  use deno_runtime::deno_core::wrap_lazy_ext_script;
+  use edno_runtime::edno_core::wrap_lazy_ext_script;
   let source = std::fs::read_to_string(path).unwrap();
   let wrapped = wrap_lazy_ext_script(&source);
   std::fs::write(path, wrapped.as_bytes()).unwrap();

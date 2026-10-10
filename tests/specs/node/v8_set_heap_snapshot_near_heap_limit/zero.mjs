@@ -5,11 +5,11 @@ try {
 } catch (err) {
   if (err?.code === "ERR_OUT_OF_RANGE") {
     console.log("zero-limit-rejected");
-    Deno.exit(0);
+    Edno.exit(0);
   }
   console.error(err);
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 console.error("setHeapSnapshotNearHeapLimit(0) did not throw");
-Deno.exit(1);
+Edno.exit(1);

@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_lockfile::NewLockfileOptions;
-use deno_lockfile::NpmPackageInfoProvider;
+use edno_lockfile::NewLockfileOptions;
+use edno_lockfile::NpmPackageInfoProvider;
 use deno_semver::jsr::JsrDepPackageReq;
 use test_util as util;
 use util::TestContext;
@@ -30,7 +30,7 @@ fn cache_switching_config_then_no_config() {
     if with_config {
       let mut slice = vec![
         "--config".to_string(),
-        "check/cache_config_on_off/deno.json".to_string(),
+        "check/cache_config_on_off/edno.json".to_string(),
       ];
       args.append(&mut slice);
     }
@@ -81,7 +81,7 @@ fn typecheck_declarations_ns() {
     "check".to_string(),
     "--doc-only".to_string(),
     util::root_path()
-      .join("cli/tsc/dts/lib.deno.ns.d.ts")
+      .join("cli/tsc/dts/lib.edno.ns.d.ts")
       .to_string_lossy()
       .into_owned(),
   ];
@@ -105,7 +105,7 @@ fn typecheck_declarations_unstable() {
     "check".to_string(),
     "--doc-only".to_string(),
     util::root_path()
-      .join("cli/tsc/dts/lib.deno.unstable.d.ts")
+      .join("cli/tsc/dts/lib.edno.unstable.d.ts")
       .to_string_lossy()
       .into_owned(),
   ];
@@ -198,7 +198,7 @@ impl NpmPackageInfoProvider for TestNpmPackageInfoProvider {
     &self,
     values: &[deno_semver::package::PackageNv],
   ) -> Result<
-    Vec<deno_lockfile::Lockfile5NpmInfo>,
+    Vec<edno_lockfile::Lockfile5NpmInfo>,
     Box<dyn std::error::Error + Send + Sync>,
   > {
     Ok(values.iter().map(|_| Default::default()).collect())
@@ -213,7 +213,7 @@ async fn npm_module_check_then_error() {
     .use_http_server()
     .build();
   let temp_dir = test_context.temp_dir();
-  temp_dir.write("deno.json", "{}"); // so the lockfile gets loaded
+  temp_dir.write("edno.json", "{}"); // so the lockfile gets loaded
 
   // get the lockfiles values first (this is necessary because the test
   // server generates different tarballs based on the operating system)
@@ -221,13 +221,13 @@ async fn npm_module_check_then_error() {
     .new_command()
     .args_vec([
       "cache",
-      "npm:@denotest/breaking-change-between-versions@1.0.0",
-      "npm:@denotest/breaking-change-between-versions@2.0.0",
+      "npm:@ednotest/breaking-change-between-versions@1.0.0",
+      "npm:@ednotest/breaking-change-between-versions@2.0.0",
     ])
     .run()
     .skip_output_check();
-  let lockfile_path = temp_dir.path().join("deno.lock");
-  let mut lockfile = deno_lockfile::Lockfile::new(
+  let lockfile_path = temp_dir.path().join("edno.lock");
+  let mut lockfile = edno_lockfile::Lockfile::new(
     NewLockfileOptions {
       file_path: lockfile_path.to_path_buf(),
       content: &lockfile_path.read_to_string(),
@@ -241,7 +241,7 @@ async fn npm_module_check_then_error() {
   // make the specifier resolve to version 1
   lockfile.content.packages.specifiers.insert(
     JsrDepPackageReq::from_str(
-      "npm:@denotest/breaking-change-between-versions",
+      "npm:@ednotest/breaking-change-between-versions",
     )
     .unwrap(),
     "1.0.0".into(),
@@ -249,7 +249,7 @@ async fn npm_module_check_then_error() {
   lockfile_path.write(lockfile.as_json_string());
   temp_dir.write(
     "main.ts",
-    "import { oldName } from 'npm:@denotest/breaking-change-between-versions'; console.log(oldName());\n",
+    "import { oldName } from 'npm:@ednotest/breaking-change-between-versions'; console.log(oldName());\n",
   );
 
   let check_command = test_context.new_command().args_vec(["check", "main.ts"]);
@@ -259,7 +259,7 @@ async fn npm_module_check_then_error() {
   // type checking error because the oldName no longer exists
   lockfile.content.packages.specifiers.insert(
     JsrDepPackageReq::from_str(
-      "npm:@denotest/breaking-change-between-versions",
+      "npm:@ednotest/breaking-change-between-versions",
     )
     .unwrap(),
     "2.0.0".into(),

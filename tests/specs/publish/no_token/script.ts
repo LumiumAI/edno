@@ -1,4 +1,4 @@
-const output = new Deno.Command(Deno.execPath(), {
+const output = new Edno.Command(Edno.execPath(), {
   args: ["publish"],
   clearEnv: true,
   env: {
@@ -7,4 +7,4 @@ const output = new Deno.Command(Deno.execPath(), {
   stdout: "inherit",
   stderr: "inherit",
 }).outputSync();
-Deno.exit(output.code);
+Edno.exit(output.code);

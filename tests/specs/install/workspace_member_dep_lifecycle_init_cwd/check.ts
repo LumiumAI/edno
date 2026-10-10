@@ -8,7 +8,7 @@ console.log("marker in root:", existsSync("init-cwd-marker.txt"));
 
 function existsSync(path: string): boolean {
   try {
-    Deno.statSync(path);
+    Edno.statSync(path);
     return true;
   } catch {
     return false;

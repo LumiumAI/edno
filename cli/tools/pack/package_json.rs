@@ -3,17 +3,17 @@
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use deno_config::deno_json::ConfigFile;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::serde_json::json;
+use edno_config::edno_json::ConfigFile;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::serde_json::json;
 use serde::Serialize;
 
 use super::ProcessedFile;
 use super::extensions::ts_to_dts_extension;
 use super::extensions::ts_to_js_extension;
 
-/// Build the lookup of source paths (as written in `deno.json` exports,
+/// Build the lookup of source paths (as written in `edno.json` exports,
 /// normalized) for which fast-check generated a usable `.d.ts`. We need
 /// this so the `types` field is only emitted for entries whose declarations
 /// actually exist in the tarball; otherwise TypeScript would resolve a
@@ -26,7 +26,7 @@ fn dts_available_set(files: &[ProcessedFile]) -> HashSet<String> {
     .collect()
 }
 
-/// Returns true if the deno.json export source path (e.g. "./mod.ts") has
+/// Returns true if the edno.json export source path (e.g. "./mod.ts") has
 /// a corresponding generated .d.ts in the tarball.
 fn has_dts(set: &HashSet<String>, source_path: &str) -> bool {
   set.contains(&ts_to_js_extension(source_path))
@@ -65,7 +65,7 @@ pub fn generate_package_json(
     .json
     .name
     .as_ref()
-    .ok_or_else(|| deno_core::anyhow::anyhow!("Missing name in config"))?;
+    .ok_or_else(|| edno_core::anyhow::anyhow!("Missing name in config"))?;
 
   let dts_set = dts_available_set(files);
 
@@ -177,8 +177,8 @@ fn convert_exports(
     return Ok(serde_json::Value::Object(result));
   }
 
-  deno_core::anyhow::bail!(
-    "unsupported 'exports' shape in deno.json: expected a string or object, got {}",
+  edno_core::anyhow::bail!(
+    "unsupported 'exports' shape in edno.json: expected a string or object, got {}",
     exports
   )
 }
@@ -218,7 +218,7 @@ fn extract_main_and_types(
       };
       return (Some(js_path), dts_path);
     } else if let Some(obj) = dot_export.as_object() {
-      // Rewrite the source extension on the way out: deno.json may carry
+      // Rewrite the source extension on the way out: edno.json may carry
       // `{"import": "./foo.ts"}` for the dot-export, but the tarball
       // contains the transpiled `.js`, so package.json's `main` must
       // point at the `.js` file or `npm install`-time resolution fails.

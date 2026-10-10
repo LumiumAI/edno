@@ -7,7 +7,7 @@
 import {
   greet,
   IMAGE_TYPE,
-} from "npm:@denotest/cjs-deep-relative-reexport@1.0.0";
+} from "npm:@ednotest/cjs-deep-relative-reexport@1.0.0";
 
 console.log(greet());
 console.log(IMAGE_TYPE);

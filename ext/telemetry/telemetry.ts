@@ -26,7 +26,7 @@ const {
   OtelMeter,
   OtelTracer,
 } = core.ops;
-const { Console } = core.loadExtScript("ext:deno_web/01_console.js");
+const { Console } = core.loadExtScript("ext:edno_web/01_console.js");
 
 const {
   ArrayFrom,
@@ -209,9 +209,9 @@ interface AsyncContextSnapshot {
 // A `unique symbol` type requires a direct `Symbol.for()` call, which is what
 // makes `SpanSnapshot` below narrowable. This runs during bootstrap, before any
 // user code, so reaching for the global here is safe.
-// deno-lint-ignore deno-internal/prefer-primordials
+// edno-lint-ignore edno-internal/prefer-primordials
 const DID_NOT_ENTER: unique symbol = Symbol.for(
-  "Deno.telemetry.didNotEnterSpan",
+  "Edno.telemetry.didNotEnterSpan",
 );
 
 /**
@@ -245,7 +245,7 @@ function isDate(value: unknown): value is Date {
 interface OtelTracer {
   __key: "tracer";
 
-  // deno-lint-ignore no-misused-new
+  // edno-lint-ignore no-misused-new
   new (name: string, version?: string, schemaUrl?: string): OtelTracer;
 
   startSpan(
@@ -669,7 +669,7 @@ class ContextManager {
     }
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   static bind<T extends (...args: any[]) => any>(
     context: Context,
     target: T,
@@ -824,7 +824,7 @@ class Meter {
     if (!METRICS_ENABLED) return new Counter(null, false);
     const instrument = this.#meter.createCounter(
       name,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       options?.description,
       options?.unit,
     ) as Instrument;
@@ -838,7 +838,7 @@ class Meter {
     if (!METRICS_ENABLED) return new Counter(null, true);
     const instrument = this.#meter.createUpDownCounter(
       name,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       options?.description,
       options?.unit,
     ) as Instrument;
@@ -852,7 +852,7 @@ class Meter {
     if (!METRICS_ENABLED) return new Gauge(null);
     const instrument = this.#meter.createGauge(
       name,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       options?.description,
       options?.unit,
     ) as Instrument;
@@ -866,7 +866,7 @@ class Meter {
     if (!METRICS_ENABLED) return new Histogram(null);
     const instrument = this.#meter.createHistogram(
       name,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       options?.description,
       options?.unit,
       options?.advice?.explicitBucketBoundaries,
@@ -881,7 +881,7 @@ class Meter {
     if (!METRICS_ENABLED) new Observable(new ObservableResult(null, true));
     const instrument = this.#meter.createObservableCounter(
       name,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       options?.description,
       options?.unit,
     ) as Instrument;
@@ -898,7 +898,7 @@ class Meter {
     if (!METRICS_ENABLED) new Observable(new ObservableResult(null, false));
     const instrument = this.#meter.createObservableUpDownCounter(
       name,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       options?.description,
       options?.unit,
     ) as Instrument;
@@ -912,7 +912,7 @@ class Meter {
     if (!METRICS_ENABLED) new Observable(new ObservableResult(null, false));
     const instrument = this.#meter.createObservableGauge(
       name,
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       options?.description,
       options?.unit,
     ) as Instrument;
@@ -1174,22 +1174,22 @@ async function observe(): Promise<void> {
 
   const promises: Promise<void>[] = [];
   // Primordials are not needed, because this is a SafeMap.
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   for (const { 0: observable, 1: callbacks } of INDIVIDUAL_CALLBACKS) {
     const result = getObservableResult(observable);
     // Primordials are not needed, because this is a SafeSet.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     for (const callback of callbacks) {
       // PromiseTry is not in primordials?
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       ArrayPrototypePush(promises, Promise.try(callback, result));
     }
   }
   // Primordials are not needed, because this is a SafeMap.
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   for (const { 0: callback, 1: result } of BATCH_CALLBACKS) {
     // PromiseTry is not in primordials?
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     ArrayPrototypePush(promises, Promise.try(callback, result));
   }
   await SafePromiseAll(promises);
@@ -1362,7 +1362,7 @@ class NonRecordingSpan implements Span {
     return false;
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   recordException(_exception: any, _time?: TimeInput): void {}
 }
 
@@ -1388,12 +1388,12 @@ function parseTraceParent(traceParent: string): SpanContext | null {
   };
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 interface TextMapSetter<Carrier = any> {
   set(carrier: Carrier, key: string, value: string): void;
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 interface TextMapPropagator<Carrier = any> {
   inject(
     context: Context,
@@ -1408,7 +1408,7 @@ interface TextMapPropagator<Carrier = any> {
   fields(): string[];
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 interface TextMapGetter<Carrier = any> {
   keys(carrier: Carrier): string[];
   get(carrier: Carrier, key: string): undefined | string | string[];
@@ -1653,7 +1653,7 @@ function getKeyPairs(baggage: Baggage): string[] {
     // NOTE: we intentionally don't URI-encode the metadata - that responsibility falls on the metadata implementation
     if (baggageEntry[1].metadata !== undefined) {
       entry += BAGGAGE_PROPERTIES_SEPARATOR +
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         baggageEntry[1].metadata.toString();
     }
 
@@ -1825,7 +1825,7 @@ class CompositePropagator implements TextMapPropagator {
       try {
         propagator.inject(context, carrier, setter);
       } catch (err) {
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.warn(
           `Failed to inject with ${propagator.constructor.name}.`,
           err,
@@ -1839,7 +1839,7 @@ class CompositePropagator implements TextMapPropagator {
       try {
         return propagator.extract(ctx, carrier, getter);
       } catch (err) {
-        // deno-lint-ignore no-console
+        // edno-lint-ignore no-console
         console.warn(
           `Failed to extract with ${propagator.constructor.name}.`,
           err,

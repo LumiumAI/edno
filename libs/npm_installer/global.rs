@@ -6,13 +6,13 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use deno_error::JsErrorBox;
-use deno_npm::NpmResolutionPackage;
-use deno_npm::NpmSystemInfo;
-use deno_npm_cache::NpmCache;
-use deno_npm_cache::NpmCacheHttpClient;
-use deno_npm_cache::NpmCacheSys;
-use deno_npm_cache::TarballCache;
-use deno_resolver::npm::managed::NpmResolutionCell;
+use edno_npm::NpmResolutionPackage;
+use edno_npm::NpmSystemInfo;
+use edno_npm_cache::NpmCache;
+use edno_npm_cache::NpmCacheHttpClient;
+use edno_npm_cache::NpmCacheSys;
+use edno_npm_cache::TarballCache;
+use edno_resolver::npm::managed::NpmResolutionCell;
 use deno_terminal::colors;
 use futures::StreamExt;
 use futures::stream::FuturesUnordered;
@@ -78,7 +78,7 @@ impl<THttpClient: NpmCacheHttpClient, TSys: NpmCacheSys>
   async fn cache_packages(
     &self,
     packages: &[NpmResolutionPackage],
-  ) -> Result<(), deno_npm_cache::EnsurePackageError> {
+  ) -> Result<(), edno_npm_cache::EnsurePackageError> {
     let mut futures_unordered = FuturesUnordered::new();
     for package in packages {
       if let Some(dist) = &package.dist {
@@ -141,7 +141,7 @@ impl<THttpClient: NpmCacheHttpClient, TSys: NpmCacheSys> NpmPackageFsInstaller
 
     // For the global cache, we don't run scripts so we just care that there _are_
     // scripts. Kind of hacky, but avoids fetching the "extra" info from the registry.
-    let extra = deno_npm::NpmPackageExtraInfo {
+    let extra = edno_npm::NpmPackageExtraInfo {
       deprecated: None,
       bin: None,
       scripts: [("postinstall".into(), "".into())].into_iter().collect(),
@@ -245,7 +245,7 @@ impl<TSys: NpmCacheSys> LifecycleScriptsStrategy
     );
     _ = writeln!(
       &mut output,
-      "{}  Enable it in your deno config file:",
+      "{}  Enable it in your edno config file:",
       colors::yellow("│")
     );
     _ = writeln!(

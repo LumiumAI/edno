@@ -1,6 +1,6 @@
 {
-  "name": "@denotest/app",
+  "name": "@ednotest/app",
   "dependencies": {
-    "@denotest/prerelease-member": "*"
+    "@ednotest/prerelease-member": "*"
   }
 }

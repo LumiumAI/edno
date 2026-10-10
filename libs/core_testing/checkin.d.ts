@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 /// <reference lib="dom" />
@@ -23,7 +23,7 @@ declare global {
     transfer(size: number): SharedArrayBuffer;
   }
 
-  namespace Deno {
+  namespace Edno {
     export function refTimer(id: number): void;
     export function unrefTimer(id: number): void;
   }

@@ -126,7 +126,7 @@ const EXEC_TIME_BENCHMARKS: &[(&str, &[&str], Option<i32>)] = &[
   //     "--reload",
   //     "--unstable",
   //     "--config",
-  //     "tests/config/deno.json",
+  //     "tests/config/edno.json",
   //     "tests/util/std/http/file_server_test.ts",
   //   ],
   //   None,
@@ -139,7 +139,7 @@ const EXEC_TIME_BENCHMARKS: &[(&str, &[&str], Option<i32>)] = &[
   //     "--no-check",
   //     "--unstable",
   //     "--config",
-  //     "tests/config/deno.json",
+  //     "tests/config/edno.json",
   //     "tests/util/std/http/file_server_test.ts",
   //   ],
   //   None,
@@ -149,7 +149,7 @@ const EXEC_TIME_BENCHMARKS: &[(&str, &[&str], Option<i32>)] = &[
 const RESULT_KEYS: &[&str] =
   &["mean", "stddev", "user", "system", "min", "max"];
 fn run_exec_time(
-  deno_exe: &Path,
+  edno_exe: &Path,
   target_dir: &PathRef,
 ) -> Result<HashMap<String, HashMap<String, f64>>> {
   let hyperfine_exe = test_util::prebuilt_tool_path("hyperfine").to_string();
@@ -178,7 +178,7 @@ fn run_exec_time(
     };
     command.push(format!(
       "{} {} {}",
-      deno_exe.to_str().unwrap(),
+      edno_exe.to_str().unwrap(),
       args.join(" "),
       ret_code_test
     ));
@@ -249,8 +249,8 @@ fn get_binary_sizes(target_dir: &Path) -> Result<HashMap<String, i64>> {
   let mut mtimes = HashMap::<String, SystemTime>::new();
 
   sizes.insert(
-    "deno".to_string(),
-    test_util::deno_exe_path().as_path().metadata()?.len() as i64,
+    "edno".to_string(),
+    test_util::edno_exe_path().as_path().metadata()?.len() as i64,
   );
 
   // add up size for everything in target/release/deps/libswc*
@@ -292,12 +292,12 @@ fn get_binary_sizes(target_dir: &Path) -> Result<HashMap<String, i64>> {
   Ok(sizes)
 }
 
-fn run_max_mem_benchmark(deno_exe: &Path) -> Result<HashMap<String, i64>> {
+fn run_max_mem_benchmark(edno_exe: &Path) -> Result<HashMap<String, i64>> {
   let mut results = HashMap::<String, i64>::new();
 
   for (name, args, return_code) in EXEC_TIME_BENCHMARKS {
     let proc = Command::new("time")
-      .args(["-v", deno_exe.to_str().unwrap()])
+      .args(["-v", edno_exe.to_str().unwrap()])
       .args(args.iter())
       .stdout(Stdio::null())
       .stderr(Stdio::piped())
@@ -333,7 +333,7 @@ fn cargo_deps() -> usize {
   count
 }
 
-// TODO(@littledivy): Remove this, denoland/benchmark_data is deprecated.
+// TODO(@littledivy): Remove this, ednoland/benchmark_data is deprecated.
 #[derive(Default, serde::Serialize)]
 struct BenchResult {
   created_at: String,
@@ -383,13 +383,13 @@ async fn main() -> Result<()> {
     return Ok(());
   }
 
-  println!("Starting Deno benchmark");
+  println!("Starting Edno benchmark");
 
   let target_dir = test_util::target_dir();
-  let deno_exe = if let Ok(p) = std::env::var("DENO_BENCH_EXE") {
+  let edno_exe = if let Ok(p) = std::env::var("EDNO_BENCH_EXE") {
     PathBuf::from(p)
   } else {
-    test_util::deno_exe_path().to_path_buf()
+    test_util::edno_exe_path().to_path_buf()
   };
   env::set_current_dir(test_util::root_path())?;
 
@@ -410,7 +410,7 @@ async fn main() -> Result<()> {
   };
 
   if benchmarks.contains(&"exec_time") {
-    let exec_times = run_exec_time(&deno_exe, &target_dir)?;
+    let exec_times = run_exec_time(&edno_exe, &target_dir)?;
     new_data.benchmark = exec_times;
   }
 
@@ -425,7 +425,7 @@ async fn main() -> Result<()> {
   }
 
   if benchmarks.contains(&"lsp") {
-    let lsp_exec_times = lsp::benchmarks(&deno_exe);
+    let lsp_exec_times = lsp::benchmarks(&edno_exe);
     new_data.lsp_exec_time = lsp_exec_times;
   }
 
@@ -444,7 +444,7 @@ async fn main() -> Result<()> {
           "-f",
           "-o",
           file.path().to_str().unwrap(),
-          deno_exe.to_str().unwrap(),
+          edno_exe.to_str().unwrap(),
         ])
         .args(args.iter())
         .stdout(Stdio::null())
@@ -476,7 +476,7 @@ async fn main() -> Result<()> {
   }
 
   if benchmarks.contains(&"mem_usage") {
-    let max_memory = run_max_mem_benchmark(&deno_exe)?;
+    let max_memory = run_max_mem_benchmark(&edno_exe)?;
     new_data.max_memory = max_memory;
   }
 

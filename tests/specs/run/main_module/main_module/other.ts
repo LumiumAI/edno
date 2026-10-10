@@ -1,1 +1,1 @@
-console.log("other", Deno.mainModule);
+console.log("other", Edno.mainModule);

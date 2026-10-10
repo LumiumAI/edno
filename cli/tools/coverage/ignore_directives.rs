@@ -5,12 +5,12 @@ use std::collections::HashSet;
 use deno_ast::MediaType;
 use deno_ast::TextLines;
 use deno_ast::swc::common::comments::CommentKind;
-use deno_core::url::Url;
+use edno_core::url::Url;
 
-static COVERAGE_IGNORE_START_DIRECTIVE: &str = "deno-coverage-ignore-start";
-static COVERAGE_IGNORE_STOP_DIRECTIVE: &str = "deno-coverage-ignore-stop";
-static COVERAGE_IGNORE_NEXT_DIRECTIVE: &str = "deno-coverage-ignore";
-static COVERAGE_IGNORE_FILE_DIRECTIVE: &str = "deno-coverage-ignore-file";
+static COVERAGE_IGNORE_START_DIRECTIVE: &str = "edno-coverage-ignore-start";
+static COVERAGE_IGNORE_STOP_DIRECTIVE: &str = "edno-coverage-ignore-stop";
+static COVERAGE_IGNORE_NEXT_DIRECTIVE: &str = "edno-coverage-ignore";
+static COVERAGE_IGNORE_FILE_DIRECTIVE: &str = "edno-coverage-ignore-file";
 
 pub struct RangeIgnoreDirective {
   pub start_line_index: usize,
@@ -233,14 +233,14 @@ mod tests {
     #[test]
     fn test_parse_range_ignore_comments() {
       let source_code = r#"
-        // deno-coverage-ignore-start
+        // edno-coverage-ignore-start
         function foo(): any {}
-        // deno-coverage-ignore-stop
+        // edno-coverage-ignore-stop
 
         function bar(): any {
-          // deno-coverage-ignore-start
+          // edno-coverage-ignore-start
           foo();
-          // deno-coverage-ignore-stop
+          // edno-coverage-ignore-stop
         }
       "#;
       let (comments, text_line) = parse_with_text_lines(source_code);
@@ -259,7 +259,7 @@ mod tests {
     #[test]
     fn test_parse_range_ignore_comments_unterminated() {
       let source_code = r#"
-        // deno-coverage-ignore-start
+        // edno-coverage-ignore-start
         function foo(): any {}
 
         function bar(): any {
@@ -278,15 +278,15 @@ mod tests {
     #[test]
     fn test_parse_range_ignore_comments_nested() {
       let source_code = r#"
-        // deno-coverage-ignore-start
+        // edno-coverage-ignore-start
         function foo(): any {}
 
         function bar(): any {
-          // deno-coverage-ignore-start
+          // edno-coverage-ignore-start
           foo();
-          // deno-coverage-ignore-stop
+          // edno-coverage-ignore-stop
         }
-        // deno-coverage-ignore-stop
+        // edno-coverage-ignore-stop
       "#;
       let (comments, text_lines) = parse_with_text_lines(source_code);
       let range_directives = parse_range_ignore_directives(
@@ -306,11 +306,11 @@ mod tests {
     #[test]
     fn test_parse_next_ignore_comments() {
       let source_code = r#"
-        // deno-coverage-ignore
+        // edno-coverage-ignore
         function foo(): any {}
 
         function bar(): any {
-          // deno-coverage-ignore
+          // edno-coverage-ignore
           foo();
         }
       "#;
@@ -328,21 +328,21 @@ mod tests {
 
     #[test]
     fn test_parse_global_ignore_directives() {
-      let comments = parse("// deno-coverage-ignore-file");
+      let comments = parse("// edno-coverage-ignore-file");
       assert!(has_file_ignore_directive(&comments));
     }
 
     #[test]
     fn test_parse_global_ignore_directives_with_explanation() {
       let comments =
-        parse("// deno-coverage-ignore-file -- reason for ignoring");
+        parse("// edno-coverage-ignore-file -- reason for ignoring");
       assert!(has_file_ignore_directive(&comments));
     }
 
     #[test]
     fn test_parse_global_ignore_directives_argument_and_explanation() {
       let comments =
-        parse("// deno-coverage-ignore-file foo -- reason for ignoring");
+        parse("// edno-coverage-ignore-file foo -- reason for ignoring");
       assert!(has_file_ignore_directive(&comments));
     }
 
@@ -351,7 +351,7 @@ mod tests {
       let comments = parse(
         r#"
         // The coverage ignore file comment must be first
-        // deno-coverage-ignore-file
+        // edno-coverage-ignore-file
         const x = 42;
       "#,
       );
@@ -363,7 +363,7 @@ mod tests {
       let comments = parse(
         r#"
         const x = 42;
-        // deno-coverage-ignore-file
+        // edno-coverage-ignore-file
       "#,
       );
       assert!(!has_file_ignore_directive(&comments));
@@ -373,8 +373,8 @@ mod tests {
     fn test_parse_global_ignore_directives_shebang() {
       let comments = parse(
         r#"
-          #!/usr/bin/env -S deno run
-          // deno-coverage-ignore-file
+          #!/usr/bin/env -S edno run
+          // edno-coverage-ignore-file
           const x = 42;
         "#
         .trim_start(),
@@ -386,8 +386,8 @@ mod tests {
     fn test_parse_global_ignore_directives_shebang_no_code() {
       let comments = parse(
         r#"
-        #!/usr/bin/env -S deno run
-        // deno-coverage-ignore-file
+        #!/usr/bin/env -S edno run
+        // edno-coverage-ignore-file
         "#
         .trim_start(),
       );

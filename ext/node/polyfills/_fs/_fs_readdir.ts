@@ -1,16 +1,16 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 import { core, primordials } from "ext:core/mod.js";
-const { denoErrorToNodeError } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+const { ednoErrorToNodeError } = core.loadExtScript(
+  "ext:edno_node/internal/errors.ts",
 );
 import {
   type Dirent,
   direntFromDeno,
   getValidatedPathToString,
-} from "ext:deno_node/internal/fs/utils.mjs";
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { promisify } = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} from "ext:edno_node/internal/fs/utils.mjs";
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { promisify } = core.loadExtScript("ext:edno_node/internal/util.mjs");
 import {
   op_fs_read_dir_async,
   op_fs_read_dir_async_next,
@@ -39,13 +39,13 @@ const {
 // characters in 0xE000-0xFFFF even though its code point is above all of them.
 // So we scan a directory's entries once and fall back to the slower explicit
 // code-point comparison only when a surrogate is present.
-function compareEntriesFast(a: Deno.DirEntry, b: Deno.DirEntry): number {
+function compareEntriesFast(a: Edno.DirEntry, b: Edno.DirEntry): number {
   const an = a.name;
   const bn = b.name;
   return an < bn ? -1 : an > bn ? 1 : 0;
 }
 
-function compareEntriesUtf8(a: Deno.DirEntry, b: Deno.DirEntry): number {
+function compareEntriesUtf8(a: Edno.DirEntry, b: Edno.DirEntry): number {
   const an = a.name;
   const bn = b.name;
   if (an === bn) return 0;
@@ -72,7 +72,7 @@ function hasSurrogate(name: string): boolean {
   return false;
 }
 
-function sortDirEntries(entries: Deno.DirEntry[]): Deno.DirEntry[] {
+function sortDirEntries(entries: Edno.DirEntry[]): Edno.DirEntry[] {
   if (entries.length < 2) return entries;
   let needsUtf8 = false;
   for (let i = 0; i < entries.length; i++) {
@@ -101,9 +101,9 @@ type readDirBoth = (
   ...args: [Error] | [null, string[] | Dirent[] | Array<string | Dirent>]
 ) => void;
 
-async function collectReadDir(path: string): Promise<Deno.DirEntry[]> {
+async function collectReadDir(path: string): Promise<Edno.DirEntry[]> {
   const rid = await op_fs_read_dir_async(path);
-  const entries: Deno.DirEntry[] = [];
+  const entries: Edno.DirEntry[] = [];
   try {
     while (true) {
       const entry = await op_fs_read_dir_async_next(rid);
@@ -205,7 +205,7 @@ export function readdir(
         }
       } catch (err) {
         callback(
-          denoErrorToNodeError(err as Error, {
+          ednoErrorToNodeError(err as Error, {
             syscall: "readdir",
             path: current,
           }),
@@ -239,7 +239,7 @@ function decode(str: string, encoding?: string): string | Buffer {
   const buf = Buffer.from(str, "utf8");
   if (encoding === "buffer") return buf;
   // No primordial exists for Buffer.prototype.toString with an encoding.
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return buf.toString(encoding as BufferEncoding);
 }
 
@@ -303,7 +303,7 @@ export function readdirSync(
         }
       }
     } catch (e) {
-      throw denoErrorToNodeError(e as Error, {
+      throw ednoErrorToNodeError(e as Error, {
         syscall: "readdir",
         path: current,
       });

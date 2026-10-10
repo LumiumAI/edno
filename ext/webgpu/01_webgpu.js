@@ -1,10 +1,10 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 // @ts-check
-/// <reference path="../../core/lib.deno_core.d.ts" />
+/// <reference path="../../core/lib.edno_core.d.ts" />
 /// <reference path="../web/internal.d.ts" />
-/// <reference path="../../cli/tsc/dts/lib.deno_web.d.ts" />
-/// <reference path="../../cli/tsc/dts/lib.deno_webgpu.d.ts" />
+/// <reference path="../../cli/tsc/dts/lib.edno_web.d.ts" />
+/// <reference path="../../cli/tsc/dts/lib.edno_webgpu.d.ts" />
 
 import { core, primordials } from "ext:core/mod.js";
 import {
@@ -55,19 +55,19 @@ const {
 // change the error thrown for the required `reason` member.
 const EMPTY_OPTIONS = ObjectFreeze(ObjectSetPrototypeOf({}, null));
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const {
   defineEventHandler,
   Event,
   EventTargetPrototype,
   setEventTargetData,
-} = core.loadExtScript("ext:deno_web/02_event.js");
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+} = core.loadExtScript("ext:edno_web/02_event.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
 
-const privateCustomInspect = SymbolFor("Deno.privateCustomInspect");
+const privateCustomInspect = SymbolFor("Edno.privateCustomInspect");
 const _message = Symbol("[[message]]");
 const illegalConstructorKey = Symbol("illegalConstructorKey");
 
@@ -238,7 +238,7 @@ ObjectDefineProperty(GPUSupportedFeaturesPrototype, privateCustomInspect, {
   value(inspect, inspectOptions) {
     if (ObjectPrototypeIsPrototypeOf(GPUSupportedFeaturesPrototype, this)) {
       return `${this.constructor.name} ${
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         inspect([...this], inspectOptions)}`;
     } else {
       return `${this.constructor.name} ${inspect({}, inspectOptions)}`;
@@ -253,7 +253,7 @@ ObjectDefineProperty(WGSLLanguageFeaturesPrototype, privateCustomInspect, {
   value(inspect, inspectOptions) {
     if (ObjectPrototypeIsPrototypeOf(WGSLLanguageFeaturesPrototype, this)) {
       return `${this.constructor.name} ${
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         inspect([...this], inspectOptions)}`;
     } else {
       return `${this.constructor.name} ${inspect({}, inspectOptions)}`;
@@ -902,7 +902,7 @@ function deviceStopCapture(device) {
   op_webgpu_device_stop_capture(device);
 }
 
-const denoNsWebGPU = {
+const ednoNsWebGPU = {
   deviceStartCapture,
   deviceStopCapture,
 };
@@ -920,7 +920,7 @@ function initGPU() {
 }
 
 export {
-  denoNsWebGPU,
+  ednoNsWebGPU,
   GPU,
   gpu,
   GPUAdapter,

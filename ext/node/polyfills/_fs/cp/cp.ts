@@ -5,11 +5,11 @@
 const { core, primordials } = __bootstrap;
 const lazyPath = core.createLazyLoader("node:path");
 const lazyFsPromises = core.createLazyLoader(
-  "ext:deno_node/internal/fs/promises.ts",
+  "ext:edno_node/internal/fs/promises.ts",
 );
 const lazyConstants = core.createLazyLoader("node:constants");
 const {
-  denoErrorToNodeError,
+  ednoErrorToNodeError,
   ERR_FS_CP_DIR_TO_NON_DIR,
   ERR_FS_CP_EEXIST,
   ERR_FS_CP_EINVAL,
@@ -19,7 +19,7 @@ const {
   ERR_FS_CP_SYMLINK_TO_SUBDIRECTORY,
   ERR_FS_CP_UNKNOWN,
   ERR_FS_EISDIR,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   op_node_cp_check_paths_recursive,
   op_node_cp_fast,
@@ -154,7 +154,7 @@ async function cpFn(
     return await getStatsForCopy(statInfo, src, dest, opts);
   } catch (err) {
     if (typeof err?.os_errno === "number") {
-      throw denoErrorToNodeError(err, {
+      throw ednoErrorToNodeError(err, {
         path: err.path,
         dest: err.dest,
         syscall: err.syscall,
@@ -249,7 +249,7 @@ async function onFile(
 
 function setDestMode(dest, srcMode) {
   if (!srcMode) return PromiseResolve();
-  return Deno.chmod(dest, srcMode);
+  return Edno.chmod(dest, srcMode);
 }
 
 function onDir(
@@ -286,7 +286,7 @@ async function copyDir(
   const dir = await lazyFsPromises().opendirPromise(src);
   const iterator = dir[SymbolAsyncIterator]();
   while (true) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     const { done, value } = await iterator.next();
     if (done) break;
     const { name } = value;

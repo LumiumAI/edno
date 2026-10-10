@@ -85,14 +85,14 @@ fn convert_or_serde<T: quote::ToTokens>(
 ) -> TokenStream {
   if serde {
     quote_spanned! { span =>
-      ::deno_core::serde_v8::to_v8(
+      ::edno_core::serde_v8::to_v8(
         __scope,
         #value,
       ).map_err(::deno_error::JsErrorBox::from_err)?
     }
   } else {
     quote_spanned! { span =>
-      ::deno_core::convert::ToV8::to_v8(
+      ::edno_core::convert::ToV8::to_v8(
         #value,
         __scope,
       ).map_err(::deno_error::JsErrorBox::from_err)?
@@ -125,13 +125,13 @@ fn create_impl(
   let (impl_generics, _, _) = impl_generics.split_for_impl();
 
   quote! {
-    impl #impl_generics ::deno_core::convert::ToV8<#lifetime> for #ident #ty_generics #where_clause {
+    impl #impl_generics ::edno_core::convert::ToV8<#lifetime> for #ident #ty_generics #where_clause {
       type Error = ::deno_error::JsErrorBox;
 
       fn to_v8<'i>(
         self,
-        __scope: &mut ::deno_core::v8::PinScope<#lifetime, 'i>,
-      ) -> Result<::deno_core::v8::Local<#lifetime, ::deno_core::v8::Value>, Self::Error>
+        __scope: &mut ::edno_core::v8::PinScope<#lifetime, 'i>,
+      ) -> Result<::edno_core::v8::Local<#lifetime, ::edno_core::v8::Value>, Self::Error>
       {
         #body
       }

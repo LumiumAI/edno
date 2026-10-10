@@ -2,20 +2,20 @@ import { spawn } from "node:child_process";
 import process from "node:process";
 
 if (process.env.SPAWNED_CHILD === "1") {
-  // Child process: verify no Deno flags were injected into argv.
+  // Child process: verify no Edno flags were injected into argv.
   // Before the fix, child_process.spawn would translate Node args
-  // into Deno args (run -A --unstable-node-globals etc.) when the
+  // into Edno args (run -A --unstable-node-globals etc.) when the
   // spawn target was a compiled binary.
   const appArgs = process.argv.slice(2);
-  const denoFlags = appArgs.filter(
+  const ednoFlags = appArgs.filter(
     (a) =>
       a === "run" ||
       a === "-A" ||
       a.startsWith("--unstable-") ||
       a.startsWith("--v8-flags="),
   );
-  if (denoFlags.length > 0) {
-    console.log("FAIL: unexpected Deno flags in argv: " + denoFlags.join(", "));
+  if (ednoFlags.length > 0) {
+    console.log("FAIL: unexpected Edno flags in argv: " + ednoFlags.join(", "));
     process.exit(1);
   }
 

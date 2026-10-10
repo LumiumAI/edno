@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/no-shasums",
+  "name": "@ednotest/no-shasums",
   "version": "1.0.0",
   "main": "./main.js"
 }

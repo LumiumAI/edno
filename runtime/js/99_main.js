@@ -3,7 +3,7 @@
 // Remove Intl.v8BreakIterator because it is a non-standard API.
 delete Intl.v8BreakIterator;
 
-const internalConsole = core.loadExtScript("ext:deno_web/01_console.js");
+const internalConsole = core.loadExtScript("ext:edno_web/01_console.js");
 import { core, internals, primordials } from "ext:core/mod.js";
 const ops = core.ops;
 import {
@@ -78,17 +78,17 @@ function getSafeOwnPropertyDescriptors(object) {
 const {
   isNativeError,
 } = core;
-// Deno.serve (00_serve.ts) chains through 23_request/23_response/22_body
-// into the 208 KB web-streams polyfill. Only loaded if `deno serve` / a
+// Edno.serve (00_serve.ts) chains through 23_request/23_response/22_body
+// into the 208 KB web-streams polyfill. Only loaded if `edno serve` / a
 // declarative server export is actually used.
 let _serveMod;
 const lazyServeMod = () =>
   _serveMod ??
-    (_serveMod = core.loadExtScript("ext:deno_http/00_serve.ts"));
-const event = core.loadExtScript("ext:deno_web/02_event.js");
-const location = core.loadExtScript("ext:deno_web/12_location.js");
+    (_serveMod = core.loadExtScript("ext:edno_http/00_serve.ts"));
+const event = core.loadExtScript("ext:edno_web/02_event.js");
+const location = core.loadExtScript("ext:edno_web/12_location.js");
 const version = core.loadExtScript("ext:runtime/01_version.ts");
-const os = core.loadExtScript("ext:deno_os/30_os.js");
+const os = core.loadExtScript("ext:edno_os/30_os.js");
 const {
   getConsoleInspectOptions,
   getDefaultInspectOptions,
@@ -96,28 +96,28 @@ const {
   inspectArgs,
   quoteString,
   setNoColorFns,
-} = core.loadExtScript("ext:deno_web/01_console.js");
-const performance = core.loadExtScript("ext:deno_web/15_performance.js");
-const url = core.loadExtScript("ext:deno_web/00_url.js");
+} = core.loadExtScript("ext:edno_web/01_console.js");
+const performance = core.loadExtScript("ext:edno_web/15_performance.js");
+const url = core.loadExtScript("ext:edno_web/00_url.js");
 // 26_fetch pulls 22_body -> 06_streams (208 KB). The only thing 99_main
 // needs from it at bootstrap is the wasm-streaming callback registration -
 // wrap that so the actual module loads on first WebAssembly streaming use.
 let _fetchMod;
 const lazyFetchMod = () =>
   _fetchMod ??
-    (_fetchMod = core.loadExtScript("ext:deno_fetch/26_fetch.js"));
-const messagePort = core.loadExtScript("ext:deno_web/13_message_port.js");
+    (_fetchMod = core.loadExtScript("ext:edno_fetch/26_fetch.js"));
+const messagePort = core.loadExtScript("ext:edno_web/13_message_port.js");
 import {
-  denoNs,
-  denoNsUnstableById,
+  ednoNs,
+  ednoNsUnstableById,
   unstableIds,
 } from "ext:runtime/90_deno_ns.js";
 const { errors } = core.loadExtScript("ext:runtime/01_errors.js");
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const {
   DOMException,
   QuotaExceededError,
-} = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+} = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 import {
   unstableForWindowOrWorkerGlobalScope,
   windowOrWorkerGlobalScope,
@@ -129,7 +129,7 @@ import {
 import {
   workerRuntimeGlobalProperties,
 } from "ext:runtime/98_global_scope_worker.js";
-const { SymbolMetadata } = core.loadExtScript("ext:deno_web/00_infra.js");
+const { SymbolMetadata } = core.loadExtScript("ext:edno_web/00_infra.js");
 // Telemetry (~2000 LOC, ~70 KB of bytecode + V8 heap) is only needed when an
 // OTEL config flag is set, but it was being loaded unconditionally at snapshot
 // build time. Skip the load on the cold-start path; only enter the module
@@ -150,11 +150,11 @@ function bootstrapOtel(otelConfig) {
   ) {
     return;
   }
-  const { bootstrap } = core.loadExtScript("ext:deno_telemetry/telemetry.ts");
+  const { bootstrap } = core.loadExtScript("ext:edno_telemetry/telemetry.ts");
   bootstrap(otelConfig);
 }
 
-// deno-lint-ignore deno-internal/prefer-primordials
+// edno-lint-ignore edno-internal/prefer-primordials
 if (Symbol.metadata) {
   throw "V8 supports Symbol.metadata now, no need to shim it";
 }
@@ -543,7 +543,7 @@ core.registerErrorBuilder(
 );
 
 function runtimeStart(
-  denoVersion,
+  ednoVersion,
   v8Version,
   tsVersion,
   target,
@@ -555,7 +555,7 @@ function runtimeStart(
   core.setReportExceptionCallback(event.reportException);
   op_set_format_exception_callback(formatException);
   version.setVersions(
-    denoVersion,
+    ednoVersion,
     v8Version,
     tsVersion,
   );
@@ -652,13 +652,13 @@ function exposeUnstableFeaturesForWindowOrWorkerGlobalScope(unstableFeatures) {
 // NOTE(bartlomieju): remove all the ops that have already been imported using
 // "virtual op module" (`ext:core/ops`).
 const NOT_IMPORTED_OPS = [
-  // Related to `Deno.bench()` API
+  // Related to `Edno.bench()` API
   "op_bench_now",
   "op_dispatch_bench_event",
   "op_register_bench",
   "op_bench_get_origin",
 
-  // Related to `Deno.jupyter` REPL API
+  // Related to `Edno.jupyter` REPL API
   "op_jupyter_broadcast",
   "op_jupyter_input",
   "op_jupyter_create_png_from_texture",
@@ -686,7 +686,7 @@ const NOT_IMPORTED_OPS = [
   "op_lint_create_serialized_ast",
   "op_is_cancelled",
 
-  // Related to `Deno.test()` API
+  // Related to `Edno.test()` API
   "op_test_event_step_result_failed",
   "op_test_event_step_result_ignored",
   "op_test_event_step_result_ok",
@@ -713,7 +713,7 @@ const NOT_IMPORTED_OPS = [
   "op_set_exit_code",
   "op_napi_open",
 
-  // Related to `Deno.desktop` API (deno compile --desktop)
+  // Related to `Edno.desktop` API (edno compile --desktop)
   "BrowserWindow",
   "Dock",
   "Tray",
@@ -734,7 +734,7 @@ const NOT_IMPORTED_OPS = [
   "op_desktop_request_notification_permission",
   "op_desktop_query_notification_permission",
 
-  // deno deploy subcommand
+  // edno deploy subcommand
   "op_deploy_token_get",
   "op_deploy_token_set",
   "op_deploy_token_delete",
@@ -768,7 +768,7 @@ function removeImportedOps(isWorker = false) {
   }
 }
 
-// `Deno[Deno.internal]` is reachable from user code. Preserve its existing
+// `Edno[Edno.internal]` is reachable from user code. Preserve its existing
 // internal compatibility surface, but keep extension-loading capabilities on
 // the core object imported through `ext:core/mod.js`.
 const userVisibleCoreDescriptors = getSafeOwnPropertyDescriptors(core);
@@ -779,10 +779,10 @@ const userVisibleCore = ObjectFreeze(ObjectDefineProperties(
   userVisibleCoreDescriptors,
 ));
 ObjectAssign(internals, { core: userVisibleCore });
-const internalSymbol = Symbol("Deno.internal");
-// `Deno.test` and its sub-methods are no-ops outside of `deno test`, kept for
-// compatibility so they don't error under `deno run`. Mirrors the surface of
-// the real `Deno.test` defined in cli/js/40_test.js.
+const internalSymbol = Symbol("Edno.internal");
+// `Edno.test` and its sub-methods are no-ops outside of `edno test`, kept for
+// compatibility so they don't error under `edno run`. Mirrors the surface of
+// the real `Edno.test` defined in cli/js/40_test.js.
 function noopTest() {}
 noopTest.ignore = () => {};
 noopTest.only = () => {};
@@ -795,8 +795,8 @@ const noopTestEach = () => () => {};
 noopTest.each = noopTestEach;
 noopTest.only.each = noopTestEach;
 noopTest.ignore.each = noopTestEach;
-// Build finalDenoNs without spreading denoNs: spread invokes every getter,
-// including the lazy ones (Deno.serve / Deno.run / etc.) that intentionally
+// Build finalDenoNs without spreading ednoNs: spread invokes every getter,
+// including the lazy ones (Edno.serve / Edno.run / etc.) that intentionally
 // avoid loading 06_streams / 22_body / 40_process at snapshot time. Use
 // ObjectDefineProperties + getOwnPropertyDescriptors to preserve the lazy
 // descriptors.
@@ -804,20 +804,20 @@ const finalDenoNs = ObjectDefineProperties(
   {
     internal: internalSymbol,
     [internalSymbol]: internals,
-    // Deno.test, Deno.bench, Deno.lint are noops here, but kept for
+    // Edno.test, Edno.bench, Edno.lint are noops here, but kept for
     // compatibility; so that they don't cause errors when used outside of
-    // `deno test`/`deno bench`/`deno lint` contexts.
+    // `edno test`/`edno bench`/`edno lint` contexts.
     test: noopTest,
     bench: () => {},
     lint: {
       runPlugin: () => {
         throw new Error(
-          "`Deno.lint.runPlugin` is only available in `deno test` subcommand.",
+          "`Edno.lint.runPlugin` is only available in `edno test` subcommand.",
         );
       },
     },
   },
-  getSafeOwnPropertyDescriptors(denoNs),
+  getSafeOwnPropertyDescriptors(ednoNs),
 );
 
 ObjectDefineProperties(finalDenoNs, {
@@ -860,7 +860,7 @@ const executionModes = {
 let protoSetRecorded = false;
 let protoGetRecorded = false;
 
-// By default Deno disables the `Object.prototype.__proto__` accessor for
+// By default Edno disables the `Object.prototype.__proto__` accessor for
 // security reasons (it enables prototype pollution), see
 // https://tc39.es/ecma262/#sec-get-object.prototype.__proto__
 //
@@ -918,7 +918,7 @@ function disableProtoAccessor() {
 // The TC39 arraybuffer-base64 methods land on Uint8Array.prototype during
 // V8's InstallConditionalFeatures, after snapshot deserialization, so the
 // snapshotted primordials cannot include them. Capture them here, before any
-// user code runs, for ext:deno_node/internal/buffer.mjs; when a method is
+// user code runs, for ext:edno_node/internal/buffer.mjs; when a method is
 // unavailable the slot stays undefined and the consumer uses its JS codec.
 // TODO(tomas-zijdemans): move these to primordials once V8 ships the methods
 // unconditionally (no --js-arraybuffer-base64 flag).
@@ -941,7 +941,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
     captureHexMethods();
 
     const {
-      0: denoVersion,
+      0: ednoVersion,
       1: location_,
       2: unstableFeatures,
       5: hasNodeModulesDir,
@@ -960,7 +960,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
       19: disableOffscreenCanvas,
     } = runtimeOptions;
 
-    denoNs.build.standalone = standalone;
+    ednoNs.build.standalone = standalone;
 
     let serveIsMain_ = serveIsMain;
     let serveWorkerCountOrIndex_ = serveWorkerCountOrIndex;
@@ -979,7 +979,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
         // 15 = "serve-worker-nn".length, assuming
         // serveWorkerCount < 100
         const prefix = `[${StringPrototypePadEnd(base, 15, " ")}]`;
-        // deno-lint-ignore no-global-assign
+        // edno-lint-ignore no-global-assign
         console = new internalConsole.Console((msg, level) =>
           core.print(`${prefix} ` + msg, level > 1)
         );
@@ -999,7 +999,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
           // have an unrelated `export default`, so that graph was being
           // compiled for programs that will never serve anything. Hoist the
           // guard here. `dflt == null` still calls through, so the TypeError
-          // `Object.hasOwn(null, ...)` raises under `deno serve` is unchanged.
+          // `Object.hasOwn(null, ...)` raises under `edno serve` is unchanged.
           if (dflt == null || ObjectHasOwn(dflt, "fetch")) {
             try {
               serve = lazyServeMod().registerDeclarativeServer(dflt);
@@ -1016,7 +1016,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
             // Only error if main worker
             import.meta.log(
               "error",
-              `%cerror: %cdeno serve requires %cexport default { fetch }%c in the main module, did you mean to run \"deno run\"?`,
+              `%cerror: %cdeno serve requires %cexport default { fetch }%c in the main module, did you mean to run \"edno run\"?`,
               "color: yellow;",
               "color: inherit;",
               "font-weight: bold;",
@@ -1030,7 +1030,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
           if (mode === executionModes.run && !autoServe) {
             import.meta.log(
               "error",
-              `%cwarning: %cDetected %cexport default { fetch }%c, did you mean to run \"deno serve\"?`,
+              `%cwarning: %cDetected %cexport default { fetch }%c, did you mean to run \"edno serve\"?`,
               "color: yellow;",
               "color: inherit;",
               "font-weight: bold;",
@@ -1112,7 +1112,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
     event.defineEventHandler(globalThis, "unload");
 
     runtimeStart(
-      denoVersion,
+      ednoVersion,
       v8Version,
       tsVersion,
       target,
@@ -1129,7 +1129,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
           return jupyterNs;
         }
         throw new Error(
-          "Deno.jupyter is only available in `deno jupyter` subcommand",
+          "Edno.jupyter is only available in `edno jupyter` subcommand",
         );
       },
       set(val) {
@@ -1139,7 +1139,7 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
 
     for (let i = 0; i <= unstableFeatures.length; i++) {
       const id = unstableFeatures[i];
-      const unstable = denoNsUnstableById[id];
+      const unstable = ednoNsUnstableById[id];
       if (unstable) {
         ObjectDefineProperties(
           finalDenoNs,
@@ -1152,9 +1152,9 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
       disableProtoAccessor();
     }
 
-    // Setup `Deno` global - we're actually overriding already existing global
-    // `Deno` with `Deno` namespace from "./deno.ts".
-    ObjectDefineProperty(globalThis, "Deno", core.propReadOnly(finalDenoNs));
+    // Setup `Edno` global - we're actually overriding already existing global
+    // `Edno` with `Edno` namespace from "./edno.ts".
+    ObjectDefineProperty(globalThis, "Edno", core.propReadOnly(finalDenoNs));
 
     const nodeBootstrapArgs = {
       usesLocalNodeModulesDir: hasNodeModulesDir,
@@ -1164,11 +1164,11 @@ function bootstrapMainRuntime(runtimeOptions, warmup = false) {
       nodeClusterUniqueId,
       nodeClusterSchedPolicy,
       // Stashed so process.ts's self-trigger can call __bootstrapNodeProcess
-      // without reading Deno.* (the no-deno-api-in-polyfills lint counts
-      // Deno.* references in node polyfills; passing them in keeps process.ts
+      // without reading Edno.* (the no-edno-api-in-polyfills lint counts
+      // Edno.* references in node polyfills; passing them in keeps process.ts
       // at zero new violations).
-      denoArgs: Deno.args,
-      denoVersion: Deno.version,
+      ednoArgs: Edno.args,
+      ednoVersion: Edno.version,
     };
     if (nodeBootstrap) {
       nodeBootstrap(nodeBootstrapArgs);
@@ -1213,7 +1213,7 @@ function bootstrapWorkerRuntime(
     captureHexMethods();
 
     const {
-      0: denoVersion,
+      0: ednoVersion,
       1: location_,
       2: unstableFeatures,
       4: enableTestingFeaturesFlag,
@@ -1227,7 +1227,7 @@ function bootstrapWorkerRuntime(
       19: disableOffscreenCanvas,
     } = runtimeOptions;
 
-    denoNs.build.standalone = standalone;
+    ednoNs.build.standalone = standalone;
 
     closeOnIdle = runtimeOptions[14];
 
@@ -1277,14 +1277,14 @@ function bootstrapWorkerRuntime(
     event.defineEventHandler(globalThis, "message");
     event.defineEventHandler(globalThis, "error", undefined, true);
 
-    // `Deno.exit()` closes the worker using the internal worker close
+    // `Edno.exit()` closes the worker using the internal worker close
     // operation. Setting an exit code using an op in worker context is a no-op.
     os.setExitHandler((_exitCode) => {
       workerClose();
     });
 
     runtimeStart(
-      denoVersion,
+      ednoVersion,
       v8Version,
       tsVersion,
       target,
@@ -1298,7 +1298,7 @@ function bootstrapWorkerRuntime(
 
     for (let i = 0; i <= unstableFeatures.length; i++) {
       const id = unstableFeatures[i];
-      const unstable = denoNsUnstableById[id];
+      const unstable = ednoNsUnstableById[id];
       if (unstable) {
         ObjectDefineProperties(
           finalDenoNs,
@@ -1315,9 +1315,9 @@ function bootstrapWorkerRuntime(
       disableProtoAccessor();
     }
 
-    // Setup `Deno` global - we're actually overriding already existing global
-    // `Deno` with `Deno` namespace from "./deno.ts".
-    ObjectDefineProperty(globalThis, "Deno", core.propReadOnly(finalDenoNs));
+    // Setup `Edno` global - we're actually overriding already existing global
+    // `Edno` with `Edno` namespace from "./edno.ts".
+    ObjectDefineProperty(globalThis, "Edno", core.propReadOnly(finalDenoNs));
 
     const workerMetadata = maybeWorkerMetadata
       ? messagePort.deserializeJsMessageData(maybeWorkerMetadata)
@@ -1334,9 +1334,9 @@ function bootstrapWorkerRuntime(
       nodeClusterSchedPolicy,
       moduleSpecifier: workerType === "node" ? moduleSpecifier : null,
       // Stashed so process.ts's self-trigger can call __bootstrapNodeProcess
-      // without reading Deno.* (see the main-thread branch above).
-      denoArgs: Deno.args,
-      denoVersion: Deno.version,
+      // without reading Edno.* (see the main-thread branch above).
+      ednoArgs: Edno.args,
+      ednoVersion: Edno.version,
     };
     if (nodeBootstrap) {
       nodeBootstrap(nodeBootstrapArgs);

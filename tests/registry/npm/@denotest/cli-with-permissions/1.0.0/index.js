@@ -1,3 +1,3 @@
 console.log("Hello in CLI with permissions");
-console.log("Reading DENO_HELLO env var...");
-console.log(Deno.env.get("DENO_HELLO"));
+console.log("Reading EDNO_HELLO env var...");
+console.log(Edno.env.get("EDNO_HELLO"));

@@ -2,11 +2,11 @@
 import { join } from "@std/path";
 
 const testDir = new URL(".", import.meta.url).pathname;
-const socketPath = join(Deno.makeTempDirSync(), "test.sock");
+const socketPath = join(Edno.makeTempDirSync(), "test.sock");
 
 // Start the server in background
 const serverEnv = { TEST_SOCKET_PATH: socketPath };
-const serverProcess = new Deno.Command(Deno.execPath(), {
+const serverProcess = new Edno.Command(Edno.execPath(), {
   args: [
     "run",
     "--quiet",
@@ -26,9 +26,9 @@ await new Promise((resolve) => setTimeout(resolve, 500));
 
 // Run the main script
 const mainEnv = {
-  DENO_UNSTABLE_CRON_SOCK: `unix:${socketPath}`,
+  EDNO_UNSTABLE_CRON_SOCK: `unix:${socketPath}`,
 };
-const mainProcess = new Deno.Command(Deno.execPath(), {
+const mainProcess = new Edno.Command(Edno.execPath(), {
   args: [
     "run",
     "--quiet",
@@ -50,5 +50,5 @@ console.error("Main exit code:", mainResult.code);
 
 // Exit with main script's exit code
 if (mainResult.code !== 0) {
-  Deno.exit(mainResult.code);
+  Edno.exit(mainResult.code);
 }

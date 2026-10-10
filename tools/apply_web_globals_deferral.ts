@@ -1,29 +1,29 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S edno run -A
 // Copyright 2018-2026 the Deno authors. MIT license.
 //
-// Rewrites Deno's web-platform global `declare var` declarations so they DEFER
+// Rewrites Edno's web-platform global `declare var` declarations so they DEFER
 // to lib.dom when present and let stock @types/node defer to them otherwise,
 // using the same conditional-type mechanism @types/node already uses to coexist
 // with lib.dom:
 //
-//   declare var Request: <DenoType>;
+//   declare var Request: <EdnoType>;
 // becomes
-//   declare var Request: typeof globalThis extends { document: any; Request: infer T } ? T : <DenoType>;
+//   declare var Request: typeof globalThis extends { document: any; Request: infer T } ? T : <EdnoType>;
 //
-// `document` is a DOM-exclusive marker (neither Deno nor @types/node declare it),
-// so when real lib.dom is loaded Deno re-exports lib.dom's type (precedence
-// dom > deno); when it is absent Deno keeps its own type, and @types/node's
+// `document` is a DOM-exclusive marker (neither Edno nor @types/node declare it),
+// so when real lib.dom is loaded Edno re-exports lib.dom's type (precedence
+// dom > edno); when it is absent Edno keeps its own type, and @types/node's
 // `typeof globalThis extends { onmessage: any; Request: infer T }` probe finds
-// Deno's declaration and defers to it (precedence deno > node).
+// Edno's declaration and defers to it (precedence edno > node).
 //
 // The set of names to transform is derived from the vendored @types/node so it
 // stays in sync on `@types/node` bumps. This transform is behaviour-neutral
-// under the current forked tsc (Deno files' globalThis has no `document`, so the
+// under the current forked tsc (Edno files' globalThis has no `document`, so the
 // conditional always yields the original type); it only matters once the fork's
 // global split is removed. Markers (onmessage/onabort/ReportingObserver) are
 // added separately in the composition libs.
 //
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { Project } from "jsr:@ts-morph/ts-morph@27.0.2";
 
@@ -32,11 +32,11 @@ const modRs = new URL("../cli/tsc/mod.rs", import.meta.url).pathname;
 
 // 1. Derive the overlap set from TYPES_NODE_IGNORABLE_NAMES in mod.rs - the
 // canonical, in-repo list of globals that overlap with @types/node and that
-// Deno owns. (The vendored cli/tsc/dts/node copy is already stripped, so it
+// Edno owns. (The vendored cli/tsc/dts/node copy is already stripped, so it
 // can't be used as the source.) Over-inclusion is harmless: the deferral
 // conditional falls through to the original type when no other declarer exists.
 const probeNames = new Set<string>();
-const rs = await Deno.readTextFile(modRs);
+const rs = await Edno.readTextFile(modRs);
 const listMatch =
   /TYPES_NODE_IGNORABLE_NAMES:\s*&\[&str\]\s*=\s*&\[([\s\S]*?)\];/.exec(rs);
 if (!listMatch) {
@@ -52,7 +52,7 @@ console.log(
 // then splice the ORIGINAL file text so only the type annotation changes -
 // comments, formatting and everything else are preserved byte-for-byte.
 const project = new Project({ useInMemoryFileSystem: false });
-const libGlob = dtsDir + "lib.deno*.d.ts";
+const libGlob = dtsDir + "lib.edno*.d.ts";
 project.addSourceFilesAtPaths(libGlob);
 
 const transformed: string[] = [];
@@ -87,7 +87,7 @@ for (const sf of project.getSourceFiles()) {
   for (const [start, end, repl] of edits) {
     text = text.slice(0, start) + repl + text.slice(end);
   }
-  await Deno.writeTextFile(path, text);
+  await Edno.writeTextFile(path, text);
 }
 
 console.log(`\ntransformed ${transformed.length}:`);

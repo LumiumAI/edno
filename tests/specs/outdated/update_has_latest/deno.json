@@ -1,5 +1,5 @@
 {
   "imports": {
-    "@denotest/add": "jsr:@denotest/add@^0.2.1"
+    "@ednotest/add": "jsr:@ednotest/add@^0.2.1"
   }
 }

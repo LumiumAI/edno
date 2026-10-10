@@ -52,22 +52,22 @@ const {
   ArrayIsArray,
   ObjectAssign,
   StringPrototypeReplace,
-} = core.loadExtScript("ext:deno_node/internal/primordials.mjs");
+} = core.loadExtScript("ext:edno_node/internal/primordials.mjs");
 const assert = core.loadExtScript(
-  "ext:deno_node/internal/assert.mjs",
+  "ext:edno_node/internal/assert.mjs",
 );
 const net = core.createLazyLoader("node:net")().default;
 const {
   createSecureContext,
   translatePeerCertificate,
-} = core.loadExtScript("ext:deno_node/_tls_common.ts");
+} = core.loadExtScript("ext:edno_node/_tls_common.ts");
 const { JSStreamSocket } = core.loadExtScript(
-  "ext:deno_node/internal/js_stream_socket.js",
+  "ext:edno_node/internal/js_stream_socket.js",
 );
 const { convertALPNProtocols } = core.loadExtScript(
-  "ext:deno_node/internal/tls_common.js",
+  "ext:edno_node/internal/tls_common.js",
 );
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const {
   connResetException,
   ERR_INVALID_ARG_TYPE,
@@ -77,49 +77,49 @@ const {
   ERR_TLS_CERT_ALTNAME_INVALID,
   ERR_TLS_REQUIRED_SERVER_NAME,
   ERR_TLS_SNI_FROM_SERVER,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { debuglog } = core.loadExtScript(
-  "ext:deno_node/internal/util/debuglog.ts",
+  "ext:edno_node/internal/util/debuglog.ts",
 );
 const {
   constants: TCPConstants,
   TCP,
-} = core.loadExtScript("ext:deno_node/internal_binding/tcp_wrap.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/tcp_wrap.ts");
 const { kMaybeDestroy } = core.loadExtScript(
-  "ext:deno_node/internal/stream_base_commons.ts",
+  "ext:edno_node/internal/stream_base_commons.ts",
 );
 const { kReinitializeHandle } = core.loadExtScript(
-  "ext:deno_node/internal/net.ts",
+  "ext:edno_node/internal/net.ts",
 );
 const {
   constants: PipeConstants,
   Pipe,
-} = core.loadExtScript("ext:deno_node/internal_binding/pipe_wrap.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/pipe_wrap.ts");
 const { kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
 const { domainToASCII } = core.loadExtScript(
-  "ext:deno_node/internal/idna.ts",
+  "ext:edno_node/internal/idna.ts",
 );
 const {
   validateFunction,
   validateInt32,
   validateNumber,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { isArrayBufferView, isTypedArray } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const { op_tls_canonicalize_ipv4_address } = core.ops;
 const { default: tlsWrap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/tls_wrap.ts",
+  "ext:edno_node/internal_binding/tls_wrap.ts",
 );
 const { ownerSymbol } = core.loadExtScript(
-  "ext:deno_node/internal_binding/symbols.ts",
+  "ext:edno_node/internal_binding/symbols.ts",
 );
 const { X509Certificate } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/x509.ts",
+  "ext:edno_node/internal/crypto/x509.ts",
 );
 
 const lazyTls = core.createLazyLoader("node:tls");
@@ -539,7 +539,7 @@ tlsWrap.TLSWrap.prototype.close = function close(cb) {
     this._owner.ssl = null;
   }
 
-  // deno-lint-ignore no-this-alias
+  // edno-lint-ignore no-this-alias
   const self = this;
   const done = () => {
     self.cancelWrite();
@@ -1084,10 +1084,10 @@ TLSSocket.prototype.setServername = function (name) {
 // payload is `${servername ?? host ?? ""}:${port ?? ""}` -- see the
 // matching emit sites in onConnectSecure.
 const SYNTHETIC_SESSION_PREFIXES = [
-  "deno-tls12-session:",
-  "deno-tls13-session-ticket-1:",
-  "deno-tls13-session-ticket-2:",
-  "deno-tls13-dummy-session:",
+  "edno-tls12-session:",
+  "edno-tls13-session-ticket-1:",
+  "edno-tls13-session-ticket-2:",
+  "edno-tls13-dummy-session:",
 ];
 
 function syntheticSessionMatches(buf, options) {
@@ -1095,7 +1095,7 @@ function syntheticSessionMatches(buf, options) {
   const sessionKey = `${options.servername ?? options.host ?? ""}:${
     options.port ?? ""
   }`;
-  // deno-lint-ignore deno-internal/prefer-primordials -- Buffer.prototype.toString(encoding)
+  // edno-lint-ignore edno-internal/prefer-primordials -- Buffer.prototype.toString(encoding)
   const text = buf.toString("latin1");
   for (const prefix of new SafeArrayIterator(SYNTHETIC_SESSION_PREFIXES)) {
     if (text === prefix + sessionKey) return true;
@@ -1112,7 +1112,7 @@ TLSSocket.prototype.setSession = function (_session) {
   // getSession() is synthetic and encodes the host:port it was issued for.
   // Only treat the next handshake as a resume when the caller is replaying
   // a buffer that matches *this* connection's host:port -- otherwise
-  // accepting any deno-tls*-session prefix would let an attacker skip
+  // accepting any edno-tls*-session prefix would let an attacker skip
   // checkServerIdentity() in onConnectSecure by forging a session for a
   // different name.
   this._sessionReused = syntheticSessionMatches(
@@ -1608,16 +1608,16 @@ function onConnectSecure() {
     const sessionKey = `${options.servername ?? options.host ?? ""}:${
       options.port ?? ""
     }`;
-    this._session = Buffer.from(`deno-tls12-session:${sessionKey}`);
+    this._session = Buffer.from(`edno-tls12-session:${sessionKey}`);
     this[kPendingSession] = this._session;
   } else if (!this._session && this.getProtocol() === "TLSv1.3") {
     const sessionKey = `${options.servername ?? options.host ?? ""}:${
       options.port ?? ""
     }`;
-    this._session = Buffer.from(`deno-tls13-dummy-session:${sessionKey}`);
+    this._session = Buffer.from(`edno-tls13-dummy-session:${sessionKey}`);
     this[kPendingSession] = [
-      Buffer.from(`deno-tls13-session-ticket-1:${sessionKey}`),
-      Buffer.from(`deno-tls13-session-ticket-2:${sessionKey}`),
+      Buffer.from(`edno-tls13-session-ticket-1:${sessionKey}`),
+      Buffer.from(`edno-tls13-session-ticket-2:${sessionKey}`),
     ];
     this.prependOnceListener("close", () => emitPendingSession(this));
   }

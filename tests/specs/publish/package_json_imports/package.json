@@ -1,5 +1,5 @@
 {
-  "name": "@deno/foo",
+  "name": "@edno/foo",
   "version": "0.0.1",
   "imports": {
     "#add": {

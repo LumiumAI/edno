@@ -60,7 +60,7 @@ function sendBody(port: number): {
 // Facet 1: streaming response held open while the request body is piped.
 async function facetHeldOpenStreamingResponse() {
   const sink = new CountingSink();
-  const server = Deno.serve({ port: 0, onListen: () => {} }, async (req) => {
+  const server = Edno.serve({ port: 0, onListen: () => {} }, async (req) => {
     // Any macrotask boundary before responding used to trigger the stall.
     await new Promise((r) => setTimeout(r, 0));
     if (req.method !== "PATCH" || !req.body) {
@@ -94,7 +94,7 @@ async function facetHeldOpenStreamingResponse() {
 async function facetCompletedResponse() {
   const pipeResult = Promise.withResolvers<string>();
   const sink = new CountingSink();
-  const server = Deno.serve({ port: 0, onListen: () => {} }, (req) => {
+  const server = Edno.serve({ port: 0, onListen: () => {} }, (req) => {
     if (req.method !== "PATCH" || !req.body) {
       return new Response(null, { status: 400 });
     }
@@ -120,7 +120,7 @@ async function facetCompletedResponse() {
 async function facetFastStaticResponse() {
   const pipeResult = Promise.withResolvers<string>();
   const sink = new CountingSink();
-  const server = Deno.serve({ port: 0, onListen: () => {} }, (req) => {
+  const server = Edno.serve({ port: 0, onListen: () => {} }, (req) => {
     if (req.method !== "PATCH" || !req.body) {
       return new Response(null, { status: 400 });
     }
@@ -144,7 +144,7 @@ async function facetFastStaticResponse() {
 // Facet 4: the handler abandons the body reader after a partial read. The
 // connection must not be held hostage by a reader that never finishes.
 async function facetAbandonedReader() {
-  const server = Deno.serve({ port: 0, onListen: () => {} }, async (req) => {
+  const server = Edno.serve({ port: 0, onListen: () => {} }, async (req) => {
     if (req.method !== "PATCH" || !req.body) {
       return new Response(null, { status: 400 });
     }

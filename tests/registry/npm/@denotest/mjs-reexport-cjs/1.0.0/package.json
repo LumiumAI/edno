@@ -1,8 +1,8 @@
 {
-  "name": "@denotest/mjs-reexport-cjs",
+  "name": "@ednotest/mjs-reexport-cjs",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/conditional-exports-node": "*"
+    "@ednotest/conditional-exports-node": "*"
   },
   "exports": {
     "node": "./index.mjs",

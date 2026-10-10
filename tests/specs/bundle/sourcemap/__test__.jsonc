@@ -10,14 +10,14 @@
         {
           "args": [
             "eval",
-            "console.log(Deno.statSync('./out2.js.map').isFile)"
+            "console.log(Edno.statSync('./out2.js.map').isFile)"
           ],
           "output": "true\n"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./out2.js').includes('//# sourceMappingURL='))"
+            "console.log(Edno.readTextFileSync('./out2.js').includes('//# sourceMappingURL='))"
           ],
           "output": "true\n"
         }
@@ -32,14 +32,14 @@
         {
           "args": [
             "eval",
-            "console.log(Deno.statSync('./out3.js.map').isFile)"
+            "console.log(Edno.statSync('./out3.js.map').isFile)"
           ],
           "output": "true\n"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./out3.js').includes('//# sourceMappingURL='))"
+            "console.log(Edno.readTextFileSync('./out3.js').includes('//# sourceMappingURL='))"
           ],
           "output": "false\n"
         }
@@ -54,7 +54,7 @@
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./out4.js').includes('//# sourceMappingURL=data:'))"
+            "console.log(Edno.readTextFileSync('./out4.js').includes('//# sourceMappingURL=data:'))"
           ],
           "output": "true\n"
         }

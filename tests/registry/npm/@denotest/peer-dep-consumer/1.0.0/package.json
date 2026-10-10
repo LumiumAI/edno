@@ -1,7 +1,7 @@
 {
-  "name": "@denotest/peer-dep-consumer",
+  "name": "@ednotest/peer-dep-consumer",
   "version": "1.0.0",
   "peerDependencies": {
-    "@denotest/peer-dep-base": "*"
+    "@ednotest/peer-dep-base": "*"
   }
 }

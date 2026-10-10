@@ -11,7 +11,7 @@ const {
   op_async_never_resolves,
   op_async_fake,
   op_async_promise_id,
-} = Deno
+} = Edno
   .core
   .ops;
 
@@ -34,7 +34,7 @@ export async function asyncSpin() {
 
 export function asyncNeverResolves() {
   const prom = op_async_never_resolves();
-  Deno.core.refOpPromise(prom);
+  Edno.core.refOpPromise(prom);
   return prom;
 }
 
@@ -66,7 +66,7 @@ export class StatsDiff {
   #appeared;
   #disappeared;
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   constructor(private diff: any) {
     this.#appeared = new StatsCollection(this.diff.appeared);
     this.#disappeared = new StatsCollection(this.diff.disappeared);
@@ -94,7 +94,7 @@ export enum LeakType {
 
 // This contains an array of serialized RuntimeActivity structs.
 export class StatsCollection {
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   constructor(private data: any[]) {
     console.log(data);
   }

@@ -18,19 +18,19 @@ const {
   validatePort,
   validateString,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { customInspectSymbol, kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const { inspect } = core.loadExtScript(
-  "ext:deno_node/internal/util/inspect.mjs",
+  "ext:edno_node/internal/util/inspect.mjs",
 );
 const { isIP, isIPv6 } = core.loadExtScript(
-  "ext:deno_node/internal/net.ts",
+  "ext:edno_node/internal/net.ts",
 );
 
 const {
@@ -342,7 +342,7 @@ class SocketAddress {
     } = options;
 
     if (typeof family === "string") {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       family = family.toLowerCase();
     }
     switch (family) {

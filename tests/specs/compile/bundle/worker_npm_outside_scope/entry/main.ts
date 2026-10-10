@@ -1,11 +1,11 @@
 // The entrypoint lives in `entry/` (its package scope), where the npm
 // dependency is declared and resolves normally. It spawns a worker authored in
 // a sibling `outside/` directory, which has no package scope of its own and
-// does not declare the dependency. `deno compile` follows the
+// does not declare the dependency. `edno compile` follows the
 // `new Worker(new URL(...))` reference and pulls that source file into the
 // graph; its bare npm import must still resolve against the build's npm
 // snapshot. See https://github.com/denoland/deno/issues/34937.
-import { getValue, setValue } from "@denotest/esm-basic";
+import { getValue, setValue } from "@ednotest/esm-basic";
 
 setValue(5);
 console.log("main", getValue());

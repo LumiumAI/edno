@@ -1,12 +1,12 @@
-console.log("main1", Deno.env.get("DENO_HELLO"));
-console.log("main2", Deno.env.get("DENO_BYE"));
-console.log("main3", Deno.env.get("AWS_HELLO"));
+console.log("main1", Edno.env.get("EDNO_HELLO"));
+console.log("main2", Edno.env.get("EDNO_BYE"));
+console.log("main3", Edno.env.get("AWS_HELLO"));
 
 new Worker(import.meta.resolve("./worker.js"), {
   type: "module",
-  deno: {
+  edno: {
     permissions: {
-      env: ["DENO_*"],
+      env: ["EDNO_*"],
     },
   },
 });

@@ -7,7 +7,7 @@
       "exitCode": 1
     },
     {
-      "args": "lint -c deno_exclude.json a.ts",
+      "args": "lint -c edno_exclude.json a.ts",
       "output": "lint_exclude.out"
     },
     {

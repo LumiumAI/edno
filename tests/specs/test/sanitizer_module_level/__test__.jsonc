@@ -1,13 +1,13 @@
 {
   "tempDir": true,
   "tests": {
-    // Deno.test.sanitizer() enables ops sanitizer - timer leak should fail
+    // Edno.test.sanitizer() enables ops sanitizer - timer leak should fail
     "module_level_ops": {
       "args": "test module_ops.ts",
       "exitCode": 1,
       "output": "module_ops.out"
     },
-    // Deno.test.sanitizer() enables resources sanitizer - resource leak should fail
+    // Edno.test.sanitizer() enables resources sanitizer - resource leak should fail
     "module_level_resources": {
       "args": "test --allow-read module_resources.ts",
       "exitCode": 1,
@@ -29,7 +29,7 @@
       "args": "test --sanitize-ops module_disables_cli.ts",
       "output": "module_disables_cli.out"
     },
-    // Deno.test.sanitizer() validates its argument
+    // Edno.test.sanitizer() validates its argument
     "invalid_options": {
       "args": "test invalid_options.ts",
       "output": "invalid_options.out"

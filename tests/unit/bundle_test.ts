@@ -14,20 +14,20 @@ import { basename, join, toFileUrl } from "@std/path";
 
 class TempDir implements AsyncDisposable, Disposable {
   #path: string;
-  constructor(options?: Deno.MakeTempOptions) {
+  constructor(options?: Edno.MakeTempOptions) {
     // Resolve symlinks (e.g. macOS `/var` -> `/private/var`) up front. The
-    // bundler canonicalizes module paths, and Deno matches read/write grants
+    // bundler canonicalizes module paths, and Edno matches read/write grants
     // by literal path, so tests that scope permissions to this directory must
     // grant the canonical path the bundler will actually check against.
-    this.#path = Deno.realPathSync(Deno.makeTempDirSync(options));
+    this.#path = Edno.realPathSync(Edno.makeTempDirSync(options));
   }
 
   async [Symbol.asyncDispose]() {
-    await Deno.remove(this.#path, { recursive: true });
+    await Edno.remove(this.#path, { recursive: true });
   }
 
   [Symbol.dispose]() {
-    Deno.removeSync(this.#path, { recursive: true });
+    Edno.removeSync(this.#path, { recursive: true });
   }
 
   get path() {
@@ -41,16 +41,16 @@ class TempDir implements AsyncDisposable, Disposable {
 
 class TempFile implements AsyncDisposable, Disposable {
   #path: string;
-  constructor(options?: Deno.MakeTempOptions) {
-    this.#path = Deno.makeTempFileSync(options);
+  constructor(options?: Edno.MakeTempOptions) {
+    this.#path = Edno.makeTempFileSync(options);
   }
 
   async [Symbol.asyncDispose]() {
-    await Deno.remove(this.#path);
+    await Edno.remove(this.#path);
   }
 
   [Symbol.dispose]() {
-    Deno.removeSync(this.#path);
+    Edno.removeSync(this.#path);
   }
 
   get path() {
@@ -59,15 +59,15 @@ class TempFile implements AsyncDisposable, Disposable {
 }
 
 async function assertPathNotFound(path: string) {
-  await assertRejects(() => Deno.lstat(path), Deno.errors.NotFound);
+  await assertRejects(() => Edno.lstat(path), Edno.errors.NotFound);
 }
 
-Deno.test("bundle: basic in-memory bundle succeeds and returns content", async () => {
+Edno.test("bundle: basic in-memory bundle succeeds and returns content", async () => {
   using dir = new TempDir();
   const entry = dir.join("index.ts");
   const dep = dir.join("mod.ts");
 
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     dep,
     [
       "export function greet(name: string) {",
@@ -75,7 +75,7 @@ Deno.test("bundle: basic in-memory bundle succeeds and returns content", async (
       "}",
     ].join("\n"),
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     entry,
     [
       "import { greet } from './mod.ts';",
@@ -83,7 +83,7 @@ Deno.test("bundle: basic in-memory bundle succeeds and returns content", async (
     ].join("\n"),
   );
 
-  const result = await Deno.bundle({
+  const result = await Edno.bundle({
     entrypoints: [entry],
     // keep readable to assert on content
     minify: false,
@@ -103,22 +103,22 @@ Deno.test("bundle: basic in-memory bundle succeeds and returns content", async (
   assertFalse(content.includes(": string"));
 });
 
-Deno.test("bundle: write to outputDir omits outputFiles and writes files", async () => {
+Edno.test("bundle: write to outputDir omits outputFiles and writes files", async () => {
   using dir = new TempDir();
   const srcDir = dir.join("src");
   const outDir = dir.join("dist");
-  await Deno.mkdir(srcDir, { recursive: true });
+  await Edno.mkdir(srcDir, { recursive: true });
   const entry = join(srcDir, "main.ts");
   const dep = join(srcDir, "util.ts");
 
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     dep,
     unindent`
       export const msg: string = 'Hello bundle write';
       export function upper(s: string) { return s.toUpperCase(); }
     `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     entry,
     unindent`
       import { msg, upper } from './util.ts';
@@ -126,7 +126,7 @@ Deno.test("bundle: write to outputDir omits outputFiles and writes files", async
     `,
   );
 
-  const result = await Deno.bundle({
+  const result = await Edno.bundle({
     entrypoints: [entry],
     outputDir: outDir,
     // default write is true when outputDir/outputPath is set
@@ -142,28 +142,28 @@ Deno.test("bundle: write to outputDir omits outputFiles and writes files", async
 
   // verify a JS file was written to the output directory
   const files = [] as string[];
-  for await (const e of Deno.readDir(outDir)) {
+  for await (const e of Edno.readDir(outDir)) {
     if (e.isFile && e.name.endsWith(".js")) files.push(e.name);
   }
   assert(files.length >= 1);
   // read first file and check expected content present
   const outJsPath = join(outDir, files[0]);
-  const outContent = await Deno.readTextFile(outJsPath);
+  const outContent = await Edno.readTextFile(outJsPath);
   assertStringIncludes(outContent, "Hello bundle write");
 });
 
-Deno.test("bundle: write requires caller permission", async () => {
+Edno.test("bundle: write requires caller permission", async () => {
   using dir = new TempDir();
   const entry = dir.join("main.ts");
   const runner = dir.join("runner.ts");
   const blockedDir = dir.join("blocked");
   const output = join(blockedDir, "dist", "main.js");
 
-  await Deno.writeTextFile(entry, "export const value = 42;\n");
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(entry, "export const value = 42;\n");
+  await Edno.writeTextFile(
     runner,
     unindent`
-      await Deno.bundle({
+      await Edno.bundle({
         entrypoints: [${JSON.stringify(entry)}],
         outputPath: ${JSON.stringify(output)},
         write: true,
@@ -171,7 +171,7 @@ Deno.test("bundle: write requires caller permission", async () => {
     `,
   );
 
-  const { success, stderr } = await new Deno.Command(Deno.execPath(), {
+  const { success, stderr } = await new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--no-config",
@@ -193,19 +193,19 @@ Deno.test("bundle: write requires caller permission", async () => {
   await assertPathNotFound(output);
 });
 
-Deno.test("bundle: module read requires caller permission", async () => {
+Edno.test("bundle: module read requires caller permission", async () => {
   using dir = new TempDir();
   const secret = dir.join("secret.ts");
   const runner = dir.join("runner.ts");
 
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     secret,
     'export const TOKEN = "super-secret-value";\n',
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     runner,
     unindent`
-      const result = await Deno.bundle({
+      const result = await Edno.bundle({
         entrypoints: [${JSON.stringify(secret)}],
         write: false,
       });
@@ -219,7 +219,7 @@ Deno.test("bundle: module read requires caller permission", async () => {
 
   // Read access to the runner only, so reading the bundled module is denied
   // before graph preparation reads its source.
-  const { success, stdout } = await new Deno.Command(Deno.execPath(), {
+  const { success, stdout } = await new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--no-config",
@@ -254,7 +254,7 @@ Deno.test("bundle: module read requires caller permission", async () => {
   );
 });
 
-Deno.test("bundle: permitted path alias preserves module identity", async () => {
+Edno.test("bundle: permitted path alias preserves module identity", async () => {
   using dir = new TempDir();
   const realDir = dir.join("real");
   const aliasDir = dir.join("alias");
@@ -262,15 +262,15 @@ Deno.test("bundle: permitted path alias preserves module identity", async () => 
   const aliasEntry = join(aliasDir, "entry.ts");
   const runner = dir.join("runner.ts");
 
-  await Deno.mkdir(realDir);
-  await Deno.writeTextFile(entry, "export const value = 42;\n");
-  await Deno.symlink(realDir, aliasDir, {
-    type: Deno.build.os === "windows" ? "junction" : "dir",
+  await Edno.mkdir(realDir);
+  await Edno.writeTextFile(entry, "export const value = 42;\n");
+  await Edno.symlink(realDir, aliasDir, {
+    type: Edno.build.os === "windows" ? "junction" : "dir",
   });
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     runner,
     unindent`
-      const result = await Deno.bundle({
+      const result = await Edno.bundle({
         entrypoints: [${JSON.stringify(aliasEntry)}],
         write: false,
       });
@@ -281,8 +281,8 @@ Deno.test("bundle: permitted path alias preserves module identity", async () => 
     `,
   );
 
-  const { success, stdout, stderr } = await new Deno.Command(
-    Deno.execPath(),
+  const { success, stdout, stderr } = await new Edno.Command(
+    Edno.execPath(),
     {
       args: [
         "run",
@@ -308,15 +308,15 @@ Deno.test("bundle: permitted path alias preserves module identity", async () => 
   assert(result.success, JSON.stringify(result.errors));
 });
 
-Deno.test("bundle: html entrypoint read requires caller permission", async () => {
+Edno.test("bundle: html entrypoint read requires caller permission", async () => {
   using dir = new TempDir();
   const secretDir = dir.join("secret");
   const secretHtml = join(secretDir, "index.html");
   const outDir = dir.join("dist");
   const runner = dir.join("runner.ts");
 
-  await Deno.mkdir(secretDir, { recursive: true });
-  await Deno.writeTextFile(
+  await Edno.mkdir(secretDir, { recursive: true });
+  await Edno.writeTextFile(
     secretHtml,
     unindent`
       <html>
@@ -324,14 +324,14 @@ Deno.test("bundle: html entrypoint read requires caller permission", async () =>
       </html>
     `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     join(secretDir, "main.ts"),
     "console.log('secret');\n",
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     runner,
     unindent`
-      await Deno.bundle({
+      await Edno.bundle({
         entrypoints: [${JSON.stringify(toFileUrl(secretHtml).href)}],
         outputDir: ${JSON.stringify(outDir)},
         write: false,
@@ -340,7 +340,7 @@ Deno.test("bundle: html entrypoint read requires caller permission", async () =>
   );
 
   // Read access to the runner only, so loading the HTML entrypoint is denied.
-  const { success, stderr } = await new Deno.Command(Deno.execPath(), {
+  const { success, stderr } = await new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--no-config",
@@ -361,7 +361,7 @@ Deno.test("bundle: html entrypoint read requires caller permission", async () =>
   await assertPathNotFound(outDir);
 });
 
-Deno.test("bundle: worker permissions override parent permissions", async () => {
+Edno.test("bundle: worker permissions override parent permissions", async () => {
   using dir = new TempDir();
   const sourceDir = dir.join("source");
   const secretDir = dir.join("secret");
@@ -371,12 +371,12 @@ Deno.test("bundle: worker permissions override parent permissions", async () => 
   const output = join(blockedDir, "main.js");
   const runner = dir.join("worker_runner.ts");
 
-  await Deno.mkdir(sourceDir, { recursive: true });
-  await Deno.mkdir(secretDir, { recursive: true });
-  await Deno.writeTextFile(entry, "export const value = 42;\n");
-  await Deno.writeTextFile(secretHtml, "<p>blocked</p>\n");
+  await Edno.mkdir(sourceDir, { recursive: true });
+  await Edno.mkdir(secretDir, { recursive: true });
+  await Edno.writeTextFile(entry, "export const value = 42;\n");
+  await Edno.writeTextFile(secretHtml, "<p>blocked</p>\n");
 
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     runner,
     unindent`
       const workerSource = ${
@@ -385,7 +385,7 @@ Deno.test("bundle: worker permissions override parent permissions", async () => 
           const result = {};
 
           try {
-            await Deno.bundle({
+            await Edno.bundle({
               entrypoints: [data.secretHtml],
               outputDir: data.outputDir,
               write: false,
@@ -396,7 +396,7 @@ Deno.test("bundle: worker permissions override parent permissions", async () => 
           }
 
           try {
-            await Deno.bundle({
+            await Edno.bundle({
               entrypoints: [data.entry],
               outputPath: data.output,
               write: true,
@@ -415,7 +415,7 @@ Deno.test("bundle: worker permissions override parent permissions", async () => 
       );
       const worker = new Worker(workerUrl, {
         type: "module",
-        deno: {
+        edno: {
           permissions: {
             read: [${JSON.stringify(sourceDir)}],
             write: false,
@@ -437,8 +437,8 @@ Deno.test("bundle: worker permissions override parent permissions", async () => 
     `,
   );
 
-  const { success, stdout, stderr } = await new Deno.Command(
-    Deno.execPath(),
+  const { success, stdout, stderr } = await new Edno.Command(
+    Edno.execPath(),
     {
       args: [
         "run",
@@ -470,12 +470,12 @@ Deno.test("bundle: worker permissions override parent permissions", async () => 
   await assertPathNotFound(output);
 });
 
-Deno.test("bundle: minify produces smaller output", async () => {
+Edno.test("bundle: minify produces smaller output", async () => {
   using dir = new TempDir();
   const entry = dir.join("index.ts");
   const dep = dir.join("calc.ts");
 
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     dep,
     unindent`
       export function add(a: number, b: number) {
@@ -485,7 +485,7 @@ Deno.test("bundle: minify produces smaller output", async () => {
       }
     `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     entry,
     unindent`
       import { add } from './calc.ts';
@@ -493,7 +493,7 @@ Deno.test("bundle: minify produces smaller output", async () => {
     `,
   );
 
-  const normal = await Deno.bundle({
+  const normal = await Edno.bundle({
     entrypoints: [entry],
     minify: false,
     write: false,
@@ -501,7 +501,7 @@ Deno.test("bundle: minify produces smaller output", async () => {
   assertEquals(normal.success, true);
   const normalJs = normal.outputFiles!.find((f) => !!f.contents)!;
 
-  const minified = await Deno.bundle({
+  const minified = await Edno.bundle({
     entrypoints: [entry],
     minify: true,
     write: false,
@@ -512,11 +512,11 @@ Deno.test("bundle: minify produces smaller output", async () => {
   assert(minJs.text().length < normalJs.text().length);
 });
 
-Deno.test("bundle: keep-names preserves names", async () => {
+Edno.test("bundle: keep-names preserves names", async () => {
   using dir = new TempDir();
   const entry = dir.join("index.ts");
 
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     entry,
     unindent`
       export function add(a: number, b: number) {
@@ -527,7 +527,7 @@ Deno.test("bundle: keep-names preserves names", async () => {
     `,
   );
 
-  const minifiedWithNames = await Deno.bundle({
+  const minifiedWithNames = await Edno.bundle({
     entrypoints: [entry],
     minify: true,
     keepNames: true,
@@ -539,26 +539,26 @@ Deno.test("bundle: keep-names preserves names", async () => {
   assertMatch(minJs.text(), /export\s*\{[^}]*\badd\b[^}]*\}/);
 });
 
-Deno.test("bundle: code splitting with multiple entrypoints", async () => {
+Edno.test("bundle: code splitting with multiple entrypoints", async () => {
   using dir = new TempDir();
   const shared = dir.join("shared.ts");
   const a = dir.join("a.ts");
   const b = dir.join("b.ts");
 
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     shared,
     unindent`
     export const shared = 'shared chunk';
   `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     a,
     unindent`
       import { shared } from './shared.ts';
       console.log('a', shared);
     `,
   );
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     b,
     unindent`
       import { shared } from './shared.ts';
@@ -567,7 +567,7 @@ Deno.test("bundle: code splitting with multiple entrypoints", async () => {
   );
 
   const outDir = dir.join("dist");
-  const result = await Deno.bundle({
+  const result = await Edno.bundle({
     entrypoints: [a, b],
     codeSplitting: true,
     // esbuild requires an output directory when splitting
@@ -583,12 +583,12 @@ Deno.test("bundle: code splitting with multiple entrypoints", async () => {
   assert(jsFiles.length >= 3);
 });
 
-Deno.test("bundle: inline sourcemap is present", async () => {
+Edno.test("bundle: inline sourcemap is present", async () => {
   using dir = new TempDir();
   const entry = dir.join("index.ts");
-  await Deno.writeTextFile(entry, "export const x = 1;\n");
+  await Edno.writeTextFile(entry, "export const x = 1;\n");
 
-  const result = await Deno.bundle({
+  const result = await Edno.bundle({
     entrypoints: [entry],
     sourcemap: "inline",
     write: false,
@@ -603,13 +603,13 @@ Deno.test("bundle: inline sourcemap is present", async () => {
   );
 });
 
-Deno.test("bundle: missing entrypoint rejects", async () => {
+Edno.test("bundle: missing entrypoint rejects", async () => {
   using dir = new TempDir();
   const missing = dir.join("does_not_exist.ts");
 
   let threw = false;
   try {
-    await Deno.bundle({
+    await Edno.bundle({
       entrypoints: [missing],
       write: false,
     });
@@ -619,11 +619,11 @@ Deno.test("bundle: missing entrypoint rejects", async () => {
   assert(threw);
 });
 
-Deno.test("bundle: returns errors for unresolved import", async () => {
+Edno.test("bundle: returns errors for unresolved import", async () => {
   using dir = new TempDir();
   const entry = dir.join("main.ts");
   // entry exists, but imports a non-existent module
-  await Deno.writeTextFile(
+  await Edno.writeTextFile(
     entry,
     unindent`
       import './missing.ts';
@@ -631,7 +631,7 @@ Deno.test("bundle: returns errors for unresolved import", async () => {
     `,
   );
 
-  const result = await Deno.bundle({
+  const result = await Edno.bundle({
     entrypoints: [entry],
     write: false,
     minify: false,
@@ -644,25 +644,25 @@ Deno.test("bundle: returns errors for unresolved import", async () => {
   assertStringIncludes(texts, "missing.ts");
 });
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 async function evalEsmString(code: string): Promise<any> {
   await using file = new TempFile({ suffix: ".js" });
-  Deno.writeTextFileSync(file.path, code);
+  Edno.writeTextFileSync(file.path, code);
   return await import(toFileUrl(file.path).toString());
 }
 
-Deno.test("bundle: replaces require shim when platform is deno", async () => {
+Edno.test("bundle: replaces require shim when platform is edno", async () => {
   using dir = new TempDir();
   const entry = dir.join("index.cjs");
   const input = unindent`
     const sep = require("node:path").sep;
     module.exports = ["good", sep.length];
   `;
-  await Deno.writeTextFile(entry, input);
+  await Edno.writeTextFile(entry, input);
 
-  const result = await Deno.bundle({
+  const result = await Edno.bundle({
     entrypoints: [entry],
-    platform: "deno",
+    platform: "edno",
     write: false,
   });
 
@@ -673,7 +673,7 @@ Deno.test("bundle: replaces require shim when platform is deno", async () => {
   assertEquals(output.default, ["good", 1]);
 });
 
-Deno.test("bundle: html works", async () => {
+Edno.test("bundle: html works", async () => {
   using dir = new TempDir();
   const entry = dir.join("index.html");
   const input = unindent`
@@ -690,10 +690,10 @@ Deno.test("bundle: html works", async () => {
   `;
   const outDir = dir.join("dist");
 
-  await Deno.writeTextFile(entry, input);
-  await Deno.writeTextFile(script, scriptInput);
+  await Edno.writeTextFile(entry, input);
+  await Edno.writeTextFile(script, scriptInput);
 
-  const result = await Deno.bundle({
+  const result = await Edno.bundle({
     entrypoints: [entry],
     outputDir: outDir,
     write: false,

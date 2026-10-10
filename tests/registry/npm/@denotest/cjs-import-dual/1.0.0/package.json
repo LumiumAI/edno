@@ -1,7 +1,7 @@
 {
-  "name": "@denotest/cjs-import-dual",
+  "name": "@ednotest/cjs-import-dual",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/dual-cjs-esm": "1"
+    "@ednotest/dual-cjs-esm": "1"
   }
 }

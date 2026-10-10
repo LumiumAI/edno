@@ -13,7 +13,7 @@
 
 use base64::Engine;
 use base64::prelude::BASE64_URL_SAFE_NO_PAD;
-use deno_core::v8;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 
 use crate::CryptoError;

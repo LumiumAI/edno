@@ -1,1 +1,1 @@
-console.log(Deno.env.get("PARENT_ENV"));
+console.log(Edno.env.get("PARENT_ENV"));

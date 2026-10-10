@@ -11,11 +11,11 @@
 
 use std::borrow::Cow;
 
-use deno_core::v8;
-use deno_core::webidl::ContextFn;
-use deno_core::webidl::WebIdlConverter;
-use deno_core::webidl::WebIdlError;
-use deno_core::webidl::WebIdlErrorKind;
+use edno_core::v8;
+use edno_core::webidl::ContextFn;
+use edno_core::webidl::WebIdlConverter;
+use edno_core::webidl::WebIdlError;
+use edno_core::webidl::WebIdlErrorKind;
 use deno_error::JsErrorBox;
 
 use crate::crypto_key::CryptoKey;
@@ -65,7 +65,7 @@ impl<'a> WebIdlConverter<'a> for SubtleKey {
     _options: &Self::Options,
   ) -> Result<Self, WebIdlError> {
     let Some(key_ptr) =
-      deno_core::cppgc::try_unwrap_cppgc_object::<CryptoKey>(scope, value)
+      edno_core::cppgc::try_unwrap_cppgc_object::<CryptoKey>(scope, value)
     else {
       return Err(WebIdlError::new(
         prefix,

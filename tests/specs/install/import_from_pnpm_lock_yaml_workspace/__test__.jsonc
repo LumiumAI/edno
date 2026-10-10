@@ -2,17 +2,17 @@
   "tempDir": true,
   "steps": [
     {
-      // No deno.lock or package-lock.json. `deno install` should seed
-      // deno.lock from pnpm-lock.yaml, including the workspace member's deps.
+      // No edno.lock or package-lock.json. `edno install` should seed
+      // edno.lock from pnpm-lock.yaml, including the workspace member's deps.
       "args": "install",
       "output": "install.out"
     },
     {
       "args": [
         "eval",
-        "console.log(Deno.readTextFileSync('deno.lock').trim())"
+        "console.log(Edno.readTextFileSync('edno.lock').trim())"
       ],
-      "output": "deno.lock.out"
+      "output": "edno.lock.out"
     }
   ]
 }

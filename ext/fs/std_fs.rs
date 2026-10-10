@@ -13,16 +13,16 @@ use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::Mutex;
 
-use deno_core::unsync::spawn_blocking;
-use deno_io::StdFileResourceInner;
-use deno_io::fs::File;
-use deno_io::fs::FsError;
-use deno_io::fs::FsResult;
-use deno_io::fs::FsStat;
-use deno_io::fs::FsStatFs;
-use deno_maybe_sync::new_rc;
-use deno_permissions::CheckedPath;
-use deno_permissions::CheckedPathBuf;
+use edno_core::unsync::spawn_blocking;
+use edno_io::StdFileResourceInner;
+use edno_io::fs::File;
+use edno_io::fs::FsError;
+use edno_io::fs::FsResult;
+use edno_io::fs::FsStat;
+use edno_io::fs::FsStatFs;
+use edno_maybe_sync::new_rc;
+use edno_permissions::CheckedPath;
+use edno_permissions::CheckedPathBuf;
 
 use crate::FileSystem;
 use crate::OpenOptions;
@@ -937,7 +937,7 @@ fn stat(path: &Path) -> FsResult<FsStat> {
   let file = open_for_stat_windows(path, false)?;
   let metadata = file.metadata()?;
   let mut fsstat = FsStat::from_std(metadata);
-  deno_io::stat_extra(&file, &mut fsstat)?;
+  edno_io::stat_extra(&file, &mut fsstat)?;
   Ok(fsstat)
 }
 
@@ -952,13 +952,13 @@ fn lstat(path: &Path) -> FsResult<FsStat> {
   let file = open_for_stat_windows(path, true)?;
   let metadata = file.metadata()?;
   let mut fsstat = FsStat::from_std(metadata);
-  deno_io::stat_extra(&file, &mut fsstat)?;
+  edno_io::stat_extra(&file, &mut fsstat)?;
   Ok(fsstat)
 }
 
 // Some Windows file system drivers (notably ImDisk-backed memory disks)
 // reject `FILE_FLAG_BACKUP_SEMANTICS` for regular files and return
-// `ERROR_INVALID_FUNCTION` (1). Deno passes that flag so `CreateFile` can
+// `ERROR_INVALID_FUNCTION` (1). Edno passes that flag so `CreateFile` can
 // open directories; on those drivers we transparently retry without it.
 // See https://github.com/denoland/deno/issues/26257.
 #[cfg(windows)]

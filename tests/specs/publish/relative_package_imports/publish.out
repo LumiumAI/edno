@@ -1,11 +1,11 @@
 [WILDCARD]
-error[relative-package-import]: invalid relative import from the '@denotest/subtract' package into the '@denotest/add' package
+error[relative-package-import]: invalid relative import from the '@ednotest/subtract' package into the '@ednotest/add' package
  --> [WILDLINE]mod.ts:1:21
   | 
 1 | import { add } from "../add/mod.ts";
   |                     ^^^^^^^^^^^^^^^ the specifier
   | 
-  = hint: replace the relative import with a bare specifier that imports from the other package by name and optionally an export (ex. "@denotest/add")
+  = hint: replace the relative import with a bare specifier that imports from the other package by name and optionally an export (ex. "@ednotest/add")
 
   info: importing modules in another package using a relative import won't work once the packages are published
   docs: https://jsr.io/go/relative-package-import

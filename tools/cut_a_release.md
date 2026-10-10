@@ -1,4 +1,4 @@
-# Cutting a Deno release
+# Cutting a Edno release
 
 1. Go to this workflow:
    https://github.com/denoland/deno/actions/workflows/start_release.yml

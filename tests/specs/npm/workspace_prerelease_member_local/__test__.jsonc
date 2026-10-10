@@ -3,7 +3,7 @@
   "steps": [
     {
       // a plain `*` dependency on a prerelease workspace member (not
-      // `workspace:*`) must resolve to the local member with deno-managed
+      // `workspace:*`) must resolve to the local member with edno-managed
       // node_modules, instead of being fetched from the registry.
       "args": "install",
       "output": "[WILDCARD]"

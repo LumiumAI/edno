@@ -6,6 +6,6 @@ fn main() {
     return;
   }
 
-  deno_runtime::deno_napi::print_linker_flags("denort");
-  deno_runtime::deno_webgpu::print_linker_flags("denort");
+  edno_runtime::edno_napi::print_linker_flags("ednort");
+  edno_runtime::edno_webgpu::print_linker_flags("ednort");
 }

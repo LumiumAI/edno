@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent and Node contributors. All rights reserved. MIT license.
 
@@ -31,7 +31,7 @@ const { op_http2_error_string, op_http2_http_state } = core.ops;
 const lazyHttpCommon = core.createLazyLoader("node:_http_common");
 const lazyProcess = core.createLazyLoader("node:process");
 const { codes, hideStackFrames } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const {
   HTTP2_HEADER_ACCESS_CONTROL_ALLOW_CREDENTIALS,
@@ -91,7 +91,7 @@ const {
   NGHTTP2_NV_FLAG_NONE,
   NGHTTP2_SESSION_CLIENT,
   NGHTTP2_SESSION_SERVER,
-} = core.loadExtScript("ext:deno_node/internal/http2/constants.ts");
+} = core.loadExtScript("ext:edno_node/internal/http2/constants.ts");
 
 const {
   ERR_HTTP2_CONNECT_AUTHORITY,
@@ -331,7 +331,7 @@ function addCustomSettingsToObj() {
   const toRet = {};
   const num = settingsBuffer[IDX_SETTINGS_FLAGS + 1];
   for (let i = 0; i < num; i++) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     toRet[settingsBuffer[IDX_SETTINGS_FLAGS + 1 + 2 * i + 1].toString()] =
       Number(settingsBuffer[IDX_SETTINGS_FLAGS + 1 + 2 * i + 2]);
   }

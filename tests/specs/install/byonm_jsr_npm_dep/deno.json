@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@denotest/npm-add": "jsr:@denotest/npm-add@1",
-    "@denotest/npm-add-0-5": "jsr:@denotest/npm-add@0.5"
+    "@ednotest/npm-add": "jsr:@ednotest/npm-add@1",
+    "@ednotest/npm-add-0-5": "jsr:@ednotest/npm-add@0.5"
   }
 }

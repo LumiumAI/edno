@@ -1,17 +1,17 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno"
+name = "edno"
 version = "2.9.7"
 authors.workspace = true
-default-run = "deno"
+default-run = "edno"
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Provides the deno executable"
+description = "Provides the edno executable"
 
 [[bin]]
-name = "deno"
+name = "edno"
 path = "main.rs"
 doc = false
 
@@ -25,10 +25,10 @@ harness = false
 
 [features]
 default = ["v8"]
-# The dependency named `v8` is the deno_v8 facade, retained under the existing
+# The dependency named `v8` is the edno_v8 facade, retained under the existing
 # crate name so the engine integration does not require source-level churn.
-v8 = ["__runtime_defaults", "deno_core/v8", "v8/v8"]
-quickjs = ["__runtime_defaults", "deno_core/quickjs", "v8/quickjs"]
+v8 = ["__runtime_defaults", "edno_core/v8", "v8/v8"]
+quickjs = ["__runtime_defaults", "edno_core/quickjs", "v8/quickjs"]
 __runtime_defaults = ["upgrade", "__vendored_zlib_ng"]
 # A feature that enables heap profiling with dhat on Linux.
 # 1. Compile with `cargo build --profile=release-with-debug --features=dhat-heap`
@@ -36,12 +36,12 @@ __runtime_defaults = ["upgrade", "__vendored_zlib_ng"]
 # 3. Open the json file in https://nnethercote.github.io/dh_view/dh_view.html
 dhat-heap = ["dhat"]
 # A feature that enables the upgrade subcommand and the background check for
-# available updates (of deno binary). This is typically disabled for (Linux)
+# available updates (of edno binary). This is typically disabled for (Linux)
 # distribution packages.
 upgrade = []
 # A dev feature to disable creations and loading of snapshots in favor of
 # loading JS sources at runtime.
-hmr = ["deno_runtime/hmr", "deno_snapshots/disable"]
+hmr = ["edno_runtime/hmr", "edno_snapshots/disable"]
 # Vendor zlib as zlib-ng
 __vendored_zlib_ng = ["flate2/zlib-ng-compat", "libz-sys/zlib-ng"]
 lsp-tracing = ["dep:tracing", "dep:tracing-subscriber", "dep:tracing-opentelemetry", "opentelemetry-otlp/grpc-tonic"]
@@ -51,8 +51,8 @@ panic-trace = ["deno_panic"]
 panic-trace-frame-pointer = ["panic-trace", "deno_panic/frame-pointer"]
 
 [build-dependencies]
-deno_runtime = { workspace = true }
-deno_core = { workspace = true }
+edno_runtime = { workspace = true }
+edno_core = { workspace = true }
 lazy-regex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
@@ -67,34 +67,34 @@ winres.workspace = true
 
 [dependencies]
 deno_ast = { workspace = true, features = ["cjs", "codegen", "proposal", "react", "sourcemap", "transforms", "typescript", "view", "visit", "utils"] }
-deno_bundle_runtime.workspace = true
-deno_cache_dir = { workspace = true, features = ["sync"] }
-deno_cli_parser.workspace = true
-deno_config = { workspace = true, features = ["sync", "workspace"] }
-deno_core.workspace = true
+edno_bundle_runtime.workspace = true
+edno_cache_dir = { workspace = true, features = ["sync"] }
+edno_cli_parser.workspace = true
+edno_config = { workspace = true, features = ["sync", "workspace"] }
+edno_core.workspace = true
 deno_doc = { workspace = true, features = ["rust", "comrak"] }
 deno_error.workspace = true
 deno_graph = { workspace = true, features = ["fast_check"] }
-deno_lib.workspace = true
+edno_lib.workspace = true
 deno_lint.workspace = true
-deno_lockfile.workspace = true
+edno_lockfile.workspace = true
 deno_media_type = { workspace = true, features = ["data_url", "decoding", "module_specifier"] }
-deno_npm.workspace = true
-deno_npm_cache.workspace = true
-deno_npm_installer = { workspace = true }
-deno_npmrc.workspace = true
-deno_os.workspace = true
-deno_package_json = { workspace = true, features = ["sync"] }
+edno_npm.workspace = true
+edno_npm_cache.workspace = true
+edno_npm_installer = { workspace = true }
+edno_npmrc.workspace = true
+edno_os.workspace = true
+edno_package_json = { workspace = true, features = ["sync"] }
 deno_panic = { version = "0.2.1", optional = true }
 deno_path_util.workspace = true
-deno_print.workspace = true
-deno_resolver = { workspace = true, features = ["deno_ast", "graph", "sync"] }
-deno_runtime.workspace = true
+edno_print.workspace = true
+edno_resolver = { workspace = true, features = ["deno_ast", "graph", "sync"] }
+edno_runtime.workspace = true
 deno_semver.workspace = true
-deno_signals.workspace = true
-deno_snapshots.workspace = true
+edno_signals.workspace = true
+edno_snapshots.workspace = true
 deno_task_shell.workspace = true
-deno_telemetry.workspace = true
+edno_telemetry.workspace = true
 deno_terminal.workspace = true
 eszip.workspace = true
 libsui.workspace = true
@@ -119,7 +119,7 @@ color-print.workspace = true
 console_static_text.workspace = true
 crossterm.workspace = true
 dashmap.workspace = true
-deno_dotenv.workspace = true
+edno_dotenv.workspace = true
 dhat = { workspace = true, optional = true }
 dprint-core.workspace = true
 dprint-plugin-json.workspace = true
@@ -209,7 +209,7 @@ zstd.workspace = true
 
 [target.'cfg(windows)'.dependencies]
 windows-sys = { workspace = true, features = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_RestartManager", "Win32_System_Threading"] }
-deno_subprocess_windows.workspace = true
+edno_subprocess_windows.workspace = true
 
 [target.'cfg(unix)'.dependencies]
 nix.workspace = true
@@ -220,7 +220,7 @@ tokio-vsock.workspace = true
 # unsafe_use_unprotected_platform is a workaround for a segfault that may occur
 # when running multiple v8 tests on different threads
 criterion.workspace = true
-deno_core = { workspace = true, features = ["unsafe_use_unprotected_platform"] }
+edno_core = { workspace = true, features = ["unsafe_use_unprotected_platform"] }
 pretty_assertions.workspace = true
 sys_traits = { workspace = true, features = ["memory"] }
 test_util.workspace = true
@@ -230,11 +230,11 @@ name = "flags"
 harness = false
 
 [package.metadata.winres]
-# This section defines the metadata that appears in the deno.exe PE header.
-OriginalFilename = "deno.exe"
-LegalCopyright = "© Deno contributors & Deno Land Inc. MIT licensed."
-ProductName = "Deno"
-FileDescription = "Deno: A secure runtime for JavaScript and TypeScript"
+# This section defines the metadata that appears in the edno.exe PE header.
+OriginalFilename = "edno.exe"
+LegalCopyright = "© Edno contributors & Edno Land Inc. MIT licensed."
+ProductName = "Edno"
+FileDescription = "Edno: A secure runtime for JavaScript and TypeScript"
 
 [package.metadata.cargo-shear]
 ignored = ["locked-tripwire"]

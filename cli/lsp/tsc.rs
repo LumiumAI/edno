@@ -20,39 +20,39 @@ use std::thread;
 
 use dashmap::DashMap;
 use deno_ast::MediaType;
-use deno_config::deno_json::CompilerOptions;
-use deno_core::JsRuntime;
-use deno_core::ModuleSpecifier;
-use deno_core::OpState;
-use deno_core::RuntimeOptions;
-use deno_core::anyhow::anyhow;
-use deno_core::convert::Number;
-use deno_core::convert::Smi;
-use deno_core::convert::ToV8;
-use deno_core::error::AnyError;
-use deno_core::futures::FutureExt;
-use deno_core::op2;
-use deno_core::parking_lot::Mutex;
-use deno_core::resolve_url;
-use deno_core::serde::Deserialize;
-use deno_core::serde::Serialize;
-use deno_core::serde::de;
-use deno_core::serde_json;
-use deno_core::serde_json::Value;
-use deno_core::serde_json::json;
-use deno_core::serde_v8;
-use deno_core::url::Url;
-use deno_core::v8;
+use edno_config::edno_json::CompilerOptions;
+use edno_core::JsRuntime;
+use edno_core::ModuleSpecifier;
+use edno_core::OpState;
+use edno_core::RuntimeOptions;
+use edno_core::anyhow::anyhow;
+use edno_core::convert::Number;
+use edno_core::convert::Smi;
+use edno_core::convert::ToV8;
+use edno_core::error::AnyError;
+use edno_core::futures::FutureExt;
+use edno_core::op2;
+use edno_core::parking_lot::Mutex;
+use edno_core::resolve_url;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Serialize;
+use edno_core::serde::de;
+use edno_core::serde_json;
+use edno_core::serde_json::Value;
+use edno_core::serde_json::json;
+use edno_core::serde_v8;
+use edno_core::url::Url;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 use deno_graph::source::Resolver;
-use deno_lib::util::result::InfallibleResultExt;
-use deno_lib::worker::create_isolate_create_params;
+use edno_lib::util::result::InfallibleResultExt;
+use edno_lib::worker::create_isolate_create_params;
 use deno_path_util::url_to_file_path;
-use deno_resolver::deno_json::CompilerOptionsKey;
-use deno_runtime::deno_inspector_server::InspectPublishUid;
-use deno_runtime::deno_inspector_server::InspectorServer;
-use deno_runtime::deno_node::SUPPORTED_BUILTIN_NODE_MODULES;
-use deno_runtime::tokio_util::create_basic_runtime;
+use edno_resolver::edno_json::CompilerOptionsKey;
+use edno_runtime::edno_inspector_server::InspectPublishUid;
+use edno_runtime::edno_inspector_server::InspectorServer;
+use edno_runtime::edno_node::SUPPORTED_BUILTIN_NODE_MODULES;
+use edno_runtime::tokio_util::create_basic_runtime;
 use indexmap::IndexSet;
 use lazy_regex::lazy_regex;
 use lsp_types::Uri;
@@ -475,7 +475,7 @@ impl TsJsServer {
           Arc::new(
             InspectorServer::new(
               addr,
-              "deno-lsp-tsc",
+              "edno-lsp-tsc",
               InspectPublishUid::default(),
             )
             .unwrap(),
@@ -522,7 +522,7 @@ impl TsJsServer {
       .filter_map(|(document, change_kind)| {
         let (specifier, media_type) =
           snapshot.document_modules.primary_specifier(document)?;
-        let specifier = self.specifier_map.denormalize(&specifier, media_type);
+        let specifier = self.specifier_map.ednormalize(&specifier, media_type);
         Some((specifier, *change_kind))
       })
       .collect::<Vec<_>>();
@@ -557,7 +557,7 @@ impl TsJsServer {
     let req = TscRequest::GetDiagnostics((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       snapshot.project_version,
     ));
     self
@@ -636,7 +636,7 @@ impl TsJsServer {
     let req = TscRequest::FindReferences((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -672,7 +672,7 @@ impl TsJsServer {
       .get_or_try_init(|| async {
         let req = TscRequest::GetNavigationTree((self
           .specifier_map
-          .denormalize(&module.specifier, module.media_type),));
+          .ednormalize(&module.specifier, module.media_type),));
         self
           .request(
             snapshot,
@@ -723,7 +723,7 @@ impl TsJsServer {
     let req = TscRequest::GetQuickInfoAtPosition((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
       QUICK_INFO_MAX_LENGTH,
     ));
@@ -752,7 +752,7 @@ impl TsJsServer {
     let req = TscRequest::GetCodeFixesAtPosition(Box::new((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       range.start,
       range.end,
       codes,
@@ -804,7 +804,7 @@ impl TsJsServer {
     let req = TscRequest::GetApplicableRefactors(Box::new((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       range.into(),
       UserPreferences::from_config_for_specifier(
         &snapshot.config,
@@ -839,7 +839,7 @@ impl TsJsServer {
         r#type: "file",
         file_name: self
           .specifier_map
-          .denormalize(&module.specifier, module.media_type),
+          .ednormalize(&module.specifier, module.media_type),
       },
       fix_id.to_string(),
       (&snapshot
@@ -883,7 +883,7 @@ impl TsJsServer {
     let req = TscRequest::GetEditsForRefactor(Box::new((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       (&snapshot
         .config
         .tree
@@ -926,10 +926,10 @@ impl TsJsServer {
     let req = TscRequest::GetEditsForFileRename(Box::new((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       self
         .specifier_map
-        .denormalize(new_specifier, module.media_type),
+        .ednormalize(new_specifier, module.media_type),
       (&snapshot
         .config
         .tree
@@ -975,13 +975,13 @@ impl TsJsServer {
     position: u32,
     token: &CancellationToken,
   ) -> Result<Option<Vec<DocumentHighlights>>, AnyError> {
-    let denormalized_specifier = self
+    let ednormalized_specifier = self
       .specifier_map
-      .denormalize(&module.specifier, module.media_type);
+      .ednormalize(&module.specifier, module.media_type);
     let req = TscRequest::GetDocumentHighlights(Box::new((
-      denormalized_specifier.clone(),
+      ednormalized_specifier.clone(),
       position,
-      vec![denormalized_specifier],
+      vec![ednormalized_specifier],
     )));
     self
       .request(
@@ -1006,7 +1006,7 @@ impl TsJsServer {
     let req = TscRequest::GetDefinitionAndBoundSpan((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -1038,7 +1038,7 @@ impl TsJsServer {
     let req = TscRequest::GetTypeDefinitionAtPosition((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -1076,7 +1076,7 @@ impl TsJsServer {
     let req = TscRequest::GetCompletionsAtPosition(Box::new((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
       GetCompletionsAtPositionOptions {
         user_preferences: UserPreferences::from_config_for_specifier(
@@ -1126,7 +1126,7 @@ impl TsJsServer {
     let req = TscRequest::GetCompletionEntryDetails(Box::new((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
       name,
       (&snapshot
@@ -1171,7 +1171,7 @@ impl TsJsServer {
     let req = TscRequest::GetImplementationAtPosition((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -1204,7 +1204,7 @@ impl TsJsServer {
   ) -> Result<Vec<OutliningSpan>, AnyError> {
     let req = TscRequest::GetOutliningSpans((self
       .specifier_map
-      .denormalize(&module.specifier, module.media_type),));
+      .ednormalize(&module.specifier, module.media_type),));
     self
       .request(
         snapshot,
@@ -1228,7 +1228,7 @@ impl TsJsServer {
     let req = TscRequest::ProvideCallHierarchyIncomingCalls((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -1260,7 +1260,7 @@ impl TsJsServer {
     let req = TscRequest::ProvideCallHierarchyOutgoingCalls((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -1295,7 +1295,7 @@ impl TsJsServer {
     let req = TscRequest::PrepareCallHierarchy((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -1336,7 +1336,7 @@ impl TsJsServer {
     let req = TscRequest::FindRenameLocations((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
       false,
       false,
@@ -1377,7 +1377,7 @@ impl TsJsServer {
     let req = TscRequest::GetSmartSelectionRange((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
     ));
     self
@@ -1403,7 +1403,7 @@ impl TsJsServer {
     let req = TscRequest::GetEncodedSemanticClassifications((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       TextSpan {
         start: range.start,
         length: range.end - range.start,
@@ -1435,7 +1435,7 @@ impl TsJsServer {
     let req = TscRequest::GetSignatureHelpItems((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       position,
       options,
     ));
@@ -1497,7 +1497,7 @@ impl TsJsServer {
     let req = TscRequest::ProvideInlayHints((
       self
         .specifier_map
-        .denormalize(&module.specifier, module.media_type),
+        .ednormalize(&module.specifier, module.media_type),
       text_span,
       UserPreferences::from_config_for_specifier(
         &snapshot.config,
@@ -1529,7 +1529,7 @@ impl TsJsServer {
           r#type: "file",
           file_name: self
             .specifier_map
-            .denormalize(&module.specifier, module.media_type),
+            .ednormalize(&module.specifier, module.media_type),
         },
         mode: Some(OrganizeImportsMode::All),
       },
@@ -2262,7 +2262,7 @@ fn target_uri_for_client(
       .uri
       .scheme()
       .as_str()
-      .eq_ignore_ascii_case("deno")
+      .eq_ignore_ascii_case("edno")
   {
     return None;
   }
@@ -2279,7 +2279,7 @@ fn virtual_document_file_path(
   snapshot: &StateSnapshot,
 ) -> Option<PathBuf> {
   let checksum =
-    deno_lib::util::checksum::r#gen(&[target_module.uri.as_str().as_bytes()]);
+    edno_lib::util::checksum::r#gen(&[target_module.uri.as_str().as_bytes()]);
   let mut file_name = target_module
     .uri
     .path()
@@ -2299,7 +2299,7 @@ fn virtual_document_file_path(
   Some(
     snapshot
       .cache
-      .deno_dir()
+      .edno_dir()
       .root
       .join("lsp")
       .join("virtual_documents")
@@ -3641,12 +3641,12 @@ fn parse_code_actions(
                 &mut text_edit.new_text,
                 &specifier_rewrite.new_specifier,
               );
-              if let Some(deno_types_specifier) =
+              if let Some(edno_types_specifier) =
                 &specifier_rewrite.new_deno_types_specifier
               {
                 text_edit.new_text = format!(
                   "// @ts-types=\"{}\"\n{}",
-                  deno_types_specifier, &text_edit.new_text
+                  edno_types_specifier, &text_edit.new_text
                 );
               }
             }
@@ -4056,11 +4056,11 @@ impl CompletionEntryDetails {
           new_text,
           &specifier_rewrite.new_specifier,
         );
-        if let Some(deno_types_specifier) =
+        if let Some(edno_types_specifier) =
           &specifier_rewrite.new_deno_types_specifier
         {
           *new_text =
-            format!("// @ts-types=\"{}\"\n{}", deno_types_specifier, new_text);
+            format!("// @ts-types=\"{}\"\n{}", edno_types_specifier, new_text);
         }
       }
     }
@@ -4129,7 +4129,7 @@ impl CompletionEntryDetails {
 #[serde(rename_all = "camelCase")]
 pub struct CompletionInfo {
   entries: Vec<CompletionEntry>,
-  // this is only used by Microsoft's telemetrics, which Deno doesn't use and
+  // this is only used by Microsoft's telemetrics, which Edno doesn't use and
   // there are issues with the value not matching the type definitions.
   // flags: Option<CompletionInfoFlags>,
   is_global_completion: bool,
@@ -4534,7 +4534,7 @@ impl CompletionEntry {
         if let Some(code_specifier) = language_server
           .resolver
           .get_scoped_resolver(module.scope.as_deref())
-          .deno_types_to_code_resolution(&import_data.normalized)
+          .edno_types_to_code_resolution(&import_data.normalized)
           .and_then(|s| {
             import_mapper
               .check_specifier(&s, &module.specifier)
@@ -4882,7 +4882,7 @@ impl SelectionRange {
 #[derive(Debug, Default)]
 pub struct TscSpecifierMap {
   normalized_specifiers: DashMap<String, ModuleSpecifier>,
-  denormalized_specifiers: DashMap<(ModuleSpecifier, bool), String>,
+  ednormalized_specifiers: DashMap<(ModuleSpecifier, bool), String>,
 }
 
 impl TscSpecifierMap {
@@ -4893,30 +4893,30 @@ impl TscSpecifierMap {
   /// Convert the specifier to one compatible with tsc. Cache the resulting
   /// mapping in case it needs to be reversed.
   // TODO(nayeemrmn): Factor in out-of-band media type here.
-  pub fn denormalize(
+  pub fn ednormalize(
     &self,
     specifier: &ModuleSpecifier,
     media_type: MediaType,
   ) -> String {
-    self.denormalize_inner(specifier, media_type, false)
+    self.ednormalize_inner(specifier, media_type, false)
   }
 
-  /// Denormalizes a specifier while hiding `node_modules` from TypeScript.
+  /// Ednormalizes a specifier while hiding `node_modules` from TypeScript.
   ///
-  /// TypeScript suppresses auto-import candidates from `node_modules/.deno`,
+  /// TypeScript suppresses auto-import candidates from `node_modules/.edno`,
   /// so direct package entry points that should be auto-importable are exposed
   /// under a synthetic `$node_modules` path. Avoid using this for every
   /// node_modules file, as that makes TypeScript treat the whole dependency
   /// tree like user code.
-  pub fn denormalize_with_node_modules_alias(
+  pub fn ednormalize_with_node_modules_alias(
     &self,
     specifier: &ModuleSpecifier,
     media_type: MediaType,
   ) -> String {
-    self.denormalize_inner(specifier, media_type, true)
+    self.ednormalize_inner(specifier, media_type, true)
   }
 
-  fn denormalize_inner(
+  fn ednormalize_inner(
     &self,
     specifier: &ModuleSpecifier,
     media_type: MediaType,
@@ -4924,7 +4924,7 @@ impl TscSpecifierMap {
   ) -> String {
     let original = specifier;
     if let Some(specifier) = self
-      .denormalized_specifiers
+      .ednormalized_specifiers
       .get(&(original.clone(), alias_node_modules))
     {
       return specifier.to_string();
@@ -4932,7 +4932,7 @@ impl TscSpecifierMap {
     let mut specifier = original.to_string();
     if alias_node_modules && !specifier.contains("/node_modules/@types/node/") {
       // The ts server doesn't give completions from files in
-      // `node_modules/.deno/`. We work around it like this.
+      // `node_modules/.edno/`. We work around it like this.
       specifier = specifier.replace("/node_modules/", "/$node_modules/");
     }
     // If the module's media type doesn't correspond to tsc's path-inferred
@@ -4953,7 +4953,7 @@ impl TscSpecifierMap {
   pub fn normalize<S: AsRef<str>>(
     &self,
     specifier: S,
-  ) -> Result<ModuleSpecifier, deno_core::url::ParseError> {
+  ) -> Result<ModuleSpecifier, edno_core::url::ParseError> {
     let original = specifier.as_ref();
     if let Some(specifier) = self.normalized_specifiers.get(original) {
       return Ok(specifier.clone());
@@ -4963,7 +4963,7 @@ impl TscSpecifierMap {
       .replace("$node_modules", "node_modules");
     let specifier = ModuleSpecifier::parse(&specifier_str)?;
     if specifier.as_str() != original {
-      self.denormalized_specifiers.insert(
+      self.ednormalized_specifiers.insert(
         (specifier.clone(), original.contains("$node_modules")),
         original.to_string(),
       );
@@ -5081,13 +5081,13 @@ fn op_libs() -> Vec<String> {
 enum LoadError {
   #[error("{0}")]
   #[class(inherit)]
-  UrlParse(#[from] deno_core::url::ParseError),
+  UrlParse(#[from] edno_core::url::ParseError),
   #[error("{0}")]
   #[class(inherit)]
   JsErrorBox(#[from] deno_error::JsErrorBox),
 }
 
-#[derive(Debug, deno_core::ToV8)]
+#[derive(Debug, edno_core::ToV8)]
 struct LoadResponse {
   data: DocumentText,
   script_kind: i32,
@@ -5149,7 +5149,7 @@ fn op_load<'s>(
 fn op_release(
   state: &mut OpState,
   #[string] specifier: &str,
-) -> Result<(), deno_core::url::ParseError> {
+) -> Result<(), edno_core::url::ParseError> {
   let _span = super::logging::lsp_tracing_info_span!("op_release").entered();
   let state = state.borrow_mut::<State>();
   let mark = state
@@ -5171,7 +5171,7 @@ fn op_resolve(
   state: &mut OpState,
   #[string] base: &str,
   #[scoped] specifiers: Vec<(bool, String)>,
-) -> Result<Vec<Option<(String, Option<String>)>>, deno_core::url::ParseError> {
+) -> Result<Vec<Option<(String, Option<String>)>>, edno_core::url::ParseError> {
   let _span = super::logging::lsp_tracing_info_span!("op_resolve").entered();
   op_resolve_inner(state, ResolveArgs { base, specifiers })
 }
@@ -5195,7 +5195,7 @@ impl<'a> ToV8<'a> for TscRequestArray {
 
     let (method_name, args) = self.request.into_server_request(scope)?;
 
-    let method_name = deno_core::FastString::from_static(method_name)
+    let method_name = edno_core::FastString::from_static(method_name)
       .v8_string(scope)
       .unwrap()
       .into();
@@ -5229,12 +5229,12 @@ impl<'a> ToV8<'a> for TscRequestArray {
 /// collect garbage and return memory to the OS. Kept comfortably longer than
 /// typical bursts of editor activity so we don't run a collection in the middle
 /// of someone's editing session. Overridable via the
-/// `DENO_LSP_IDLE_MEMORY_RELEASE_MS` env var (mainly so tests don't have to wait
+/// `EDNO_LSP_IDLE_MEMORY_RELEASE_MS` env var (mainly so tests don't have to wait
 /// out the full delay; a very large value effectively disables the behavior).
 static IDLE_MEMORY_RELEASE_DELAY: std::sync::LazyLock<std::time::Duration> =
   std::sync::LazyLock::new(|| {
     const DEFAULT_MS: u64 = 5000;
-    let ms = std::env::var("DENO_LSP_IDLE_MEMORY_RELEASE_MS")
+    let ms = std::env::var("EDNO_LSP_IDLE_MEMORY_RELEASE_MS")
       .ok()
       .and_then(|s| s.parse::<u64>().ok())
       .unwrap_or(DEFAULT_MS);
@@ -5352,7 +5352,7 @@ async fn op_poll_requests(
 fn op_resolve_inner(
   state: &mut OpState,
   args: ResolveArgs,
-) -> Result<Vec<Option<(String, Option<String>)>>, deno_core::url::ParseError> {
+) -> Result<Vec<Option<(String, Option<String>)>>, edno_core::url::ParseError> {
   let state = state.borrow_mut::<State>();
   let mark = state.performance.mark_with_args("tsc.op.op_resolve", &args);
   let referrer = state.specifier_map.normalize(args.base)?;
@@ -5369,7 +5369,7 @@ fn op_resolve_inner(
     .map(|o| {
       o.map(|(s, mt)| {
         (
-          denormalize_with_auto_import_alias(state, &s, mt, Some(&referrer)),
+          ednormalize_with_auto_import_alias(state, &s, mt, Some(&referrer)),
           match mt {
             MediaType::Unknown => None,
             // surface these as .js for typescript so side-effect imports
@@ -5431,7 +5431,7 @@ struct TracingSpan(
   #[allow(dead_code, reason = "unsupported")] Option<super::trace::EnteredSpan>,
 );
 
-deno_core::external!(TracingSpan, "lsp::TracingSpan");
+edno_core::external!(TracingSpan, "lsp::TracingSpan");
 
 fn span_with_context(
   _state: &State,
@@ -5468,7 +5468,7 @@ fn should_alias_node_modules_for_auto_import(
     .is_some()
 }
 
-fn denormalize_with_auto_import_alias(
+fn ednormalize_with_auto_import_alias(
   state: &State,
   specifier: &ModuleSpecifier,
   media_type: MediaType,
@@ -5477,9 +5477,9 @@ fn denormalize_with_auto_import_alias(
   if should_alias_node_modules_for_auto_import(state, specifier, scope) {
     state
       .specifier_map
-      .denormalize_with_node_modules_alias(specifier, media_type)
+      .ednormalize_with_node_modules_alias(specifier, media_type)
   } else {
-    state.specifier_map.denormalize(specifier, media_type)
+    state.specifier_map.ednormalize(specifier, media_type)
   }
 }
 
@@ -5491,7 +5491,7 @@ fn op_make_span(
 ) -> *const c_void {
   let state = op_state.borrow_mut::<State>();
   if !state.tracing_enabled() {
-    return deno_core::ExternalPointer::new(TracingSpan(None)).into_raw();
+    return edno_core::ExternalPointer::new(TracingSpan(None)).into_raw();
   }
   let sp = super::logging::lsp_tracing_info_span!(
     "js",
@@ -5502,7 +5502,7 @@ fn op_make_span(
   } else {
     sp.entered()
   };
-  deno_core::ExternalPointer::new(TracingSpan(Some(span))).into_raw()
+  edno_core::ExternalPointer::new(TracingSpan(Some(span))).into_raw()
 }
 
 #[op2(fast)]
@@ -5515,7 +5515,7 @@ fn op_log_event(op_state: &OpState, #[string] _msg: &str) {
 
 #[op2(fast)]
 fn op_exit_span(op_state: &mut OpState, span: *const c_void, root: bool) {
-  let ptr = deno_core::ExternalPointer::<TracingSpan>::from_raw(span);
+  let ptr = edno_core::ExternalPointer::<TracingSpan>::from_raw(span);
   // SAFETY: trust me
   let _span = unsafe { ptr.unsafely_take().0 };
   let state = op_state.borrow_mut::<State>();
@@ -5555,7 +5555,7 @@ fn insert_root_module_script_names(
   // If there is a types dep, use that as the root instead. But if the doc
   // is open, include both as roots.
   if let Some((types_specifier, types_media_type, _)) = &types_entry {
-    script_names.insert(denormalize_with_auto_import_alias(
+    script_names.insert(ednormalize_with_auto_import_alias(
       state,
       types_specifier,
       *types_media_type,
@@ -5563,13 +5563,13 @@ fn insert_root_module_script_names(
     ));
   }
   if types_entry.is_none() || is_open {
-    script_names.insert(denormalize_with_auto_import_alias(
+    script_names.insert(ednormalize_with_auto_import_alias(
       state,
       &module.specifier,
       module.media_type,
       scope,
     ));
-    // The auto-import alias hides `node_modules/.deno` from tsc, but
+    // The auto-import alias hides `node_modules/.edno` from tsc, but
     // requests for open documents (diagnostics, hover, etc.) use the
     // unaliased name. Include it as a root too so they don't fail with
     // "Could not find source file". See
@@ -5578,7 +5578,7 @@ fn insert_root_module_script_names(
       script_names.insert(
         state
           .specifier_map
-          .denormalize(&module.specifier, module.media_type),
+          .ednormalize(&module.specifier, module.media_type),
       );
     }
   }
@@ -5641,7 +5641,7 @@ fn op_script_names(state: &mut OpState) -> ScriptNames {
         continue;
       };
       script_names
-        .insert(state.specifier_map.denormalize(&specifier, media_type));
+        .insert(state.specifier_map.ednormalize(&specifier, media_type));
     }
     if scopes_with_node_specifier.contains(&scope) {
       script_names.insert("asset:///reference_types_node.d.ts".to_string());
@@ -5712,7 +5712,7 @@ fn op_script_names(state: &mut OpState) -> ScriptNames {
         else {
           continue;
         };
-        script_names.insert(denormalize_with_auto_import_alias(
+        script_names.insert(ednormalize_with_auto_import_alias(
           state,
           &module.specifier,
           module.media_type,
@@ -5779,7 +5779,7 @@ fn op_script_names(state: &mut OpState) -> ScriptNames {
         .state_snapshot
         .document_modules
         .module(&document, scope.map(|s| s.as_ref()))?;
-      Some(denormalize_with_auto_import_alias(
+      Some(ednormalize_with_auto_import_alias(
         state,
         &module.specifier,
         module.media_type,
@@ -5823,7 +5823,7 @@ fn op_script_names(state: &mut OpState) -> ScriptNames {
 fn op_script_version(
   state: &mut OpState,
   #[string] specifier: &str,
-) -> Result<Option<String>, deno_core::url::ParseError> {
+) -> Result<Option<String>, edno_core::url::ParseError> {
   let state = state.borrow_mut::<State>();
   let mark = state.performance.mark("tsc.op.op_script_version");
   let specifier = state.specifier_map.normalize(specifier)?;
@@ -5856,7 +5856,7 @@ impl TscRuntime {
   fn new(mut js_runtime: JsRuntime) -> Self {
     let server_main_loop_fn_global = {
       let context = js_runtime.main_context();
-      deno_core::scope!(scope, &mut js_runtime);
+      edno_core::scope!(scope, &mut js_runtime);
       let context_local = v8::Local::new(scope, context);
       let global_obj = context_local.global(scope);
       let server_main_loop_fn_str =
@@ -5891,8 +5891,8 @@ fn run_tsc_thread(
   // keeps this updated with the in-flight request's cancellation token.
   let request_cancellation: Arc<Mutex<CancellationToken>> = Default::default();
   let mut extensions =
-    deno_runtime::snapshot_info::get_extensions_in_snapshot();
-  extensions.push(deno_tsc::init(
+    edno_runtime::snapshot_info::get_extensions_in_snapshot();
+  extensions.push(edno_tsc::init(
     performance,
     specifier_map,
     request_rx,
@@ -5902,12 +5902,12 @@ fn run_tsc_thread(
   let mut tsc_runtime = JsRuntime::new(RuntimeOptions {
     extensions,
     create_params: create_isolate_create_params(&crate::sys::CliSys::default()),
-    startup_snapshot: deno_snapshots::CLI_SNAPSHOT,
+    startup_snapshot: edno_snapshots::CLI_SNAPSHOT,
     inspector: has_inspector_server,
     // See cli/tsc/js.rs: the LSP TSC isolate shares CLI_SNAPSHOT and needs
     // the residual lazy-ESM/JS sources for node:* lookups (e.g. `process`).
-    residual_lazy_esm_sources: deno_snapshots::RESIDUAL_LAZY_ESM,
-    residual_lazy_js_sources: deno_snapshots::RESIDUAL_LAZY_JS,
+    residual_lazy_esm_sources: edno_snapshots::RESIDUAL_LAZY_ESM,
+    residual_lazy_js_sources: edno_snapshots::RESIDUAL_LAZY_JS,
     ..Default::default()
   });
 
@@ -5951,7 +5951,7 @@ fn run_tsc_thread(
 
   if let Some(server) = maybe_inspector_server {
     server.register_inspector(
-      "ext:deno_tsc/99_main_compiler.js".to_string(),
+      "ext:edno_tsc/99_main_compiler.js".to_string(),
       tsc_runtime.inspector(),
       false,
     );
@@ -5977,7 +5977,7 @@ fn run_tsc_thread(
       }
     };
     let main_loop_fut = {
-      let enable_debug = std::env::var("DENO_TSC_DEBUG")
+      let enable_debug = std::env::var("EDNO_TSC_DEBUG")
         .map(|s| {
           let s = s.trim();
           s == "1" || s.eq_ignore_ascii_case("true")
@@ -5986,7 +5986,7 @@ fn run_tsc_thread(
       let mut runtime = tsc_runtime.lock().await;
       let main_loop = runtime.server_main_loop_fn_global.clone();
       let args = {
-        deno_core::scope!(scope, &mut runtime.js_runtime);
+        edno_core::scope!(scope, &mut runtime.js_runtime);
         let enable_debug_local =
           v8::Local::<v8::Value>::from(v8::Boolean::new(scope, enable_debug));
         [v8::Global::new(scope, enable_debug_local)]
@@ -6010,7 +6010,7 @@ fn run_tsc_thread(
   runtime.block_on(tsc_future)
 }
 
-deno_core::extension!(deno_tsc,
+edno_core::extension!(edno_tsc,
   ops = [
     op_is_cancelled,
     op_is_node_file,
@@ -6046,13 +6046,13 @@ deno_core::extension!(deno_tsc,
       options.request_cancellation,
     ));
   },
-  customizer = |ext: &mut deno_core::Extension| {
-    use deno_core::ExtensionFileSource;
-    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_tsc/99_main_compiler.js", crate::tsc::MAIN_COMPILER_SOURCE.as_str().into()));
-    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_tsc/97_ts_host.js", crate::tsc::TS_HOST_SOURCE.as_str().into()));
-    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_tsc/98_lsp.js", crate::tsc::LSP_SOURCE.as_str().into()));
-    ext.js_files.to_mut().push(ExtensionFileSource::new_computed("ext:deno_cli_tsc/00_typescript.js", crate::tsc::TYPESCRIPT_SOURCE.as_str().into()));
-    ext.esm_entry_point = Some("ext:deno_tsc/99_main_compiler.js");
+  customizer = |ext: &mut edno_core::Extension| {
+    use edno_core::ExtensionFileSource;
+    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_tsc/99_main_compiler.js", crate::tsc::MAIN_COMPILER_SOURCE.as_str().into()));
+    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_tsc/97_ts_host.js", crate::tsc::TS_HOST_SOURCE.as_str().into()));
+    ext.esm_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_tsc/98_lsp.js", crate::tsc::LSP_SOURCE.as_str().into()));
+    ext.js_files.to_mut().push(ExtensionFileSource::new_computed("ext:edno_cli_tsc/00_typescript.js", crate::tsc::TYPESCRIPT_SOURCE.as_str().into()));
+    ext.esm_entry_point = Some("ext:edno_tsc/99_main_compiler.js");
   }
 );
 
@@ -6312,7 +6312,7 @@ impl UserPreferences {
       provide_prefix_and_suffix_text_for_rename: Some(
         language_settings.preferences.use_aliases_for_renames,
       ),
-      // Only use workspace settings for quote style if there's no `deno.json`.
+      // Only use workspace settings for quote style if there's no `edno.json`.
       quote_preference: if config
         .tree
         .workspace_dir_for_specifier(specifier)
@@ -6333,7 +6333,7 @@ impl UserPreferences {
 // `Serialize` is retained because the whole `TscRequest` is serialized to a
 // JSON performance-trace via `Performance::mark_with_args`; `ToV8` is what
 // actually crosses the V8 boundary in `into_server_request`.
-#[derive(Debug, Clone, Serialize, deno_core::ToV8)]
+#[derive(Debug, Clone, Serialize, edno_core::ToV8)]
 #[serde(rename_all = "camelCase")]
 pub struct SignatureHelpItemsOptions {
   #[serde(skip_serializing_if = "Option::is_none")]
@@ -6341,7 +6341,7 @@ pub struct SignatureHelpItemsOptions {
   pub trigger_reason: Option<SignatureHelpTriggerReason>,
 }
 
-#[derive(Debug, Clone, Serialize, deno_core::ToV8)]
+#[derive(Debug, Clone, Serialize, edno_core::ToV8)]
 pub enum SignatureHelpTriggerKind {
   #[serde(rename = "characterTyped")]
   CharacterTyped,
@@ -6364,7 +6364,7 @@ impl From<lsp::SignatureHelpTriggerKind> for SignatureHelpTriggerKind {
   }
 }
 
-#[derive(Debug, Clone, Serialize, deno_core::ToV8)]
+#[derive(Debug, Clone, Serialize, edno_core::ToV8)]
 #[serde(rename_all = "camelCase")]
 pub struct SignatureHelpTriggerReason {
   pub kind: SignatureHelpTriggerKind,
@@ -6766,18 +6766,18 @@ mod tests {
   }
 
   async fn setup(
-    deno_json_content: Value,
+    edno_json_content: Value,
     sources: &[(&str, &str, i32, LanguageId)],
   ) -> (TempDir, TsJsServer, Arc<StateSnapshot>) {
     let temp_dir = TempDir::new();
-    let cache = LspCache::new(Some(temp_dir.url().join(".deno_dir").unwrap()));
+    let cache = LspCache::new(Some(temp_dir.url().join(".edno_dir").unwrap()));
     let mut config = Config::default();
     config
       .tree
       .inject_config_file(
-        deno_config::deno_json::ConfigFile::new(
-          &deno_json_content.to_string(),
-          temp_dir.url().join("deno.json").unwrap(),
+        edno_config::edno_json::ConfigFile::new(
+          &edno_json_content.to_string(),
+          temp_dir.url().join("edno.json").unwrap(),
         )
         .unwrap(),
       )
@@ -6888,7 +6888,7 @@ mod tests {
       }),
       &[(
         "a.ts",
-        r#"console.log("hello deno");"#,
+        r#"console.log("hello edno");"#,
         1,
         LanguageId::TypeScript,
       )],
@@ -6919,7 +6919,7 @@ mod tests {
           "end": { "line": 0, "character": 7 },
           "fileName": specifier,
           "messageText": "Cannot find name 'console'. Do you need to change your target library? Try changing the \'lib\' compiler option to include 'dom'.",
-          "sourceLine": "console.log(\"hello deno\");",
+          "sourceLine": "console.log(\"hello edno\");",
           "category": 1,
           "code": 2584,
         }
@@ -7361,18 +7361,18 @@ mod tests {
   fn test_tsc_specifier_map_node_modules_alias_is_opt_in() {
     let map = TscSpecifierMap::new();
     let specifier = ModuleSpecifier::parse(
-      "file:///project/node_modules/.deno/pkg@1.0.0/node_modules/pkg/mod.d.ts",
+      "file:///project/node_modules/.edno/pkg@1.0.0/node_modules/pkg/mod.d.ts",
     )
     .unwrap();
 
-    let denormalized = map.denormalize(&specifier, MediaType::Dts);
-    assert_eq!(denormalized, specifier.as_str());
+    let ednormalized = map.ednormalize(&specifier, MediaType::Dts);
+    assert_eq!(ednormalized, specifier.as_str());
 
     let aliased =
-      map.denormalize_with_node_modules_alias(&specifier, MediaType::Dts);
+      map.ednormalize_with_node_modules_alias(&specifier, MediaType::Dts);
     assert_eq!(
       aliased,
-      "file:///project/$node_modules/.deno/pkg@1.0.0/$node_modules/pkg/mod.d.ts",
+      "file:///project/$node_modules/.edno/pkg@1.0.0/$node_modules/pkg/mod.d.ts",
     );
     assert_eq!(map.normalize(&aliased).unwrap(), specifier);
   }

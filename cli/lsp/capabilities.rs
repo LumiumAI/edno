@@ -7,7 +7,7 @@
 //!
 use std::sync::LazyLock;
 
-use deno_core::serde_json::json;
+use edno_core::serde_json::json;
 use tower_lsp::lsp_types::*;
 
 use super::refactor::ALL_KNOWN_REFACTOR_ACTION_KINDS;
@@ -61,9 +61,9 @@ pub fn semantic_tokens_registration_options()
   const SCHEMES: [&str; 5] = [
     "file",
     "untitled",
-    "deno",
+    "edno",
     "vscode-notebook-cell",
-    "deno-notebook-cell",
+    "edno-notebook-cell",
   ];
   let mut document_filters =
     Vec::with_capacity(LANGUAGES.len() * SCHEMES.len());
@@ -151,7 +151,7 @@ pub fn server_capabilities(
     references_provider: Some(OneOf::Left(true)),
     document_highlight_provider: Some(OneOf::Left(true)),
     document_symbol_provider: Some(OneOf::Right(DocumentSymbolOptions {
-      label: Some("Deno".to_string()),
+      label: Some("Edno".to_string()),
       work_done_progress_options: WorkDoneProgressOptions {
         work_done_progress: None,
       },
@@ -173,8 +173,8 @@ pub fn server_capabilities(
     color_provider: None,
     execute_command_provider: Some(ExecuteCommandOptions {
       commands: vec![
-        "deno.cache".to_string(),
-        "deno.reloadImportRegistries".to_string(),
+        "edno.cache".to_string(),
+        "edno.reloadImportRegistries".to_string(),
       ],
       ..Default::default()
     }),
@@ -204,7 +204,7 @@ pub fn server_capabilities(
     linked_editing_range_provider: None,
     moniker_provider: None,
     experimental: Some(json!({
-      "denoConfigTasks": true,
+      "ednoConfigTasks": true,
       "testingApi": true,
       "didRefreshDenoConfigurationTreeNotifications": true,
     })),

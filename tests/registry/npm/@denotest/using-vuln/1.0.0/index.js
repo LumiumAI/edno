@@ -1,4 +1,4 @@
-import { sayHello as sayHelloVuln2 } from "@denotest/with-vuln2";
+import { sayHello as sayHelloVuln2 } from "@ednotest/with-vuln2";
 
 export function sayHello() {
   return sayHelloVuln2();

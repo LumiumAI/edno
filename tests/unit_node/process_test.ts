@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-undef no-console
+// edno-lint-ignore-file no-undef no-console
 
 import process, {
   arch as importedArch,
@@ -64,30 +64,30 @@ function getUserNameFromSystem(uid: number): string {
   return name;
 }
 
-Deno.test({
+Edno.test({
   name: "process.cwd and process.chdir success",
   fn() {
-    assertEquals(process.cwd(), Deno.cwd());
+    assertEquals(process.cwd(), Edno.cwd());
 
-    const currentDir = Deno.cwd();
+    const currentDir = Edno.cwd();
 
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     process.chdir(tempDir);
     assertEquals(
-      Deno.realPathSync(process.cwd()),
-      Deno.realPathSync(tempDir),
+      Edno.realPathSync(process.cwd()),
+      Edno.realPathSync(tempDir),
     );
 
     process.chdir(currentDir);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.chdir failure",
   fn() {
-    // process.chdir now wraps Deno errors into Node-shaped uv errors with
+    // process.chdir now wraps Edno errors into Node-shaped uv errors with
     // syscall/path/dest, so a missing directory throws a plain Error with
-    // code "ENOENT" rather than Deno.errors.NotFound.
+    // code "ENOENT" rather than Edno.errors.NotFound.
     const err = assertThrows(
       () => {
         process.chdir("non-existent-directory-name");
@@ -101,7 +101,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.version",
   fn() {
     assertEquals(typeof process, "object");
@@ -126,15 +126,15 @@ Deno.test({
     assertEquals(typeof process.versions.unicode, "string");
     // These two are not present in `process.versions` in Node, but we
     // add them anyway
-    assertEquals(typeof process.versions.deno, "string");
+    assertEquals(typeof process.versions.edno, "string");
     assertEquals(typeof process.versions.typescript, "string");
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.platform",
   fn() {
-    const expectedOs = Deno.build.os == "windows" ? "win32" : Deno.build.os;
+    const expectedOs = Edno.build.os == "windows" ? "win32" : Edno.build.os;
     assertEquals(typeof process.platform, "string");
     assertEquals(process.platform, expectedOs);
     assertEquals(typeof importedPlatform, "string");
@@ -142,7 +142,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.mainModule",
   fn() {
     assertEquals(process.mainModule, undefined);
@@ -154,13 +154,13 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.arch",
   fn() {
     function testValue(arch: string) {
-      if (Deno.build.arch == "x86_64") {
+      if (Edno.build.arch == "x86_64") {
         assertEquals(arch, "x64");
-      } else if (Deno.build.arch == "aarch64") {
+      } else if (Edno.build.arch == "aarch64") {
         assertEquals(arch, "arm64");
       } else {
         throw new Error("unreachable");
@@ -174,25 +174,25 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.pid",
   fn() {
     assertEquals(typeof process.pid, "number");
-    assertEquals(process.pid, Deno.pid);
+    assertEquals(process.pid, Edno.pid);
     assertEquals(typeof importedPid, "number");
-    assertEquals(importedPid, Deno.pid);
+    assertEquals(importedPid, Edno.pid);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.ppid",
   fn() {
     assertEquals(typeof process.ppid, "number");
-    assertEquals(process.ppid, Deno.ppid);
+    assertEquals(process.ppid, Edno.ppid);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.on",
   async fn() {
     assertEquals(typeof process.on, "function");
@@ -207,7 +207,7 @@ Deno.test({
 
     const cwd = path.dirname(path.fromFileUrl(import.meta.url));
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "run",
         "--quiet",
@@ -222,7 +222,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   // Regression test for https://github.com/denoland/deno/issues/24646: a
   // spurious `ERR_MULTIPLE_CALLBACK` ("Callback called multiple times") was
   // thrown from `onwrite` while doing many synchronous writes to
@@ -244,7 +244,7 @@ Deno.test({
       }
       console.error("DONE_OK");
     `;
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", "--quiet", code],
       stdout: "piped",
       stderr: "piped",
@@ -260,9 +260,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.on signal",
-  ignore: Deno.build.os == "windows",
+  ignore: Edno.build.os == "windows",
   async fn() {
     let wait = "";
     const testTimeout = setTimeout(
@@ -270,7 +270,7 @@ Deno.test({
       10_000,
     );
     try {
-      const process = new Deno.Command(Deno.execPath(), {
+      const process = new Edno.Command(Edno.execPath(), {
         args: [
           "eval",
           `
@@ -314,10 +314,10 @@ Deno.test({
   },
 });
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function processKill() {
-    const p = new Deno.Command(Deno.execPath(), {
+    const p = new Edno.Command(Edno.execPath(), {
       args: ["eval", "setTimeout(() => {}, 10000)"],
     }).spawn();
 
@@ -329,13 +329,13 @@ Deno.test(
   },
 );
 
-Deno.test({
+Edno.test({
   name: "process.off signal",
-  ignore: Deno.build.os == "windows",
+  ignore: Edno.build.os == "windows",
   async fn() {
     const testTimeout = setTimeout(() => fail("Test timed out"), 10_000);
     try {
-      const process = new Deno.Command(Deno.execPath(), {
+      const process = new Edno.Command(Edno.execPath(), {
         args: [
           "eval",
           `
@@ -378,7 +378,7 @@ Deno.test({
 });
 
 // Only supported on Windows (but won't throw anywhere)
-Deno.test({
+Edno.test({
   name: "process.on SIGBREAK doesn't throw",
   fn() {
     const listener = () => {};
@@ -388,7 +388,7 @@ Deno.test({
 });
 
 // Not supported on Windows (but won't throw anywhere)
-Deno.test({
+Edno.test({
   name: "process.on SIGTERM doesn't throw",
   fn() {
     const listener = () => {};
@@ -397,32 +397,32 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.argv",
   fn() {
     assert(Array.isArray(argv));
     assert(Array.isArray(process.argv));
     assert(
-      process.argv[0].match(/[^/\\]*deno[^/\\]*$/),
-      "deno included in the file name of argv[0]",
+      process.argv[0].match(/[^/\\]*edno[^/\\]*$/),
+      "edno included in the file name of argv[0]",
     );
     assertEquals(
       process.argv[1],
-      path.fromFileUrl(Deno.mainModule),
+      path.fromFileUrl(Edno.mainModule),
     );
     // argv supports array methods.
     assert(Array.isArray(process.argv.slice(2)));
-    assertEquals(process.argv.indexOf(Deno.execPath()), 0);
-    assertEquals(process.argv.indexOf(path.fromFileUrl(Deno.mainModule)), 1);
+    assertEquals(process.argv.indexOf(Edno.execPath()), 0);
+    assertEquals(process.argv.indexOf(path.fromFileUrl(Edno.mainModule)), 1);
     // argv[0] should be the executable path (same as process.execPath), this is Node.js behavior
-    assertEquals(process.argv[0], Deno.execPath());
+    assertEquals(process.argv[0], Edno.execPath());
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.argv0",
   async fn() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         `import process from "node:process";console.log(process.argv0);`,
@@ -430,29 +430,29 @@ Deno.test({
       stdout: "piped",
       stderr: "null",
     }).output();
-    assertEquals(new TextDecoder().decode(stdout).trim(), Deno.execPath());
+    assertEquals(new TextDecoder().decode(stdout).trim(), Edno.execPath());
 
     assertEquals(typeof process.argv0, "string");
     assert(
-      process.argv0.match(/[^/\\]*deno[^/\\]*$/),
-      "deno included in the file name of argv[0]",
+      process.argv0.match(/[^/\\]*edno[^/\\]*$/),
+      "edno included in the file name of argv[0]",
     );
     assertEquals(typeof importedArgv0, "string");
     assert(
-      importedArgv0.match(/[^/\\]*deno[^/\\]*$/),
-      "deno included in the file name of argv[0]",
+      importedArgv0.match(/[^/\\]*edno[^/\\]*$/),
+      "edno included in the file name of argv[0]",
     );
 
     // Setting should be a noop
     process.argv0 = "foobar";
     assert(
-      process.argv0.match(/[^/\\]*deno[^/\\]*$/),
-      "deno included in the file name of argv[0]",
+      process.argv0.match(/[^/\\]*edno[^/\\]*$/),
+      "edno included in the file name of argv[0]",
     );
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.execArgv",
   fn() {
     assert(Array.isArray(process.execArgv));
@@ -463,14 +463,14 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.env",
   fn() {
     assert(Object.prototype.hasOwnProperty.call(process, "env"));
 
-    Deno.env.set("HELLO", "WORLD");
+    Edno.env.set("HELLO", "WORLD");
 
-    assertObjectMatch(process.env, Deno.env.toObject());
+    assertObjectMatch(process.env, Edno.env.toObject());
 
     assertEquals(typeof (process.env.HELLO), "string");
     assertEquals(process.env.HELLO, "WORLD");
@@ -497,7 +497,7 @@ Deno.test({
     });
     assertEquals(process.env.HELLO, "OTHER_WORLD");
 
-    // deno-lint-ignore no-prototype-builtins
+    // edno-lint-ignore no-prototype-builtins
     assert(process.env.hasOwnProperty("HELLO"));
     assert("HELLO" in process.env);
     assert(Object.keys(process.env.valueOf()).includes("HELLO"));
@@ -517,11 +517,11 @@ Deno.test({
 });
 
 // #30701
-Deno.test({
+Edno.test({
   name: "process.env handles falsy values correctly",
   fn() {
     const key = "TEST_ENV_VAR_EMPTY_STRING";
-    Deno.env.set(key, "");
+    Edno.env.set(key, "");
 
     assertEquals(process.env[key], "");
     assertEquals(Object.keys(process.env).includes(key), true);
@@ -530,20 +530,20 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.env requires scoped env permission",
   permissions: { env: ["FOO"] },
   fn() {
-    Deno.env.set("FOO", "1");
+    Edno.env.set("FOO", "1");
     assert("FOO" in process.env);
     assertThrows(() => {
       process.env.BAR;
-    }, Deno.errors.NotCapable);
+    }, Edno.errors.NotCapable);
     assert(Object.hasOwn(process.env, "FOO"));
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.env doesn't throw with invalid env var names",
   fn() {
     assertEquals(process.env[""], undefined);
@@ -558,7 +558,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   "name": "process.env: checking symbol in env should not require permission",
   permissions: "none",
   fn() {
@@ -567,12 +567,12 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdin",
   fn() {
-    // @ts-ignore `Deno.stdin.rid` was soft-removed in Deno 2.
-    assertEquals(process.stdin.fd, Deno.stdin.rid);
-    const isTTY = Deno.stdin.isTerminal();
+    // @ts-ignore `Edno.stdin.rid` was soft-removed in Edno 2.
+    assertEquals(process.stdin.fd, Edno.stdin.rid);
+    const isTTY = Edno.stdin.isTerminal();
     assertEquals(process.stdin.isTTY, isTTY);
 
     // Allows overwriting `process.stdin.isTTY` (mirrors stdout/stderr from #26130)
@@ -588,10 +588,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdin readable with a TTY",
   // TODO(PolarETech): Run this test even in non tty environment
-  ignore: !Deno.stdin.isTerminal(),
+  ignore: !Edno.stdin.isTerminal(),
   // stdin resource is present before the test starts.
   sanitizeResources: false,
   async fn() {
@@ -622,18 +622,18 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdin readable with piping a file",
   async fn() {
     const expected = ["65536", "foo", "bar", "null", "end"];
     const scriptPath = "./testdata/process_stdin.ts";
     const filePath = "./testdata/process_stdin_dummy.txt";
 
-    const shell = Deno.build.os === "windows" ? "cmd.exe" : "/bin/sh";
-    const cmd = `"${Deno.execPath()}" run ${scriptPath} < ${filePath}`;
-    const args = Deno.build.os === "windows" ? ["/d", "/c", cmd] : ["-c", cmd];
+    const shell = Edno.build.os === "windows" ? "cmd.exe" : "/bin/sh";
+    const cmd = `"${Edno.execPath()}" run ${scriptPath} < ${filePath}`;
+    const args = Edno.build.os === "windows" ? ["/d", "/c", cmd] : ["-c", cmd];
 
-    const p = new Deno.Command(shell, {
+    const p = new Edno.Command(shell, {
       args,
       stdin: "null",
       stdout: "piped",
@@ -648,11 +648,11 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdin readable with piping a stream",
   async fn() {
     const expected = [
-      Deno.build.os == "windows" ? "16384" : "65536",
+      Edno.build.os == "windows" ? "16384" : "65536",
       "foo",
       "bar",
       "null",
@@ -660,7 +660,7 @@ Deno.test({
     ];
     const scriptPath = "./testdata/process_stdin.ts";
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["run", scriptPath],
       stdin: "piped",
       stdout: "piped",
@@ -681,14 +681,14 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdin readable with piping a socket",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   async fn() {
     const expected = ["65536", "foo", "bar", "null", "end"];
     const scriptPath = "./testdata/process_stdin.ts";
 
-    const listener = Deno.listen({ hostname: "127.0.0.1", port: 9000 });
+    const listener = Edno.listen({ hostname: "127.0.0.1", port: 9000 });
     listener.accept().then(async (conn) => {
       await conn.write(new TextEncoder().encode("foo\nbar"));
       conn.close();
@@ -697,10 +697,10 @@ Deno.test({
 
     const shell = "/bin/bash";
     const cmd =
-      `"${Deno.execPath()}" run ${scriptPath} < /dev/tcp/127.0.0.1/9000`;
+      `"${Edno.execPath()}" run ${scriptPath} < /dev/tcp/127.0.0.1/9000`;
     const args = ["-c", cmd];
 
-    const p = new Deno.Command(shell, {
+    const p = new Edno.Command(shell, {
       args,
       stdin: "null",
       stdout: "piped",
@@ -714,13 +714,13 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdin readable with null",
   async fn() {
     const expected = ["65536", "null", "end"];
     const scriptPath = "./testdata/process_stdin.ts";
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["run", scriptPath],
       stdin: "null",
       stdout: "piped",
@@ -736,21 +736,21 @@ Deno.test({
 
 // TODO(kt3k): Enable this test case. 'readable' event handler in
 // `process_stdin.ts` doesn't work now
-Deno.test({
+Edno.test({
   name: "process.stdin readable with unsuitable stdin",
   ignore: true,
   // // TODO(PolarETech): Prepare a similar test that can be run on Windows
-  // ignore: Deno.build.os === "windows",
+  // ignore: Edno.build.os === "windows",
   async fn() {
     const expected = ["65536", "null", "end"];
     const scriptPath = "./testdata/process_stdin.ts";
     const directoryPath = "./testdata/";
 
     const shell = "/bin/bash";
-    const cmd = `"${Deno.execPath()}" run ${scriptPath} < ${directoryPath}`;
+    const cmd = `"${Edno.execPath()}" run ${scriptPath} < ${directoryPath}`;
     const args = ["-c", cmd];
 
-    const p = new Deno.Command(shell, {
+    const p = new Edno.Command(shell, {
       args,
       stdin: "null",
       stdout: "piped",
@@ -765,14 +765,14 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdout",
   fn() {
-    // @ts-ignore `Deno.stdout.rid` was soft-removed in Deno 2.
-    assertEquals(process.stdout.fd, Deno.stdout.rid);
-    const isTTY = Deno.stdout.isTerminal();
+    // @ts-ignore `Edno.stdout.rid` was soft-removed in Edno 2.
+    assertEquals(process.stdout.fd, Edno.stdout.rid);
+    const isTTY = Edno.stdout.isTerminal();
     assertEquals(process.stdout.isTTY, isTTY);
-    const consoleSize = isTTY ? Deno.consoleSize() : undefined;
+    const consoleSize = isTTY ? Edno.consoleSize() : undefined;
     assertEquals(process.stdout.columns, consoleSize?.columns);
     assertEquals(process.stdout.rows, consoleSize?.rows);
     assert([1, 4, 8, 24].includes(process.stdout.getColorDepth()));
@@ -805,14 +805,14 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stderr",
   fn() {
-    // @ts-ignore `Deno.stderr.rid` was soft-removed in Deno 2.
-    assertEquals(process.stderr.fd, Deno.stderr.rid);
-    const isTTY = Deno.stderr.isTerminal();
+    // @ts-ignore `Edno.stderr.rid` was soft-removed in Edno 2.
+    assertEquals(process.stderr.fd, Edno.stderr.rid);
+    const isTTY = Edno.stderr.isTerminal();
     assertEquals(process.stderr.isTTY, isTTY);
-    const consoleSize = isTTY ? Deno.consoleSize() : undefined;
+    const consoleSize = isTTY ? Edno.consoleSize() : undefined;
     assertEquals(process.stderr.columns, consoleSize?.columns);
     assertEquals(process.stderr.rows, consoleSize?.rows);
     assertEquals(
@@ -834,7 +834,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.nextTick",
   async fn() {
     let withoutArguments = false;
@@ -854,7 +854,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.getActiveResourcesInfo reports active timers",
   fn() {
     const countTimeouts = () =>
@@ -873,10 +873,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process._getActiveRequests reports pending fs requests",
   async fn() {
-    const tempFile = Deno.makeTempFileSync();
+    const tempFile = Edno.makeTempFileSync();
     try {
       const before = processWithActiveResources._getActiveRequests().length;
       const promises = Array.from(
@@ -907,12 +907,12 @@ Deno.test({
         before,
       );
     } finally {
-      Deno.removeSync(tempFile);
+      Edno.removeSync(tempFile);
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process._getActiveHandles reports active net handles",
   async fn() {
     let acceptedSocket: net.Socket | undefined;
@@ -941,7 +941,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "process.getActiveResourcesInfo reports net handles with Node wrap names",
   async fn() {
@@ -975,10 +975,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.getActiveResourcesInfo reports fs requests as FSReqCallback",
   async fn() {
-    const tempFile = Deno.makeTempFileSync();
+    const tempFile = Edno.makeTempFileSync();
     const countOf = () =>
       process.getActiveResourcesInfo().filter((t) => t === "FSReqCallback")
         .length;
@@ -1001,12 +1001,12 @@ Deno.test({
       for (const fd of fds) fs.closeSync(fd);
       assertEquals(countOf(), before);
     } finally {
-      Deno.removeSync(tempFile);
+      Edno.removeSync(tempFile);
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.hrtime",
   // TODO(kt3k): Enable this test
   ignore: true,
@@ -1030,7 +1030,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.hrtime.bigint",
   fn() {
     const time = process.hrtime.bigint();
@@ -1039,7 +1039,7 @@ Deno.test({
   },
 });
 
-Deno.test("process.on, process.off, process.removeListener doesn't throw on unimplemented events", () => {
+Edno.test("process.on, process.off, process.removeListener doesn't throw on unimplemented events", () => {
   const events = [
     "beforeExit",
     "disconnect",
@@ -1063,7 +1063,7 @@ Deno.test("process.on, process.off, process.removeListener doesn't throw on unim
   });
 });
 
-Deno.test("process.memoryUsage()", () => {
+Edno.test("process.memoryUsage()", () => {
   const mem = process.memoryUsage();
   assert(typeof mem.rss === "number");
   assert(typeof mem.heapTotal === "number");
@@ -1073,26 +1073,26 @@ Deno.test("process.memoryUsage()", () => {
   assertEquals(mem.arrayBuffers, 0);
 });
 
-Deno.test("process.memoryUsage.rss()", () => {
+Edno.test("process.memoryUsage.rss()", () => {
   const rss = process.memoryUsage.rss();
   assert(typeof rss === "number");
 });
 
-Deno.test("process.exitCode", () => {
+Edno.test("process.exitCode", () => {
   assertEquals(process.exitCode, undefined);
   process.exitCode = 127;
   assertEquals(process.exitCode, 127);
   assertThrows(() => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     (process.exitCode as any) = "asdf";
   });
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (process.exitCode as any) = "10";
   process.exitCode = undefined; // reset
 });
 
 async function exitCodeTest(codeText: string, expectedExitCode: number) {
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: [
       "eval",
       codeText,
@@ -1103,7 +1103,7 @@ async function exitCodeTest(codeText: string, expectedExitCode: number) {
   assertEquals(code, expectedExitCode);
 }
 
-Deno.test("process.exitCode in should change exit code", async () => {
+Edno.test("process.exitCode in should change exit code", async () => {
   await exitCodeTest(
     "import process from 'node:process'; process.exitCode = 127;",
     127,
@@ -1118,31 +1118,31 @@ Deno.test("process.exitCode in should change exit code", async () => {
   );
 });
 
-Deno.test("Deno.exit should override process exit", async () => {
+Edno.test("Edno.exit should override process exit", async () => {
   await exitCodeTest(
-    "import process from 'node:process'; process.exitCode = 10; Deno.exit(12);",
+    "import process from 'node:process'; process.exitCode = 10; Edno.exit(12);",
     12,
   );
 });
 
-Deno.test("process.config", () => {
+Edno.test("process.config", () => {
   assert(process.config !== undefined);
   assert(process.config.target_defaults !== undefined);
   assert(process.config.variables !== undefined);
   assertEquals(process.config.variables.host_arch, process.arch);
 });
 
-Deno.test("process._exiting", () => {
+Edno.test("process._exiting", () => {
   // @ts-ignore fix the type here
   assert(process._exiting === false);
 });
 
-Deno.test("process.execPath", () => {
+Edno.test("process.execPath", () => {
   assertEquals(typeof process.execPath, "string");
   assertEquals(process.execPath, process.argv[0]);
 });
 
-Deno.test("process.execPath is writable", () => {
+Edno.test("process.execPath is writable", () => {
   // pnpm writes to process.execPath
   // https://github.com/pnpm/pnpm/blob/67d8b65d2e8da1df3725034b8c5b1fcf3af4ad81/packages/config/src/index.ts#L175
   const originalExecPath = process.execPath;
@@ -1154,24 +1154,24 @@ Deno.test("process.execPath is writable", () => {
   }
 });
 
-Deno.test("process.getgid", () => {
-  if (Deno.build.os === "windows") {
+Edno.test("process.getgid", () => {
+  if (Edno.build.os === "windows") {
     assertEquals(process.getgid, undefined);
   } else {
-    assertEquals(process.getgid?.(), Deno.gid());
+    assertEquals(process.getgid?.(), Edno.gid());
   }
 });
 
-Deno.test("process.getuid", () => {
-  if (Deno.build.os === "windows") {
+Edno.test("process.getuid", () => {
+  if (Edno.build.os === "windows") {
     assertEquals(process.getuid, undefined);
   } else {
-    assertEquals(process.getuid?.(), Deno.uid());
+    assertEquals(process.getuid?.(), Edno.uid());
   }
 });
 
-Deno.test("process.geteuid", () => {
-  if (Deno.build.os === "windows") {
+Edno.test("process.geteuid", () => {
+  if (Edno.build.os === "windows") {
     assertEquals(process.geteuid, undefined);
   } else {
     assert(geteuid);
@@ -1179,10 +1179,10 @@ Deno.test("process.geteuid", () => {
   }
 });
 
-Deno.test({
+Edno.test({
   name: "process.exit",
   async fn() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "run",
         "--quiet",
@@ -1197,10 +1197,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.reallyExit",
   async fn() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "run",
         "--quiet",
@@ -1215,10 +1215,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process._rawDebug",
   async fn() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "run",
         "--quiet",
@@ -1237,7 +1237,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.stdout isn't closed when source stream ended",
   async fn() {
     const source = Readable.from(["foo", "bar"]);
@@ -1253,7 +1253,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.title",
   fn() {
     // Default process.title should be the execPath (matches Node.js behavior)
@@ -1267,7 +1267,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.argv[1] in Worker",
   async fn() {
     const worker = new Worker(
@@ -1279,9 +1279,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.binding('uv').errname",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   fn() {
     // @ts-ignore: untyped internal binding, not actually supposed to be
     // used by userland modules in Node.js
@@ -1292,9 +1292,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.binding('uv').getErrorMessage",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   fn() {
     // @ts-ignore: untyped internal binding, not actually supposed to be
     // used by userland modules in Node.js
@@ -1305,9 +1305,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.binding('uv').getErrorMap",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   fn() {
     // @ts-ignore: untyped internal binding, not actually supposed to be
     // used by userland modules in Node.js
@@ -1321,9 +1321,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.binding('uv').getCodeMap",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   fn() {
     // @ts-ignore: untyped internal binding, not actually supposed to be
     // used by userland modules in Node.js
@@ -1337,7 +1337,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.report",
   fn() {
     // The process.report is marked as possibly undefined in node 18 typings
@@ -1354,7 +1354,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.report.writeReport unimplemented result",
   fn() {
     // The process.report is marked as possibly undefined in node 18 typings
@@ -1364,13 +1364,13 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.report.getReport result",
   fn() {
     // The process.report is marked as possibly undefined in node 18 typings
     if (!process.report) throw "No process report";
 
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const result = process.report.getReport() as any;
 
     // test and remove dynamic parts
@@ -1407,7 +1407,7 @@ Deno.test({
     // glibc fields only exist on Linux+glibc builds; on musl Linux and
     // non-Linux platforms the keys must be absent so libc-flavor detection
     // works (denoland/deno#33948).
-    const isGlibc = Deno.build.os === "linux" && Deno.build.env === "gnu";
+    const isGlibc = Edno.build.os === "linux" && Edno.build.env === "gnu";
     if (isGlibc) {
       assertEquals(result.header.glibcVersionRuntime, "2.38");
       assertEquals(result.header.glibcVersionCompiler, "2.38");
@@ -1458,7 +1458,7 @@ Deno.test({
 });
 
 // Regression test for https://github.com/denoland/deno/issues/35072
-Deno.test({
+Edno.test({
   name: "named export { report } from node:process",
   fn() {
     // `import { report } from 'node:process'` must work as a named export
@@ -1472,7 +1472,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setSourceMapsEnabled",
   fn() {
     // @ts-ignore: setSourceMapsEnabled is not available in the types yet.
@@ -1482,7 +1482,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.sourceMapsEnabled",
   fn() {
     // @ts-ignore: not available in the types yet.
@@ -1491,7 +1491,7 @@ Deno.test({
 });
 
 // Regression test for https://github.com/denoland/deno/issues/23761
-Deno.test({
+Edno.test({
   name: "process.uptime without this",
   fn() {
     const v = (0, process.uptime)();
@@ -1500,7 +1500,7 @@ Deno.test({
 });
 
 // Test for https://github.com/denoland/deno/issues/23863
-Deno.test({
+Edno.test({
   name: "instantiate process constructor without 'new' keyword",
   fn() {
     // This would throw
@@ -1509,7 +1509,7 @@ Deno.test({
 });
 
 // Test for https://github.com/denoland/deno/issues/22892
-Deno.test("process.listeners - include SIG* events", () => {
+Edno.test("process.listeners - include SIG* events", () => {
   const listener = () => console.log("SIGINT");
   process.on("SIGINT", listener);
   assertEquals(process.listeners("SIGINT").length, 1);
@@ -1524,20 +1524,20 @@ Deno.test("process.listeners - include SIG* events", () => {
   assertEquals(process.listeners("SIGINT").length, 0);
 });
 
-Deno.test(function processVersionsOwnProperty() {
+Edno.test(function processVersionsOwnProperty() {
   assert(Object.prototype.hasOwnProperty.call(process, "versions"));
 });
 
-Deno.test(function importedExecArgvTest() {
+Edno.test(function importedExecArgvTest() {
   assert(Array.isArray(importedExecArgv));
 });
 
-Deno.test(function importedExecPathTest() {
+Edno.test(function importedExecPathTest() {
   assertEquals(typeof importedExecPath, "string");
-  assertEquals(importedExecPath, Deno.execPath());
+  assertEquals(importedExecPath, Edno.execPath());
 });
 
-Deno.test("process.cpuUsage()", () => {
+Edno.test("process.cpuUsage()", () => {
   assert(process.cpuUsage.length === 1);
   const cpuUsage = process.cpuUsage();
   assert(typeof cpuUsage.user === "number");
@@ -1586,11 +1586,11 @@ Deno.test("process.cpuUsage()", () => {
   }
 });
 
-Deno.test("importedCpuUsage", () => {
+Edno.test("importedCpuUsage", () => {
   assert(importedCpuUsage === process.cpuUsage);
 });
 
-Deno.test("process.resourceUsage()", () => {
+Edno.test("process.resourceUsage()", () => {
   const usage = process.resourceUsage();
   // All 16 fields documented at
   // https://nodejs.org/api/process.html#processresourceusage must be present
@@ -1624,8 +1624,8 @@ Deno.test("process.resourceUsage()", () => {
   assert(later.systemCPUTime >= usage.systemCPUTime);
 });
 
-Deno.test("process.resourceUsage() maxRSS is in kilobytes", () => {
-  const rssBytes = Deno.memoryUsage().rss;
+Edno.test("process.resourceUsage() maxRSS is in kilobytes", () => {
+  const rssBytes = Edno.memoryUsage().rss;
   const { maxRSS } = process.resourceUsage();
 
   // maxRSS is a peak, so it must be at least roughly the current RSS.
@@ -1640,56 +1640,56 @@ Deno.test("process.resourceUsage() maxRSS is in kilobytes", () => {
   );
 });
 
-Deno.test("importedResourceUsage", async () => {
+Edno.test("importedResourceUsage", async () => {
   const { resourceUsage } = await import("node:process");
   assert(resourceUsage === process.resourceUsage);
 });
 
-Deno.test({
+Edno.test({
   name:
     "process.constrainedMemory requires systemMemoryInfo permission on Linux and Android",
-  ignore: Deno.build.os !== "linux" && Deno.build.os !== "android",
+  ignore: Edno.build.os !== "linux" && Edno.build.os !== "android",
   permissions: { sys: false },
   fn() {
     assertThrows(
       () => process.constrainedMemory(),
-      Deno.errors.NotCapable,
+      Edno.errors.NotCapable,
       'Requires sys access to "systemMemoryInfo"',
     );
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.constrainedMemory works with sys permission",
-  ignore: Deno.build.os !== "linux" && Deno.build.os !== "android",
+  ignore: Edno.build.os !== "linux" && Edno.build.os !== "android",
   permissions: { sys: true },
   fn() {
     assert(typeof process.constrainedMemory() === "number");
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "process.constrainedMemory returns 0 without sys permission outside Linux and Android",
-  ignore: Deno.build.os === "linux" || Deno.build.os === "android",
+  ignore: Edno.build.os === "linux" || Edno.build.os === "android",
   permissions: { sys: false },
   fn() {
     assertEquals(process.constrainedMemory(), 0);
   },
 });
 
-Deno.test("process.stdout.columns writable", () => {
+Edno.test("process.stdout.columns writable", () => {
   process.stdout.columns = 80;
   assertEquals(process.stdout.columns, 80);
 });
 
-Deno.test("getBuiltinModule", () => {
+Edno.test("getBuiltinModule", () => {
   assert(process.getBuiltinModule("fs"));
   assert(process.getBuiltinModule("node:fs"));
   assertEquals(process.getBuiltinModule("something"), undefined);
 });
 
-Deno.test("process.emitWarning() prints to stderr", async () => {
+Edno.test("process.emitWarning() prints to stderr", async () => {
   using writeStub = stub(process.stderr, "write", () => true);
   const { promise, resolve } = Promise.withResolvers<void>();
   process.on("warning", () => resolve());
@@ -1709,10 +1709,10 @@ Deno.test("process.emitWarning() prints to stderr", async () => {
   );
 });
 
-Deno.test("process.emitWarning() does not print to stderr when it is deprecation warning and noDeprecation is set to true", async () => {
+Edno.test("process.emitWarning() does not print to stderr when it is deprecation warning and noDeprecation is set to true", async () => {
   using writeStub = stub(process.stderr, "write", () => true);
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (process as any).noDeprecation = true; // Set noDeprecation to true
   process.emitWarning("This is a deprecation warning", {
     code: "TEST0002",
@@ -1723,20 +1723,20 @@ Deno.test("process.emitWarning() does not print to stderr when it is deprecation
   await delay(10);
 
   assertEquals(writeStub.calls.length, 0);
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (process as any).noDeprecation = false; // Reset noDeprecation
 });
 
-Deno.test("process.moduleLoadList", () => {
-  // deno-lint-ignore no-explicit-any
+Edno.test("process.moduleLoadList", () => {
+  // edno-lint-ignore no-explicit-any
   const moduleLoadList = (process as any).moduleLoadList;
   assert(Array.isArray(moduleLoadList));
   assertEquals(moduleLoadList.length, 0);
 });
 
-Deno.test({
+Edno.test({
   name: "process.setegid()",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     const originalEgid = getegid!();
     const groupName = getGroupNameFromSystem(originalEgid);
@@ -1747,9 +1747,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setegid() throws on invalid group",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     assertThrows(
       () => {
@@ -1760,17 +1760,17 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setegid() should be undefined on unsupported platforms",
-  ignore: Deno.build.os !== "windows" && Deno.build.os !== "android",
+  ignore: Edno.build.os !== "windows" && Edno.build.os !== "android",
   fn() {
     assertEquals(process.setegid, undefined);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.seteuid()",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     const originalEuid = geteuid!();
     const userName = getUserNameFromSystem(originalEuid);
@@ -1781,9 +1781,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.seteuid() throws on invalid user",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     assertThrows(
       () => {
@@ -1794,17 +1794,17 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.seteuid() should be undefined on unsupported platforms",
-  ignore: Deno.build.os !== "windows" && Deno.build.os !== "android",
+  ignore: Edno.build.os !== "windows" && Edno.build.os !== "android",
   fn() {
     assertEquals(process.seteuid, undefined);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setgid()",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     const originalGid = getgid!();
     const groupName = getGroupNameFromSystem(originalGid);
@@ -1815,9 +1815,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setgid() throws on invalid group",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     assertThrows(
       () => {
@@ -1828,17 +1828,17 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setgid() should be undefined on unsupported platforms",
-  ignore: Deno.build.os !== "windows" && Deno.build.os !== "android",
+  ignore: Edno.build.os !== "windows" && Edno.build.os !== "android",
   fn() {
     assertEquals(process.setgid, undefined);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setuid()",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     const originalUid = getuid!();
     const userName = getUserNameFromSystem(originalUid);
@@ -1849,9 +1849,9 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setuid() throws on invalid user",
-  ignore: Deno.build.os === "windows" || Deno.build.os === "android",
+  ignore: Edno.build.os === "windows" || Edno.build.os === "android",
   fn() {
     assertThrows(
       () => {
@@ -1862,33 +1862,33 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.setuid() should be undefined on unsupported platforms",
-  ignore: Deno.build.os !== "windows" && Deno.build.os !== "android",
+  ignore: Edno.build.os !== "windows" && Edno.build.os !== "android",
   fn() {
     assertEquals(process.setuid, undefined);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.loadEnvFile()",
   async fn() {
-    const dirPath = Deno.makeTempDirSync();
+    const dirPath = Edno.makeTempDirSync();
     const envFilePath = path.join(dirPath, "envfile.env");
     const envContent = "FOO=foo\nBAR=bar\nBAZ=baz";
-    Deno.writeTextFileSync(envFilePath, envContent);
+    Edno.writeTextFileSync(envFilePath, envContent);
 
     const code = `
     import assert from "node:assert";
     import process from "node:process";
-    process.loadEnvFile(Deno.args[0]);
+    process.loadEnvFile(Edno.args[0]);
 
     assert.strictEqual(process.env.FOO, "foo");
     assert.strictEqual(process.env.BAR, "bar");
     assert.strictEqual(process.env.BAZ, "baz");
     `;
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", code, envFilePath],
       cwd: testDir,
       stderr: "piped",
@@ -1901,29 +1901,29 @@ Deno.test({
       console.error("Error output:", stderrStr);
     }
 
-    Deno.removeSync(dirPath, { recursive: true });
+    Edno.removeSync(dirPath, { recursive: true });
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.loadEnvFile() with buffer path",
   async fn() {
-    const dirPath = Deno.makeTempDirSync();
+    const dirPath = Edno.makeTempDirSync();
     const envFilePath = path.join(dirPath, "envfile.env");
     const envContent = "FOO=foo\nBAR=bar\nBAZ=baz";
-    Deno.writeTextFileSync(envFilePath, envContent);
+    Edno.writeTextFileSync(envFilePath, envContent);
 
     const code = `
     import assert from "node:assert";
     import process from "node:process";
-    process.loadEnvFile(Buffer.from(Deno.args[0]));
+    process.loadEnvFile(Buffer.from(Edno.args[0]));
 
     assert.strictEqual(process.env.FOO, "foo");
     assert.strictEqual(process.env.BAR, "bar");
     assert.strictEqual(process.env.BAZ, "baz");
     `;
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", code, envFilePath],
       cwd: testDir,
       stderr: "piped",
@@ -1936,14 +1936,14 @@ Deno.test({
       console.error("Error output:", stderrStr);
     }
 
-    Deno.removeSync(dirPath, { recursive: true });
+    Edno.removeSync(dirPath, { recursive: true });
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.loadEnvFile() with non-existent file",
   fn() {
-    const dirPath = Deno.makeTempDirSync();
+    const dirPath = Edno.makeTempDirSync();
     const envFilePath = path.join(dirPath, "envfile.env");
 
     nodeAssert.throws(
@@ -1955,28 +1955,28 @@ Deno.test({
       },
     );
 
-    Deno.removeSync(dirPath, { recursive: true });
+    Edno.removeSync(dirPath, { recursive: true });
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.loadEnvFile() trim null characters in env values",
   async fn() {
-    const dirPath = Deno.makeTempDirSync();
+    const dirPath = Edno.makeTempDirSync();
     const envFilePath = path.join(dirPath, "envfile.env");
     const envContent = "FOO=f\0oo\nBAR=bar\n";
-    Deno.writeTextFileSync(envFilePath, envContent);
+    Edno.writeTextFileSync(envFilePath, envContent);
 
     const code = `
     import assert from "node:assert";
     import process from "node:process";
-    process.loadEnvFile(Deno.args[0]);
+    process.loadEnvFile(Edno.args[0]);
 
     assert.strictEqual(process.env.FOO, "f");
     assert.strictEqual(process.env.BAR, "bar");
     `;
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", code, envFilePath],
       cwd: testDir,
       stderr: "piped",
@@ -1989,27 +1989,27 @@ Deno.test({
       console.error("Error output:", stderrStr);
     }
 
-    Deno.removeSync(dirPath, { recursive: true });
+    Edno.removeSync(dirPath, { recursive: true });
   },
 });
 
-Deno.test({
+Edno.test({
   name: "process.loadEnvFile() does not throw on invalid UTF-8 encoding",
   fn() {
-    const dirPath = Deno.makeTempDirSync();
+    const dirPath = Edno.makeTempDirSync();
     const envFilePath = path.join(dirPath, "envfile.env");
     const contentArray = new Uint8Array([0xff, 0xfe, 0xfd]);
-    Deno.writeFileSync(envFilePath, contentArray);
+    Edno.writeFileSync(envFilePath, contentArray);
     // should load fine as in Node.js
     process.loadEnvFile(envFilePath);
-    Deno.removeSync(dirPath, { recursive: true });
+    Edno.removeSync(dirPath, { recursive: true });
   },
 });
 
 // Regression test: signal handlers receive the signal name as first argument
-Deno.test({
+Edno.test({
   name: "[node/process] signal handlers receive signal name",
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   async fn() {
     const received: string[] = [];
     const handler = (signal: string) => {

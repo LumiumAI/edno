@@ -3,11 +3,11 @@
 use std::borrow::Cow;
 
 use deno_media_type::MediaType;
-use deno_resolver::loader::LoadedModuleSource;
-use deno_runtime::deno_core::FastString;
-use deno_runtime::deno_core::ModuleSourceCode;
-use deno_runtime::deno_core::ModuleType;
-use deno_runtime::deno_core::RequestedModuleType;
+use edno_resolver::loader::LoadedModuleSource;
+use edno_runtime::edno_core::FastString;
+use edno_runtime::edno_core::ModuleSourceCode;
+use edno_runtime::edno_core::ModuleType;
+use edno_runtime::edno_core::RequestedModuleType;
 
 pub fn module_type_from_media_and_requested_type(
   media_type: MediaType,
@@ -52,22 +52,22 @@ pub fn loaded_module_source_to_module_source_code(
 
 pub fn as_deno_resolver_requested_module_type(
   value: &RequestedModuleType,
-) -> deno_resolver::loader::RequestedModuleType<'_> {
+) -> edno_resolver::loader::RequestedModuleType<'_> {
   match value {
     RequestedModuleType::None => {
-      deno_resolver::loader::RequestedModuleType::None
+      edno_resolver::loader::RequestedModuleType::None
     }
     RequestedModuleType::Json => {
-      deno_resolver::loader::RequestedModuleType::Json
+      edno_resolver::loader::RequestedModuleType::Json
     }
     RequestedModuleType::Text => {
-      deno_resolver::loader::RequestedModuleType::Text
+      edno_resolver::loader::RequestedModuleType::Text
     }
     RequestedModuleType::Bytes => {
-      deno_resolver::loader::RequestedModuleType::Bytes
+      edno_resolver::loader::RequestedModuleType::Bytes
     }
     RequestedModuleType::Other(text) => {
-      deno_resolver::loader::RequestedModuleType::Other(text)
+      edno_resolver::loader::RequestedModuleType::Other(text)
     }
   }
 }

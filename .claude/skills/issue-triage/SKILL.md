@@ -1,11 +1,11 @@
 ---
 name: issue-triage
-description: Triage a Deno GitHub issue — reproduce bugs, classify, label, and comment with findings. Use when asked to triage an issue or when an issue number/URL is provided for triage.
+description: Triage a Edno GitHub issue — reproduce bugs, classify, label, and comment with findings. Use when asked to triage an issue or when an issue number/URL is provided for triage.
 argument-hint: <issue-number-or-url>
-allowed-tools: Bash(gh *) Bash(deno *) Bash(git *) Bash(mktemp *) Bash(rm *) Bash(cat *) Read Write Glob Grep Agent
+allowed-tools: Bash(gh *) Bash(edno *) Bash(git *) Bash(mktemp *) Bash(rm *) Bash(cat *) Read Write Glob Grep Agent
 ---
 
-# Deno Issue Triage
+# Edno Issue Triage
 
 Triage issue `$ARGUMENTS` on the `denoland/deno` repository.
 
@@ -24,7 +24,7 @@ Determine what kind of issue this is:
 - **Question** — a usage question, not a bug
 - **Duplicate** — already reported (search closed and open issues with
   `gh issue list --search "keywords" --state all`)
-- **Invalid** — not actionable, not a Deno issue, or insufficient info
+- **Invalid** — not actionable, not a Edno issue, or insufficient info
 
 If the issue is clearly a question, duplicate, or invalid, skip reproduction and
 go straight to Step 5.
@@ -33,7 +33,7 @@ go straight to Step 5.
 
 A valid bug report needs:
 
-- Deno version (`deno --version` output)
+- Edno version (`edno --version` output)
 - Operating system
 - Reproduction steps or minimal reproduction code
 - Expected behavior vs actual behavior
@@ -55,10 +55,10 @@ to a local temp directory only if Docker is unavailable.
 
 ```sh
 # Run repro with latest canary
-docker run --rm -v "$REPRO_DIR":/repro -w /repro denoland/deno:canary deno run repro.ts
+docker run --rm -v "$REPRO_DIR":/repro -w /repro denoland/deno:canary edno run repro.ts
 
 # Run repro with a specific version (e.g., 2.1.4)
-docker run --rm -v "$REPRO_DIR":/repro -w /repro denoland/deno:2.1.4 deno run repro.ts
+docker run --rm -v "$REPRO_DIR":/repro -w /repro denoland/deno:2.1.4 edno run repro.ts
 ```
 
 Use `docker run --rm` so containers are cleaned up automatically. Mount the
@@ -68,10 +68,10 @@ repro files via `-v`.
 
 ```sh
 REPRO_DIR=$(mktemp -d)
-deno run "$REPRO_DIR/repro.ts"
+edno run "$REPRO_DIR/repro.ts"
 ```
 
-### Get Deno versions
+### Get Edno versions
 
 Try to reproduce with both:
 
@@ -81,7 +81,7 @@ Try to reproduce with both:
 Use the appropriate Docker image tag for each version (e.g.,
 `denoland/deno:2.1.4`, `denoland/deno:canary`).
 
-If the issue specifies a particular Deno version and the bug does NOT reproduce
+If the issue specifies a particular Edno version and the bug does NOT reproduce
 on canary, note that it may already be fixed. Check git log for relevant fixes.
 
 ### Run the reproduction
@@ -89,11 +89,11 @@ on canary, note that it may already be fixed. Check git log for relevant fixes.
 - Extract the reproduction code from the issue body
 - Write it to a local temp directory
 - Run it inside a Docker container (or locally as fallback) with the appropriate
-  `deno` subcommand and flags
+  `edno` subcommand and flags
 - Capture both stdout and stderr
 - Compare actual output against the expected behavior described in the issue
 
-If the reproduction involves specific npm packages, `deno.json` config, or
+If the reproduction involves specific npm packages, `edno.json` config, or
 multi-file setups, recreate the full environment as described.
 
 ### Clean up
@@ -126,7 +126,7 @@ label is sufficient. Do not over-label.
 | `question`   | Usage question                                      |
 | `duplicate`  | Duplicate of another issue                          |
 | `invalid`    | Not actionable                                      |
-| `panic`      | Deno panics/crashes                                 |
+| `panic`      | Edno panics/crashes                                 |
 | `regression` | Something that used to work but is now broken       |
 
 ### Area labels (add one that best matches)
@@ -140,16 +140,16 @@ label is sufficient. Do not over-label.
 | `lsp`                                                                                                                                  | Language server                  |
 | `runtime`                                                                                                                              | Runtime crate                    |
 | `permissions`                                                                                                                          | Permission system                |
-| `compile`                                                                                                                              | `deno compile`                   |
-| `testing`                                                                                                                              | `deno test` and coverage         |
-| `task runner`                                                                                                                          | `deno task`                      |
-| `install`                                                                                                                              | `deno install` / `deno add`      |
+| `compile`                                                                                                                              | `edno compile`                   |
+| `testing`                                                                                                                              | `edno test` and coverage         |
+| `task runner`                                                                                                                          | `edno task`                      |
+| `install`                                                                                                                              | `edno install` / `edno add`      |
 | `tsc`                                                                                                                                  | TypeScript compiler              |
 | `types`                                                                                                                                | TypeScript type issues           |
-| `config`                                                                                                                               | `deno.json` configuration        |
+| `config`                                                                                                                               | `edno.json` configuration        |
 | `node resolution`                                                                                                                      | Node/npm module resolution       |
-| `publish`                                                                                                                              | `deno publish`                   |
-| `lint`                                                                                                                                 | `deno lint`                      |
+| `publish`                                                                                                                              | `edno publish`                   |
+| `lint`                                                                                                                                 | `edno lint`                      |
 | `wasm`                                                                                                                                 | WebAssembly                      |
 
 ### Priority labels (add only when clearly warranted)
@@ -198,7 +198,7 @@ This looks like a duplicate of #XXXX. Closing in favor of that issue.
 For **questions**:
 
 ```
-This is a usage question rather than a bug. [Brief answer or pointer to docs.] Closing this — feel free to ask on https://discord.gg/deno if you have more questions.
+This is a usage question rather than a bug. [Brief answer or pointer to docs.] Closing this — feel free to ask on https://discord.gg/edno if you have more questions.
 ```
 
 ### Posting the comment

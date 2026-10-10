@@ -102,20 +102,20 @@ const {
 const EMPTY_OPTIONS = ObjectFreeze(ObjectSetPrototypeOf({}, null));
 
 const { read, readSync, write, writeSync } = core.loadExtScript(
-  "ext:deno_io/12_io.js",
+  "ext:edno_io/12_io.js",
 );
-const abortSignal = core.loadExtScript("ext:deno_web/03_abort_signal.js");
+const abortSignal = core.loadExtScript("ext:edno_web/03_abort_signal.js");
 // Defer loading the 208 KB `06_streams.js` polyfill: these helpers are only
 // used inside File class methods and writeFile-family functions, so pay
 // the parse cost on first use rather than at every startup.
 let _streamsImpl;
 function lazyStreams() {
   return _streamsImpl ??
-    (_streamsImpl = core.loadExtScript("ext:deno_web/06_streams.js"));
+    (_streamsImpl = core.loadExtScript("ext:edno_web/06_streams.js"));
 }
-const { pathFromURL } = core.loadExtScript("ext:deno_web/00_infra.js");
+const { pathFromURL } = core.loadExtScript("ext:edno_web/00_infra.js");
 
-const fsFileConstructorKey = Symbol("Deno.internal.FsFile");
+const fsFileConstructorKey = Symbol("Edno.internal.FsFile");
 
 function chmodSync(path, mode) {
   op_fs_chmod_sync(pathFromURL(path), mode);
@@ -360,7 +360,7 @@ function createByteStruct(types) {
   // types can be "date", "bool" or "u64".
   let offset = 0;
   let str =
-    'const unix = Deno.build.os === "darwin" || Deno.build.os === "linux" || Deno.build.os === "android" || Deno.build.os === "openbsd" || Deno.build.os === "freebsd";' +
+    'const unix = Edno.build.os === "darwin" || Edno.build.os === "linux" || Edno.build.os === "android" || Edno.build.os === "openbsd" || Edno.build.os === "freebsd";' +
     // Two's-complement inversion avoids float64 precision loss near 2^64.
     " const readI64Ms = (lo, hi) => hi < 2147483648 ? lo + hi * 4294967296 : -((~hi >>> 0) * 4294967296 + (~lo >>> 0) + 1);" +
     " return {";
@@ -654,7 +654,7 @@ class FsFile {
     this.#rid = rid;
     if (!symbol || symbol !== fsFileConstructorKey) {
       throw new TypeError(
-        "'Deno.FsFile' cannot be constructed, use 'Deno.open()' or 'Deno.openSync()' instead",
+        "'Edno.FsFile' cannot be constructed, use 'Edno.open()' or 'Edno.openSync()' instead",
       );
     }
   }

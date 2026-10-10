@@ -25,18 +25,18 @@
 
 (function () {
 const { core, primordials } = __bootstrap;
-const bufMod = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const bufMod = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const { Buffer } = bufMod;
 const { MAX_STRING_LENGTH } = bufMod.constants;
 const { normalizeEncoding: castEncoding } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_THIS,
   ERR_UNKNOWN_ENCODING,
   NodeError,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   ArrayBufferIsView,
   ObjectDefineProperties,
@@ -120,7 +120,7 @@ function bufferToString(buf, encoding, start, end) {
       `Cannot create a string longer than 0x${maxStringLengthHex} characters`,
     );
   }
-  // deno-lint-ignore deno-internal/prefer-primordials -- buf is a Buffer; Buffer.prototype.toString(encoding) is not String.prototype.toString
+  // edno-lint-ignore edno-internal/prefer-primordials -- buf is a Buffer; Buffer.prototype.toString(encoding) is not String.prototype.toString
   return buf.toString(encoding, start, end);
 }
 

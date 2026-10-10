@@ -12,7 +12,7 @@ use std::sync::Arc;
 
 pub use deno_ast;
 pub use deno_graph;
-use deno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
+use edno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
 use futures::future::BoxFuture;
 use futures::future::LocalBoxFuture;
 use futures::io::AsyncBufReadExt;
@@ -203,8 +203,8 @@ impl Module {
 }
 
 /// This is the kind of module that is being stored. This is the same enum as is
-/// present in [deno_core::ModuleType] except that this has additional variant
-/// `Jsonc` which is used when an import map is embedded in Deno's config file
+/// present in [edno_core::ModuleType] except that this has additional variant
+/// `Jsonc` which is used when an import map is embedded in Edno's config file
 /// that can be JSONC.
 /// Note that a module of type `Jsonc` can be used only as an import map, not as
 /// a normal module.

@@ -11,16 +11,16 @@ use std::borrow::Cow;
 use std::path::Path;
 use std::path::PathBuf;
 
-use deno_core::FastString;
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::url::Url;
-use deno_core::v8;
-use deno_core::v8::ExternalReference;
+use edno_core::FastString;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::url::Url;
+use edno_core::v8;
+use edno_core::v8::ExternalReference;
 use deno_error::JsErrorBox;
-use deno_permissions::OpenAccessKind;
-use deno_permissions::PermissionsContainer;
-use node_resolver::DenoIsBuiltInNodeModuleChecker;
+use edno_permissions::OpenAccessKind;
+use edno_permissions::PermissionsContainer;
+use node_resolver::EdnoIsBuiltInNodeModuleChecker;
 use node_resolver::InNpmPackageChecker;
 use node_resolver::IsBuiltInNodeModuleChecker;
 use node_resolver::NpmPackageFolderResolver;
@@ -31,10 +31,10 @@ extern crate libz_sys as zlib;
 
 pub mod ops;
 
-use deno_dotenv::parse_env_content_hook;
-pub use deno_package_json::PackageJson;
-use deno_permissions::PermissionCheckError;
-pub use node_resolver::DENO_SUPPORTED_BUILTIN_NODE_MODULES as SUPPORTED_BUILTIN_NODE_MODULES;
+use edno_dotenv::parse_env_content_hook;
+pub use edno_package_json::PackageJson;
+use edno_permissions::PermissionCheckError;
+pub use node_resolver::EDNO_SUPPORTED_BUILTIN_NODE_MODULES as SUPPORTED_BUILTIN_NODE_MODULES;
 pub use node_resolver::PathClean;
 pub use ops::ipc::ChildPipeFd;
 use ops::vm;
@@ -43,7 +43,7 @@ pub use ops::vm::VM_CONTEXT_INDEX;
 pub use ops::vm::create_v8_context;
 pub use ops::vm::init_global_template;
 
-/// The Node.js version that Deno emulates. This is the single source of truth
+/// The Node.js version that Edno emulates. This is the single source of truth
 /// for the value reported through `process.version` / `process.versions.node`:
 /// the `__NODE_VERSION__` token in `_process/process.ts` is substituted with it
 /// at snapshot build time (see `maybe_transpile_source` in
@@ -53,7 +53,7 @@ pub use ops::vm::init_global_template;
 pub const NODE_VERSION: &str = "26.5.1";
 
 pub fn is_builtin_node_module(module_name: &str) -> bool {
-  DenoIsBuiltInNodeModuleChecker.is_builtin_node_module(module_name)
+  EdnoIsBuiltInNodeModuleChecker.is_builtin_node_module(module_name)
 }
 
 #[allow(clippy::disallowed_types, reason = "definition")]
@@ -125,7 +125,7 @@ fn op_node_build_os() -> String {
 enum DotEnvLoadErr {
   #[class(inherit)]
   #[error("{0}")]
-  Fs(#[from] deno_io::fs::FsError),
+  Fs(#[from] edno_io::fs::FsError),
   #[class(inherit)]
   #[error(transparent)]
   Permission(
@@ -142,7 +142,7 @@ fn op_node_load_env_file(
   scope: &mut v8::PinScope<'_, '_>,
   #[string] path: &str,
 ) -> Result<(), DotEnvLoadErr> {
-  let fs = state.borrow::<deno_fs::FileSystemRc>().clone();
+  let fs = state.borrow::<edno_fs::FileSystemRc>().clone();
   let permissions = state.borrow::<PermissionsContainer>().clone();
   permissions
     .check_env_all()
@@ -156,7 +156,7 @@ fn op_node_load_env_file(
     .map_err(DotEnvLoadErr::Permission)?;
 
   let contents = fs.read_text_file_lossy_sync(&path)?;
-  let process_env = deno_os::ProcessEnvGuard::lock();
+  let process_env = edno_os::ProcessEnvGuard::lock();
   parse_env_content_hook(&contents, &mut |key, value| {
     // Follows Node.js behavior where null bytes are stripped from env keys and values
     let key = if let Some(null_pos) = key.find('\0') {
@@ -198,8 +198,8 @@ pub struct NodeExtInitServices<
   pub sys: TSys,
 }
 
-deno_core::extension!(deno_node,
-  deps = [ deno_io, deno_fs ],
+edno_core::extension!(edno_node,
+  deps = [ edno_io, edno_fs ],
   parameters = [TInNpmPackageChecker: InNpmPackageChecker, TNpmPackageFolderResolver: NpmPackageFolderResolver, TSys: ExtNodeSys],
   ops = [
     ops::assert::op_node_get_first_expression,
@@ -469,7 +469,7 @@ deno_core::extension!(deno_node,
   // explicit eager `esm` entry: the whole node process closure
   // (module / process / stream / net / tty / ...) is moved to
   // `lazy_loaded_esm` and only deserialized on first node:* use, so non-node
-  // `deno run` programs never pay for it in the snapshot. An explicit entry
+  // `edno run` programs never pay for it in the snapshot. An explicit entry
   // here that no eager module imports would land in the module map
   // unevaluated and fail snapshot validation with `NonEvaluatedModules`.
   esm = [
@@ -478,7 +478,7 @@ deno_core::extension!(deno_node,
   // Keep the rest of the node-polyfill closures (process / module / net /
   // tty / 01_require) out of the eager evaluation graph: their foundational
   // SFIs and context state are loaded only on first node:* use, so non-node
-  // `deno run` paths skip ~2 MB of node-polyfill deserialization.
+  // `edno run` paths skip ~2 MB of node-polyfill deserialization.
   // node:module previously had to stay eager because lazy bootstrap shifted
   // Agent.keepSocketAlive's setUnrefTimeout(5000) into test execution where
   // the sanitizer saw it as a leak; the timer is now marked is_system in
@@ -798,14 +798,14 @@ deno_core::extension!(deno_node,
     "path/mod.ts",
   ],
   synthetic_esm = [
-    "node:url" = "ext:deno_node/url.ts",
-    "node:util" = "ext:deno_node/util.ts",
-    "node:worker_threads" = "ext:deno_node/worker_threads.ts",
-    "node:zlib" = "ext:deno_node/zlib.js",
+    "node:url" = "ext:edno_node/url.ts",
+    "node:util" = "ext:edno_node/util.ts",
+    "node:worker_threads" = "ext:edno_node/worker_threads.ts",
+    "node:zlib" = "ext:edno_node/zlib.js",
   ],
   options = {
     maybe_init: Option<NodeExtInitServices<TInNpmPackageChecker, TNpmPackageFolderResolver, TSys>>,
-    fs: deno_fs::FileSystemRc,
+    fs: edno_fs::FileSystemRc,
   },
   state = |state, options| {
     state.put(options.fs.clone());
@@ -825,10 +825,10 @@ deno_core::extension!(deno_node,
     state.put(crate::ops::tls::NodeTlsState {
       custom_ca_certs: None,
       client_session_store: std::sync::Arc::new(
-        deno_tls::rustls::client::ClientSessionMemoryCache::new(256),
+        edno_tls::rustls::client::ClientSessionMemoryCache::new(256),
       ),
       client_session_store_insecure: std::sync::Arc::new(
-        deno_tls::rustls::client::ClientSessionMemoryCache::new(256),
+        edno_tls::rustls::client::ClientSessionMemoryCache::new(256),
       ),
       server_ticketer: None,
       cached_default_verifier: None,
@@ -837,7 +837,7 @@ deno_core::extension!(deno_node,
       cached_insecure_no_client_auth: None,
     });
   },
-  customizer = |ext: &mut deno_core::Extension| {
+  customizer = |ext: &mut edno_core::Extension| {
     let external_references = [
       vm::QUERY_MAP_FN.with(|query| {
         ExternalReference {
@@ -929,13 +929,13 @@ pub trait ExtNodeSys:
 pub type NodeResolver<TInNpmPackageChecker, TNpmPackageFolderResolver, TSys> =
   node_resolver::NodeResolver<
     TInNpmPackageChecker,
-    DenoIsBuiltInNodeModuleChecker,
+    EdnoIsBuiltInNodeModuleChecker,
     TNpmPackageFolderResolver,
     TSys,
   >;
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type NodeResolverRc<TInNpmPackageChecker, TNpmPackageFolderResolver, TSys> =
-  deno_fs::sync::MaybeArc<
+  edno_fs::sync::MaybeArc<
     NodeResolver<TInNpmPackageChecker, TNpmPackageFolderResolver, TSys>,
   >;
 
@@ -958,9 +958,9 @@ pub fn create_host_defined_options<'s>(
 pub fn create_vm_dynamic_import_missing_host_defined_options<'s>(
   scope: &mut v8::PinScope<'s, '_>,
 ) -> v8::Local<'s, v8::Data> {
-  deno_core::create_host_defined_options_with_kind(
+  edno_core::create_host_defined_options_with_kind(
     scope,
-    deno_core::host_defined_options_kind::VM_DYNAMIC_IMPORT_MISSING,
+    edno_core::host_defined_options_kind::VM_DYNAMIC_IMPORT_MISSING,
   )
 }
 
@@ -968,9 +968,9 @@ pub fn create_vm_dynamic_import_callback_host_defined_options<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   callback_id: u32,
 ) -> v8::Local<'s, v8::Data> {
-  deno_core::create_host_defined_options_with_kind_and_key(
+  edno_core::create_host_defined_options_with_kind_and_key(
     scope,
-    deno_core::host_defined_options_kind::VM_DYNAMIC_IMPORT_CALLBACK,
+    edno_core::host_defined_options_kind::VM_DYNAMIC_IMPORT_CALLBACK,
     callback_id,
   )
 }

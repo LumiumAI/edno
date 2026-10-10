@@ -21,7 +21,7 @@ URL.revokeObjectURL(blobUrl);
 // the real cwd (compiled binaries remap embedded paths into a virtual root, so
 // the file must be addressed by its real on-disk path), and it is not part of
 // the compile-time module graph.
-const cwd = Deno.cwd().replaceAll("\\", "/");
+const cwd = Edno.cwd().replaceAll("\\", "/");
 const pluginUrl = `file://${cwd.startsWith("/") ? "" : "/"}${cwd}/plugin.ts`;
 const fromFile = await import(pluginUrl);
 console.log(fromFile.greet("file"));

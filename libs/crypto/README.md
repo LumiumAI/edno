@@ -1,3 +1,3 @@
-# `deno_crypto`
+# `edno_crypto`
 
-Rust cryptography provider for Deno WebCrypto and `node:crypto`.
+Rust cryptography provider for Edno WebCrypto and `node:crypto`.

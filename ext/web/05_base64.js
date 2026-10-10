@@ -14,8 +14,8 @@ const {
   TypeErrorPrototype,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 
 /**
  * @param {string} data

@@ -7,7 +7,7 @@ import {
   op_init_canvas,
 } from "ext:core/ops";
 
-const { Blob } = core.loadExtScript("ext:deno_web/09_file.js");
+const { Blob } = core.loadExtScript("ext:edno_web/09_file.js");
 
 op_init_canvas(Blob);
 

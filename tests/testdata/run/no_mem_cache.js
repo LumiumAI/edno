@@ -1,6 +1,6 @@
-const fixtureFile = await Deno.makeTempFile();
+const fixtureFile = await Edno.makeTempFile();
 let prefix = "file://";
-if (Deno.build.os == "windows") {
+if (Edno.build.os == "windows") {
   prefix += "/";
 }
 const fixtureUrl = new URL(`${prefix}${fixtureFile}`);
@@ -8,7 +8,7 @@ let resolve;
 
 let p = new Promise((res) => resolve = res);
 
-await Deno.writeTextFile(fixtureUrl, `self.postMessage("hello");\n`);
+await Edno.writeTextFile(fixtureUrl, `self.postMessage("hello");\n`);
 
 const workerA = new Worker(fixtureUrl.href, { type: "module" });
 workerA.onmessage = (msg) => {
@@ -21,7 +21,7 @@ workerA.terminate();
 
 p = new Promise((res) => resolve = res);
 
-await Deno.writeTextFile(fixtureUrl, `self.postMessage("goodbye");\n`);
+await Edno.writeTextFile(fixtureUrl, `self.postMessage("goodbye");\n`);
 
 const workerB = new Worker(fixtureUrl.href, { type: "module" });
 workerB.onmessage = (msg) => {

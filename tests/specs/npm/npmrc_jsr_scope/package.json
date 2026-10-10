@@ -2,6 +2,6 @@
   "name": "npmrc_test",
   "version": "0.0.1",
   "dependencies": {
-    "@jsr/denotest__basic": "1.0.0"
+    "@jsr/ednotest__basic": "1.0.0"
   }
 }

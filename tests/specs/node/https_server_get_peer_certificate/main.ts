@@ -26,10 +26,10 @@ const server = https.createServer(
     ca: [rootCa],
   },
   (req, res) => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const socket = req.socket as any;
     const peer = socket.getPeerCertificate();
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     console.log("authorized:", (req as any).client?.authorized);
     console.log("peer has subject:", !!peer && !!peer.subject);
     console.log("peer has issuer:", !!peer && !!peer.issuer);
@@ -41,7 +41,7 @@ const server = https.createServer(
 );
 
 await new Promise<void>((resolve) => server.listen(0, resolve));
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const port = (server.address() as any).port;
 
 const status = await new Promise<number>((resolve, reject) => {

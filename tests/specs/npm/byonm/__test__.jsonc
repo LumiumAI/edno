@@ -20,7 +20,7 @@
     },
     "not_installed": {
       "envs": {
-        "DENO_UNSTABLE_BYONM": "1"
+        "EDNO_UNSTABLE_BYONM": "1"
       },
       "steps": [{
         "args": "run -A not_installed.ts",
@@ -30,7 +30,7 @@
     },
     "invalid_sub_path": {
       "envs": {
-        "DENO_UNSTABLE_BYONM": "1"
+        "EDNO_UNSTABLE_BYONM": "1"
       },
       "steps": [{
         "args": "install",

@@ -2,12 +2,12 @@
 # yarn lockfile v1
 
 
-"@denotest/add@1.0.0":
+"@ednotest/add@1.0.0":
   version "1.0.0"
-  resolved "http://localhost:4260/@denotest/add/-/add-1.0.0.tgz"
+  resolved "http://localhost:4260/@ednotest/add/-/add-1.0.0.tgz"
   integrity sha512-uvNpnVPU/CC2Do/LNF3TkhoLGLLKC6jFDPiSnojuZCEwmoXJjS2+Sn+LYk7eUix4vsMKA9ctxaMhcfb6pdHQTQ==
 
-"@denotest/esm-basic@1.0.0":
+"@ednotest/esm-basic@1.0.0":
   version "1.0.0"
-  resolved "http://localhost:4260/@denotest/esm-basic/-/esm-basic-1.0.0.tgz"
+  resolved "http://localhost:4260/@ednotest/esm-basic/-/esm-basic-1.0.0.tgz"
   integrity sha512-LvAO9tXoBq0fhrWc5PdAATOZxxrd1KTeIFhUucK8w1WNKrapcjVVjqU8s8L5fm0Ppd/tMIGXcRvbfWWmOmBgWQ==

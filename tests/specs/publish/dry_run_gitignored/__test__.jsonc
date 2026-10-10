@@ -3,7 +3,7 @@
   "steps": [{
     "args": [
       "eval",
-      "Deno.writeTextFileSync('.gitignore', 'gitignored.ts')"
+      "Edno.writeTextFileSync('.gitignore', 'gitignored.ts')"
     ],
     "output": "[WILDCARD]"
   }, {

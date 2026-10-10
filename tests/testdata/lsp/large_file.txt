@@ -2,19 +2,19 @@
 
 // @ts-check
 /// <reference path="./compiler.d.ts" />
-// deno-lint-ignore-file no-undef
+// edno-lint-ignore-file no-undef
 
 // This module is the entry point for "compiler" isolate, ie. the one
-// that is created when Deno needs to type check TypeScript, and in some
+// that is created when Edno needs to type check TypeScript, and in some
 // instances convert TypeScript to JavaScript.
 
 // Removes the `__proto__` for security reasons.  This intentionally makes
-// Deno non compliant with ECMA-262 Annex B.2.2.1
+// Edno non compliant with ECMA-262 Annex B.2.2.1
 delete Object.prototype.__proto__;
 
 ((window) => {
-  /** @type {DenoCore} */
-  const core = window.Deno.core;
+  /** @type {EdnoCore} */
+  const core = window.Edno.core;
 
   let logDebug = false;
   let logSource = "JS";
@@ -121,7 +121,7 @@ delete Object.prototype.__proto__;
   const CACHE = "cache:///";
 
   /** Diagnostics that are intentionally ignored when compiling TypeScript in
-   * Deno, as they provide misleading or incorrect information. */
+   * Edno, as they provide misleading or incorrect information. */
   const IGNORED_DIAGNOSTICS = [
     // TS1208: All files must be modules when the '--isolatedModules' flag is
     // provided.  We can ignore because we guarantee that all files are
@@ -134,7 +134,7 @@ delete Object.prototype.__proto__;
     // TS1103: 'for-await-of' statement is only allowed within an async function
     // or async generator.
     1103,
-    // TS2306: File 'file:///Users/rld/src/deno/subdir/amd_like.js' is
+    // TS2306: File 'file:///Users/rld/src/edno/subdir/amd_like.js' is
     // not a module.
     2306,
     // TS2691: An import path cannot end with a '.ts' extension. Consider
@@ -232,7 +232,7 @@ delete Object.prototype.__proto__;
   let languageService;
 
   /** An object literal of the incremental compiler host, which provides the
-   * specific "bindings" to the Deno environment that tsc needs to work.
+   * specific "bindings" to the Edno environment that tsc needs to work.
    *
    * @type {ts.CompilerHost & ts.LanguageServiceHost} */
   const host = {
@@ -449,7 +449,7 @@ delete Object.prototype.__proto__;
       .convertCompilerOptionsFromJson(config, "");
     // The `allowNonTsExtensions` is a "hidden" compiler option used in VSCode
     // which is not allowed to be passed in JSON, we need it to allow special
-    // URLs which Deno supports. So we need to either ignore the diagnostic, or
+    // URLs which Edno supports. So we need to either ignore the diagnostic, or
     // inject it ourselves.
     Object.assign(options, { allowNonTsExtensions: true });
     const program = ts.createIncrementalProgram({
@@ -643,7 +643,7 @@ delete Object.prototype.__proto__;
   for (const lib of libs) {
     const specifier = `lib.${lib}.d.ts`;
     // we are using internal APIs here to "inject" our custom libraries into
-    // tsc, so things like `"lib": [ "deno.ns" ]` are supported.
+    // tsc, so things like `"lib": [ "edno.ns" ]` are supported.
     if (!ts.libs.includes(lib)) {
       ts.libs.push(lib);
       ts.libMap.set(lib, `lib.${lib}.d.ts`);
@@ -656,7 +656,7 @@ delete Object.prototype.__proto__;
   }
   // this helps ensure as much as possible is in memory that is re-usable
   // before the snapshotting is done, which helps unsure fast "startup" for
-  // subsequent uses of tsc in Deno.
+  // subsequent uses of tsc in Edno.
   const TS_SNAPSHOT_PROGRAM = ts.createProgram({
     rootNames: [buildSpecifier],
     options: SNAPSHOT_COMPILE_OPTIONS,

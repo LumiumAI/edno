@@ -1,4 +1,4 @@
-Deno.test({
+Edno.test({
   name: "ignore",
   permissions: {
     read: true,

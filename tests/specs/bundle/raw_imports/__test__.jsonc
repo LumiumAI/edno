@@ -6,7 +6,7 @@
       "output": "[WILDCARD]"
     },
     {
-      "args": ["eval", "Deno.removeSync('./other.ts')"],
+      "args": ["eval", "Edno.removeSync('./other.ts')"],
       "output": ""
     },
     {

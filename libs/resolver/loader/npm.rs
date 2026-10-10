@@ -105,13 +105,13 @@ fn format_dir_import_message(
 pub trait NpmModuleLoaderSys: NodeCodeTranslatorSys {}
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type DenoNpmModuleLoaderRc<TSys> =
-  deno_maybe_sync::MaybeArc<DenoNpmModuleLoader<TSys>>;
+pub type EdnoNpmModuleLoaderRc<TSys> =
+  edno_maybe_sync::MaybeArc<EdnoNpmModuleLoader<TSys>>;
 
-pub type DenoNpmModuleLoader<TSys> = NpmModuleLoader<
-  crate::cjs::analyzer::DenoCjsCodeAnalyzer<TSys>,
-  crate::npm::DenoInNpmPackageChecker,
-  node_resolver::DenoIsBuiltInNodeModuleChecker,
+pub type EdnoNpmModuleLoader<TSys> = NpmModuleLoader<
+  crate::cjs::analyzer::EdnoCjsCodeAnalyzer<TSys>,
+  crate::npm::EdnoInNpmPackageChecker,
+  node_resolver::EdnoIsBuiltInNodeModuleChecker,
   crate::npm::NpmResolver<TSys>,
   TSys,
 >;

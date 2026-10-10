@@ -1,8 +1,8 @@
 [UNORDERED_START]
-Download http://localhost:4260/@denotest%2fesm-import-cjs-default
-Download http://localhost:4260/@denotest%2fcjs-default-export
-Download http://localhost:4260/@denotest/cjs-default-export/1.0.0.tgz
-Download http://localhost:4260/@denotest/esm-import-cjs-default/1.0.0.tgz
+Download http://localhost:4260/@ednotest%2fesm-import-cjs-default
+Download http://localhost:4260/@ednotest%2fcjs-default-export
+Download http://localhost:4260/@ednotest/cjs-default-export/1.0.0.tgz
+Download http://localhost:4260/@ednotest/esm-import-cjs-default/1.0.0.tgz
 [UNORDERED_END]
 Check [WILDCARD]main.ts
 Node esm importing node cjs
@@ -36,7 +36,7 @@ Node esm importing node cjs
 }
 ===========================
 static method
-Deno esm importing node cjs
+Edno esm importing node cjs
 ===========================
 {
   default: [Function (anonymous)],
@@ -59,7 +59,7 @@ Deno esm importing node cjs
   named: [Function (anonymous)]
 }
 ===========================
-Deno esm importing node esm
+Edno esm importing node esm
 ===========================
 [Function: default]
 [Module: null prototype] { default: [Function: default] }

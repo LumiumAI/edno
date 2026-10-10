@@ -8,7 +8,7 @@
           "output": "[WILDCARD]"
         },
         {
-          "args": "run -A npm:@denotest/print-npm-user-agent",
+          "args": "run -A npm:@ednotest/print-npm-user-agent",
           "output": "run.out"
         }
       ]

@@ -2,7 +2,7 @@
 import { assert, assertEquals, assertThrows } from "./test_util.ts";
 import { assertType, IsExact } from "@std/testing/types";
 
-Deno.test(function urlPatternFromString() {
+Edno.test(function urlPatternFromString() {
   const pattern = new URLPattern("https://deno.land/foo/:bar");
   assertEquals(pattern.protocol, "https");
   assertEquals(pattern.hostname, "deno.land");
@@ -20,7 +20,7 @@ Deno.test(function urlPatternFromString() {
   assertType<IsExact<typeof val, string | undefined>>(true);
 });
 
-Deno.test(function urlPatternFromStringWithBase() {
+Edno.test(function urlPatternFromStringWithBase() {
   const pattern = new URLPattern("/foo/:bar", "https://deno.land");
   assertEquals(pattern.protocol, "https");
   assertEquals(pattern.hostname, "deno.land");
@@ -34,7 +34,7 @@ Deno.test(function urlPatternFromStringWithBase() {
   assertEquals(match.pathname.groups, { bar: "x" });
 });
 
-Deno.test(function urlPatternFromInit() {
+Edno.test(function urlPatternFromInit() {
   const pattern = new URLPattern({
     pathname: "/foo/:bar",
   });
@@ -49,7 +49,7 @@ Deno.test(function urlPatternFromInit() {
   assert(pattern.test({ pathname: "/foo/x" }));
 });
 
-Deno.test(function urlPatternWithPrototypePollution() {
+Edno.test(function urlPatternWithPrototypePollution() {
   const originalExec = RegExp.prototype.exec;
   try {
     RegExp.prototype.exec = () => {
@@ -64,17 +64,17 @@ Deno.test(function urlPatternWithPrototypePollution() {
   }
 });
 
-Deno.test(function urlPatternFlagsRegression() {
+Edno.test(function urlPatternFlagsRegression() {
   new URLPattern({ pathname: "/install(\.sh|\.ps1)" });
 });
 
-Deno.test(function urlPatternIgnoreCase() {
+Edno.test(function urlPatternIgnoreCase() {
   const p = new URLPattern({ pathname: "/test" }, { ignoreCase: true });
   assert(p.test("/test", "http://localhost"));
   assert(p.test("/TeSt", "http://localhost"));
 });
 
-Deno.test(function urlPatternInvalidNameError() {
+Edno.test(function urlPatternInvalidNameError() {
   // A ":" not followed by a valid group name (e.g. file-router syntax such as
   // `[:slug]` expanding to `::slug`) should produce an actionable error that
   // echoes the offending component, points a caret at it, and includes a hint.
@@ -93,7 +93,7 @@ Deno.test(function urlPatternInvalidNameError() {
   );
 });
 
-Deno.test(function urlPatternInvalidNameErrorFromString() {
+Edno.test(function urlPatternInvalidNameErrorFromString() {
   // For a constructor string we cannot reliably map the position back to the
   // full input, but the input and hint should still be surfaced.
   const err = assertThrows(

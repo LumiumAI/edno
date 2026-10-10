@@ -5,7 +5,7 @@ import { spawn, spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-const tempDir = Deno.cwd();
+const tempDir = Edno.cwd();
 const markerFile = path.join(tempDir, "injection_marker");
 
 // Clean up any existing marker file
@@ -21,7 +21,7 @@ const newlinePayload = `dummy\ntouch ${markerFile}`;
 spawnSync("echo", [newlinePayload], { shell: true });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: Newline injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: Newline injection blocked");
 }
@@ -32,7 +32,7 @@ const semicolonPayload = `dummy; touch ${markerFile}`;
 spawnSync("echo", [semicolonPayload], { shell: true });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: Semicolon injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: Semicolon injection blocked");
 }
@@ -43,7 +43,7 @@ const pipePayload = `dummy | touch ${markerFile}`;
 spawnSync("echo", [pipePayload], { shell: true });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: Pipe injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: Pipe injection blocked");
 }
@@ -54,7 +54,7 @@ const backtickPayload = "`touch " + markerFile + "`";
 spawnSync("echo", [backtickPayload], { shell: true });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: Backtick injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: Backtick injection blocked");
 }
@@ -65,7 +65,7 @@ const dollarPayload = "$(touch " + markerFile + ")";
 spawnSync("echo", [dollarPayload], { shell: true });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: $() injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: $() injection blocked");
 }
@@ -80,7 +80,7 @@ if (result.stdout?.trim() === "hello world") {
   console.log("PASS: Normal args work");
 } else {
   console.log("FAIL: Normal args broken, got:", result.stdout?.trim());
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // Test 7: Args with spaces are preserved
@@ -93,7 +93,7 @@ if (result2.stdout?.trim() === "hello world") {
   console.log("PASS: Args with spaces work");
 } else {
   console.log("FAIL: Args with spaces broken, got:", result2.stdout?.trim());
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // Test 8: Shell features work when using string command (no args)
@@ -103,7 +103,7 @@ if (result3.stdout?.trim() === "foo") {
   console.log("PASS: Shell features work");
 } else {
   console.log("FAIL: Shell features broken, got:", result3.stdout?.trim());
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // Test 9: Async spawn also escapes args
@@ -113,7 +113,7 @@ await new Promise<void>((resolve) => {
   child.on("close", () => {
     if (fs.existsSync(markerFile)) {
       console.log("FAIL: Async spawn injection was not blocked");
-      Deno.exit(1);
+      Edno.exit(1);
     } else {
       console.log("PASS: Async spawn injection blocked");
     }
@@ -126,13 +126,13 @@ await new Promise<void>((resolve) => {
 // use double quotes (which allow backtick command substitution in POSIX sh).
 console.log("Test 10: Backtick + $VAR injection in args");
 const backtickVarPayload = "`touch " + markerFile + "`$HOME";
-spawnSync(Deno.execPath(), ["eval", "''", backtickVarPayload], {
+spawnSync(Edno.execPath(), ["eval", "''", backtickVarPayload], {
   shell: true,
   env: { PATH: "/usr/bin:/bin", HOME: "/tmp" },
 });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: Backtick + $VAR injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: Backtick + $VAR injection blocked");
 }
@@ -141,13 +141,13 @@ if (fs.existsSync(markerFile)) {
 // Same issue with $() command substitution syntax combined with $VAR.
 console.log("Test 11: $() + $VAR injection in args");
 const subshellVarPayload = "$(touch " + markerFile + ")$HOME";
-spawnSync(Deno.execPath(), ["eval", "''", subshellVarPayload], {
+spawnSync(Edno.execPath(), ["eval", "''", subshellVarPayload], {
   shell: true,
   env: { PATH: "/usr/bin:/bin", HOME: "/tmp" },
 });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: $() + $VAR injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: $() + $VAR injection blocked");
 }
@@ -159,13 +159,13 @@ if (fs.existsSync(markerFile)) {
 // trailing wrapper quote as a comment.
 console.log("Test 12: Backslash-quote breakout + $VAR injection in args");
 const bsQuotePayload = '$HOME\\";touch ' + markerFile + ";#";
-spawnSync(Deno.execPath(), ["eval", "''", bsQuotePayload], {
+spawnSync(Edno.execPath(), ["eval", "''", bsQuotePayload], {
   shell: true,
   env: { PATH: "/usr/bin:/bin", HOME: "/tmp" },
 });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: Backslash-quote breakout injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: Backslash-quote breakout injection blocked");
 }
@@ -173,13 +173,13 @@ if (fs.existsSync(markerFile)) {
 // Test 13: Backslash-quote breakout with pipe injection
 console.log("Test 13: Backslash-quote breakout + pipe injection in args");
 const bsPipePayload = '$HOME\\"|touch ' + markerFile + " #";
-spawnSync(Deno.execPath(), ["eval", "''", bsPipePayload], {
+spawnSync(Edno.execPath(), ["eval", "''", bsPipePayload], {
   shell: true,
   env: { PATH: "/usr/bin:/bin", HOME: "/tmp" },
 });
 if (fs.existsSync(markerFile)) {
   console.log("FAIL: Backslash-quote pipe injection was not blocked");
-  Deno.exit(1);
+  Edno.exit(1);
 } else {
   console.log("PASS: Backslash-quote pipe injection blocked");
 }

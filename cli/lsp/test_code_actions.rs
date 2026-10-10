@@ -77,7 +77,7 @@ impl<'a> TestCodeActionCollector<'a> {
       return;
     }
 
-    let Some((is_deno_test, maybe_modifier)) = deno_test_call(node) else {
+    let Some((is_deno_test, maybe_modifier)) = edno_test_call(node) else {
       return;
     };
     if !is_deno_test {
@@ -89,14 +89,14 @@ impl<'a> TestCodeActionCollector<'a> {
         self.push_replace_callee_action(
           TestToggleKind::Ignore.disable_title(),
           node,
-          "Deno.test",
+          "Edno.test",
         );
       }
       Some(TestToggleKind::Only) => {
         self.push_replace_callee_action(
           TestToggleKind::Only.disable_title(),
           node,
-          "Deno.test",
+          "Edno.test",
         );
       }
       None => {
@@ -264,7 +264,7 @@ pub fn collect_test_code_actions(
   collector.take()
 }
 
-fn deno_test_call(
+fn edno_test_call(
   node: &ast::CallExpr,
 ) -> Option<(bool, Option<TestToggleKind>)> {
   let ast::Callee::Expr(callee_expr) = &node.callee else {
@@ -293,9 +293,9 @@ fn deno_test_call(
   }
 
   match prop_chain {
-    ["", "Deno", "test"] => Some((true, None)),
-    ["Deno", "test", "ignore"] => Some((true, Some(TestToggleKind::Ignore))),
-    ["Deno", "test", "only"] => Some((true, Some(TestToggleKind::Only))),
+    ["", "Edno", "test"] => Some((true, None)),
+    ["Edno", "test", "ignore"] => Some((true, Some(TestToggleKind::Ignore))),
+    ["Edno", "test", "only"] => Some((true, Some(TestToggleKind::Only))),
     _ => None,
   }
 }
@@ -319,7 +319,7 @@ fn position_le(a: lsp::Position, b: lsp::Position) -> bool {
 #[cfg(test)]
 mod tests {
   use deno_ast::MediaType;
-  use deno_core::resolve_url;
+  use edno_core::resolve_url;
   use pretty_assertions::assert_eq;
 
   use super::*;
@@ -368,7 +368,7 @@ mod tests {
 
   #[test]
   fn test_basic_test_actions() {
-    let actions = collect(r#"Deno.test("name", () => {});"#, 0, 5);
+    let actions = collect(r#"Edno.test("name", () => {});"#, 0, 5);
     assert_eq!(
       action_texts(&actions),
       vec![
@@ -384,7 +384,7 @@ mod tests {
   #[test]
   fn test_object_test_actions() {
     let actions = collect(
-      r#"Deno.test({ name: "name", fn: () => {}, only: false });"#,
+      r#"Edno.test({ name: "name", fn: () => {}, only: false });"#,
       0,
       5,
     );
@@ -397,7 +397,7 @@ mod tests {
   #[test]
   fn test_object_test_disable_actions() {
     let actions = collect(
-      r#"Deno.test({ name: "name", fn: () => {}, ignore: true, only: true });"#,
+      r#"Edno.test({ name: "name", fn: () => {}, ignore: true, only: true });"#,
       0,
       5,
     );
@@ -409,7 +409,7 @@ mod tests {
 
   #[test]
   fn test_modifier_test_disable_action() {
-    let actions = collect(r#"Deno.test.ignore("name", () => {});"#, 0, 15);
-    assert_eq!(action_texts(&actions), vec![("Unignore test", "Deno.test")]);
+    let actions = collect(r#"Edno.test.ignore("name", () => {});"#, 0, 15);
+    assert_eq!(action_texts(&actions), vec![("Unignore test", "Edno.test")]);
   }
 }

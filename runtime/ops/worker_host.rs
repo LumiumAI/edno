@@ -11,28 +11,28 @@ use std::sync::atomic::AtomicU32;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 
-use deno_core::CancelFuture;
-use deno_core::CancelHandle;
-use deno_core::DetachedBuffer;
-use deno_core::FromV8;
-use deno_core::JsBuffer;
-use deno_core::JsRuntimeInspector;
-use deno_core::ModuleSpecifier;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::op2;
-use deno_permissions::ChildPermissionsArg;
-use deno_permissions::PermissionsContainer;
-use deno_web::Blob;
-use deno_web::BlobStoreTrait;
-use deno_web::JsMessageData;
-use deno_web::MessagePortError;
-use deno_web::RecvMessageData;
-use deno_web::Transferable;
-use deno_web::deserialize_js_transferables;
-use deno_web::serialize_transferables;
+use edno_core::CancelFuture;
+use edno_core::CancelHandle;
+use edno_core::DetachedBuffer;
+use edno_core::FromV8;
+use edno_core::JsBuffer;
+use edno_core::JsRuntimeInspector;
+use edno_core::ModuleSpecifier;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::op2;
+use edno_permissions::ChildPermissionsArg;
+use edno_permissions::PermissionsContainer;
+use edno_web::Blob;
+use edno_web::BlobStoreTrait;
+use edno_web::JsMessageData;
+use edno_web::MessagePortError;
+use edno_web::RecvMessageData;
+use edno_web::Transferable;
+use edno_web::deserialize_js_transferables;
+use edno_web::serialize_transferables;
 use log::debug;
 use tokio::sync::mpsc::UnboundedReceiver;
 use tokio::sync::mpsc::UnboundedSender;
@@ -54,14 +54,14 @@ pub const UNSTABLE_FEATURE_NAME: &str = "worker-options";
 
 /// Default OS stack size for the thread a worker's isolate runs on.
 ///
-/// This is `deno_node`'s `DEFAULT_STACK_SIZE_MB`, which is what
+/// This is `edno_node`'s `DEFAULT_STACK_SIZE_MB`, which is what
 /// `resourceLimits.stackSizeMb` reports back to JS: without setting it here the
 /// thread would get Rust's 2MB default while we told the user it was 4MB. 2MB
 /// also leaves very little native headroom above V8's own JS stack limit
 /// (`--stack-size`, 1MB by default), so a raised `--stack-size` overflows the
 /// OS stack and aborts the process instead of raising `RangeError`.
 const DEFAULT_WORKER_STACK_SIZE_MB: usize =
-  deno_node::ops::worker_threads::DEFAULT_STACK_SIZE_MB;
+  edno_node::ops::worker_threads::DEFAULT_STACK_SIZE_MB;
 
 /// V8 resource limits for worker isolates, matching Node.js `resourceLimits`.
 #[derive(FromV8, Default, Clone)]
@@ -165,13 +165,13 @@ impl Drop for WorkerThread {
     // resource-drop backstop when the worker's `JsRuntime` drops.
     let handle = self.worker_handle.clone();
     if let Some(client_id) = &self.web_lock_client_id
-      && deno_web::locks::client_holds_lock(client_id)
+      && edno_web::locks::client_holds_lock(client_id)
     {
       handle.terminate_execution();
     }
     handle.terminate();
     if let Some(client_id) = &self.web_lock_client_id {
-      deno_web::locks::cleanup_locks_for_client_id(client_id);
+      edno_web::locks::cleanup_locks_for_client_id(client_id);
     }
   }
 }
@@ -226,8 +226,8 @@ impl Drop for ThreadMessageReceiver {
   }
 }
 
-deno_core::extension!(
-  deno_worker_host,
+edno_core::extension!(
+  edno_worker_host,
   ops = [
     op_create_worker,
     op_host_terminate_worker,
@@ -280,10 +280,10 @@ pub enum CreateWorkerError {
   ClassicWorkers,
   #[class(inherit)]
   #[error(transparent)]
-  Permission(deno_permissions::ChildPermissionError),
+  Permission(edno_permissions::ChildPermissionError),
   #[class(inherit)]
   #[error(transparent)]
-  ModuleResolution(#[from] deno_core::ModuleResolutionError),
+  ModuleResolution(#[from] edno_core::ModuleResolutionError),
   #[class(inherit)]
   #[error(transparent)]
   MessagePort(#[from] MessagePortError),
@@ -317,7 +317,7 @@ fn op_create_worker(
     super::check_unstable(
       state,
       UNSTABLE_FEATURE_NAME,
-      "Worker.deno.permissions",
+      "Worker.edno.permissions",
     );
   }
 
@@ -345,7 +345,7 @@ fn op_create_worker(
     .unwrap_or(false);
   let worker_id = WorkerId::new();
 
-  let module_specifier = deno_core::resolve_url(&specifier)?;
+  let module_specifier = edno_core::resolve_url(&specifier)?;
   // Synchronously capture the root blob so a racing `URL.revokeObjectURL`
   // after `new Worker(blobUrl)` can't make the worker load fail (see #26142).
   // This anchors only the worker root; blob URL dependencies still resolve
@@ -463,7 +463,7 @@ fn op_create_worker(
     // default lazily-assigned numeric client id and rely on the resource-drop
     // backstop to release their locks when their `JsRuntime` unwinds.
     web_lock_client_id: matches!(args.worker_type, WorkerThreadType::Node)
-      .then(|| deno_web::locks::worker_lock_client_id(worker_id.as_u32())),
+      .then(|| edno_web::locks::worker_lock_client_id(worker_id.as_u32())),
     ctrl_closed: false,
     message_closed: false,
     termination_requested: false,

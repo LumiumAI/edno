@@ -4,7 +4,7 @@
 // `cjs_pkg` and `.cts` for `inner` so the runtime classifies them as CJS
 // without needing a `package.json` with `"type": "commonjs"`, while still
 // exercising the TypeScript transpile branch of the host-FS require path.
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   "inner.cts",
   `"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -14,7 +14,7 @@ const value: number = 42;
 exports.value = value satisfies number;
 `,
 );
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   "cjs_pkg.cjs",
   `"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,13 +31,13 @@ Object.defineProperty(exports, "value", {
 // analysis cleanly. That keeps `cjs_pkg.cjs` and `inner.cts` out of
 // the embedded VFS, forcing the host-FS fallback paths exercised by
 // this regression test.
-Deno.writeTextFileSync(
+Edno.writeTextFileSync(
   "main.ts",
   `const dynImport = new Function(
   "p",
   "return import(p);",
 ) as (p: string) => Promise<{ value: number }>;
-const url = new URL("./cjs_pkg.cjs", "file://" + Deno.cwd() + "/").href;
+const url = new URL("./cjs_pkg.cjs", "file://" + Edno.cwd() + "/").href;
 const mod = await dynImport(url);
 console.log("ok", mod.value);
 `,

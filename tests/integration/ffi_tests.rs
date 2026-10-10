@@ -3,8 +3,8 @@
 use std::process::Command;
 
 use pretty_assertions::assert_eq;
-use test_util::deno_cmd;
-use test_util::deno_config_path;
+use test_util::edno_cmd;
+use test_util::edno_config_path;
 use test_util::ffi_tests_path;
 use test_util::println;
 
@@ -29,11 +29,11 @@ fn build() {
 fn ffi_basic() {
   build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(ffi_tests_path())
     .arg("run")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("--allow-ffi")
     .arg("--allow-read")
@@ -42,7 +42,7 @@ fn ffi_basic() {
     .arg(r#"--v8-flags=--allow-natives-syntax"#)
     .arg("testdata/test.js")
     .env("NO_COLOR", "1")
-    .env("DENO_UNSTABLE_FFI_TRACE_TURBO", "1")
+    .env("EDNO_UNSTABLE_FFI_TRACE_TURBO", "1")
     .output()
     .unwrap();
   let stdout = std::str::from_utf8(&output.stdout).unwrap();
@@ -142,11 +142,11 @@ fn ffi_basic() {
 fn ffi_nonblocking_buffer_gc() {
   build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(ffi_tests_path())
     .arg("run")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("--allow-ffi")
     .arg("--allow-read")
@@ -170,15 +170,15 @@ fn ffi_nonblocking_buffer_gc() {
 }
 
 #[test_util::test]
-#[ignore = "native check does not yet inject unstable Deno types (e.g. FFI); tracked with the deno.* lib migration (#35985)"]
+#[ignore = "native check does not yet inject unstable Edno types (e.g. FFI); tracked with the edno.* lib migration (#35985)"]
 fn ffi_symbol_types() {
   build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(ffi_tests_path())
     .arg("check")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("--unstable-ffi")
     .arg("--quiet")
@@ -201,11 +201,11 @@ fn ffi_symbol_types() {
 fn ffi_thread_safe_callback() {
   build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(ffi_tests_path())
     .arg("run")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("--allow-ffi")
     .arg("--allow-read")
@@ -239,11 +239,11 @@ fn ffi_thread_safe_callback() {
 fn ffi_event_loop_integration() {
   build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(ffi_tests_path())
     .arg("run")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("--allow-ffi")
     .arg("--allow-read")
@@ -265,7 +265,7 @@ fn ffi_event_loop_integration() {
   // unexpected: The callback logs synchronously and creates an asynchronous
   // logging task, which then gets called synchronously before the callback
   // actually yields to the calling thread. This is in contrast to what the
-  // logging would look like if the call was coming from within Deno itself,
+  // logging would look like if the call was coming from within Edno itself,
   // and may lead users to unknowingly run heavy asynchronous tasks from thread
   // safe callbacks synchronously.
   // The fix would be to make sure microtasks are only run after the event loop
@@ -295,11 +295,11 @@ fn ffi_event_loop_integration() {
 fn ffi_callback_errors() {
   build();
 
-  let output = deno_cmd()
+  let output = edno_cmd()
     .current_dir(ffi_tests_path())
     .arg("run")
     .arg("--config")
-    .arg(deno_config_path())
+    .arg(edno_config_path())
     .arg("--no-lock")
     .arg("--allow-ffi")
     .arg("--allow-read")

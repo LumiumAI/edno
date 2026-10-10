@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/basic",
+  "name": "@ednotest/basic",
   "version": "1.0.0",
   "type": "module",
   "main": "main.mjs",

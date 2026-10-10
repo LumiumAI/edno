@@ -7,17 +7,17 @@ const {
 } = primordials;
 
 const version = {
-  deno: "",
+  edno: "",
   v8: "",
   typescript: "",
 };
 
 function setVersions(
-  denoVersion,
+  ednoVersion,
   v8Version,
   tsVersion,
 ) {
-  version.deno = denoVersion;
+  version.edno = ednoVersion;
   version.v8 = v8Version;
   version.typescript = tsVersion;
 

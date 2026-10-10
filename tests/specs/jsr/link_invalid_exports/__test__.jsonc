@@ -15,7 +15,7 @@
         "args": [
           "eval",
           "--no-config",
-          "Deno.copyFileSync('add/invalid.json', 'add/deno.json')"
+          "Edno.copyFileSync('add/invalid.json', 'add/edno.json')"
         ],
         "output": ""
       }, {

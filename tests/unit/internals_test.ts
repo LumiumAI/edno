@@ -1,15 +1,15 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assert } from "./test_util.ts";
 
-Deno.test(function internalsExists() {
+Edno.test(function internalsExists() {
   const {
     inspectArgs,
     // @ts-expect-error TypeScript (as of 3.7) does not support indexing namespaces by symbol
-  } = Deno[Deno.internal];
+  } = Edno[Edno.internal];
   assert(!!inspectArgs);
 });
 
-Deno.test(function upgradeHttpRawIsNotExposed() {
+Edno.test(function upgradeHttpRawIsNotExposed() {
   // @ts-expect-error TypeScript does not support indexing namespaces by symbol
-  assert(!("upgradeHttpRaw" in Deno[Deno.internal]));
+  assert(!("upgradeHttpRaw" in Edno[Edno.internal]));
 });

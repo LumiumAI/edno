@@ -5,12 +5,12 @@ use std::cell::RefCell;
 use std::num::NonZeroU64;
 use std::rc::Rc;
 
-use deno_core::GarbageCollected;
-use deno_core::cppgc::SameObject;
-use deno_core::cppgc::make_cppgc_object;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::webidl::WebIdlInterfaceConverter;
+use edno_core::GarbageCollected;
+use edno_core::cppgc::SameObject;
+use edno_core::cppgc::make_cppgc_object;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::webidl::WebIdlInterfaceConverter;
 use deno_error::JsErrorBox;
 use wgpu_core::binding_model::BindingResource;
 use wgpu_core::pipeline::ProgrammableStageDescriptor;
@@ -80,7 +80,7 @@ impl WebIdlInterfaceConverter for GPUDevice {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPUDevice {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPUDevice"
@@ -636,7 +636,7 @@ impl GPUDevice {
           );
         }),
       );
-      deno_core::cppgc::try_unwrap_cppgc_object::<GPUCommandEncoder>(
+      edno_core::cppgc::try_unwrap_cppgc_object::<GPUCommandEncoder>(
         scope,
         obj.into(),
       )
@@ -759,7 +759,7 @@ impl GPUDevice {
     };
 
     let val = if let Some(err) = error {
-      deno_core::error::to_v8_error(scope, &err)
+      edno_core::error::to_v8_error(scope, &err)
     } else {
       v8::null(scope).into()
     };
@@ -992,7 +992,7 @@ pub struct GPUDeviceLostInfo {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPUDeviceLostInfo {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPUDeviceLostInfo"

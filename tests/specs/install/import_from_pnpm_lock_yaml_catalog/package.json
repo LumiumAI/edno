@@ -2,9 +2,9 @@
   "name": "root",
   "version": "1.0.0",
   "catalog": {
-    "@denotest/add": "1.0.0"
+    "@ednotest/add": "1.0.0"
   },
   "dependencies": {
-    "@denotest/add": "catalog:"
+    "@ednotest/add": "catalog:"
   }
 }

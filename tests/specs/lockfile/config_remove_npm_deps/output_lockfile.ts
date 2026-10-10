@@ -1,2 +1,2 @@
-const filePath = import.meta.dirname + "/deno.lock";
-console.log(Deno.readTextFileSync(filePath).trim());
+const filePath = import.meta.dirname + "/edno.lock";
+console.log(Edno.readTextFileSync(filePath).trim());

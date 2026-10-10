@@ -3,4 +3,4 @@ function add(a: number, b: number) {
 }
 
 console.log(add(1, 2));
-console.log(Deno.readTextFileSync(import.meta.filename!).trim());
+console.log(Edno.readTextFileSync(import.meta.filename!).trim());

@@ -5,5 +5,5 @@ size: [WILDCARD]
 
 file:///[WILDCARD]/main.ts (63B)
 └─┬ file:///[WILDCARD]/lib.ts (166B)
-  ├── file:///[WILDCARD]@denotest/esm-basic/main.mjs (unknown)
-  └── file:///[WILDCARD]@denotest/esm-basic/main.d.mts (unknown)
+  ├── file:///[WILDCARD]@ednotest/esm-basic/main.mjs (unknown)
+  └── file:///[WILDCARD]@ednotest/esm-basic/main.d.mts (unknown)

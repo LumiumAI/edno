@@ -23,11 +23,11 @@ use url::Url;
 use super::ModuleExportAnalyzer;
 use crate::cache::ParsedSourceCacheRc;
 
-pub struct DenoAstModuleExportAnalyzer {
+pub struct EdnoAstModuleExportAnalyzer {
   parsed_source_cache: ParsedSourceCacheRc,
 }
 
-impl DenoAstModuleExportAnalyzer {
+impl EdnoAstModuleExportAnalyzer {
   pub fn new(parsed_source_cache: ParsedSourceCacheRc) -> Self {
     Self {
       parsed_source_cache,
@@ -41,7 +41,7 @@ impl DenoAstModuleExportAnalyzer {
 )]
 type ArcStr = std::sync::Arc<str>;
 
-impl ModuleExportAnalyzer for DenoAstModuleExportAnalyzer {
+impl ModuleExportAnalyzer for EdnoAstModuleExportAnalyzer {
   fn parse_module(
     &self,
     specifier: Url,

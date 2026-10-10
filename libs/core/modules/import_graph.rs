@@ -4,15 +4,15 @@
 //!
 //! Two independent knobs:
 //!
-//! - `DENO_SNAPSHOT_IMPORT_GRAPH=<path>` — append a JSONL graph entry per
+//! - `EDNO_SNAPSHOT_IMPORT_GRAPH=<path>` — append a JSONL graph entry per
 //!   import/lazy-load to the given file. Designed for snapshot-build
 //!   analysis but works at runtime too. Each line is `{"from","to","kind"}`
 //!   where `kind` is `"esm"` | `"lazy_esm"` | `"lazy_script"`.
 //!
-//! - `DENO_LOG_LAZY_LOAD=1` — print a short line to stderr each time a
+//! - `EDNO_LOG_LAZY_LOAD=1` — print a short line to stderr each time a
 //!   `lazy_loaded_esm` module is loaded via `op_lazy_load_esm` or a
 //!   `lazy_loaded_js` script via `op_load_ext_script`. Use to see what
-//!   `deno run hello.js` actually evaluates at startup (i.e. what *fell
+//!   `edno run hello.js` actually evaluates at startup (i.e. what *fell
 //!   out* of the snapshot and is now paying parse/compile cost lazily).
 //!
 //! For `lazy_*` edges `from` is the calling script (best-effort via the v8
@@ -20,7 +20,7 @@
 
 // This module is a developer-facing instrumentation knob gated entirely on
 // env vars set by humans running snapshot builds or debugging startup time
-// (`DENO_SNAPSHOT_IMPORT_GRAPH`, `DENO_LOG_LAZY_LOAD`). Using `sys_traits`
+// (`EDNO_SNAPSHOT_IMPORT_GRAPH`, `EDNO_LOG_LAZY_LOAD`). Using `sys_traits`
 // here would force every embedder to plumb a Sys through, for zero benefit
 // since this code never runs except when those env vars are set. Same for
 // stderr: this is a debug print to a human, not user-facing CLI output.
@@ -39,8 +39,8 @@ use std::sync::OnceLock;
 
 use crate::v8;
 
-const ENV_VAR: &str = "DENO_SNAPSHOT_IMPORT_GRAPH";
-const STDERR_ENV_VAR: &str = "DENO_LOG_LAZY_LOAD";
+const ENV_VAR: &str = "EDNO_SNAPSHOT_IMPORT_GRAPH";
+const STDERR_ENV_VAR: &str = "EDNO_LOG_LAZY_LOAD";
 
 struct Writer {
   inner: Mutex<BufWriter<File>>,
@@ -108,7 +108,7 @@ pub(crate) fn record_esm_import(from: &str, to: &str) {
   record(from, to, "esm");
 }
 
-/// `Deno.core` lazy ESM: a cache miss, i.e. the module was actually parsed,
+/// `Edno.core` lazy ESM: a cache miss, i.e. the module was actually parsed,
 /// instantiated, and evaluated.
 pub(crate) fn record_lazy_esm(scope: &mut v8::PinScope, to: &str) {
   let stderr = stderr_log_enabled();
@@ -139,7 +139,7 @@ pub(crate) fn record_lazy_esm_cached(scope: &mut v8::PinScope, to: &str) {
   );
 }
 
-/// `Deno.core.loadExtScript(...)`. Called via the op only on cache miss
+/// `Edno.core.loadExtScript(...)`. Called via the op only on cache miss
 /// (the JS-side `loadedScripts` map short-circuits cache hits before the
 /// op fires), so this always corresponds to a real load.
 pub(crate) fn record_lazy_script(scope: &mut v8::PinScope, to: &str) {

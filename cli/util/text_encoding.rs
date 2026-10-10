@@ -5,8 +5,8 @@ use std::ops::Range;
 
 use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
-use deno_core::ModuleSourceCode;
-use deno_core::error::AnyError;
+use edno_core::ModuleSourceCode;
+use edno_core::error::AnyError;
 use deno_error::JsErrorBox;
 use text_lines::LineAndColumnIndex;
 use text_size::TextSize;
@@ -24,7 +24,7 @@ pub fn source_map_from_code(code: &[u8]) -> Option<Vec<u8>> {
 
 /// Truncate the source code before the source map.
 pub fn code_without_source_map(code: ModuleSourceCode) -> ModuleSourceCode {
-  use deno_core::ModuleCodeBytes;
+  use edno_core::ModuleCodeBytes;
 
   match code {
     ModuleSourceCode::String(mut code) => {
@@ -311,8 +311,8 @@ where
 mod tests {
   use std::sync::Arc;
 
-  use deno_core::ModuleCodeBytes;
-  use deno_core::ModuleCodeString;
+  use edno_core::ModuleCodeBytes;
+  use edno_core::ModuleCodeString;
 
   use super::*;
 

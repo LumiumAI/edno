@@ -2,7 +2,7 @@
 (function () {
 const { core, primordials } = __bootstrap;
 const { Encodings } = core.loadExtScript(
-  "ext:deno_node/internal_binding/_node.ts",
+  "ext:edno_node/internal_binding/_node.ts",
 );
 
 const {
@@ -21,7 +21,7 @@ function fill(
   end,
 ) {
   // Ignore primordial: `fill` is a method from Node.js Buffer.
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return buffer.fill(value, start, end);
 }
 

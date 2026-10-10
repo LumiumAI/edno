@@ -147,7 +147,7 @@ function sanitizeThrowValue(err) {
     return err;
   }
   try {
-    Deno.inspect(err);
+    Edno.inspect(err);
     return err;
   } catch {
     return new Error(
@@ -174,7 +174,7 @@ function installErrorHandlers() {
       sink.fail(event.reason);
       return;
     }
-    // Preserve the prior behavior of swallowing rejections while Deno.test
+    // Preserve the prior behavior of swallowing rejections while Edno.test
     // backed node tests are pending but no body is actively running.
     if (activeNodeTests > 0) {
       event.preventDefault();
@@ -205,8 +205,8 @@ const {
   validateObject,
   validateString,
   validateStringArray,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const nodeErrors = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const nodeErrors = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
@@ -215,13 +215,13 @@ const {
 // errors module; unlike the generated codes it is not registered on `.codes`.
 const { ERR_INVALID_STATE } = nodeErrors;
 const { emitExperimentalWarning, kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
-const { default: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+const { default: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 const {
   tapEscape,
   tapIndent,
-} = core.loadExtScript("ext:deno_node/internal/test/reporters.ts");
+} = core.loadExtScript("ext:edno_node/internal/test/reporters.ts");
 
 const methodsToCopy = [
   "deepEqual",
@@ -262,44 +262,44 @@ function getAssertObject() {
 let _fsForSnapshot = null;
 function getFsForSnapshot() {
   if (_fsForSnapshot === null) {
-    _fsForSnapshot = core.loadExtScript("ext:deno_node/fs.ts");
+    _fsForSnapshot = core.loadExtScript("ext:edno_node/fs.ts");
   }
   return _fsForSnapshot;
 }
 let _pathForSnapshot = null;
 function getPathForSnapshot() {
   if (_pathForSnapshot === null) {
-    _pathForSnapshot = core.loadExtScript("ext:deno_node/path/mod.ts");
+    _pathForSnapshot = core.loadExtScript("ext:edno_node/path/mod.ts");
   }
   return _pathForSnapshot;
 }
 
 // Resolve update-snapshot mode lazily so the env / Rust op is read at most
-// once. We accept either Deno's own `--update-snapshots` flag (when running
-// under `deno test`) or Node's `--test-update-snapshots` propagated via
+// once. We accept either Edno's own `--update-snapshots` flag (when running
+// under `edno test`) or Node's `--test-update-snapshots` propagated via
 // NODE_OPTIONS, so the polyfill behaves the same way the rest of the Node
 // compat surface does for reporter detection above.
 //
-// The deno_test extension's ops are registered at runtime - after this
+// The edno_test extension's ops are registered at runtime - after this
 // polyfill's snapshot is built - so they are not on the captured `core.ops`.
-// They are however reachable via `Deno[Deno.internal].core.ops`, which the
+// They are however reachable via `Edno[Edno.internal].core.ops`, which the
 // test runner exposes for cli/js code; we look them up lazily through there.
 let _fileSnapshotUpdateMode = undefined;
 function isFileSnapshotUpdateMode() {
   if (_fileSnapshotUpdateMode !== undefined) return _fileSnapshotUpdateMode;
-  const denoInternal = globalThis.Deno?.[globalThis.Deno.internal];
-  const op = denoInternal?.core?.ops?.op_test_snapshot_in_update_mode;
+  const ednoInternal = globalThis.Edno?.[globalThis.Edno.internal];
+  const op = ednoInternal?.core?.ops?.op_test_snapshot_in_update_mode;
   if (typeof op === "function") {
     try {
       if (op()) {
         _fileSnapshotUpdateMode = true;
         return true;
       }
-    } catch { /* op not wired up; not running under `deno test` */ }
+    } catch { /* op not wired up; not running under `edno test` */ }
   }
   let nodeOptions = "";
   try {
-    nodeOptions = globalThis.Deno?.env?.get("NODE_OPTIONS") || "";
+    nodeOptions = globalThis.Edno?.env?.get("NODE_OPTIONS") || "";
   } catch { /* permission denied */ }
   if (
     nodeOptions &&
@@ -418,7 +418,7 @@ let _Readable = null;
 function getReadable() {
   if (_Readable === null) {
     _Readable = core.loadExtScript(
-      "ext:deno_node/internal/streams/readable.js",
+      "ext:edno_node/internal/streams/readable.js",
     ).Readable;
   }
   return _Readable;
@@ -426,7 +426,7 @@ function getReadable() {
 let _fsWatch = null;
 function getFsWatch() {
   if (_fsWatch === null) {
-    _fsWatch = core.loadExtScript("ext:deno_node/fs.ts").watch;
+    _fsWatch = core.loadExtScript("ext:edno_node/fs.ts").watch;
   }
   return _fsWatch;
 }
@@ -510,7 +510,7 @@ function run(options) {
       } catch { /* ignore */ }
       watcher = null;
     }
-    // deno-lint-ignore deno-internal/prefer-primordials -- stream is a Node Readable, not an Array
+    // edno-lint-ignore edno-internal/prefer-primordials -- stream is a Node Readable, not an Array
     stream.push(null);
   }
 
@@ -520,7 +520,7 @@ function run(options) {
     // Node's TestsStream emits each lifecycle entry both as a data chunk
     // (consumed via async iteration / `'data'` listeners) and as a named
     // event so callers can attach `.on('test:watch:drained', ...)` directly.
-    // deno-lint-ignore deno-internal/prefer-primordials -- stream is a Node Readable, not an Array
+    // edno-lint-ignore edno-internal/prefer-primordials -- stream is a Node Readable, not an Array
     stream.push({ __proto__: null, type, data });
     stream.emit(type, data);
   }
@@ -588,13 +588,13 @@ function noop() {}
 const skippedSymbol = Symbol("skipped");
 
 // Detect Node.js-compatible `--test-reporter=...` selection so the polyfill
-// can emit reporter output matching Node's snapshot fixtures. Deno's CLI does
+// can emit reporter output matching Node's snapshot fixtures. Edno's CLI does
 // not consume `--test-reporter`; instead, our `child_process` polyfill (via
-// node_shim) propagates the value through NODE_OPTIONS when one Deno process
+// node_shim) propagates the value through NODE_OPTIONS when one Edno process
 // spawns another using Node-style flags. Reading the env var here keeps the
 // detection self-contained and avoids new Rust plumbing.
 function detectNodeTestReporter() {
-  const env = globalThis.Deno?.env;
+  const env = globalThis.Edno?.env;
   if (!env) return null;
   let value = null;
   try {
@@ -617,7 +617,7 @@ function detectNodeTestReporter() {
   return match ? match[1] : null;
 }
 
-// Resolve lazily: testing.ts ships inside Deno's startup snapshot, so any env
+// Resolve lazily: testing.ts ships inside Edno's startup snapshot, so any env
 // lookups performed at module-evaluation time observe the build environment,
 // not the running process. Memoize on the first call so we still only read the
 // env once.
@@ -633,7 +633,7 @@ function isTapMode() {
 
 function getTapSuiteALS() {
   if (tapSuiteALS !== null) return tapSuiteALS;
-  const mod = core.loadExtScript("ext:deno_node/async_hooks.ts");
+  const mod = core.loadExtScript("ext:edno_node/async_hooks.ts");
   const ALS = mod.AsyncLocalStorage;
   tapSuiteALS = new ALS();
   return tapSuiteALS;
@@ -651,7 +651,7 @@ function getTapCurrentSuite() {
 // filter tests Node-style. A bare string is interpreted as a regex source;
 // `/.../flags` is a regex literal.
 function parsePatternFlag(flag) {
-  const env = globalThis.Deno?.env;
+  const env = globalThis.Edno?.env;
   if (!env) return null;
   let nodeOptions = "";
   try {
@@ -696,7 +696,7 @@ function getTestSkipPatterns() {
 let testOnlyFlagCache;
 function isTestOnlyFlagSet() {
   if (testOnlyFlagCache !== undefined) return testOnlyFlagCache;
-  const env = globalThis.Deno?.env;
+  const env = globalThis.Edno?.env;
   if (!env) {
     testOnlyFlagCache = false;
     return false;
@@ -752,7 +752,7 @@ const tapStats = {
 };
 
 function tapWrite(line) {
-  // deno-lint-ignore no-console
+  // edno-lint-ignore no-console
   console.log(line);
 }
 
@@ -864,7 +864,7 @@ class TapContext {
     if (this.#parentChildren) {
       ArrayPrototypePush(this.#parentChildren, entry);
     }
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const parentState = this;
     const p = PromisePrototypeThen(
       this.#subtestTail,
@@ -896,7 +896,7 @@ function scheduleTapRun() {
 async function runTapTop() {
   // Hold the event loop open while tests run so that fixtures using
   // unref'd timers (Node's runner keeps itself alive internally) don't cause
-  // Deno to exit before subtests complete.
+  // Edno to exit before subtests complete.
   const keepAlive = setInterval(() => {}, 1 << 30);
   try {
     // Match Node's ordering: top-level `before()` callbacks fire before the
@@ -950,7 +950,7 @@ async function runTapTop() {
   }
   if (tapStats.fail > 0 || tapStats.cancelled > 0) {
     try {
-      globalThis.Deno?.exit?.(1);
+      globalThis.Edno?.exit?.(1);
     } catch { /* exit unavailable */ }
   }
 }
@@ -1311,7 +1311,7 @@ async function runPossiblyExpectingFailure(fn, nodeTestContext, options) {
       return result;
     } finally {
       // Drain even on failure so subtests registered before the error finish
-      // their Deno test steps before this test settles.
+      // their Edno test steps before this test settles.
       await nodeTestContext._drainSubtests();
     }
   }
@@ -1358,7 +1358,7 @@ class TestPlan {
 }
 
 class NodeTestContext {
-  #denoContext;
+  #ednoContext;
   #afterHooks = [];
   #beforeHooks = [];
   #parent;
@@ -1378,14 +1378,14 @@ class NodeTestContext {
   #runOnly = false;
   // Promises for top-level `test()` calls routed here from inside this
   // context's body (see `_trackSubtest`). The body awaits these before settling
-  // so such subtests still complete (Node semantics) and their Deno test steps
+  // so such subtests still complete (Node semantics) and their Edno test steps
   // finish before the parent step returns.
   #subtestPromises = [];
   // Canonical tags declared directly on this test/suite (see prepareTags).
   #ownTags = [];
 
   constructor(t, parent, name, tags) {
-    this.#denoContext = t;
+    this.#ednoContext = t;
     this.#parent = parent;
     this.#name = name;
     if (tags !== undefined) {
@@ -1472,7 +1472,7 @@ class NodeTestContext {
   }
 
   diagnostic(message) {
-    // deno-lint-ignore no-console
+    // edno-lint-ignore no-console
     console.log("DIAGNOSTIC:", message);
   }
 
@@ -1498,14 +1498,14 @@ class NodeTestContext {
   test(name, options, fn, overrides) {
     const prepared = prepareOptions(name, options, fn, overrides);
     if (this.#plan) this.#plan.increment();
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const parentContext = this;
     const stepPromise = PromisePrototypeThen(
-      this.#denoContext.step({
+      this.#ednoContext.step({
         name: prepared.name,
-        fn: async (denoTestContext) => {
+        fn: async (ednoTestContext) => {
           const newNodeTextContext = new NodeTestContext(
-            denoTestContext,
+            ednoTestContext,
             parentContext,
             prepared.name,
             prepared.options.tags,
@@ -1634,7 +1634,7 @@ class NodeTestContext {
   async _runBeforeHooksOnce() {
     if (this.#beforeHooksRun) return;
     this.#beforeHooksRun = true;
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const ctx = this;
     for (const hook of new SafeArrayIterator(this.#beforeHooks)) {
       await runInTestContext(ctx, () => hook(ctx));
@@ -1647,7 +1647,7 @@ class NodeTestContext {
   async _runAfterHooksOnce() {
     if (this.#afterHooksRun) return;
     this.#afterHooksRun = true;
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const ctx = this;
     for (const hook of new SafeArrayIterator(this.#afterHooks)) {
       await runInTestContext(ctx, () => hook(ctx));
@@ -1662,20 +1662,20 @@ let currentSuite = null;
 // `runPossiblyExpectingFailure` for the duration of each body so that a
 // top-level `test()` / `it()` call made from inside another test's body is
 // registered as a subtest of that test (via `t.step()`), matching Node, rather
-// than hitting Deno's "Nested Deno.test() calls are not supported" error.
+// than hitting Edno's "Nested Edno.test() calls are not supported" error.
 //
 // This must be an ALS, not a single module global with synchronous
 // save/restore: the unawaited routed-subtest path this enables makes execution
 // non-LIFO. With concurrent subtest bodies suspended across `await`, a plain
 // variable can point at a sibling when a parent resumes and silently mis-nest
-// the next routed `test()`. Each Deno test/step fn is its own async root, so
+// the next routed `test()`. Each Edno test/step fn is its own async root, so
 // the store stays scoped to that body's subtree and survives `await`
 // boundaries, giving every interleaved body its own context. See
 // https://github.com/denoland/deno/issues/35391.
 let testContextALS = null;
 function getTestContextALS() {
   if (testContextALS !== null) return testContextALS;
-  const mod = core.loadExtScript("ext:deno_node/async_hooks.ts");
+  const mod = core.loadExtScript("ext:edno_node/async_hooks.ts");
   const ALS = mod.AsyncLocalStorage;
   testContextALS = new ALS();
   return testContextALS;
@@ -1737,7 +1737,7 @@ async function runRootAfterIfDone() {
 }
 
 class TestSuite {
-  #denoTestContext;
+  #ednoTestContext;
   nodeTestContext;
   // The enclosing suite, or null for a top-level suite. Used to cascade
   // beforeEach()/afterEach() hooks from every ancestor suite onto each test
@@ -1750,7 +1750,7 @@ class TestSuite {
   afterEachHooks = [];
 
   constructor(t, nodeTestContext, parent) {
-    this.#denoTestContext = t;
+    this.#ednoTestContext = t;
     this.nodeTestContext = nodeTestContext;
     this.parent = parent ?? null;
   }
@@ -1758,13 +1758,13 @@ class TestSuite {
   addTest(name, options, fn, overrides) {
     const prepared = prepareOptions(name, options, fn, overrides);
     const suiteNodeContext = this.nodeTestContext;
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const suite = this;
     ArrayPrototypePush(this.entries, {
       name: prepared.name,
-      fn: async (denoTestContext) => {
+      fn: async (ednoTestContext) => {
         const newNodeTextContext = new NodeTestContext(
-          denoTestContext,
+          ednoTestContext,
           suiteNodeContext,
           prepared.name,
           prepared.options.tags,
@@ -1838,7 +1838,7 @@ class TestSuite {
     const prepared = prepareOptions(name, options, fn, overrides);
     const { promise, resolve } = PromiseWithResolvers();
     const parentSuiteContext = this.nodeTestContext;
-    // deno-lint-ignore no-this-alias
+    // edno-lint-ignore no-this-alias
     const parentSuite = this;
     ArrayPrototypePush(this.entries, {
       name: prepared.name,
@@ -1857,7 +1857,7 @@ class TestSuite {
 
   async execute() {
     for (const entry of new SafeArrayIterator(this.entries)) {
-      await this.#denoTestContext.step({
+      await this.#ednoTestContext.step({
         name: entry.name,
         fn: entry.fn,
         ignore: entry.ignore,
@@ -1983,7 +1983,7 @@ function prepareDenoTest(name, options, fn, overrides) {
 
   activeNodeTests++;
 
-  const denoTestOptions = {
+  const ednoTestOptions = {
     name: prepared.name,
     fn: wrapTestFn(prepared.fn, noop, prepared.name, prepared.options),
     only: prepared.options.only,
@@ -1993,9 +1993,9 @@ function prepareDenoTest(name, options, fn, overrides) {
     sanitizeOps: false,
     sanitizeResources: false,
   };
-  Deno.test(denoTestOptions);
+  Edno.test(ednoTestOptions);
   // Node resolves the returned promise on test completion, but the
-  // Deno runner only executes registered tests after the module
+  // Edno runner only executes registered tests after the module
   // finishes evaluating, so top-level `await test(...)` deadlocks.
   // Resolve immediately to unblock; the test still runs and is
   // reported normally. Trade-off: code that awaits `test()` for
@@ -2058,7 +2058,7 @@ function prepareDenoTestForSuite(name, options, fn, overrides) {
 
   activeNodeTests++;
 
-  const denoTestOptions = {
+  const ednoTestOptions = {
     name: prepared.name,
     fn: wrapSuiteFn(
       prepared.fn,
@@ -2075,7 +2075,7 @@ function prepareDenoTestForSuite(name, options, fn, overrides) {
     sanitizeOps: false,
     sanitizeResources: false,
   };
-  Deno.test(denoTestOptions);
+  Edno.test(ednoTestOptions);
   // See `prepareDenoTest` for the Node-divergence trade-off; top-level
   // `await suite(...)` would deadlock if we waited for completion.
   return PromiseResolve();
@@ -2091,7 +2091,7 @@ function test(name, options, fn, overrides) {
   }
   // A top-level `test()` called from inside another test's body becomes a
   // subtest of that test, matching Node. Without this it would fall through to
-  // `Deno.test()`, which rejects nested registration.
+  // `Edno.test()`, which rejects nested registration.
   const currentContext = getCurrentTestContext();
   if (currentContext !== null) {
     const promise = currentContext.test(name, options, fn, overrides);
@@ -2257,7 +2257,7 @@ class MockFunctionContext {
 
   resetCalls() {
     ArrayPrototypeSplice(this.#calls, 0, this.#calls.length);
-    // Node's MockTracker.reset() restores mocked methods (and Deno's
+    // Node's MockTracker.reset() restores mocked methods (and Edno's
     // mock.reset() already restores module mocks via MockModuleContext).
     // Invoke restore here without splicing activeMocks mid-iteration.
     if (this.#restore) {
@@ -2409,7 +2409,7 @@ class MockPropertyContext {
     if (!this._restored) {
       // Reinstall the pristine original descriptor. Unlike Node we don't force
       // a `value` field, since the original property may be an accessor (e.g.
-      // `process.platform` is a getter in Deno) and mixing `value` with
+      // `process.platform` is a getter in Edno) and mixing `value` with
       // `get`/`set` is an invalid descriptor.
       ObjectDefineProperty(this.#object, this.#propertyName, {
         __proto__: null,
@@ -2602,7 +2602,7 @@ class MockTimersHandle {
   [SymbolToPrimitive]() {
     return this.#id;
   }
-  [SymbolFor("Deno.customInspect")]() {
+  [SymbolFor("Edno.customInspect")]() {
     return `MockTimer { id: ${this.#id} }`;
   }
   get _id() {
@@ -2613,7 +2613,7 @@ class MockTimersHandle {
 // Installs/uninstalls this MockTimers on the `node:timers` module so that
 // `require("node:timers")` and `import ... from "node:timers[/promises]"`
 // callers route through the virtual clock too, not just `globalThis`.
-const kInstallMockTimers = SymbolFor("Deno.internal.node.mockTimers");
+const kInstallMockTimers = SymbolFor("Edno.internal.node.mockTimers");
 
 class MockTimers {
   _enabled = false;
@@ -2727,12 +2727,12 @@ class MockTimers {
 
     // Route the `node:timers` / `node:timers/promises` module functions through
     // this instance too (see `kInstallMockTimers` in `timers.ts`).
-    core.loadExtScript("ext:deno_node/timers.ts")[kInstallMockTimers](this);
+    core.loadExtScript("ext:edno_node/timers.ts")[kInstallMockTimers](this);
   }
 
   reset() {
     if (!this._enabled) return;
-    core.loadExtScript("ext:deno_node/timers.ts")[kInstallMockTimers](null);
+    core.loadExtScript("ext:edno_node/timers.ts")[kInstallMockTimers](null);
     for (
       const { 0: name, 1: original } of new SafeMapIterator(this.#originals)
     ) {
@@ -2964,7 +2964,7 @@ const mockTimers = new MockTimers();
 // synthetic module source generated for a mocked specifier reads the live
 // export values back out of this registry at evaluation time, so functions and
 // objects passed to `mock.module()` cross into the mocked module unchanged.
-const kMockModuleRegistryName = "deno.internal.nodeTestMockModules";
+const kMockModuleRegistryName = "edno.internal.nodeTestMockModules";
 // Search param appended to a mocked ESM url to bust the module cache when
 // `cache` is false. ESM modules cannot be evicted from the loader cache, so a
 // fresh url (new version) is resolved on every import instead.
@@ -3022,7 +3022,7 @@ function getCallerUrl() {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (
-      StringPrototypeIncludes(line, "ext:deno_node/") ||
+      StringPrototypeIncludes(line, "ext:edno_node/") ||
       StringPrototypeIncludes(line, "ext:core/")
     ) {
       continue;
@@ -3202,7 +3202,7 @@ function generateEsmSource(entry, key) {
     JSONStringify('mock exports not found for "' + key + '"') + "); }\n";
   if (entry.isCjs) {
     // For a CommonJS module the named exports are applied onto the default
-    // export object, mirroring how Deno exposes a required CJS module to an
+    // export object, mirroring how Edno exposes a required CJS module to an
     // ESM importer (default plus the merged keys).
     src += "let $d = $e.hasDefaultExport ? $e.moduleExports.default : {};\n";
     if (entry.exportNames.length > 0) {
@@ -3569,7 +3569,7 @@ const mock = {
     tick: (ms) => mockTimers.tick(ms),
     runAll: () => mockTimers.runAll(),
     // `setTime` is MockTimers' own method, not Date.prototype.setTime.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     setTime: (ms) => mockTimers.setTime(ms),
     [SymbolDispose]: () => mockTimers.reset(),
   },

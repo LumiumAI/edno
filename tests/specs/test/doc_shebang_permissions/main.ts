@@ -3,16 +3,16 @@
  * permission is revoked and accessing the environment fails.
  *
  * ```ts
- * #!/usr/bin/env -S deno run --allow-read
- * Deno.env.toObject();
+ * #!/usr/bin/env -S edno run --allow-read
+ * Edno.env.toObject();
  * ```
  *
  * `-A` inherits every permission from the test runner, so this example can
  * access the environment.
  *
  * ```ts
- * #!/usr/bin/env -S deno run -A
- * Deno.env.toObject();
+ * #!/usr/bin/env -S edno run -A
+ * Edno.env.toObject();
  * ```
  * @module doc
  */

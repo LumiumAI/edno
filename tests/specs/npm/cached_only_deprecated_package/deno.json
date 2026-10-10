@@ -1,6 +1,6 @@
 {
   "nodeModulesDir": "auto",
   "imports": {
-    "@denotest/deprecated-package-with-bin": "npm:@denotest/deprecated-package-with-bin@1.0.0"
+    "@ednotest/deprecated-package-with-bin": "npm:@ednotest/deprecated-package-with-bin@1.0.0"
   }
 }

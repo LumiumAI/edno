@@ -17,16 +17,16 @@ const {
   SetPrototypeForEach,
 } = primordials;
 
-const { codes } = core.loadExtScript("ext:deno_node/internal/errors.ts");
+const { codes } = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   ERR_INVALID_ARG_VALUE,
   ERR_UNAVAILABLE_DURING_EXIT,
 } = codes;
 const { AssertionError } = core.loadExtScript(
-  "ext:deno_node/internal/assert/assertion_error.js",
+  "ext:edno_node/internal/assert/assertion_error.js",
 );
 const { validateUint32 } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 
 const noop = FunctionPrototype;
@@ -107,7 +107,7 @@ class CallTracker {
   }
 
   calls(fn, expected = 1) {
-    // deno-lint-ignore no-process-global
+    // edno-lint-ignore no-process-global
     if (process._exiting) {
       throw new ERR_UNAVAILABLE_DURING_EXIT();
     }

@@ -3,18 +3,18 @@
   "tests": {
     "without_flag": {
       "if": "notSlowCiShard",
-      "args": "x -y npm:@denotest/unsafe-proto-bin",
+      "args": "x -y npm:@ednotest/unsafe-proto-bin",
       "output": "without_flag.out"
     },
     "with_flag": {
       "if": "notSlowCiShard",
-      "args": "x -y --unstable-unsafe-proto npm:@denotest/unsafe-proto-bin",
+      "args": "x -y --unstable-unsafe-proto npm:@ednotest/unsafe-proto-bin",
       "output": "with_flag.out"
     },
     "with_config": {
       "if": "notSlowCiShard",
       "cwd": "./with_config",
-      "args": "x -y npm:@denotest/unsafe-proto-bin",
+      "args": "x -y npm:@ednotest/unsafe-proto-bin",
       "output": "with_flag.out"
     }
   }

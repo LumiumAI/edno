@@ -14,7 +14,7 @@
     {
       "args": [
         "eval",
-        "Deno.renameSync('test-project', 'test-project-moved')"
+        "Edno.renameSync('test-project', 'test-project-moved')"
       ],
       "output": ""
     },

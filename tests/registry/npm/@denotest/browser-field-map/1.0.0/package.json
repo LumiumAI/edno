@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/browser-field-map",
+  "name": "@ednotest/browser-field-map",
   "version": "1.0.0",
   "main": "main.js",
   "browser": {

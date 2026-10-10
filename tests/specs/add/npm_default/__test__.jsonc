@@ -3,47 +3,47 @@
   "tests": {
     // Unprefixed package name should resolve as npm by default
     "add_unprefixed": {
-      "args": "add @denotest/esm-basic",
+      "args": "add @ednotest/esm-basic",
       "output": "add_unprefixed.out"
     },
     // Mixing unprefixed (npm default) with explicit jsr: prefix
     "add_mixed_with_jsr": {
-      "args": "add @denotest/esm-basic jsr:@denotest/add",
+      "args": "add @ednotest/esm-basic jsr:@ednotest/add",
       "output": "add_mixed.out"
     },
     // install subcommand should also default to npm
     "install_unprefixed": {
-      "args": "install @denotest/esm-basic",
+      "args": "install @ednotest/esm-basic",
       "output": "add_unprefixed.out"
     },
     // Explicit npm: prefix still works (backward compat)
     "add_explicit_npm_prefix": {
-      "args": "add npm:@denotest/esm-basic",
+      "args": "add npm:@ednotest/esm-basic",
       "output": "add_unprefixed.out"
     },
     // --jsr flag overrides default to jsr
     "add_jsr_flag": {
-      "args": "add --jsr @denotest/add",
+      "args": "add --jsr @ednotest/add",
       "output": "add_jsr_flag.out"
     },
     // --npm flag is now a no-op (same as default) but should still work
     "add_npm_flag_noop": {
-      "args": "add --npm @denotest/esm-basic",
+      "args": "add --npm @ednotest/esm-basic",
       "output": "add_unprefixed.out"
     },
     // Alias with explicit npm: prefix still works when default is npm
     "add_alias_with_prefix": {
       "steps": [
         {
-          "args": "add my-alias@npm:@denotest/esm-basic",
-          "output": "Add npm:@denotest/esm-basic@1.0.0\n[WILDCARD]\n"
+          "args": "add my-alias@npm:@ednotest/esm-basic",
+          "output": "Add npm:@ednotest/esm-basic@1.0.0\n[WILDCARD]\n"
         },
         {
           "args": [
             "eval",
-            "console.log(JSON.stringify(JSON.parse(Deno.readTextFileSync('deno.json')).imports))"
+            "console.log(JSON.stringify(JSON.parse(Edno.readTextFileSync('edno.json')).imports))"
           ],
-          "output": "{\"my-alias\":\"npm:@denotest/esm-basic@^1.0.0\"}\n"
+          "output": "{\"my-alias\":\"npm:@ednotest/esm-basic@^1.0.0\"}\n"
         }
       ]
     },
@@ -51,15 +51,15 @@
     "add_alias_jsr_prefix": {
       "steps": [
         {
-          "args": "add my-jsr@jsr:@denotest/add",
-          "output": "Add jsr:@denotest/add@1.0.0\n[WILDCARD]\n"
+          "args": "add my-jsr@jsr:@ednotest/add",
+          "output": "Add jsr:@ednotest/add@1.0.0\n[WILDCARD]\n"
         },
         {
           "args": [
             "eval",
-            "console.log(JSON.stringify(JSON.parse(Deno.readTextFileSync('deno.json')).imports))"
+            "console.log(JSON.stringify(JSON.parse(Edno.readTextFileSync('edno.json')).imports))"
           ],
-          "output": "{\"my-jsr\":\"jsr:@denotest/add@^1.0.0\"}\n"
+          "output": "{\"my-jsr\":\"jsr:@ednotest/add@^1.0.0\"}\n"
         }
       ]
     }

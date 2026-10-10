@@ -30,7 +30,7 @@
         ".": "./index.js",
         "./client": "./client.js",
         "./server": {
-          "deno": "./server.browser.js",
+          "edno": "./server.browser.js",
           "worker": "./server.browser.js",
           "browser": "./server.browser.js",
           "default": "./server.node.js"

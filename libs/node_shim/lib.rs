@@ -3144,8 +3144,8 @@ pub fn parse_args(args: Vec<String>) -> Result<ParseResult, Vec<String>> {
 /// Options for controlling translation behavior
 #[derive(Debug, Clone, Default)]
 pub struct TranslateOptions {
-  /// Use "deno node" as base command (for standalone CLI)
-  /// When false, uses "deno run" (for child_process spawning)
+  /// Use "edno node" as base command (for standalone CLI)
+  /// When false, uses "edno run" (for child_process spawning)
   pub use_node_subcommand: bool,
   /// Add unstable Node.js compat flags (--unstable-bare-node-builtins,
   /// --unstable-detect-cjs)
@@ -3168,7 +3168,7 @@ impl TranslateOptions {
     }
   }
 
-  /// Options for child_process spawning within Deno
+  /// Options for child_process spawning within Edno
   pub fn for_child_process() -> Self {
     Self {
       use_node_subcommand: false,
@@ -3191,17 +3191,17 @@ impl TranslateOptions {
   }
 }
 
-/// Result of translating Node.js CLI args to Deno args
+/// Result of translating Node.js CLI args to Edno args
 #[derive(Debug, Clone, Default)]
 pub struct TranslatedArgs {
-  /// The Deno CLI arguments
-  pub deno_args: Vec<String>,
+  /// The Edno CLI arguments
+  pub edno_args: Vec<String>,
   /// Node options that should be added to NODE_OPTIONS env var
   pub node_options: Vec<String>,
-  /// Whether to set DENO_TLS_CA_STORE=system
+  /// Whether to set EDNO_TLS_CA_STORE=system
   pub use_system_ca: bool,
   /// Comma-separated trace event categories from --trace-event-categories,
-  /// propagated to the spawned process via DENO_NODE_TRACE_EVENT_CATEGORIES.
+  /// propagated to the spawned process via EDNO_NODE_TRACE_EVENT_CATEGORIES.
   pub trace_event_categories: String,
 }
 
@@ -3229,13 +3229,13 @@ pub fn wrap_eval_code(source_code: &str) -> String {
   )
 }
 
-/// Deno subcommands - if the first arg is one of these, pass through unchanged.
+/// Edno subcommands - if the first arg is one of these, pass through unchanged.
 /// This must be kept in sync with the subcommands registered in
-/// `cli/args/flags.rs` so that spawning e.g. `deno bundle ...` via
+/// `cli/args/flags.rs` so that spawning e.g. `edno bundle ...` via
 /// `node:child_process` is passed through instead of being treated as a script
-/// to `deno run`. The `subcommands_recognized_by_node_shim` test in
+/// to `edno run`. The `subcommands_recognized_by_node_shim` test in
 /// `cli/args/flags.rs` enforces this. See #35591.
-const DENO_SUBCOMMANDS: &[&str] = &[
+const EDNO_SUBCOMMANDS: &[&str] = &[
   "add",
   "approve-builds",
   "approve-scripts",
@@ -3292,9 +3292,9 @@ const DENO_SUBCOMMANDS: &[&str] = &[
   "x",
 ];
 
-/// Check if a string is a Deno subcommand
+/// Check if a string is a Edno subcommand
 pub fn is_deno_subcommand(arg: &str) -> bool {
-  DENO_SUBCOMMANDS.contains(&arg)
+  EDNO_SUBCOMMANDS.contains(&arg)
 }
 
 /// Subcommands that execute user code and accept permission flags. A spawned
@@ -3359,19 +3359,19 @@ fn has_permission_flag(args: &[String]) -> bool {
   args.iter().any(|a| is_permission_flag(a))
 }
 
-/// Resolve a Node-style entrypoint to a specifier that Deno's `run` subcommand
+/// Resolve a Node-style entrypoint to a specifier that Edno's `run` subcommand
 /// understands.
 ///
 /// If the entrypoint is an absolute path, or a relative path that exists on
-/// disk, it is returned unchanged. Otherwise we shell out to `deno_exe` to
+/// disk, it is returned unchanged. Otherwise we shell out to `edno_exe` to
 /// resolve it using Node's module resolution semantics (via `resolve.js`).
 ///
-/// `deno_exe` is the path or name used to invoke deno for the resolution
-/// fallback. The standalone shim passes `"deno"` (relying on PATH); callers
-/// running inside the deno process should pass `std::env::current_exe()`.
+/// `edno_exe` is the path or name used to invoke edno for the resolution
+/// fallback. The standalone shim passes `"edno"` (relying on PATH); callers
+/// running inside the edno process should pass `std::env::current_exe()`.
 ///
-/// Infrastructure failures (no current dir, can't spawn deno, non-UTF8 output)
-/// fall back to returning the entrypoint unchanged, letting deno's own `run`
+/// Infrastructure failures (no current dir, can't spawn edno, non-UTF8 output)
+/// fall back to returning the entrypoint unchanged, letting edno's own `run`
 /// resolution surface a normal error rather than panicking. A non-zero exit
 /// from the resolution script itself is still propagated via process exit, as
 /// that carries the user-facing "module not found" diagnostic.
@@ -3380,7 +3380,7 @@ fn has_permission_flag(args: &[String]) -> bool {
   reason = "CLI shim resolving a node entrypoint, mirrors the standalone binary"
 )]
 pub fn resolve_entrypoint(
-  deno_exe: &std::path::Path,
+  edno_exe: &std::path::Path,
   entrypoint: &str,
 ) -> String {
   use std::process::Stdio;
@@ -3398,8 +3398,8 @@ pub fn resolve_entrypoint(
     return entrypoint.to_string();
   };
 
-  // Otherwise, shell out to `deno` to try to resolve the entrypoint.
-  let mut command = std::process::Command::new(deno_exe);
+  // Otherwise, shell out to `edno` to try to resolve the entrypoint.
+  let mut command = std::process::Command::new(edno_exe);
   command
     .arg("eval")
     .arg("--no-config")
@@ -3430,70 +3430,70 @@ pub fn resolve_entrypoint(
   }
 }
 
-/// For a translated `deno run ...` argv, resolve the entrypoint argument in
+/// For a translated `edno run ...` argv, resolve the entrypoint argument in
 /// place using [`resolve_entrypoint`].
 ///
-/// No-op unless `deno_args` is a `run` invocation with an entrypoint (the first
+/// No-op unless `edno_args` is a `run` invocation with an entrypoint (the first
 /// non-flag argument after `run`). Shared by the standalone shim binary and the
 /// in-process arg0 dispatch so the entrypoint-finding logic lives in one place.
 pub fn resolve_run_entrypoint(
-  deno_exe: &std::path::Path,
-  deno_args: &mut [String],
+  edno_exe: &std::path::Path,
+  edno_args: &mut [String],
 ) {
-  if deno_args.len() < 3 || deno_args.get(1).map(|s| s.as_str()) != Some("run")
+  if edno_args.len() < 3 || edno_args.get(1).map(|s| s.as_str()) != Some("run")
   {
     return;
   }
-  let entrypoint_idx = deno_args
+  let entrypoint_idx = edno_args
     .iter()
     .enumerate()
     .skip(2)
     .find(|(_, arg)| !arg.starts_with('-'))
     .map(|(i, _)| i);
   if let Some(idx) = entrypoint_idx {
-    deno_args[idx] = resolve_entrypoint(deno_exe, &deno_args[idx]);
+    edno_args[idx] = resolve_entrypoint(edno_exe, &edno_args[idx]);
   }
 }
 
 fn append_remaining_args(
-  deno_args: &mut Vec<String>,
+  edno_args: &mut Vec<String>,
   remaining_args: Vec<String>,
   had_double_dash: bool,
 ) {
   if had_double_dash && !remaining_args.is_empty() {
-    deno_args.push("--".to_string());
+    edno_args.push("--".to_string());
   }
-  deno_args.extend(remaining_args);
+  edno_args.extend(remaining_args);
 }
 
-/// Translate parsed Node.js CLI arguments to Deno CLI arguments.
+/// Translate parsed Node.js CLI arguments to Edno CLI arguments.
 pub fn translate_to_deno_args(
   parsed_args: ParseResult,
   options: &TranslateOptions,
 ) -> TranslatedArgs {
   let mut result = TranslatedArgs::default();
-  let deno_args = &mut result.deno_args;
+  let edno_args = &mut result.edno_args;
   let node_options = &mut result.node_options;
 
-  // Check if the args already look like Deno args (e.g., from vitest workers)
-  // If the first remaining arg is a Deno subcommand, pass through unchanged.
+  // Check if the args already look like Edno args (e.g., from vitest workers)
+  // If the first remaining arg is a Edno subcommand, pass through unchanged.
   if !parsed_args.had_double_dash
     && let Some(first_arg) = parsed_args.remaining_args.first()
     && is_deno_subcommand(first_arg)
   {
-    let mut deno_args = parsed_args.remaining_args;
+    let mut edno_args = parsed_args.remaining_args;
     // A spawned Node.js process has no permission model. When a tool detects it
-    // is running under Deno and spawns an execution subcommand (e.g.
-    // `deno run <script>`) without any permission flags, grant `-A` so the
+    // is running under Edno and spawns an execution subcommand (e.g.
+    // `edno run <script>`) without any permission flags, grant `-A` so the
     // child behaves like Node.js instead of tripping a permission prompt. Tools
     // that pass explicit permission flags (e.g. vitest workers spawn
     // `run -A ...`) are left untouched. See #35441.
-    if subcommand_runs_user_code(&deno_args[0])
-      && !has_permission_flag(&deno_args)
+    if subcommand_runs_user_code(&edno_args[0])
+      && !has_permission_flag(&edno_args)
     {
-      deno_args.insert(1, "-A".to_string());
+      edno_args.insert(1, "-A".to_string());
     }
-    result.deno_args = deno_args;
+    result.edno_args = edno_args;
     return result;
   }
 
@@ -3516,19 +3516,19 @@ pub fn translate_to_deno_args(
   // Handle --version flag
   if opts.print_version {
     if options.use_node_subcommand {
-      deno_args.push("node".to_string());
+      edno_args.push("node".to_string());
     }
-    deno_args.push("--version".to_string());
+    edno_args.push("--version".to_string());
     return result;
   }
 
   // Handle --v8-options flag (print V8 help and exit)
   if opts.print_v8_help {
     if options.use_node_subcommand {
-      deno_args.push("node".to_string());
-      deno_args.push("run".to_string());
+      edno_args.push("node".to_string());
+      edno_args.push("run".to_string());
     }
-    deno_args.push("--v8-flags=--help".to_string());
+    edno_args.push("--v8-flags=--help".to_string());
     return result;
   }
 
@@ -3536,28 +3536,28 @@ pub fn translate_to_deno_args(
   if opts.print_help {
     if options.use_node_subcommand {
       // For CLI, we handle help specially
-      deno_args.push("node".to_string());
+      edno_args.push("node".to_string());
     }
-    deno_args.push("--help".to_string());
+    edno_args.push("--help".to_string());
     return result;
   }
 
-  // Handle --completion-bash flag (translate to Deno completions)
+  // Handle --completion-bash flag (translate to Edno completions)
   if opts.print_bash_completion {
-    deno_args.push("completions".to_string());
-    deno_args.push("bash".to_string());
+    edno_args.push("completions".to_string());
+    edno_args.push("bash".to_string());
     return result;
   }
 
-  // Handle --run flag (run package.json script via deno task)
+  // Handle --run flag (run package.json script via edno task)
   if !opts.run.is_empty() {
     if options.use_node_subcommand {
-      deno_args.push("node".to_string());
+      edno_args.push("node".to_string());
     }
-    deno_args.push("task".to_string());
-    deno_args.push(opts.run.clone());
+    edno_args.push("task".to_string());
+    edno_args.push(opts.run.clone());
     append_remaining_args(
-      deno_args,
+      edno_args,
       parsed_args.remaining_args,
       parsed_args.had_double_dash,
     );
@@ -3577,39 +3577,39 @@ pub fn translate_to_deno_args(
 
   if env_opts.has_eval_string || eval_string_for_print.is_some() {
     if options.use_node_subcommand {
-      deno_args.push("node".to_string());
+      edno_args.push("node".to_string());
     }
-    deno_args.push("eval".to_string());
-    // Note: deno eval has implicit permissions, so we don't add -A
+    edno_args.push("eval".to_string());
+    // Note: edno eval has implicit permissions, so we don't add -A
 
     if options.add_unstable_flags {
-      deno_args.push("--unstable-bare-node-builtins".to_string());
-      deno_args.push("--unstable-detect-cjs".to_string());
+      edno_args.push("--unstable-bare-node-builtins".to_string());
+      edno_args.push("--unstable-detect-cjs".to_string());
     }
     if options.add_standalone_config {
-      deno_args.push("--node-modules-dir=manual".to_string());
-      deno_args.push("--no-config".to_string());
+      edno_args.push("--node-modules-dir=manual".to_string());
+      edno_args.push("--no-config".to_string());
     }
 
     if env_opts.has_env_file_string {
       if env_opts.env_file.is_empty() {
-        deno_args.push("--env-file".to_string());
+        edno_args.push("--env-file".to_string());
       } else {
-        deno_args.push(format!("--env-file={}", env_opts.env_file));
+        edno_args.push(format!("--env-file={}", env_opts.env_file));
       }
     }
 
     if env_opts.print_eval {
-      deno_args.push("--print".to_string());
+      edno_args.push("--print".to_string());
     }
 
     if !parsed_args.v8_args.is_empty() {
-      deno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
+      edno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
     }
 
     // Add conditions and inspector flags for eval
-    add_conditions(deno_args, env_opts);
-    add_inspector_flags(deno_args, env_opts);
+    add_conditions(edno_args, env_opts);
+    add_inspector_flags(edno_args, env_opts);
 
     // Get the eval code from either the explicit eval_string or the first remaining arg (for -p)
     let raw_eval_code = eval_string_for_print
@@ -3618,7 +3618,7 @@ pub fn translate_to_deno_args(
 
     // When `--inspect-port=N` is passed without `--inspect[-brk|-wait]`,
     // Node updates `process.debugPort` to N but does not start the
-    // inspector. Deno doesn't carry `--inspect-port` as a runtime flag,
+    // inspector. Edno doesn't carry `--inspect-port` as a runtime flag,
     // so emit an equivalent assignment as part of the eval code.
     let raw_eval_code_owned;
     let raw_eval_code: &str = if env_opts.debug_options.inspect_port_explicit
@@ -3638,10 +3638,10 @@ pub fn translate_to_deno_args(
     } else {
       raw_eval_code.to_string()
     };
-    deno_args.push(eval_code);
+    edno_args.push(eval_code);
 
     if options.use_node_subcommand {
-      deno_args.push("--".to_string());
+      edno_args.push("--".to_string());
     }
     // For -p with first arg as eval code, skip that arg
     let remaining_args = if eval_string_for_print.is_some() {
@@ -3649,30 +3649,30 @@ pub fn translate_to_deno_args(
     } else {
       parsed_args.remaining_args
     };
-    deno_args.extend(remaining_args);
+    edno_args.extend(remaining_args);
     return result;
   }
 
-  // Handle --test flag (run tests via deno test)
+  // Handle --test flag (run tests via edno test)
   if env_opts.test_runner {
     if options.use_node_subcommand {
-      deno_args.push("node".to_string());
+      edno_args.push("node".to_string());
     }
-    deno_args.push("test".to_string());
-    deno_args.push("-A".to_string());
+    edno_args.push("test".to_string());
+    edno_args.push("-A".to_string());
 
     if options.add_unstable_flags {
-      deno_args.push("--unstable-bare-node-builtins".to_string());
-      deno_args.push("--unstable-detect-cjs".to_string());
+      edno_args.push("--unstable-bare-node-builtins".to_string());
+      edno_args.push("--unstable-detect-cjs".to_string());
     }
     if options.add_standalone_config {
-      deno_args.push("--node-modules-dir=manual".to_string());
-      deno_args.push("--no-config".to_string());
+      edno_args.push("--node-modules-dir=manual".to_string());
+      edno_args.push("--no-config".to_string());
     }
 
-    add_common_flags(deno_args, &parsed_args, env_opts);
+    add_common_flags(edno_args, &parsed_args, env_opts);
     append_remaining_args(
-      deno_args,
+      edno_args,
       parsed_args.remaining_args,
       parsed_args.had_double_dash,
     );
@@ -3682,23 +3682,23 @@ pub fn translate_to_deno_args(
   // Handle REPL (no arguments or force_repl)
   if parsed_args.remaining_args.is_empty() || env_opts.force_repl {
     if options.use_node_subcommand {
-      deno_args.push("node".to_string());
-      deno_args.push("repl".to_string());
-      deno_args.push("-A".to_string());
+      edno_args.push("node".to_string());
+      edno_args.push("repl".to_string());
+      edno_args.push("-A".to_string());
 
       if !parsed_args.v8_args.is_empty() {
-        deno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
+        edno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
       }
 
-      add_conditions(deno_args, env_opts);
-      add_inspector_flags(deno_args, env_opts);
+      add_conditions(edno_args, env_opts);
+      add_inspector_flags(edno_args, env_opts);
 
-      deno_args.push("--".to_string());
-      deno_args.extend(parsed_args.remaining_args);
+      edno_args.push("--".to_string());
+      edno_args.extend(parsed_args.remaining_args);
     } else {
       // For child_process, return empty args to trigger REPL behavior
       if !parsed_args.v8_args.is_empty() {
-        deno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
+        edno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
       }
     }
     return result;
@@ -3706,25 +3706,25 @@ pub fn translate_to_deno_args(
 
   // Handle running a script
   if options.use_node_subcommand {
-    deno_args.push("node".to_string());
+    edno_args.push("node".to_string());
   }
-  deno_args.push("run".to_string());
-  deno_args.push("-A".to_string());
+  edno_args.push("run".to_string());
+  edno_args.push("-A".to_string());
 
   if options.add_unstable_flags {
-    deno_args.push("--unstable-bare-node-builtins".to_string());
-    deno_args.push("--unstable-detect-cjs".to_string());
+    edno_args.push("--unstable-bare-node-builtins".to_string());
+    edno_args.push("--unstable-detect-cjs".to_string());
   }
   if options.add_standalone_config {
-    deno_args.push("--node-modules-dir=manual".to_string());
-    deno_args.push("--no-config".to_string());
+    edno_args.push("--node-modules-dir=manual".to_string());
+    edno_args.push("--no-config".to_string());
   }
 
-  add_common_flags(deno_args, &parsed_args, env_opts);
+  add_common_flags(edno_args, &parsed_args, env_opts);
 
   // Handle --no-warnings -> --quiet
   if !env_opts.warnings {
-    deno_args.push("--quiet".to_string());
+    edno_args.push("--quiet".to_string());
     node_options.push("--no-warnings".to_string());
   }
 
@@ -3734,7 +3734,7 @@ pub fn translate_to_deno_args(
   }
 
   // Forward Node's --test-reporter so node:test in the spawned child can
-  // detect it and emit the corresponding output format. Deno's own CLI does
+  // detect it and emit the corresponding output format. Edno's own CLI does
   // not consume the flag (its TAP/spec output differs from Node's), so the
   // value rides along through NODE_OPTIONS for the polyfill to pick up.
   for reporter in &env_opts.test_reporter {
@@ -3749,7 +3749,7 @@ pub fn translate_to_deno_args(
 
   // Add the script and remaining args
   append_remaining_args(
-    deno_args,
+    edno_args,
     parsed_args.remaining_args,
     parsed_args.had_double_dash,
   );
@@ -3782,16 +3782,16 @@ fn add_tls_node_options(
 }
 
 fn add_common_flags(
-  deno_args: &mut Vec<String>,
+  edno_args: &mut Vec<String>,
   parsed_args: &ParseResult,
   env_opts: &EnvironmentOptions,
 ) {
   // Add watch mode if enabled
   if env_opts.watch_mode {
     if env_opts.watch_mode_paths.is_empty() {
-      deno_args.push("--watch".to_string());
+      edno_args.push("--watch".to_string());
     } else {
-      deno_args.push(format!(
+      edno_args.push(format!(
         "--watch={}",
         env_opts
           .watch_mode_paths
@@ -3806,34 +3806,34 @@ fn add_common_flags(
   // Add env file if specified
   if env_opts.has_env_file_string {
     if env_opts.env_file.is_empty() {
-      deno_args.push("--env-file".to_string());
+      edno_args.push("--env-file".to_string());
     } else {
-      deno_args.push(format!("--env-file={}", env_opts.env_file));
+      edno_args.push(format!("--env-file={}", env_opts.env_file));
     }
   }
 
   // Add V8 flags
   if !parsed_args.v8_args.is_empty() {
-    deno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
+    edno_args.push(format!("--v8-flags={}", parsed_args.v8_args.join(",")));
   }
 
   // Add conditions
-  add_conditions(deno_args, env_opts);
+  add_conditions(edno_args, env_opts);
 
   // Add inspector flags
-  add_inspector_flags(deno_args, env_opts);
+  add_inspector_flags(edno_args, env_opts);
 }
 
-fn add_conditions(deno_args: &mut Vec<String>, env_opts: &EnvironmentOptions) {
+fn add_conditions(edno_args: &mut Vec<String>, env_opts: &EnvironmentOptions) {
   if !env_opts.conditions.is_empty() {
     for condition in &env_opts.conditions {
-      deno_args.push(format!("--conditions={}", condition));
+      edno_args.push(format!("--conditions={}", condition));
     }
   }
 }
 
 fn add_inspector_flags(
-  deno_args: &mut Vec<String>,
+  edno_args: &mut Vec<String>,
   env_opts: &EnvironmentOptions,
 ) {
   if env_opts.debug_options.inspector_enabled {
@@ -3844,13 +3844,13 @@ fn add_inspector_flags(
     } else {
       "--inspect"
     };
-    deno_args.push(format!(
+    edno_args.push(format!(
       "{}={}:{}",
       arg,
       env_opts.debug_options.host_port.host,
       env_opts.debug_options.host_port.port
     ));
-    deno_args.push(format!(
+    edno_args.push(format!(
       "--inspect-publish-uid={}",
       env_opts.debug_options.inspect_publish_uid_string
     ));
@@ -5052,14 +5052,14 @@ mod tests {
   #[test]
   fn test_translate_inspect_port_injects_debug_port_for_print() {
     // `--inspect-port=N` without `--inspect[-brk|-wait]` should make
-    // `process.debugPort` equal N — matching Node — even though Deno
+    // `process.debugPort` equal N — matching Node — even though Edno
     // has no equivalent runtime flag. The translator injects the
     // assignment into the eval code used by `-p`/`-e`.
     let parsed =
       parse_args(svec!["--inspect-port=0", "-p", "process.debugPort"]).unwrap();
     let result = translate_to_deno_args(parsed, &TranslateOptions::default());
     let eval_arg = result
-      .deno_args
+      .edno_args
       .iter()
       .find(|a| a.contains("process.debugPort"))
       .expect("expected an eval arg referencing process.debugPort");
@@ -5078,7 +5078,7 @@ mod tests {
         .unwrap();
     let result = translate_to_deno_args(parsed, &TranslateOptions::default());
     let eval_arg = result
-      .deno_args
+      .edno_args
       .iter()
       .find(|a| a.contains("process.debugPort"))
       .expect("expected an eval arg referencing process.debugPort");
@@ -5330,7 +5330,7 @@ mod tests {
     assert_eq!(result.remaining_args, svec!["script.js"]);
   }
 
-  /// Test that takes a `input: ["node"]` and `expected: ["deno", "repl", "-A", "--"] `
+  /// Test that takes a `input: ["node"]` and `expected: ["edno", "repl", "-A", "--"] `
   macro_rules! test {
       ($name:ident, $input:tt , $expected:tt) => {
           #[test]
@@ -5338,7 +5338,7 @@ mod tests {
               let parsed_args = parse_args(svec! $input).unwrap();
               let options = TranslateOptions::for_node_cli();
               let result = translate_to_deno_args(parsed_args, &options);
-              assert_eq!(result.deno_args, svec! $expected);
+              assert_eq!(result.edno_args, svec! $expected);
           }
       };
   }
@@ -5360,18 +5360,18 @@ mod tests {
     ]
   );
 
-  /// Helper for the deno-subcommand pass-through path (used when a tool spawns
-  /// Deno with deno-style args). Translation is mode-independent here, so use
+  /// Helper for the edno-subcommand pass-through path (used when a tool spawns
+  /// Edno with edno-style args). Translation is mode-independent here, so use
   /// the child_process options.
   fn translate_passthrough(input: Vec<String>) -> Vec<String> {
     let parsed_args = parse_args(input).unwrap();
     let options = TranslateOptions::for_child_process();
-    translate_to_deno_args(parsed_args, &options).deno_args
+    translate_to_deno_args(parsed_args, &options).edno_args
   }
 
   #[test]
   fn passthrough_run_without_perms_gets_allow_all() {
-    // Regression test for #35441: `deno run <script>` spawned without any
+    // Regression test for #35441: `edno run <script>` spawned without any
     // permission flags must receive `-A` so the Node-compat child has full
     // access instead of prompting.
     assert_eq!(
@@ -5438,7 +5438,7 @@ mod tests {
     let options = TranslateOptions::for_child_process();
     let result = translate_to_deno_args(parsed, &options);
     assert_eq!(
-      result.deno_args,
+      result.edno_args,
       svec![
         "run",
         "-A",
@@ -5458,7 +5458,7 @@ mod tests {
     let options = TranslateOptions::for_child_process();
     let result = translate_to_deno_args(parsed, &options);
     assert_eq!(
-      result.deno_args,
+      result.edno_args,
       svec![
         "run",
         "-A",

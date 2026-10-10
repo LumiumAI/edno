@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --unstable --allow-read --allow-write --allow-run --config=tests/config/deno.json
+#!/usr/bin/env -S edno run --unstable --allow-read --allow-write --allow-run --config=tests/config/edno.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 import { join, ROOT_PATH } from "./util.js";
@@ -9,7 +9,7 @@ const V_WGPU = "29.0.1";
 const TARGET_DIR = join(ROOT_PATH, "ext", "webgpu");
 
 async function bash(subcmd, opts = {}) {
-  const { success, code } = await new Deno.Command("bash", {
+  const { success, code } = await new Edno.Command("bash", {
     ...opts,
     args: ["-c", subcmd],
     stdout: "inherit",
@@ -18,7 +18,7 @@ async function bash(subcmd, opts = {}) {
 
   // Exit process on failure
   if (!success) {
-    Deno.exit(code);
+    Edno.exit(code);
   }
 }
 
@@ -27,34 +27,34 @@ async function clearTargetDir() {
 }
 
 async function checkoutUpstream() {
-  // Path of deno_webgpu inside the TAR
+  // Path of edno_webgpu inside the TAR
   const tarPrefix = `${REPO.replace("/", "-")}-${
     COMMIT.slice(0, 7)
-  }/deno_webgpu/`;
+  }/edno_webgpu/`;
   const cmd =
     `curl -L https://api.github.com/repos/${REPO}/tarball/${COMMIT} | tar -C '${TARGET_DIR}' -xzvf - --strip=2 '${tarPrefix}'`;
   // console.log(cmd);
   await bash(cmd);
 }
 
-async function denoWebgpuVersion() {
+async function ednoWebgpuVersion() {
   const coreCargo = join(ROOT_PATH, "Cargo.toml");
-  const contents = await Deno.readTextFile(coreCargo);
+  const contents = await Edno.readTextFile(coreCargo);
   return contents.match(
-    /^deno_webgpu = { version = "(\d+\.\d+\.\d+)", path = ".\/ext\/webgpu" }$/m,
+    /^edno_webgpu = { version = "(\d+\.\d+\.\d+)", path = ".\/ext\/webgpu" }$/m,
   )[1];
 }
 
 async function patchFile(path, patcher) {
-  const data = await Deno.readTextFile(path);
+  const data = await Edno.readTextFile(path);
   const patched = patcher(data);
-  await Deno.writeTextFile(path, patched);
+  await Edno.writeTextFile(path, patched);
 }
 
 async function patchReadme() {
   const sourceSection = `## Source
 
-The canonical source is considered to be https://github.com/gfx-rs/wgpu@trunk/deno_webgpu,
+The canonical source is considered to be https://github.com/gfx-rs/wgpu@trunk/edno_webgpu,
 even though they are maintained separately but synced occasionally using the script
 https://github.com/denoland/deno/blob/main/tools/wgpu_sync.js
 `;
@@ -80,7 +80,7 @@ https://github.com/denoland/deno/blob/main/tools/wgpu_sync.js
 }
 
 async function patchCargo() {
-  const vDenoWebgpu = await denoWebgpuVersion();
+  const vDenoWebgpu = await ednoWebgpuVersion();
   await patchFile(
     join(TARGET_DIR, "Cargo.toml"),
     (data) =>

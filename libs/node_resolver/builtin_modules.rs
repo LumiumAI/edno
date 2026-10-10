@@ -6,22 +6,22 @@ pub trait IsBuiltInNodeModuleChecker: std::fmt::Debug {
 }
 
 /// An implementation of IsBuiltInNodeModuleChecker that uses
-/// the list of built-in node_modules that are supported by Deno
-/// in the `deno_node` crate (ext/node).
+/// the list of built-in node_modules that are supported by Edno
+/// in the `edno_node` crate (ext/node).
 #[derive(Debug)]
-pub struct DenoIsBuiltInNodeModuleChecker;
+pub struct EdnoIsBuiltInNodeModuleChecker;
 
-impl IsBuiltInNodeModuleChecker for DenoIsBuiltInNodeModuleChecker {
+impl IsBuiltInNodeModuleChecker for EdnoIsBuiltInNodeModuleChecker {
   #[inline(always)]
   fn is_builtin_node_module(&self, module_name: &str) -> bool {
-    DENO_SUPPORTED_BUILTIN_NODE_MODULES
+    EDNO_SUPPORTED_BUILTIN_NODE_MODULES
       .binary_search(&module_name)
       .is_ok()
   }
 }
 
-/// Collection of built-in node_modules supported by Deno.
-pub static DENO_SUPPORTED_BUILTIN_NODE_MODULES: &[&str] = &[
+/// Collection of built-in node_modules supported by Edno.
+pub static EDNO_SUPPORTED_BUILTIN_NODE_MODULES: &[&str] = &[
   // NOTE(bartlomieju): keep this list in sync with `ext/node/polyfills/01_require.js`
   "_http_agent",
   "_http_common",
@@ -99,8 +99,8 @@ mod test {
 
   #[test]
   fn test_builtins_are_sorted() {
-    let mut builtins_list = DENO_SUPPORTED_BUILTIN_NODE_MODULES.to_vec();
+    let mut builtins_list = EDNO_SUPPORTED_BUILTIN_NODE_MODULES.to_vec();
     builtins_list.sort();
-    assert_eq!(DENO_SUPPORTED_BUILTIN_NODE_MODULES, builtins_list);
+    assert_eq!(EDNO_SUPPORTED_BUILTIN_NODE_MODULES, builtins_list);
   }
 }

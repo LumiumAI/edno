@@ -1,10 +1,10 @@
-Deno.bench({
+Edno.bench({
   group: "G1",
   name: "G1-B",
   fn() {},
 });
 
-Deno.bench({
+Edno.bench({
   group: "G2",
   name: "G2-B",
   fn() {},

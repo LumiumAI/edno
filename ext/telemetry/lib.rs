@@ -26,18 +26,18 @@ use std::time::Duration;
 use std::time::Instant;
 use std::time::SystemTime;
 
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::ToV8;
-use deno_core::futures::FutureExt;
-use deno_core::futures::Stream;
-use deno_core::futures::StreamExt;
-use deno_core::futures::channel::mpsc;
-use deno_core::futures::channel::mpsc::UnboundedSender;
-use deno_core::futures::future::BoxFuture;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::v8::DataError;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::ToV8;
+use edno_core::futures::FutureExt;
+use edno_core::futures::Stream;
+use edno_core::futures::StreamExt;
+use edno_core::futures::channel::mpsc;
+use edno_core::futures::channel::mpsc::UnboundedSender;
+use edno_core::futures::future::BoxFuture;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::v8::DataError;
 use deno_error::JsError;
 use deno_error::JsErrorBox;
 use once_cell::sync::Lazy;
@@ -105,8 +105,8 @@ use tokio::task::JoinSet;
 mod console_exporter;
 mod grpc_exporter;
 
-deno_core::extension!(
-  deno_telemetry,
+edno_core::extension!(
+  edno_telemetry,
   ops = [
     op_otel_collect_isolate_metrics,
     op_otel_enable_isolate_metrics,
@@ -202,7 +202,7 @@ fn otel_create_shared_runtime() -> UnboundedSender<BoxFuture<'static, ()>> {
       .enable_time()
       // This limits the number of threads for blocking operations (like for
       // synchronous fs ops) or CPU bound tasks like when we run dprint in
-      // parallel for deno fmt.
+      // parallel for edno fmt.
       // The default value is 512, which is an unhelpfully large thread pool. We
       // don't ever want to have more than a couple dozen threads.
       .max_blocking_threads(if cfg!(windows) {
@@ -269,7 +269,7 @@ fn new_log_record() -> LogRecord {
     Lazy::new(|| {
       opentelemetry_sdk::logs::SdkLoggerProvider::builder()
         .build()
-        .logger("deno")
+        .logger("edno")
     });
   LOG_RECORD_FACTORY.create_log_record()
 }
@@ -343,7 +343,7 @@ impl<T> Stream for BatchMessageChannelReceiver<T> {
   }
 }
 
-enum DenoPeriodicReaderMessage {
+enum EdnoPeriodicReaderMessage {
   Register(std::sync::Weak<opentelemetry_sdk::metrics::Pipeline>),
   Export,
   ForceFlush(oneshot::Sender<OTelSdkResult>),
@@ -351,39 +351,39 @@ enum DenoPeriodicReaderMessage {
 }
 
 #[derive(Debug)]
-struct DenoPeriodicReader {
-  tx: tokio::sync::mpsc::Sender<DenoPeriodicReaderMessage>,
+struct EdnoPeriodicReader {
+  tx: tokio::sync::mpsc::Sender<EdnoPeriodicReaderMessage>,
   temporality: Temporality,
 }
 
-impl MetricReader for DenoPeriodicReader {
+impl MetricReader for EdnoPeriodicReader {
   fn register_pipeline(
     &self,
     pipeline: std::sync::Weak<opentelemetry_sdk::metrics::Pipeline>,
   ) {
     let _ = self
       .tx
-      .try_send(DenoPeriodicReaderMessage::Register(pipeline));
+      .try_send(EdnoPeriodicReaderMessage::Register(pipeline));
   }
 
   fn collect(
     &self,
     _rm: &mut opentelemetry_sdk::metrics::data::ResourceMetrics,
   ) -> OTelSdkResult {
-    unreachable!("collect should not be called on DenoPeriodicReader");
+    unreachable!("collect should not be called on EdnoPeriodicReader");
   }
 
   fn force_flush(&self) -> OTelSdkResult {
     let (tx, rx) = oneshot::channel();
-    let _ = self.tx.try_send(DenoPeriodicReaderMessage::ForceFlush(tx));
-    deno_core::futures::executor::block_on(rx).unwrap()?;
+    let _ = self.tx.try_send(EdnoPeriodicReaderMessage::ForceFlush(tx));
+    edno_core::futures::executor::block_on(rx).unwrap()?;
     Ok(())
   }
 
   fn shutdown_with_timeout(&self, _timeout: Duration) -> OTelSdkResult {
     let (tx, rx) = oneshot::channel();
-    let _ = self.tx.try_send(DenoPeriodicReaderMessage::Shutdown(tx));
-    deno_core::futures::executor::block_on(rx).unwrap()?;
+    let _ = self.tx.try_send(EdnoPeriodicReaderMessage::Shutdown(tx));
+    edno_core::futures::executor::block_on(rx).unwrap()?;
     Ok(())
   }
 
@@ -398,7 +398,7 @@ impl MetricReader for DenoPeriodicReader {
 const METRIC_EXPORT_INTERVAL_NAME: &str = "OTEL_METRIC_EXPORT_INTERVAL";
 const DEFAULT_INTERVAL: Duration = Duration::from_secs(60);
 
-impl DenoPeriodicReader {
+impl EdnoPeriodicReader {
   fn new<E: PushMetricExporter + 'static>(
     sys: &impl TelemetrySys,
     exporter: E,
@@ -458,7 +458,7 @@ impl DenoPeriodicReader {
 
       loop {
         let message = tokio::select! {
-          _ = ticker.tick() => DenoPeriodicReaderMessage::Export,
+          _ = ticker.tick() => EdnoPeriodicReaderMessage::Export,
           message = rx.recv() => if let Some(message) = message {
             message
           } else {
@@ -467,45 +467,45 @@ impl DenoPeriodicReader {
         };
 
         match message {
-          DenoPeriodicReaderMessage::Register(new_pipeline) => {
+          EdnoPeriodicReaderMessage::Register(new_pipeline) => {
             inner.register_pipeline(new_pipeline);
           }
-          DenoPeriodicReaderMessage::Export => {
+          EdnoPeriodicReaderMessage::Export => {
             otel_debug!(
-                name: "DenoPeriodicReader.ExportTriggered",
+                name: "EdnoPeriodicReader.ExportTriggered",
                 message = "Export message received.",
             );
             if let Err(err) = collect_and_export(true).await {
               otel_error!(
-                name: "DenoPeriodicReader.ExportFailed",
+                name: "EdnoPeriodicReader.ExportFailed",
                 message = "Failed to export metrics",
                 reason = format!("{}", err));
             }
           }
-          DenoPeriodicReaderMessage::ForceFlush(sender) => {
+          EdnoPeriodicReaderMessage::ForceFlush(sender) => {
             otel_debug!(
-                name: "DenoPeriodicReader.ForceFlushCalled",
+                name: "EdnoPeriodicReader.ForceFlushCalled",
                 message = "Flush message received.",
             );
             let res = collect_and_export(false).await;
             if let Err(send_error) = sender.send(res) {
               otel_debug!(
-                  name: "DenoPeriodicReader.Flush.SendResultError",
+                  name: "EdnoPeriodicReader.Flush.SendResultError",
                   message = "Failed to send flush result.",
                   reason = format!("{:?}", send_error),
               );
             }
           }
-          DenoPeriodicReaderMessage::Shutdown(sender) => {
+          EdnoPeriodicReaderMessage::Shutdown(sender) => {
             otel_debug!(
-                name: "DenoPeriodicReader.ShutdownCalled",
+                name: "EdnoPeriodicReader.ShutdownCalled",
                 message = "Shutdown message received",
             );
             let res = collect_and_export(false).await;
             let _ = exporter.shutdown();
             if let Err(send_error) = sender.send(res) {
               otel_debug!(
-                  name: "DenoPeriodicReader.Shutdown.SendResultError",
+                  name: "EdnoPeriodicReader.Shutdown.SendResultError",
                   message = "Failed to send shutdown result",
                   reason = format!("{:?}", send_error),
               );
@@ -520,7 +520,7 @@ impl DenoPeriodicReader {
       .unbounded_send(worker.boxed())
       .expect("failed to send task to shared OpenTelemetry runtime");
 
-    DenoPeriodicReader { tx, temporality }
+    EdnoPeriodicReader { tx, temporality }
   }
 }
 
@@ -530,15 +530,15 @@ mod hyper_client {
   use std::task::Poll;
   use std::time::Duration;
 
-  use deno_net::tunnel::TunnelConnection;
-  use deno_net::tunnel::TunnelStream;
-  use deno_net::tunnel::get_tunnel;
-  use deno_tls::SocketUse;
-  use deno_tls::TlsKey;
-  use deno_tls::TlsKeys;
-  use deno_tls::create_client_config;
-  use deno_tls::load_certs;
-  use deno_tls::load_private_keys;
+  use edno_net::tunnel::TunnelConnection;
+  use edno_net::tunnel::TunnelStream;
+  use edno_net::tunnel::get_tunnel;
+  use edno_tls::SocketUse;
+  use edno_tls::TlsKey;
+  use edno_tls::TlsKeys;
+  use edno_tls::create_client_config;
+  use edno_tls::load_certs;
+  use edno_tls::load_private_keys;
   use http_body_util::BodyExt;
   use http_body_util::Full;
   use hyper::Uri;
@@ -577,7 +577,7 @@ mod hyper_client {
     #[error(transparent)]
     Box(#[from] Box<dyn std::error::Error + Send + Sync>),
     #[error(transparent)]
-    Tunnel(#[from] deno_net::tunnel::Error),
+    Tunnel(#[from] edno_net::tunnel::Error),
   }
 
   #[derive(Debug, Clone)]
@@ -793,7 +793,7 @@ mod hyper_client {
   impl HyperClient {
     fn build_connector(
       sys: &impl FsRead,
-    ) -> deno_core::anyhow::Result<Connector> {
+    ) -> edno_core::anyhow::Result<Connector> {
       let connector = if let Some(tunnel) = get_tunnel() {
         Connector::Tunnel(tunnel.clone())
       } else if let Ok(addr) = std::env::var("OTEL_DENO_VSOCK") {
@@ -804,7 +804,7 @@ mod hyper_client {
         )))]
         {
           let _ = addr;
-          deno_core::anyhow::bail!("vsock is not supported on this platform")
+          edno_core::anyhow::bail!("vsock is not supported on this platform")
         }
 
         #[cfg(any(
@@ -814,7 +814,7 @@ mod hyper_client {
         ))]
         {
           let Some((cid, port)) = addr.split_once(':') else {
-            deno_core::anyhow::bail!("invalid vsock addr");
+            edno_core::anyhow::bail!("invalid vsock addr");
           };
           let cid = if cid == "-1" { u32::MAX } else { cid.parse()? };
           let port = port.parse()?;
@@ -838,7 +838,7 @@ mod hyper_client {
             let certs = load_certs(&mut std::io::Cursor::new(cert))?;
             let key =
               load_private_keys(&key)?.into_iter().next().ok_or_else(|| {
-                deno_core::anyhow::anyhow!(
+                edno_core::anyhow::anyhow!(
                   "no private key found in OTEL_EXPORTER_OTLP_CLIENT_KEY file"
                 )
               })?;
@@ -849,7 +849,7 @@ mod hyper_client {
         };
 
         let tls_config =
-          create_client_config(deno_tls::TlsClientConfigOptions {
+          create_client_config(edno_tls::TlsClientConfigOptions {
             root_cert_store: None,
             ca_certs,
             unsafely_ignore_certificate_errors: None,
@@ -866,13 +866,13 @@ mod hyper_client {
       Ok(connector)
     }
 
-    pub fn new(sys: &impl FsRead) -> deno_core::anyhow::Result<Self> {
+    pub fn new(sys: &impl FsRead) -> edno_core::anyhow::Result<Self> {
       let connector = Self::build_connector(sys)?;
       Ok(Self::from_connector(connector, false))
     }
 
     /// Create a client configured for gRPC (HTTP/2 enforced).
-    pub fn new_h2(sys: &impl FsRead) -> deno_core::anyhow::Result<Self> {
+    pub fn new_h2(sys: &impl FsRead) -> edno_core::anyhow::Result<Self> {
       let connector = Self::build_connector(sys)?;
       Ok(Self::from_connector(connector, true))
     }
@@ -958,7 +958,7 @@ mod hyper_client {
 pub struct OtelGlobals {
   pub span_processor: BatchSpanProcessor<OtelSharedRuntime>,
   pub log_processor: BatchLogProcessor<OtelSharedRuntime>,
-  pub id_generator: DenoIdGenerator,
+  pub id_generator: EdnoIdGenerator,
   pub meter_provider: SdkMeterProvider,
   pub builtin_instrumentation_scope: InstrumentationScope,
   pub span_event_count_limit: usize,
@@ -1115,7 +1115,7 @@ enum RootSampler {
 
 impl Default for Sampler {
   fn default() -> Self {
-    // When `OTEL_TRACES_SAMPLER` is unset, preserve Deno's historical behavior
+    // When `OTEL_TRACES_SAMPLER` is unset, preserve Edno's historical behavior
     // of recording and sampling every span.
     Sampler {
       parent_based: false,
@@ -1127,7 +1127,7 @@ impl Default for Sampler {
 impl Sampler {
   fn from_env(
     sys: &impl TelemetrySys,
-  ) -> Result<Self, deno_core::anyhow::Error> {
+  ) -> Result<Self, edno_core::anyhow::Error> {
     let Ok(value) = sys.env_var("OTEL_TRACES_SAMPLER") else {
       return Ok(Self::default());
     };
@@ -1172,7 +1172,7 @@ impl Sampler {
         root: RootSampler::TraceIdRatio(ratio()),
       },
       other => {
-        return Err(deno_core::anyhow::anyhow!(
+        return Err(edno_core::anyhow::anyhow!(
           "Env var OTEL_TRACES_SAMPLER specifies an unsupported sampler: {}",
           other
         ));
@@ -1226,7 +1226,7 @@ pub fn init(
   sys: &impl TelemetrySys,
   rt_config: OtelRuntimeConfig,
   config: OtelConfig,
-) -> deno_core::anyhow::Result<()> {
+) -> edno_core::anyhow::Result<()> {
   if !config.metrics_enabled
     && !config.tracing_enabled
     && config.console == OtelConsoleConfig::Ignore
@@ -1251,13 +1251,13 @@ pub fn init(
     Ok("http/json") => (false, false, Protocol::HttpJson),
     Ok("grpc") => (false, true, Protocol::HttpBinary),
     Ok(protocol) => {
-      return Err(deno_core::anyhow::anyhow!(
+      return Err(edno_core::anyhow::anyhow!(
         "Env var OTEL_EXPORTER_OTLP_PROTOCOL specifies an unsupported protocol: {}",
         protocol
       ));
     }
     Err(err) => {
-      return Err(deno_core::anyhow::anyhow!(
+      return Err(edno_core::anyhow::anyhow!(
         "Failed to read env var OTEL_EXPORTER_OTLP_PROTOCOL: {}",
         err
       ));
@@ -1281,13 +1281,13 @@ pub fn init(
     base_resource.get(&Key::new(TELEMETRY_SDK_VERSION)).unwrap();
 
   // Add the runtime name and version to the resource attributes. Also override
-  // the `telemetry.sdk` attributes to include the Deno runtime.
+  // the `telemetry.sdk` attributes to include the Edno runtime.
   let resource = Resource::builder()
     .with_attributes([
       KeyValue::new(PROCESS_RUNTIME_NAME, rt_config.runtime_name),
       KeyValue::new(PROCESS_RUNTIME_VERSION, rt_config.runtime_version.clone()),
-      KeyValue::new(TELEMETRY_SDK_LANGUAGE, format!("deno-{sdk_language}")),
-      KeyValue::new(TELEMETRY_SDK_NAME, format!("deno-{sdk_name}")),
+      KeyValue::new(TELEMETRY_SDK_LANGUAGE, format!("edno-{sdk_language}")),
+      KeyValue::new(TELEMETRY_SDK_NAME, format!("edno-{sdk_name}")),
       KeyValue::new(
         TELEMETRY_SDK_VERSION,
         format!("{}-{}", rt_config.runtime_version, sdk_version),
@@ -1308,7 +1308,7 @@ pub fn init(
     Some("delta") => Temporality::Delta,
     Some("lowmemory") => Temporality::LowMemory,
     Some(other) => {
-      return Err(deno_core::anyhow::anyhow!(
+      return Err(edno_core::anyhow::anyhow!(
         "Invalid value for OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: {}",
         other
       ));
@@ -1324,7 +1324,7 @@ pub fn init(
 
     let metric_exporter =
       console_exporter::ConsoleMetricExporter::new(temporality);
-    let metric_reader = DenoPeriodicReader::new(sys, metric_exporter);
+    let metric_reader = EdnoPeriodicReader::new(sys, metric_exporter);
     let meter_provider = SdkMeterProvider::builder()
       .with_reader(metric_reader)
       .with_resource(resource.clone())
@@ -1346,7 +1346,7 @@ pub fn init(
 
     let metric_exporter =
       grpc_exporter::GrpcMetricExporter::new(client.clone(), temporality);
-    let metric_reader = DenoPeriodicReader::new(sys, metric_exporter);
+    let metric_reader = EdnoPeriodicReader::new(sys, metric_exporter);
     let meter_provider = SdkMeterProvider::builder()
       .with_reader(metric_reader)
       .with_resource(resource.clone())
@@ -1373,7 +1373,7 @@ pub fn init(
       .with_http_client(client.clone())
       .with_protocol(protocol)
       .build_metrics_exporter(temporality)?;
-    let metric_reader = DenoPeriodicReader::new(sys, metric_exporter);
+    let metric_reader = EdnoPeriodicReader::new(sys, metric_exporter);
     let meter_provider = SdkMeterProvider::builder()
       .with_reader(metric_reader)
       .with_resource(resource.clone())
@@ -1391,14 +1391,14 @@ pub fn init(
   };
 
   let builtin_instrumentation_scope =
-    opentelemetry::InstrumentationScope::builder("deno")
+    opentelemetry::InstrumentationScope::builder("edno")
       .with_version(rt_config.runtime_version.clone())
       .build();
 
   let id_generator = if let Some(prefix) = config.deterministic_prefix {
-    DenoIdGenerator::deterministic(prefix)
+    EdnoIdGenerator::deterministic(prefix)
   } else {
-    DenoIdGenerator::random()
+    EdnoIdGenerator::random()
   };
 
   let span_event_count_limit = span_event_count_limit_from_env(sys);
@@ -1420,16 +1420,16 @@ pub fn init(
       sampler,
       config,
     })
-    .map_err(|_| deno_core::anyhow::anyhow!("failed to set otel globals"))?;
+    .map_err(|_| edno_core::anyhow::anyhow!("failed to set otel globals"))?;
 
-  deno_signals::before_exit(before_exit);
-  deno_net::tunnel::disable_before_exit();
+  edno_signals::before_exit(before_exit);
+  edno_net::tunnel::disable_before_exit();
 
   Ok(())
 }
 
 fn before_exit() {
-  log::trace!("deno_telemetry::before_exit");
+  log::trace!("edno_telemetry::before_exit");
 
   let Some(OtelGlobals {
     span_processor: spans,
@@ -1450,7 +1450,7 @@ fn before_exit() {
   let r = meter_provider.shutdown();
   log::trace!("meters={:?}", r);
 
-  deno_net::tunnel::before_exit();
+  edno_net::tunnel::before_exit();
 }
 
 pub fn handle_log(record: &log::Record) {
@@ -1517,7 +1517,7 @@ pub fn handle_log(record: &log::Record) {
 }
 
 #[derive(Debug)]
-pub enum DenoIdGenerator {
+pub enum EdnoIdGenerator {
   Random(RandomIdGenerator),
   Deterministic {
     next_trace_id: AtomicU64,
@@ -1525,7 +1525,7 @@ pub enum DenoIdGenerator {
   },
 }
 
-impl IdGenerator for DenoIdGenerator {
+impl IdGenerator for EdnoIdGenerator {
   fn new_trace_id(&self) -> TraceId {
     match self {
       Self::Random(generator) => generator.new_trace_id(),
@@ -1554,7 +1554,7 @@ impl IdGenerator for DenoIdGenerator {
   }
 }
 
-impl DenoIdGenerator {
+impl EdnoIdGenerator {
   fn random() -> Self {
     Self::Random(RandomIdGenerator::default())
   }
@@ -1816,7 +1816,7 @@ fn op_otel_log<'s>(
   log_record.add_attribute("log.iostream", iostream);
 
   if let Some(span) =
-    deno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
+    edno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
   {
     let state = span.0.borrow();
     match &**state {
@@ -1970,8 +1970,8 @@ fn owned_string<'s>(
 struct OtelTracer(InstrumentationScope);
 
 // SAFETY: we're sure this can be GCed
-unsafe impl deno_core::GarbageCollected for OtelTracer {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+unsafe impl edno_core::GarbageCollected for OtelTracer {
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"OtelTracer"
@@ -2236,8 +2236,8 @@ pub enum OtelSpanState {
 }
 
 // SAFETY: we're sure this can be GCed
-unsafe impl deno_core::GarbageCollected for OtelSpan {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+unsafe impl edno_core::GarbageCollected for OtelSpan {
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"OtelSpan"
@@ -2434,7 +2434,7 @@ fn op_otel_span_attribute1<'s>(
   value: v8::Local<'s, v8::Value>,
 ) {
   let Some(span) =
-    deno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
+    edno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
   else {
     return;
   };
@@ -2465,7 +2465,7 @@ fn op_otel_span_attribute2<'s>(
   value2: v8::Local<'s, v8::Value>,
 ) {
   let Some(span) =
-    deno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
+    edno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
   else {
     return;
   };
@@ -2510,7 +2510,7 @@ fn op_otel_span_attribute3<'s>(
   value3: v8::Local<'s, v8::Value>,
 ) {
   let Some(span) =
-    deno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
+    edno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
   else {
     return;
   };
@@ -2562,7 +2562,7 @@ fn op_otel_span_update_name<'s>(
   };
   let name = owned_string(scope, name);
   let Some(span) =
-    deno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
+    edno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
   else {
     return;
   };
@@ -2599,7 +2599,7 @@ fn op_otel_span_add_link<'s>(
   );
 
   let Some(span) =
-    deno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
+    edno_core::_ops::try_unwrap_cppgc_object::<OtelSpan>(scope, span)
   else {
     return 0;
   };
@@ -2619,8 +2619,8 @@ fn op_otel_span_add_link<'s>(
 struct OtelMeter(opentelemetry::metrics::Meter);
 
 // SAFETY: we're sure this can be GCed
-unsafe impl deno_core::GarbageCollected for OtelMeter {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+unsafe impl edno_core::GarbageCollected for OtelMeter {
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"OtelMeter"
@@ -2824,7 +2824,7 @@ enum Instrument {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for Instrument {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"Instrument"
@@ -2921,7 +2921,7 @@ fn op_otel_metric_record1(
   key1: v8::Local<'_, v8::Value>,
   value1: v8::Local<'_, v8::Value>,
 ) {
-  let Some(instrument) = deno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
+  let Some(instrument) = edno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
     &mut *scope,
     instrument,
   ) else {
@@ -2966,7 +2966,7 @@ fn op_otel_metric_record2(
   key2: v8::Local<'_, v8::Value>,
   value2: v8::Local<'_, v8::Value>,
 ) {
-  let Some(instrument) = deno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
+  let Some(instrument) = edno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
     &mut *scope,
     instrument,
   ) else {
@@ -3019,7 +3019,7 @@ fn op_otel_metric_record3(
   key3: v8::Local<'_, v8::Value>,
   value3: v8::Local<'_, v8::Value>,
 ) {
-  let Some(instrument) = deno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
+  let Some(instrument) = edno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
     &mut *scope,
     instrument,
   ) else {
@@ -3089,7 +3089,7 @@ fn op_otel_metric_observable_record1(
   key1: v8::Local<'_, v8::Value>,
   value1: v8::Local<'_, v8::Value>,
 ) {
-  let Some(instrument) = deno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
+  let Some(instrument) = edno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
     &mut *scope,
     instrument,
   ) else {
@@ -3127,7 +3127,7 @@ fn op_otel_metric_observable_record2(
   key2: v8::Local<'_, v8::Value>,
   value2: v8::Local<'_, v8::Value>,
 ) {
-  let Some(instrument) = deno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
+  let Some(instrument) = edno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
     &mut *scope,
     instrument,
   ) else {
@@ -3171,7 +3171,7 @@ fn op_otel_metric_observable_record3(
   key3: v8::Local<'_, v8::Value>,
   value3: v8::Local<'_, v8::Value>,
 ) {
-  let Some(instrument) = deno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
+  let Some(instrument) = edno_core::_ops::try_unwrap_cppgc_object::<Instrument>(
     &mut *scope,
     instrument,
   ) else {

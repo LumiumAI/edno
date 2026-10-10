@@ -183191,7 +183191,7 @@ function getRangeOfEnclosingComment(sourceFile, position, precedingToken, tokenA
   const leadingCommentRangesOfNextToken = getLeadingCommentRangesOfNode(tokenAtPosition, sourceFile);
   const commentRanges = concatenate(trailingRangesOfPreviousToken, leadingCommentRangesOfNextToken);
   return commentRanges && find(commentRanges, (range) => rangeContainsPositionExclusive(range, position) || // The end marker of a single-line comment does not include the newline character.
-  // With caret at `^`, in the following case, we are inside a comment (^ denotes the cursor position):
+  // With caret at `^`, in the following case, we are inside a comment (^ ednotes the cursor position):
   //
   //    // asdf   ^\n
   //

@@ -6,5 +6,5 @@ if (scope === "worker") {
   postMessage("done");
 } else {
   const worker = new Worker(`${import.meta.url}#worker`, { type: "module" });
-  worker.onmessage = () => Deno.exit(0);
+  worker.onmessage = () => Edno.exit(0);
 }

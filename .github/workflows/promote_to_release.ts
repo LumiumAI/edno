@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --check --allow-write=. --allow-read=. --lock=./tools/deno.lock.json
+#!/usr/bin/env -S edno run --check --allow-write=. --allow-read=. --lock=./tools/edno.lock.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { conditions, createWorkflow, job, step } from "jsr:@david/gagen@0.3.1";
 
@@ -29,9 +29,9 @@ const windowsJob = job("promote-to-release-windows", {
       },
     }),
     step({
-      name: "Install deno",
+      name: "Install edno",
       uses: "denoland/setup-deno@v2",
-      with: { "deno-version": "v2.x" },
+      with: { "edno-version": "v2.x" },
     }),
     step({
       name: "Download Windows binaries",
@@ -45,16 +45,16 @@ const windowsJob = job("promote-to-release-windows", {
         "} else {",
         '  $SrcUrl = "https://dl.deno.land/canary/${{github.event.inputs.commitHash}}"',
         "}",
-        'Invoke-WebRequest -Uri "$SrcUrl/deno-${{ matrix.target }}.zip" -OutFile "deno-windows.zip"',
-        'Invoke-WebRequest -Uri "$SrcUrl/denort-${{ matrix.target }}.zip" -OutFile "denort-windows.zip"',
-        'Expand-Archive -Path "deno-windows.zip" -DestinationPath "."',
-        'Expand-Archive -Path "denort-windows.zip" -DestinationPath "."',
+        'Invoke-WebRequest -Uri "$SrcUrl/edno-${{ matrix.target }}.zip" -OutFile "edno-windows.zip"',
+        'Invoke-WebRequest -Uri "$SrcUrl/ednort-${{ matrix.target }}.zip" -OutFile "ednort-windows.zip"',
+        'Expand-Archive -Path "edno-windows.zip" -DestinationPath "."',
+        'Expand-Archive -Path "ednort-windows.zip" -DestinationPath "."',
       ],
     }),
     step({
       name: "Run patchver for Windows",
       run:
-        "deno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release_windows.ts ${{github.event.inputs.releaseKind}}",
+        "edno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release_windows.ts ${{github.event.inputs.releaseKind}}",
     }),
     step({
       name: "Authenticate with Azure",
@@ -67,16 +67,16 @@ const windowsJob = job("promote-to-release-windows", {
       },
     }),
     step({
-      name: "Code sign deno.exe",
+      name: "Code sign edno.exe",
       uses: "Azure/artifact-signing-action@v0",
       with: {
         "cache-dependencies": false,
         trace: true,
         endpoint: "https://eus.codesigning.azure.net/",
-        "trusted-signing-account-name": "deno-cli-code-signing",
-        "certificate-profile-name": "deno-cli-code-signing-cert",
+        "trusted-signing-account-name": "edno-cli-code-signing",
+        "certificate-profile-name": "edno-cli-code-signing-cert",
         "files-folder": ".",
-        "files-folder-filter": "deno.exe",
+        "files-folder-filter": "edno.exe",
         "file-digest": "SHA256",
         "timestamp-rfc3161": "http://timestamp.acs.microsoft.com",
         "timestamp-digest": "SHA256",
@@ -95,14 +95,14 @@ const windowsJob = job("promote-to-release-windows", {
       run: [
         '$SignTool = Get-ChildItem -Path "C:\\Program Files*\\Windows Kits\\*\\bin\\*\\x64\\signtool.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1',
         "$SignToolPath = $SignTool.FullName",
-        '& $SignToolPath verify /pa /v "deno.exe"',
+        '& $SignToolPath verify /pa /v "edno.exe"',
       ],
     }),
     step({
       name: "Create archives",
       run: [
-        'Compress-Archive -Path "deno.exe" -DestinationPath "deno-${{ matrix.target }}.zip" -Force',
-        'Compress-Archive -Path "denort.exe" -DestinationPath "denort-${{ matrix.target }}.zip" -Force',
+        'Compress-Archive -Path "edno.exe" -DestinationPath "edno-${{ matrix.target }}.zip" -Force',
+        'Compress-Archive -Path "ednort.exe" -DestinationPath "ednort-${{ matrix.target }}.zip" -Force',
       ],
     }),
     step({
@@ -110,7 +110,7 @@ const windowsJob = job("promote-to-release-windows", {
       uses: "actions/upload-artifact@v6",
       with: {
         name: "windows-binaries-${{ matrix.target }}",
-        path: "deno-${{ matrix.target }}.zip\ndenort-${{ matrix.target }}.zip",
+        path: "edno-${{ matrix.target }}.zip\ndenort-${{ matrix.target }}.zip",
       },
     }),
   ],
@@ -153,9 +153,9 @@ const workflow = createWorkflow({
           },
         }),
         step({
-          name: "Install deno",
+          name: "Install edno",
           uses: "denoland/setup-deno@v2",
-          with: { "deno-version": "v2.x" },
+          with: { "edno-version": "v2.x" },
         }),
         step({
           name: "Install rust-codesign",
@@ -171,7 +171,7 @@ const workflow = createWorkflow({
             APPLE_CODESIGN_PASSWORD: "${{ secrets.APPLE_CODESIGN_PASSWORD }}",
           },
           run:
-            "deno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release.ts ${{github.event.inputs.releaseKind}} ${{github.event.inputs.commitHash}}",
+            "edno run -A --minimum-dependency-age=0 ./tools/release/promote_to_release.ts ${{github.event.inputs.releaseKind}} ${{github.event.inputs.commitHash}}",
         }),
         step({
           name: "Download Windows binaries",
@@ -186,10 +186,10 @@ const workflow = createWorkflow({
           name: "Create version file",
           run: [
             "# Unzip a binary to get the version",
-            "unzip -o deno-x86_64-apple-darwin.zip",
-            "DENO_VERSION=$(./deno -V | cut -d ' ' -f 2 | cut -d '+' -f 1)",
-            'echo "v${DENO_VERSION}" > release-${{github.event.inputs.releaseKind}}-latest.txt',
-            "rm -f ./deno",
+            "unzip -o edno-x86_64-apple-darwin.zip",
+            "EDNO_VERSION=$(./edno -V | cut -d ' ' -f 2 | cut -d '+' -f 1)",
+            'echo "v${EDNO_VERSION}" > release-${{github.event.inputs.releaseKind}}-latest.txt',
+            "rm -f ./edno",
           ],
         }),
         step({
@@ -200,11 +200,11 @@ const workflow = createWorkflow({
             "# from, so the checksums change too. Regenerate the sidecars here;",
             "# otherwise the source release's stale *.sha256sum stays in the",
             "# bucket and no longer matches the promoted zip (see #36235).",
-            "for f in deno-*.zip denort-*.zip; do",
+            "for f in edno-*.zip ednort-*.zip; do",
             '  shasum -a 256 "$f" > "$f.sha256sum"',
             '  tmp="$(mktemp -d)"',
             '  unzip -o -q "$f" -d "$tmp"',
-            '  ( cd "$tmp" && shasum -a 256 deno* ) > "${f%.zip}.sha256sum"',
+            '  ( cd "$tmp" && shasum -a 256 edno* ) > "${f%.zip}.sha256sum"',
             '  rm -rf "$tmp"',
             "done",
           ],
@@ -223,12 +223,12 @@ const workflow = createWorkflow({
             "# regenerated checksums. `aws s3 sync ./` walked the whole checkout",
             "# (submodules included), uploading stray *.zip test fixtures and",
             "# tripping over a broken symlink (exit 2).",
-            "for f in deno-*.zip denort-*.zip; do",
-            '  aws s3 cp "./$f" "s3://dl-deno-land/release/$VERSION/$f"',
-            '  aws s3 cp "./$f.sha256sum" "s3://dl-deno-land/release/$VERSION/$f.sha256sum"',
-            '  aws s3 cp "./${f%.zip}.sha256sum" "s3://dl-deno-land/release/$VERSION/${f%.zip}.sha256sum"',
+            "for f in edno-*.zip ednort-*.zip; do",
+            '  aws s3 cp "./$f" "s3://dl-edno-land/release/$VERSION/$f"',
+            '  aws s3 cp "./$f.sha256sum" "s3://dl-edno-land/release/$VERSION/$f.sha256sum"',
+            '  aws s3 cp "./${f%.zip}.sha256sum" "s3://dl-edno-land/release/$VERSION/${f%.zip}.sha256sum"',
             "done",
-            "aws s3 cp release-${{github.event.inputs.releaseKind}}-latest.txt s3://dl-deno-land/release-${{github.event.inputs.releaseKind}}-latest.txt",
+            "aws s3 cp release-${{github.event.inputs.releaseKind}}-latest.txt s3://dl-edno-land/release-${{github.event.inputs.releaseKind}}-latest.txt",
           ],
         }),
         step({
@@ -240,9 +240,9 @@ const workflow = createWorkflow({
           run: [
             "# The latest.txt file lives at a stable URL but changes every",
             "# release, so the edge has to be told to drop it. Otherwise",
-            "# `deno upgrade` keeps serving the previous version until the",
+            "# `edno upgrade` keeps serving the previous version until the",
             "# 4 hour TTL expires.",
-            "deno run -A --lock=tools/deno.lock.json tools/release/purge_cdn_cache.ts release-${{github.event.inputs.releaseKind}}-latest.txt",
+            "edno run -A --lock=tools/edno.lock.json tools/release/purge_cdn_cache.ts release-${{github.event.inputs.releaseKind}}-latest.txt",
           ],
         }),
       ],

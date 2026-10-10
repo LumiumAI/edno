@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assertEquals } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   { permissions: { env: true, read: true } },
   async function workerEnvArrayPermissions() {
     const { promise, resolve } = Promise.withResolvers<boolean[]>();
@@ -10,7 +10,7 @@ Deno.test(
       import.meta.resolve(
         "../testdata/workers/env_read_check_worker.js",
       ),
-      { type: "module", deno: { permissions: { env: ["test", "OTHER"] } } },
+      { type: "module", edno: { permissions: { env: ["test", "OTHER"] } } },
     );
 
     worker.onmessage = ({ data }) => {
@@ -24,7 +24,7 @@ Deno.test(
     const permissions = await promise;
     worker.terminate();
 
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       // windows ignores case
       assertEquals(permissions, [true, true, false, true]);
     } else {

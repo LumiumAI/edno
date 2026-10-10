@@ -9,13 +9,13 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_npm::registry::NpmPackageInfo;
-use deno_npm::registry::NpmPackageVersionInfo;
-use deno_npm::registry::NpmRegistryApi;
-use deno_npm::registry::NpmRegistryPackageInfoLoadError;
-use deno_npm::resolution::AddPkgReqsOptions;
-use deno_npm::resolution::NpmResolutionSnapshot;
-use deno_npm::resolution::NpmVersionResolver;
+use edno_npm::registry::NpmPackageInfo;
+use edno_npm::registry::NpmPackageVersionInfo;
+use edno_npm::registry::NpmRegistryApi;
+use edno_npm::registry::NpmRegistryPackageInfoLoadError;
+use edno_npm::resolution::AddPkgReqsOptions;
+use edno_npm::resolution::NpmResolutionSnapshot;
+use edno_npm::resolution::NpmVersionResolver;
 use deno_semver::package::PackageNv;
 use deno_semver::package::PackageReq;
 use reqwest::StatusCode;
@@ -35,10 +35,10 @@ use reqwest::StatusCode;
 /// running a custom npm registry locally via:
 ///
 /// ```sh
-/// deno run --allow-net --allow-read=. --allow-write=. jsr:@david/bench-registry@0.3.2/cli --cached-only
+/// edno run --allow-net --allow-read=. --allow-write=. jsr:@david/bench-registry@0.3.2/cli --cached-only
 /// ```
 ///
-/// Then do `deno clean ; pnpm cache delete`, create an `.npmrc` with:
+/// Then do `edno clean ; pnpm cache delete`, create an `.npmrc` with:
 ///
 /// ```ini
 /// registry=http://localhost:8000/npm/
@@ -322,7 +322,7 @@ struct SubsetRegistryApi {
 
 impl Default for SubsetRegistryApi {
   fn default() -> Self {
-    std::fs::create_dir_all("target/.deno_npm").unwrap();
+    std::fs::create_dir_all("target/.edno_npm").unwrap();
     Self {
       data: Default::default(),
     }
@@ -406,7 +406,7 @@ impl NpmRegistryApi for SubsetRegistryApi {
 }
 
 fn packument_cache_filepath(name: &str) -> String {
-  format!("target/.deno_npm/{}", encode_package_name(name))
+  format!("target/.edno_npm/{}", encode_package_name(name))
 }
 
 fn packument_url(name: &str) -> String {

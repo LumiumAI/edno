@@ -4,7 +4,7 @@
 // re-export chain.
 import safe, {
   attached,
-} from "npm:@denotest/cjs-module-exports-require-member-nested";
+} from "npm:@ednotest/cjs-module-exports-require-member-nested";
 
 console.log(safe());
 console.log(attached());

@@ -1,6 +1,6 @@
-Deno.test("foo", () => {
+Edno.test("foo", () => {
   reportError(new Error("foo"));
   console.log(1);
 });
 
-Deno.test("bar", () => {});
+Edno.test("bar", () => {});

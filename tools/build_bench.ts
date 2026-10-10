@@ -1,16 +1,16 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read --allow-write --allow-run=git,cargo
+#!/usr/bin/env -S edno run --allow-env --allow-read --allow-write --allow-run=git,cargo
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 import $ from "https://deno.land/x/dax@0.32.0/mod.ts";
 
-if (Deno.args.length === 0) {
+if (Edno.args.length === 0) {
   $.log(
     "Usage: build_bench [-v] [--profile release|debug] commit1 [commit2 [comment3...]]",
   );
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
-const args = Deno.args.slice();
+const args = Edno.args.slice();
 let verbose = false;
 if (args[0] == "-v") {
   args.shift();
@@ -25,12 +25,12 @@ if (args[0] == "--profile") {
 
 function exit(msg: string) {
   $.logError(msg);
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // Make sure the .git dir exists
-const gitDir = Deno.cwd() + "/.git";
-await Deno.stat(gitDir);
+const gitDir = Edno.cwd() + "/.git";
+await Edno.stat(gitDir);
 
 async function runCommand(human: string, cmd) {
   if (verbose) {
@@ -55,7 +55,7 @@ async function runCommand(human: string, cmd) {
 }
 
 async function buildGitCommit(progress, commit) {
-  const tempDir = $.path(await Deno.makeTempDir());
+  const tempDir = $.path(await Edno.makeTempDir());
 
   const gitInfo =
     await $`git log --pretty=oneline --abbrev-commit -n1 ${commit}`.stdout(
@@ -107,12 +107,12 @@ async function buildGitCommit(progress, commit) {
 
   let file;
   if (profile === "release") {
-    file = `deno-${hash}`;
+    file = `edno-${hash}`;
   } else {
-    file = `deno-${profile}-${hash}`;
+    file = `edno-${profile}-${hash}`;
   }
   progress.message(`copy ${hash}`);
-  await tempDir.join("target").join(profile).join("deno").copyFile(file);
+  await tempDir.join("target").join(profile).join("edno").copyFile(file);
 
   progress.message(`cleanup ${hash}`);
   await tempDir.remove({ recursive: true });

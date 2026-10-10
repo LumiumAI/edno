@@ -1,11 +1,11 @@
 {
   "tempDir": true,
   "tests": {
-    "deno_exit": {
+    "edno_exit": {
       "steps": [
         {
           "args": "run --cpu-prof-dir=. main.js",
-          "output": "calling Deno.exit()\n"
+          "output": "calling Edno.exit()\n"
         },
         {
           "args": "run --allow-read verify.js",

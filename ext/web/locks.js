@@ -11,8 +11,8 @@ import {
   op_lock_manager_request,
 } from "ext:core/ops";
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 
 const {
   PromisePrototypeThen,
@@ -238,7 +238,7 @@ class LockManager {
   // `query()` returns a Promise per the Web Locks spec and Node's
   // `LockManager`; the underlying op is synchronous, so there is nothing to
   // await, but the method stays `async` to produce a real Promise.
-  // deno-lint-ignore require-await
+  // edno-lint-ignore require-await
   async query() {
     webidl.assertBranded(this, LockManagerPrototype);
     const { held, pending } = op_lock_manager_query();

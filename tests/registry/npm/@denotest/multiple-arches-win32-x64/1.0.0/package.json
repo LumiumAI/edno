@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/multiple-arches-win32-x64",
+  "name": "@ednotest/multiple-arches-win32-x64",
   "version": "1.0.0",
   "os": [
     "win32"

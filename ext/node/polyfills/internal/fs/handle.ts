@@ -1,9 +1,9 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-explicit-any no-node-globals
+// edno-lint-ignore-file no-explicit-any no-node-globals
 
 import { core, primordials } from "ext:core/mod.js";
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const lazyFs = core.createLazyLoader("node:fs");
 const lazyReadline = core.createLazyLoader("node:readline");
 const lazyBuffer = core.createLazyLoader("node:buffer");
@@ -12,7 +12,7 @@ import type {
   BinaryOptionsArgument,
   FileOptionsArgument,
   TextOptionsArgument,
-} from "ext:deno_node/_fs/_fs_common.ts";
+} from "ext:edno_node/_fs/_fs_common.ts";
 // writev loaded lazily from node:fs via lazyFs
 
 export interface WriteVResult {
@@ -33,27 +33,27 @@ function writevPromise(
   });
 }
 // readvPromise loaded lazily from node:fs via lazyFs
-const { fstatPromise } = core.loadExtScript("ext:deno_node/_fs/_fs_fstat.ts");
+const { fstatPromise } = core.loadExtScript("ext:edno_node/_fs/_fs_fstat.ts");
 // fchown, ftruncate, futimes loaded lazily from node:fs via lazyFs
 const { kEmptyObject, promisify } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 
 // CreateReadStreamOptions, CreateWriteStreamOptions types from node:fs/promises
-const { default: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+const { default: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 const {
-  denoErrorToNodeError,
+  ednoErrorToNodeError,
   ERR_INVALID_STATE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { readableStreamCancel } = core.loadExtScript(
-  "ext:deno_web/06_streams.js",
+  "ext:edno_web/06_streams.js",
 );
 const {
   validateBoolean,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { isDataView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 const lazyProcess = core.createLazyLoader("node:process");
 
@@ -213,7 +213,7 @@ export class FileHandle extends EventEmitter {
       };
       // `opts` is a plain options object; `.buffer` is a normal property,
       // not the TypedArray `.buffer` getter.
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       buf = opts.buffer ?? lazyBuffer().Buffer.alloc(16384);
       offset = opts.offset ?? 0;
       length = opts.length ?? getByteLength(buf) - offset;
@@ -304,7 +304,7 @@ export class FileHandle extends EventEmitter {
         this.#rid = -1;
         resolve();
       } catch (err) {
-        reject(denoErrorToNodeError(err as Error, { syscall: "close" }));
+        reject(ednoErrorToNodeError(err as Error, { syscall: "close" }));
       }
     });
   }

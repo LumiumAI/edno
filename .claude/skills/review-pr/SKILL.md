@@ -1,11 +1,11 @@
 ---
 name: review-pr
-description: Review a Deno runtime pull request for correctness, tests, security, and conventions. Use when asked to review a PR or when a PR number/URL is provided for review.
+description: Review a Edno runtime pull request for correctness, tests, security, and conventions. Use when asked to review a PR or when a PR number/URL is provided for review.
 argument-hint: <pr-number-or-url>
 allowed-tools: Bash(gh *) Bash(git *) Read Glob Grep Agent
 ---
 
-# Deno PR Reviewer
+# Edno PR Reviewer
 
 Review PR `$ARGUMENTS` on the `denoland/deno` repository.
 
@@ -46,7 +46,7 @@ the top of your review and do not approve.
 5. **AI disclosure** — If the PR looks AI-generated (boilerplate-heavy, generic
    comments, suspiciously broad) but has no disclosure, ask about it.
 6. **Linked issue (external contributors)** — If the PR author is not a
-   `denoland` org member, the PR must link to an issue. If there is no linked
+   `ednoland` org member, the PR must link to an issue. If there is no linked
    issue, request changes and ask the author to open an issue and discuss the
    change first.
 
@@ -63,7 +63,7 @@ to understand surrounding context when needed.
 - **Performance**: No unnecessary allocations/copies, no blocking in async code.
 - **Safety**: No `unsafe` without strong justification. No command injection,
   path traversal, or permission bypasses.
-- **Permissions**: New capabilities must go through Deno's permission system.
+- **Permissions**: New capabilities must go through Edno's permission system.
   Watch `ext/node/` especially — Node.js APIs sometimes assume full access.
 - **Dependencies**: New Cargo deps need strong justification. Prefer existing
   deps or stdlib.

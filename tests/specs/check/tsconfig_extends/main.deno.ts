@@ -1,2 +1,2 @@
-Deno.readTextFileSync("hello.txt");
+Edno.readTextFileSync("hello.txt");
 document.body.innerHTML = "<div>Hello</div>";

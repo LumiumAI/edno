@@ -6,94 +6,94 @@ import {
   pathToAbsoluteFileUrl,
 } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   function readLinkSyncSuccess() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const target = testDir +
-      (Deno.build.os == "windows" ? "\\target" : "/target");
+      (Edno.build.os == "windows" ? "\\target" : "/target");
     const symlink = testDir +
-      (Deno.build.os == "windows" ? "\\symlink" : "/symlink");
-    Deno.mkdirSync(target);
-    Deno.symlinkSync(target, symlink);
-    const targetPath = Deno.readLinkSync(symlink);
+      (Edno.build.os == "windows" ? "\\symlink" : "/symlink");
+    Edno.mkdirSync(target);
+    Edno.symlinkSync(target, symlink);
+    const targetPath = Edno.readLinkSync(symlink);
     assertEquals(targetPath, target);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   function readLinkSyncUrlSuccess() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const target = testDir +
-      (Deno.build.os == "windows" ? "\\target" : "/target");
+      (Edno.build.os == "windows" ? "\\target" : "/target");
     const symlink = testDir +
-      (Deno.build.os == "windows" ? "\\symlink" : "/symlink");
-    Deno.mkdirSync(target);
-    Deno.symlinkSync(target, symlink);
-    const targetPath = Deno.readLinkSync(pathToAbsoluteFileUrl(symlink));
+      (Edno.build.os == "windows" ? "\\symlink" : "/symlink");
+    Edno.mkdirSync(target);
+    Edno.symlinkSync(target, symlink);
+    const targetPath = Edno.readLinkSync(pathToAbsoluteFileUrl(symlink));
     assertEquals(targetPath, target);
   },
 );
 
-Deno.test({ permissions: { read: false } }, function readLinkSyncPerm() {
+Edno.test({ permissions: { read: false } }, function readLinkSyncPerm() {
   assertThrows(() => {
-    Deno.readLinkSync("/symlink");
-  }, Deno.errors.NotCapable);
+    Edno.readLinkSync("/symlink");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, function readLinkSyncNotFound() {
+Edno.test({ permissions: { read: true } }, function readLinkSyncNotFound() {
   assertThrows(
     () => {
-      Deno.readLinkSync("bad_filename");
+      Edno.readLinkSync("bad_filename");
     },
-    Deno.errors.NotFound,
+    Edno.errors.NotFound,
     `readlink 'bad_filename'`,
   );
 });
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function readLinkSuccess() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const target = testDir +
-      (Deno.build.os == "windows" ? "\\target" : "/target");
+      (Edno.build.os == "windows" ? "\\target" : "/target");
     const symlink = testDir +
-      (Deno.build.os == "windows" ? "\\symlink" : "/symlink");
-    Deno.mkdirSync(target);
-    Deno.symlinkSync(target, symlink);
-    const targetPath = await Deno.readLink(symlink);
+      (Edno.build.os == "windows" ? "\\symlink" : "/symlink");
+    Edno.mkdirSync(target);
+    Edno.symlinkSync(target, symlink);
+    const targetPath = await Edno.readLink(symlink);
     assertEquals(targetPath, target);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, read: true } },
   async function readLinkUrlSuccess() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const target = testDir +
-      (Deno.build.os == "windows" ? "\\target" : "/target");
+      (Edno.build.os == "windows" ? "\\target" : "/target");
     const symlink = testDir +
-      (Deno.build.os == "windows" ? "\\symlink" : "/symlink");
-    Deno.mkdirSync(target);
-    Deno.symlinkSync(target, symlink);
-    const targetPath = await Deno.readLink(pathToAbsoluteFileUrl(symlink));
+      (Edno.build.os == "windows" ? "\\symlink" : "/symlink");
+    Edno.mkdirSync(target);
+    Edno.symlinkSync(target, symlink);
+    const targetPath = await Edno.readLink(pathToAbsoluteFileUrl(symlink));
     assertEquals(targetPath, target);
   },
 );
 
-Deno.test({ permissions: { read: false } }, async function readLinkPerm() {
+Edno.test({ permissions: { read: false } }, async function readLinkPerm() {
   await assertRejects(async () => {
-    await Deno.readLink("/symlink");
-  }, Deno.errors.NotCapable);
+    await Edno.readLink("/symlink");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, async function readLinkNotFound() {
+Edno.test({ permissions: { read: true } }, async function readLinkNotFound() {
   await assertRejects(
     async () => {
-      await Deno.readLink("bad_filename");
+      await Edno.readLink("bad_filename");
     },
-    Deno.errors.NotFound,
+    Edno.errors.NotFound,
     `readlink 'bad_filename'`,
   );
 });

@@ -1,9 +1,9 @@
 {
-  "name": "@denotest/app",
+  "name": "@ednotest/app",
   "version": "1.0.0",
   "dependencies": {
-    "my-adder": "workspace:@denotest/adder@*",
-    "adder-caret": "workspace:@denotest/adder@^",
+    "my-adder": "workspace:@ednotest/adder@*",
+    "adder-caret": "workspace:@ednotest/adder@^",
     "my-mult": "workspace:multiplier@1.0.0"
   }
 }

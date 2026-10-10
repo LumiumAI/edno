@@ -1,10 +1,10 @@
 # Node compat test directory
 
 This directory includes the tools for running Node.js test cases directly in
-Deno.
+Edno.
 
 - ./runner/suite/ - vendored Node.js test cases (git submodule at
-  https://github.com/denoland/node_test)
+  https://github.com/ednoland/node_test)
 - ./config.jsonc - has the list of passing Node.js test cases
 - ./mod.rs - The script entrypoint of node compat test.
 
@@ -16,7 +16,7 @@ cargo test <name of test file>
 
 ## Configuration file
 
-The `config.jsonc` specifies which tests should pass in Deno and includes
+The `config.jsonc` specifies which tests should pass in Edno and includes
 platform-specific and behavioral settings for each test.
 
 ### Options
@@ -76,4 +76,4 @@ CI check.
 ## Daily test viewer
 
 To see the latest test results of all test cases, visit this site
-https://node-test-viewer.deno.deno.net/results/latest
+https://node-test-viewer.edno.edno.net/results/latest

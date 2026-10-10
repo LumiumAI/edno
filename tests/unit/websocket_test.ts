@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import {
   assert,
@@ -13,14 +13,14 @@ import {
 const servePort = 4248;
 const serveUrl = `ws://localhost:${servePort}/`;
 
-Deno.test({ permissions: "none" }, function websocketPermissionless() {
+Edno.test({ permissions: "none" }, function websocketPermissionless() {
   assertThrows(
     () => new WebSocket("ws://localhost"),
-    Deno.errors.NotCapable,
+    Edno.errors.NotCapable,
   );
 });
 
-Deno.test(async function websocketConstructorTakeURLObjectAsParameter() {
+Edno.test(async function websocketConstructorTakeURLObjectAsParameter() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket(new URL("ws://localhost:4242/"));
   assertEquals(ws.url, "ws://localhost:4242/");
@@ -32,7 +32,7 @@ Deno.test(async function websocketConstructorTakeURLObjectAsParameter() {
   await promise;
 });
 
-Deno.test(async function websocketH2SendSmallPacket() {
+Edno.test(async function websocketH2SendSmallPacket() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket(new URL("wss://localhost:4249/"));
   assertEquals(ws.url, "wss://localhost:4249/");
@@ -60,7 +60,7 @@ Deno.test(async function websocketH2SendSmallPacket() {
 // PUSH_PROMISE sequence, aborting the whole process. The test server attempts a
 // server push and reports the outcome as its first message: a safe client makes
 // h2 reject the push ("push-rejected").
-Deno.test(async function websocketH2DisablesServerPush() {
+Edno.test(async function websocketH2DisablesServerPush() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket(new URL("wss://localhost:4266/"));
   ws.onerror = (e) => reject(e);
@@ -75,7 +75,7 @@ Deno.test(async function websocketH2DisablesServerPush() {
   await promise;
 });
 
-Deno.test(async function websocketH2SendLargePacket() {
+Edno.test(async function websocketH2SendLargePacket() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket(new URL("wss://localhost:4249/"));
   assertEquals(ws.url, "wss://localhost:4249/");
@@ -97,7 +97,7 @@ Deno.test(async function websocketH2SendLargePacket() {
   await promise;
 });
 
-Deno.test(async function websocketSendLargePacket() {
+Edno.test(async function websocketSendLargePacket() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket(new URL("wss://localhost:4243/"));
   assertEquals(ws.url, "wss://localhost:4243/");
@@ -114,7 +114,7 @@ Deno.test(async function websocketSendLargePacket() {
   await promise;
 });
 
-Deno.test(async function websocketSendLargeBinaryPacket() {
+Edno.test(async function websocketSendLargeBinaryPacket() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket(new URL("wss://localhost:4243/"));
   ws.binaryType = "arraybuffer";
@@ -133,7 +133,7 @@ Deno.test(async function websocketSendLargeBinaryPacket() {
   await promise;
 });
 
-Deno.test(async function websocketSendLargeBlobPacket() {
+Edno.test(async function websocketSendLargeBlobPacket() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket(new URL("wss://localhost:4243/"));
   ws.binaryType = "arraybuffer";
@@ -154,7 +154,7 @@ Deno.test(async function websocketSendLargeBlobPacket() {
 
 // https://github.com/denoland/deno/pull/17762
 // https://github.com/denoland/deno/issues/17761
-Deno.test(async function websocketPingPong() {
+Edno.test(async function websocketPingPong() {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4245/");
   assertEquals(ws.url, "ws://localhost:4245/");
@@ -170,7 +170,7 @@ Deno.test(async function websocketPingPong() {
 });
 
 // TODO(mmastrac): This requires us to ignore bad certs
-// Deno.test(async function websocketSecureConnect() {
+// Edno.test(async function websocketSecureConnect() {
 //   const { promise, resolve } = Promise.withResolvers<void>();
 //   const ws = new WebSocket("wss://localhost:4243/");
 //   assertEquals(ws.url, "wss://localhost:4243/");
@@ -186,15 +186,15 @@ Deno.test(async function websocketPingPong() {
 // });
 
 // https://github.com/denoland/deno/issues/18700
-Deno.test(
+Edno.test(
   { sanitizeOps: false, sanitizeResources: false },
   async function websocketWriteLock() {
     const ac = new AbortController();
     const listeningDeferred = Promise.withResolvers<void>();
 
-    const server = Deno.serve({
+    const server = Edno.serve({
       handler: (req) => {
-        const { socket, response } = Deno.upgradeWebSocket(req);
+        const { socket, response } = Edno.upgradeWebSocket(req);
         socket.onopen = function () {
           setTimeout(() => socket.send("Hello"), 500);
         };
@@ -232,7 +232,7 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/18775
-Deno.test({
+Edno.test({
   sanitizeOps: false,
   sanitizeResources: false,
 }, async function websocketDoubleClose() {
@@ -241,9 +241,9 @@ Deno.test({
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
 
-  const server = Deno.serve({
+  const server = Edno.serve({
     handler: (req) => {
-      const { response, socket } = Deno.upgradeWebSocket(req);
+      const { response, socket } = Edno.upgradeWebSocket(req);
       let called = false;
       socket.onopen = () => socket.send("Hello");
       socket.onmessage = () => {
@@ -277,7 +277,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/19483
-Deno.test({
+Edno.test({
   sanitizeOps: false,
   sanitizeResources: false,
 }, async function websocketCloseFlushes() {
@@ -286,9 +286,9 @@ Deno.test({
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
 
-  const server = Deno.serve({
+  const server = Edno.serve({
     handler: (req) => {
-      const { response, socket } = Deno.upgradeWebSocket(req);
+      const { response, socket } = Edno.upgradeWebSocket(req);
       socket.onopen = () => socket.send("Hello");
       socket.onmessage = () => {
         socket.send("Bye");
@@ -328,7 +328,7 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/19283
-Deno.test({
+Edno.test({
   sanitizeOps: false,
   sanitizeResources: false,
 }, async function websocketUrlCredentialsAsBasicAuth() {
@@ -337,13 +337,13 @@ Deno.test({
   const listeningDeferred = Promise.withResolvers<void>();
 
   let seenAuth: string | null = null;
-  const server = Deno.serve({
+  const server = Edno.serve({
     handler: (req) => {
       seenAuth = req.headers.get("authorization");
       if (seenAuth !== "Basic " + btoa("user:p@ss")) {
         return new Response("unauthorized", { status: 401 });
       }
-      const { response, socket } = Deno.upgradeWebSocket(req);
+      const { response, socket } = Edno.upgradeWebSocket(req);
       socket.onopen = () => socket.close();
       socket.onclose = () => ac.abort();
       return response;
@@ -367,7 +367,7 @@ Deno.test({
   assertEquals(seenAuth, "Basic " + btoa("user:p@ss"));
 });
 
-Deno.test(
+Edno.test(
   { sanitizeOps: false },
   function websocketConstructorWithPrototypePollution() {
     const originalSymbolIterator = Array.prototype[Symbol.iterator];
@@ -379,7 +379,7 @@ Deno.test(
         new WebSocket(
           new URL("ws://localhost:4242/"),
           // Allow `Symbol.iterator` to be called in WebIDL conversion to `sequence<DOMString>`
-          // deno-lint-ignore no-explicit-any
+          // edno-lint-ignore no-explicit-any
           ["soap", "soap"].values() as any,
         );
       }, DOMException);
@@ -389,20 +389,20 @@ Deno.test(
   },
 );
 
-Deno.test({
+Edno.test({
   sanitizeOps: false,
   sanitizeResources: false,
 }, async function websocketTlsSocketWorks() {
-  const cert = await Deno.readTextFile("tests/testdata/tls/localhost.crt");
-  const key = await Deno.readTextFile("tests/testdata/tls/localhost.key");
+  const cert = await Edno.readTextFile("tests/testdata/tls/localhost.crt");
+  const key = await Edno.readTextFile("tests/testdata/tls/localhost.key");
 
   const messages: string[] = [],
     errors: { server?: Event; client?: Event }[] = [];
   const promise = new Promise((okay, nope) => {
     const ac = new AbortController();
-    const server = Deno.serve({
+    const server = Edno.serve({
       handler: (req) => {
-        const { response, socket } = Deno.upgradeWebSocket(req);
+        const { response, socket } = Edno.upgradeWebSocket(req);
         socket.onopen = () => socket.send("ping");
         socket.onmessage = (e) => {
           messages.push(e.data);
@@ -441,14 +441,14 @@ Deno.test({
 });
 
 // https://github.com/denoland/deno/issues/15340
-Deno.test(
+Edno.test(
   async function websocketServerFieldInit() {
     const ac = new AbortController();
     const listeningDeferred = Promise.withResolvers<void>();
 
-    const server = Deno.serve({
+    const server = Edno.serve({
       handler: (req) => {
-        const { socket, response } = Deno.upgradeWebSocket(req, {
+        const { socket, response } = Edno.upgradeWebSocket(req, {
           idleTimeout: 0,
         });
         socket.onopen = function () {
@@ -480,15 +480,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { sanitizeOps: false },
   async function websocketServerGetsGhosted() {
     const ac = new AbortController();
     const listeningDeferred = Promise.withResolvers<void>();
 
-    const server = Deno.serve({
+    const server = Edno.serve({
       handler: (req) => {
-        const { socket, response } = Deno.upgradeWebSocket(req, {
+        const { socket, response } = Edno.upgradeWebSocket(req, {
           idleTimeout: 2,
         });
         socket.onerror = () => socket.close();
@@ -510,20 +510,20 @@ Deno.test(
   },
 );
 
-Deno.test("invalid scheme", () => {
+Edno.test("invalid scheme", () => {
   assertThrows(() => new WebSocket("foo://localhost:4242"));
 });
 
-Deno.test("fragment", () => {
+Edno.test("fragment", () => {
   assertThrows(() => new WebSocket("ws://localhost:4242/#"));
   assertThrows(() => new WebSocket("ws://localhost:4242/#foo"));
 });
 
-Deno.test("duplicate protocols", () => {
+Edno.test("duplicate protocols", () => {
   assertThrows(() => new WebSocket("ws://localhost:4242", ["foo", "foo"]));
 });
 
-Deno.test("invalid server", async () => {
+Edno.test("invalid server", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:2121");
   let err = false;
@@ -542,7 +542,7 @@ Deno.test("invalid server", async () => {
   await promise;
 });
 
-Deno.test("connect & close", async () => {
+Edno.test("connect & close", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.onerror = () => fail();
@@ -555,7 +555,7 @@ Deno.test("connect & close", async () => {
   await promise;
 });
 
-Deno.test("connect & abort", async () => {
+Edno.test("connect & abort", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.close();
@@ -574,7 +574,7 @@ Deno.test("connect & abort", async () => {
   await promise;
 });
 
-Deno.test("connect & close custom valid code", async () => {
+Edno.test("connect & close custom valid code", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.onerror = () => fail();
@@ -585,7 +585,7 @@ Deno.test("connect & close custom valid code", async () => {
   await promise;
 });
 
-Deno.test("connect & close custom invalid code", async () => {
+Edno.test("connect & close custom invalid code", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.onerror = () => fail();
@@ -599,7 +599,7 @@ Deno.test("connect & close custom invalid code", async () => {
   await promise;
 });
 
-Deno.test("connect & close custom valid reason", async () => {
+Edno.test("connect & close custom valid reason", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.onerror = () => fail();
@@ -610,7 +610,7 @@ Deno.test("connect & close custom valid reason", async () => {
   await promise;
 });
 
-Deno.test("connect & close custom invalid reason", async () => {
+Edno.test("connect & close custom invalid reason", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.onerror = () => fail();
@@ -624,7 +624,7 @@ Deno.test("connect & close custom invalid reason", async () => {
   await promise;
 });
 
-Deno.test("echo string", async () => {
+Edno.test("echo string", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.onerror = () => fail();
@@ -639,7 +639,7 @@ Deno.test("echo string", async () => {
   await promise;
 });
 
-Deno.test("echo string tls", async () => {
+Edno.test("echo string tls", async () => {
   const deferred1 = Promise.withResolvers<void>();
   const deferred2 = Promise.withResolvers<void>();
   const ws = new WebSocket("wss://localhost:4243");
@@ -657,7 +657,7 @@ Deno.test("echo string tls", async () => {
   await deferred2.promise;
 });
 
-Deno.test("websocket error", async () => {
+Edno.test("websocket error", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("wss://localhost:4242");
   ws.onopen = () => fail();
@@ -672,7 +672,7 @@ Deno.test("websocket error", async () => {
   await promise;
 });
 
-Deno.test("echo blob with binaryType blob", async () => {
+Edno.test("echo blob with binaryType blob", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   const blob = new Blob(["foo"]);
@@ -692,7 +692,7 @@ Deno.test("echo blob with binaryType blob", async () => {
   await promise;
 });
 
-Deno.test("echo blob with binaryType arraybuffer", async () => {
+Edno.test("echo blob with binaryType arraybuffer", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.binaryType = "arraybuffer";
@@ -711,7 +711,7 @@ Deno.test("echo blob with binaryType arraybuffer", async () => {
   await promise;
 });
 
-Deno.test("echo uint8array with binaryType blob", async () => {
+Edno.test("echo uint8array with binaryType blob", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   const uint = new Uint8Array([102, 111, 111]);
@@ -729,7 +729,7 @@ Deno.test("echo uint8array with binaryType blob", async () => {
   await promise;
 });
 
-Deno.test("echo uint8array with binaryType arraybuffer", async () => {
+Edno.test("echo uint8array with binaryType arraybuffer", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.binaryType = "arraybuffer";
@@ -746,7 +746,7 @@ Deno.test("echo uint8array with binaryType arraybuffer", async () => {
   await promise;
 });
 
-Deno.test("echo arraybuffer with binaryType blob", async () => {
+Edno.test("echo arraybuffer with binaryType blob", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   const buffer = new ArrayBuffer(3);
@@ -764,7 +764,7 @@ Deno.test("echo arraybuffer with binaryType blob", async () => {
   await promise;
 });
 
-Deno.test("echo arraybuffer with binaryType arraybuffer", async () => {
+Edno.test("echo arraybuffer with binaryType arraybuffer", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.binaryType = "arraybuffer";
@@ -781,7 +781,7 @@ Deno.test("echo arraybuffer with binaryType arraybuffer", async () => {
   await promise;
 });
 
-Deno.test("echo blob mixed with string", async () => {
+Edno.test("echo blob mixed with string", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   ws.binaryType = "arraybuffer";
@@ -806,7 +806,7 @@ Deno.test("echo blob mixed with string", async () => {
   await promise;
 });
 
-Deno.test("Event Handlers order", async () => {
+Edno.test("Event Handlers order", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   const arr: number[] = [];
@@ -826,7 +826,7 @@ Deno.test("Event Handlers order", async () => {
   await promise;
 });
 
-Deno.test("Close without frame", async () => {
+Edno.test("Close without frame", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4244");
   ws.onerror = () => fail();
@@ -837,13 +837,13 @@ Deno.test("Close without frame", async () => {
   await promise;
 });
 
-Deno.test("Close connection", async () => {
+Edno.test("Close connection", async () => {
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
 
-  const server = Deno.serve({
+  const server = Edno.serve({
     handler: (req) => {
-      const { socket, response } = Deno.upgradeWebSocket(req);
+      const { socket, response } = Edno.upgradeWebSocket(req);
       socket.onmessage = function (e) {
         socket.close(1008);
         assertEquals(e.data, "Hello");
@@ -862,7 +862,7 @@ Deno.test("Close connection", async () => {
 
   await listeningDeferred.promise;
 
-  const conn = await Deno.connect({ port: servePort, hostname: "localhost" });
+  const conn = await Edno.connect({ port: servePort, hostname: "localhost" });
   await conn.write(
     new TextEncoder().encode(
       "GET / HTTP/1.1\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
@@ -881,7 +881,7 @@ Deno.test("Close connection", async () => {
   conn.close();
 });
 
-Deno.test("send to a closed socket", async () => {
+Edno.test("send to a closed socket", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const ws = new WebSocket("ws://localhost:4242");
   const blob = new Blob(["foo"]);
@@ -897,7 +897,7 @@ Deno.test("send to a closed socket", async () => {
 });
 
 // https://github.com/denoland/deno/issues/25126
-Deno.test("websocket close ongoing handshake", async () => {
+Edno.test("websocket close ongoing handshake", async () => {
   // First try to close without any delay
   {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -937,11 +937,11 @@ Deno.test("websocket close ongoing handshake", async () => {
 
 // Regression test: non-ASCII bytes in Sec-WebSocket-Protocol header
 // should not cause a panic.
-Deno.test(
+Edno.test(
   { sanitizeOps: false, sanitizeResources: false },
   async function websocketNonAsciiProtocolHeader() {
     const port = 14248;
-    const listener = Deno.listen({ port, hostname: "127.0.0.1" });
+    const listener = Edno.listen({ port, hostname: "127.0.0.1" });
 
     const serverTask = (async () => {
       const conn = await listener.accept();
@@ -1020,23 +1020,23 @@ function createOnErrorCb(ac: AbortController): (err: unknown) => Response {
 
 function onListen(
   resolve: (value: void | PromiseLike<void>) => void,
-): (_addr: Deno.Addr) => void {
+): (_addr: Edno.Addr) => void {
   return () => {
     resolve();
   };
 }
 
-Deno.test("WebSocket headers", async () => {
+Edno.test("WebSocket headers", async () => {
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
   const doneDeferred = Promise.withResolvers<void>();
-  await using server = Deno.serve({
+  await using server = Edno.serve({
     handler: (request) => {
       assertEquals(request.headers.get("Authorization"), "Bearer foo");
       const {
         response,
         socket,
-      } = Deno.upgradeWebSocket(request);
+      } = Edno.upgradeWebSocket(request);
       socket.onerror = (e) => {
         console.error(e);
         fail();
@@ -1075,17 +1075,17 @@ Deno.test("WebSocket headers", async () => {
   await server.finished;
 });
 
-Deno.test("WebSocket with custom http client with unix proxy", {
-  ignore: Deno.build.os === "windows",
+Edno.test("WebSocket with custom http client with unix proxy", {
+  ignore: Edno.build.os === "windows",
 }, async () => {
-  const socketPath = Deno.makeTempFileSync();
-  Deno.removeSync(socketPath);
+  const socketPath = Edno.makeTempFileSync();
+  Edno.removeSync(socketPath);
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
   const doneDeferred = Promise.withResolvers<void>();
-  await using server = Deno.serve({
+  await using server = Edno.serve({
     handler: (request) => {
-      const { response, socket } = Deno.upgradeWebSocket(request);
+      const { response, socket } = Edno.upgradeWebSocket(request);
       socket.onerror = (e) => {
         console.error(e);
         fail();
@@ -1106,7 +1106,7 @@ Deno.test("WebSocket with custom http client with unix proxy", {
 
   await listeningDeferred.promise;
   const def = Promise.withResolvers<void>();
-  using client = Deno.createHttpClient({
+  using client = Edno.createHttpClient({
     proxy: {
       transport: "unix",
       path: socketPath,
@@ -1127,17 +1127,17 @@ Deno.test("WebSocket with custom http client with unix proxy", {
   await server.finished;
 });
 
-Deno.test("WebSocket with custom http client with vsock proxy", {
-  ignore: Deno.build.os !== "linux",
+Edno.test("WebSocket with custom http client with vsock proxy", {
+  ignore: Edno.build.os !== "linux",
 }, async () => {
-  const socketPath = Deno.makeTempFileSync();
-  Deno.removeSync(socketPath);
+  const socketPath = Edno.makeTempFileSync();
+  Edno.removeSync(socketPath);
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
   const doneDeferred = Promise.withResolvers<void>();
-  await using server = Deno.serve({
+  await using server = Edno.serve({
     handler: (request) => {
-      const { response, socket } = Deno.upgradeWebSocket(request);
+      const { response, socket } = Edno.upgradeWebSocket(request);
       socket.onerror = (e) => {
         console.error(e);
         fail();
@@ -1159,7 +1159,7 @@ Deno.test("WebSocket with custom http client with vsock proxy", {
 
   await listeningDeferred.promise;
   const def = Promise.withResolvers<void>();
-  using client = Deno.createHttpClient({
+  using client = Edno.createHttpClient({
     proxy: {
       transport: "vsock",
       cid: 1,
@@ -1181,18 +1181,18 @@ Deno.test("WebSocket with custom http client with vsock proxy", {
   await server.finished;
 });
 
-Deno.test("WebSocket custom host header", async () => {
+Edno.test("WebSocket custom host header", async () => {
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
   const doneDeferred = Promise.withResolvers<void>();
-  await using server = Deno.serve({
+  await using server = Edno.serve({
     handler: (request) => {
       assertEquals(request.headers.get("host"), "example.com");
       assertEquals(request.url, "http://example.com/");
       const {
         response,
         socket,
-      } = Deno.upgradeWebSocket(request);
+      } = Edno.upgradeWebSocket(request);
       socket.onerror = (e) => {
         console.error(e);
         fail();
@@ -1212,7 +1212,7 @@ Deno.test("WebSocket custom host header", async () => {
 
   await listeningDeferred.promise;
   const def = Promise.withResolvers<void>();
-  using client = Deno.createHttpClient({ allowHost: true });
+  using client = Edno.createHttpClient({ allowHost: true });
   const ws = new WebSocket(`ws://localhost:${servePort}`, {
     headers: {
       "Host": "example.com",
@@ -1233,13 +1233,13 @@ Deno.test("WebSocket custom host header", async () => {
   await server.finished;
 });
 
-Deno.test("WebSocket close with reason but no code doesn't send 1005", async () => {
+Edno.test("WebSocket close with reason but no code doesn't send 1005", async () => {
   const ac = new AbortController();
   const listeningDeferred = Promise.withResolvers<void>();
 
-  const server = Deno.serve({
+  const server = Edno.serve({
     handler: (request) => {
-      const { response, socket } = Deno.upgradeWebSocket(request);
+      const { response, socket } = Edno.upgradeWebSocket(request);
       socket.onerror = () => fail();
       socket.onopen = () => {
         socket.close(undefined, "A");
@@ -1256,7 +1256,7 @@ Deno.test("WebSocket close with reason but no code doesn't send 1005", async () 
 
   await listeningDeferred.promise;
 
-  const conn = await Deno.connect({ port: servePort, hostname: "localhost" });
+  const conn = await Edno.connect({ port: servePort, hostname: "localhost" });
   await conn.write(
     new TextEncoder().encode(
       "GET / HTTP/1.1\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",

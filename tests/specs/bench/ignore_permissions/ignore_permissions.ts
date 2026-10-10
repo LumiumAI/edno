@@ -1,4 +1,4 @@
-Deno.bench({
+Edno.bench({
   name: "ignore",
   permissions: {
     read: true,

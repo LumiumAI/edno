@@ -2,7 +2,7 @@
 
 import { assertEquals } from "./common.js";
 
-Deno.test("napi addon survives worker termination", async () => {
+Edno.test("napi addon survives worker termination", async () => {
   // Spawn a worker that loads the NAPI addon and does work.
   // Terminate it and verify no crash occurs.
   const worker = new Worker(
@@ -24,7 +24,7 @@ Deno.test("napi addon survives worker termination", async () => {
   await new Promise((r) => setTimeout(r, 100));
 });
 
-Deno.test("napi external buffer finalizer runs after worker termination", async () => {
+Edno.test("napi external buffer finalizer runs after worker termination", async () => {
   const worker = new Worker(
     new URL("./worker_termination_worker.js", import.meta.url),
     { type: "module" },

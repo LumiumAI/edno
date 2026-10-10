@@ -1,4 +1,4 @@
-import defaultImport, * as namespaceImport from "npm:@denotest/cjs-module-export-assignment-number";
+import defaultImport, * as namespaceImport from "npm:@ednotest/cjs-module-export-assignment-number";
 
 const testDefault: 5 = defaultImport;
 console.log(testDefault);

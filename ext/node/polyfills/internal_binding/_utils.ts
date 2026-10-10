@@ -7,7 +7,7 @@ const {
 } = core.ops;
 const {
   forgivingBase64Decode,
-} = core.loadExtScript("ext:deno_web/00_infra.js");
+} = core.loadExtScript("ext:edno_web/00_infra.js");
 const {
   DataView,
   DataViewPrototypeSetUint16,
@@ -103,7 +103,7 @@ function base64UrlToBytes(str: string) {
 }
 
 // https://github.com/nodejs/node/blob/591ba692bfe30408e6a67397e7d18bfa1b9c3561/deps/nbytes/src/nbytes.cpp#L144-L158
-// deno-fmt-ignore
+// edno-fmt-ignore
 const unhexTable = new Int8Array([
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 0 - 15
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 16 - 31

@@ -5,9 +5,9 @@ use std::collections::HashSet;
 use std::collections::VecDeque;
 
 use deno_ast::ModuleSpecifier;
-use deno_config::workspace::JsrPackageConfig;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
+use edno_config::workspace::JsrPackageConfig;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
 use deno_graph::ModuleGraph;
 
 pub struct PublishOrderGraph {

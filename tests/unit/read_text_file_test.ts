@@ -9,32 +9,32 @@ import {
   unreachable,
 } from "./test_util.ts";
 
-Deno.test({ permissions: { read: true } }, function readTextFileSyncSuccess() {
-  const data = Deno.readTextFileSync("tests/testdata/assets/fixture.json");
+Edno.test({ permissions: { read: true } }, function readTextFileSyncSuccess() {
+  const data = Edno.readTextFileSync("tests/testdata/assets/fixture.json");
   assert(data.length > 0);
   const pkg = JSON.parse(data);
-  assertEquals(pkg.name, "deno");
+  assertEquals(pkg.name, "edno");
 });
 
-Deno.test({ permissions: { read: true } }, function readTextFileSyncByUrl() {
-  const data = Deno.readTextFileSync(
+Edno.test({ permissions: { read: true } }, function readTextFileSyncByUrl() {
+  const data = Edno.readTextFileSync(
     pathToAbsoluteFileUrl("tests/testdata/assets/fixture.json"),
   );
   assert(data.length > 0);
   const pkg = JSON.parse(data);
-  assertEquals(pkg.name, "deno");
+  assertEquals(pkg.name, "edno");
 });
 
-Deno.test({ permissions: { read: false } }, function readTextFileSyncPerm() {
+Edno.test({ permissions: { read: false } }, function readTextFileSyncPerm() {
   assertThrows(() => {
-    Deno.readTextFileSync("tests/testdata/assets/fixture.json");
-  }, Deno.errors.NotCapable);
+    Edno.readTextFileSync("tests/testdata/assets/fixture.json");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, function readTextFileSyncNotFound() {
+Edno.test({ permissions: { read: true } }, function readTextFileSyncNotFound() {
   assertThrows(() => {
-    Deno.readTextFileSync("bad_filename");
-  }, Deno.errors.NotFound);
+    Edno.readTextFileSync("bad_filename");
+  }, Edno.errors.NotFound);
 });
 
 // Reading a broken (dangling) symlink should report NotFound, not
@@ -42,80 +42,80 @@ Deno.test({ permissions: { read: true } }, function readTextFileSyncNotFound() {
 // path is opened with O_NOFOLLOW, which reports a surviving symlink tail as
 // ELOOP; that is translated to ENOENT. Regression test for
 // https://github.com/denoland/deno/issues/29139
-Deno.test(
+Edno.test(
   {
     permissions: { read: true, write: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   function readTextFileSyncBrokenSymlink() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const target = testDir + "/target.txt";
     const link = testDir + "/link.txt";
-    Deno.writeTextFileSync(target, "hello");
-    Deno.symlinkSync(target, link);
+    Edno.writeTextFileSync(target, "hello");
+    Edno.symlinkSync(target, link);
     // The link resolves while the target exists.
-    assertEquals(Deno.readTextFileSync(link), "hello");
+    assertEquals(Edno.readTextFileSync(link), "hello");
     // Once the target is gone the link is broken.
-    Deno.removeSync(target);
-    assertThrows(() => Deno.readTextFileSync(link), Deno.errors.NotFound);
+    Edno.removeSync(target);
+    assertThrows(() => Edno.readTextFileSync(link), Edno.errors.NotFound);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readTextFileSuccess() {
-    const data = await Deno.readTextFile(
+    const data = await Edno.readTextFile(
       "tests/testdata/assets/fixture.json",
     );
     assert(data.length > 0);
     const pkg = JSON.parse(data);
-    assertEquals(pkg.name, "deno");
+    assertEquals(pkg.name, "edno");
   },
 );
 
-Deno.test({ permissions: { read: true } }, async function readTextFileByUrl() {
-  const data = await Deno.readTextFile(
+Edno.test({ permissions: { read: true } }, async function readTextFileByUrl() {
+  const data = await Edno.readTextFile(
     pathToAbsoluteFileUrl("tests/testdata/assets/fixture.json"),
   );
   assert(data.length > 0);
   const pkg = JSON.parse(data);
-  assertEquals(pkg.name, "deno");
+  assertEquals(pkg.name, "edno");
 });
 
-Deno.test({ permissions: { read: false } }, async function readTextFilePerm() {
+Edno.test({ permissions: { read: false } }, async function readTextFilePerm() {
   await assertRejects(async () => {
-    await Deno.readTextFile("tests/testdata/assets/fixture.json");
-  }, Deno.errors.NotCapable);
+    await Edno.readTextFile("tests/testdata/assets/fixture.json");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test({ permissions: { read: true } }, function readTextFileSyncLoop() {
+Edno.test({ permissions: { read: true } }, function readTextFileSyncLoop() {
   for (let i = 0; i < 256; i++) {
-    Deno.readTextFileSync("tests/testdata/assets/fixture.json");
+    Edno.readTextFileSync("tests/testdata/assets/fixture.json");
   }
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readTextFileDoesNotLeakResources() {
-    await assertRejects(async () => await Deno.readTextFile("cli"));
+    await assertRejects(async () => await Edno.readTextFile("cli"));
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   function readTextFileSyncDoesNotLeakResources() {
-    assertThrows(() => Deno.readTextFileSync("cli"));
+    assertThrows(() => Edno.readTextFileSync("cli"));
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readTextFileWithAbortSignal() {
     const ac = new AbortController();
     queueMicrotask(() => ac.abort());
     const error = await assertRejects(
       async () => {
-        await Deno.readTextFile("tests/testdata/assets/fixture.json", {
+        await Edno.readTextFile("tests/testdata/assets/fixture.json", {
           signal: ac.signal,
         });
       },
@@ -125,7 +125,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readTextFileWithAbortSignalReason() {
     const ac = new AbortController();
@@ -133,7 +133,7 @@ Deno.test(
     queueMicrotask(() => ac.abort(abortReason));
     const error = await assertRejects(
       async () => {
-        await Deno.readTextFile("tests/testdata/assets/fixture.json", {
+        await Edno.readTextFile("tests/testdata/assets/fixture.json", {
           signal: ac.signal,
         });
       },
@@ -142,13 +142,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readTextFileWithAbortSignalPrimitiveReason() {
     const ac = new AbortController();
     queueMicrotask(() => ac.abort("Some string"));
     try {
-      await Deno.readTextFile("tests/testdata/assets/fixture.json", {
+      await Edno.readTextFile("tests/testdata/assets/fixture.json", {
         signal: ac.signal,
       });
       unreachable();
@@ -159,25 +159,25 @@ Deno.test(
 );
 
 // Test that AbortController's cancel handle is cleaned-up correctly, and do not leak resources.
-Deno.test(
+Edno.test(
   { permissions: { read: true } },
   async function readTextFileWithAbortSignalNotCalled() {
     const ac = new AbortController();
-    await Deno.readTextFile("tests/testdata/assets/fixture.json", {
+    await Edno.readTextFile("tests/testdata/assets/fixture.json", {
       signal: ac.signal,
     });
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "linux" },
+Edno.test(
+  { ignore: Edno.build.os !== "linux" },
   async function readTextFileProcFs() {
-    const data = await Deno.readTextFile("/proc/self/stat");
+    const data = await Edno.readTextFile("/proc/self/stat");
     assert(data.length > 0);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function readTextFileSyncV8LimitError() {
     const kStringMaxLengthPlusOne = 536870888 + 1;
@@ -185,7 +185,7 @@ Deno.test(
     const filePath = "tests/testdata/too_big_a_file.txt";
 
     try {
-      Deno.writeFileSync(filePath, bytes);
+      Edno.writeFileSync(filePath, bytes);
     } catch {
       // NOTE(bartlomieju): writing a 0.5Gb file might be too much for CI,
       // so skip running if writing fails.
@@ -194,17 +194,17 @@ Deno.test(
 
     assertThrows(
       () => {
-        Deno.readTextFileSync(filePath);
+        Edno.readTextFileSync(filePath);
       },
       TypeError,
       "buffer exceeds maximum length",
     );
 
-    Deno.removeSync(filePath);
+    Edno.removeSync(filePath);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function readTextFileV8LimitError() {
     const kStringMaxLengthPlusOne = 536870888 + 1;
@@ -212,7 +212,7 @@ Deno.test(
     const filePath = "tests/testdata/too_big_a_file_2.txt";
 
     try {
-      await Deno.writeFile(filePath, bytes);
+      await Edno.writeFile(filePath, bytes);
     } catch {
       // NOTE(bartlomieju): writing a 0.5Gb file might be too much for CI,
       // so skip running if writing fails.
@@ -221,12 +221,12 @@ Deno.test(
 
     await assertRejects(
       async () => {
-        await Deno.readTextFile(filePath);
+        await Edno.readTextFile(filePath);
       },
       TypeError,
       "buffer exceeds maximum length",
     );
 
-    await Deno.remove(filePath);
+    await Edno.remove(filePath);
   },
 );

@@ -1,7 +1,7 @@
 import { copy } from "@std/io/copy";
-const addr = Deno.args[0] || "0.0.0.0:4544";
+const addr = Edno.args[0] || "0.0.0.0:4544";
 const [hostname, port] = addr.split(":");
-const listener = Deno.listen({ hostname, port: Number(port) });
+const listener = Edno.listen({ hostname, port: Number(port) });
 console.log("listening on", addr);
 listener.accept().then(
   async (conn) => {

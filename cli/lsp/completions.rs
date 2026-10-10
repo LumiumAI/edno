@@ -2,15 +2,15 @@
 
 use deno_ast::LineAndColumnIndex;
 use deno_ast::SourceTextInfo;
-use deno_core::ModuleSpecifier;
-use deno_core::resolve_path;
-use deno_core::resolve_url;
-use deno_core::serde::Deserialize;
-use deno_core::serde::Serialize;
-use deno_core::serde_json::json;
-use deno_core::url::Position;
+use edno_core::ModuleSpecifier;
+use edno_core::resolve_path;
+use edno_core::resolve_url;
+use edno_core::serde::Deserialize;
+use edno_core::serde::Serialize;
+use edno_core::serde_json::json;
+use edno_core::url::Position;
 use deno_path_util::url_to_file_path;
-use deno_runtime::deno_node::SUPPORTED_BUILTIN_NODE_MODULES;
+use edno_runtime::edno_node::SUPPORTED_BUILTIN_NODE_MODULES;
 use deno_semver::jsr::JsrPackageReqReference;
 use deno_semver::npm::NpmPackageReqReference;
 use deno_semver::package::PackageNv;
@@ -588,7 +588,7 @@ async fn get_jsr_completions(
           );
           let command = Some(lsp::Command {
             title: "".to_string(),
-            command: "deno.cache".to_string(),
+            command: "edno.cache".to_string(),
             arguments: Some(vec![
               json!([&specifier]),
               json!(referrer),
@@ -638,7 +638,7 @@ async fn get_jsr_completions(
         let specifier = format!("jsr:{}@{}", package_name, version);
         let command = Some(lsp::Command {
           title: "".to_string(),
-          command: "deno.cache".to_string(),
+          command: "edno.cache".to_string(),
           arguments: Some(vec![
             json!([&specifier]),
             json!(referrer),
@@ -678,7 +678,7 @@ async fn get_jsr_completions(
       let specifier = format!("jsr:{}", name);
       let command = Some(lsp::Command {
         title: "".to_string(),
-        command: "deno.cache".to_string(),
+        command: "edno.cache".to_string(),
         arguments: Some(vec![
           json!([&specifier]),
           json!(referrer),
@@ -749,7 +749,7 @@ async fn get_npm_completions(
         );
         let command = Some(lsp::Command {
           title: "".to_string(),
-          command: "deno.cache".to_string(),
+          command: "edno.cache".to_string(),
           arguments: Some(vec![
             json!([&specifier]),
             json!(referrer),
@@ -797,7 +797,7 @@ async fn get_npm_completions(
         let specifier = format!("npm:{}@{}", package_name, version);
         let command = Some(lsp::Command {
           title: "".to_string(),
-          command: "deno.cache".to_string(),
+          command: "edno.cache".to_string(),
           arguments: Some(vec![
             json!([&specifier]),
             json!(referrer),
@@ -837,7 +837,7 @@ async fn get_npm_completions(
       let specifier = format!("npm:{}", name);
       let command = Some(lsp::Command {
         title: "".to_string(),
-        command: "deno.cache".to_string(),
+        command: "edno.cache".to_string(),
         arguments: Some(vec![
           json!([&specifier]),
           json!(referrer),
@@ -905,7 +905,7 @@ fn get_node_completions(
   })
 }
 
-/// Get remote completions that include modules in the Deno cache which match
+/// Get remote completions that include modules in the Edno cache which match
 /// the current specifier string.
 fn get_remote_completions(
   module: &DocumentModule,
@@ -954,8 +954,8 @@ fn get_remote_completions(
     .collect()
 }
 
-/// Returns true if the given file URL points to a Deno configuration file
-/// (`deno.json` or `deno.jsonc`).
+/// Returns true if the given file URL points to a Edno configuration file
+/// (`edno.json` or `edno.jsonc`).
 pub fn is_deno_config_url(url: &ModuleSpecifier) -> bool {
   if url.scheme() != "file" {
     return false;
@@ -963,7 +963,7 @@ pub fn is_deno_config_url(url: &ModuleSpecifier) -> bool {
   let Some(name) = url.path_segments().and_then(|mut s| s.next_back()) else {
     return false;
   };
-  name == "deno.json" || name == "deno.jsonc"
+  name == "edno.json" || name == "edno.jsonc"
 }
 
 /// Walk a `jsonc_parser` AST looking for the innermost string literal whose
@@ -999,7 +999,7 @@ fn find_string_at<'a, 'b>(
   None
 }
 
-/// Determine whether a path inside a deno config file corresponds to an
+/// Determine whether a path inside a edno config file corresponds to an
 /// import-map value position (i.e. the value of an `imports.<key>` entry or a
 /// `scopes.<scope>.<key>` entry).
 fn is_import_value_path(path: &[String]) -> bool {
@@ -1039,7 +1039,7 @@ fn jsonc_string_to_narrow_lsp_range(
 }
 
 /// Provide jsr:/npm:/node: import-specifier completions for the value of an
-/// `imports` (or `scopes.<scope>.<key>`) entry inside a Deno configuration
+/// `imports` (or `scopes.<scope>.<key>`) entry inside a Edno configuration
 /// file. Returns `None` if the position isn't inside such a value, so the
 /// caller can fall through to other completion providers.
 pub async fn get_deno_json_import_completions(
@@ -1128,8 +1128,8 @@ pub async fn get_deno_json_import_completions(
 mod tests {
   use std::collections::HashMap;
 
-  use deno_core::resolve_url;
-  use deno_resolver::deno_json::CompilerOptionsKey;
+  use edno_core::resolve_url;
+  use edno_resolver::edno_json::CompilerOptionsKey;
   use pretty_assertions::assert_eq;
   use test_util::TempDir;
 
@@ -1145,7 +1145,7 @@ mod tests {
     fs_sources: &[(&str, &str)],
   ) -> DocumentModules {
     let temp_dir = TempDir::new();
-    let cache = LspCache::new(Some(temp_dir.url().join(".deno_dir").unwrap()));
+    let cache = LspCache::new(Some(temp_dir.url().join(".edno_dir").unwrap()));
     let mut document_modules = DocumentModules::default();
     document_modules.update_config(
       &Default::default(),
@@ -1366,7 +1366,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["jsr:@std/assert"]),
                 json!(&referrer),
@@ -1389,7 +1389,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["jsr:@std/async"]),
                 json!(&referrer),
@@ -1449,7 +1449,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["jsr:@std/assert@0.5.0"]),
                 json!(&referrer),
@@ -1472,7 +1472,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["jsr:@std/assert@0.4.0"]),
                 json!(&referrer),
@@ -1495,7 +1495,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["jsr:@std/assert@0.3.0"]),
                 json!(&referrer),
@@ -1556,7 +1556,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["jsr:@std/path@0.1.0/common"]),
                 json!(&referrer),
@@ -1579,7 +1579,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["jsr:@std/path@0.1.0/constants"]),
                 json!(&referrer),
@@ -1639,7 +1639,7 @@ mod tests {
           })),
           command: Some(lsp::Command {
             title: "".to_string(),
-            command: "deno.cache".to_string(),
+            command: "edno.cache".to_string(),
             arguments: Some(vec![
               json!(["@std/path/common"]),
               json!(&referrer),
@@ -1693,7 +1693,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer"]),
                 json!(&referrer),
@@ -1716,7 +1716,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer-core"]),
                 json!(&referrer),
@@ -1739,7 +1739,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer-extra-plugin"]),
                 json!(&referrer),
@@ -1762,7 +1762,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer-extra-plugin-stealth"]),
                 json!(&referrer),
@@ -1817,7 +1817,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer@21.0.2"]),
                 json!(&referrer),
@@ -1840,7 +1840,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer@21.0.1"]),
                 json!(&referrer),
@@ -1863,7 +1863,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer@21.0.0"]),
                 json!(&referrer),
@@ -1886,7 +1886,7 @@ mod tests {
             })),
             command: Some(lsp::Command {
               title: "".to_string(),
-              command: "deno.cache".to_string(),
+              command: "edno.cache".to_string(),
               arguments: Some(vec![
                 json!(["npm:puppeteer@20.9.0"]),
                 json!(&referrer),
@@ -1906,7 +1906,7 @@ mod tests {
   #[tokio::test]
   async fn test_get_npm_completions_for_exports() {
     let npm_search_api = TestPackageSearchApi::default().with_package_version(
-      "@denotest/routes",
+      "@ednotest/routes",
       "1.0.0",
       &[".", "./client", "./constants", "./server"],
     );
@@ -1923,7 +1923,7 @@ mod tests {
     let referrer = ModuleSpecifier::parse("file:///referrer.ts").unwrap();
     let actual = get_npm_completions(
       &referrer,
-      "npm:@denotest/routes@1/co",
+      "npm:@ednotest/routes@1/co",
       &range,
       &npm_search_api,
     )
@@ -1934,19 +1934,19 @@ mod tests {
       CompletionList {
         is_incomplete: false,
         items: vec![lsp::CompletionItem {
-          label: "npm:@denotest/routes@1/constants".to_string(),
+          label: "npm:@ednotest/routes@1/constants".to_string(),
           kind: Some(lsp::CompletionItemKind::FILE),
           detail: Some("(npm)".to_string()),
           sort_text: Some("0000000003".to_string()),
           text_edit: Some(lsp::CompletionTextEdit::Edit(lsp::TextEdit {
             range,
-            new_text: "npm:@denotest/routes@1/constants".to_string(),
+            new_text: "npm:@ednotest/routes@1/constants".to_string(),
           })),
           command: Some(lsp::Command {
             title: "".to_string(),
-            command: "deno.cache".to_string(),
+            command: "edno.cache".to_string(),
             arguments: Some(vec![
-              json!(["npm:@denotest/routes@1/constants"]),
+              json!(["npm:@ednotest/routes@1/constants"]),
               json!(&referrer),
               json!({ "forceGlobalCache": true }),
             ])

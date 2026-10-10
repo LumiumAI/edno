@@ -66,7 +66,7 @@ function assertDone(actual: IteratorResult<{ id: number }>) {
   let db: DatabaseSync | null = new DatabaseSync(":memory:");
   db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY)");
   db.exec("INSERT INTO test (id) VALUES (1), (2)");
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   let stmt: any = db.prepare("SELECT id FROM test ORDER BY id ASC");
   let iterator: Iterator<{ id: number }> | null = stmt.iterate();
   assertStatementRefIsHidden(iterator);
@@ -88,7 +88,7 @@ function assertDone(actual: IteratorResult<{ id: number }>) {
   db.exec("INSERT INTO test (id) VALUES (1), (2)");
   // @ts-expect-error createTagStore is a valid method
   const store = db.createTagStore(10);
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   let sql: any = store;
   let iterator: Iterator<{ id: number }> | null = sql
     .iterate`SELECT id FROM test ORDER BY id ASC`;

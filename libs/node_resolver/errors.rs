@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 use boxed_error::Boxed;
 use deno_error::JsError;
-use deno_package_json::MissingPkgJsonNameError;
+use edno_package_json::MissingPkgJsonNameError;
 use deno_path_util::UrlToFilePathError;
 use thiserror::Error;
 use url::Url;
@@ -29,7 +29,7 @@ pub enum NodeJsErrorCode {
   ERR_UNSUPPORTED_ESM_URL_SCHEME,
   ERR_INVALID_FILE_URL_PATH,
   ERR_UNKNOWN_BUILTIN_MODULE,
-  /// Deno specific since Node doesn't support type checking TypeScript.
+  /// Edno specific since Node doesn't support type checking TypeScript.
   ERR_TYPES_NOT_FOUND,
 }
 
@@ -539,7 +539,7 @@ impl NodeJsErrorCoded for TypesNotFoundError {
 #[derive(Debug, Error, JsError)]
 #[class(inherit)]
 #[error("[{}] Invalid package config. {}", self.code(), .0)]
-pub struct PackageJsonLoadError(pub deno_package_json::PackageJsonLoadError);
+pub struct PackageJsonLoadError(pub edno_package_json::PackageJsonLoadError);
 
 impl NodeJsErrorCoded for PackageJsonLoadError {
   fn code(&self) -> NodeJsErrorCode {

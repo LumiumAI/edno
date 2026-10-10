@@ -2,11 +2,11 @@
 
 use std::rc::Rc;
 
-use deno_core::AsyncRefCell;
-use deno_core::AsyncResult;
-use deno_core::CancelHandle;
-use deno_core::CancelTryFuture;
-use deno_core::RcRef;
+use edno_core::AsyncRefCell;
+use edno_core::AsyncResult;
+use edno_core::CancelHandle;
+use edno_core::CancelTryFuture;
+use edno_core::RcRef;
 use tokio::io::AsyncReadExt;
 use tokio::io::AsyncWriteExt;
 
@@ -45,26 +45,26 @@ mod as_raw_handle {
   }
 }
 
-impl deno_core::Resource for BiPipeResource {
+impl edno_core::Resource for BiPipeResource {
   fn close(self: Rc<Self>) {
     self.cancel.cancel();
   }
 
-  fn backing_handle(self: Rc<Self>) -> Option<deno_core::ResourceHandle> {
+  fn backing_handle(self: Rc<Self>) -> Option<edno_core::ResourceHandle> {
     #[cfg(unix)]
     {
-      Some(deno_core::ResourceHandle::from_fd_like(&self.raw_handle))
+      Some(edno_core::ResourceHandle::from_fd_like(&self.raw_handle))
     }
     #[cfg(windows)]
     {
-      Some(deno_core::ResourceHandle::from_fd_like(
+      Some(edno_core::ResourceHandle::from_fd_like(
         &as_raw_handle::RawHandleWrap(self.raw_handle),
       ))
     }
   }
 
-  deno_core::impl_readable_byob!();
-  deno_core::impl_writable!();
+  edno_core::impl_readable_byob!();
+  edno_core::impl_writable!();
 }
 
 impl BiPipeResource {
@@ -402,7 +402,7 @@ fn from_raw(
 fn from_raw(
   handle: RawBiPipeHandle,
 ) -> Result<(BiPipeRead, BiPipeWrite), std::io::Error> {
-  // Safety: We cannot use `get_osfhandle` because Deno statically links to msvcrt. It is not guaranteed that the
+  // Safety: We cannot use `get_osfhandle` because Edno statically links to msvcrt. It is not guaranteed that the
   // fd handle map will be the same.
   let pipe = unsafe {
     tokio::net::windows::named_pipe::NamedPipeClient::from_raw_handle(

@@ -67,7 +67,7 @@ use url::Url;
 
 use super::TempDir;
 use crate::PathRef;
-use crate::deno_exe_path;
+use crate::edno_exe_path;
 use crate::eprintln;
 use crate::jsr_registry_url;
 use crate::npm_registry_url;
@@ -237,10 +237,10 @@ impl InitializeParamsBuilder {
   pub fn new(config: Value) -> Self {
     let mut config_as_options = json!({});
     if let Some(object) = config.as_object() {
-      if let Some(deno) = object.get("deno")
-        && let Some(deno) = deno.as_object()
+      if let Some(edno) = object.get("edno")
+        && let Some(edno) = edno.as_object()
       {
-        config_as_options = json!(deno.clone());
+        config_as_options = json!(edno.clone());
       }
       let config_as_options = config_as_options.as_object_mut().unwrap();
       if let Some(typescript) = object.get("typescript") {
@@ -587,9 +587,9 @@ pub struct LspClientBuilder {
   stderr_inherit: bool,
   stderr_null: bool,
   log_debug: bool,
-  deno_exe: PathRef,
+  edno_exe: PathRef,
   root_dir: PathRef,
-  deno_dir: TempDir,
+  edno_dir: TempDir,
   envs: HashMap<OsString, OsString>,
   collect_perf: bool,
 }
@@ -600,21 +600,21 @@ impl LspClientBuilder {
     Self::new_with_dir(TempDir::new())
   }
 
-  pub fn new_with_dir(deno_dir: TempDir) -> Self {
+  pub fn new_with_dir(edno_dir: TempDir) -> Self {
     Self {
       stderr_inherit: false,
       stderr_null: false,
       log_debug: false,
-      deno_exe: deno_exe_path(),
-      root_dir: deno_dir.path().clone(),
-      deno_dir,
+      edno_exe: edno_exe_path(),
+      root_dir: edno_dir.path().clone(),
+      edno_dir,
       envs: Default::default(),
       collect_perf: false,
     }
   }
 
-  pub fn deno_exe(mut self, exe_path: impl AsRef<Path>) -> Self {
-    self.deno_exe = PathRef::new(exe_path);
+  pub fn edno_exe(mut self, exe_path: impl AsRef<Path>) -> Self {
+    self.edno_exe = PathRef::new(exe_path);
     self
   }
 
@@ -667,19 +667,19 @@ impl LspClientBuilder {
   }
 
   pub fn build_result(&self) -> Result<LspClient> {
-    let deno_dir = self.deno_dir.clone();
-    let mut command = Command::new(&self.deno_exe);
+    let edno_dir = self.edno_dir.clone();
+    let mut command = Command::new(&self.edno_exe);
     let mut args = vec!["lsp".to_string()];
     if self.log_debug {
       args.push("--log-level=debug".to_string());
     }
     command
-      .env("DENO_DIR", deno_dir.path())
+      .env("EDNO_DIR", edno_dir.path())
       .env("NPM_CONFIG_REGISTRY", npm_registry_url())
       .env("JSR_URL", jsr_registry_url())
       // turn on diagnostic synchronization communication
-      .env("DENO_INTERNAL_DIAGNOSTIC_BATCH_NOTIFICATIONS", "1")
-      .env("DENO_NO_UPDATE_CHECK", "1")
+      .env("EDNO_INTERNAL_DIAGNOSTIC_BATCH_NOTIFICATIONS", "1")
+      .env("EDNO_NO_UPDATE_CHECK", "1")
       .args(args)
       .stdin(Stdio::piped())
       .stdout(Stdio::piped());
@@ -747,7 +747,7 @@ impl LspClientBuilder {
       start: Instant::now(),
       root_dir: self.root_dir.clone(),
       writer,
-      deno_dir,
+      edno_dir,
       stderr_lines_rx,
       config: json!("{}"),
       supports_workspace_configuration: false,
@@ -848,7 +848,7 @@ pub struct LspClient {
   request_id: u64,
   start: Instant,
   writer: io::BufWriter<ChildStdin>,
-  deno_dir: TempDir,
+  edno_dir: TempDir,
   root_dir: PathRef,
   stderr_lines_rx: Option<mpsc::Receiver<String>>,
   config: serde_json::Value,
@@ -873,8 +873,8 @@ impl Drop for LspClient {
 }
 
 impl LspClient {
-  pub fn deno_dir(&self) -> &TempDir {
-    &self.deno_dir
+  pub fn edno_dir(&self) -> &TempDir {
+    &self.edno_dir
   }
 
   pub fn duration(&self) -> Duration {
@@ -942,7 +942,7 @@ impl LspClient {
   ) {
     self.initialize_with_config(
       do_build,
-      json!({ "deno": {
+      json!({ "edno": {
         "enable": true,
         "cache": null,
         "certificateStores": null,
@@ -995,12 +995,12 @@ impl LspClient {
       && let Some(options) = options.as_object()
       && let Some(config) = config.as_object_mut()
     {
-      let mut deno = options.clone();
+      let mut edno = options.clone();
       let typescript = options.get("typescript");
       let javascript = options.get("javascript");
-      deno.remove("typescript");
-      deno.remove("javascript");
-      config.insert("deno".to_string(), json!(deno));
+      edno.remove("typescript");
+      edno.remove("javascript");
+      config.insert("edno".to_string(), json!(edno));
       if let Some(typescript) = typescript {
         config.insert("typescript".to_string(), typescript.clone());
       }
@@ -1165,7 +1165,7 @@ impl LspClient {
     self.write_request(
       "workspace/executeCommand",
       json!({
-        "command": "deno.cache",
+        "command": "edno.cache",
         "arguments": [specifiers.into_iter().collect::<Vec<_>>(), referrer],
       }),
     );
@@ -1175,7 +1175,7 @@ impl LspClient {
     self.write_request(
       "workspace/executeCommand",
       json!({
-        "command": "deno.cache",
+        "command": "edno.cache",
         "arguments": [[], specifier],
       }),
     );
@@ -1207,13 +1207,13 @@ impl LspClient {
       );
     }
     self.read_notification_with_method::<()>(
-      "deno/internalTestDiagnosticBatchStart",
+      "edno/internalTestDiagnosticBatchStart",
     );
     // Most tests have just one open document.
     let mut diagnostics = Vec::with_capacity(1);
     loop {
       let (method, params) = self.read_notification::<Value>();
-      if method == "deno/internalTestDiagnosticBatchEnd" {
+      if method == "edno/internalTestDiagnosticBatchEnd" {
         break;
       }
       if method == "textDocument/publishDiagnostics" {

@@ -11,45 +11,45 @@ use std::sync::atomic::Ordering;
 use std::time::Duration;
 use std::time::Instant;
 
-use deno_cache::CacheImpl;
-use deno_cache::CreateCache;
-use deno_cache::SqliteBackedCache;
-use deno_core::CompiledWasmModuleStore;
-use deno_core::Extension;
-use deno_core::InspectorSessionKind;
-use deno_core::JsRuntime;
-use deno_core::JsRuntimeInspector;
-use deno_core::LocalInspectorSession;
-use deno_core::ModuleCodeString;
-use deno_core::ModuleId;
-use deno_core::ModuleLoadOptions;
-use deno_core::ModuleLoadReferrer;
-use deno_core::ModuleLoader;
-use deno_core::ModuleSpecifier;
-use deno_core::OpMetricsFactoryFn;
-use deno_core::PollEventLoopOptions;
-use deno_core::RuntimeOptions;
-use deno_core::SharedArrayBufferStore;
-use deno_core::SourceCodeCacheInfo;
-use deno_core::error::CoreError;
-use deno_core::error::JsError;
-use deno_core::v8;
-use deno_cron::CronHandler;
-use deno_cron::CronHandlerImpl;
+use edno_cache::CacheImpl;
+use edno_cache::CreateCache;
+use edno_cache::SqliteBackedCache;
+use edno_core::CompiledWasmModuleStore;
+use edno_core::Extension;
+use edno_core::InspectorSessionKind;
+use edno_core::JsRuntime;
+use edno_core::JsRuntimeInspector;
+use edno_core::LocalInspectorSession;
+use edno_core::ModuleCodeString;
+use edno_core::ModuleId;
+use edno_core::ModuleLoadOptions;
+use edno_core::ModuleLoadReferrer;
+use edno_core::ModuleLoader;
+use edno_core::ModuleSpecifier;
+use edno_core::OpMetricsFactoryFn;
+use edno_core::PollEventLoopOptions;
+use edno_core::RuntimeOptions;
+use edno_core::SharedArrayBufferStore;
+use edno_core::SourceCodeCacheInfo;
+use edno_core::error::CoreError;
+use edno_core::error::JsError;
+use edno_core::v8;
+use edno_cron::CronHandler;
+use edno_cron::CronHandlerImpl;
 use deno_error::JsErrorBox;
-use deno_fs::FileSystem;
-use deno_io::Stdio;
-use deno_kv::dynamic::MultiBackendDbHandler;
-use deno_napi::DenoRtNativeAddonLoaderRc;
-use deno_node::ExtNodeSys;
-use deno_node::NodeExtInitServices;
-use deno_os::ExitCode;
-use deno_permissions::PermissionsContainer;
-use deno_process::NpmProcessStateProviderRc;
-use deno_tls::RootCertStoreProvider;
-use deno_tls::TlsKeys;
-use deno_web::BlobStoreTrait;
-use deno_web::InMemoryBroadcastChannel;
+use edno_fs::FileSystem;
+use edno_io::Stdio;
+use edno_kv::dynamic::MultiBackendDbHandler;
+use edno_napi::EdnoRtNativeAddonLoaderRc;
+use edno_node::ExtNodeSys;
+use edno_node::NodeExtInitServices;
+use edno_os::ExitCode;
+use edno_permissions::PermissionsContainer;
+use edno_process::NpmProcessStateProviderRc;
+use edno_tls::RootCertStoreProvider;
+use edno_tls::TlsKeys;
+use edno_web::BlobStoreTrait;
+use edno_web::InMemoryBroadcastChannel;
 use log::debug;
 use node_resolver::InNpmPackageChecker;
 use node_resolver::NpmPackageFolderResolver;
@@ -58,7 +58,7 @@ use crate::BootstrapOptions;
 use crate::FeatureChecker;
 use crate::code_cache::CodeCache;
 use crate::code_cache::CodeCacheType;
-use crate::deno_inspector_server::get_inspector_server;
+use crate::edno_inspector_server::get_inspector_server;
 use crate::ops;
 use crate::shared::runtime;
 
@@ -66,7 +66,7 @@ pub type FormatJsErrorFn = dyn Fn(&JsError) -> String + Sync + Send;
 
 #[cfg(target_os = "linux")]
 pub(crate) static MEMORY_TRIM_HANDLER_ENABLED: LazyLock<bool> =
-  LazyLock::new(|| std::env::var_os("DENO_USR2_MEMORY_TRIM").is_some());
+  LazyLock::new(|| std::env::var_os("EDNO_USR2_MEMORY_TRIM").is_some());
 
 #[cfg(target_os = "linux")]
 pub(crate) static SIGUSR2_RX: LazyLock<tokio::sync::watch::Receiver<()>> =
@@ -74,7 +74,7 @@ pub(crate) static SIGUSR2_RX: LazyLock<tokio::sync::watch::Receiver<()>> =
     let (tx, rx) = tokio::sync::watch::channel(());
 
     tokio::spawn(async move {
-      let mut sigusr2 = deno_signals::signal_stream(libc::SIGUSR2).unwrap();
+      let mut sigusr2 = edno_signals::signal_stream(libc::SIGUSR2).unwrap();
 
       loop {
         sigusr2.recv().await;
@@ -97,11 +97,11 @@ pub(crate) static SIGUSR2_RX: LazyLock<tokio::sync::watch::Receiver<()>> =
 // module types
 pub fn create_validate_import_attributes_callback(
   enable_raw_imports: Arc<AtomicBool>,
-) -> deno_core::ValidateImportAttributesCb {
+) -> edno_core::ValidateImportAttributesCb {
   Box::new(
     move |scope: &mut v8::PinScope<'_, '_>,
           attributes: &HashMap<String, String>,
-          context: &deno_core::ImportAttributesContext| {
+          context: &edno_core::ImportAttributesContext| {
       // If `module.registerHooks()` has installed user hooks, defer
       // import-attribute validation to the user hooks so they can
       // implement custom module types and attributes
@@ -111,7 +111,7 @@ pub fn create_validate_import_attributes_callback(
       let op_state = JsRuntime::op_state_from(&*scope);
       if let Ok(op_state) = op_state.try_borrow()
         && let Some(registry) = op_state
-          .try_borrow::<deno_node::ops::module_hooks::LoaderHookRegistry>(
+          .try_borrow::<edno_node::ops::module_hooks::LoaderHookRegistry>(
         )
         && registry.hooks_active.get()
       {
@@ -145,25 +145,25 @@ pub fn create_validate_import_attributes_callback(
   )
 }
 
-/// Evaluates custom module types that aren't built into deno_core. Currently
+/// Evaluates custom module types that aren't built into edno_core. Currently
 /// only `with { type: "css" }` imports (gated on `--unstable-raw-imports` by
 /// `create_validate_import_attributes_callback`), which evaluate to a
 /// `CSSStyleSheet` containing the source text.
 pub fn create_custom_module_evaluation_callback()
--> deno_core::CustomModuleEvaluationCb {
+-> edno_core::CustomModuleEvaluationCb {
   Box::new(
     |scope, module_type, _module_name, code| match &*module_type {
       "css" => {
         let code = match code {
-          deno_core::ModuleSourceCode::String(code) => code.as_str().to_owned(),
-          deno_core::ModuleSourceCode::Bytes(bytes) => {
+          edno_core::ModuleSourceCode::String(code) => code.as_str().to_owned(),
+          edno_core::ModuleSourceCode::Bytes(bytes) => {
             String::from_utf8_lossy(bytes.as_bytes()).into_owned()
           }
         };
         let sheet: v8::Local<v8::Value> =
-          deno_web::create_css_style_sheet(scope, code).into();
+          edno_web::create_css_style_sheet(scope, code).into();
         let sheet = v8::Global::new(scope, sheet);
-        Ok(deno_core::CustomModuleEvaluationKind::Synthetic(sheet))
+        Ok(edno_core::CustomModuleEvaluationKind::Synthetic(sheet))
       }
       _ => Err(deno_error::JsErrorBox::generic(format!(
         "Importing \"{module_type}\" modules is not supported"
@@ -185,9 +185,9 @@ pub fn make_wait_for_inspector_disconnect_callback() -> Box<dyn Fn()> {
 }
 
 /// This worker is created and used by almost all
-/// subcommands in Deno executable.
+/// subcommands in Edno executable.
 ///
-/// It provides ops available in the `Deno` namespace.
+/// It provides ops available in the `Edno` namespace.
 ///
 /// All `WebWorker`s created during program execution
 /// are descendants of this worker.
@@ -220,7 +220,7 @@ pub struct WorkerServiceOptions<
 > {
   pub blob_store: Arc<dyn BlobStoreTrait>,
   pub broadcast_channel: InMemoryBroadcastChannel,
-  pub deno_rt_native_addon_loader: Option<DenoRtNativeAddonLoaderRc>,
+  pub edno_rt_native_addon_loader: Option<EdnoRtNativeAddonLoaderRc>,
   pub feature_checker: Arc<FeatureChecker>,
   pub fs: Arc<dyn FileSystem>,
   /// Implementation of `ModuleLoader` which will be
@@ -239,7 +239,7 @@ pub struct WorkerServiceOptions<
   pub npm_process_state_provider: Option<NpmProcessStateProviderRc>,
   pub permissions: PermissionsContainer,
   pub root_cert_store_provider: Option<Arc<dyn RootCertStoreProvider>>,
-  pub fetch_dns_resolver: deno_fetch::dns::Resolver,
+  pub fetch_dns_resolver: edno_fetch::dns::Resolver,
 
   /// The store to use for transferring SharedArrayBuffers between isolates.
   /// If multiple isolates should have the possibility of sharing
@@ -259,7 +259,7 @@ pub struct WorkerServiceOptions<
   /// V8 code cache for module and script source code.
   pub v8_code_cache: Option<Arc<dyn CodeCache>>,
 
-  pub bundle_provider: Option<Arc<dyn deno_bundle_runtime::BundleProvider>>,
+  pub bundle_provider: Option<Arc<dyn edno_bundle_runtime::BundleProvider>>,
 }
 
 pub struct WorkerOptions {
@@ -345,16 +345,16 @@ impl Default for WorkerOptions {
 }
 
 pub(crate) fn request_builder_hook(
-  request: &mut http::Request<deno_fetch::ReqBody>,
+  request: &mut http::Request<edno_fetch::ReqBody>,
 ) -> Result<(), JsErrorBox> {
   const X_DENO_FETCH_TOKEN: http::HeaderName =
-    http::HeaderName::from_static("x-deno-fetch-token");
+    http::HeaderName::from_static("x-edno-fetch-token");
   const CDN_LOOP: http::HeaderName = http::HeaderName::from_static("cdn-loop");
   static X_DENO_FETCH_TOKEN_VALUE: OnceLock<Option<http::HeaderValue>> =
     OnceLock::new();
   static CDN_LOOP_VALUE: OnceLock<Option<http::HeaderValue>> = OnceLock::new();
 
-  // Scrub Deno-specific headers to prevent user code from spoofing them.
+  // Scrub Edno-specific headers to prevent user code from spoofing them.
   if let http::header::Entry::Occupied(entry) =
     request.headers_mut().entry(X_DENO_FETCH_TOKEN)
   {
@@ -425,7 +425,7 @@ pub fn create_op_metrics(
         clippy::print_stderr,
         reason = "we actually want to output here"
       )]
-      move |op: &deno_core::_ops::OpCtx, event, source| {
+      move |op: &edno_core::_ops::OpCtx, event, source| {
         eprintln!(
           "[{: >10.3}] {name:max_len$}: {event:?} {source:?}",
           now.elapsed().as_secs_f64(),
@@ -471,17 +471,17 @@ impl MainWorker {
     mut options: WorkerOptions,
   ) -> (Self, BootstrapOptions) {
     fn create_cache_inner(options: &WorkerOptions) -> Option<CreateCache> {
-      if let Ok(var) = std::env::var("DENO_CACHE_LSC_ENDPOINT") {
+      if let Ok(var) = std::env::var("EDNO_CACHE_LSC_ENDPOINT") {
         let elems: Vec<_> = var.split(",").collect();
         if elems.len() == 2 {
           let endpoint = elems[0];
           let token = elems[1];
-          use deno_cache::CacheShard;
+          use edno_cache::CacheShard;
 
           let shard =
             Rc::new(CacheShard::new(endpoint.to_string(), token.to_string()));
           let create_cache_fn = move || {
-            let x = deno_cache::LscBackend::default();
+            let x = edno_cache::LscBackend::default();
             x.set_shard(shard.clone());
 
             Ok(CacheImpl::Lsc(x))
@@ -611,39 +611,39 @@ impl MainWorker {
 
     js_runtime
       .lazy_init_extensions(vec![
-        deno_web::deno_web::args(
+        edno_web::edno_web::args(
           services.blob_store.clone(),
           options.bootstrap.location.clone(),
           true,
           services.broadcast_channel.clone(),
         ),
-        deno_fetch::deno_fetch::args(deno_fetch::Options {
+        edno_fetch::edno_fetch::args(edno_fetch::Options {
           user_agent: options.bootstrap.user_agent.clone(),
           root_cert_store_provider: services.root_cert_store_provider.clone(),
           unsafely_ignore_certificate_errors: options
             .unsafely_ignore_certificate_errors
             .clone(),
-          file_fetch_handler: Rc::new(deno_fetch::FsFetchHandler),
+          file_fetch_handler: Rc::new(edno_fetch::FsFetchHandler),
           resolver: services.fetch_dns_resolver,
           request_builder_hook: Some(request_builder_hook),
           ..Default::default()
         }),
-        deno_cache::deno_cache::args(create_cache),
-        deno_websocket::deno_websocket::args(),
-        deno_webstorage::deno_webstorage::args(
+        edno_cache::edno_cache::args(create_cache),
+        edno_websocket::edno_websocket::args(),
+        edno_webstorage::edno_webstorage::args(
           options.origin_storage_dir.clone(),
         ),
-        deno_crypto::deno_crypto::args(options.seed),
-        deno_ffi::deno_ffi::args(services.deno_rt_native_addon_loader.clone()),
-        deno_net::deno_net::args(
+        edno_crypto::edno_crypto::args(options.seed),
+        edno_ffi::edno_ffi::args(services.edno_rt_native_addon_loader.clone()),
+        edno_net::edno_net::args(
           services.root_cert_store_provider.clone(),
           options.unsafely_ignore_certificate_errors.clone(),
         ),
-        deno_kv::deno_kv::args(
+        edno_kv::edno_kv::args(
           Box::new(MultiBackendDbHandler::remote_or_sqlite(
             options.origin_storage_dir.clone(),
             options.seed,
-            deno_kv::remote::HttpOptions {
+            edno_kv::remote::HttpOptions {
               user_agent: options.bootstrap.user_agent.clone(),
               root_cert_store_provider: services
                 .root_cert_store_provider
@@ -655,30 +655,30 @@ impl MainWorker {
               proxy: None,
             },
           )),
-          deno_kv::KvConfig::builder().build(),
+          edno_kv::KvConfig::builder().build(),
         ),
-        deno_napi::deno_napi::args(
-          services.deno_rt_native_addon_loader.clone(),
+        edno_napi::edno_napi::args(
+          services.edno_rt_native_addon_loader.clone(),
         ),
-        deno_http::deno_http::args(deno_http::Options {
+        edno_http::edno_http::args(edno_http::Options {
           no_legacy_abort: options.bootstrap.no_legacy_abort,
           ..Default::default()
         }),
-        deno_io::deno_io::args(Some(options.stdio)),
-        deno_fs::deno_fs::args(services.fs.clone()),
-        deno_os::deno_os::args(Some(exit_code.clone())),
-        deno_process::deno_process::args(services.npm_process_state_provider),
-        deno_node::deno_node::args::<
+        edno_io::edno_io::args(Some(options.stdio)),
+        edno_fs::edno_fs::args(services.fs.clone()),
+        edno_os::edno_os::args(Some(exit_code.clone())),
+        edno_process::edno_process::args(services.npm_process_state_provider),
+        edno_node::edno_node::args::<
           TInNpmPackageChecker,
           TNpmPackageFolderResolver,
           TExtNodeSys,
         >(services.node_services, services.fs.clone()),
-        ops::runtime::deno_runtime::args(main_module.clone()),
-        ops::worker_host::deno_worker_host::args(
+        ops::runtime::edno_runtime::args(main_module.clone()),
+        ops::worker_host::edno_worker_host::args(
           options.create_web_worker_cb.clone(),
           options.format_js_error_fn.clone(),
         ),
-        deno_bundle_runtime::deno_bundle_runtime::args(
+        edno_bundle_runtime::edno_bundle_runtime::args(
           services.bundle_provider.clone(),
         ),
       ])
@@ -697,7 +697,7 @@ impl MainWorker {
       state.put(services.feature_checker);
     }
 
-    // Register the uv_loop_t (created by deno_node extension state callback)
+    // Register the uv_loop_t (created by edno_node extension state callback)
     // The uv loop is auto-created and registered by JsRuntime::new_inner.
 
     if let Some(server) = get_inspector_server() {
@@ -719,7 +719,7 @@ impl MainWorker {
       dispatch_process_exit_event_fn_global,
     ) = {
       let context = js_runtime.main_context();
-      deno_core::scope!(scope, &mut js_runtime);
+      edno_core::scope!(scope, &mut js_runtime);
       let context_local = v8::Local::new(scope, context);
       let global_obj = context_local.global(scope);
       let bootstrap_str =
@@ -822,7 +822,7 @@ impl MainWorker {
       clippy::disallowed_methods,
       reason = "diagnostic env var; not part of the sys_traits surface"
     )]
-    let phase_enabled = std::env::var_os("DENO_STARTUP_PHASES")
+    let phase_enabled = std::env::var_os("EDNO_STARTUP_PHASES")
       .is_some_and(|v| !v.is_empty() && v != "0");
     let t0 = if phase_enabled {
       Some(std::time::Instant::now())
@@ -835,11 +835,11 @@ impl MainWorker {
       let mut state = op_state.borrow_mut();
       state.put(options.clone());
       if let Some((fd, serialization)) = options.node_ipc_init {
-        state.put(deno_node::ChildPipeFd(fd, serialization));
+        state.put(edno_node::ChildPipeFd(fd, serialization));
       }
     }
 
-    deno_core::scope!(scope, &mut self.js_runtime);
+    edno_core::scope!(scope, &mut self.js_runtime);
     v8::tc_scope!(scope, scope);
     let args = options.as_v8(scope);
     let bootstrap_fn = self.bootstrap_fn_global.take().unwrap();
@@ -887,7 +887,7 @@ impl MainWorker {
       .js_runtime
       .op_state()
       .borrow()
-      .borrow::<deno_core::V8CrossThreadTaskSpawner>()
+      .borrow::<edno_core::V8CrossThreadTaskSpawner>()
       .clone();
 
     let memory_trim_handle = tokio::spawn(async move {
@@ -905,7 +905,7 @@ impl MainWorker {
     self.memory_trim_handle = Some(memory_trim_handle);
   }
 
-  /// See [JsRuntime::execute_script](deno_core::JsRuntime::execute_script)
+  /// See [JsRuntime::execute_script](edno_core::JsRuntime::execute_script)
   pub fn execute_script(
     &mut self,
     script_name: &'static str,
@@ -1009,7 +1009,7 @@ impl MainWorker {
   /// was not configured to create inspector.
   pub fn create_inspector_session(
     &mut self,
-    cb: deno_core::InspectorSessionSend,
+    cb: edno_core::InspectorSessionSend,
   ) -> LocalInspectorSession {
     self.js_runtime.maybe_init_inspector();
     let insp = self.js_runtime.inspector();
@@ -1037,8 +1037,8 @@ impl MainWorker {
   /// block until it disconnects. Returns immediately when no such session
   /// is attached.
   ///
-  /// This mirrors the wait the `deno run` event loop performs at the end of
-  /// execution and is meant for tools like `deno test` / `deno bench` whose
+  /// This mirrors the wait the `edno run` event loop performs at the end of
+  /// execution and is meant for tools like `edno test` / `edno bench` whose
   /// normal shutdown polls the event loop with a zero-duration timeout and
   /// would otherwise exit while a debugger is still attached.
   pub async fn wait_for_inspector_session_disconnect(
@@ -1069,14 +1069,14 @@ impl MainWorker {
   ///
   /// Does not poll event loop, and thus not await any of the "load" event handlers.
   pub fn dispatch_load_event(&mut self) -> Result<(), Box<JsError>> {
-    deno_core::scope!(scope, &mut self.js_runtime);
+    edno_core::scope!(scope, &mut self.js_runtime);
     v8::tc_scope!(tc_scope, scope);
     let dispatch_load_event_fn =
       v8::Local::new(tc_scope, &self.dispatch_load_event_fn_global);
     let undefined = v8::undefined(tc_scope);
     dispatch_load_event_fn.call(tc_scope, undefined.into(), &[]);
     if let Some(exception) = tc_scope.exception() {
-      return Err(deno_core::exception_to_err(
+      return Err(edno_core::exception_to_err(
         tc_scope, exception, false, true,
       ));
     }
@@ -1087,14 +1087,14 @@ impl MainWorker {
   ///
   /// Does not poll event loop, and thus not await any of the "unload" event handlers.
   pub fn dispatch_unload_event(&mut self) -> Result<(), Box<JsError>> {
-    deno_core::scope!(scope, &mut self.js_runtime);
+    edno_core::scope!(scope, &mut self.js_runtime);
     v8::tc_scope!(tc_scope, scope);
     let dispatch_unload_event_fn =
       v8::Local::new(tc_scope, &self.dispatch_unload_event_fn_global);
     let undefined = v8::undefined(tc_scope);
     dispatch_unload_event_fn.call(tc_scope, undefined.into(), &[]);
     if let Some(exception) = tc_scope.exception() {
-      return Err(deno_core::exception_to_err(
+      return Err(edno_core::exception_to_err(
         tc_scope, exception, false, true,
       ));
     }
@@ -1103,14 +1103,14 @@ impl MainWorker {
 
   /// Dispatches process.emit("exit") event for node compat.
   pub fn dispatch_process_exit_event(&mut self) -> Result<(), Box<JsError>> {
-    deno_core::scope!(scope, &mut self.js_runtime);
+    edno_core::scope!(scope, &mut self.js_runtime);
     v8::tc_scope!(tc_scope, scope);
     let dispatch_process_exit_event_fn =
       v8::Local::new(tc_scope, &self.dispatch_process_exit_event_fn_global);
     let undefined = v8::undefined(tc_scope);
     dispatch_process_exit_event_fn.call(tc_scope, undefined.into(), &[]);
     if let Some(exception) = tc_scope.exception() {
-      return Err(deno_core::exception_to_err(
+      return Err(edno_core::exception_to_err(
         tc_scope, exception, false, true,
       ));
     }
@@ -1124,7 +1124,7 @@ impl MainWorker {
     let finalizers = {
       let op_state = self.js_runtime.op_state();
       let op_state = op_state.borrow();
-      match op_state.try_borrow::<deno_napi::NapiState>() {
+      match op_state.try_borrow::<edno_napi::NapiState>() {
         Some(s) => s.ref_tracker.borrow_mut().take_pending(),
         None => return,
       }
@@ -1137,7 +1137,7 @@ impl MainWorker {
     // so native addon code can use NAPI functions during cleanup. LIFO matches
     // Node.js's linked list behavior (head insertion → reverse iteration).
     {
-      deno_core::scope!(scope, &mut self.js_runtime);
+      edno_core::scope!(scope, &mut self.js_runtime);
       let _scope = v8::HandleScope::new(scope);
       for f in finalizers.into_iter().rev() {
         // SAFETY: The pointers (env, data, hint) were stored when the native
@@ -1154,7 +1154,7 @@ impl MainWorker {
   /// indicating if the event was prevented and thus event loop should continue
   /// running.
   pub fn dispatch_beforeunload_event(&mut self) -> Result<bool, Box<JsError>> {
-    deno_core::scope!(scope, &mut self.js_runtime);
+    edno_core::scope!(scope, &mut self.js_runtime);
     v8::tc_scope!(tc_scope, scope);
     let dispatch_beforeunload_event_fn =
       v8::Local::new(tc_scope, &self.dispatch_beforeunload_event_fn_global);
@@ -1162,7 +1162,7 @@ impl MainWorker {
     let ret_val =
       dispatch_beforeunload_event_fn.call(tc_scope, undefined.into(), &[]);
     if let Some(exception) = tc_scope.exception() {
-      return Err(deno_core::exception_to_err(
+      return Err(edno_core::exception_to_err(
         tc_scope, exception, false, true,
       ));
     }
@@ -1174,7 +1174,7 @@ impl MainWorker {
   pub fn dispatch_process_beforeexit_event(
     &mut self,
   ) -> Result<bool, Box<JsError>> {
-    deno_core::scope!(scope, &mut self.js_runtime);
+    edno_core::scope!(scope, &mut self.js_runtime);
     v8::tc_scope!(tc_scope, scope);
     let dispatch_process_beforeexit_event_fn = v8::Local::new(
       tc_scope,
@@ -1187,7 +1187,7 @@ impl MainWorker {
       &[],
     );
     if let Some(exception) = tc_scope.exception() {
-      return Err(deno_core::exception_to_err(
+      return Err(edno_core::exception_to_err(
         tc_scope, exception, false, true,
       ));
     }
@@ -1208,46 +1208,46 @@ fn common_extensions<
   // `runtime/worker.rs`, `runtime/web_worker.rs`, `runtime/snapshot_info.rs`
   // and `runtime/snapshot.rs`!
   vec![
-    deno_telemetry::deno_telemetry::init(),
+    edno_telemetry::edno_telemetry::init(),
     // Web APIs
-    deno_webidl::deno_webidl::init(),
-    deno_web::deno_web::lazy_init(),
-    deno_webgpu::deno_webgpu::init(),
-    deno_image::deno_image::init(),
-    deno_canvas::deno_canvas::init(),
-    deno_fetch::deno_fetch::lazy_init(),
-    deno_cache::deno_cache::lazy_init(),
-    deno_websocket::deno_websocket::lazy_init(),
-    deno_webstorage::deno_webstorage::lazy_init(),
-    deno_crypto::deno_crypto::lazy_init(),
-    deno_ffi::deno_ffi::lazy_init(),
-    deno_net::deno_net::lazy_init(),
-    deno_tls::deno_tls::init(),
-    deno_kv::deno_kv::lazy_init(),
-    deno_cron::deno_cron::init(Box::new(CronHandlerImpl::create_from_env())),
-    deno_napi::deno_napi::lazy_init(),
-    deno_http::deno_http::lazy_init(),
-    deno_io::deno_io::lazy_init(),
-    deno_fs::deno_fs::lazy_init(),
-    deno_os::deno_os::lazy_init(),
-    deno_process::deno_process::lazy_init(),
-    deno_node_crypto::deno_node_crypto::init(),
-    deno_node_sqlite::deno_node_sqlite::init(),
-    deno_node::deno_node::lazy_init::<
+    edno_webidl::edno_webidl::init(),
+    edno_web::edno_web::lazy_init(),
+    edno_webgpu::edno_webgpu::init(),
+    edno_image::edno_image::init(),
+    edno_canvas::edno_canvas::init(),
+    edno_fetch::edno_fetch::lazy_init(),
+    edno_cache::edno_cache::lazy_init(),
+    edno_websocket::edno_websocket::lazy_init(),
+    edno_webstorage::edno_webstorage::lazy_init(),
+    edno_crypto::edno_crypto::lazy_init(),
+    edno_ffi::edno_ffi::lazy_init(),
+    edno_net::edno_net::lazy_init(),
+    edno_tls::edno_tls::init(),
+    edno_kv::edno_kv::lazy_init(),
+    edno_cron::edno_cron::init(Box::new(CronHandlerImpl::create_from_env())),
+    edno_napi::edno_napi::lazy_init(),
+    edno_http::edno_http::lazy_init(),
+    edno_io::edno_io::lazy_init(),
+    edno_fs::edno_fs::lazy_init(),
+    edno_os::edno_os::lazy_init(),
+    edno_process::edno_process::lazy_init(),
+    edno_node_crypto::edno_node_crypto::init(),
+    edno_node_sqlite::edno_node_sqlite::init(),
+    edno_node::edno_node::lazy_init::<
       TInNpmPackageChecker,
       TNpmPackageFolderResolver,
       TExtNodeSys,
     >(),
     // Ops from this crate
-    ops::runtime::deno_runtime::lazy_init(),
-    ops::worker_host::deno_worker_host::lazy_init(),
-    ops::fs_events::deno_fs_events::init(),
-    ops::permissions::deno_permissions::init(),
-    ops::tty::deno_tty::init(),
-    ops::http::deno_http_runtime::init(),
-    deno_bundle_runtime::deno_bundle_runtime::lazy_init(),
-    ops::desktop::deno_desktop::init(),
-    ops::bootstrap::deno_bootstrap::init(
+    ops::runtime::edno_runtime::lazy_init(),
+    ops::worker_host::edno_worker_host::lazy_init(),
+    ops::fs_events::edno_fs_events::init(),
+    ops::permissions::edno_permissions::init(),
+    ops::tty::edno_tty::init(),
+    ops::http::edno_http_runtime::init(),
+    edno_bundle_runtime::edno_bundle_runtime::lazy_init(),
+    ops::desktop::edno_desktop::init(),
+    ops::bootstrap::edno_bootstrap::init(
       has_snapshot.then(Default::default),
       unconfigured_runtime,
     ),
@@ -1256,7 +1256,7 @@ fn common_extensions<
     // are available and importing them in `99_main.js` doesn't cause an
     // error because they're not defined. Trying to use these ops in non-worker
     // context will cause a panic.
-    ops::web_worker::deno_web_worker::init().disable(),
+    ops::web_worker::edno_web_worker::init().disable(),
   ]
 }
 
@@ -1325,13 +1325,13 @@ fn common_runtime(opts: CommonRuntimeOptions) -> JsRuntime {
 }
 
 pub fn create_permissions_stack_trace_callback()
--> deno_core::OpStackTraceCallback {
-  Box::new(|stack: Vec<deno_core::error::JsStackFrame>| {
-    deno_permissions::prompter::set_current_stacktrace(Box::new(move || {
+-> edno_core::OpStackTraceCallback {
+  Box::new(|stack: Vec<edno_core::error::JsStackFrame>| {
+    edno_permissions::prompter::set_current_stacktrace(Box::new(move || {
       stack
         .iter()
         .map(|frame| {
-          deno_core::error::format_frame::<deno_core::error::NoAnsiColors>(
+          edno_core::error::format_frame::<edno_core::error::NoAnsiColors>(
             frame, None,
           )
         })
@@ -1409,8 +1409,8 @@ impl ModuleLoader for PlaceholderModuleLoader {
     &self,
     specifier: &str,
     referrer: &str,
-    kind: deno_core::ResolutionKind,
-  ) -> deno_core::ModuleResolveResponse {
+    kind: edno_core::ResolutionKind,
+  ) -> edno_core::ModuleResolveResponse {
     self
       .0
       .borrow_mut()
@@ -1424,7 +1424,7 @@ impl ModuleLoader for PlaceholderModuleLoader {
     module_specifier: &ModuleSpecifier,
     maybe_referrer: Option<&ModuleLoadReferrer>,
     options: ModuleLoadOptions,
-  ) -> deno_core::ModuleLoadResponse {
+  ) -> edno_core::ModuleLoadResponse {
     self.0.borrow_mut().clone().unwrap().load(
       module_specifier,
       maybe_referrer,
@@ -1441,7 +1441,7 @@ impl ModuleLoader for PlaceholderModuleLoader {
   ) -> std::pin::Pin<
     Box<
       dyn std::prelude::rust_2024::Future<
-          Output = Result<(), deno_core::error::ModuleLoaderError>,
+          Output = Result<(), edno_core::error::ModuleLoaderError>,
         >,
     >,
   > {

@@ -43,12 +43,12 @@ pub fn setup_op_state(
   lazy_extensions
 }
 
-// TODO(bartlomieju): `deno_core_ext` ops should be returned as a separate
-// vector - they need to be special cased and attached to `Deno.core.ops`,
+// TODO(bartlomieju): `edno_core_ext` ops should be returned as a separate
+// vector - they need to be special cased and attached to `Edno.core.ops`,
 // but not added to "ext:core/ops" virtual module.
 /// Collects ops from extensions & applies middleware
 pub fn init_ops(
-  deno_core_ops: &'static [OpDecl],
+  edno_core_ops: &'static [OpDecl],
   extensions: &mut [Extension],
 ) -> (Vec<OpDeclStorage>, Vec<OpMethodDecl>) {
   // In debug build verify there that inter-Extension dependencies
@@ -56,7 +56,7 @@ pub fn init_ops(
   #[cfg(debug_assertions)]
   check_extensions_dependencies(extensions);
 
-  // One entry per extension (plus deno_core's own table), each holding that
+  // One entry per extension (plus edno_core's own table), each holding that
   // extension's ops in registration order.
   let mut ops = Vec::with_capacity(extensions.len() + 1);
 
@@ -66,7 +66,7 @@ pub fn init_ops(
     .sum::<usize>();
   let mut op_methods = Vec::with_capacity(no_of_methods);
 
-  // Collect all middlewares - deno_core extension must not have a middleware!
+  // Collect all middlewares - edno_core extension must not have a middleware!
   let middlewares: Vec<Box<OpMiddlewareFn>> = extensions
     .iter_mut()
     .filter_map(|e| e.take_middleware())
@@ -92,9 +92,9 @@ pub fn init_ops(
 
   // Collect ops from all extensions and apply a macroware to each of them.
   if has_middleware {
-    ops.push(OpDeclStorage::Owned(rewrite(deno_core_ops)));
+    ops.push(OpDeclStorage::Owned(rewrite(edno_core_ops)));
   } else {
-    ops.push(OpDeclStorage::Static(deno_core_ops));
+    ops.push(OpDeclStorage::Static(edno_core_ops));
   }
 
   for ext in extensions.iter_mut() {

@@ -1,7 +1,7 @@
 {
   "tasks": {
     "a": {
-      "command": "deno run a.js",
+      "command": "edno run a.js",
       "dependencies": ["a"]
     }
   }

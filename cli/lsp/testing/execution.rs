@@ -8,19 +8,19 @@ use std::sync::Arc;
 use std::time::Duration;
 use std::time::Instant;
 
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::error::JsError;
-use deno_core::futures::StreamExt;
-use deno_core::futures::future;
-use deno_core::futures::stream;
-use deno_core::parking_lot::RwLock;
-use deno_core::unsync::spawn;
-use deno_core::unsync::spawn_blocking;
-use deno_runtime::deno_permissions::Permissions;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::tokio_util::create_and_run_current_thread;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::error::JsError;
+use edno_core::futures::StreamExt;
+use edno_core::futures::future;
+use edno_core::futures::stream;
+use edno_core::parking_lot::RwLock;
+use edno_core::unsync::spawn;
+use edno_core::unsync::spawn_blocking;
+use edno_runtime::edno_permissions::Permissions;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::tokio_util::create_and_run_current_thread;
 use indexmap::IndexMap;
 use tokio_util::sync::CancellationToken;
 use tower_lsp::lsp_types as lsp;
@@ -29,7 +29,7 @@ use super::definitions::TestDefinition;
 use super::definitions::TestModule;
 use super::lsp_custom;
 use super::server::TestServerTests;
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::flags_from_vec;
 use crate::args::parallelism_count;
 use crate::factory::CliFactory;
@@ -119,7 +119,7 @@ fn failure_to_test_message(failure: &TestFailure) -> lsp_custom::TestMessage {
       character: v.column_number,
     };
     // Does not have to match the test URI
-    // since one can write `Deno.test(importedFunction)`
+    // since one can write `Edno.test(importedFunction)`
     let uri = uri_parse_unencoded(&v.file_name).ok()?;
     Some(lsp::Location {
       uri,
@@ -168,7 +168,7 @@ pub struct TestRun {
   tests: TestServerTests,
   token: CancellationToken,
   workspace_settings: config::WorkspaceSettings,
-  /// `--env-file` paths inherited from the `test` task in deno.json. Resolved
+  /// `--env-file` paths inherited from the `test` task in edno.json. Resolved
   /// once at run construction so `get_args` doesn't depend on the config tree.
   test_task_env_files: Vec<PathBuf>,
 }
@@ -246,7 +246,7 @@ impl TestRun {
     // subcommand factory runs. The LSP test runner bypasses that, so apply
     // them here against the process environment before constructing the
     // worker factory. Without this, tests that read env vars at module load
-    // wouldn't see values from a deno.json `test` task's `--env-file`.
+    // wouldn't see values from a edno.json `test` task's `--env-file`.
     //
     // We use the stateful `WatchEnvTracker` so that re-runs after edits to
     // the env file or task definition refresh values rather than seeing the
@@ -259,9 +259,9 @@ impl TestRun {
     //   * Variables that were present in the process environment *before*
     //     any env file was loaded keep precedence over env files, matching
     //     the CLI's `load_env_variables_from_env_files`.
-    //   * Concurrent `deno/testRun` requests racing on the shared global env
+    //   * Concurrent `edno/testRun` requests racing on the shared global env
     //     can interleave; this is the same hazard the CLI has when running
-    //     multiple `deno test` invocations in one process.
+    //     multiple `edno test` invocations in one process.
     if let Some(env_files) = &flags.env_file {
       let cwd = resolve_cwd_or_fallback(flags.initial_cwd.as_deref());
       WatchEnvTracker::snapshot().load_env_variables_from_env_files(
@@ -282,7 +282,7 @@ impl TestRun {
       .await?;
 
     let (concurrent_jobs, fail_fast) =
-      if let DenoSubcommand::Test(test_flags) = cli_options.sub_command() {
+      if let EdnoSubcommand::Test(test_flags) = cli_options.sub_command() {
         (
           parallelism_count(test_flags.parallel).into(),
           test_flags.fail_fast,
@@ -292,7 +292,7 @@ impl TestRun {
       };
 
     // TODO(mmastrac): Temporarily limit concurrency in windows testing to avoid named pipe issue:
-    // *** Unexpected server pipe failure '"\\\\.\\pipe\\deno_pipe_e30f45c9df61b1e4.1198.222\\0"': 3
+    // *** Unexpected server pipe failure '"\\\\.\\pipe\\edno_pipe_e30f45c9df61b1e4.1198.222\\0"': 3
     // This is likely because we're hitting some sort of invisible resource limit
     // This limit is both in cli/lsp/testing/execution.rs and cli/tools/test/mod.rs
     #[cfg(windows)]
@@ -526,7 +526,7 @@ impl TestRun {
   }
 
   fn get_args(&self) -> Vec<Cow<'_, str>> {
-    let mut args = vec![Cow::Borrowed("deno"), Cow::Borrowed("test")];
+    let mut args = vec![Cow::Borrowed("edno"), Cow::Borrowed("test")];
     args.extend(
       self
         .workspace_settings
@@ -561,9 +561,9 @@ impl TestRun {
     {
       args.push(Cow::Borrowed("--inspect"));
     }
-    // Inherit `--env-file` paths from the `test` task in deno.json when the
-    // user hasn't already supplied one via `deno.testing.args`. Without this,
-    // running tests from VSCode wouldn't see env vars that `deno task test`
+    // Inherit `--env-file` paths from the `test` task in edno.json when the
+    // user hasn't already supplied one via `edno.testing.args`. Without this,
+    // running tests from VSCode wouldn't see env vars that `edno task test`
     // loads (see https://github.com/denoland/deno/issues/28797).
     let has_env_file_arg = args.iter().any(|a| {
       let a = a.as_ref();
@@ -576,7 +576,7 @@ impl TestRun {
       for env_file in &self.test_task_env_files {
         let Some(env_file) = env_file.to_str() else {
           lsp_log!(
-            "Skipping non-UTF8 env file path from deno.json `test` task: {}",
+            "Skipping non-UTF8 env file path from edno.json `test` task: {}",
             env_file.display()
           );
           continue;
@@ -589,16 +589,16 @@ impl TestRun {
 }
 
 /// Walks each unique scope reached by the queued specifiers and harvests
-/// `--env-file` paths from its deno.json `test` task. Each path is resolved
-/// against the deno.json's directory (matching how `deno task test` reads
+/// `--env-file` paths from its edno.json `test` task. Each path is resolved
+/// against the edno.json's directory (matching how `edno task test` reads
 /// them) so the LSP process's cwd doesn't change the answer. Scopes are
-/// deduplicated so a workspace with one shared deno.json is processed once.
+/// deduplicated so a workspace with one shared edno.json is processed once.
 fn collect_test_task_env_files(
   queue: &HashSet<ModuleSpecifier>,
   config_tree: &config::ConfigTree,
 ) -> Vec<PathBuf> {
   let mut env_files = Vec::new();
-  let mut seen_scopes: HashSet<Arc<deno_core::url::Url>> = HashSet::new();
+  let mut seen_scopes: HashSet<Arc<edno_core::url::Url>> = HashSet::new();
   let mut seen_env_files: HashSet<PathBuf> = HashSet::new();
   for specifier in queue {
     let Some(data) = config_tree.data_for_specifier(specifier) else {
@@ -639,7 +639,7 @@ fn collect_test_task_env_files(
 
 /// Scans a task command string for `--env-file`/`--env` flags and returns the
 /// associated file paths. A bare `--env-file` flag (no value) defaults to
-/// `.env` to match the CLI behavior. In compound task commands, only `deno
+/// `.env` to match the CLI behavior. In compound task commands, only `edno
 /// test ...` command segments are scanned so env files belonging to unrelated
 /// commands are not inherited by the LSP test runner.
 fn extract_env_files_from_command(command: &str) -> Vec<String> {
@@ -649,7 +649,7 @@ fn extract_env_files_from_command(command: &str) -> Vec<String> {
   let mut env_files = Vec::new();
   let mut index = 0;
   while index + 1 < tokens.len() {
-    if tokens[index] == "deno" && tokens[index + 1] == "test" {
+    if tokens[index] == "edno" && tokens[index + 1] == "test" {
       index += 2;
       while index < tokens.len() && !is_shell_command_separator(&tokens[index])
       {
@@ -918,7 +918,7 @@ impl LspTestReporter {
     }
     // No individual test was registered for this origin at runtime. This happens
     // when the module throws while evaluating, before (or instead of) any test
-    // runs — for example `Deno.test("")` throws "The test name can't be empty".
+    // runs — for example `Edno.test("")` throws "The test name can't be empty".
     // Surface the failure against the module's statically-collected tests (which
     // were already enqueued on the client) so the run still reports the error
     // instead of silently completing. See
@@ -1066,7 +1066,7 @@ impl LspTestReporter {
 
 #[cfg(test)]
 mod tests {
-  use deno_core::serde_json::json;
+  use edno_core::serde_json::json;
 
   use super::*;
   use crate::lsp::testing::collectors::tests::new_range;
@@ -1074,7 +1074,7 @@ mod tests {
   #[test]
   fn test_as_queue_and_filters() {
     let specifier = ModuleSpecifier::parse("file:///a/file.ts").unwrap();
-    // Regression test for https://github.com/denoland/vscode_deno/issues/890.
+    // Regression test for https://github.com/ednoland/vscode_deno/issues/890.
     let non_test_specifier =
       ModuleSpecifier::parse("file:///a/no_tests.ts").unwrap();
     let params = lsp_custom::TestRunRequestParams {
@@ -1171,26 +1171,26 @@ mod tests {
 
   #[test]
   fn test_extract_env_files_from_command() {
-    // Plain `deno test --env-file=.env.test -A` (the case from
+    // Plain `edno test --env-file=.env.test -A` (the case from
     // https://github.com/denoland/deno/issues/28797).
     assert_eq!(
-      extract_env_files_from_command("deno test --env-file=.env.test -A"),
+      extract_env_files_from_command("edno test --env-file=.env.test -A"),
       vec![".env.test".to_string()],
     );
     // Bare `--env-file` defaults to `.env` (matches CLI default).
     assert_eq!(
-      extract_env_files_from_command("deno test --env-file -A"),
+      extract_env_files_from_command("edno test --env-file -A"),
       vec![".env".to_string()],
     );
     // `--env` alias.
     assert_eq!(
-      extract_env_files_from_command("deno test --env=.env.local"),
+      extract_env_files_from_command("edno test --env=.env.local"),
       vec![".env.local".to_string()],
     );
     // Multiple env files, possibly amid other args.
     assert_eq!(
       extract_env_files_from_command(
-        "deno test --env-file=.env --env-file=.env.test -A"
+        "edno test --env-file=.env --env-file=.env.test -A"
       ),
       vec![".env".to_string(), ".env.test".to_string()],
     );
@@ -1198,35 +1198,35 @@ mod tests {
     // intended for the test run.
     assert_eq!(
       extract_env_files_from_command(
-        "deno fmt && deno test --env-file=.env.test"
+        "edno fmt && edno test --env-file=.env.test"
       ),
       vec![".env.test".to_string()],
     );
     // Env files belonging to other commands in a compound task are ignored.
     assert_eq!(
       extract_env_files_from_command(
-        "deno run --env-file=.env.prod setup.ts && deno test --env-file=.env.test"
+        "edno run --env-file=.env.prod setup.ts && edno test --env-file=.env.test"
       ),
       vec![".env.test".to_string()],
     );
     assert!(
       extract_env_files_from_command(
-        "deno run --env-file=.env.prod setup.ts && deno test"
+        "edno run --env-file=.env.prod setup.ts && edno test"
       )
       .is_empty()
     );
     // Quoted path containing whitespace is preserved by the shlex split.
     assert_eq!(
       extract_env_files_from_command(
-        "deno test --env-file=\"my env/.env.test\""
+        "edno test --env-file=\"my env/.env.test\""
       ),
       vec!["my env/.env.test".to_string()],
     );
     // No env-file flag.
-    assert!(extract_env_files_from_command("deno test -A").is_empty());
+    assert!(extract_env_files_from_command("edno test -A").is_empty());
     // Malformed command (unterminated quote) is treated as no env files.
     assert!(
-      extract_env_files_from_command("deno test --env-file=\"foo").is_empty()
+      extract_env_files_from_command("edno test --env-file=\"foo").is_empty()
     );
   }
 }

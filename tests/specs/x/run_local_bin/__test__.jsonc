@@ -2,7 +2,7 @@
   "tempDir": true,
   "steps": [
     {
-      "args": "add npm:@denotest/bin",
+      "args": "add npm:@ednotest/bin",
       "output": "[WILDCARD]"
     },
     {

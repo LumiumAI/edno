@@ -1,15 +1,15 @@
 import { join } from "@std/path";
 
 const testDir = new URL(".", import.meta.url).pathname;
-const tempDir = Deno.makeTempDirSync();
+const tempDir = Edno.makeTempDirSync();
 const cronSocketPath = join(tempDir, "cron.sock");
 const controlSocketPath = join(tempDir, "control.sock");
 
 // 1. Start cron socket listener (we are the server for cron)
-const cronListener = Deno.listen({ transport: "unix", path: cronSocketPath });
+const cronListener = Edno.listen({ transport: "unix", path: cronSocketPath });
 
 // 2. Spawn main.js with both env vars set
-const mainProcess = new Deno.Command(Deno.execPath(), {
+const mainProcess = new Edno.Command(Edno.execPath(), {
   args: [
     "run",
     "--quiet",
@@ -18,8 +18,8 @@ const mainProcess = new Deno.Command(Deno.execPath(), {
     join(testDir, "main.js"),
   ],
   env: {
-    DENO_UNSTABLE_CRON_SOCK: `unix:${cronSocketPath}`,
-    DENO_UNSTABLE_CONTROL_SOCK: `unix:${controlSocketPath}`,
+    EDNO_UNSTABLE_CRON_SOCK: `unix:${cronSocketPath}`,
+    EDNO_UNSTABLE_CONTROL_SOCK: `unix:${controlSocketPath}`,
   },
 }).spawn();
 
@@ -27,7 +27,7 @@ const mainProcess = new Deno.Command(Deno.execPath(), {
 let i = 0;
 while (true) {
   try {
-    await Deno.lstat(controlSocketPath);
+    await Edno.lstat(controlSocketPath);
     break;
   } catch {}
 
@@ -39,8 +39,8 @@ while (true) {
   await new Promise((r) => setTimeout(r, 10));
 }
 
-// 3. Connect to control socket (Deno is the server, we are the client)
-const controlConn = await Deno.connect({
+// 3. Connect to control socket (Edno is the server, we are the client)
+const controlConn = await Edno.connect({
   transport: "unix",
   path: controlSocketPath,
 });
@@ -52,13 +52,13 @@ const controlWriter = controlConn.writable.getWriter();
 
 // Send Start command
 const startCmd = JSON.stringify({
-  cwd: Deno.cwd(),
+  cwd: Edno.cwd(),
   args: ["run", "--unstable-cron", "--allow-net", join(testDir, "main.js")],
   env: [],
 }) + "\n";
 await controlWriter.write(new TextEncoder().encode(startCmd));
 
-// 4. Accept cron socket connection (Deno connects to us)
+// 4. Accept cron socket connection (Edno connects to us)
 const cronConn = await cronListener.accept();
 const cronReader = cronConn.readable
   .pipeThrough(new TextDecoderStream())
@@ -97,7 +97,7 @@ async function readCronMessages() {
           console.error(
             "[CRON SERVER] ERROR: Unexpected registration after serve",
           );
-          Deno.exit(1);
+          Edno.exit(1);
         }
       } else if (msg.kind === "reject-ack") {
         console.error("[CRON SERVER] Received reject-ack");
@@ -124,7 +124,7 @@ async function readControlMessages() {
         (typeof msg === "object" && msg !== null && "Serving" in msg)
       ) {
         receivedServing = true;
-        console.error("[CONTROL CLIENT] Received Serving signal from Deno");
+        console.error("[CONTROL CLIENT] Received Serving signal from Edno");
 
         // Send rejection on cron socket
         const rejection = JSON.stringify({
@@ -137,7 +137,7 @@ async function readControlMessages() {
         // Wait to ensure no more registrations arrive
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        // Read side is closed by Deno. We cannot close the whole connection here because we are still reading
+        // Read side is closed by Edno. We cannot close the whole connection here because we are still reading
         // in the readCronMessages loop
         await cronConn.closeWrite();
         return;
@@ -153,7 +153,7 @@ const [receivedRejectAck] = await Promise.all([
 
 if (!receivedRejectAck) {
   console.error("[CRON SERVER] ERROR: Did not receive reject-ack");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 console.error("[CRON SERVER] Registered crons:", registeredCrons.join(", "));
@@ -161,7 +161,7 @@ if (registeredCrons.length === 1 && registeredCrons[0] === "early-cron") {
   console.error("[CRON SERVER] SUCCESS: Only early cron was registered");
 } else {
   console.error("[CRON SERVER] ERROR: Unexpected registrations");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // Cleanup

@@ -4,12 +4,12 @@ export { assert, assertEquals, assertRejects, assertThrows } from "@std/assert";
 export { fromFileUrl } from "@std/path";
 import process from "node:process";
 
-const targetDir = Deno.execPath().replace(/[^\/\\]+$/, "");
+const targetDir = Edno.execPath().replace(/[^\/\\]+$/, "");
 export const [libPrefix, libSuffix] = {
   darwin: ["lib", "dylib"],
   linux: ["lib", "so"],
   windows: ["", "dll"],
-}[Deno.build.os];
+}[Edno.build.os];
 
 export function loadTestLibrary() {
   const specifier = `${targetDir}/${libPrefix}test_napi.${libSuffix}`;

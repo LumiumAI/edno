@@ -1,11 +1,11 @@
 import { addOne } from "./mod.ts";
 
-Deno.test("addOne", () => {
+Edno.test("addOne", () => {
   if (addOne(1) !== 2) {
     throw new Error("failed");
   }
 });
 
-Deno.test("fail", () => {
+Edno.test("fail", () => {
   throw new Error("failed");
 });

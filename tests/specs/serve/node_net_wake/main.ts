@@ -3,7 +3,7 @@ import net from "node:net";
 const httpPort = 12477;
 const tcpPort = 12478;
 
-const listener = Deno.listen({ hostname: "127.0.0.1", port: tcpPort });
+const listener = Edno.listen({ hostname: "127.0.0.1", port: tcpPort });
 
 (async () => {
   try {
@@ -20,7 +20,7 @@ const listener = Deno.listen({ hostname: "127.0.0.1", port: tcpPort });
   }
 })();
 
-const server = Deno.serve({
+const server = Edno.serve({
   hostname: "127.0.0.1",
   port: httpPort,
   onListen() {},
@@ -45,11 +45,11 @@ const server = Deno.serve({
     console.log(await response.text());
     await server.shutdown();
     listener.close();
-    Deno.exit(0);
+    Edno.exit(0);
   } catch (error) {
     console.error(error);
     await server.shutdown().catch(() => {});
     listener.close();
-    Deno.exit(2);
+    Edno.exit(2);
   }
 })();

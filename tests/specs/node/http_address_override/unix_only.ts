@@ -1,8 +1,8 @@
 import * as http from "node:http";
 
-const SOCK = "/tmp/deno-http-override-only.sock";
+const SOCK = "/tmp/edno-http-override-only.sock";
 try {
-  Deno.removeSync(SOCK);
+  Edno.removeSync(SOCK);
 } catch { /* ignore */ }
 
 // Non-duplicate unix override: the user's listen(9999) should be
@@ -21,7 +21,7 @@ server.listen(9999, "127.0.0.1", async () => {
   }
   console.log(`tcp reachable: ${tcpReachable}`);
 
-  const conn = await Deno.connect({ transport: "unix", path: SOCK });
+  const conn = await Edno.connect({ transport: "unix", path: SOCK });
   const req = "GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
   await conn.write(new TextEncoder().encode(req));
   const parts: Uint8Array[] = [];
@@ -40,6 +40,6 @@ server.listen(9999, "127.0.0.1", async () => {
 
   server.close();
   try {
-    Deno.removeSync(SOCK);
+    Edno.removeSync(SOCK);
   } catch { /* ignore */ }
 });

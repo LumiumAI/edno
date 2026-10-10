@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [
     {
@@ -11,16 +11,16 @@
       "output": "[WILDCARD]"
     },
     {
-      // Simulate a lockfile produced by an older deno that did not track
+      // Simulate a lockfile produced by an older edno that did not track
       // workspace links, so on the next load the re-derived links differ and
       // the lockfile is flagged as changed.
-      "args": "run -A --no-lock strip_links.ts ./deno.lock",
+      "args": "run -A --no-lock strip_links.ts ./edno.lock",
       "output": ""
     },
     {
       // Simulate a precomputed cache that has the package tarball but not its
       // registry metadata (packument). A re-resolution would need to fetch it.
-      "args": "run -A --no-lock rm_packument.ts ./deno_dir/npm/localhost_4260/@denotest/esm-basic/registry.json",
+      "args": "run -A --no-lock rm_packument.ts ./edno_dir/npm/localhost_4260/@ednotest/esm-basic/registry.json",
       "output": ""
     },
     {

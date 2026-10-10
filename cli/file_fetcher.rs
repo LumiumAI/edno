@@ -3,19 +3,19 @@
 use std::sync::Arc;
 
 use deno_ast::MediaType;
-use deno_cache_dir::GlobalOrLocalHttpCache;
-use deno_cache_dir::file_fetcher::BlobData;
-use deno_cache_dir::file_fetcher::CacheSetting;
-use deno_cache_dir::file_fetcher::File;
-use deno_cache_dir::file_fetcher::SendError;
-use deno_cache_dir::file_fetcher::SendResponse;
-use deno_core::ModuleSpecifier;
-use deno_core::anyhow::Context;
-use deno_core::error::AnyError;
-use deno_core::url::Url;
-use deno_resolver::file_fetcher::PermissionedFileFetcherOptions;
-use deno_resolver::loader::MemoryFiles;
-use deno_runtime::deno_web::BlobStoreTrait;
+use edno_cache_dir::GlobalOrLocalHttpCache;
+use edno_cache_dir::file_fetcher::BlobData;
+use edno_cache_dir::file_fetcher::CacheSetting;
+use edno_cache_dir::file_fetcher::File;
+use edno_cache_dir::file_fetcher::SendError;
+use edno_cache_dir::file_fetcher::SendResponse;
+use edno_core::ModuleSpecifier;
+use edno_core::anyhow::Context;
+use edno_core::error::AnyError;
+use edno_core::url::Url;
+use edno_resolver::file_fetcher::PermissionedFileFetcherOptions;
+use edno_resolver::loader::MemoryFiles;
+use edno_runtime::edno_web::BlobStoreTrait;
 use http::HeaderMap;
 use http::StatusCode;
 
@@ -61,12 +61,12 @@ impl TextDecodedFile {
   }
 }
 
-pub type CliFileFetcher = deno_resolver::file_fetcher::PermissionedFileFetcher<
+pub type CliFileFetcher = edno_resolver::file_fetcher::PermissionedFileFetcher<
   BlobStoreAdapter,
   CliSys,
   HttpClientAdapter,
 >;
-pub type CliDenoGraphLoader = deno_resolver::file_fetcher::DenoGraphLoader<
+pub type CliDenoGraphLoader = edno_resolver::file_fetcher::EdnoGraphLoader<
   BlobStoreAdapter,
   CliSys,
   HttpClientAdapter,
@@ -109,7 +109,7 @@ pub fn create_cli_file_fetcher(
 pub struct BlobStoreAdapter(Arc<dyn BlobStoreTrait>);
 
 #[async_trait::async_trait(?Send)]
-impl deno_cache_dir::file_fetcher::BlobStore for BlobStoreAdapter {
+impl edno_cache_dir::file_fetcher::BlobStore for BlobStoreAdapter {
   async fn get(&self, specifier: &Url) -> std::io::Result<Option<BlobData>> {
     let Some(blob) = self.0.get_object_url(specifier.clone()) else {
       return Ok(None);
@@ -129,7 +129,7 @@ pub struct HttpClientAdapter {
 }
 
 #[async_trait::async_trait(?Send)]
-impl deno_cache_dir::file_fetcher::HttpClient for HttpClientAdapter {
+impl edno_cache_dir::file_fetcher::HttpClient for HttpClientAdapter {
   async fn send_no_follow(
     &self,
     url: &Url,
@@ -191,7 +191,7 @@ impl deno_cache_dir::file_fetcher::HttpClient for HttpClientAdapter {
         return Ok(SendResponse::NotModified);
       }
 
-      if let Some(warning) = response.headers().get("X-Deno-Warning") {
+      if let Some(warning) = response.headers().get("X-Edno-Warning") {
         log::warn!(
           "{} {}",
           crate::colors::yellow("Warning"),
@@ -245,15 +245,15 @@ impl deno_cache_dir::file_fetcher::HttpClient for HttpClientAdapter {
 mod tests {
   use std::collections::HashMap;
 
-  use deno_cache_dir::HttpCache;
-  use deno_cache_dir::file_fetcher::HttpClient;
-  use deno_core::resolve_url;
-  use deno_resolver::file_fetcher::FetchErrorKind;
-  use deno_resolver::file_fetcher::FetchPermissionsOptionRef;
-  use deno_resolver::loader::MemoryFilesRc;
-  use deno_runtime::deno_web::Blob;
-  use deno_runtime::deno_web::BlobStore;
-  use deno_runtime::deno_web::InMemoryBlobPart;
+  use edno_cache_dir::HttpCache;
+  use edno_cache_dir::file_fetcher::HttpClient;
+  use edno_core::resolve_url;
+  use edno_resolver::file_fetcher::FetchErrorKind;
+  use edno_resolver::file_fetcher::FetchPermissionsOptionRef;
+  use edno_resolver::loader::MemoryFilesRc;
+  use edno_runtime::edno_web::Blob;
+  use edno_runtime::edno_web::BlobStore;
+  use edno_runtime::edno_web::InMemoryBlobPart;
   use test_util::TempDir;
 
   use super::*;
@@ -398,7 +398,7 @@ mod tests {
         "content-type".to_string(),
         "application/javascript".to_string(),
       )])),
-      loaded_from: deno_cache_dir::file_fetcher::LoadedFrom::Local,
+      loaded_from: edno_cache_dir::file_fetcher::LoadedFrom::Local,
     };
     file_fetcher.insert_memory_files(file.clone());
 
@@ -514,7 +514,7 @@ mod tests {
     );
     assert_eq!(file.media_type, MediaType::Json);
 
-    // This creates a totally new instance, simulating another Deno process
+    // This creates a totally new instance, simulating another Edno process
     // invocation and indicates to "cache bust".
     let location = temp_dir.path().join("remote").to_path_buf();
     let file_fetcher = create_cli_file_fetcher(
@@ -872,14 +872,14 @@ mod tests {
       FetchErrorKind::TooManyRedirects(_) => unreachable!(),
     };
     let err = match err.into_kind() {
-      deno_resolver::file_fetcher::FetchNoFollowErrorKind::FetchNoFollow(
+      edno_resolver::file_fetcher::FetchNoFollowErrorKind::FetchNoFollow(
         err,
       ) => err,
       _ => unreachable!(),
     };
     let err = err.into_kind();
     match &err {
-      deno_cache_dir::file_fetcher::FetchNoFollowErrorKind::NoRemote {
+      edno_cache_dir::file_fetcher::FetchNoFollowErrorKind::NoRemote {
         ..
       } => {
         assert_eq!(
@@ -932,14 +932,14 @@ mod tests {
       FetchErrorKind::TooManyRedirects(_) => unreachable!(),
     };
     let err = match err.into_kind() {
-      deno_resolver::file_fetcher::FetchNoFollowErrorKind::FetchNoFollow(
+      edno_resolver::file_fetcher::FetchNoFollowErrorKind::FetchNoFollow(
         err,
       ) => err,
       _ => unreachable!(),
     };
     let err = err.into_kind();
     match &err {
-      deno_cache_dir::file_fetcher::FetchNoFollowErrorKind::NotCached {
+      edno_cache_dir::file_fetcher::FetchNoFollowErrorKind::NotCached {
         ..
       } => {
         assert_eq!(
@@ -962,17 +962,17 @@ mod tests {
     let (file_fetcher, temp_dir) = setup(CacheSetting::Use, None);
     let fixture_path = temp_dir.path().join("mod.ts");
     let specifier = ModuleSpecifier::from_file_path(&fixture_path).unwrap();
-    fixture_path.write(r#"console.log("hello deno");"#);
+    fixture_path.write(r#"console.log("hello edno");"#);
     let result = file_fetcher.fetch_bypass_permissions(&specifier).await;
     assert!(result.is_ok());
     let file = TextDecodedFile::decode(result.unwrap()).unwrap();
-    assert_eq!(&*file.source, r#"console.log("hello deno");"#);
+    assert_eq!(&*file.source, r#"console.log("hello edno");"#);
 
-    fixture_path.write(r#"console.log("goodbye deno");"#);
+    fixture_path.write(r#"console.log("goodbye edno");"#);
     let result = file_fetcher.fetch_bypass_permissions(&specifier).await;
     assert!(result.is_ok());
     let file = TextDecodedFile::decode(result.unwrap()).unwrap();
-    assert_eq!(&*file.source, r#"console.log("goodbye deno");"#);
+    assert_eq!(&*file.source, r#"console.log("goodbye edno");"#);
   }
 
   #[tokio::test]

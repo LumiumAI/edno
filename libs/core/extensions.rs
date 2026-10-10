@@ -338,34 +338,34 @@ impl OpDecl {
   }
 }
 
-/// Declares a block of Deno `#[op]`s. The first parameter determines the name of the
-/// op declaration block, and is usually `deno_ops`. This block generates a function that
+/// Declares a block of Edno `#[op]`s. The first parameter determines the name of the
+/// op declaration block, and is usually `edno_ops`. This block generates a function that
 /// returns a [`Vec<OpDecl>`].
 ///
 /// This can be either a compact form like:
 ///
 /// ```no_compile
-/// # use deno_core::*;
+/// # use edno_core::*;
 /// #[op]
 /// fn op_xyz() {}
 ///
-/// deno_core::ops!(deno_ops, [
+/// edno_core::ops!(edno_ops, [
 ///   op_xyz
 /// ]);
 ///
 /// // Use the ops:
-/// deno_ops()
+/// edno_ops()
 /// ```
 ///
 /// ... or a parameterized form like so that allows passing a number of type parameters
 /// to each `#[op]`:
 ///
 /// ```no_compile
-/// # use deno_core::*;
+/// # use edno_core::*;
 /// #[op]
 /// fn op_xyz<P>() where P: Clone {}
 ///
-/// deno_core::ops!(deno_ops,
+/// edno_core::ops!(edno_ops,
 ///   parameters = [P: Clone],
 ///   ops = [
 ///     op_xyz<P>
@@ -373,7 +373,7 @@ impl OpDecl {
 /// );
 ///
 /// // Use the ops, with `String` as the parameter `P`:
-/// deno_ops::<String>()
+/// edno_ops::<String>()
 /// ```
 #[macro_export]
 macro_rules! ops {
@@ -408,7 +408,7 @@ macro_rules! or {
   };
 }
 
-/// Defines a Deno extension. The first parameter is the name of the extension symbol namespace to create. This is the symbol you
+/// Defines a Edno extension. The first parameter is the name of the extension symbol namespace to create. This is the symbol you
 /// will use to refer to the extension.
 ///
 /// Most extensions will define a combination of ops and ESM files, like so:
@@ -418,7 +418,7 @@ macro_rules! or {
 /// fn op_xyz() {
 /// }
 ///
-/// deno_core::extension!(
+/// edno_core::extension!(
 ///   my_extension,
 ///   ops = [ op_xyz ],
 ///   esm = [ "my_script.js" ],
@@ -439,12 +439,12 @@ macro_rules! or {
 ///  * lazy_loaded_esm: a comma-separated list of ESM module filenames (see [`include_js_files`]), that will be included in
 ///    the produced binary, but not automatically evaluated. Eg: `lazy_loaded_esm = [ dir "dir", "my_file.js" ]`
 ///  * lazy_loaded_js: a comma-separated list of JS script filenames that will be included in
-///    the produced binary, but not automatically evaluated. Loaded on demand via `Deno.core.loadExtScript()`.
+///    the produced binary, but not automatically evaluated. Loaded on demand via `Edno.core.loadExtScript()`.
 ///    Eg: `lazy_loaded_js = [ dir "dir", "my_file.js" ]`
 ///  * synthetic_esm: a comma-separated list of `"module_specifier" = "backing_script_specifier"` pairs.
 ///    Imports of `module_specifier` resolve to a synthetic ESM module whose exports are derived from
 ///    the exports object returned by the IIFE in `backing_script_specifier` (which must be declared
-///    in `lazy_loaded_js`). Eg: `synthetic_esm = [ "node:zlib" = "ext:deno_node/zlib.js" ]`
+///    in `lazy_loaded_js`). Eg: `synthetic_esm = [ "node:zlib" = "ext:edno_node/zlib.js" ]`
 ///  * js: a comma-separated list of JS filenames (see [`include_js_files`]), eg: `js = [ dir "dir", "my_file.js" ]`
 ///  * config: a structure-like definition for configuration parameters which will be required when initializing this extension, eg: `config = { my_param: Option<usize> }`
 ///  * middleware: an [`OpDecl`] middleware function with the signature `fn (OpDecl) -> OpDecl`
@@ -480,11 +480,11 @@ macro_rules! extension {
   ) => {
     $( $(#[doc = $docblocks])+ )?
     ///
-    /// An extension for use with the Deno JS runtime.
+    /// An extension for use with the Edno JS runtime.
     /// To use it, provide it as an argument when instantiating your runtime:
     ///
     /// ```rust,ignore
-    /// use deno_core::{ JsRuntime, RuntimeOptions };
+    /// use edno_core::{ JsRuntime, RuntimeOptions };
     ///
     #[doc = concat!("let mut extensions = vec![", stringify!($name), "::init()];")]
     /// let mut js_runtime = JsRuntime::new(RuntimeOptions {
@@ -919,7 +919,7 @@ pub struct ExtensionArguments {
 /// [`ExtensionFileSource`], that represents the filename and source code.
 ///
 /// ```
-/// # use deno_core::include_js_files_doctest as include_js_files;
+/// # use edno_core::include_js_files_doctest as include_js_files;
 /// // Example (for "my_extension"):
 /// let files = include_js_files!(
 ///   my_extension
@@ -936,7 +936,7 @@ pub struct ExtensionArguments {
 /// directory name.
 ///
 /// ```
-/// # use deno_core::include_js_files_doctest as include_js_files;
+/// # use edno_core::include_js_files_doctest as include_js_files;
 /// // Example with "dir" option (for "my_extension"):
 /// include_js_files!(
 ///   my_extension
@@ -952,7 +952,7 @@ pub struct ExtensionArguments {
 /// You may also override the specifiers for each file like so:
 ///
 /// ```
-/// # use deno_core::include_js_files_doctest as include_js_files;
+/// # use edno_core::include_js_files_doctest as include_js_files;
 /// // Example with "dir" option (for "my_extension"):
 /// include_js_files!(
 ///   my_extension
@@ -1142,7 +1142,7 @@ mod tests {
       const ID: u32;
     }
 
-    /// Resembles the generic ops in `deno_node`/`deno_http`: the parameter is
+    /// Resembles the generic ops in `edno_node`/`edno_http`: the parameter is
     /// named in the op's turbofish and reached through the op body.
     #[op2(fast)]
     fn op_generic_probe<P: TestParam + 'static>() -> u32 {
@@ -1157,7 +1157,7 @@ mod tests {
       ops = [op_generic_probe<P>, op_void_sync],
     );
 
-    /// Mirrors `deno_node`'s shape: several parameters, only some of which any
+    /// Mirrors `edno_node`'s shape: several parameters, only some of which any
     /// given op names, plus a parameter used by the options/state function.
     #[op2(fast)]
     fn op_generic_multi<A: TestParam + 'static, B: TestParam + 'static>() -> u32

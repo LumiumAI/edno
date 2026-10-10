@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 /// A process that currently holds an open handle to one of the files we tried
 /// to remove. Used to give the user an actionable message (for example, that a
-/// running Deno language server is keeping cache files locked) when `deno
+/// running Edno language server is keeping cache files locked) when `edno
 /// clean` cannot delete part of the cache on Windows.
 pub struct LockingProcess {
   pub pid: u32,
@@ -12,7 +12,7 @@ pub struct LockingProcess {
   pub name: String,
   /// Full path to the process image, when it could be resolved.
   pub exe: Option<PathBuf>,
-  /// Whether the process image looks like a `deno` executable.
+  /// Whether the process image looks like a `edno` executable.
   pub is_deno: bool,
 }
 
@@ -147,7 +147,7 @@ fn is_deno_exe(path: &std::path::Path) -> bool {
   path
     .file_stem()
     .and_then(|stem| stem.to_str())
-    .is_some_and(|stem| stem.eq_ignore_ascii_case("deno"))
+    .is_some_and(|stem| stem.eq_ignore_ascii_case("edno"))
 }
 
 /// Resolves the full image path for a process id, or `None` if it cannot be

@@ -561,7 +561,7 @@ async fn main_server(
       *res.status_mut() = StatusCode::MOVED_PERMANENTLY;
       res
         .headers_mut()
-        .insert("X-Deno-Warning", HeaderValue::from_static("foobar"));
+        .insert("X-Edno-Warning", HeaderValue::from_static("foobar"));
       res.headers_mut().insert(
         "location",
         HeaderValue::from_bytes(b"/lsp/x_deno_warning_redirect.js").unwrap(),
@@ -776,12 +776,12 @@ async fn main_server(
       );
       Ok(res)
     }
-    (_, "/.well-known/deno-import-intellisense.json") => {
+    (_, "/.well-known/edno-import-intellisense.json") => {
       let file_path =
-        testdata_path().join("lsp/registries/deno-import-intellisense.json");
+        testdata_path().join("lsp/registries/edno-import-intellisense.json");
       if let Ok(body) = tokio::fs::read(file_path).await {
         Ok(custom_headers(
-          "/.well-known/deno-import-intellisense.json",
+          "/.well-known/edno-import-intellisense.json",
           body,
         ))
       } else {
@@ -1132,7 +1132,7 @@ console.log("imported", import.meta.url);
       Ok(
         Response::builder()
           .status(StatusCode::OK)
-          // use a deno version that will never happen
+          // use a edno version that will never happen
           .body(string_body("99999.99.99"))
           .unwrap(),
       )
@@ -1153,13 +1153,13 @@ console.log("imported", import.meta.url);
         .body(string_body("bda3850f84f24b71e02512c1ba2d6bf2e3daa2fd"))
         .unwrap(),
     ),
-    // for testing deno upgrade
+    // for testing edno upgrade
     (&Method::GET, path)
-      if path.starts_with("/deno-upgrade/download/")
+      if path.starts_with("/edno-upgrade/download/")
         && path.ends_with(".zip") =>
     {
       let version = path
-        .strip_prefix("/deno-upgrade/download/v")
+        .strip_prefix("/edno-upgrade/download/v")
         .and_then(|s| s.split('/').next())
         .unwrap_or("unknown");
 
@@ -1172,13 +1172,13 @@ console.log("imported", import.meta.url);
           .compression_method(zip::CompressionMethod::Stored);
 
         let exe_name = if path.contains("windows") {
-          "deno.exe"
+          "edno.exe"
         } else {
-          "deno"
+          "edno"
         };
 
         zip_writer.start_file(exe_name, options).unwrap();
-        let content = format!("DENO_UPGRADE_TEST_BINARY_VERSION_{}", version);
+        let content = format!("EDNO_UPGRADE_TEST_BINARY_VERSION_{}", version);
         zip_writer.write_all(content.as_bytes()).unwrap();
         zip_writer.finish().unwrap();
       }
@@ -1191,21 +1191,21 @@ console.log("imported", import.meta.url);
           .unwrap(),
       )
     }
-    // for testing deno upgrade -- uncompressed binary SHA-256
+    // for testing edno upgrade -- uncompressed binary SHA-256
     (&Method::GET, path)
-      if path.starts_with("/deno-upgrade/download/")
+      if path.starts_with("/edno-upgrade/download/")
         && path.ends_with(".sha256sum")
         && !path.ends_with(".zip.sha256sum")
         && !path.ends_with(".bsdiff.sha256sum") =>
     {
       let version = path
-        .strip_prefix("/deno-upgrade/download/v")
+        .strip_prefix("/edno-upgrade/download/v")
         .and_then(|s| s.split('/').next())
         .unwrap_or("unknown");
       // The fake binary content matches what the zip handler produces
-      let content = format!("DENO_UPGRADE_TEST_BINARY_VERSION_{}", version);
+      let content = format!("EDNO_UPGRADE_TEST_BINARY_VERSION_{}", version);
       let hash = sha2_digest(content.as_bytes());
-      let filename = path.rsplit('/').next().unwrap_or("deno");
+      let filename = path.rsplit('/').next().unwrap_or("edno");
       let body = format!("{}  {}\n", hash, filename);
       Ok(
         Response::builder()
@@ -1215,16 +1215,16 @@ console.log("imported", import.meta.url);
           .unwrap(),
       )
     }
-    // for testing deno upgrade -- bsdiff delta patch
+    // for testing edno upgrade -- bsdiff delta patch
     (&Method::GET, path)
-      if path.starts_with("/deno-upgrade/download/")
+      if path.starts_with("/edno-upgrade/download/")
         && path.ends_with(".bsdiff") =>
     {
       let version = path
-        .strip_prefix("/deno-upgrade/download/v")
+        .strip_prefix("/edno-upgrade/download/v")
         .and_then(|s| s.split('/').next())
         .unwrap_or("unknown");
-      // Extract source version from filename: deno-{target}.from-{src}.bsdiff
+      // Extract source version from filename: edno-{target}.from-{src}.bsdiff
       let filename = path.rsplit('/').next().unwrap_or("");
       let src_version = filename
         .rsplit(".from-")
@@ -1233,8 +1233,8 @@ console.log("imported", import.meta.url);
         .unwrap_or("unknown");
       // Generate a bsdiff patch from the old to the new fake binary
       let old_content =
-        format!("DENO_UPGRADE_TEST_BINARY_VERSION_{}", src_version);
-      let new_content = format!("DENO_UPGRADE_TEST_BINARY_VERSION_{}", version);
+        format!("EDNO_UPGRADE_TEST_BINARY_VERSION_{}", src_version);
+      let new_content = format!("EDNO_UPGRADE_TEST_BINARY_VERSION_{}", version);
       let mut patch = Vec::new();
       bsdiff::diff(old_content.as_bytes(), new_content.as_bytes(), &mut patch)
         .unwrap();
@@ -1246,13 +1246,13 @@ console.log("imported", import.meta.url);
           .unwrap(),
       )
     }
-    // for testing deno upgrade -- bsdiff delta patch SHA-256
+    // for testing edno upgrade -- bsdiff delta patch SHA-256
     (&Method::GET, path)
-      if path.starts_with("/deno-upgrade/download/")
+      if path.starts_with("/edno-upgrade/download/")
         && path.ends_with(".bsdiff.sha256sum") =>
     {
       let version = path
-        .strip_prefix("/deno-upgrade/download/v")
+        .strip_prefix("/edno-upgrade/download/v")
         .and_then(|s| s.split('/').next())
         .unwrap_or("unknown");
       let filename_with_sum = path.rsplit('/').next().unwrap_or("");
@@ -1265,8 +1265,8 @@ console.log("imported", import.meta.url);
         .and_then(|s| s.strip_suffix(".bsdiff"))
         .unwrap_or("unknown");
       let old_content =
-        format!("DENO_UPGRADE_TEST_BINARY_VERSION_{}", src_version);
-      let new_content = format!("DENO_UPGRADE_TEST_BINARY_VERSION_{}", version);
+        format!("EDNO_UPGRADE_TEST_BINARY_VERSION_{}", src_version);
+      let new_content = format!("EDNO_UPGRADE_TEST_BINARY_VERSION_{}", version);
       let mut patch = Vec::new();
       bsdiff::diff(old_content.as_bytes(), new_content.as_bytes(), &mut patch)
         .unwrap();

@@ -1,3 +1,3 @@
-Deno.test("resource leak", () => {
-  Deno.openSync("deno_no_sanitizers.json");
+Edno.test("resource leak", () => {
+  Edno.openSync("edno_no_sanitizers.json");
 });

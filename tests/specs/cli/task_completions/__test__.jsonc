@@ -3,17 +3,17 @@
   "tests": {
     "basic": {
       "envs": { "COMPLETE": "fish" },
-      "args": ["--", "/thing/deno", "task", ""],
+      "args": ["--", "/thing/edno", "task", ""],
       "output": "basic.out"
     },
     "config_flag": {
       "envs": { "COMPLETE": "fish" },
       "args": [
         "--",
-        "/thing/deno",
+        "/thing/edno",
         "task",
         "--config",
-        "./subdir/deno.json",
+        "./subdir/edno.json",
         ""
       ],
       "output": "config_flag.out"
@@ -21,25 +21,25 @@
     "workspace": {
       "envs": { "COMPLETE": "fish" },
       "cwd": "./workspace/member",
-      "args": ["--", "/thing/deno", "task", ""],
+      "args": ["--", "/thing/edno", "task", ""],
       "output": "workspace.out"
     },
     "workspace_package_json": {
       "envs": { "COMPLETE": "fish" },
       "cwd": "./workspace/member2",
-      "args": ["--", "/thing/deno", "task", ""],
+      "args": ["--", "/thing/edno", "task", ""],
       "output": "workspace_package_json.out"
     },
     "workspace_recursive": {
       "envs": { "COMPLETE": "fish" },
       "cwd": "./workspace",
-      "args": ["--", "/thing/deno", "task", "--recursive", ""],
+      "args": ["--", "/thing/edno", "task", "--recursive", ""],
       "output": "workspace_recursive.out"
     },
     "workspace_filter": {
       "envs": { "COMPLETE": "fish" },
       "cwd": "./workspace",
-      "args": ["--", "/thing/deno", "task", "--filter", "member2", ""],
+      "args": ["--", "/thing/edno", "task", "--filter", "member2", ""],
       "output": "workspace_filter.out"
     }
   }

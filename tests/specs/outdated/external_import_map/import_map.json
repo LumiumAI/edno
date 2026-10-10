@@ -1,8 +1,8 @@
 {
   "imports": {
-    "@denotest/add": "jsr:@denotest/add@^0.2.0",
-    "@denotest/subtract": "jsr:@denotest/subtract@^0.2.0",
-    "@denotest/breaking-change-between-versions": "npm:@denotest/breaking-change-between-versions@1.0.0",
-    "@denotest/has-patch-versions": "npm:@denotest/has-patch-versions@^0.1.0"
+    "@ednotest/add": "jsr:@ednotest/add@^0.2.0",
+    "@ednotest/subtract": "jsr:@ednotest/subtract@^0.2.0",
+    "@ednotest/breaking-change-between-versions": "npm:@ednotest/breaking-change-between-versions@1.0.0",
+    "@ednotest/has-patch-versions": "npm:@ednotest/has-patch-versions@^0.1.0"
   }
 }

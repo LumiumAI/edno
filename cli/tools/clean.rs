@@ -9,14 +9,14 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_cache_dir::GlobalOrLocalHttpCache;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::url::Url;
+use edno_cache_dir::GlobalOrLocalHttpCache;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::url::Url;
 use deno_graph::ModuleGraph;
 use deno_graph::packages::PackageSpecifiers;
-use deno_npm_installer::graph::NpmCachingStrategy;
+use edno_npm_installer::graph::NpmCachingStrategy;
 use sys_traits::FsCanonicalize;
 use sys_traits::FsCreateDirAll;
 use walkdir::WalkDir;
@@ -46,9 +46,9 @@ pub async fn clean(
   }
 
   let factory = CliFactory::from_flags(flags);
-  let deno_dir = factory.deno_dir()?;
-  if deno_dir.root.exists() {
-    let no_of_files = walkdir::WalkDir::new(&deno_dir.root).into_iter().count();
+  let edno_dir = factory.edno_dir()?;
+  if edno_dir.root.exists() {
+    let no_of_files = walkdir::WalkDir::new(&edno_dir.root).into_iter().count();
     let progress_bar = ProgressBar::new(ProgressBarStyle::ProgressBars);
     let progress_guard =
       progress_bar.update_with_prompt(ProgressMessagePrompt::Cleaning, "");
@@ -58,9 +58,9 @@ pub async fn clean(
     // On a dry run, tally up what would be removed without deleting anything;
     // the reported output is otherwise identical to a real clean.
     if clean_flags.dry_run {
-      cleaner.tally(&deno_dir.root)?;
+      cleaner.tally(&edno_dir.root)?;
     } else {
-      cleaner.rm_rf(&deno_dir.root)?;
+      cleaner.rm_rf(&edno_dir.root)?;
     }
 
     // Drop the guard so that progress bar disappears.
@@ -69,7 +69,7 @@ pub async fn clean(
     log::info!(
       "{} {} {}",
       colors::green("Removed"),
-      deno_dir.root.display(),
+      edno_dir.root.display(),
       colors::gray(&format!(
         "({} files, {})",
         cleaner.files_removed + cleaner.dirs_removed,
@@ -89,7 +89,7 @@ pub async fn clean(
 
 /// Warns about cache files that could not be removed because another process is
 /// holding them open. On Windows this resolves the offending process(es) via
-/// the Restart Manager and points the user at a running Deno language server,
+/// the Restart Manager and points the user at a running Edno language server,
 /// which is the most common cause (see issue #33903).
 fn report_locked_files(failed: &[(PathBuf, std::io::Error)]) {
   if failed.is_empty() {
@@ -125,8 +125,8 @@ fn format_locked_files_message(
 
   if processes.is_empty() {
     message.push_str(
-      "\n\nThis is usually an editor running the Deno language server holding \
-       the cache open. Close it (or any running `deno` process) and run `deno \
+      "\n\nThis is usually an editor running the Edno language server holding \
+       the cache open. Close it (or any running `edno` process) and run `edno \
        clean` again.",
     );
   } else {
@@ -137,14 +137,14 @@ fn format_locked_files_message(
         None => process.name.clone(),
       };
       let hint = if process.is_deno {
-        " (a running Deno process, likely the language server in your editor)"
+        " (a running Edno process, likely the language server in your editor)"
       } else {
         ""
       };
       message.push_str(&format!("\n  {} (PID {}){}", label, process.pid, hint));
     }
     message
-      .push_str("\n\nClose the process(es) above and run `deno clean` again.");
+      .push_str("\n\nClose the process(es) above and run `edno clean` again.");
   }
 
   message
@@ -270,10 +270,10 @@ async fn clean_except(
   )?;
   let http_cache = factory.global_http_cache()?;
   let local_or_global_http_cache = factory.http_cache()?.clone();
-  let deno_dir = factory.deno_dir()?.clone();
-  let deno_dir_root_canonical =
-    try_get_canonicalized_root_dir(&sys, &deno_dir.root)
-      .unwrap_or(deno_dir.root.clone());
+  let edno_dir = factory.edno_dir()?.clone();
+  let edno_dir_root_canonical =
+    try_get_canonicalized_root_dir(&sys, &edno_dir.root)
+      .unwrap_or(edno_dir.root.clone());
 
   let mut permit = main_graph_container.acquire_update_permit().await;
   let graph = permit.graph_mut();
@@ -297,9 +297,9 @@ async fn clean_except(
   let mut npm_reqs = Vec::new();
 
   let mut keep_paths_trie = PathTrie::new();
-  if deno_dir_root_canonical != deno_dir.root {
+  if edno_dir_root_canonical != edno_dir.root {
     keep_paths_trie
-      .add_rewrite(deno_dir.root.clone(), deno_dir_root_canonical.clone());
+      .add_rewrite(edno_dir.root.clone(), edno_dir_root_canonical.clone());
   }
   for (_, entry) in graph.walk(
     roots.iter(),
@@ -345,11 +345,11 @@ async fn clean_except(
     {
       keep_paths_trie.insert(path);
     }
-    if let Some(path) = deno_dir
+    if let Some(path) = edno_dir
       .gen_cache
       .get_cache_filename_with_extension(url, "js")
     {
-      let path = deno_dir.gen_cache.location.join(path);
+      let path = edno_dir.gen_cache.location.join(path);
       keep_paths_trie.insert(path);
     }
   }
@@ -372,7 +372,7 @@ async fn clean_except(
       node_modules_keep.insert(package.get_package_cache_folder_id());
     }
     keep_paths_trie.insert(npm_cache.package_folder_for_id(
-      &deno_npm::NpmPackageCacheFolderId {
+      &edno_npm::NpmPackageCacheFolderId {
         nv: package.id.nv.clone(),
         copy_index: package.copy_index,
       },
@@ -395,11 +395,11 @@ async fn clean_except(
   })?;
   walk_removing(
     &mut state,
-    walkdir::WalkDir::new(&deno_dir.root)
+    walkdir::WalkDir::new(&edno_dir.root)
       .contents_first(false)
       .min_depth(2),
     &keep_paths_trie,
-    &deno_dir.root,
+    &edno_dir.root,
     dry_run,
   )?;
   let mut node_modules_cleaned = FsCleaner::default();
@@ -418,8 +418,8 @@ async fn clean_except(
     && let GlobalOrLocalHttpCache::Local(cache) = local_or_global_http_cache
   {
     let mut trie = PathTrie::new();
-    if deno_dir_root_canonical != deno_dir.root {
-      trie.add_rewrite(deno_dir.root.clone(), deno_dir_root_canonical);
+    if edno_dir_root_canonical != edno_dir.root {
+      trie.add_rewrite(edno_dir.root.clone(), edno_dir_root_canonical);
     }
     let cache = cache.clone();
     add_jsr_meta_paths(graph, &mut trie, jsr_url, &|url| match cache
@@ -459,7 +459,7 @@ async fn clean_except(
   }
 
   if !dry_run {
-    log_stats(&state, &deno_dir.root);
+    log_stats(&state, &edno_dir.root);
 
     if let Some(dir) = node_modules_path {
       log_stats(&node_modules_cleaned, dir);
@@ -572,7 +572,7 @@ fn walk_removing(
 
 fn clean_node_modules(
   cleaner: &mut FsCleaner,
-  keep_pkgs: &HashSet<deno_npm::NpmPackageCacheFolderId>,
+  keep_pkgs: &HashSet<edno_npm::NpmPackageCacheFolderId>,
   dir: &Path,
   dry_run: bool,
 ) -> Result<(), AnyError> {
@@ -608,7 +608,7 @@ fn clean_node_modules(
     bail!("expected a node_modules directory, got: {}", dir.display());
   }
 
-  let base = dir.join(".deno");
+  let base = dir.join(".edno");
   let base_metadata = match std::fs::symlink_metadata(&base) {
     Ok(metadata) => metadata,
     Err(err)
@@ -621,13 +621,13 @@ fn clean_node_modules(
     }
     Err(err) => {
       return Err(err).with_context(|| {
-        format!("failed to stat node_modules/.deno at {}", base.display())
+        format!("failed to stat node_modules/.edno at {}", base.display())
       });
     }
   };
   if base_metadata.file_type().is_symlink() {
     bail!(
-      "refusing to clean symlinked node_modules/.deno directory at {}",
+      "refusing to clean symlinked node_modules/.edno directory at {}",
       base.display()
     );
   }
@@ -637,10 +637,10 @@ fn clean_node_modules(
 
   let keep_ids = keep_pkgs
     .iter()
-    .map(deno_resolver::npm::get_package_folder_id_folder_name)
+    .map(edno_resolver::npm::get_package_folder_id_folder_name)
     .collect::<HashSet<_>>();
 
-  // remove the actual packages from node_modules/.deno
+  // remove the actual packages from node_modules/.edno
   let entries = match std::fs::read_dir(&base) {
     Ok(entries) => entries,
     // `base` was confirmed to be a real directory above, so reaching this arm
@@ -666,7 +666,7 @@ fn clean_node_modules(
 
   // TODO(nathanwhit): this probably shouldn't reach directly into this code
   let sys = CliSys::default();
-  let mut setup_cache = deno_npm_installer::LocalSetupCache::load(
+  let mut setup_cache = edno_npm_installer::LocalSetupCache::load(
     sys.clone(),
     base.join(".setup-cache.bin"),
   );
@@ -702,9 +702,9 @@ fn clean_node_modules(
     }
   };
 
-  // remove top level symlinks from node_modules/<package> to node_modules/.deno/<package>
+  // remove top level symlinks from node_modules/<package> to node_modules/.edno/<package>
   // where the target doesn't exist (because it was removed above)
-  deno_npm_installer::remove_unused_node_modules_symlinks(
+  edno_npm_installer::remove_unused_node_modules_symlinks(
     &sys,
     dir,
     &keep_ids,
@@ -715,12 +715,12 @@ fn clean_node_modules(
   )
   .map_err(AnyError::from)?;
 
-  // remove symlinks from node_modules/.deno/node_modules/<package> to node_modules/.deno/<package>
+  // remove symlinks from node_modules/.edno/node_modules/<package> to node_modules/.edno/<package>
   // where the target doesn't exist (because it was removed above)
-  let deno_nm = base.join("node_modules");
-  deno_npm_installer::remove_unused_node_modules_symlinks(
+  let edno_nm = base.join("node_modules");
+  edno_npm_installer::remove_unused_node_modules_symlinks(
     &sys,
-    &deno_nm,
+    &edno_nm,
     &keep_ids,
     &mut |name, path| {
       setup_cache.remove_deno_symlink(name);
@@ -751,26 +751,26 @@ mod tests {
 
   #[test]
   fn locked_files_message_without_processes() {
-    let paths = vec![PathBuf::from("/deno/dep_analysis_cache_v2")];
+    let paths = vec![PathBuf::from("/edno/dep_analysis_cache_v2")];
     let message = format_locked_files_message(&paths, &[]);
     assert!(message.starts_with(
       "1 file could not be removed because they are in use by another process:"
     ));
     assert!(message.contains("dep_analysis_cache_v2"));
-    assert!(message.contains("Deno language server"));
+    assert!(message.contains("Edno language server"));
   }
 
   #[test]
   fn locked_files_message_lists_holding_processes() {
     let paths = vec![
-      PathBuf::from("/deno/dep_analysis_cache_v2"),
-      PathBuf::from("/deno/node_analysis_cache_v2"),
+      PathBuf::from("/edno/dep_analysis_cache_v2"),
+      PathBuf::from("/edno/node_analysis_cache_v2"),
     ];
     let processes = vec![
       LockingProcess {
         pid: 1234,
-        name: "deno".to_string(),
-        exe: Some(PathBuf::from("C:/Program Files/deno/deno.exe")),
+        name: "edno".to_string(),
+        exe: Some(PathBuf::from("C:/Program Files/edno/edno.exe")),
         is_deno: true,
       },
       LockingProcess {
@@ -783,7 +783,7 @@ mod tests {
     let message = format_locked_files_message(&paths, &processes);
     assert!(message.starts_with("2 files could not be removed"));
     assert!(message.contains("Held open by:"));
-    assert!(message.contains("deno.exe (PID 1234)"));
+    assert!(message.contains("edno.exe (PID 1234)"));
     assert!(message.contains("likely the language server"));
     assert!(message.contains("Some Editor (PID 5678)"));
     assert!(message.contains("Close the process(es) above"));
@@ -792,7 +792,7 @@ mod tests {
   #[test]
   fn locked_files_message_truncates_long_lists() {
     let paths = (0..15)
-      .map(|i| PathBuf::from(format!("/deno/file_{i}")))
+      .map(|i| PathBuf::from(format!("/edno/file_{i}")))
       .collect::<Vec<_>>();
     let message = format_locked_files_message(&paths, &[]);
     assert!(message.starts_with("15 files could not be removed"));
@@ -805,7 +805,7 @@ mod tests {
     temp_dir.create_dir_all("node_modules");
     temp_dir.create_dir_all("victim/important_dir");
     temp_dir.write("victim/important_dir/secret.txt", "secret");
-    temp_dir.symlink_dir("victim", "node_modules/.deno");
+    temp_dir.symlink_dir("victim", "node_modules/.edno");
 
     let mut cleaner = FsCleaner::new(None);
     let node_modules = temp_dir.path().join("node_modules");
@@ -849,9 +849,9 @@ mod tests {
       #[cfg(unix)]
       {
         [
-          "/foo/bar/deno",
-          "/foo/bar/deno/1",
-          "/foo/bar/deno/2",
+          "/foo/bar/edno",
+          "/foo/bar/edno/1",
+          "/foo/bar/edno/2",
           "/foo/baz",
           "/Actual/thing/quux",
         ]
@@ -859,9 +859,9 @@ mod tests {
       #[cfg(windows)]
       {
         [
-          r"C:\foo\bar\deno",
-          r"C:\foo\bar\deno\1",
-          r"C:\foo\bar\deno\2",
+          r"C:\foo\bar\edno",
+          r"C:\foo\bar\edno\1",
+          r"C:\foo\bar\edno\2",
           r"C:\foo\baz",
           r"D:\thing",
           r"C:\Actual\thing\quux",
@@ -877,12 +877,12 @@ mod tests {
           ("/foo", Some(Prefix)),
           ("/foo/", Some(Prefix)),
           ("/foo/bar", Some(Prefix)),
-          ("/foo/bar/deno", Some(Match)),
-          ("/foo/bar/deno/1", Some(Match)),
-          ("/foo/bar/deno/2", Some(Match)),
+          ("/foo/bar/edno", Some(Match)),
+          ("/foo/bar/edno/1", Some(Match)),
+          ("/foo/bar/edno/2", Some(Match)),
           ("/foo/baz", Some(Match)),
           ("/fo", None),
-          ("/foo/baz/deno", None),
+          ("/foo/baz/edno", None),
           ("/Actual/thing/quux", Some(Match)),
           ("/RewriteMe/thing/quux", Some(Match)),
           ("/RewriteMe/thing", Some(Prefix)),
@@ -896,11 +896,11 @@ mod tests {
           (r"C:\foo\", Some(Prefix)),
           (r"C:\foo\", Some(Prefix)),
           (r"C:\foo\bar", Some(Prefix)),
-          (r"C:\foo\bar\deno\1", Some(Match)),
-          (r"C:\foo\bar\deno\2", Some(Match)),
+          (r"C:\foo\bar\edno\1", Some(Match)),
+          (r"C:\foo\bar\edno\2", Some(Match)),
           (r"C:\foo\baz", Some(Match)),
           (r"C:\fo", None),
-          (r"C:\foo\baz\deno", None),
+          (r"C:\foo\baz\edno", None),
           (r"D:\", Some(Prefix)),
           (r"E:\", None),
           (r"C:\Actual\thing\quux", Some(Match)),

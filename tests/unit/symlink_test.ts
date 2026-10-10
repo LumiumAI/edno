@@ -6,171 +6,171 @@ import {
   pathToAbsoluteFileUrl,
 } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function symlinkSyncSuccess() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const oldname = testDir + "/oldname";
     const newname = testDir + "/newname";
-    Deno.mkdirSync(oldname);
-    Deno.symlinkSync(oldname, newname);
-    const newNameInfoLStat = Deno.lstatSync(newname);
-    const newNameInfoStat = Deno.statSync(newname);
+    Edno.mkdirSync(oldname);
+    Edno.symlinkSync(oldname, newname);
+    const newNameInfoLStat = Edno.lstatSync(newname);
+    const newNameInfoStat = Edno.statSync(newname);
     assert(newNameInfoLStat.isSymlink);
     assert(newNameInfoStat.isDirectory);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function symlinkSyncURL() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const oldname = testDir + "/oldname";
     const newname = testDir + "/newname";
-    Deno.mkdirSync(oldname);
-    Deno.symlinkSync(
+    Edno.mkdirSync(oldname);
+    Edno.symlinkSync(
       pathToAbsoluteFileUrl(oldname),
       pathToAbsoluteFileUrl(newname),
     );
-    const newNameInfoLStat = Deno.lstatSync(newname);
-    const newNameInfoStat = Deno.statSync(newname);
+    const newNameInfoLStat = Edno.lstatSync(newname);
+    const newNameInfoStat = Edno.statSync(newname);
     assert(newNameInfoLStat.isSymlink);
     assert(newNameInfoStat.isDirectory);
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os !== "windows",
+    ignore: Edno.build.os !== "windows",
     permissions: { read: true, write: true },
   },
   function symlinkSyncJunction() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const oldname = testDir + "/oldname";
     const newname = testDir + "/newname";
-    Deno.mkdirSync(oldname);
-    Deno.symlinkSync(oldname, newname, { type: "junction" });
-    const newNameInfoLStat = Deno.lstatSync(newname);
-    const newNameInfoStat = Deno.statSync(newname);
+    Edno.mkdirSync(oldname);
+    Edno.symlinkSync(oldname, newname, { type: "junction" });
+    const newNameInfoLStat = Edno.lstatSync(newname);
+    const newNameInfoStat = Edno.statSync(newname);
     assert(newNameInfoLStat.isSymlink);
     assert(newNameInfoStat.isDirectory);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: false, write: false } },
   function symlinkSyncPerm() {
     assertThrows(() => {
-      Deno.symlinkSync("oldbaddir", "newbaddir");
-    }, Deno.errors.NotCapable);
+      Edno.symlinkSync("oldbaddir", "newbaddir");
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function symlinkSyncAlreadyExist() {
-    const existingFile = Deno.makeTempFileSync();
-    const existingFile2 = Deno.makeTempFileSync();
+    const existingFile = Edno.makeTempFileSync();
+    const existingFile2 = Edno.makeTempFileSync();
     assertThrows(
       () => {
-        Deno.symlinkSync(existingFile, existingFile2);
+        Edno.symlinkSync(existingFile, existingFile2);
       },
-      Deno.errors.AlreadyExists,
+      Edno.errors.AlreadyExists,
       `symlink '${existingFile}' -> '${existingFile2}'`,
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function symlinkSuccess() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const oldname = testDir + "/oldname";
     const newname = testDir + "/newname";
-    Deno.mkdirSync(oldname);
-    await Deno.symlink(oldname, newname);
-    const newNameInfoLStat = Deno.lstatSync(newname);
-    const newNameInfoStat = Deno.statSync(newname);
+    Edno.mkdirSync(oldname);
+    await Edno.symlink(oldname, newname);
+    const newNameInfoLStat = Edno.lstatSync(newname);
+    const newNameInfoStat = Edno.statSync(newname);
     assert(newNameInfoLStat.isSymlink, "NOT SYMLINK");
     assert(newNameInfoStat.isDirectory, "NOT DIRECTORY");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function symlinkURL() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const oldname = testDir + "/oldname";
     const newname = testDir + "/newname";
-    Deno.mkdirSync(oldname);
-    await Deno.symlink(
+    Edno.mkdirSync(oldname);
+    await Edno.symlink(
       pathToAbsoluteFileUrl(oldname),
       pathToAbsoluteFileUrl(newname),
     );
-    const newNameInfoLStat = Deno.lstatSync(newname);
-    const newNameInfoStat = Deno.statSync(newname);
+    const newNameInfoLStat = Edno.lstatSync(newname);
+    const newNameInfoStat = Edno.statSync(newname);
     assert(newNameInfoLStat.isSymlink, "NOT SYMLINK");
     assert(newNameInfoStat.isDirectory, "NOT DIRECTORY");
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os !== "windows",
+    ignore: Edno.build.os !== "windows",
     permissions: { read: true, write: true },
   },
   async function symlinkJunction() {
-    const testDir = Deno.makeTempDirSync();
+    const testDir = Edno.makeTempDirSync();
     const oldname = testDir + "/oldname";
     const newname = testDir + "/newname";
-    Deno.mkdirSync(oldname);
-    await Deno.symlink(oldname, newname, { type: "junction" });
-    const newNameInfoLStat = Deno.lstatSync(newname);
-    const newNameInfoStat = Deno.statSync(newname);
+    Edno.mkdirSync(oldname);
+    await Edno.symlink(oldname, newname, { type: "junction" });
+    const newNameInfoLStat = Edno.lstatSync(newname);
+    const newNameInfoStat = Edno.statSync(newname);
     assert(newNameInfoLStat.isSymlink, "NOT SYMLINK");
     assert(newNameInfoStat.isDirectory, "NOT DIRECTORY");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function symlinkAlreadyExist() {
-    const existingFile = Deno.makeTempFileSync();
-    const existingFile2 = Deno.makeTempFileSync();
+    const existingFile = Edno.makeTempFileSync();
+    const existingFile2 = Edno.makeTempFileSync();
     await assertRejects(
       async () => {
-        await Deno.symlink(existingFile, existingFile2);
+        await Edno.symlink(existingFile, existingFile2);
       },
-      Deno.errors.AlreadyExists,
+      Edno.errors.AlreadyExists,
       `symlink '${existingFile}' -> '${existingFile2}'`,
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: ["."] } },
   async function symlinkNoFullWritePermissions() {
     await assertRejects(
-      () => Deno.symlink("old", "new"),
-      Deno.errors.NotCapable,
+      () => Edno.symlink("old", "new"),
+      Edno.errors.NotCapable,
     );
     assertThrows(
-      () => Deno.symlinkSync("old", "new"),
-      Deno.errors.NotCapable,
+      () => Edno.symlinkSync("old", "new"),
+      Edno.errors.NotCapable,
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: ["."], write: true } },
   async function symlinkNoFullReadPermissions() {
     await assertRejects(
-      () => Deno.symlink("old", "new"),
-      Deno.errors.NotCapable,
+      () => Edno.symlink("old", "new"),
+      Edno.errors.NotCapable,
     );
     assertThrows(
-      () => Deno.symlinkSync("old", "new"),
-      Deno.errors.NotCapable,
+      () => Edno.symlinkSync("old", "new"),
+      Edno.errors.NotCapable,
     );
   },
 );

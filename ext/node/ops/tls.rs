@@ -17,31 +17,31 @@ use std::task::Poll;
 
 use base64::Engine;
 use bytes::Bytes;
-use deno_core::AsyncRefCell;
-use deno_core::AsyncResult;
-use deno_core::FromV8;
-use deno_core::OpState;
-use deno_core::RcRef;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::op2;
+use edno_core::AsyncRefCell;
+use edno_core::AsyncResult;
+use edno_core::FromV8;
+use edno_core::OpState;
+use edno_core::RcRef;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::op2;
 use deno_native_certs::load_native_certs;
-use deno_net::DefaultTlsOptions;
-use deno_net::UnsafelyIgnoreCertificateErrors;
-use deno_net::ops::NetError;
-use deno_net::ops::TlsHandshakeInfo;
-use deno_net::ops_tls::TlsStreamResource;
-use deno_node_crypto::x509::Certificate;
-use deno_node_crypto::x509::CertificateObject;
-use deno_permissions::PermissionCheckError;
-use deno_permissions::PermissionsContainer;
-use deno_tls::SocketUse;
-use deno_tls::TlsClientConfigOptions;
-use deno_tls::TlsKeys;
-use deno_tls::TlsKeysHolder;
-use deno_tls::create_client_config;
-use deno_tls::rustls::ClientConnection;
-use deno_tls::rustls::pki_types::ServerName;
+use edno_net::DefaultTlsOptions;
+use edno_net::UnsafelyIgnoreCertificateErrors;
+use edno_net::ops::NetError;
+use edno_net::ops::TlsHandshakeInfo;
+use edno_net::ops_tls::TlsStreamResource;
+use edno_node_crypto::x509::Certificate;
+use edno_node_crypto::x509::CertificateObject;
+use edno_permissions::PermissionCheckError;
+use edno_permissions::PermissionsContainer;
+use edno_tls::SocketUse;
+use edno_tls::TlsClientConfigOptions;
+use edno_tls::TlsKeys;
+use edno_tls::TlsKeysHolder;
+use edno_tls::create_client_config;
+use edno_tls::rustls::ClientConnection;
+use edno_tls::rustls::pki_types::ServerName;
 use rustls_tokio_stream::TlsStream;
 use rustls_tokio_stream::TlsStreamRead;
 use rustls_tokio_stream::TlsStreamWrite;
@@ -58,13 +58,13 @@ pub(crate) struct NodeTlsState {
   /// Session cache for connections that fully verify the peer cert
   /// (`rejectUnauthorized: true`, the default).
   pub(crate) client_session_store:
-    Arc<dyn deno_tls::rustls::client::ClientSessionStore>,
+    Arc<dyn edno_tls::rustls::client::ClientSessionStore>,
   /// Separate session cache for connections that accept invalid certs
   /// (`rejectUnauthorized: false`). Sessions cached here are never
   /// offered to a later strict connection, so a deferred cert error in
   /// the first handshake cannot be skipped by a resumed strict handshake.
   pub(crate) client_session_store_insecure:
-    Arc<dyn deno_tls::rustls::client::ClientSessionStore>,
+    Arc<dyn edno_tls::rustls::client::ClientSessionStore>,
   /// Process-shared TLS session ticketer used for every `node:tls` server
   /// config in this isolate.  Sharing the ticketer across servers in a
   /// process keeps RFC 5077 ticket keys consistent for all incoming
@@ -72,7 +72,7 @@ pub(crate) struct NodeTlsState {
   /// `parallel/test-tls-ticket-cluster` test relies on.  Node maintains
   /// per-server keys; this is a pragmatic simplification.
   pub(crate) server_ticketer:
-    Option<Arc<dyn deno_tls::rustls::server::ProducesTickets>>,
+    Option<Arc<dyn edno_tls::rustls::server::ProducesTickets>>,
   /// Cached TLS-1.3 client cert verifiers and shared "no client cert"
   /// resolvers, used when a client connection is built without per-context
   /// `ca` certs or a client cert (a process-level custom CA from
@@ -86,9 +86,9 @@ pub(crate) struct NodeTlsState {
   pub(crate) cached_default_verifier: Option<CachedClientVerifier>,
   pub(crate) cached_insecure_verifier: Option<CachedClientVerifier>,
   pub(crate) cached_no_client_auth:
-    Option<Arc<dyn deno_tls::rustls::client::ResolvesClientCert>>,
+    Option<Arc<dyn edno_tls::rustls::client::ResolvesClientCert>>,
   pub(crate) cached_insecure_no_client_auth:
-    Option<Arc<dyn deno_tls::rustls::client::ResolvesClientCert>>,
+    Option<Arc<dyn edno_tls::rustls::client::ResolvesClientCert>>,
 }
 
 fn cert_der_to_pem(cert: &[u8]) -> String {
@@ -106,7 +106,7 @@ fn cert_der_to_pem(cert: &[u8]) -> String {
 }
 
 pub(crate) type CachedClientVerifier = (
-  Arc<dyn deno_tls::rustls::client::danger::ServerCertVerifier>,
+  Arc<dyn edno_tls::rustls::client::danger::ServerCertVerifier>,
   Arc<std::sync::Mutex<Option<String>>>,
 );
 
@@ -201,7 +201,7 @@ pub fn op_node_get_ca_certificates<TSys: ExtNodeSys + 'static>(
     "default" => {
       let mut certs = Vec::new();
       let stores_value = sys
-        .env_var("DENO_TLS_CA_STORE")
+        .env_var("EDNO_TLS_CA_STORE")
         .ok()
         .unwrap_or_else(|| "mozilla".to_string());
       let stores = stores_value
@@ -240,10 +240,10 @@ pub fn op_set_default_ca_certificates(
     state.put(NodeTlsState {
       custom_ca_certs: Some(certs),
       client_session_store: Arc::new(
-        deno_tls::rustls::client::ClientSessionMemoryCache::new(256),
+        edno_tls::rustls::client::ClientSessionMemoryCache::new(256),
       ),
       client_session_store_insecure: Arc::new(
-        deno_tls::rustls::client::ClientSessionMemoryCache::new(256),
+        edno_tls::rustls::client::ClientSessionMemoryCache::new(256),
       ),
       server_ticketer: None,
       cached_default_verifier: None,
@@ -594,8 +594,8 @@ impl JSDuplexResource {
 }
 
 impl Resource for JSDuplexResource {
-  deno_core::impl_readable_byob!();
-  deno_core::impl_writable!();
+  edno_core::impl_readable_byob!();
+  edno_core::impl_writable!();
 
   fn name(&self) -> Cow<'_, str> {
     "JSDuplexResource".into()
@@ -692,8 +692,8 @@ impl JSStreamTlsResource {
 }
 
 impl Resource for JSStreamTlsResource {
-  deno_core::impl_readable_byob!();
-  deno_core::impl_writable!();
+  edno_core::impl_readable_byob!();
+  edno_core::impl_writable!();
 
   fn name(&self) -> Cow<'_, str> {
     "JSStreamTlsResource".into()

@@ -3,12 +3,12 @@ import { assertEquals } from "@std/assert";
 const errorDeferred = Promise.withResolvers<void>();
 const closeDeferred = Promise.withResolvers<void>();
 
-const listener = Deno.listen({ port: 4509 });
+const listener = Edno.listen({ port: 4509 });
 console.log("READY");
-// @ts-ignore `Deno.serveHttp()` was soft-removed in Deno 2.
-const httpConn = Deno.serveHttp(await listener.accept());
+// @ts-ignore `Edno.serveHttp()` was soft-removed in Edno 2.
+const httpConn = Edno.serveHttp(await listener.accept());
 const { request, respondWith } = (await httpConn.nextRequest())!;
-const { response, socket } = Deno.upgradeWebSocket(request, {
+const { response, socket } = Edno.upgradeWebSocket(request, {
   idleTimeout: 1,
 });
 socket.onerror = (e) => {
@@ -27,4 +27,4 @@ await errorDeferred.promise;
 await closeDeferred.promise;
 
 // TODO(mmastrac): this doesn't exit on its own. Why?
-Deno.exit(123);
+Edno.exit(123);

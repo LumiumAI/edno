@@ -15,14 +15,14 @@ use std::time::Instant;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
-use deno_core::FastString;
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::convert::Uint8Array;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::FastString;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::convert::Uint8Array;
+use edno_core::op2;
+use edno_core::v8;
 use deno_error::JsErrorBox;
-use deno_permissions::PermissionsContainer;
+use edno_permissions::PermissionsContainer;
 use v8::ValueDeserializerHelper;
 use v8::ValueSerializerHelper;
 
@@ -175,7 +175,7 @@ fn civil_from_days(z: i64) -> (i64, u32, u32) {
   (y, m, d)
 }
 
-// Builds a filename matching Deno/Node's `writeHeapSnapshot` naming scheme:
+// Builds a filename matching Edno/Node's `writeHeapSnapshot` naming scheme:
 // `Heap.<YYYYMMDD>.<HHMMSS>.<pid>.<threadId>.<seq(3 digits)>.heapsnapshot`.
 //
 // The thread id is hardcoded to 0, matching `writeHeapSnapshot` in v8.ts. In
@@ -361,7 +361,7 @@ pub fn op_v8_set_heap_snapshot_near_heap_limit(
   state: &mut OpState,
   scope: &mut v8::PinScope<'_, '_>,
   #[smi] limit: u32,
-) -> Result<(), deno_permissions::PermissionCheckError> {
+) -> Result<(), edno_permissions::PermissionCheckError> {
   let dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
   let dir = state
     .borrow_mut::<PermissionsContainer>()
@@ -401,8 +401,8 @@ pub fn op_v8_query_objects_count(
   scope: &mut v8::PinScope<'_, '_>,
   #[string] ctor_name: &str,
 ) -> u32 {
-  use deno_core::serde_json;
-  use deno_core::serde_json::Value;
+  use edno_core::serde_json;
+  use edno_core::serde_json::Value;
 
   let mut buf = Vec::new();
   scope.take_heap_snapshot(|chunk| {
@@ -512,7 +512,7 @@ pub struct SerializerDelegate {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl v8::cppgc::GarbageCollected for Serializer<'_> {
-  fn trace(&self, visitor: &mut deno_core::v8::cppgc::Visitor) {
+  fn trace(&self, visitor: &mut edno_core::v8::cppgc::Visitor) {
     visitor.trace(&self.delegate_state.obj);
   }
 
@@ -706,8 +706,8 @@ pub struct Deserializer<'a> {
 }
 
 // SAFETY: we're sure this can be GCed
-unsafe impl deno_core::GarbageCollected for Deserializer<'_> {
-  fn trace(&self, visitor: &mut deno_core::v8::cppgc::Visitor) {
+unsafe impl edno_core::GarbageCollected for Deserializer<'_> {
+  fn trace(&self, visitor: &mut edno_core::v8::cppgc::Visitor) {
     visitor.trace(&self.delegate_state.obj);
   }
 
@@ -807,7 +807,7 @@ pub fn op_v8_transfer_array_buffer_de(
   #[cppgc] deser: &Deserializer,
   #[smi] id: u32,
   array_buffer: v8::Local<v8::Value>,
-) -> Result<(), deno_core::error::DataError> {
+) -> Result<(), edno_core::error::DataError> {
   if let Ok(shared_array_buffer) =
     array_buffer.try_cast::<v8::SharedArrayBuffer>()
   {

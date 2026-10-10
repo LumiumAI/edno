@@ -17,11 +17,11 @@ fn init_subcommand_without_dir() {
   let stderr = output.stderr();
   assert_contains!(stderr, "Project initialized");
   assert!(!stderr.contains("cd"));
-  assert_contains!(stderr, "deno run --allow-net main.ts");
-  assert_contains!(stderr, "deno task dev");
-  assert_contains!(stderr, "deno test");
+  assert_contains!(stderr, "edno run --allow-net main.ts");
+  assert_contains!(stderr, "edno task dev");
+  assert_contains!(stderr, "edno test");
 
-  assert!(cwd.join("deno.json").exists());
+  assert!(cwd.join("edno.json").exists());
 
   let output = context
     .new_command()
@@ -51,11 +51,11 @@ fn init_subcommand_with_dir_arg() {
   let stderr = output.stderr();
   assert_contains!(stderr, "Project initialized");
   assert_contains!(stderr, "cd my_dir");
-  assert_contains!(stderr, "deno run --allow-net main.ts");
-  assert_contains!(stderr, "deno task dev");
-  assert_contains!(stderr, "deno test");
+  assert_contains!(stderr, "edno run --allow-net main.ts");
+  assert_contains!(stderr, "edno task dev");
+  assert_contains!(stderr, "edno test");
 
-  assert!(cwd.join("my_dir/deno.json").exists());
+  assert!(cwd.join("my_dir/edno.json").exists());
 
   let output = context
     .new_command()
@@ -84,7 +84,7 @@ fn init_subcommand_with_quiet_arg() {
   output.assert_exit_code(0);
 
   assert_eq!(output.stdout(), "");
-  assert!(cwd.join("deno.json").exists());
+  assert!(cwd.join("edno.json").exists());
 
   let output = context
     .new_command()
@@ -117,17 +117,17 @@ fn init_subcommand_with_existing_file() {
 Run these commands to get started
 
   # Run the server
-  deno run --allow-net main.ts
+  edno run --allow-net main.ts
 
   # Run the server and watch for file changes
-  deno task dev
+  edno task dev
 
   # Run the tests
-  deno test
+  edno test
 ",
   );
 
-  assert!(cwd.join("deno.json").exists());
+  assert!(cwd.join("edno.json").exists());
 
   let output = context
     .new_command()
@@ -155,15 +155,15 @@ fn init_subcommand_empty() {
   let stderr = output.stderr();
   assert_contains!(stderr, "Project initialized");
   assert!(!stderr.contains("cd"));
-  assert_contains!(stderr, "deno run main.ts");
-  assert_contains!(stderr, "deno task dev");
-  assert!(!stderr.contains("deno test"));
+  assert_contains!(stderr, "edno run main.ts");
+  assert_contains!(stderr, "edno task dev");
+  assert!(!stderr.contains("edno test"));
 
-  let deno_json_path = cwd.join("deno.json");
-  assert!(deno_json_path.exists());
+  let edno_json_path = cwd.join("edno.json");
+  assert!(edno_json_path.exists());
 
-  let deno_json_content = deno_json_path.read_to_string();
-  assert!(!deno_json_content.contains("@std/assert"));
+  let edno_json_content = edno_json_path.read_to_string();
+  assert!(!edno_json_content.contains("@std/assert"));
 
   assert!(cwd.join("main.ts").exists());
   assert!(!cwd.join("main_test.ts").exists());
@@ -199,11 +199,11 @@ async fn init_subcommand_serve() {
 
   let stderr = output.stderr();
   assert_contains!(stderr, "Project initialized");
-  assert_contains!(stderr, "deno serve -R main.ts");
-  assert_contains!(stderr, "deno task dev");
-  assert_contains!(stderr, "deno test -R");
+  assert_contains!(stderr, "edno serve -R main.ts");
+  assert_contains!(stderr, "edno task dev");
+  assert_contains!(stderr, "edno test -R");
 
-  assert!(cwd.join("deno.json").exists());
+  assert!(cwd.join("edno.json").exists());
 
   let mut child = context
     .new_command()
@@ -244,7 +244,7 @@ fn init_npm() {
   let cwd = context.temp_dir().path();
   context
     .new_command()
-    .args("init --npm @denotest")
+    .args("init --npm @ednotest")
     .with_pty(|mut pty| {
       pty.expect("Do you want to continue?");
       pty.write_raw("y\n");
@@ -259,7 +259,7 @@ fn create_jsr() {
   let cwd = context.temp_dir().path();
   context
     .new_command()
-    .args("create jsr:@denotest/create")
+    .args("create jsr:@ednotest/create")
     .with_pty(|mut pty| {
       pty.expect("Do you want to continue?");
       pty.write_raw("y\n");
@@ -277,7 +277,7 @@ fn create_jsr_with_yes_flag() {
   let cwd = context.temp_dir().path();
   let output = context
     .new_command()
-    .args("create --yes jsr:@denotest/create")
+    .args("create --yes jsr:@ednotest/create")
     .split_output()
     .run();
   output.assert_exit_code(0);
@@ -295,7 +295,7 @@ fn init_jsr() {
   let cwd = context.temp_dir().path();
   context
     .new_command()
-    .args("init --jsr @denotest/create")
+    .args("init --jsr @ednotest/create")
     .with_pty(|mut pty| {
       pty.expect("Do you want to continue?");
       pty.write_raw("y\n");
@@ -313,7 +313,7 @@ fn init_jsr_with_yes_flag() {
   let cwd = context.temp_dir().path();
   let output = context
     .new_command()
-    .args("init --jsr --yes @denotest/create")
+    .args("init --jsr --yes @ednotest/create")
     .split_output()
     .run();
   output.assert_exit_code(0);

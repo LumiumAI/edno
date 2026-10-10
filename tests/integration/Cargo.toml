@@ -22,8 +22,8 @@ anyhow.workspace = true
 async-trait.workspace = true
 bytes.workspace = true
 chrono = { workspace = true, features = ["now"] }
-deno_cache_dir.workspace = true
-deno_lockfile.workspace = true
+edno_cache_dir.workspace = true
+edno_lockfile.workspace = true
 deno_semver.workspace = true
 deno_unsync = { workspace = true, features = ["tokio"] }
 fastwebsockets = { workspace = true, features = ["upgrade", "unstable-split"] }

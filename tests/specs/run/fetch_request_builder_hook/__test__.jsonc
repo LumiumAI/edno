@@ -4,7 +4,7 @@
       "args": "run -A main.ts",
       "envs": {
         "X_DENO_FETCH_TOKEN": "test-fetch-token-123",
-        "CDN_LOOP": "us-east-1.example.deno-cluster.net"
+        "CDN_LOOP": "us-east-1.example.edno-cluster.net"
       },
       "output": "main.out"
     },

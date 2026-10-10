@@ -1,5 +1,5 @@
-console.log("@denotest/add", import.meta.resolve("@denotest/add"));
+console.log("@ednotest/add", import.meta.resolve("@ednotest/add"));
 console.log(
-  "@denotest/add/non-existent",
-  import.meta.resolve("@denotest/add/non-existent"),
+  "@ednotest/add/non-existent",
+  import.meta.resolve("@ednotest/add/non-existent"),
 );

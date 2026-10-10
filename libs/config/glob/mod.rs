@@ -835,7 +835,7 @@ fn ascii_literal_suffix(pattern: &str) -> Box<[u8]> {
 ///
 /// `suffix` comes from a pattern normalized to `/`, but on Windows the path
 /// separator is `\`, so a suffix that spans a directory boundary (e.g.
-/// `/deno.json`) would never match. Treat `\` and `/` as equivalent so the
+/// `/edno.json`) would never match. Treat `\` and `/` as equivalent so the
 /// reject stays a genuine necessary condition on every platform. Normalizing
 /// only ever widens what passes this pre-filter (the real glob engine still
 /// runs afterward), so it never drops a genuine match.
@@ -1056,22 +1056,22 @@ mod test {
     // A directory-spanning suffix must still match a backslash path, otherwise
     // every workspace member config file is rejected on Windows.
     assert!(path_ends_with_ascii_ci(
-      Path::new("C:\\root\\member\\deno.json"),
-      b"/deno.json",
+      Path::new("C:\\root\\member\\edno.json"),
+      b"/edno.json",
     ));
     assert!(path_ends_with_ascii_ci(
-      Path::new("/root/member/deno.json"),
-      b"/deno.json",
+      Path::new("/root/member/edno.json"),
+      b"/edno.json",
     ));
     // case-insensitive
     assert!(path_ends_with_ascii_ci(
-      Path::new("C:\\root\\member\\DENO.JSON"),
-      b"/deno.json",
+      Path::new("C:\\root\\member\\EDNO.JSON"),
+      b"/edno.json",
     ));
     // a genuinely different suffix is still rejected
     assert!(!path_ends_with_ascii_ci(
       Path::new("C:\\root\\member\\package.json"),
-      b"/deno.json",
+      b"/edno.json",
     ));
   }
 
@@ -1884,7 +1884,7 @@ mod test {
       }
     }
     for scheme in &["npm", "jsr"] {
-      let url = format!("{}:@denotest/basic", scheme);
+      let url = format!("{}:@ednotest/basic", scheme);
       let pattern = PathOrPattern::new(&url).unwrap();
       match pattern {
         PathOrPattern::RemoteUrl(p) => {
@@ -1921,7 +1921,7 @@ mod test {
       }
     }
     for scheme in &["npm", "jsr"] {
-      let url = format!("{}:@denotest/basic", scheme);
+      let url = format!("{}:@ednotest/basic", scheme);
       let pattern = PathOrPattern::from_relative(&dir, &url).unwrap();
       match pattern {
         PathOrPattern::RemoteUrl(p) => {

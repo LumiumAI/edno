@@ -4,12 +4,12 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Duration;
 
-use deno_core::GarbageCollected;
-use deno_core::WebIDL;
-use deno_core::futures::channel::oneshot;
-use deno_core::op2;
-use deno_core::v8;
-use deno_core::webidl::WebIdlInterfaceConverter;
+use edno_core::GarbageCollected;
+use edno_core::WebIDL;
+use edno_core::futures::channel::oneshot;
+use edno_core::op2;
+use edno_core::v8;
+use edno_core::webidl::WebIdlInterfaceConverter;
 use deno_error::JsErrorBox;
 use wgpu_core::device::HostMap as MapMode;
 
@@ -139,7 +139,7 @@ impl WebIdlInterfaceConverter for GPUBuffer {
 
 // SAFETY: we're sure this can be GCed
 unsafe impl GarbageCollected for GPUBuffer {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"GPUBuffer"

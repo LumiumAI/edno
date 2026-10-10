@@ -1,1 +1,1 @@
-module.exports.getKind = require("@denotest/dual-cjs-esm").getKind;
+module.exports.getKind = require("@ednotest/dual-cjs-esm").getKind;

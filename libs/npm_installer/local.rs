@@ -19,23 +19,23 @@ use std::sync::Arc;
 use anyhow::Error as AnyError;
 use async_trait::async_trait;
 use deno_error::JsErrorBox;
-use deno_npm::NpmPackageExtraInfo;
-use deno_npm::NpmPackageId;
-use deno_npm::NpmPackageIdPeerDependencies;
-use deno_npm::NpmResolutionPackage;
-use deno_npm::NpmResolutionPackageSystemInfo;
-use deno_npm::NpmSystemInfo;
-use deno_npm::resolution::NpmResolutionSnapshot;
-use deno_npm_cache::NpmCache;
-use deno_npm_cache::NpmCacheHttpClient;
-use deno_npm_cache::NpmCacheSys;
-use deno_npm_cache::TarballCache;
-use deno_npm_cache::create_dir_all_no_symlink;
-use deno_npm_cache::ensure_not_symlink;
-use deno_npm_cache::hard_link_file;
+use edno_npm::NpmPackageExtraInfo;
+use edno_npm::NpmPackageId;
+use edno_npm::NpmPackageIdPeerDependencies;
+use edno_npm::NpmResolutionPackage;
+use edno_npm::NpmResolutionPackageSystemInfo;
+use edno_npm::NpmSystemInfo;
+use edno_npm::resolution::NpmResolutionSnapshot;
+use edno_npm_cache::NpmCache;
+use edno_npm_cache::NpmCacheHttpClient;
+use edno_npm_cache::NpmCacheSys;
+use edno_npm_cache::TarballCache;
+use edno_npm_cache::create_dir_all_no_symlink;
+use edno_npm_cache::ensure_not_symlink;
+use edno_npm_cache::hard_link_file;
 use deno_path_util::fs::atomic_write_file_with_retries;
-use deno_resolver::npm::get_package_folder_id_folder_name;
-use deno_resolver::npm::managed::NpmResolutionCell;
+use edno_resolver::npm::get_package_folder_id_folder_name;
+use edno_resolver::npm::managed::NpmResolutionCell;
 use deno_semver::StackString;
 use deno_semver::package::PackageNv;
 use deno_terminal::colors;
@@ -207,10 +207,10 @@ impl<
         .workspace_pkgs()
         .iter()
         .any(|pkg| !pkg.scripts.is_empty());
-    let deno_local_registry_dir = self.root_node_modules_path.join(".deno");
+    let edno_local_registry_dir = self.root_node_modules_path.join(".edno");
     if has_no_packages
       && (!self.clean_on_install
-        || !self.sys.fs_exists_no_err(&deno_local_registry_dir))
+        || !self.sys.fs_exists_no_err(&edno_local_registry_dir))
     {
       return Ok(()); // don't create the directory
     }
@@ -222,12 +222,12 @@ impl<
     }
 
     let sys = self.sys.with_paths_in_errors();
-    let deno_node_modules_dir = deno_local_registry_dir.join("node_modules");
-    sys.fs_create_dir_all(&deno_node_modules_dir)?;
+    let edno_node_modules_dir = edno_local_registry_dir.join("node_modules");
+    sys.fs_create_dir_all(&edno_node_modules_dir)?;
     let bin_node_modules_dir_path = self.root_node_modules_path.join(".bin");
     let single_process_lock = LaxSingleProcessFsFlag::lock(
       sys.as_ref(),
-      deno_local_registry_dir.join(".deno.lock"),
+      edno_local_registry_dir.join(".edno.lock"),
       &self.reporter,
       // similar message used by cargo build
       "waiting for file lock on node_modules directory",
@@ -241,7 +241,7 @@ impl<
     // load this after we get the directory lock
     let mut setup_cache = LocalSetupCache::load(
       sys.as_ref().clone(),
-      deno_local_registry_dir.join(".setup-cache.bin"),
+      edno_local_registry_dir.join(".setup-cache.bin"),
     );
 
     // 1. Check if packages changed and clean up if needed
@@ -254,7 +254,7 @@ impl<
         cleanup_unused_packages(
           sys.as_ref(),
           &self.root_node_modules_path,
-          &deno_local_registry_dir,
+          &edno_local_registry_dir,
           &package_partitions,
           &root_folder_names,
           &mut setup_cache,
@@ -263,10 +263,10 @@ impl<
       setup_cache.set_clean_packages_hash(packages_hash);
     }
 
-    // 2. Write all the packages out the .deno directory.
+    // 2. Write all the packages out the .edno directory.
     //
     // Copy (hardlink in future) <global_registry_cache>/<package_id>/ to
-    // node_modules/.deno/<package_folder_id_folder_name>/node_modules/<package_name>
+    // node_modules/.edno/<package_folder_id_folder_name>/node_modules/<package_name>
     let workspace_lifecycle_packages =
       self.resolve_workspace_lifecycle_packages(snapshot)?;
     let mut cache_futures = FuturesUnordered::new();
@@ -280,7 +280,7 @@ impl<
       &self.lifecycle_scripts_config,
       LocalLifecycleScripts {
         sys: sys.as_ref(),
-        deno_local_registry_dir: &deno_local_registry_dir,
+        edno_local_registry_dir: &edno_local_registry_dir,
         install_reporter: self.install_reporter.clone(),
       },
     )));
@@ -321,7 +321,7 @@ impl<
       let package_folder_name = get_package_folder_id_folder_name(
         &package.get_package_cache_folder_id(),
       );
-      let folder_path = deno_local_registry_dir.join(&package_folder_name);
+      let folder_path = edno_local_registry_dir.join(&package_folder_name);
       let tags = package_tags
         .get(&package.id.nv)
         .map(|tags| {
@@ -565,10 +565,10 @@ impl<
         let package_folder_name = get_package_folder_id_folder_name(
           &package.get_package_cache_folder_id(),
         );
-        // node_modules/.deno/<package_folder_id_folder_name>/node_modules/<package_name> -> local package folder
+        // node_modules/.edno/<package_folder_id_folder_name>/node_modules/<package_name> -> local package folder
         let target = join_package_name(
           Cow::Owned(
-            deno_local_registry_dir
+            edno_local_registry_dir
               .join(&package_folder_name)
               .join("node_modules"),
           ),
@@ -605,7 +605,7 @@ impl<
     // 4. Create any "copy" packages, which are used for peer dependencies
     for package in &package_partitions.copy_packages {
       let package_cache_folder_id = package.get_package_cache_folder_id();
-      let destination_path = deno_local_registry_dir
+      let destination_path = edno_local_registry_dir
         .join(get_package_folder_id_folder_name(&package_cache_folder_id));
       let initialized_file = destination_path.join(".initialized");
       if !sys.fs_exists_no_err(&initialized_file) {
@@ -614,7 +614,7 @@ impl<
           join_package_name(Cow::Owned(sub_node_modules), &package.id.nv.name);
         let source_path = join_package_name(
           Cow::Owned(
-            deno_local_registry_dir
+            edno_local_registry_dir
               .join(get_package_folder_id_folder_name(
                 &package_cache_folder_id.with_no_count(),
               ))
@@ -649,15 +649,15 @@ impl<
     }
     drop(cache_futures);
 
-    // 5. Symlink all the dependencies into the .deno directory.
+    // 5. Symlink all the dependencies into the .edno directory.
     //
-    // Symlink node_modules/.deno/<package_id>/node_modules/<dep_name> to
-    // node_modules/.deno/<dep_id>/node_modules/<dep_package_name>
+    // Symlink node_modules/.edno/<package_id>/node_modules/<dep_name> to
+    // node_modules/.edno/<dep_id>/node_modules/<dep_package_name>
     for package in package_partitions.iter_all() {
       let package_folder_name = get_package_folder_id_folder_name(
         &package.get_package_cache_folder_id(),
       );
-      let sub_node_modules = deno_local_registry_dir
+      let sub_node_modules = edno_local_registry_dir
         .join(&package_folder_name)
         .join("node_modules");
       let mut dep_setup_cache = setup_cache.with_dep(&package_folder_name);
@@ -676,7 +676,7 @@ impl<
         {
           let dep_folder_path = join_package_name(
             Cow::Owned(
-              deno_local_registry_dir
+              edno_local_registry_dir
                 .join(dep_folder_name)
                 .join("node_modules"),
             ),
@@ -747,7 +747,7 @@ impl<
         );
         let local_registry_package_path = join_package_name(
           Cow::Owned(
-            deno_local_registry_dir
+            edno_local_registry_dir
               .join(&target_folder_name)
               .join("node_modules"),
           ),
@@ -787,7 +787,7 @@ impl<
 
     // 7. Create symlinks for the remaining top level packages in the node_modules folder.
     // (These may be present if they are not in the package.json dependencies)
-    // Symlink node_modules/.deno/<package_id>/node_modules/<package_name> to
+    // Symlink node_modules/.edno/<package_id>/node_modules/<package_name> to
     // node_modules/<package_name>
     let mut ids = snapshot
       .top_level_packages()
@@ -810,7 +810,7 @@ impl<
       if setup_cache.insert_root_symlink(&id.nv.name, &target_folder_name) {
         let local_registry_package_path = join_package_name(
           Cow::Owned(
-            deno_local_registry_dir
+            edno_local_registry_dir
               .join(&target_folder_name)
               .join("node_modules"),
           ),
@@ -843,7 +843,7 @@ impl<
       {
         let local_registry_package_path = join_package_name(
           Cow::Owned(
-            deno_local_registry_dir
+            edno_local_registry_dir
               .join(&target_folder_name)
               .join("node_modules"),
           ),
@@ -876,7 +876,7 @@ impl<
       ensure_jsr_npmrc(sys.as_ref(), project_dir)?;
     }
 
-    // 8. Create a node_modules/.deno/node_modules/<package-name> directory with
+    // 8. Create a node_modules/.edno/node_modules/<package-name> directory with
     // the remaining packages
     for package in newest_packages_by_name.values() {
       match found_names.entry(&package.id.nv.name) {
@@ -896,7 +896,7 @@ impl<
       {
         let local_registry_package_path = join_package_name(
           Cow::Owned(
-            deno_local_registry_dir
+            edno_local_registry_dir
               .join(target_folder_name)
               .join("node_modules"),
           ),
@@ -907,7 +907,7 @@ impl<
           sys.as_ref(),
           &local_registry_package_path,
           &join_package_name(
-            Cow::Borrowed(&deno_node_modules_dir),
+            Cow::Borrowed(&edno_node_modules_dir),
             &package.id.nv.name,
           ),
         )?;
@@ -1020,7 +1020,7 @@ impl<
                 );
                 let local_registry_package_path = join_package_name(
                   Cow::Owned(
-                    deno_local_registry_dir
+                    edno_local_registry_dir
                       .join(&target_folder_name)
                       .join("node_modules"),
                   ),
@@ -1074,7 +1074,7 @@ impl<
 
     for package in &workspace_lifecycle_packages {
       sys.fs_create_dir_all(local_node_modules_package_folder(
-        &deno_local_registry_dir,
+        &edno_local_registry_dir,
         &package.package,
       ))?;
       lifecycle_scripts.borrow_mut().add(
@@ -1130,7 +1130,7 @@ impl<
         &self.lifecycle_scripts_config,
         LocalLifecycleScripts {
           sys: sys.as_ref(),
-          deno_local_registry_dir: &deno_local_registry_dir,
+          edno_local_registry_dir: &edno_local_registry_dir,
           install_reporter: self.install_reporter.clone(),
         },
       ),
@@ -1162,7 +1162,7 @@ impl<
           on_ran_pkg_scripts: &|pkg| {
             create_initialized_file(
               sys.as_ref(),
-              &ran_scripts_file(&deno_local_registry_dir, pkg),
+              &ran_scripts_file(&edno_local_registry_dir, pkg),
             )
             .map_err(JsErrorBox::from_err)
           },
@@ -1350,7 +1350,7 @@ fn jsr_npm_name_to_original(name: &str) -> Option<String> {
 
 /// Ensures the `.npmrc` next to the `node_modules` directory declares JSR's npm
 /// compatibility registry (`@jsr:registry=https://npm.jsr.io`). This lets
-/// external tooling (npm, pnpm, yarn) resolve the `@jsr/*` packages Deno
+/// external tooling (npm, pnpm, yarn) resolve the `@jsr/*` packages Edno
 /// materialized into `node_modules`. A pre-existing `@jsr:registry` entry is
 /// respected (left untouched); otherwise the line is appended to an existing
 /// `.npmrc` or a new one is created.
@@ -1389,7 +1389,7 @@ fn ensure_jsr_npmrc<TSys: NpmCacheSys>(
   )
 }
 
-/// `node_modules/.deno/<package>/`
+/// `node_modules/.edno/<package>/`
 fn local_node_modules_package_folder(
   local_registry_dir: &Path,
   package: &NpmResolutionPackage,
@@ -1399,7 +1399,7 @@ fn local_node_modules_package_folder(
   ))
 }
 
-/// `node_modules/.deno/<package>/.scripts-run`
+/// `node_modules/.edno/<package>/.scripts-run`
 fn ran_scripts_file(
   local_registry_dir: &Path,
   package: &NpmResolutionPackage,
@@ -1410,14 +1410,14 @@ fn ran_scripts_file(
 
 struct LocalLifecycleScripts<'a, TSys: FsOpen + FsMetadata> {
   sys: &'a TSys,
-  deno_local_registry_dir: &'a Path,
+  edno_local_registry_dir: &'a Path,
   install_reporter: Option<Arc<dyn crate::InstallReporter>>,
 }
 
 impl<TSys: FsOpen + FsMetadata> LocalLifecycleScripts<'_, TSys> {
-  /// `node_modules/.deno/<package>/.scripts-warned`
+  /// `node_modules/.edno/<package>/.scripts-warned`
   fn warned_scripts_file(&self, package: &NpmResolutionPackage) -> PathBuf {
-    local_node_modules_package_folder(self.deno_local_registry_dir, package)
+    local_node_modules_package_folder(self.edno_local_registry_dir, package)
       .join(".scripts-warned")
   }
 }
@@ -1461,7 +1461,7 @@ impl<TSys: FsOpen + FsMetadata> LifecycleScriptsStrategy
         &mut output,
         "{}  Run \"{}\" to run build scripts.",
         colors::yellow("│"),
-        colors::bold("deno approve-scripts")
+        colors::bold("edno approve-scripts")
       );
       _ = write!(&mut output, "{}", colors::yellow("╰─"));
 
@@ -1500,14 +1500,14 @@ impl<TSys: FsOpen + FsMetadata> LifecycleScriptsStrategy
   fn has_run(&self, package: &NpmResolutionPackage) -> bool {
     self
       .sys
-      .fs_exists_no_err(ran_scripts_file(self.deno_local_registry_dir, package))
+      .fs_exists_no_err(ran_scripts_file(self.edno_local_registry_dir, package))
   }
 }
 
 // Uses BTreeMap to preserve the ordering of the elements in memory, to ensure
 // the file generated from this datastructure is deterministic.
 // See: https://github.com/denoland/deno/issues/24479
-/// Represents a dependency at `node_modules/.deno/<package_id>/`
+/// Represents a dependency at `node_modules/.edno/<package_id>/`
 struct SetupCacheDep<'a> {
   previous: Option<&'a BTreeMap<String, String>>,
   current: &'a mut BTreeMap<String, String>,
@@ -1532,7 +1532,7 @@ impl SetupCacheDep<'_> {
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 struct SetupCacheData {
   root_symlinks: BTreeMap<String, String>,
-  deno_symlinks: BTreeMap<String, String>,
+  edno_symlinks: BTreeMap<String, String>,
   dep_symlinks: BTreeMap<String, BTreeMap<String, String>>,
   #[serde(default)]
   clean_packages_hash: u64,
@@ -1588,12 +1588,12 @@ impl<TSys: NpmCacheSys> LocalSetupCache<TSys> {
   }
 
   pub fn remove_deno_symlink(&mut self, name: &str) {
-    self.current.deno_symlinks.remove(name);
+    self.current.edno_symlinks.remove(name);
   }
 
   /// Inserts and checks for the existence of a root symlink
   /// at `node_modules/<package_name>` pointing to
-  /// `node_modules/.deno/<package_id>/`
+  /// `node_modules/.edno/<package_id>/`
   pub fn insert_root_symlink(
     &mut self,
     name: &str,
@@ -1615,8 +1615,8 @@ impl<TSys: NpmCacheSys> LocalSetupCache<TSys> {
   }
 
   /// Inserts and checks for the existence of a symlink at
-  /// `node_modules/.deno/node_modules/<package_name>` pointing to
-  /// `node_modules/.deno/<package_id>/`
+  /// `node_modules/.edno/node_modules/<package_name>` pointing to
+  /// `node_modules/.edno/<package_id>/`
   pub fn insert_deno_symlink(
     &mut self,
     name: &str,
@@ -1624,12 +1624,12 @@ impl<TSys: NpmCacheSys> LocalSetupCache<TSys> {
   ) -> bool {
     self
       .current
-      .deno_symlinks
+      .edno_symlinks
       .insert(name.to_string(), target_folder_name.to_string());
     if let Some(previous_target) = self
       .previous
       .as_ref()
-      .and_then(|p| p.deno_symlinks.get(name))
+      .and_then(|p| p.edno_symlinks.get(name))
     {
       previous_target != target_folder_name
     } else {
@@ -1795,7 +1795,7 @@ pub(crate) fn remove_stale_member_symlinks<TSys: LocalNpmInstallSys>(
     let Some(name) = file_name.to_str() else {
       continue;
     };
-    // Leave `.bin`, `.deno`, and any other dot-entries alone: they are not the
+    // Leave `.bin`, `.edno`, and any other dot-entries alone: they are not the
     // per-dependency alias links this loop manages.
     if name.starts_with('.') {
       continue;
@@ -1841,7 +1841,7 @@ pub(crate) struct MemberBinDep<'a> {
   /// The resolved npm package, used for its `bin` metadata.
   pub package: &'a NpmResolutionPackage,
   /// Where the package's `package.json` is read from: its real location in the
-  /// layout (the `.deno` store path for the isolated linker, or the hoisted
+  /// layout (the `.edno` store path for the isolated linker, or the hoisted
   /// package directory for the hoisted linker).
   pub read_path: PathBuf,
   /// The member's own link to the package
@@ -2030,7 +2030,7 @@ pub(crate) fn join_package_name(
 /// Calculates a hash of the current package set for change detection.
 /// This allows us to detect when npm packages have been added, removed, or changed.
 fn calculate_packages_hash(
-  package_partitions: &deno_npm::resolution::NpmPackagesPartitioned,
+  package_partitions: &edno_npm::resolution::NpmPackagesPartitioned,
   root_folder_names: &BTreeSet<String>,
 ) -> u64 {
   use std::hash::Hash;
@@ -2099,17 +2099,17 @@ fn root_package_folder_names(
   folder_names
 }
 
-/// Cleans up unused packages from the node_modules/.deno directory.
+/// Cleans up unused packages from the node_modules/.edno directory.
 /// This removes any package folders that are not part of the current resolution.
 fn cleanup_unused_packages<TSys: LocalNpmInstallSys>(
   sys: &TSys,
   root_node_modules_dir: &Path,
-  deno_local_registry_dir: &Path,
-  package_partitions: &deno_npm::resolution::NpmPackagesPartitioned,
+  edno_local_registry_dir: &Path,
+  package_partitions: &edno_npm::resolution::NpmPackagesPartitioned,
   root_folder_names: &BTreeSet<String>,
   setup_cache: &mut LocalSetupCache<TSys>,
 ) {
-  // Collect all package folder names that should exist in .deno/
+  // Collect all package folder names that should exist in .edno/
   let expected_folders: HashSet<_> = package_partitions
     .iter_all()
     .map(|package| {
@@ -2117,18 +2117,18 @@ fn cleanup_unused_packages<TSys: LocalNpmInstallSys>(
     })
     .collect();
 
-  // Clean up package folders in .deno/ that are no longer needed
-  if let Ok(entries) = sys.fs_read_dir(deno_local_registry_dir) {
+  // Clean up package folders in .edno/ that are no longer needed
+  if let Ok(entries) = sys.fs_read_dir(edno_local_registry_dir) {
     for entry in entries.flatten() {
       let file_name = entry.file_name();
       if let Some(name_str) = file_name.to_str() {
-        if name_str == "node_modules" || name_str.starts_with(".deno.lock") {
+        if name_str == "node_modules" || name_str.starts_with(".edno.lock") {
           continue;
         }
 
         // If this folder is not expected, remove it
         if !expected_folders.contains(name_str) {
-          let path = deno_local_registry_dir.join(file_name);
+          let path = edno_local_registry_dir.join(file_name);
           let _ignore = sys.fs_remove_dir_all(&path);
         }
       }
@@ -2143,11 +2143,11 @@ fn cleanup_unused_packages<TSys: LocalNpmInstallSys>(
     })
     .collect::<HashSet<_>>();
 
-  // Clean up .deno/node_modules/* symlinks for packages no longer needed
-  let deno_node_modules_dir = deno_local_registry_dir.join("node_modules");
+  // Clean up .edno/node_modules/* symlinks for packages no longer needed
+  let edno_node_modules_dir = edno_local_registry_dir.join("node_modules");
   let _ignore = remove_unused_node_modules_symlinks(
     sys,
-    &deno_node_modules_dir,
+    &edno_node_modules_dir,
     &keep_names,
     &mut |name, path| {
       setup_cache.remove_deno_symlink(name);
@@ -2188,7 +2188,7 @@ fn cleanup_unused_packages<TSys: LocalNpmInstallSys>(
 }
 
 /// Extracts the package folder name from a node_modules symlink target path.
-/// e.g. node_modules/.deno/chalk@5.0.1/node_modules/chalk -> chalk@5.0.1
+/// e.g. node_modules/.edno/chalk@5.0.1/node_modules/chalk -> chalk@5.0.1
 pub fn node_modules_package_actual_dir_to_name(
   path: &Path,
 ) -> Option<Cow<'_, str>> {
@@ -2348,14 +2348,14 @@ mod test {
       BTreeSet::from(["package-a".to_string(), "package-b".to_string()]);
 
     let hash = calculate_packages_hash(
-      &deno_npm::resolution::NpmPackagesPartitioned {
+      &edno_npm::resolution::NpmPackagesPartitioned {
         packages,
         copy_packages: Vec::new(),
       },
       &root_folder_names,
     );
     let reversed_hash = calculate_packages_hash(
-      &deno_npm::resolution::NpmPackagesPartitioned {
+      &edno_npm::resolution::NpmPackagesPartitioned {
         packages: reversed_packages,
         copy_packages: Vec::new(),
       },
@@ -2441,17 +2441,17 @@ mod test {
   fn test_node_modules_package_actual_dir_to_name() {
     assert_eq!(
       node_modules_package_actual_dir_to_name(Path::new(
-        ".deno/chalk@5.0.1/node_modules/chalk"
+        ".edno/chalk@5.0.1/node_modules/chalk"
       ))
       .as_deref(),
       Some("chalk@5.0.1")
     );
     assert_eq!(
       node_modules_package_actual_dir_to_name(Path::new(
-        ".deno/@denotest+add@1.0.0/node_modules/@denotest/add"
+        ".edno/@ednotest+add@1.0.0/node_modules/@ednotest/add"
       ))
       .as_deref(),
-      Some("@denotest+add@1.0.0")
+      Some("@ednotest+add@1.0.0")
     );
   }
 

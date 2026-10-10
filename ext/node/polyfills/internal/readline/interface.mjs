@@ -20,7 +20,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// deno-lint-ignore-file no-inner-declarations no-this-alias
+// edno-lint-ignore-file no-inner-declarations no-this-alias
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -31,33 +31,33 @@ const {
   ERR_INVALID_ARG_VALUE,
   ERR_OUT_OF_RANGE,
   ERR_USE_AFTER_CLOSE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   //   inspect,
   getStringWidth,
   stripVTControlCharacters,
-} = core.loadExtScript("ext:deno_node/internal/util/inspect.mjs");
+} = core.loadExtScript("ext:edno_node/internal/util/inspect.mjs");
 const { EventEmitter, kFirstEventParam } = core.loadExtScript(
-  "ext:deno_node/_events.mjs",
+  "ext:edno_node/_events.mjs",
 );
 const { emitKeypressEvents } = core.loadExtScript(
-  "ext:deno_node/internal/readline/emitKeypressEvents.mjs",
+  "ext:edno_node/internal/readline/emitKeypressEvents.mjs",
 );
 const {
   charLengthAt,
   charLengthLeft,
   commonPrefix,
   kSubstringSearch,
-} = core.loadExtScript("ext:deno_node/internal/readline/utils.mjs");
+} = core.loadExtScript("ext:edno_node/internal/readline/utils.mjs");
 const {
   clearScreenDown,
   cursorTo,
   moveCursor,
-} = core.loadExtScript("ext:deno_node/internal/readline/callbacks.mjs");
+} = core.loadExtScript("ext:edno_node/internal/readline/callbacks.mjs");
 const lazyProcess = core.createLazyLoader("node:process");
 
 const { StringDecoder } = core.loadExtScript(
-  "ext:deno_node/string_decoder.ts",
+  "ext:edno_node/string_decoder.ts",
 );
 const {
   kAddHistory,
@@ -91,13 +91,13 @@ const {
   kWordLeft,
   kWordRight,
   kWriteToOutput,
-} = core.loadExtScript("ext:deno_node/internal/readline/symbols.mjs");
+} = core.loadExtScript("ext:edno_node/internal/readline/symbols.mjs");
 const {
   validateAbortSignal,
   validateArray,
   validateString,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 
 const {
   ArrayFrom,

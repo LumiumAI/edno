@@ -67,7 +67,7 @@ server.listen(0, "127.0.0.1", () => {
     );
     client.destroy();
     server.close();
-    Deno.exit(1);
+    Edno.exit(1);
   }, 10000);
   // Unref so it doesn't keep the process alive if test passes
   timer.unref?.();

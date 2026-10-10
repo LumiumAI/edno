@@ -1,6 +1,6 @@
 import { test } from "./mod.js";
 
-Deno.test({
+Edno.test({
   name: "bugrepo a",
   fn: () => {
     test(true);

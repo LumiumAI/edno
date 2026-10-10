@@ -12,8 +12,8 @@ use std::rc::Rc;
 use std::task::Context;
 use std::task::Poll;
 
-use deno_core::FastString;
-use deno_core::error::CoreError;
+use edno_core::FastString;
+use edno_core::error::CoreError;
 use deno_error::JsErrorBox;
 use futures::future::FutureExt;
 use futures::stream::StreamFuture;
@@ -1496,7 +1496,7 @@ impl ModuleMap {
   ///
   /// Internal modules that aren't baked into the snapshot get instantiated at
   /// runtime, at which point the installed loader is the embedder's
-  /// user-facing one. In Deno that loader applies the user's import map, so an
+  /// user-facing one. In Edno that loader applies the user's import map, so an
   /// entry like `{ "ext:core/mod.js": "./mod.js" }` used to rewrite the imports
   /// of internal modules such as `ext:cli/40_test_common.js` or
   /// `node:_http_agent`, breaking instantiation. Internal specifiers are owned

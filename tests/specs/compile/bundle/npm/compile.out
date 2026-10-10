@@ -1,8 +1,8 @@
-[WILDCARD]Warning deno compile --bundle is experimental and may change.
+[WILDCARD]Warning edno compile --bundle is experimental and may change.
 [WILDCARD]Embedded Files
 
 main[WILDLINE]
-└── .deno_compile_bundle_[WILDCHARS(8)].mjs ([WILDLINE]
+└── .edno_compile_bundle_[WILDCHARS(8)].mjs ([WILDLINE]
 
 Files: [WILDLINE]
 Metadata: [WILDLINE]

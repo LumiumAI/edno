@@ -5,7 +5,7 @@ import net from "node:net";
 
 import { assert, assertEquals } from "@std/assert";
 
-Deno.test({
+Edno.test({
   name: "[node/https] request directly with key and cert as arguments",
   sanitizeResources: false,
   async fn() {
@@ -14,8 +14,8 @@ Deno.test({
     const deferred2 = Promise.withResolvers<void>();
     const server = https.createServer(
       {
-        cert: Deno.readTextFileSync("tests/testdata/tls/localhost.crt"),
-        key: Deno.readTextFileSync("tests/testdata/tls/localhost.key"),
+        cert: Edno.readTextFileSync("tests/testdata/tls/localhost.crt"),
+        key: Edno.readTextFileSync("tests/testdata/tls/localhost.key"),
       },
       (req, res) => {
         // @ts-ignore: It exists on TLSSocket
@@ -28,9 +28,9 @@ Deno.test({
         method: "GET",
         hostname: "localhost",
         port: (server.address() as net.AddressInfo).port,
-        key: Deno.readTextFileSync("tests/testdata/tls/localhost.key"),
-        cert: Deno.readTextFileSync("tests/testdata/tls/localhost.crt"),
-        ca: Deno.readTextFileSync("tests/testdata/tls/RootCA.pem"),
+        key: Edno.readTextFileSync("tests/testdata/tls/localhost.key"),
+        cert: Edno.readTextFileSync("tests/testdata/tls/localhost.crt"),
+        ca: Edno.readTextFileSync("tests/testdata/tls/RootCA.pem"),
       }, (resp) => {
         resp.on("data", (chunk) => {
           body += chunk;
@@ -54,14 +54,14 @@ Deno.test({
   },
 });
 
-Deno.test("[node/https] request directly with key and cert as agent", async () => {
+Edno.test("[node/https] request directly with key and cert as agent", async () => {
   let body = "";
   const deferred1 = Promise.withResolvers<void>();
   const deferred2 = Promise.withResolvers<void>();
   const server = https.createServer(
     {
-      cert: Deno.readTextFileSync("tests/testdata/tls/localhost.crt"),
-      key: Deno.readTextFileSync("tests/testdata/tls/localhost.key"),
+      cert: Edno.readTextFileSync("tests/testdata/tls/localhost.crt"),
+      key: Edno.readTextFileSync("tests/testdata/tls/localhost.key"),
     },
     (req, res) => {
       // @ts-ignore: It exists on TLSSocket
@@ -75,9 +75,9 @@ Deno.test("[node/https] request directly with key and cert as agent", async () =
       hostname: "localhost",
       port: (server.address() as never as net.AddressInfo).port,
       agent: new https.Agent({
-        key: Deno.readTextFileSync("tests/testdata/tls/localhost.key"),
-        cert: Deno.readTextFileSync("tests/testdata/tls/localhost.crt"),
-        ca: Deno.readTextFileSync("tests/testdata/tls/RootCA.pem"),
+        key: Edno.readTextFileSync("tests/testdata/tls/localhost.key"),
+        cert: Edno.readTextFileSync("tests/testdata/tls/localhost.crt"),
+        ca: Edno.readTextFileSync("tests/testdata/tls/RootCA.pem"),
       }),
     }, (resp) => {
       resp.on("data", (chunk) => {

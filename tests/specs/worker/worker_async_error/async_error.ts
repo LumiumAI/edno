@@ -1,4 +1,4 @@
-// deno-lint-ignore require-await
+// edno-lint-ignore require-await
 (async () => {
   throw new Error("bar");
 })();

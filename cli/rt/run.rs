@@ -7,84 +7,84 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::OnceLock;
 
-use deno_cache_dir::npm::NpmCacheDir;
-use deno_config::workspace::ResolverWorkspaceJsrPackage;
-use deno_core::FastString;
-use deno_core::ModuleLoadOptions;
-use deno_core::ModuleLoadReferrer;
-use deno_core::ModuleLoader;
-use deno_core::ModuleSourceCode;
-use deno_core::ModuleSpecifier;
-use deno_core::ModuleType;
-use deno_core::RequestedModuleType;
-use deno_core::ResolutionKind;
-use deno_core::SourceCodeCacheInfo;
-use deno_core::error::AnyError;
-use deno_core::error::ModuleLoaderError;
-use deno_core::futures::FutureExt;
-use deno_core::futures::future::LocalBoxFuture;
-use deno_core::url::Url;
-use deno_core::v8_set_flags;
+use edno_cache_dir::npm::NpmCacheDir;
+use edno_config::workspace::ResolverWorkspaceJsrPackage;
+use edno_core::FastString;
+use edno_core::ModuleLoadOptions;
+use edno_core::ModuleLoadReferrer;
+use edno_core::ModuleLoader;
+use edno_core::ModuleSourceCode;
+use edno_core::ModuleSpecifier;
+use edno_core::ModuleType;
+use edno_core::RequestedModuleType;
+use edno_core::ResolutionKind;
+use edno_core::SourceCodeCacheInfo;
+use edno_core::error::AnyError;
+use edno_core::error::ModuleLoaderError;
+use edno_core::futures::FutureExt;
+use edno_core::futures::future::LocalBoxFuture;
+use edno_core::url::Url;
+use edno_core::v8_set_flags;
 use deno_error::JsErrorBox;
-use deno_lib::args::CaData;
-use deno_lib::args::RootCertStoreLoadError;
-use deno_lib::args::get_root_cert_store;
-use deno_lib::args::npm_pkg_req_ref_to_binary_command;
-use deno_lib::loader::as_deno_resolver_requested_module_type;
-use deno_lib::loader::loaded_module_source_to_module_source_code;
-use deno_lib::loader::module_type_from_media_and_requested_type;
-use deno_lib::npm::NpmRegistryReadPermissionChecker;
-use deno_lib::npm::NpmRegistryReadPermissionCheckerMode;
-use deno_lib::npm::create_npm_process_state_provider;
-use deno_lib::standalone::binary::NodeModules;
-use deno_lib::util::hash::FastInsecureHasher;
-use deno_lib::util::text_encoding::from_utf8_lossy_cow;
-use deno_lib::util::text_encoding::from_utf8_lossy_owned;
-use deno_lib::util::v8::construct_v8_flags;
-use deno_lib::worker::CreateModuleLoaderResult;
-use deno_lib::worker::LibMainWorkerFactory;
-use deno_lib::worker::LibMainWorkerOptions;
-use deno_lib::worker::ModuleLoaderFactory;
-use deno_lib::worker::StorageKeyResolver;
+use edno_lib::args::CaData;
+use edno_lib::args::RootCertStoreLoadError;
+use edno_lib::args::get_root_cert_store;
+use edno_lib::args::npm_pkg_req_ref_to_binary_command;
+use edno_lib::loader::as_deno_resolver_requested_module_type;
+use edno_lib::loader::loaded_module_source_to_module_source_code;
+use edno_lib::loader::module_type_from_media_and_requested_type;
+use edno_lib::npm::NpmRegistryReadPermissionChecker;
+use edno_lib::npm::NpmRegistryReadPermissionCheckerMode;
+use edno_lib::npm::create_npm_process_state_provider;
+use edno_lib::standalone::binary::NodeModules;
+use edno_lib::util::hash::FastInsecureHasher;
+use edno_lib::util::text_encoding::from_utf8_lossy_cow;
+use edno_lib::util::text_encoding::from_utf8_lossy_owned;
+use edno_lib::util::v8::construct_v8_flags;
+use edno_lib::worker::CreateModuleLoaderResult;
+use edno_lib::worker::LibMainWorkerFactory;
+use edno_lib::worker::LibMainWorkerOptions;
+use edno_lib::worker::ModuleLoaderFactory;
+use edno_lib::worker::StorageKeyResolver;
 use deno_media_type::MediaType;
-use deno_npm::resolution::NpmResolutionSnapshot;
-use deno_npmrc::ResolvedNpmRc;
-use deno_package_json::PackageJsonDepValue;
-use deno_resolver::DenoResolveErrorKind;
-use deno_resolver::cjs::CjsTracker;
-use deno_resolver::cjs::IsCjsResolutionMode;
-use deno_resolver::loader::NpmModuleLoader;
-use deno_resolver::npm::ByonmNpmResolverCreateOptions;
-use deno_resolver::npm::CreateInNpmPkgCheckerOptions;
-use deno_resolver::npm::DenoInNpmPackageChecker;
-use deno_resolver::npm::NpmReqResolver;
-use deno_resolver::npm::NpmReqResolverOptions;
-use deno_resolver::npm::NpmResolver;
-use deno_resolver::npm::NpmResolverCreateOptions;
-use deno_resolver::npm::managed::ManagedInNpmPkgCheckerCreateOptions;
-use deno_resolver::npm::managed::ManagedNpmResolverCreateOptions;
-use deno_resolver::npm::managed::NpmResolutionCell;
-use deno_resolver::workspace::MappedResolution;
-use deno_resolver::workspace::SloppyImportsOptions;
-use deno_resolver::workspace::WorkspaceResolver;
-use deno_runtime::FeatureChecker;
-use deno_runtime::WorkerExecutionMode;
-use deno_runtime::WorkerLogLevel;
-use deno_runtime::code_cache::CodeCache;
-use deno_runtime::deno_fs::FileSystem;
-use deno_runtime::deno_node::NodeRequireLoader;
-use deno_runtime::deno_node::create_host_defined_options;
-use deno_runtime::deno_node::ops::module_hooks::LoaderHookRegistry;
-use deno_runtime::deno_permissions::CheckSpecifierKind;
-use deno_runtime::deno_permissions::Permissions;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::deno_tls::RootCertStoreProvider;
-use deno_runtime::deno_tls::rustls::RootCertStore;
-use deno_runtime::deno_web::Blob;
-use deno_runtime::deno_web::BlobStore;
-use deno_runtime::permissions::RuntimePermissionDescriptorParser;
+use edno_npm::resolution::NpmResolutionSnapshot;
+use edno_npmrc::ResolvedNpmRc;
+use edno_package_json::PackageJsonDepValue;
+use edno_resolver::EdnoResolveErrorKind;
+use edno_resolver::cjs::CjsTracker;
+use edno_resolver::cjs::IsCjsResolutionMode;
+use edno_resolver::loader::NpmModuleLoader;
+use edno_resolver::npm::ByonmNpmResolverCreateOptions;
+use edno_resolver::npm::CreateInNpmPkgCheckerOptions;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
+use edno_resolver::npm::NpmReqResolver;
+use edno_resolver::npm::NpmReqResolverOptions;
+use edno_resolver::npm::NpmResolver;
+use edno_resolver::npm::NpmResolverCreateOptions;
+use edno_resolver::npm::managed::ManagedInNpmPkgCheckerCreateOptions;
+use edno_resolver::npm::managed::ManagedNpmResolverCreateOptions;
+use edno_resolver::npm::managed::NpmResolutionCell;
+use edno_resolver::workspace::MappedResolution;
+use edno_resolver::workspace::SloppyImportsOptions;
+use edno_resolver::workspace::WorkspaceResolver;
+use edno_runtime::FeatureChecker;
+use edno_runtime::WorkerExecutionMode;
+use edno_runtime::WorkerLogLevel;
+use edno_runtime::code_cache::CodeCache;
+use edno_runtime::edno_fs::FileSystem;
+use edno_runtime::edno_node::NodeRequireLoader;
+use edno_runtime::edno_node::create_host_defined_options;
+use edno_runtime::edno_node::ops::module_hooks::LoaderHookRegistry;
+use edno_runtime::edno_permissions::CheckSpecifierKind;
+use edno_runtime::edno_permissions::Permissions;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::edno_tls::RootCertStoreProvider;
+use edno_runtime::edno_tls::rustls::RootCertStore;
+use edno_runtime::edno_web::Blob;
+use edno_runtime::edno_web::BlobStore;
+use edno_runtime::permissions::RuntimePermissionDescriptorParser;
 use deno_semver::npm::NpmPackageReqReference;
-use node_resolver::DenoIsBuiltInNodeModuleChecker;
+use node_resolver::EdnoIsBuiltInNodeModuleChecker;
 use node_resolver::NodeResolutionKind;
 use node_resolver::NodeResolver;
 use node_resolver::PackageJsonResolver;
@@ -97,32 +97,32 @@ use node_resolver::cache::NodeResolutionSys;
 use node_resolver::errors::PackageJsonLoadError;
 use sys_traits::EnvCurrentDir;
 
-use crate::binary::DenoCompileModuleSource;
+use crate::binary::EdnoCompileModuleSource;
 use crate::binary::StandaloneData;
 use crate::binary::StandaloneModules;
 use crate::binary::transpile_runtime_module;
-use crate::code_cache::DenoCompileCodeCache;
-use crate::file_system::DenoRtSys;
+use crate::code_cache::EdnoCompileCodeCache;
+use crate::file_system::EdnoRtSys;
 use crate::file_system::FileBackedVfs;
 use crate::node::CjsCodeAnalyzer;
-use crate::node::DenoRtCjsTracker;
-use crate::node::DenoRtNodeCodeTranslator;
-use crate::node::DenoRtNodeResolver;
-use crate::node::DenoRtNpmModuleLoader;
-use crate::node::DenoRtNpmReqResolver;
+use crate::node::EdnoRtCjsTracker;
+use crate::node::EdnoRtNodeCodeTranslator;
+use crate::node::EdnoRtNodeResolver;
+use crate::node::EdnoRtNpmModuleLoader;
+use crate::node::EdnoRtNpmReqResolver;
 
 struct SharedModuleLoaderState {
   blob_store: Arc<BlobStore>,
-  cjs_tracker: Arc<DenoRtCjsTracker>,
-  code_cache: Option<Arc<DenoCompileCodeCache>>,
+  cjs_tracker: Arc<EdnoRtCjsTracker>,
+  code_cache: Option<Arc<EdnoCompileCodeCache>>,
   modules: Arc<StandaloneModules>,
-  node_code_translator: Arc<DenoRtNodeCodeTranslator>,
-  node_resolver: Arc<DenoRtNodeResolver>,
-  npm_module_loader: Arc<DenoRtNpmModuleLoader>,
-  npm_registry_permission_checker: NpmRegistryReadPermissionChecker<DenoRtSys>,
-  npm_req_resolver: Arc<DenoRtNpmReqResolver>,
+  node_code_translator: Arc<EdnoRtNodeCodeTranslator>,
+  node_resolver: Arc<EdnoRtNodeResolver>,
+  npm_module_loader: Arc<EdnoRtNpmModuleLoader>,
+  npm_registry_permission_checker: NpmRegistryReadPermissionChecker<EdnoRtSys>,
+  npm_req_resolver: Arc<EdnoRtNpmReqResolver>,
   vfs: Arc<FileBackedVfs>,
-  workspace_resolver: WorkspaceResolver<DenoRtSys>,
+  workspace_resolver: WorkspaceResolver<EdnoRtSys>,
 }
 
 impl SharedModuleLoaderState {
@@ -137,13 +137,13 @@ impl SharedModuleLoaderState {
     if !code_cache.enabled() {
       return None;
     }
-    // deno version is already included in the root cache key
+    // edno version is already included in the root cache key
     let hash = FastInsecureHasher::new_without_deno_version()
       .write_hashable(source)
       .finish();
     let data = code_cache.get_sync(
       specifier,
-      deno_runtime::code_cache::CodeCacheType::EsModule,
+      edno_runtime::code_cache::CodeCacheType::EsModule,
       hash,
     );
     Some(SourceCodeCacheInfo {
@@ -159,9 +159,9 @@ struct EmbeddedModuleLoader {
   hook_registry: LoaderHookRegistry,
   permissions: PermissionsContainer,
   /// Whether this loader belongs to a web worker. A worker's main module is
-  /// checked against read permissions like a dynamic import (as in `deno run`).
+  /// checked against read permissions like a dynamic import (as in `edno run`).
   is_worker: bool,
-  sys: DenoRtSys,
+  sys: EdnoRtSys,
   /// For blob/object-URL module workers, the captured root blob and its
   /// specifier. Used so the worker's root module load resolves from the
   /// synchronously-captured blob even if `URL.revokeObjectURL` has since
@@ -208,7 +208,7 @@ impl CjsAnalysisSourceProvider for StandaloneCjsAnalysisSourceProvider<'_> {
 impl EmbeddedModuleLoader {
   /// Local files that aren't embedded in the binary are read from the host
   /// file system. When loaded via `import()` or as a worker's main module,
-  /// they must pass the read permission check, the same as in `deno run`.
+  /// they must pass the read permission check, the same as in `edno run`.
   fn check_host_fs_read_permission(
     &self,
     specifier: &Url,
@@ -241,7 +241,7 @@ impl EmbeddedModuleLoader {
       )]
       let current_dir =
         self.sys.env_current_dir().map_err(JsErrorBox::from_err)?;
-      deno_core::resolve_path(".", &current_dir)
+      edno_core::resolve_path(".", &current_dir)
         .map_err(JsErrorBox::from_err)?
     } else {
       Url::parse(referrer).map_err(|err| {
@@ -279,7 +279,7 @@ impl EmbeddedModuleLoader {
     let mapped_resolution = self.shared.workspace_resolver.resolve(
       raw_specifier,
       &referrer,
-      deno_resolver::workspace::ResolutionKind::Execution,
+      edno_resolver::workspace::ResolutionKind::Execution,
     );
 
     match mapped_resolution {
@@ -316,7 +316,7 @@ impl EmbeddedModuleLoader {
         .map_err(|e| JsErrorBox::from_err(e.clone()))?
       {
         PackageJsonDepValue::File(_) => Err(JsErrorBox::from_err(
-          DenoResolveErrorKind::UnsupportedPackageJsonFileSpecifier.into_box(),
+          EdnoResolveErrorKind::UnsupportedPackageJsonFileSpecifier.into_box(),
         )),
         PackageJsonDepValue::Req(req) => Ok(
           self
@@ -471,12 +471,12 @@ impl EmbeddedModuleLoader {
     original_specifier: &Url,
     maybe_referrer: Option<&ModuleLoadReferrer>,
     options: ModuleLoadOptions,
-  ) -> deno_core::ModuleLoadResponse {
+  ) -> edno_core::ModuleLoadResponse {
     if let Err(err) = self.check_host_fs_read_permission(
       original_specifier,
       options.is_dynamic_import,
     ) {
-      return deno_core::ModuleLoadResponse::Sync(Err(err));
+      return edno_core::ModuleLoadResponse::Sync(Err(err));
     }
 
     if self.shared.node_resolver.in_npm_package(original_specifier) {
@@ -484,7 +484,7 @@ impl EmbeddedModuleLoader {
       let shared = self.shared.clone();
       let original_specifier = original_specifier.clone();
       let maybe_referrer = maybe_referrer.map(|r| r.specifier.clone());
-      return deno_core::ModuleLoadResponse::Async(
+      return edno_core::ModuleLoadResponse::Async(
         async move {
           let source_provider =
             StandaloneCjsAnalysisSourceProvider::new(&loader);
@@ -517,7 +517,7 @@ impl EmbeddedModuleLoader {
           } else {
             None
           };
-          Ok(deno_core::ModuleSource::new_with_redirect(
+          Ok(edno_core::ModuleSource::new_with_redirect(
             module_type,
             loaded_module_source_to_module_source_code(code_source.source),
             &original_specifier,
@@ -533,9 +533,9 @@ impl EmbeddedModuleLoader {
       Ok(Some(module)) => {
         match options.requested_module_type {
           RequestedModuleType::Text | RequestedModuleType::Bytes => {
-            let module_source = DenoCompileModuleSource::Bytes(module.data);
-            return deno_core::ModuleLoadResponse::Sync(Ok(
-              deno_core::ModuleSource::new_with_redirect(
+            let module_source = EdnoCompileModuleSource::Bytes(module.data);
+            return edno_core::ModuleLoadResponse::Sync(Ok(
+              edno_core::ModuleSource::new_with_redirect(
                 match options.requested_module_type {
                   RequestedModuleType::Text => ModuleType::Text,
                   RequestedModuleType::Bytes => ModuleType::Bytes,
@@ -571,7 +571,7 @@ impl EmbeddedModuleLoader {
         {
           Ok(is_maybe_cjs) => is_maybe_cjs,
           Err(err) => {
-            return deno_core::ModuleLoadResponse::Sync(Err(
+            return edno_core::ModuleLoadResponse::Sync(Err(
               JsErrorBox::type_error(format!("{:?}", err)),
             ));
           }
@@ -581,13 +581,13 @@ impl EmbeddedModuleLoader {
           let module_specifier = module_specifier.clone();
           let loader = self.clone();
           let shared = self.shared.clone();
-          deno_core::ModuleLoadResponse::Async(
+          edno_core::ModuleLoadResponse::Async(
             async move {
               let source = match module_source {
-                DenoCompileModuleSource::String(string) => {
+                EdnoCompileModuleSource::String(string) => {
                   Cow::Borrowed(string)
                 }
-                DenoCompileModuleSource::Bytes(module_code_bytes) => {
+                EdnoCompileModuleSource::Bytes(module_code_bytes) => {
                   match module_code_bytes {
                     Cow::Owned(bytes) => {
                       Cow::Owned(from_utf8_lossy_owned(bytes))
@@ -619,7 +619,7 @@ impl EmbeddedModuleLoader {
               } else {
                 None
               };
-              Ok(deno_core::ModuleSource::new_with_redirect(
+              Ok(edno_core::ModuleSource::new_with_redirect(
                 module_type,
                 module_source,
                 &original_specifier,
@@ -643,8 +643,8 @@ impl EmbeddedModuleLoader {
           } else {
             None
           };
-          deno_core::ModuleLoadResponse::Sync(Ok(
-            deno_core::ModuleSource::new_with_redirect(
+          edno_core::ModuleLoadResponse::Sync(Ok(
+            edno_core::ModuleSource::new_with_redirect(
               module_type,
               module_source,
               original_specifier,
@@ -691,13 +691,13 @@ impl EmbeddedModuleLoader {
                   ModuleSourceCode::String(transpiled.into_source().text.into())
                 }
                 Err(e) => {
-                  return deno_core::ModuleLoadResponse::Sync(Err(
+                  return edno_core::ModuleLoadResponse::Sync(Err(
                     JsErrorBox::type_error(format!("Transpile error: {e}")),
                   ));
                 }
               },
               Err(e) => {
-                return deno_core::ModuleLoadResponse::Sync(Err(
+                return edno_core::ModuleLoadResponse::Sync(Err(
                   JsErrorBox::type_error(format!("Parse error: {e}")),
                 ));
               }
@@ -705,8 +705,8 @@ impl EmbeddedModuleLoader {
           } else {
             ModuleSourceCode::String(source.into())
           };
-          return deno_core::ModuleLoadResponse::Sync(Ok(
-            deno_core::ModuleSource::new(
+          return edno_core::ModuleLoadResponse::Sync(Ok(
+            edno_core::ModuleSource::new(
               module_type,
               code,
               original_specifier,
@@ -714,11 +714,11 @@ impl EmbeddedModuleLoader {
             ),
           ));
         }
-        deno_core::ModuleLoadResponse::Sync(Err(JsErrorBox::type_error(
+        edno_core::ModuleLoadResponse::Sync(Err(JsErrorBox::type_error(
           format!("Module not found: {}", original_specifier),
         )))
       }
-      Err(err) => deno_core::ModuleLoadResponse::Sync(Err(
+      Err(err) => edno_core::ModuleLoadResponse::Sync(Err(
         JsErrorBox::type_error(format!("{:?}", err)),
       )),
     }
@@ -737,13 +737,13 @@ impl ModuleLoader for EmbeddedModuleLoader {
 
   fn resolve_with_scope(
     &self,
-    scope: &mut deno_core::v8::PinScope,
+    scope: &mut edno_core::v8::PinScope,
     raw_specifier: &str,
     referrer: &str,
     kind: ResolutionKind,
     import_attributes: &std::collections::HashMap<String, String>,
   ) -> Result<ModuleSpecifier, JsErrorBox> {
-    // CJS modules generated by Deno import `node:module` internally. Node does
+    // CJS modules generated by Edno import `node:module` internally. Node does
     // not expose that implementation detail to resolve hooks, so only bypass
     // hooks for CJS referrers. User ESM imports of `node:module` still go
     // through hooks.
@@ -788,9 +788,9 @@ impl ModuleLoader for EmbeddedModuleLoader {
 
   fn get_host_defined_options<'s>(
     &self,
-    scope: &mut deno_core::v8::PinScope<'s, '_>,
+    scope: &mut edno_core::v8::PinScope<'s, '_>,
     name: &str,
-  ) -> Option<deno_core::v8::Local<'s, deno_core::v8::Data>> {
+  ) -> Option<edno_core::v8::Local<'s, edno_core::v8::Data>> {
     let name = Url::parse(name).ok()?;
     if self.shared.node_resolver.in_npm_package(&name) {
       Some(create_host_defined_options(scope))
@@ -804,14 +804,14 @@ impl ModuleLoader for EmbeddedModuleLoader {
     original_specifier: &Url,
     maybe_referrer: Option<&ModuleLoadReferrer>,
     options: ModuleLoadOptions,
-  ) -> deno_core::ModuleLoadResponse {
+  ) -> edno_core::ModuleLoadResponse {
     if original_specifier.scheme() == "data" {
       let raw_data_url = match deno_media_type::data_url::RawDataUrl::parse(
         original_specifier,
       ) {
         Ok(raw) => raw,
         Err(err) => {
-          return deno_core::ModuleLoadResponse::Sync(Err(
+          return edno_core::ModuleLoadResponse::Sync(Err(
             JsErrorBox::type_error(format!("{:#}", err)),
           ));
         }
@@ -820,7 +820,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
       let data_url_text = match raw_data_url.decode() {
         Ok(text) => text,
         Err(err) => {
-          return deno_core::ModuleLoadResponse::Sync(Err(
+          return edno_core::ModuleLoadResponse::Sync(Err(
             JsErrorBox::type_error(format!("{:#}", err)),
           ));
         }
@@ -834,12 +834,12 @@ impl ModuleLoader for EmbeddedModuleLoader {
       ) {
         Ok(code) => code,
         Err(err) => {
-          return deno_core::ModuleLoadResponse::Sync(Err(err));
+          return edno_core::ModuleLoadResponse::Sync(Err(err));
         }
       };
-      return deno_core::ModuleLoadResponse::Sync(Ok(
-        deno_core::ModuleSource::new(
-          deno_core::ModuleType::JavaScript,
+      return edno_core::ModuleLoadResponse::Sync(Ok(
+        edno_core::ModuleSource::new(
+          edno_core::ModuleType::JavaScript,
           ModuleSourceCode::String(code.into()),
           original_specifier,
           None,
@@ -859,12 +859,12 @@ impl ModuleLoader for EmbeddedModuleLoader {
         .map(|(_, blob)| blob.clone())
         .or_else(|| self.shared.blob_store.get_object_url(specifier.clone()));
       let Some(blob) = maybe_blob else {
-        return deno_core::ModuleLoadResponse::Sync(Err(
+        return edno_core::ModuleLoadResponse::Sync(Err(
           JsErrorBox::type_error(format!("Blob URL not found: {specifier}")),
         ));
       };
       let requested_module_type = options.requested_module_type.clone();
-      return deno_core::ModuleLoadResponse::Async(
+      return edno_core::ModuleLoadResponse::Async(
         async move {
           let bytes = blob.read_all().await;
           let (media_type, maybe_charset) =
@@ -881,7 +881,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
               ModuleSourceCode::Bytes(bytes.into_boxed_slice().into())
             }
             _ => {
-              // Mirror `deno run`'s charset-aware decoding (see
+              // Mirror `edno run`'s charset-aware decoding (see
               // `TextDecodedFile::decode` in cli/file_fetcher.rs) so blob
               // sources honor the content-type charset and have a leading BOM
               // stripped, instead of blindly assuming UTF-8.
@@ -902,7 +902,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
               ModuleSourceCode::String(text.into())
             }
           };
-          Ok(deno_core::ModuleSource::new(
+          Ok(edno_core::ModuleSource::new(
             module_type,
             source,
             &specifier,
@@ -952,7 +952,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
       let is_dynamic_import = options.is_dynamic_import;
       let is_synchronous = options.is_synchronous;
       let requested_module_type = options.requested_module_type.clone();
-      return deno_core::ModuleLoadResponse::Async(
+      return edno_core::ModuleLoadResponse::Async(
         async move {
           let hook_result = match receiver.await {
             Ok(r) => r,
@@ -970,7 +970,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
                 format.as_deref(),
                 &requested_module_type,
               );
-              Ok(deno_core::ModuleSource::new(
+              Ok(edno_core::ModuleSource::new(
                 module_type,
                 ModuleSourceCode::String(source.into()),
                 &specifier,
@@ -986,7 +986,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
               // identity at the original specifier (matches Node).
               let fetch_specifier = effective_url
                 .as_deref()
-                .and_then(|u| deno_core::ModuleSpecifier::parse(u).ok())
+                .and_then(|u| edno_core::ModuleSpecifier::parse(u).ok())
                 .filter(|u| u != &specifier);
               let load_url = fetch_specifier.as_ref().unwrap_or(&specifier);
               let response = this.load_default(
@@ -999,11 +999,11 @@ impl ModuleLoader for EmbeddedModuleLoader {
                 },
               );
               let source = match response {
-                deno_core::ModuleLoadResponse::Sync(r) => r?,
-                deno_core::ModuleLoadResponse::Async(fut) => fut.await?,
+                edno_core::ModuleLoadResponse::Sync(r) => r?,
+                edno_core::ModuleLoadResponse::Async(fut) => fut.await?,
               };
               if fetch_specifier.is_some() {
-                Ok(deno_core::ModuleSource::new(
+                Ok(edno_core::ModuleSource::new(
                   source.module_type,
                   source.code,
                   &specifier,
@@ -1034,7 +1034,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
     }
     // Residual ext-scripts (the node polyfill closure, etc.) don't go through
     // `load()`, so they can't ride their cache on a `ModuleSource`. Read the
-    // shared on-disk cache directly here. The deno version is already part of
+    // shared on-disk cache directly here. The edno version is already part of
     // the root cache key.
     //
     // Hash the source *bytes*, not the `&str`: that's what
@@ -1046,7 +1046,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
       .finish();
     let data = code_cache.get_sync(
       specifier,
-      deno_runtime::code_cache::CodeCacheType::EsModule,
+      edno_runtime::code_cache::CodeCacheType::EsModule,
       hash,
     );
     Some(SourceCodeCacheInfo {
@@ -1064,7 +1064,7 @@ impl ModuleLoader for EmbeddedModuleLoader {
     if let Some(code_cache) = &self.shared.code_cache {
       code_cache.set_sync(
         specifier,
-        deno_runtime::code_cache::CodeCacheType::EsModule,
+        edno_runtime::code_cache::CodeCacheType::EsModule,
         source_hash,
         code_cache_data,
       );
@@ -1212,7 +1212,7 @@ impl NodeRequireLoader for EmbeddedModuleLoader {
 
 struct StandaloneModuleLoaderFactory {
   shared: Arc<SharedModuleLoaderState>,
-  sys: DenoRtSys,
+  sys: EdnoRtSys,
 }
 
 impl StandaloneModuleLoaderFactory {
@@ -1269,7 +1269,7 @@ impl ModuleLoaderFactory for StandaloneModuleLoaderFactory {
 }
 
 struct StandaloneRootCertStoreProvider {
-  sys: DenoRtSys,
+  sys: EdnoRtSys,
   ca_stores: Option<Vec<String>>,
   ca_data: Option<CaData>,
   cell: OnceLock<Result<RootCertStore, RootCertStoreLoadError>>,
@@ -1294,7 +1294,7 @@ impl RootCertStoreProvider for StandaloneRootCertStoreProvider {
 }
 
 /// Callback to initialize additional `OpState` during worker creation.
-pub type OpStateInitFn = Box<dyn FnOnce(&mut deno_core::OpState) + Send>;
+pub type OpStateInitFn = Box<dyn FnOnce(&mut edno_core::OpState) + Send>;
 
 /// Error raised while a compiled desktop app's main module is still loading or
 /// first evaluating (e.g. a failed import, a link error, or a top-level
@@ -1306,7 +1306,7 @@ pub type OpStateInitFn = Box<dyn FnOnce(&mut deno_core::OpState) + Send>;
 /// pre-formatted, user-facing message so the shell can surface it in a native
 /// dialog: a GUI-launched app (Finder/Dock) has no visible stderr, so an
 /// unsurfaced startup error otherwise presents as a window that blinks open and
-/// immediately closes (deno#35544).
+/// immediately closes (edno#35544).
 ///
 /// The original error is retained as the [`std::error::Error::source`] so the
 /// `{:?}` debug logs in the desktop shell still print the full cause chain.
@@ -1335,8 +1335,8 @@ impl std::error::Error for DesktopStartupError {
 /// print them to stderr while retaining the original error as the source.
 fn desktop_startup_error<E: Into<AnyError>>(err: E) -> AnyError {
   let err: AnyError = err.into();
-  let message = match deno_lib::util::result::js_error_downcast_ref(&err) {
-    Some(js_error) => deno_runtime::fmt_errors::format_js_error(js_error, None),
+  let message = match edno_lib::util::result::js_error_downcast_ref(&err) {
+    Some(js_error) => edno_runtime::fmt_errors::format_js_error(js_error, None),
     None => format!("{err:?}"),
   };
   AnyError::new(DesktopStartupError {
@@ -1362,14 +1362,14 @@ pub struct RunOptions {
   /// Override the main module to execute instead of the embedded entrypoint.
   /// Used by desktop runtime for forked worker processes (child_process.fork)
   /// where the child should run a specific script, not the embedded entrypoint.
-  pub override_main_module: Option<deno_core::url::Url>,
+  pub override_main_module: Option<edno_core::url::Url>,
   /// Version and rollback state for desktop auto-update JS initialization.
   pub auto_update_version: Option<String>,
   pub auto_update_rolled_back: bool,
-  /// Error reporting URL from deno.json `desktop.errorReporting.url`.
+  /// Error reporting URL from edno.json `desktop.errorReporting.url`.
   pub error_reporting_url: Option<String>,
-  /// Auto-update release base URL from deno.json `desktop.release.baseUrl`.
-  /// Used as the default `url` for `Deno.autoUpdate` when none is passed.
+  /// Auto-update release base URL from edno.json `desktop.release.baseUrl`.
+  /// Used as the default `url` for `Edno.autoUpdate` when none is passed.
   pub release_base_url: Option<String>,
   /// Stop on the first line of user code. Mirrors `--inspect-brk`.
   pub inspect_brk: bool,
@@ -1385,7 +1385,7 @@ pub struct RunOptions {
 /// forked child processes (e.g. child_process.fork()).
 pub async fn run(
   fs: Arc<dyn FileSystem>,
-  sys: DenoRtSys,
+  sys: EdnoRtSys,
   data: StandaloneData,
 ) -> Result<i32, AnyError> {
   run_with_options(fs, sys, data, RunOptions::default()).await
@@ -1393,7 +1393,7 @@ pub async fn run(
 
 pub async fn run_with_options(
   fs: Arc<dyn FileSystem>,
-  sys: DenoRtSys,
+  sys: EdnoRtSys,
   data: StandaloneData,
   options: RunOptions,
 ) -> Result<i32, AnyError> {
@@ -1442,7 +1442,7 @@ pub async fn run_with_options(
     match child_entrypoint {
       // Only honor the override for a genuine fork() child, which always wires
       // up an IPC channel (NODE_CHANNEL_FD). This is defense in depth against an
-      // accidental collision with a stray DENO_INTERNAL_CHILD_ENTRYPOINT, not a
+      // accidental collision with a stray EDNO_INTERNAL_CHILD_ENTRYPOINT, not a
       // security boundary: an attacker who can set one env var can set both, and
       // resolve_child_entrypoint's cwd-relative fallback will then run an
       // on-disk module with the binary's baked-in permissions. That on-disk
@@ -1455,7 +1455,7 @@ pub async fn run_with_options(
       _ => entrypoint,
     }
   };
-  let npm_global_cache_dir = root_path.join(".deno_compile_node_modules");
+  let npm_global_cache_dir = root_path.join(".edno_compile_node_modules");
   let pkg_json_resolver = Arc::new(PackageJsonResolver::new(
     sys.clone(),
     Some(Arc::new(PackageJsonThreadLocalCache)),
@@ -1482,7 +1482,7 @@ pub async fn run_with_options(
     Some(NodeModules::Managed { node_modules_dir }) => {
       // create an npmrc that uses the fake npm_registry_url to resolve packages
       let npmrc = Arc::new(ResolvedNpmRc {
-        default_config: deno_npmrc::RegistryConfigWithUrl {
+        default_config: edno_npmrc::RegistryConfigWithUrl {
           registry_url: npm_registry_url.clone(),
           config: Default::default(),
         },
@@ -1503,7 +1503,7 @@ pub async fn run_with_options(
       let maybe_node_modules_path = node_modules_dir
         .map(|node_modules_dir| workspace_root_path.join(node_modules_dir));
       let in_npm_pkg_checker =
-        DenoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Managed(
+        EdnoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Managed(
           ManagedInNpmPkgCheckerCreateOptions {
             root_cache_dir_url: npm_cache_dir.root_dir_url(),
             maybe_node_modules_path: maybe_node_modules_path.as_deref(),
@@ -1511,7 +1511,7 @@ pub async fn run_with_options(
         ));
       let npm_resolution =
         Arc::new(NpmResolutionCell::new(NpmResolutionSnapshot::new(snapshot)));
-      let npm_resolver = NpmResolver::<DenoRtSys>::new::<DenoRtSys>(
+      let npm_resolver = NpmResolver::<EdnoRtSys>::new::<EdnoRtSys>(
         NpmResolverCreateOptions::Managed(ManagedNpmResolverCreateOptions {
           npm_resolution,
           npm_cache_dir,
@@ -1519,7 +1519,7 @@ pub async fn run_with_options(
           maybe_node_modules_path,
           npm_system_info: Default::default(),
           npmrc,
-          linker_mode: deno_config::deno_json::NodeModulesLinkerMode::default(),
+          linker_mode: edno_config::edno_json::NodeModulesLinkerMode::default(),
         }),
       );
       (in_npm_pkg_checker, npm_resolver)
@@ -1530,8 +1530,8 @@ pub async fn run_with_options(
       let root_node_modules_dir =
         root_node_modules_dir.map(|p| workspace_root_path.join(p));
       let in_npm_pkg_checker =
-        DenoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Byonm);
-      let npm_resolver = NpmResolver::<DenoRtSys>::new::<DenoRtSys>(
+        EdnoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Byonm);
+      let npm_resolver = NpmResolver::<EdnoRtSys>::new::<EdnoRtSys>(
         NpmResolverCreateOptions::Byonm(ByonmNpmResolverCreateOptions {
           sys: node_resolution_sys.clone(),
           pkg_json_resolver: pkg_json_resolver.clone(),
@@ -1551,14 +1551,14 @@ pub async fn run_with_options(
         npmrc.get_all_known_registries_urls(),
       ));
       let in_npm_pkg_checker =
-        DenoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Managed(
+        EdnoInNpmPackageChecker::new(CreateInNpmPkgCheckerOptions::Managed(
           ManagedInNpmPkgCheckerCreateOptions {
             root_cache_dir_url: npm_cache_dir.root_dir_url(),
             maybe_node_modules_path: None,
           },
         ));
       let npm_resolution = Arc::new(NpmResolutionCell::default());
-      let npm_resolver = NpmResolver::<DenoRtSys>::new::<DenoRtSys>(
+      let npm_resolver = NpmResolver::<EdnoRtSys>::new::<EdnoRtSys>(
         NpmResolverCreateOptions::Managed(ManagedNpmResolverCreateOptions {
           npm_resolution,
           sys: node_resolution_sys.clone(),
@@ -1566,7 +1566,7 @@ pub async fn run_with_options(
           maybe_node_modules_path: None,
           npm_system_info: Default::default(),
           npmrc: create_default_npmrc(),
-          linker_mode: deno_config::deno_json::NodeModulesLinkerMode::default(),
+          linker_mode: edno_config::edno_json::NodeModulesLinkerMode::default(),
         }),
       );
       (in_npm_pkg_checker, npm_resolver)
@@ -1576,7 +1576,7 @@ pub async fn run_with_options(
   let has_node_modules_dir = npm_resolver.root_node_modules_path().is_some();
   let node_resolver = Arc::new(NodeResolver::new(
     in_npm_pkg_checker.clone(),
-    DenoIsBuiltInNodeModuleChecker,
+    EdnoIsBuiltInNodeModuleChecker,
     npm_resolver.clone(),
     pkg_json_resolver.clone(),
     node_resolution_sys,
@@ -1645,7 +1645,7 @@ pub async fn run_with_options(
           .to_file_path()
           .unwrap();
         let pkg_json =
-          deno_package_json::PackageJson::load_from_value(path, json)?;
+          edno_package_json::PackageJson::load_from_value(path, json)?;
         Ok(Arc::new(pkg_json))
       })
       .collect::<Result<Vec<_>, AnyError>>()?;
@@ -1657,7 +1657,7 @@ pub async fn run_with_options(
         .jsr_pkgs
         .iter()
         .map(|pkg| ResolverWorkspaceJsrPackage {
-          is_link: false, // only used for enhancing the diagnostic, which isn't shown in deno compile
+          is_link: false, // only used for enhancing the diagnostic, which isn't shown in edno compile
           base: root_dir_url.join(&pkg.relative_base).unwrap(),
           name: pkg.name.clone(),
           version: pkg.version.clone(),
@@ -1677,7 +1677,7 @@ pub async fn run_with_options(
     )
   };
   let code_cache = match metadata.code_cache_key {
-    Some(code_cache_key) => Some(Arc::new(DenoCompileCodeCache::new(
+    Some(code_cache_key) => Some(Arc::new(EdnoCompileCodeCache::new(
       root_path.with_file_name(format!(
         "{}.cache",
         root_path.file_name().unwrap().to_string_lossy()
@@ -1714,13 +1714,13 @@ pub async fn run_with_options(
 
   // Desktop runtimes always need a baseline set of permissions to function:
   // the renderer is served over loopback HTTP, so net access to 127.0.0.1
-  // is mandatory; the desktop init JS reads `DENO_DESKTOP_*` env vars to
+  // is mandatory; the desktop init JS reads `EDNO_DESKTOP_*` env vars to
   // discover the inspector mux, HMR watch dir, etc. Without these, the
-  // very first `Deno.serve(...)` or `Deno.env.get(...)` throws NotCapable
+  // very first `Edno.serve(...)` or `Edno.env.get(...)` throws NotCapable
   // and aborts script execution before the event-loop IIFE registers —
   // which manifests as a blank window where nothing works (no input,
   // no auto-tests, no bindings). Granting them up front avoids forcing
-  // every `deno desktop` user to remember `-A`.
+  // every `edno desktop` user to remember `-A`.
   let has_desktop = op_state_init.is_some();
   let permissions = {
     let mut permissions = metadata.permissions;
@@ -1746,9 +1746,9 @@ pub async fn run_with_options(
       checker.enable_feature(feature.leak());
     }
     // Mirror cli/factory.rs: force-enable the unstable KV feature when
-    // DENO_KV_REQUIRES_DISTRIBUTED_DATABASE=error so Deno.openKv() is exposed
+    // EDNO_KV_REQUIRES_DISTRIBUTED_DATABASE=error so Edno.openKv() is exposed
     // and surfaces a clear "no database attached" error.
-    if std::env::var("DENO_KV_REQUIRES_DISTRIBUTED_DATABASE").as_deref()
+    if std::env::var("EDNO_KV_REQUIRES_DISTRIBUTED_DATABASE").as_deref()
       == Ok("error")
       && !checker.check("kv")
     {
@@ -1757,11 +1757,11 @@ pub async fn run_with_options(
     checker
   });
   // Resolve a persistent, per-app data directory so origin-bound storage such
-  // as the default `Deno.openKv()`, `localStorage` and `caches` persists to
+  // as the default `Edno.openKv()`, `localStorage` and `caches` persists to
   // disk instead of silently falling back to an in-memory database. A compiled
   // binary is a standalone app, so we store under the platform's app data
   // directory (`%LOCALAPPDATA%`, `~/Library/Application Support`,
-  // `$XDG_DATA_HOME`) keyed by the app name, rather than polluting `DENO_DIR`.
+  // `$XDG_DATA_HOME`) keyed by the app name, rather than polluting `EDNO_DIR`.
   //
   // The app name is baked in at compile time (`--app-name`, otherwise the
   // output file name), so it is stable across runs and even if the binary is
@@ -1776,7 +1776,7 @@ pub async fn run_with_options(
     std::env::current_exe()
       .ok()
       .and_then(|p| p.file_stem().map(|s| s.to_string_lossy().into_owned()))
-      .unwrap_or_else(|| "deno-compile".to_string())
+      .unwrap_or_else(|| "edno-compile".to_string())
   });
   // `--app-name` is validated at compile time (see `validate_app_name`), so it
   // is safe to use directly as a single directory component here.
@@ -1814,19 +1814,19 @@ pub async fn run_with_options(
     seed: metadata.seed,
     unsafely_ignore_certificate_errors: metadata
       .unsafely_ignore_certificate_errors,
-    node_ipc_init: deno_lib::args::node_ipc_init(&sys)?,
+    node_ipc_init: edno_lib::args::node_ipc_init(&sys)?,
     serve_port: options.serve_port,
     serve_host: options.serve_host,
     otel_config: metadata.otel_config,
     no_legacy_abort: false,
-    startup_snapshot: deno_snapshots::CLI_SNAPSHOT,
-    residual_lazy_js_sources: deno_snapshots::RESIDUAL_LAZY_JS,
-    residual_lazy_esm_sources: deno_snapshots::RESIDUAL_LAZY_ESM,
+    startup_snapshot: edno_snapshots::CLI_SNAPSHOT,
+    residual_lazy_js_sources: edno_snapshots::RESIDUAL_LAZY_JS,
+    residual_lazy_esm_sources: edno_snapshots::RESIDUAL_LAZY_ESM,
     enable_raw_imports: metadata.unstable_config.raw_imports,
     close_on_idle: !options.auto_serve,
     maybe_initial_cwd: None,
     disable_offscreen_canvas: matches!(
-      std::env::var("DENO_DISABLE_OFFSCREEN_CANVAS").as_deref(),
+      std::env::var("EDNO_DISABLE_OFFSCREEN_CANVAS").as_deref(),
       Ok("1") | Ok("true")
     ),
   };
@@ -1856,11 +1856,11 @@ pub async fn run_with_options(
     .v8_flags
     .contains(&String::from("--single-threaded"));
   let v8_platform = if is_single_threaded {
-    Some(::deno_core::v8::Platform::new_single_threaded(true).make_shared())
+    Some(::edno_core::v8::Platform::new_single_threaded(true).make_shared())
   } else {
     None
   };
-  deno_core::JsRuntime::init_platform(v8_platform);
+  edno_core::JsRuntime::init_platform(v8_platform);
 
   let main_module = match NpmPackageReqReference::from_specifier(&main_module) {
     Ok(package_ref) => {
@@ -1897,11 +1897,11 @@ pub async fn run_with_options(
     init_fn(&mut op_state.borrow_mut());
   }
 
-  // Initialize desktop APIs (Deno.desktop.*).
+  // Initialize desktop APIs (Edno.desktop.*).
   if has_desktop {
     worker
       .js_runtime()
-      .execute_script("ext:deno_desktop/init", crate::desktop::DESKTOP_JS)?;
+      .execute_script("ext:edno_desktop/init", crate::desktop::DESKTOP_JS)?;
 
     // Initialize auto-update JS (DesktopUpdater cppgc object is already
     // registered via the desktop extension's objects).
@@ -1912,7 +1912,7 @@ pub async fn run_with_options(
     );
     worker
       .js_runtime()
-      .execute_script("ext:deno_desktop/auto_update", js)?;
+      .execute_script("ext:edno_desktop/auto_update", js)?;
 
     // Make the operator-configured reporting URL available to the native
     // op (and the panic hook) via `ERROR_REPORT_CONFIG`. The op reads the
@@ -1920,7 +1920,7 @@ pub async fn run_with_options(
     // untrusted caller can't retarget it. `OnceLock::set` is a no-op if a
     // path that already knows the URL (e.g. `run_desktop`) set it first.
     if let Some(url) = options.error_reporting_url.as_deref() {
-      deno_runtime::ops::desktop::set_error_report_config(
+      edno_runtime::ops::desktop::set_error_report_config(
         url.to_string(),
         options.auto_update_version.clone(),
       );
@@ -1932,7 +1932,7 @@ pub async fn run_with_options(
     );
     worker
       .js_runtime()
-      .execute_script("ext:deno_desktop/error_reporting", js)?;
+      .execute_script("ext:edno_desktop/error_reporting", js)?;
   }
 
   if let Some(watch_dir) = hmr_watch_dir {
@@ -1998,7 +1998,7 @@ pub async fn run_with_options(
 // Internal env var carrying the module a fork()ed child of a compiled binary
 // should run. Kept in sync with ext/node/polyfills/child_process.ts.
 const INTERNAL_CHILD_ENTRYPOINT_ENV_VAR: &str =
-  "DENO_INTERNAL_CHILD_ENTRYPOINT";
+  "EDNO_INTERNAL_CHILD_ENTRYPOINT";
 
 /// Resolves the module path passed to `node:child_process.fork()` to the module
 /// that a compiled-binary child should run as its main module.
@@ -2014,7 +2014,7 @@ fn resolve_child_entrypoint(
   module_path: &str,
   entrypoint: &Url,
   vfs: &FileBackedVfs,
-  sys: &DenoRtSys,
+  sys: &EdnoRtSys,
 ) -> Url {
   // Falling back to the entrypoint silently would re-run the parent's
   // entrypoint, i.e. the very symptom of #26304. Warn so the failure is
@@ -2057,7 +2057,7 @@ fn resolve_child_entrypoint(
   let cwd = sys.env_current_dir();
   match cwd {
     Ok(cwd) => {
-      deno_core::resolve_path(module_path, &cwd).unwrap_or_else(|_| fallback())
+      edno_core::resolve_path(module_path, &cwd).unwrap_or_else(|_| fallback())
     }
     Err(_) => fallback(),
   }
@@ -2086,22 +2086,22 @@ fn hook_load_import_attributes(
 /// then falls back to the importer's `with { type: "..." }` attribute.
 fn pick_hook_module_type(
   format: Option<&str>,
-  requested: &deno_core::RequestedModuleType,
-) -> deno_core::ModuleType {
+  requested: &edno_core::RequestedModuleType,
+) -> edno_core::ModuleType {
   if let Some(format) = format {
     match format {
-      "json" => return deno_core::ModuleType::Json,
-      "text" => return deno_core::ModuleType::Text,
-      "bytes" => return deno_core::ModuleType::Bytes,
-      "wasm" => return deno_core::ModuleType::Wasm,
+      "json" => return edno_core::ModuleType::Json,
+      "text" => return edno_core::ModuleType::Text,
+      "bytes" => return edno_core::ModuleType::Bytes,
+      "wasm" => return edno_core::ModuleType::Wasm,
       _ => {}
     }
   }
   match requested {
-    deno_core::RequestedModuleType::Json => deno_core::ModuleType::Json,
-    deno_core::RequestedModuleType::Text => deno_core::ModuleType::Text,
-    deno_core::RequestedModuleType::Bytes => deno_core::ModuleType::Bytes,
-    _ => deno_core::ModuleType::JavaScript,
+    edno_core::RequestedModuleType::Json => edno_core::ModuleType::Json,
+    edno_core::RequestedModuleType::Text => edno_core::ModuleType::Text,
+    edno_core::RequestedModuleType::Bytes => edno_core::ModuleType::Bytes,
+    _ => edno_core::ModuleType::JavaScript,
   }
 }
 
@@ -2109,8 +2109,8 @@ fn create_default_npmrc() -> Arc<ResolvedNpmRc> {
   // this is fine because multiple registries are combined into
   // one when compiling the binary
   Arc::new(ResolvedNpmRc {
-    default_config: deno_npmrc::RegistryConfigWithUrl {
-      registry_url: Url::parse(deno_npmrc::NPM_DEFAULT_REGISTRY).unwrap(),
+    default_config: edno_npmrc::RegistryConfigWithUrl {
+      registry_url: Url::parse(edno_npmrc::NPM_DEFAULT_REGISTRY).unwrap(),
       config: Default::default(),
     },
     scopes: Default::default(),
@@ -2127,7 +2127,7 @@ fn create_default_npmrc() -> Arc<ResolvedNpmRc> {
 /// can read the files it shipped with. Preserves the `Some(vec![])`
 /// allow-all sentinel and avoids duplicating an already-present entry.
 pub(crate) fn grant_vfs_read_access(
-  permissions: &mut deno_runtime::deno_permissions::PermissionsOptions,
+  permissions: &mut edno_runtime::edno_permissions::PermissionsOptions,
   root_path: &std::path::Path,
 ) {
   let entry = root_path.to_string_lossy().into_owned();
@@ -2148,20 +2148,20 @@ pub(crate) fn grant_vfs_read_access(
 }
 
 /// Loopback hosts a desktop runtime must be able to reach. The compiled
-/// app's renderer talks to its `Deno.serve()` over loopback HTTP, so
+/// app's renderer talks to its `Edno.serve()` over loopback HTTP, so
 /// net access here is structural, not optional.
 const DESKTOP_LOOPBACK_HOSTS: &[&str] = &["127.0.0.1", "localhost", "[::1]"];
 
 /// Env vars the DESKTOP_JS init script reads. Granting only these
 /// (instead of blanket `allow-env`) keeps the user's shell environment
-/// off-limits to arbitrary `Deno.env.get` calls in their app code while
+/// off-limits to arbitrary `Edno.env.get` calls in their app code while
 /// still letting the framework boot.
 const DESKTOP_ENV_KEYS: &[&str] = &[
-  "DENO_DESKTOP_MUX_WS",
-  "DENO_DESKTOP_HMR",
-  "DENO_DESKTOP_INSPECT_INTERNAL_PORT",
-  "DENO_DESKTOP_INSPECT_BRK",
-  "DENO_DESKTOP_INSPECT_WAIT",
+  "EDNO_DESKTOP_MUX_WS",
+  "EDNO_DESKTOP_HMR",
+  "EDNO_DESKTOP_INSPECT_INTERNAL_PORT",
+  "EDNO_DESKTOP_INSPECT_BRK",
+  "EDNO_DESKTOP_INSPECT_WAIT",
   "LAUFEY_RUNTIME_PATH",
   "LAUFEY_REMOTE_DEBUGGING_PORT",
 ];
@@ -2175,7 +2175,7 @@ const DESKTOP_ENV_KEYS: &[&str] = &[
 /// loopback/key entries appended. `None` is replaced with the baseline
 /// vec.
 pub(crate) fn apply_desktop_permission_defaults(
-  permissions: &mut deno_runtime::deno_permissions::PermissionsOptions,
+  permissions: &mut edno_runtime::edno_permissions::PermissionsOptions,
 ) {
   fn extend(slot: &mut Option<Vec<String>>, defaults: &[&str]) {
     match slot {
@@ -2202,7 +2202,7 @@ pub(crate) fn apply_desktop_permission_defaults(
 
 #[cfg(test)]
 mod tests {
-  use deno_runtime::deno_permissions::PermissionsOptions;
+  use edno_runtime::edno_permissions::PermissionsOptions;
 
   use super::DESKTOP_ENV_KEYS;
   use super::DESKTOP_LOOPBACK_HOSTS;
@@ -2219,7 +2219,7 @@ mod tests {
   fn desktop_startup_error_tags_and_carries_message() {
     // A desktop main-module load/eval failure is wrapped so the shell can
     // recognize it (downcast) and show the carried message in a dialog,
-    // instead of letting it exit silently (deno#35544).
+    // instead of letting it exit silently (edno#35544).
     let original =
       deno_error::JsErrorBox::generic("could not load workspace member");
     let wrapped = desktop_startup_error(original);

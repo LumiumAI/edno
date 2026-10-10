@@ -25,7 +25,7 @@ await new Promise<void>((resolve) => {
     path: "/foo",
     agent: new http.Agent({
       proxyEnv: { HTTP_PROXY: `http://127.0.0.1:${proxyPort}` },
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
     } as any),
   }, async (res) => {
     await text(res);

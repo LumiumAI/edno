@@ -1,1 +1,1 @@
-export * from "jsr:@denotest/add@1";
+export * from "jsr:@ednotest/add@1";

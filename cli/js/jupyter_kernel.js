@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 /**
- * Jupyter ZMQ kernel implemented entirely in JS using Deno.listen().
+ * Jupyter ZMQ kernel implemented entirely in JS using Edno.listen().
  *
  * Architecture:
  *   Main OS thread   - this file; runs the ZMTP/Jupyter protocol (non-blocking TCP I/O)
@@ -338,7 +338,7 @@ async function recvMultipart(conn) {
  * For each connected peer, echo back every received message.
  */
 async function runHeartbeat(port, ip) {
-  const listener = Deno.listen({ hostname: ip, port });
+  const listener = Edno.listen({ hostname: ip, port });
   while (true) {
     const conn = await listener.accept();
     (async () => {
@@ -399,7 +399,7 @@ class RouterSocket {
 
   _listen() {
     (async () => {
-      const listener = Deno.listen({ hostname: this.ip, port: this.port });
+      const listener = Edno.listen({ hostname: this.ip, port: this.port });
       while (true) {
         const conn = await listener.accept();
         this._handlePeer(conn);
@@ -488,7 +488,7 @@ class PubSocket {
 
   _listen() {
     (async () => {
-      const listener = Deno.listen({ hostname: this.ip, port: this.port });
+      const listener = Edno.listen({ hostname: this.ip, port: this.port });
       while (true) {
         const conn = await listener.accept();
         (async () => {
@@ -604,7 +604,7 @@ async function startJupyterKernel() {
     return {
       status: "ok",
       protocol_version: "5.3",
-      implementation: "Deno kernel",
+      implementation: "Edno kernel",
       implementation_version: op_jupyter_deno_version(),
       language_info: {
         name: "typescript",
@@ -615,8 +615,8 @@ async function startJupyterKernel() {
         codemirror_mode: "typescript",
         nbconvert_exporter: "script",
       },
-      banner: "Welcome to Deno kernel",
-      help_links: [{ text: "Visit Deno manual", url: "https://docs.deno.com" }],
+      banner: "Welcome to Edno kernel",
+      help_links: [{ text: "Visit Edno manual", url: "https://docs.deno.com" }],
       debugger: false,
     };
   }
@@ -1056,7 +1056,7 @@ async function startJupyterKernel() {
       // fresh kernel, so the current process must exit either way;
       // otherwise it lingers as an orphan. Give the reply a moment to
       // flush over TCP, then exit. See denoland/deno#20556.
-      setTimeout(() => Deno.exit(0), 100);
+      setTimeout(() => Edno.exit(0), 100);
     } else if (msgType === "interrupt_request") {
       op_jupyter_repl_interrupt();
       const replyFrames = await encodeMsg(

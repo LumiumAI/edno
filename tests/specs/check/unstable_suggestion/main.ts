@@ -1,8 +1,8 @@
 /// <reference no-default-lib="true" />
-/// <reference lib="deno.ns" />
+/// <reference lib="edno.ns" />
 
 // unstable apis removed here, so should error
-Deno.listenDatagram({
+Edno.listenDatagram({
   port: 3000,
   transport: "udp",
 });

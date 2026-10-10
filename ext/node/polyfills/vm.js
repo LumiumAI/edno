@@ -5,16 +5,16 @@
 const { core, primordials } = __bootstrap;
 // Pre-evaluate node:process in the realm that imported node:vm so that any
 // vm context's `import('node:process')` returns the cached module rather
-// than instantiating node:process inside the sandbox (where `Deno` is not
-// defined and process.ts's body would throw `ReferenceError: Deno is not
+// than instantiating node:process inside the sandbox (where `Edno` is not
+// defined and process.ts's body would throw `ReferenceError: Edno is not
 // defined`). node:process is `lazy_loaded_esm` now, so without this nudge
 // the first instantiation can happen from a sandbox realm. Loader is
 // memoized; repeat calls are cheap.
 core.createLazyLoader("node:process")();
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { notImplemented } = core.loadExtScript("ext:deno_node/_utils.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { notImplemented } = core.loadExtScript("ext:edno_node/_utils.ts");
 const { kEmptyObject } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const {
   op_vm_compile_function,
@@ -48,7 +48,7 @@ const {
   validateString,
   validateStringArray,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const {
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_ARG_VALUE,
@@ -57,7 +57,7 @@ const {
   ERR_VM_MODULE_DIFFERENT_CONTEXT,
   ERR_VM_MODULE_NOT_MODULE,
   ERR_VM_MODULE_STATUS,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const {
   ArrayIsArray,
@@ -290,7 +290,7 @@ function getContextOptions(options) {
 
 let defaultContextNameIndex = 1;
 function createContext(
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   contextObject = {},
   options = kEmptyObject,
 ) {

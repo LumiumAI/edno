@@ -1,4 +1,4 @@
-# deno_lib
+# edno_lib
 
-This crate contains the shared code between the Deno CLI and denort. It is
+This crate contains the shared code between the Edno CLI and ednort. It is
 highly unstable.

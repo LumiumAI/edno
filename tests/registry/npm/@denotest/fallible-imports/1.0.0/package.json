@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/fallible-imports",
+  "name": "@ednotest/fallible-imports",
   "version": "1.0.0",
   "exports": {
     ".": "./mod.js",

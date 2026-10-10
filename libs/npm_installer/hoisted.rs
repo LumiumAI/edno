@@ -22,17 +22,17 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use deno_error::JsErrorBox;
-use deno_npm::NpmPackageExtraInfo;
-use deno_npm::NpmPackageId;
-use deno_npm::NpmPackageIdPeerDependencies;
-use deno_npm::NpmResolutionPackage;
-use deno_npm::NpmResolutionPackageSystemInfo;
-use deno_npm::NpmSystemInfo;
-use deno_npm::resolution::NpmResolutionSnapshot;
-use deno_npm_cache::NpmCache;
-use deno_npm_cache::NpmCacheHttpClient;
-use deno_npm_cache::TarballCache;
-use deno_resolver::npm::managed::NpmResolutionCell;
+use edno_npm::NpmPackageExtraInfo;
+use edno_npm::NpmPackageId;
+use edno_npm::NpmPackageIdPeerDependencies;
+use edno_npm::NpmResolutionPackage;
+use edno_npm::NpmResolutionPackageSystemInfo;
+use edno_npm::NpmSystemInfo;
+use edno_npm::resolution::NpmResolutionSnapshot;
+use edno_npm_cache::NpmCache;
+use edno_npm_cache::NpmCacheHttpClient;
+use edno_npm_cache::TarballCache;
+use edno_resolver::npm::managed::NpmResolutionCell;
 use deno_semver::StackString;
 use deno_semver::package::PackageNv;
 use deno_terminal::colors;
@@ -357,10 +357,10 @@ impl<
         .workspace_pkgs()
         .iter()
         .any(|pkg| !pkg.scripts.is_empty());
-    let deno_marker_dir = self.root_node_modules_path.join(".deno");
+    let edno_marker_dir = self.root_node_modules_path.join(".edno");
     if has_no_packages
       && (!self.clean_on_install
-        || !self.sys.fs_exists_no_err(&deno_marker_dir))
+        || !self.sys.fs_exists_no_err(&edno_marker_dir))
     {
       return Ok(());
     }
@@ -374,13 +374,13 @@ impl<
     // Create the node_modules directory
     sys.fs_create_dir_all(&self.root_node_modules_path)?;
 
-    // Use a marker directory for the lock file (reuse .deno for compatibility)
-    sys.fs_create_dir_all(&deno_marker_dir)?;
+    // Use a marker directory for the lock file (reuse .edno for compatibility)
+    sys.fs_create_dir_all(&edno_marker_dir)?;
 
     let bin_node_modules_dir_path = self.root_node_modules_path.join(".bin");
     let single_process_lock = LaxSingleProcessFsFlag::lock(
       sys.as_ref(),
-      deno_marker_dir.join(".deno.lock"),
+      edno_marker_dir.join(".edno.lock"),
       &self.reporter,
       "waiting for file lock on node_modules directory",
     )
@@ -881,7 +881,7 @@ impl<
   async fn clone_package<'a>(
     &'a self,
     package: &'a NpmResolutionPackage,
-    dist: &'a deno_npm::registry::NpmPackageVersionDistInfo,
+    dist: &'a edno_npm::registry::NpmPackageVersionDistInfo,
     package_path: PathBuf,
     install_reporter: Option<Arc<dyn crate::InstallReporter>>,
     extra_info_provider: Arc<CachedNpmPackageExtraInfoProvider>,
@@ -1056,7 +1056,7 @@ fn cleanup_hoisted_packages(
     for entry in entries.flatten() {
       let name = entry.file_name();
       let name_str = name.to_string_lossy();
-      // Skip hidden dirs (.deno, .bin) and expected packages
+      // Skip hidden dirs (.edno, .bin) and expected packages
       if name_str.starts_with('.') || expected_names.contains(name_str.as_ref())
       {
         continue;
@@ -1152,7 +1152,7 @@ impl LifecycleScriptsStrategy for HoistedLifecycleScripts {
         &mut output,
         "{}  Run \"{}\" to run build scripts.",
         colors::yellow("│"),
-        colors::bold("deno approve-scripts")
+        colors::bold("edno approve-scripts")
       );
       _ = write!(&mut output, "{}", colors::yellow("╰─"));
 

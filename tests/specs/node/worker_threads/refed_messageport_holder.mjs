@@ -29,7 +29,7 @@ if (isMainThread) {
   worker.on("exit", () => {
     if (!aliveConfirmed) {
       console.log("FAIL: worker was terminated on idle");
-      Deno.exit(1);
+      Edno.exit(1);
     }
   });
 

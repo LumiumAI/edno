@@ -37,7 +37,7 @@ use crate::graphs::LockfilePackageGraph;
 
 pub struct SetWorkspaceConfigOptions {
   pub config: WorkspaceConfig,
-  /// Maintains deno.json dependencies and workspace config
+  /// Maintains edno.json dependencies and workspace config
   /// regardless of the `config` options provided.
   ///
   /// Ex. the CLI sets this to `true` when someone runs a
@@ -325,7 +325,7 @@ pub(crate) struct WorkspaceConfigContent {
   pub root: WorkspaceMemberConfigContent,
   #[serde(default)]
   pub members: HashMap<String, WorkspaceMemberConfigContent>,
-  // todo(dsherret): patches is deprecated, remove in Deno 3.0
+  // todo(dsherret): patches is deprecated, remove in Edno 3.0
   #[serde(default, alias = "patches")]
   pub links: HashMap<String, LockfileLinkContent>,
   /// npm overrides from the root package.json
@@ -696,7 +696,7 @@ impl Lockfile {
       // When the value is transformed, we don't consider that a lockfile
       // change that should update the lockfile because we want to reduce
       // lockfile churn. For example, say someone with a new version of
-      // Deno does a PR to a repo that has an old lockfile, but they
+      // Edno does a PR to a repo that has an old lockfile, but they
       // don't update any dependencies. In that case, we don't want to
       // have that PR include a lockfile change.
       let value = match version {
@@ -1842,7 +1842,7 @@ mod tests {
   #[test]
   fn lockfile_with_redirects() {
     let mut lockfile = new_lockfile(NewLockfileOptions {
-      file_path: PathBuf::from("/foo/deno.lock"),
+      file_path: PathBuf::from("/foo/edno.lock"),
       content: r#"{
   "version": "4",
   "redirects": {
@@ -1873,7 +1873,7 @@ mod tests {
   #[test]
   fn test_insert_redirect() {
     let mut lockfile = new_lockfile(NewLockfileOptions {
-      file_path: PathBuf::from("/foo/deno.lock"),
+      file_path: PathBuf::from("/foo/edno.lock"),
       content: r#"{
   "version": "4",
   "redirects": {
@@ -1913,7 +1913,7 @@ mod tests {
   #[test]
   fn test_insert_jsr() {
     let mut lockfile = new_lockfile(NewLockfileOptions {
-      file_path: PathBuf::from("/foo/deno.lock"),
+      file_path: PathBuf::from("/foo/edno.lock"),
       content: r#"{
   "version": "4",
   "specifiers": {

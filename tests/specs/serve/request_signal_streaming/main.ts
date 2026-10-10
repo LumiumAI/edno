@@ -5,7 +5,7 @@
 let abortedDuringStream = false;
 const abortedAfterCompletion = Promise.withResolvers<void>();
 
-const server = Deno.serve({ port: 0, onListen: () => {} }, (req) => {
+const server = Edno.serve({ port: 0, onListen: () => {} }, (req) => {
   let i = 0;
   const body = new ReadableStream({
     async pull(controller) {

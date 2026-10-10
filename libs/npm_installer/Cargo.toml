@@ -1,14 +1,14 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_npm_installer"
+name = "edno_npm_installer"
 version = "0.54.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Installer of npm packages used in Deno"
+description = "Installer of npm packages used in Edno"
 
 [lib]
 path = "lib.rs"
@@ -20,17 +20,17 @@ async-trait.workspace = true
 bincode.workspace = true
 boxed_error.workspace = true
 capacity_builder.workspace = true
-deno_cache_dir.workspace = true
-deno_config.workspace = true
+edno_cache_dir.workspace = true
+edno_config.workspace = true
 deno_error.workspace = true
 deno_graph.workspace = true
-deno_lockfile.workspace = true
-deno_npm.workspace = true
-deno_npm_cache.workspace = true
-deno_npmrc.workspace = true
-deno_package_json.workspace = true
+edno_lockfile.workspace = true
+edno_npm.workspace = true
+edno_npm_cache.workspace = true
+edno_npmrc.workspace = true
+edno_package_json.workspace = true
 deno_path_util.workspace = true
-deno_resolver = { workspace = true, features = ["graph", "sync"] }
+edno_resolver = { workspace = true, features = ["graph", "sync"] }
 deno_semver.workspace = true
 deno_terminal.workspace = true
 deno_unsync.workspace = true

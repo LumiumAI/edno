@@ -1,5 +1,5 @@
 import { used } from "./ignore_file_directive.ts";
 
-Deno.test("used", function () {
+Edno.test("used", function () {
   used();
 });

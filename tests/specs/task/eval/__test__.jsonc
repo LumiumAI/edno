@@ -13,7 +13,7 @@
       "args": [
         "task",
         "--eval",
-        "echo 12345 | (deno eval 'const b = new Uint8Array(1);Deno.stdin.readSync(b);console.log(b)' && deno eval 'const b = new Uint8Array(1);Deno.stdin.readSync(b);console.log(b)')"
+        "echo 12345 | (edno eval 'const b = new Uint8Array(1);Edno.stdin.readSync(b);console.log(b)' && edno eval 'const b = new Uint8Array(1);Edno.stdin.readSync(b);console.log(b)')"
       ],
       "output": "piped.out"
     },
@@ -21,7 +21,7 @@
       "tempDir": true,
       "steps": [{
         "args": "install",
-        "output": "[WILDCARD]Initialize @denotest/bin[WILDCARD]"
+        "output": "[WILDCARD]Initialize @ednotest/bin[WILDCARD]"
       }, {
         "args": [
           "task",

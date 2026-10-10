@@ -2,15 +2,15 @@
   // Regression test for https://github.com/denoland/deno/issues/29835
   "tempDir": true,
   "tests": {
-    // A linked package that has a deno.json is a Deno/JSR link. Some packages
+    // A linked package that has a edno.json is a Edno/JSR link. Some packages
     // also ship a package.json only for other runtimes (e.g. Bun), and that
-    // incidental package.json must not make Deno treat the link as an npm
+    // incidental package.json must not make Edno treat the link as an npm
     // package, which previously failed with "Linking npm packages requires
     // using a node_modules directory" unless "nodeModulesDir" was set.
-    "deno_json_link": {
+    "edno_json_link": {
       "args": "run main.ts",
-      "cwd": "deno_json_link",
-      "output": "deno_json_link/main.out"
+      "cwd": "edno_json_link",
+      "output": "edno_json_link/main.out"
     },
     // A linked folder that only has a package.json is a genuine npm link and
     // must still require a node_modules directory.

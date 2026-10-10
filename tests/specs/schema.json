@@ -3,7 +3,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "description": "Schema file for the __test__.jsonc files",
   "required": [],
-  "title": "Deno internal spec test schema",
+  "title": "Edno internal spec test schema",
   "type": "object",
   "definitions": {
     "single_test": {

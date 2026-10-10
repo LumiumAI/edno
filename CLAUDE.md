@@ -1,4 +1,4 @@
-# Deno Development Guide
+# Edno Development Guide
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@
 
 ## Git workflow
 
-Deno uses a GH based standard git workflow. The main branch is `main`. All
+Edno uses a GH based standard git workflow. The main branch is `main`. All
 development happens in feature branches, which are then merged into `main` via
 pull requests.
 
@@ -42,13 +42,13 @@ When the feature is finished and ready to for review, follow these steps:
 
 ## High Level Overview
 
-The user visible interface and high level integration is in the `deno` crate
+The user visible interface and high level integration is in the `edno` crate
 (located in `./cli`).
 
 This includes flag parsing, subcommands, package management tooling, etc. Flag
 parsing is in `cli/args/flags.rs`. Tools are in `cli/tools/<tool>`.
 
-The `deno_runtime` crate (`./runtime`) assembles the JavaScript runtime,
+The `edno_runtime` crate (`./runtime`) assembles the JavaScript runtime,
 including all "extensions" (native functionality exposed to JavaScript). The
 extensions themselves are in the `ext/` directory, and provide system access to
 JavaScript – for instance filesystem operations and networking.
@@ -68,7 +68,7 @@ Before building, install the required prerequisites (Rust, native compilers,
 cmake, protobuf, etc.) and clone with `--recurse-submodules` as described in
 [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md#building-from-source).
 
-### Building Deno
+### Building Edno
 
 To compile after making changes:
 
@@ -79,26 +79,26 @@ cargo build
 For faster iteration during development (less optimization):
 
 ```bash
-cargo build --bin deno
+cargo build --bin edno
 ```
 
 Execute your development build:
 
 ```bash
-./target/debug/deno eval 'console.log("Hello from dev build")'
+./target/debug/edno eval 'console.log("Hello from dev build")'
 ```
 
 ### Running with your changes
 
 ```bash
 # Run a local file
-./target/debug/deno run path/to/file.ts
+./target/debug/edno run path/to/file.ts
 
 # Run with permissions
-./target/debug/deno run --allow-net --allow-read script.ts
+./target/debug/edno run --allow-net --allow-read script.ts
 
 # Run the REPL
-./target/debug/deno
+./target/debug/edno
 ```
 
 ## Commands
@@ -110,7 +110,7 @@ Execute your development build:
 cargo check
 
 # Check specific package
-cargo check -p deno_runtime
+cargo check -p edno_runtime
 
 # Build release version (slow, optimized)
 cargo build --release
@@ -141,10 +141,10 @@ cargo test
 cargo test <nameOfTest>
 
 # Run tests in a specific package
-cargo test -p deno_core
+cargo test -p edno_core
 
 # Run just the CLI integration tests
-cargo test --bin deno
+cargo test --bin edno
 
 # Run spec tests only
 cargo test specs
@@ -172,7 +172,7 @@ cargo test unit_node::crypto_test
 cargo test unit_node::
 ```
 
-Do NOT run these directly with `./target/debug/deno test` — they depend on the
+Do NOT run these directly with `./target/debug/edno test` — they depend on the
 cargo test harness for correct setup.
 
 ### Test Organization
@@ -186,7 +186,7 @@ cargo test harness for correct setup.
 
 ## "spec" tests
 
-The main form of integration test in deno is the "spec" test. These tests can be
+The main form of integration test in edno is the "spec" test. These tests can be
 found in `tests/specs`. The idea is that you have a `__test__.jsonc` file that
 lays out one or more tests, where a test is a CLI command to execute and the
 output is captured and asserted against.
@@ -304,7 +304,7 @@ cargo outdated  # Requires cargo-outdated
 Use `lldb` directly:
 
 ```bash
-lldb ./target/debug/deno
+lldb ./target/debug/edno
 (lldb) run eval 'console.log("test")'
 ```
 
@@ -316,10 +316,10 @@ Use println debugging.
 
 ```bash
 # Set Rust log level
-DENO_LOG=debug ./target/debug/deno run script.ts
+EDNO_LOG=debug ./target/debug/edno run script.ts
 
 # Specific module logging
-DENO_LOG=deno_core=debug ./target/debug/deno run script.ts
+EDNO_LOG=edno_core=debug ./target/debug/edno run script.ts
 ```
 
 ### Debug Prints
@@ -408,7 +408,7 @@ prerequisites in
 **Slow compile times**
 
 - Use `cargo check` instead of `cargo build` when possible
-- Use `--bin deno` to build only the main binary
+- Use `--bin edno` to build only the main binary
 - Use `sccache` or `mold` linker for faster builds
 - Consider using `cargo-watch` for incremental builds
 

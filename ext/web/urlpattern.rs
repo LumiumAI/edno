@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_core::op2;
+use edno_core::op2;
 use serde::Serialize;
 use urlpattern::quirks;
 use urlpattern::quirks::StringOrInit;

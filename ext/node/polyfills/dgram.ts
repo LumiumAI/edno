@@ -35,8 +35,8 @@ const {
   SafeArrayIterator,
   SymbolAsyncDispose,
 } = primordials;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const {
   ERR_BUFFER_OUT_OF_BOUNDS,
   ERR_INVALID_ARG_TYPE,
@@ -50,17 +50,17 @@ const {
   ERR_SOCKET_DGRAM_NOT_RUNNING,
   errnoException,
   exceptionWithHostPort,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { kStateSymbol, newHandle } = core.loadExtScript(
-  "ext:deno_node/internal/dgram.ts",
+  "ext:edno_node/internal/dgram.ts",
 );
 const {
   asyncIdSymbol,
   defaultTriggerAsyncIdScope,
   ownerSymbol,
-} = core.loadExtScript("ext:deno_node/internal/async_hooks.ts");
+} = core.loadExtScript("ext:edno_node/internal/async_hooks.ts");
 const { SendWrap } = core.loadExtScript(
-  "ext:deno_node/internal_binding/udp_wrap.ts",
+  "ext:edno_node/internal_binding/udp_wrap.ts",
 );
 const {
   isInt32,
@@ -69,20 +69,20 @@ const {
   validatePort,
   validateString,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { guessHandleType } = core.loadExtScript(
-  "ext:deno_node/internal_binding/util.ts",
+  "ext:edno_node/internal_binding/util.ts",
 );
 const { os } = core.loadExtScript(
-  "ext:deno_node/internal_binding/constants.ts",
+  "ext:edno_node/internal_binding/constants.ts",
 );
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
-const { deprecate } = core.loadExtScript("ext:deno_node/util.ts");
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
+const { deprecate } = core.loadExtScript("ext:edno_node/util.ts");
 const { channel } = core.loadExtScript(
-  "ext:deno_node/diagnostics_channel.js",
+  "ext:edno_node/diagnostics_channel.js",
 );
 const { isArrayBufferView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 
 const { UV_UDP_REUSEADDR, UV_UDP_IPV6ONLY } = os;
@@ -272,8 +272,8 @@ class Socket extends EventEmitter {
    * `EADDRINUSE` error will occur:
    *
    * ```js
-   * import cluster from "ext:deno_node/cluster";
-   * import dgram from "ext:deno_node/dgram";
+   * import cluster from "ext:edno_node/cluster";
+   * import dgram from "ext:edno_node/dgram";
    *
    * if (cluster.isPrimary) {
    *   cluster.fork(); // Works ok.
@@ -374,7 +374,7 @@ class Socket extends EventEmitter {
    * Example of a UDP server listening on port 41234:
    *
    * ```js
-   * import dgram from "ext:deno_node/dgram";
+   * import dgram from "ext:edno_node/dgram";
    *
    * const server = dgram.createSocket('udp4');
    *
@@ -418,13 +418,13 @@ class Socket extends EventEmitter {
     const cb = arguments.length && arguments[arguments.length - 1];
 
     if (typeof cb === "function") {
-      // deno-lint-ignore no-inner-declarations
+      // edno-lint-ignore no-inner-declarations
       function removeListeners(this: Socket) {
         this.removeListener("error", removeListeners);
         this.removeListener("listening", onListening);
       }
 
-      // deno-lint-ignore no-inner-declarations
+      // edno-lint-ignore no-inner-declarations
       function onListening(this: Socket) {
         FunctionPrototypeCall(removeListeners, this);
         FunctionPrototypeCall(cb, this);
@@ -451,7 +451,7 @@ class Socket extends EventEmitter {
       // across a "cluster" of Node processes to take advantage of multi-core
       // systems.
       //
-      // Though Deno has has a Worker capability from which we could simulate this,
+      // Though Edno has has a Worker capability from which we could simulate this,
       // for now we assert that we are _always_ on the primary process.
 
       const type = guessHandleType(fd);
@@ -512,14 +512,14 @@ class Socket extends EventEmitter {
       // across a "cluster" of Node processes to take advantage of multi-core
       // systems.
       //
-      // Though Deno has has a Worker capability from which we could simulate this,
+      // Though Edno has has a Worker capability from which we could simulate this,
       // for now we assert that we are _always_ on the primary process.
 
       if (!state.handle) {
         return; // Handle has been closed in the mean time
       }
 
-      // deno-lint-ignore deno-internal/prefer-primordials -- UDP handle's bind method, not Function.prototype.bind
+      // edno-lint-ignore edno-internal/prefer-primordials -- UDP handle's bind method, not Function.prototype.bind
       const err = state.handle.bind(ip, port as number || 0, flags);
 
       if (err) {
@@ -617,7 +617,7 @@ class Socket extends EventEmitter {
     state.connectState = CONNECT_STATE_CONNECTING;
 
     if (state.bindState === BIND_STATE_UNBOUND) {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Socket's own bind method, not Function.prototype.bind
+      // edno-lint-ignore edno-internal/prefer-primordials -- Socket's own bind method, not Function.prototype.bind
       this.bind({ port: 0, exclusive: true });
     }
 
@@ -830,8 +830,8 @@ class Socket extends EventEmitter {
    * Example of sending a UDP packet to a port on `localhost`;
    *
    * ```js
-   * import dgram from "ext:deno_node/dgram";
-   * import { Buffer } from "ext:deno_node/buffer";
+   * import dgram from "ext:edno_node/dgram";
+   * import { Buffer } from "ext:edno_node/buffer";
    *
    * const message = Buffer.from('Some bytes');
    * const client = dgram.createSocket('udp4');
@@ -844,8 +844,8 @@ class Socket extends EventEmitter {
    * `127.0.0.1`;
    *
    * ```js
-   * import dgram from "ext:deno_node/dgram";
-   * import { Buffer } from "ext:deno_node/buffer";
+   * import dgram from "ext:edno_node/dgram";
+   * import { Buffer } from "ext:edno_node/buffer";
    *
    * const buf1 = Buffer.from('Some ');
    * const buf2 = Buffer.from('bytes');
@@ -864,8 +864,8 @@ class Socket extends EventEmitter {
    * `localhost`:
    *
    * ```js
-   * import dgram from "ext:deno_node/dgram";
-   * import { Buffer } from "ext:deno_node/buffer";
+   * import dgram from "ext:edno_node/dgram";
+   * import { Buffer } from "ext:edno_node/buffer";
    *
    * const message = Buffer.from('Some bytes');
    * const client = dgram.createSocket('udp4');
@@ -1001,7 +1001,7 @@ class Socket extends EventEmitter {
     healthCheck(this);
 
     if (state.bindState === BIND_STATE_UNBOUND) {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Socket's own bind method, not Function.prototype.bind
+      // edno-lint-ignore edno-internal/prefer-primordials -- Socket's own bind method, not Function.prototype.bind
       this.bind({ port: 0, exclusive: true });
     }
 
@@ -1295,7 +1295,7 @@ for (const prop of new SafeArrayIterator(deprecatedProps)) {
     ),
     set: deprecate(
       function (this: Socket, val: unknown) {
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         (this[kStateSymbol] as any)[stateKeys[prop]] = val;
       },
       `Socket.prototype.${prop} is deprecated`,
@@ -1468,17 +1468,17 @@ function sliceBuffer(buffer: MessageType, offset: number, length: number) {
   offset = offset >>> 0;
   length = length >>> 0;
 
-  // deno-lint-ignore deno-internal/prefer-primordials -- buffer may be a Buffer or DataView, not a plain TypedArray
+  // edno-lint-ignore edno-internal/prefer-primordials -- buffer may be a Buffer or DataView, not a plain TypedArray
   if (offset > buffer.byteLength) {
     throw new ERR_BUFFER_OUT_OF_BOUNDS("offset");
   }
 
-  // deno-lint-ignore deno-internal/prefer-primordials -- buffer may be a Buffer or DataView, not a plain TypedArray
+  // edno-lint-ignore edno-internal/prefer-primordials -- buffer may be a Buffer or DataView, not a plain TypedArray
   if (offset + length > buffer.byteLength) {
     throw new ERR_BUFFER_OUT_OF_BOUNDS("length");
   }
 
-  // deno-lint-ignore deno-internal/prefer-primordials -- Buffer is the Node Buffer class; .buffer/.byteOffset on a Buffer or DataView
+  // edno-lint-ignore edno-internal/prefer-primordials -- Buffer is the Node Buffer class; .buffer/.byteOffset on a Buffer or DataView
   return Buffer.from(buffer.buffer, buffer.byteOffset + offset, length);
 }
 
@@ -1495,7 +1495,7 @@ function fixBufferList(
     } else if (!isArrayBufferView(buf)) {
       return null;
     } else {
-      // deno-lint-ignore deno-internal/prefer-primordials -- Buffer is the Node Buffer class; .buffer/.byteOffset/.byteLength on a Buffer or DataView
+      // edno-lint-ignore edno-internal/prefer-primordials -- Buffer is the Node Buffer class; .buffer/.byteOffset/.byteLength on a Buffer or DataView
       newList[i] = Buffer.from(buf.buffer, buf.byteOffset, buf.byteLength);
     }
   }

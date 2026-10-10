@@ -2,27 +2,27 @@
   "tempDir": true,
   "steps": [
     {
-      "args": "add --lockfile-only npm:@denotest/esm-basic",
+      "args": "add --lockfile-only npm:@ednotest/esm-basic",
       "output": "install.out"
     },
     {
       // Verify node_modules was not created. Also that the lockfile was created and contains the package
       "args": [
         "eval",
-        "try { Deno.statSync('node_modules') } catch { console.log(true) } const lock = JSON.parse(Deno.readTextFileSync('deno.lock')); console.log(Object.keys(lock.npm).includes('@denotest/esm-basic@1.0.0'))"
+        "try { Edno.statSync('node_modules') } catch { console.log(true) } const lock = JSON.parse(Edno.readTextFileSync('edno.lock')); console.log(Object.keys(lock.npm).includes('@ednotest/esm-basic@1.0.0'))"
       ],
       "output": "true\ntrue\n"
     },
     // now test remove
     {
-      "args": "remove --lockfile-only npm:@denotest/esm-basic",
+      "args": "remove --lockfile-only npm:@ednotest/esm-basic",
       "output": "remove.out"
     },
     {
       // Verify node_modules was not created. Also that the lockfile does not contain the npm package anymore
       "args": [
         "eval",
-        "try { Deno.statSync('node_modules') } catch { console.log(true) } const lock = JSON.parse(Deno.readTextFileSync('deno.lock')); console.log(lock.npm == null)"
+        "try { Edno.statSync('node_modules') } catch { console.log(true) } const lock = JSON.parse(Edno.readTextFileSync('edno.lock')); console.log(lock.npm == null)"
       ],
       "output": "true\ntrue\n"
     }

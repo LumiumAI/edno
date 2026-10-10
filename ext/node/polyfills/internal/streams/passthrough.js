@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -28,7 +28,7 @@
 (function () {
 const { core, primordials } = __bootstrap;
 const Transform = core.loadExtScript(
-  "ext:deno_node/internal/streams/transform.js",
+  "ext:edno_node/internal/streams/transform.js",
 ).default;
 
 const {

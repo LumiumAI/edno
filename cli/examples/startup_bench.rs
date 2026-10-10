@@ -4,15 +4,15 @@
 //!
 //! Boots a `MainWorker` with the real CLI snapshot, executes a trivial
 //! script, then tears it down. Intended for fast iteration on startup-perf
-//! work — rebuilds only this example binary, not the full `deno` CLI.
+//! work — rebuilds only this example binary, not the full `edno` CLI.
 //!
 //! Usage:
 //!   cargo run --example startup_bench --release -- [iters]
 //!
 //! Env vars:
-//!   DENO_STARTUP_PHASES=1   Print per-phase breakdown of one iteration
+//!   EDNO_STARTUP_PHASES=1   Print per-phase breakdown of one iteration
 //!                           (V8 init, isolate+snapshot, ops, bootstrap JS).
-//!   DENO_STARTUP_PROFILE=1  Skip the warmup so the first iter shows in profile.
+//!   EDNO_STARTUP_PROFILE=1  Skip the warmup so the first iter shows in profile.
 //!
 //! Tips for fast iteration:
 //!   - Add a release-fast profile (lto=off, codegen-units=256, incremental=true)
@@ -26,18 +26,18 @@ use std::sync::Arc;
 use std::time::Duration;
 use std::time::Instant;
 
-use deno_core::FsModuleLoader;
-use deno_core::ModuleCodeString;
-use deno_core::resolve_path;
-use deno_resolver::npm::DenoInNpmPackageChecker;
-use deno_resolver::npm::NpmResolver;
-use deno_runtime::deno_fs::RealFs;
-use deno_runtime::deno_permissions::Permissions;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::permissions::RuntimePermissionDescriptorParser;
-use deno_runtime::worker::MainWorker;
-use deno_runtime::worker::WorkerOptions;
-use deno_runtime::worker::WorkerServiceOptions;
+use edno_core::FsModuleLoader;
+use edno_core::ModuleCodeString;
+use edno_core::resolve_path;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
+use edno_resolver::npm::NpmResolver;
+use edno_runtime::edno_fs::RealFs;
+use edno_runtime::edno_permissions::Permissions;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::permissions::RuntimePermissionDescriptorParser;
+use edno_runtime::worker::MainWorker;
+use edno_runtime::worker::WorkerOptions;
+use edno_runtime::worker::WorkerServiceOptions;
 
 #[allow(clippy::disallowed_types, reason = "example binary")]
 type Sys = sys_traits::impls::RealSys;
@@ -56,29 +56,29 @@ fn bootstrap_once() -> MainWorker {
     Arc::new(RuntimePermissionDescriptorParser::new(Sys::default()));
 
   let options = WorkerOptions {
-    startup_snapshot: deno_snapshots::CLI_SNAPSHOT,
-    residual_lazy_js_sources: deno_snapshots::RESIDUAL_LAZY_JS,
-    residual_lazy_esm_sources: deno_snapshots::RESIDUAL_LAZY_ESM,
+    startup_snapshot: edno_snapshots::CLI_SNAPSHOT,
+    residual_lazy_js_sources: edno_snapshots::RESIDUAL_LAZY_JS,
+    residual_lazy_esm_sources: edno_snapshots::RESIDUAL_LAZY_ESM,
     ..Default::default()
   };
 
   MainWorker::bootstrap_from_options::<
-    DenoInNpmPackageChecker,
+    EdnoInNpmPackageChecker,
     NpmResolver<Sys>,
     Sys,
   >(
     &main_module,
     WorkerServiceOptions {
-      deno_rt_native_addon_loader: None,
+      edno_rt_native_addon_loader: None,
       module_loader: Rc::new(FsModuleLoader),
       permissions: PermissionsContainer::new(
         permission_desc_parser,
         Permissions::none_without_prompt(),
       ),
       blob_store: std::sync::Arc::new(
-        deno_runtime::deno_web::BlobStore::default(),
+        edno_runtime::edno_web::BlobStore::default(),
       )
-        as std::sync::Arc<dyn deno_runtime::deno_web::BlobStoreTrait>,
+        as std::sync::Arc<dyn edno_runtime::edno_web::BlobStoreTrait>,
       broadcast_channel: Default::default(),
       feature_checker: Default::default(),
       node_services: Default::default(),

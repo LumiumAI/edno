@@ -1,6 +1,6 @@
-Deno.test("test0", () => {});
-Deno.test(function test1() {});
-Deno.test({ name: "test2", fn: () => {} });
-Deno.test("test3", { permissions: "none" }, () => {});
-Deno.test({ name: "test4" }, () => {});
-Deno.test({ ignore: true }, function test5() {});
+Edno.test("test0", () => {});
+Edno.test(function test1() {});
+Edno.test({ name: "test2", fn: () => {} });
+Edno.test("test3", { permissions: "none" }, () => {});
+Edno.test({ name: "test4" }, () => {});
+Edno.test({ ignore: true }, function test5() {});

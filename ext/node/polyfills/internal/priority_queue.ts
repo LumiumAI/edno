@@ -7,7 +7,7 @@
 // this enables priority queues that are based on a comparison of more than
 // just a single criteria.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 (function () {
 type Comparator<T> = (a: T, b: T) => number;
 type SetPosition<T> = (node: T, pos: number) => void;

@@ -3,12 +3,12 @@
 use std::sync::Arc;
 
 use dashmap::DashMap;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_npm::resolution::NpmVersionResolver;
-use deno_npmrc::NpmRc;
-use deno_npmrc::NpmRegistryUrl;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_npm::resolution::NpmVersionResolver;
+use edno_npmrc::NpmRc;
+use edno_npmrc::NpmRegistryUrl;
 use deno_semver::Version;
 use deno_semver::package::PackageNv;
 use once_cell::sync::Lazy;
@@ -71,7 +71,7 @@ impl PackageSearchApi for CliNpmSearchApi {
       .query_pairs_mut()
       .append_pair("text", &format!("{} boost-exact:false", query));
     let file_fetcher = self.file_fetcher.clone();
-    let file = deno_core::unsync::spawn(async move {
+    let file = edno_core::unsync::spawn(async move {
       let file = file_fetcher.fetch_bypass_permissions(&search_url).await?;
       TextDecodedFile::decode(file)
     })

@@ -9,7 +9,7 @@ const fs = require("fs");
 
 const exePath = path.join(
   __dirname,
-  os.platform() === "win32" ? "deno.exe" : "deno",
+  os.platform() === "win32" ? "edno.exe" : "edno",
 );
 
 if (!fs.existsSync(exePath)) {
@@ -39,7 +39,7 @@ function runDenoExe(exePath) {
     if (!fs.existsSync(exePath)) {
       throw new Error(
         "Could not find exe at path '" + exePath +
-          "'. Maybe try installing deno again.",
+          "'. Maybe try installing edno again.",
       );
     }
     throw result.error;

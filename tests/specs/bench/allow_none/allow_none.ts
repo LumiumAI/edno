@@ -1,4 +1,4 @@
-const permissions: Deno.PermissionName[] = [
+const permissions: Edno.PermissionName[] = [
   "read",
   "write",
   "net",
@@ -8,7 +8,7 @@ const permissions: Deno.PermissionName[] = [
 ];
 
 for (const name of permissions) {
-  Deno.bench({
+  Edno.bench({
     name,
     permissions: {
       [name]: true,

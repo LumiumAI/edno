@@ -11,7 +11,7 @@ import { spawnSync } from "node:child_process";
 
 const start = Date.now();
 const result = spawnSync(
-  Deno.execPath(),
+  Edno.execPath(),
   ["eval", "console.log('child done')"],
   { stdio: "inherit", timeout: 10_000 },
 );

@@ -4,7 +4,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use async_trait::async_trait;
-use deno_core::OpState;
+use edno_core::OpState;
 use deno_error::JsErrorBox;
 use denokv_proto::CommitResult;
 use denokv_proto::ReadRangeOutput;
@@ -60,23 +60,23 @@ impl DatabaseHandler for MultiBackendDbHandler {
     mut path: Option<String>,
   ) -> Result<Self::DB, JsErrorBox> {
     if path.is_none()
-      && let Ok(x) = std::env::var("DENO_KV_DEFAULT_PATH")
+      && let Ok(x) = std::env::var("EDNO_KV_DEFAULT_PATH")
       && !x.is_empty()
     {
       path = Some(x);
     }
 
     if let Some(path) = &mut path
-      && let Ok(prefix) = std::env::var("DENO_KV_PATH_PREFIX")
+      && let Ok(prefix) = std::env::var("EDNO_KV_PATH_PREFIX")
     {
       *path = format!("{}{}", prefix, path);
     }
 
-    // Deno Deploy: when an attached (distributed) KV database is required,
+    // Edno Deploy: when an attached (distributed) KV database is required,
     // do not silently fall back to a local/in-memory store. `error` rejects
     // the open with a clear message; `warn` logs once and allows the fallback.
     // A distributed database is one served over http(s) (see `remote_or_sqlite`).
-    if let Ok(mode) = std::env::var("DENO_KV_REQUIRES_DISTRIBUTED_DATABASE") {
+    if let Ok(mode) = std::env::var("EDNO_KV_REQUIRES_DISTRIBUTED_DATABASE") {
       let is_distributed = path
         .as_deref()
         .is_some_and(|p| p.starts_with("https://") || p.starts_with("http://"));
@@ -84,8 +84,8 @@ impl DatabaseHandler for MultiBackendDbHandler {
         match mode.as_str() {
           "error" => {
             return Err(JsErrorBox::type_error(
-              "Deno.openKv() failed: no KV database is attached to this app. \
-               Attach a KV database to your app in the Deno Deploy dashboard, \
+              "Edno.openKv() failed: no KV database is attached to this app. \
+               Attach a KV database to your app in the Edno Deploy dashboard, \
                then redeploy.",
             ));
           }
@@ -93,9 +93,9 @@ impl DatabaseHandler for MultiBackendDbHandler {
             static WARNED: std::sync::Once = std::sync::Once::new();
             WARNED.call_once(|| {
               log::warn!(
-                "Deno.openKv(): no KV database is attached to this app; using \
+                "Edno.openKv(): no KV database is attached to this app; using \
                  a temporary in-memory store. Data will not persist and is not \
-                 shared between instances. Attach a KV database in the Deno \
+                 shared between instances. Attach a KV database in the Edno \
                  Deploy dashboard."
               );
             });

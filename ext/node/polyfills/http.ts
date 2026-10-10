@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -24,7 +24,7 @@ const {
 } = core.createLazyLoader("node:_http_server")();
 const { methods, parsers } = core.createLazyLoader("node:_http_common")();
 const { validateInteger } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const METHODS = ArrayPrototypeSort(ArrayPrototypeSlice(methods));
 

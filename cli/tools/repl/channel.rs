@@ -2,10 +2,10 @@
 
 use std::cell::RefCell;
 
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::serde_json::Value;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::serde_json::Value;
 use deno_error::JsErrorBox;
 use tokio::sync::mpsc::Receiver;
 use tokio::sync::mpsc::Sender;

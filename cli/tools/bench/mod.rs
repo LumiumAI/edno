@@ -5,27 +5,27 @@ use std::path::Path;
 use std::sync::Arc;
 use std::time::Duration;
 
-use deno_config::glob::WalkEntry;
-use deno_core::ModuleSpecifier;
-use deno_core::PollEventLoopOptions;
-use deno_core::anyhow::anyhow;
-use deno_core::convert::FromV8;
-use deno_core::error::AnyError;
-use deno_core::error::CoreErrorKind;
-use deno_core::error::JsError;
-use deno_core::futures::StreamExt;
-use deno_core::futures::future;
-use deno_core::futures::stream;
-use deno_core::unsync::spawn;
-use deno_core::unsync::spawn_blocking;
-use deno_core::v8;
+use edno_config::glob::WalkEntry;
+use edno_core::ModuleSpecifier;
+use edno_core::PollEventLoopOptions;
+use edno_core::anyhow::anyhow;
+use edno_core::convert::FromV8;
+use edno_core::error::AnyError;
+use edno_core::error::CoreErrorKind;
+use edno_core::error::JsError;
+use edno_core::futures::StreamExt;
+use edno_core::futures::future;
+use edno_core::futures::stream;
+use edno_core::unsync::spawn;
+use edno_core::unsync::spawn_blocking;
+use edno_core::v8;
 use deno_error::JsErrorBox;
-use deno_npm_installer::graph::NpmCachingStrategy;
-use deno_runtime::WorkerExecutionMode;
-use deno_runtime::deno_permissions::Permissions;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::permissions::RuntimePermissionDescriptorParser;
-use deno_runtime::tokio_util::create_and_run_current_thread;
+use edno_npm_installer::graph::NpmCachingStrategy;
+use edno_runtime::WorkerExecutionMode;
+use edno_runtime::edno_permissions::Permissions;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::permissions::RuntimePermissionDescriptorParser;
+use edno_runtime::tokio_util::create_and_run_current_thread;
 use indexmap::IndexMap;
 use indexmap::IndexSet;
 use log::Level;
@@ -89,7 +89,7 @@ pub enum BenchEvent {
   UncaughtError(String, Box<JsError>),
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, deno_core::FromV8)]
+#[derive(Debug, Clone, Deserialize, Serialize, edno_core::FromV8)]
 #[serde(rename_all = "camelCase")]
 pub enum BenchResult {
   Ok(BenchStats),
@@ -116,7 +116,7 @@ pub struct BenchDescription {
   pub warmup: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, deno_core::FromV8)]
+#[derive(Debug, Clone, Serialize, Deserialize, edno_core::FromV8)]
 #[serde(rename_all = "camelCase")]
 pub struct BenchStats {
   pub n: u64,
@@ -202,7 +202,7 @@ async fn bench_specifier_inner(
       preload_modules,
       require_modules,
       permissions_container,
-      vec![ops::bench::deno_bench::init(sender.clone())],
+      vec![ops::bench::edno_bench::init(sender.clone())],
       Default::default(),
       None,
     )
@@ -266,7 +266,7 @@ async fn bench_specifier_inner(
       .js_runtime
       .with_event_loop_promise(call, PollEventLoopOptions::default())
       .await?;
-    deno_core::scope!(scope, &mut worker.js_runtime);
+    edno_core::scope!(scope, &mut worker.js_runtime);
     let result = v8::Local::new(scope, result);
     let result = BenchResult::from_v8(scope, result)
       .map_err(|e| CoreErrorKind::JsBox(e).into_box())?;
@@ -434,7 +434,7 @@ async fn bench_specifiers(
   Ok(())
 }
 
-/// Checks if the path has a basename and extension Deno supports for benches.
+/// Checks if the path has a basename and extension Edno supports for benches.
 fn is_supported_bench_path(entry: WalkEntry) -> bool {
   if !is_script_ext(entry.path) {
     false

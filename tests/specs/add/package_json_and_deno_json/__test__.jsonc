@@ -4,20 +4,20 @@
     "npm_prefers_package_json": {
       "steps": [
         {
-          "args": "add npm:@denotest/esm-basic jsr:@denotest/add npm:@denotest/say-hello",
+          "args": "add npm:@ednotest/esm-basic jsr:@ednotest/add npm:@ednotest/say-hello",
           "output": "add.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('package.json').trim())"
+            "console.log(Edno.readTextFileSync('package.json').trim())"
           ],
           "output": "npm_prefer_package.json.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('deno.json').trim())"
+            "console.log(Edno.readTextFileSync('edno.json').trim())"
           ],
           "output": "npm_prefer_deno.json.out"
         }
@@ -26,17 +26,17 @@
     "only_creates_deno_json_if_no_config": {
       "steps": [
         {
-          "args": ["eval", "Deno.removeSync('deno.json')"],
+          "args": ["eval", "Edno.removeSync('edno.json')"],
           "output": ""
         },
         {
-          "args": "add npm:@denotest/esm-basic",
+          "args": "add npm:@ednotest/esm-basic",
           "output": "add_esm_basic.out"
         },
         {
           "args": [
             "eval",
-            "try { Deno.statSync('deno.json'); console.log('bad'); } catch (e) { if (e instanceof Deno.errors.NotFound) { console.log('good'); } else { console.log('bad error', e); }}"
+            "try { Edno.statSync('edno.json'); console.log('bad'); } catch (e) { if (e instanceof Edno.errors.NotFound) { console.log('good'); } else { console.log('bad error', e); }}"
           ],
           "output": "good\n"
         }
@@ -46,20 +46,20 @@
       "steps": [
         {
           "cwd": "./subdir",
-          "args": "add npm:@denotest/esm-basic jsr:@denotest/add npm:@denotest/say-hello",
+          "args": "add npm:@ednotest/esm-basic jsr:@ednotest/add npm:@ednotest/say-hello",
           "output": "[WILDCARD]"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('package.json').trim())"
+            "console.log(Edno.readTextFileSync('package.json').trim())"
           ],
           "output": "{}\n"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./subdir/deno.json').trim())"
+            "console.log(Edno.readTextFileSync('./subdir/edno.json').trim())"
           ],
           "output": "subdir/prefer_if_closer_deno.json.out"
         }

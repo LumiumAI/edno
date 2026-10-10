@@ -1,5 +1,5 @@
 {
   "tempDir": true,
-  "args": "x -y @denotest/deno --version",
+  "args": "x -y @ednotest/edno --version",
   "output": "x.out"
 }

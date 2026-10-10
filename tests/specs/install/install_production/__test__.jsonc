@@ -16,7 +16,7 @@
           // Verify the devDependency is NOT in node_modules
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@denotest/bin'); console.log('devDep exists'); } catch { console.log('devDep not found'); }"
+            "try { Edno.statSync('node_modules/@ednotest/bin'); console.log('devDep exists'); } catch { console.log('devDep not found'); }"
           ],
           "output": "no_dev_dep.out"
         },
@@ -24,7 +24,7 @@
           // Verify @types/* package IS still in node_modules (--prod alone doesn't strip types)
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@types/denotest__index-export-no-types'); console.log('@types exists'); } catch { console.log('@types not found'); }"
+            "try { Edno.statSync('node_modules/@types/ednotest__index-export-no-types'); console.log('@types exists'); } catch { console.log('@types not found'); }"
           ],
           "output": "has_types.out"
         }
@@ -46,7 +46,7 @@
           // Verify @types/* package is NOT in node_modules
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@types/denotest__index-export-no-types'); console.log('@types exists'); } catch { console.log('@types not found'); }"
+            "try { Edno.statSync('node_modules/@types/ednotest__index-export-no-types'); console.log('@types exists'); } catch { console.log('@types not found'); }"
           ],
           "output": "no_types.out"
         }
@@ -63,7 +63,7 @@
           // Verify the devDependency IS in node_modules
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@denotest/bin'); console.log('devDep exists'); } catch { console.log('devDep not found'); }"
+            "try { Edno.statSync('node_modules/@ednotest/bin'); console.log('devDep exists'); } catch { console.log('devDep not found'); }"
           ],
           "output": "has_dev_dep.out"
         },
@@ -71,7 +71,7 @@
           // Verify @types/* package IS in node_modules
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@types/denotest__index-export-no-types'); console.log('@types exists'); } catch { console.log('@types not found'); }"
+            "try { Edno.statSync('node_modules/@types/ednotest__index-export-no-types'); console.log('@types exists'); } catch { console.log('@types not found'); }"
           ],
           "output": "has_types.out"
         }
@@ -88,7 +88,7 @@
           // Verify the code dependency is installed
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@denotest/esm-basic'); console.log('codeDep exists'); } catch { console.log('codeDep not found'); }"
+            "try { Edno.statSync('node_modules/@ednotest/esm-basic'); console.log('codeDep exists'); } catch { console.log('codeDep not found'); }"
           ],
           "output": "has_code_dep.out"
         },
@@ -96,7 +96,7 @@
           // Verify the type-only dependency is NOT installed
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@denotest/types'); console.log('typesDep exists'); } catch { console.log('typesDep not found'); }"
+            "try { Edno.statSync('node_modules/@ednotest/types'); console.log('typesDep exists'); } catch { console.log('typesDep not found'); }"
           ],
           "output": "no_types_dep.out"
         }
@@ -113,7 +113,7 @@
           // Verify the type-only dependency IS installed
           "args": [
             "eval",
-            "try { Deno.statSync('node_modules/@denotest/types'); console.log('typesDep exists'); } catch { console.log('typesDep not found'); }"
+            "try { Edno.statSync('node_modules/@ednotest/types'); console.log('typesDep exists'); } catch { console.log('typesDep not found'); }"
           ],
           "output": "has_types_dep.out"
         }

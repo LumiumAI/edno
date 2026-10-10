@@ -16,7 +16,7 @@ const {
   SymbolIterator,
 } = primordials;
 const { ERR_INVALID_MIME_SYNTAX } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 
 const NOT_HTTP_TOKEN_CODE_POINT = new SafeRegExp(
@@ -205,13 +205,13 @@ class MIMEParams {
     data.set(name, value);
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   *entries(): IterableIterator<any> {
     this.#parse();
     yield* new SafeMapIterator(this.#data);
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   *keys(): IterableIterator<any> {
     this.#parse();
     for (const { 0: key } of new SafeMapIterator(this.#data)) {
@@ -219,7 +219,7 @@ class MIMEParams {
     }
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   *values(): IterableIterator<any> {
     this.#parse();
     for (const { 1: value } of new SafeMapIterator(this.#data)) {
@@ -336,7 +336,7 @@ ObjectDefineProperty(MIMEParams.prototype, "toJSON", {
 });
 
 const { instantiateMimeParams } = MIMEParams;
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 delete (MIMEParams as any).instantiateMimeParams;
 
 class MIMEType {

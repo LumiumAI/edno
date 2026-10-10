@@ -1,5 +1,5 @@
 // Adapted from https://github.com/honojs/node-server/blob/1eb73c6d985665e75458ddd08c23bbc1dbdc7bcd/src/response.ts
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 //
 import type { OutgoingHttpHeaders } from "node:http";
 

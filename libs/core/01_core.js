@@ -34,7 +34,7 @@
     hasPromise,
     promiseIdSymbol,
     registerErrorClass,
-  } = window.Deno.core;
+  } = window.Edno.core;
   const {
     __setLeakTracingEnabled,
     __isLeakTracingEnabled,
@@ -294,7 +294,7 @@
   // Shared buffer with Rust - avoids JS-to-Rust op calls for tick scheduling.
   // Index 0: hasTickScheduled
   // Index 1: hasRejectionToWarn (set by Rust in promise_reject_callback)
-  // Set by Rust during store_js_callbacks via Deno.core.__tickInfo.
+  // Set by Rust during store_js_callbacks via Edno.core.__tickInfo.
   const kHasTickScheduled = 0;
   const kHasRejectionToWarn = 1;
   let tickInfo;
@@ -358,7 +358,7 @@
   function processTicksAndRejections() {
     let tock;
     do {
-      // deno-lint-ignore no-cond-assign
+      // edno-lint-ignore no-cond-assign
       while ((tock = queue.shift()) !== null) {
         const oldContext = getAsyncContext();
         setAsyncContext(tock.snapshot);
@@ -595,8 +595,8 @@
   }
 
   // Some "extensions" rely on "BadResource", "Interrupted", "NotCapable"
-  // errors in the JS code (eg. "deno_net") so they are provided in "Deno.core"
-  // but later reexported on "Deno.errors"
+  // errors in the JS code (eg. "edno_net") so they are provided in "Edno.core"
+  // but later reexported on "Edno.errors"
   class BadResource extends Error {
     constructor(msg, options) {
       super(msg, options);
@@ -722,7 +722,7 @@
     return { fileName, lineNumber, columnNumber };
   }
 
-  const hostObjectBrand = SymbolFor("Deno.core.hostObject");
+  const hostObjectBrand = SymbolFor("Edno.core.hostObject");
   const transferableResources = {};
   const registerTransferableResource = (name, send, receive) => {
     if (transferableResources[name]) {
@@ -744,7 +744,7 @@
   // with default implementation of Console from V8. This will cause
   // console messages to be piped to inspector console.
   //
-  // We are using `Deno.core.callConsole` binding to preserve proper stack
+  // We are using `Edno.core.callConsole` binding to preserve proper stack
   // frames in inspector console. This has to be done because V8 considers
   // the last JS stack frame as gospel for the inspector. In our case we
   // specifically want the latest user stack frame to be the one that matters
@@ -753,7 +753,7 @@
   // Inspired by:
   // https://github.com/nodejs/node/blob/1317252dfe8824fd9cfee125d2aaa94004db2f3b/lib/internal/util/inspector.js#L39-L61
   function wrapConsole(customConsole, consoleFromV8) {
-    const callConsole = window.Deno.core.callConsole;
+    const callConsole = window.Edno.core.callConsole;
 
     const keys = ObjectKeys(consoleFromV8);
     for (let i = 0; i < keys.length; ++i) {
@@ -778,9 +778,9 @@
     }
   }
 
-  // Minimal console implementation, that uses `Deno.core.print` under the hood.
+  // Minimal console implementation, that uses `Edno.core.print` under the hood.
   // It's not fully fledged and is meant to make debugging slightly easier when working with
-  // only `deno_core` crate.
+  // only `edno_core` crate.
   class CoreConsole {
     log = (...args) => {
       op_print(`${consoleStringify(...args)}\n`, false);
@@ -977,7 +977,7 @@
   // polyfill's IIFE preamble destructures `globalThis.__bootstrap` and
   // `__bootstrap.core.ops`, but at runtime (`runtime/js/99_main.js`) the
   // harness deletes `globalThis.__bootstrap` and `removeImportedOps()`
-  // strips most entries out of `Deno.core.ops`. The captured view (a
+  // strips most entries out of `Edno.core.ops`. The captured view (a
   // shallow clone of `core.ops` immune to `removeImportedOps`) is
   // registered via `op_set_captured_bootstrap` at the end of this IIFE.
   // Doing the install in Rust means the `synthetic_esm` dispatch path
@@ -996,7 +996,7 @@
 
   const getAsyncContext = getContinuationPreservedEmbedderData;
   const setAsyncContext = setContinuationPreservedEmbedderData;
-  const kNoAsyncContextRestore = Symbol("Deno.core.noAsyncContextRestore");
+  const kNoAsyncContextRestore = Symbol("Edno.core.noAsyncContextRestore");
 
   function scopeAsyncContext(ctx) {
     const old = getAsyncContext();
@@ -1054,10 +1054,10 @@
     }
   }
 
-  // Extra Deno.core.* exports
-  const core = ObjectAssign(globalThis.Deno.core, {
-    internalRidSymbol: Symbol("Deno.internal.rid"),
-    internalFdSymbol: Symbol("Deno.internal.fd"),
+  // Extra Edno.core.* exports
+  const core = ObjectAssign(globalThis.Edno.core, {
+    internalRidSymbol: Symbol("Edno.internal.rid"),
+    internalFdSymbol: Symbol("Edno.internal.fd"),
     resources,
     __eventLoopTick,
     __processTimers,
@@ -1267,7 +1267,7 @@
     refreshTimer: __timers.refreshTimer,
     refTimer: __timers.refTimer,
     unrefTimer: __timers.unrefTimer,
-    // System timers bypass Deno's test sanitizer resource tracking.
+    // System timers bypass Edno's test sanitizer resource tracking.
     createSystemTimer: (callback, after, isRefed) =>
       __timers.createTimer(callback, after, undefined, false, !!isRefed, true),
     createSystemInterval: (callback, interval, isRefed) =>
@@ -1301,7 +1301,7 @@
 
   const internals = {};
   ObjectAssign(globalThis.__bootstrap, { core, internals });
-  ObjectAssign(globalThis.Deno, { core });
+  ObjectAssign(globalThis.Edno, { core });
   ObjectFreeze(globalThis.__bootstrap.core);
 
   // Build the snapshot-time view of __bootstrap and hand it off to Rust.

@@ -1,7 +1,7 @@
 {
   // Regression test: an npm package in node_modules that shares a name with
   // a Node.js built-in (e.g. "events") must NOT shadow the built-in. Node.js
-  // always gives built-ins priority, and Deno matches that behavior.
+  // always gives built-ins priority, and Edno matches that behavior.
   "tests": {
     "byonm_builtin_shadow": {
       "args": "run --node-modules-dir=manual main.mts",

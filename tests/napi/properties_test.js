@@ -4,7 +4,7 @@ import { assertEquals, loadTestLibrary } from "./common.js";
 
 const properties = loadTestLibrary();
 
-Deno.test("napi properties", () => {
+Edno.test("napi properties", () => {
   assertEquals(properties.test_property_rw, 1);
   properties.test_property_rw = 2;
   assertEquals(properties.test_property_rw, 2);

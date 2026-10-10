@@ -6,8 +6,8 @@
 import { connect, createServer } from "node:net";
 import { strictEqual } from "node:assert";
 
-// Get a free port via Deno, then release it for the Node net server.
-const tmp = Deno.listen({ port: 0 });
+// Get a free port via Edno, then release it for the Node net server.
+const tmp = Edno.listen({ port: 0 });
 const PORT = tmp.addr.port;
 tmp.close();
 

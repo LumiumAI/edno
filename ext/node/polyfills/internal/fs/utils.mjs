@@ -39,7 +39,7 @@ const {
   Uint8Array,
   Uint8ArrayPrototype,
 } = primordials;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const {
   ERR_FS_EISDIR,
   ERR_FS_INVALID_SYMLINK_TYPE,
@@ -48,19 +48,19 @@ const {
   ERR_OUT_OF_RANGE,
   hideStackFrames,
   uvException,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const {
   isArrayBufferView,
   isBigUint64Array,
   isDate,
   isUint8Array,
-} = core.loadExtScript("ext:deno_node/internal/util/types.ts");
+} = core.loadExtScript("ext:edno_node/internal/util/types.ts");
 const { kEmptyObject, once } = core.loadExtScript(
-  "ext:deno_node/internal/util.mjs",
+  "ext:edno_node/internal/util.mjs",
 );
 const { toPathIfFileURL } = core.loadExtScript(
-  "ext:deno_node/internal/url.ts",
+  "ext:edno_node/internal/url.ts",
 );
 const {
   validateAbortSignal,
@@ -70,25 +70,25 @@ const {
   validateInteger,
   validateObject,
   validateUint32,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const lazyPath = core.createLazyLoader("node:path");
 const kType = Symbol("type");
 const kStats = Symbol("stats");
 const assert = core.loadExtScript(
-  "ext:deno_node/internal/assert.mjs",
+  "ext:edno_node/internal/assert.mjs",
 );
 const { lstat, lstatSync } = core.loadExtScript(
-  "ext:deno_node/_fs/_fs_lstat.ts",
+  "ext:edno_node/_fs/_fs_lstat.ts",
 );
-const { isWindows } = core.loadExtScript("ext:deno_node/_util/os.ts");
+const { isWindows } = core.loadExtScript("ext:edno_node/_util/os.ts");
 const lazyProcess = core.createLazyLoader("node:process");
 const { ERR_INCOMPATIBLE_OPTION_PAIR } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const {
   fs: fsConstants,
   os: osConstants,
-} = core.loadExtScript("ext:deno_node/internal_binding/constants.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/constants.ts");
 const {
   F_OK = 0,
   W_OK = 0,
@@ -240,7 +240,7 @@ export function copyObject(source) {
   // Intentionally copies inherited enumerable properties as well (Node parity):
   // `options` may be passed with fields on its prototype, e.g.
   // `{ __proto__: { start, end } }`, and those must be preserved.
-  // deno-lint-ignore guard-for-in
+  // edno-lint-ignore guard-for-in
   for (const key in source) {
     target[key] = source[key];
   }
@@ -259,22 +259,22 @@ function join(path, name) {
 
   if (typeof path === "string" && isUint8Array(name)) {
     const pathBuffer = Buffer.from(
-      // deno-lint-ignore deno-internal/prefer-primordials -- `join` is a `node:path` function
+      // edno-lint-ignore edno-internal/prefer-primordials -- `join` is a `node:path` function
       lazyPath().default.join(path, lazyPath().default.sep),
     );
     // Ignore lint. `concat` is a 'node:buffer' static method on `Buffer`
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     return Buffer.concat([pathBuffer, name]);
   }
 
   if (typeof path === "string" && typeof name === "string") {
-    // deno-lint-ignore deno-internal/prefer-primordials -- `join` is a `node:path` function
+    // edno-lint-ignore edno-internal/prefer-primordials -- `join` is a `node:path` function
     return lazyPath().default.join(path, name);
   }
 
   if (isUint8Array(path) && isUint8Array(name)) {
     // Ignore lint. `concat` is a 'node:buffer' static method on `Buffer`
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     return Buffer.concat([path, bufferSep, name]);
   }
 
@@ -919,7 +919,7 @@ export const getValidatedPathToString = (fileURLOrPath, propName) => {
     return new TextDecoder().decode(path);
   }
   if (Buffer.isBuffer(path)) {
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     return path.toString();
   }
   return path;
@@ -965,7 +965,7 @@ export function warnOnNonPortableTemplate(template) {
   }
 }
 
-/** @import { CopyOptionsBase } from "ext:deno_node/_fs/cp/cp.d.ts" */
+/** @import { CopyOptionsBase } from "ext:edno_node/_fs/cp/cp.d.ts" */
 /** @type {CopyOptionsBase} */
 const defaultCpOptions = {
   dereference: false,

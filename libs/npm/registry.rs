@@ -65,7 +65,7 @@ impl NpmPackageInfo {
   ///
   /// The keys are `skip_deserializing` in the normal parse because only the LSP
   /// (npm import-specifier completion) reads them and retaining them for every
-  /// version of every package regressed `deno run` memory badly (see
+  /// version of every package regressed `edno run` memory badly (see
   /// denoland/deno#35664). The LSP calls this to populate them for its own use;
   /// no other command pays for it.
   pub fn fill_export_keys(
@@ -131,8 +131,8 @@ impl NpmPackageInfo {
     let text = source.as_str();
     let index = fast_registry_json::pluck_packument_index(text)
       .map_err(|err| format!("error indexing npm packument: {err:?}"))?;
-    let deno_etag = index
-      .deno_etag
+    let edno_etag = index
+      .edno_etag
       .map(unescape_json_string_content)
       .transpose()?;
     let name = PackageName::from_str(
@@ -200,7 +200,7 @@ impl NpmPackageInfo {
       );
     }
 
-    let full_packument = index.deno_packument_format == Some("full");
+    let full_packument = index.edno_packument_format == Some("full");
     // ignore unparsable dates because a missing `modified` is handled
     // by fetching the full packument
     let modified = index
@@ -220,7 +220,7 @@ impl NpmPackageInfo {
         time,
       },
       NpmPackageInfoCacheMetadata {
-        etag: deno_etag,
+        etag: edno_etag,
         modified,
         full_packument,
       },
@@ -643,7 +643,7 @@ pub struct NpmDependencyEntryError {
 pub enum NpmDependencyEntryErrorSource {
   #[error(transparent)]
   NpmVersionReqParseError(#[from] NpmVersionReqParseError),
-  #[error("Package specified a dependency outside of npm ({}). Deno does not install these for security reasons. The npm package should be improved to have all its dependencies on npm.
+  #[error("Package specified a dependency outside of npm ({}). Edno does not install these for security reasons. The npm package should be improved to have all its dependencies on npm.
 
 To work around this, you can use a package.json and install the dependencies via `npm install`.", .specifier)]
   RemoteDependency { specifier: String },
@@ -728,7 +728,7 @@ fn is_export_completion_key(key: &str) -> bool {
 /// This is never deserialized as part of the normal packument parse (the
 /// `exports` field on [`NpmPackageVersionInfo`] is `skip_deserializing`).
 /// Retaining even the keys for the `exports` of every version of every npm
-/// package regressed `deno run` memory and leaked per `--watch` reload (see
+/// package regressed `edno run` memory and leaked per `--watch` reload (see
 /// denoland/deno#35664), and only the LSP reads them. The LSP fills them in on
 /// demand via [`NpmPackageInfo::fill_export_keys`].
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
@@ -847,7 +847,7 @@ impl<'de> Deserialize<'de> for NpmPackageExportKeys {
 pub struct NpmPackageVersionInfo {
   pub version: Version,
   /// Skipped during the normal parse — only the LSP consumes these keys, and
-  /// retaining them for every version of every package regressed `deno run`
+  /// retaining them for every version of every package regressed `edno run`
   /// memory (see denoland/deno#35664). The LSP fills them in via
   /// [`NpmPackageInfo::fill_export_keys`].
   #[serde(
@@ -916,7 +916,7 @@ pub struct NpmPackageVersionInfo {
 /// here, but [`NpmPackageVersionInfo::get_trust_evidence`] only checks whether
 /// they are present, so this discards the contents on deserialize and
 /// re-serializes compactly as `true`. That keeps the cached packument small
-/// even though `min-release-age` makes Deno fetch the full packument by
+/// even though `min-release-age` makes Edno fetch the full packument by
 /// default.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Present;
@@ -1321,12 +1321,12 @@ pub struct TestNpmRegistryApi {
 }
 
 #[async_trait::async_trait(?Send)]
-impl deno_lockfile::NpmPackageInfoProvider for TestNpmRegistryApi {
+impl edno_lockfile::NpmPackageInfoProvider for TestNpmRegistryApi {
   async fn get_npm_package_info(
     &self,
     values: &[PackageNv],
   ) -> Result<
-    Vec<deno_lockfile::Lockfile5NpmInfo>,
+    Vec<edno_lockfile::Lockfile5NpmInfo>,
     Box<dyn std::error::Error + Send + Sync>,
   > {
     let mut infos = Vec::new();
@@ -1337,7 +1337,7 @@ impl deno_lockfile::NpmPackageInfoProvider for TestNpmRegistryApi {
         .await
         .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)?;
       let version_info = info.version_info(nv, &linked_packages).unwrap();
-      let lockfile_info = deno_lockfile::Lockfile5NpmInfo {
+      let lockfile_info = edno_lockfile::Lockfile5NpmInfo {
         tarball_url: version_info
           .dist
           .as_ref()
@@ -2633,7 +2633,7 @@ mod test {
 
   #[test]
   fn version_info_exports_skipped_by_default() {
-    // The normal parse (e.g. `deno run`) discards `exports` entirely — nothing
+    // The normal parse (e.g. `edno run`) discards `exports` entirely — nothing
     // is retained, not even the subpath keys.
     let text = r#"{ "version": "1.0.0", "exports": { ".": "./index.js", "./client": "./client.js" } }"#;
     let info: NpmPackageVersionInfo = serde_json::from_str(text).unwrap();

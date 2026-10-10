@@ -8,9 +8,9 @@ const {
   op_node_cert_export_public_key,
   op_node_verify_spkac,
 } = core.ops;
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const { getArrayBufferOrView } = core.loadExtScript(
-  "ext:deno_node/internal/crypto/keys.ts",
+  "ext:edno_node/internal/crypto/keys.ts",
 );
 
 // The functions contained in this file cover the SPKAC format
@@ -46,7 +46,7 @@ function exportChallenge(spkac, encoding) {
 // For backwards compatibility reasons, this cannot be converted into a
 // ES6 Class.
 function Certificate() {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   if (!(this instanceof Certificate)) {
     return new Certificate();
   }

@@ -1,4 +1,4 @@
-# deno_image
+# edno_image
 
 Extension that implements various image processing related APIs.
 

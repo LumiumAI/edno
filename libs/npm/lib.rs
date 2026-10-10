@@ -432,7 +432,7 @@ impl NpmSystemInfo {
 }
 
 /// Extracts the package name from a specifier that may contain a subpath.
-/// For example, "@denotest/add2/sub.js" -> "@denotest/add2", "foo/bar" -> "foo".
+/// For example, "@ednotest/add2/sub.js" -> "@ednotest/add2", "foo/bar" -> "foo".
 pub fn package_name_without_subpath(name: &str) -> &str {
   let mut search_start_index = 0;
   if name.starts_with('@')

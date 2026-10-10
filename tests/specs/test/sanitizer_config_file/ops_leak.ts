@@ -1,3 +1,3 @@
-Deno.test("timer leak", () => {
+Edno.test("timer leak", () => {
   setTimeout(() => {}, 10000);
 });

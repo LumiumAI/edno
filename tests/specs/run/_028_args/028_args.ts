@@ -1,3 +1,3 @@
-Deno.args.forEach((arg) => {
+Edno.args.forEach((arg) => {
   console.log(arg);
 });

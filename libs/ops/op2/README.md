@@ -37,9 +37,9 @@ fn op_xyz(/* ... */) -> impl Future<Output = X> {}
 ```
 
 These are desugared to a function that adds a hidden `promise_id` argument, and
-returns `Option<X>` instead. Deno will eagerly poll the op, and if it is
+returns `Option<X>` instead. Edno will eagerly poll the op, and if it is
 immediately ready, the function will return `Some(X)`. If the op is not ready,
-the function will return `None` and the future will be handled by Deno's pending
+the function will return `None` and the future will be handled by Edno's pending
 op system.
 
 ```rust,ignore
@@ -94,7 +94,7 @@ buffer for the fast path.
 
 ## Argument conversion
 
-Arguments in non-fast ops use the `deno_core::convert::FromV8Scopeless` trait by
+Arguments in non-fast ops use the `edno_core::convert::FromV8Scopeless` trait by
 default. This trait does not require a v8 scope for conversion, making it more
 efficient for many types.
 
@@ -108,7 +108,7 @@ fn op_xyz(#[scoped] arg: MyFromV8Type) -> X {}
 ## Return value conversion
 
 Return types use the `ToV8` trait by default in non-fast ops. Any type that
-implements `deno_core::convert::ToV8` can be returned directly without any
+implements `edno_core::convert::ToV8` can be returned directly without any
 attribute.
 
 # CppGC Objects
@@ -123,8 +123,8 @@ Define a struct that implements `GarbageCollected`, then use `#[op2]` on an
 `impl` block to define its JavaScript API:
 
 ```rust,ignore
-use deno_core::GarbageCollected;
-use deno_core::v8::cppgc::GcCell;
+use edno_core::GarbageCollected;
+use edno_core::v8::cppgc::GcCell;
 
 #[repr(C)]
 pub struct MyObject {
@@ -176,7 +176,7 @@ impl MyObject {
 Register the object in your extension:
 
 ```rust,ignore
-deno_core::extension!(
+edno_core::extension!(
   my_ext,
   objects = [MyObject],
   // ...
@@ -218,7 +218,7 @@ Mark the struct with `#[derive(CppgcBase)]` and its `impl` block with
 `#[op2(base)]`:
 
 ```rust,ignore
-use deno_core::CppgcBase;
+use edno_core::CppgcBase;
 
 #[derive(CppgcBase)]
 #[repr(C)]
@@ -260,7 +260,7 @@ Mark the struct with `#[derive(CppgcInherits)]`, put the base type as the first
 field, and use `#[op2(inherit = BaseType)]` on the `impl` block:
 
 ```rust,ignore
-use deno_core::CppgcInherits;
+use edno_core::CppgcInherits;
 
 #[derive(CppgcInherits)]
 #[cppgc_inherits_from(Shape)]
@@ -778,7 +778,7 @@ FromV8Scopeless
 </td><td>
 any
 </td><td>
-Any type that implements `deno_core::covert::FromV8Scopeless`.
+Any type that implements `edno_core::covert::FromV8Scopeless`.
 </td></tr>
 <tr>
 <td>
@@ -792,7 +792,7 @@ Any type that implements `deno_core::covert::FromV8Scopeless`.
 </td><td>
 any
 </td><td>
-Any type that implements `deno_core::covert::FromV8`. ⚠️ May be slow.
+Any type that implements `edno_core::covert::FromV8`. ⚠️ May be slow.
 </td></tr>
 <tr>
 <td>
@@ -806,7 +806,7 @@ Any type that implements `deno_core::covert::FromV8`. ⚠️ May be slow.
 </td><td>
 any
 </td><td>
-Any type that implements `deno_core::covert::FromV8`. ⚠️ May be slow.
+Any type that implements `edno_core::covert::FromV8`. ⚠️ May be slow.
 </td></tr>
 <tr>
 <td>
@@ -1128,7 +1128,7 @@ Rc<RefCell<OpState>>
 </td><td>
 
 </td><td>
-Only usable in `deno_core`.
+Only usable in `edno_core`.
 </td></tr>
 </table>
 
@@ -1758,7 +1758,7 @@ ToV8Type
 </td><td>
 
 </td><td>
-Any type that implements `deno_core::covert::ToV8`.
+Any type that implements `edno_core::covert::ToV8`.
 </td><td>
 
 </td></tr>
@@ -1774,7 +1774,7 @@ Any type that implements `deno_core::covert::ToV8`.
 </td><td>
 
 </td><td>
-Any type that implements `deno_core::covert::ToV8`.
+Any type that implements `edno_core::covert::ToV8`.
 </td><td>
 
 </td></tr>

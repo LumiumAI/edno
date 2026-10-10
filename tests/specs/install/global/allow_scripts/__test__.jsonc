@@ -2,7 +2,7 @@
   "tempDir": true,
   "steps": [{
     "if": "unix",
-    "args": "install -g --allow-scripts --root ./bins --name lifecycle-scripts-simple npm:@denotest/lifecycle-scripts-simple",
+    "args": "install -g --allow-scripts --root ./bins --name lifecycle-scripts-simple npm:@ednotest/lifecycle-scripts-simple",
     "output": "install.out"
   }, {
     "if": "unix",
@@ -12,7 +12,7 @@
     "exitCode": 0
   }, {
     "if": "windows",
-    "args": "install -g --allow-scripts --root ./bins --name lifecycle-scripts-simple npm:@denotest/lifecycle-scripts-simple",
+    "args": "install -g --allow-scripts --root ./bins --name lifecycle-scripts-simple npm:@ednotest/lifecycle-scripts-simple",
     "output": "install.out"
   }, {
     "if": "windows",

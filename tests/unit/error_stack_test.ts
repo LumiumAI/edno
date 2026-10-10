@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assertEquals, assertMatch } from "./test_util.ts";
 
-Deno.test(function errorStackMessageLine() {
+Edno.test(function errorStackMessageLine() {
   const e1 = new Error();
   e1.name = "Foo";
   e1.message = "bar";
@@ -23,25 +23,25 @@ Deno.test(function errorStackMessageLine() {
   assertMatch(e4.stack!, /^\n/);
 
   const e5 = new Error();
-  // deno-lint-ignore ban-ts-comment
+  // edno-lint-ignore ban-ts-comment
   // @ts-expect-error
   e5.name = undefined;
-  // deno-lint-ignore ban-ts-comment
+  // edno-lint-ignore ban-ts-comment
   // @ts-expect-error
   e5.message = undefined;
   assertMatch(e5.stack!, /^Error\n/);
 
   const e6 = new Error();
-  // deno-lint-ignore ban-ts-comment
+  // edno-lint-ignore ban-ts-comment
   // @ts-expect-error
   e6.name = null;
-  // deno-lint-ignore ban-ts-comment
+  // edno-lint-ignore ban-ts-comment
   // @ts-expect-error
   e6.message = null;
   assertMatch(e6.stack!, /^null: null\n/);
 });
 
-Deno.test(function captureStackTrace() {
+Edno.test(function captureStackTrace() {
   function foo() {
     const error = new Error();
     const stack1 = error.stack!;

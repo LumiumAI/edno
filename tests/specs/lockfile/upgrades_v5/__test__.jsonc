@@ -8,19 +8,19 @@
           "output": "[WILDCARD]"
         },
         {
-          "args": ["eval", "console.log(Deno.readTextFileSync('deno.lock'))"],
-          "output": "deno.lock.json.out"
+          "args": ["eval", "console.log(Edno.readTextFileSync('edno.lock'))"],
+          "output": "edno.lock.json.out"
         },
         {
-          "args": "install jsr:@denotest/add",
+          "args": "install jsr:@ednotest/add",
           "output": "[WILDCARD]"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('deno.lock'))"
+            "console.log(Edno.readTextFileSync('edno.lock'))"
           ],
-          "output": "deno.lock.v5.json.out"
+          "output": "edno.lock.v5.json.out"
         }
       ]
     },
@@ -29,7 +29,7 @@
         {
           "args": [
             "eval",
-            "Deno.writeTextFileSync('deno.json', '{\"nodeModulesDir\":\"auto\"}')"
+            "Edno.writeTextFileSync('edno.json', '{\"nodeModulesDir\":\"auto\"}')"
           ],
           "output": ""
         },

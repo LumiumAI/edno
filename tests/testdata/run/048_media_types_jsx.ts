@@ -13,7 +13,7 @@ import { loaded as loadedJsx4 } from "http://localhost:4545/subdir/mt_applicatio
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       [elemName: string]: any;
     }
   }

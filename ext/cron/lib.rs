@@ -11,13 +11,13 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use deno_core::OpState;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::op2;
+use edno_core::OpState;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::op2;
 use deno_error::JsErrorBox;
 use deno_error::JsErrorClass;
-use deno_features::FeatureChecker;
+use edno_features::FeatureChecker;
 pub use handler_impl::CronHandlerImpl;
 pub use socket::SocketCronHandle;
 pub use socket::SocketCronHandler;
@@ -26,7 +26,7 @@ pub use crate::interface::*;
 
 pub const UNSTABLE_FEATURE_NAME: &str = "cron";
 
-deno_core::extension!(deno_cron,
+edno_core::extension!(edno_cron,
   ops = [
     op_cron_create,
     op_cron_next,
@@ -58,7 +58,7 @@ impl Resource for CronResource {
 pub enum CronError {
   #[class(inherit)]
   #[error(transparent)]
-  Resource(#[from] deno_core::error::ResourceError),
+  Resource(#[from] edno_core::error::ResourceError),
   #[class(type)]
   #[error("Cron name cannot exceed 64 characters: current length {0}")]
   NameExceeded(usize),
@@ -105,7 +105,7 @@ fn op_cron_create(
     let state = state.borrow();
     state
       .borrow::<Arc<FeatureChecker>>()
-      .check_or_exit(UNSTABLE_FEATURE_NAME, "Deno.cron");
+      .check_or_exit(UNSTABLE_FEATURE_NAME, "Edno.cron");
     state.borrow::<Rc<dyn CronHandler>>().clone()
   };
 

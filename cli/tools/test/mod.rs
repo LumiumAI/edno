@@ -24,37 +24,37 @@ use std::time::Duration;
 use std::time::Instant;
 
 use deno_ast::MediaType;
-use deno_cache_dir::file_fetcher::File;
-use deno_config::glob::FilePatterns;
-use deno_config::glob::WalkEntry;
-use deno_core::ModuleSpecifier;
-use deno_core::OpState;
-use deno_core::PollEventLoopOptions;
-use deno_core::anyhow;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::error::CoreError;
-use deno_core::error::CoreErrorKind;
-use deno_core::error::JsError;
-use deno_core::futures::StreamExt;
-use deno_core::futures::future;
-use deno_core::futures::stream;
-use deno_core::located_script_name;
-use deno_core::unsync::spawn;
-use deno_core::unsync::spawn_blocking;
-use deno_core::url::Url;
-use deno_core::v8;
+use edno_cache_dir::file_fetcher::File;
+use edno_config::glob::FilePatterns;
+use edno_config::glob::WalkEntry;
+use edno_core::ModuleSpecifier;
+use edno_core::OpState;
+use edno_core::PollEventLoopOptions;
+use edno_core::anyhow;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::error::CoreError;
+use edno_core::error::CoreErrorKind;
+use edno_core::error::JsError;
+use edno_core::futures::StreamExt;
+use edno_core::futures::future;
+use edno_core::futures::stream;
+use edno_core::located_script_name;
+use edno_core::unsync::spawn;
+use edno_core::unsync::spawn_blocking;
+use edno_core::url::Url;
+use edno_core::v8;
 use deno_error::JsErrorBox;
-use deno_npm_installer::graph::NpmCachingStrategy;
-use deno_runtime::WorkerExecutionMode;
-use deno_runtime::coverage::CoverageCollector;
-use deno_runtime::deno_io::Stdio;
-use deno_runtime::deno_io::StdioPipe;
-use deno_runtime::deno_permissions::Permissions;
-use deno_runtime::deno_permissions::PermissionsContainer;
-use deno_runtime::permissions::RuntimePermissionDescriptorParser;
-use deno_runtime::tokio_util::create_and_run_current_thread;
-use deno_runtime::worker::MainWorker;
+use edno_npm_installer::graph::NpmCachingStrategy;
+use edno_runtime::WorkerExecutionMode;
+use edno_runtime::coverage::CoverageCollector;
+use edno_runtime::edno_io::Stdio;
+use edno_runtime::edno_io::StdioPipe;
+use edno_runtime::edno_permissions::Permissions;
+use edno_runtime::edno_permissions::PermissionsContainer;
+use edno_runtime::permissions::RuntimePermissionDescriptorParser;
+use edno_runtime::tokio_util::create_and_run_current_thread;
+use edno_runtime::worker::MainWorker;
 use indexmap::IndexMap;
 use indexmap::IndexSet;
 use log::Level;
@@ -115,7 +115,7 @@ use crate::tools::coverage::reporter;
 use crate::tools::test::channel::ChannelClosedError;
 
 static SLOW_TEST_TIMEOUT: LazyLock<u64> = LazyLock::new(|| {
-  let base_timeout = env::var("DENO_SLOW_TEST_TIMEOUT").unwrap_or_default();
+  let base_timeout = env::var("EDNO_SLOW_TEST_TIMEOUT").unwrap_or_default();
   base_timeout.parse().unwrap_or(60).max(1)
 });
 
@@ -247,7 +247,7 @@ impl TestContainer {
   ) -> Result<(), JsErrorBox> {
     if self.registration_phase_ended {
       return Err(JsErrorBox::type_error(
-        "Nested Deno.test() calls are not supported. Use t.step() for nested tests.",
+        "Nested Edno.test() calls are not supported. Use t.step() for nested tests.",
       ));
     }
     self.descriptions.tests.insert(description.id, description);
@@ -454,8 +454,8 @@ impl TestFailure {
     // The first line of user code comes above the test file.
     // The call stack usually contains the top 10 frames, and cuts off after that.
     // We need to explicitly check for the test runner here.
-    // - Checking for a `ext:` is not enough, since other Deno `ext:`s can appear in the call stack.
-    // - This check guarantees that the next frame is inside of the Deno.test(),
+    // - Checking for a `ext:` is not enough, since other Edno `ext:`s can appear in the call stack.
+    // - This check guarantees that the next frame is inside of the Edno.test(),
     //   and not somewhere else.
     const TEST_RUNNER: &str = "ext:cli/40_test.js";
     let runner_frame_index = js_error
@@ -512,7 +512,7 @@ impl TestFailure {
 }
 
 #[allow(clippy::derive_partial_eq_without_eq, reason = "not important")]
-#[derive(Debug, Clone, PartialEq, deno_core::FromV8)]
+#[derive(Debug, Clone, PartialEq, edno_core::FromV8)]
 pub enum TestResult {
   Ok,
   Ignored,
@@ -580,13 +580,13 @@ pub enum TestEvent {
   /// Indicates that the user has cancelled the test run with Ctrl+C and
   /// the run should be aborted.
   Sigint,
-  /// Indicates that a test called `Deno.exit()` while the exit sanitizer was
+  /// Indicates that a test called `Edno.exit()` while the exit sanitizer was
   /// disabled (`sanitizeExit: false`). The test run should be aborted, a
   /// message printed, and the process should exit with the given code. This
   /// ensures that buffered output is reliably flushed before exiting, instead
   /// of letting the test silently terminate the process.
   Exit(i32),
-  /// Indicates that the test isolate called `Deno.exit()` outside of any test
+  /// Indicates that the test isolate called `Edno.exit()` outside of any test
   /// function (top-level code, or in the `unload` event). The isolate has
   /// been terminated; the test runner should report the exit code and
   /// continue with any remaining specifiers instead of killing the process.
@@ -771,11 +771,11 @@ async fn configure_main_worker(
       require_modules,
       permissions_container,
       vec![
-        ops::testing::deno_test::init(worker_sender.sender),
+        ops::testing::edno_test::init(worker_sender.sender),
         ops::lint::deno_lint_ext_for_test::init(),
-        ops::jupyter::deno_jupyter_for_test::init(
+        ops::jupyter::edno_jupyter_for_test::init(
           sender,
-          // deno test does not service stdin requests; supplying a sender keeps
+          // edno test does not service stdin requests; supplying a sender keeps
           // the extension uniform with the live kernel build but the rx end is
           // dropped so any `op_jupyter_input` call will resolve to `None`.
           tokio::sync::mpsc::unbounded_channel().0,
@@ -791,7 +791,7 @@ async fn configure_main_worker(
     .await?;
   let coverage_collector = worker.maybe_setup_coverage_collector();
   // Store the isolate handle in OpState so that `op_test_isolate_exit` can
-  // ask V8 to terminate the isolate when user code calls `Deno.exit()`
+  // ask V8 to terminate the isolate when user code calls `Edno.exit()`
   // outside of any test function. Then install the default exit handler -
   // both must be in place before user code (including preload / side
   // modules) gets a chance to run.
@@ -811,14 +811,14 @@ async fn configure_main_worker(
   worker
     .execute_script_static(
       located_script_name!(),
-      "Deno[Deno.internal].installTestIsolateExitHandler();",
+      "Edno[Edno.internal].installTestIsolateExitHandler();",
     )
     .map_err(|e| CoreErrorKind::Js(e).into_box())?;
   if options.trace_leaks {
     worker
       .execute_script_static(
         located_script_name!(),
-        "Deno[Deno.internal].core.setLeakTracingEnabled(true);",
+        "Edno[Edno.internal].core.setLeakTracingEnabled(true);",
       )
       .map_err(|e| CoreErrorKind::Js(e).into_box())?;
   }
@@ -826,7 +826,7 @@ async fn configure_main_worker(
     worker
       .execute_script_static(
         located_script_name!(),
-        "Deno[Deno.internal].testSanitizeOps = true;",
+        "Edno[Edno.internal].testSanitizeOps = true;",
       )
       .map_err(|e| CoreErrorKind::Js(e).into_box())?;
   }
@@ -834,7 +834,7 @@ async fn configure_main_worker(
     worker
       .execute_script_static(
         located_script_name!(),
-        "Deno[Deno.internal].testSanitizeResources = true;",
+        "Edno[Edno.internal].testSanitizeResources = true;",
       )
       .map_err(|e| CoreErrorKind::Js(e).into_box())?;
   }
@@ -845,7 +845,7 @@ async fn configure_main_worker(
     |res: Result<(), CoreError>| match res.map_err(|err| err.into_kind()) {
       Ok(()) => Ok(()),
       Err(CoreErrorKind::Js(err)) => {
-        // If the failure was caused by user code calling `Deno.exit()` at
+        // If the failure was caused by user code calling `Edno.exit()` at
         // top level, the isolate-exit event has already been reported.
         // Swallow the resulting termination error instead of double-reporting
         // it as an uncaught error.
@@ -904,7 +904,7 @@ pub async fn test_specifier(
   .await?;
   let event_tracker = TestEventTracker::new(worker.js_runtime.op_state());
 
-  // If user code already called `Deno.exit()` during top-level evaluation in
+  // If user code already called `Edno.exit()` during top-level evaluation in
   // `configure_main_worker`, the isolate-exit event has already been sent.
   // Skip the rest of the lifecycle - the isolate is terminated and there are
   // no tests to run.
@@ -927,7 +927,7 @@ pub async fn test_specifier(
   )
   .await;
 
-  // If user code called `Deno.exit()` from inside `dispatch_load_event`,
+  // If user code called `Edno.exit()` from inside `dispatch_load_event`,
   // `run_tests_for_worker`, or `dispatch_unload_event`, the V8 isolate was
   // forcibly terminated and the call surfaces as a JS error. The
   // `op_test_isolate_exit` op already queued an `IsolateExit` event with the
@@ -1003,7 +1003,7 @@ async fn test_specifier_inner(
     .map_err(|e| CoreErrorKind::Js(e).into_box())?;
 
   // Run any pending Node-API finalizers before the worker is torn down. This
-  // matches the `deno run`/`deno bench` paths and Node.js, where finalizers
+  // matches the `edno run`/`edno bench` paths and Node.js, where finalizers
   // registered via `napi_wrap`/`napi_add_finalizer` are invoked at teardown
   // even if the wrapped value was never garbage collected during the run.
   worker.run_napi_ref_finalizers();
@@ -1028,9 +1028,9 @@ async fn test_specifier_inner(
 
   // If a debugger session is still attached (e.g. Chrome DevTools holding
   // the connection open for an in-progress Performance recording), wait for
-  // it to disconnect before tearing down the worker. Mirrors `deno run`'s
+  // it to disconnect before tearing down the worker. Mirrors `edno run`'s
   // behavior; otherwise the connection is dropped mid-flight, making it
-  // impossible to profile `deno test` runs. See issue #19289.
+  // impossible to profile `edno test` runs. See issue #19289.
   worker.wait_for_inspector_session_disconnect().await?;
 
   Ok(())
@@ -1051,7 +1051,7 @@ pub fn worker_prepare_for_test(worker: &mut MainWorker) {
     .js_runtime
     .op_state()
     .borrow_mut()
-    .try_take::<deno_runtime::deno_fetch::Client>();
+    .try_take::<edno_runtime::edno_fetch::Client>();
 }
 
 /// Yields to tokio to allow async work to process, and then polls
@@ -1107,7 +1107,7 @@ enum WatchdogState {
 }
 
 impl TestWatchdog {
-  fn new(js_runtime: &mut deno_core::JsRuntime) -> Self {
+  fn new(js_runtime: &mut edno_core::JsRuntime) -> Self {
     let isolate_handle = js_runtime.v8_isolate().thread_safe_handle();
     let shared = std::sync::Arc::new(WatchdogShared {
       mutex: std::sync::Mutex::new(WatchdogState::Idle),
@@ -1115,7 +1115,7 @@ impl TestWatchdog {
     });
     let shared_thread = shared.clone();
     let thread = std::thread::Builder::new()
-      .name("deno-test-watchdog".to_string())
+      .name("edno-test-watchdog".to_string())
       .spawn(move || Self::run(shared_thread, isolate_handle))
       .expect("failed to spawn test watchdog thread");
     Self {
@@ -1193,7 +1193,7 @@ impl Drop for TestWatchdog {
 }
 
 async fn slow_test_watchdog(event_tracker: TestEventTracker, test_id: usize) {
-  // The slow test warning should pop up every DENO_SLOW_TEST_TIMEOUT*(2**n) seconds,
+  // The slow test warning should pop up every EDNO_SLOW_TEST_TIMEOUT*(2**n) seconds,
   // with a duration that is doubling each time. So for a warning time of 60s,
   // we should get a warning at 60s, 120s, 240s, etc.
   let base_timeout = *SLOW_TEST_TIMEOUT;
@@ -1262,7 +1262,7 @@ pub async fn run_tests_for_worker(
       .execute_script(
         located_script_name!(),
         format!(
-          "Deno[Deno.internal].flushTestSnapshots?.({})",
+          "Edno[Edno.internal].flushTestSnapshots?.({})",
           allow_stale_removal
         ),
       )
@@ -1409,10 +1409,10 @@ async fn invoke_test_function(
 
   match raced.unwrap() {
     Ok(r) => {
-      deno_core::scope!(scope, &mut worker.js_runtime);
+      edno_core::scope!(scope, &mut worker.js_runtime);
       let result = v8::Local::new(scope, r);
       Ok(AttemptInvocation::Completed(
-        <TestResult as deno_core::FromV8>::from_v8(scope, result)?,
+        <TestResult as edno_core::FromV8>::from_v8(scope, result)?,
       ))
     }
     Err(error) => match error.into_kind() {
@@ -1599,7 +1599,7 @@ async fn run_tests_for_worker_inner(
         // keepAlive connections. Defined in ext/node/polyfills/01_require.js.
         _ = worker.js_runtime.execute_script(
           located_script_name!(),
-          "Deno[Deno.internal].closeIdleConnections?.()",
+          "Edno[Edno.internal].closeIdleConnections?.()",
         );
 
         // Await activity stabilization. A leak counts as a failure of the
@@ -1744,7 +1744,7 @@ async fn test_specifiers(
 
   let mut cancel_sender = test_event_sender_factory.weak_sender();
   let sigint_handler_handle = spawn(async move {
-    deno_signals::ctrl_c().await.unwrap();
+    edno_signals::ctrl_c().await.unwrap();
     cancel_sender.send(TestEvent::Sigint).ok();
   });
   HAS_TEST_RUN_SIGINT_HANDLER.store(true, Ordering::Relaxed);
@@ -1921,7 +1921,7 @@ pub async fn report_tests(
         }
         #[allow(
           clippy::disallowed_methods,
-          reason = "TODO: why is this not using deno_runtime::exit?"
+          reason = "TODO: why is this not using edno_runtime::exit?"
         )]
         std::process::exit(130);
       }
@@ -1945,12 +1945,12 @@ pub async fn report_tests(
         }
         #[allow(
           clippy::disallowed_methods,
-          reason = "a test called Deno.exit() with the exit sanitizer disabled"
+          reason = "a test called Edno.exit() with the exit sanitizer disabled"
         )]
         std::process::exit(exit_code);
       }
       TestEvent::IsolateExit(origin, exit_code) => {
-        // A non-zero exit code from top-level `Deno.exit()` (or from an
+        // A non-zero exit code from top-level `Edno.exit()` (or from an
         // `unload` handler) should fail the test run. A zero exit code is
         // treated as a clean isolate teardown.
         if exit_code != 0 {
@@ -2002,7 +2002,7 @@ fn is_supported_test_path_predicate(entry: WalkEntry) -> bool {
   }
 }
 
-/// Checks if the path has a basename and extension Deno supports for tests.
+/// Checks if the path has a basename and extension Edno supports for tests.
 pub(crate) fn is_supported_test_path(path: &Path) -> bool {
   has_supported_test_path_name(path) && is_script_ext(path)
 }
@@ -2025,7 +2025,7 @@ fn has_supported_test_path_name(path: &Path) -> bool {
   }
 }
 
-/// Checks if the path has an extension Deno supports for tests.
+/// Checks if the path has an extension Edno supports for tests.
 fn is_supported_test_ext(path: &Path) -> bool {
   if let Some(ext) = get_extension(path) {
     matches!(
@@ -2264,7 +2264,7 @@ fn collect_changed_paths(
 ///
 /// A module is kept when it is itself a changed/related file, or when any of its
 /// local dependencies changed. As an escape hatch, a change to a file that can
-/// affect any test but isn't visible in the import graph (an env file, a deno
+/// affect any test but isn't visible in the import graph (an env file, a edno
 /// config file or the lockfile) disables filtering and keeps every module.
 async fn filter_specifiers_by_changed(
   factory: &CliFactory,
@@ -2279,8 +2279,8 @@ async fn filter_specifiers_by_changed(
   let mut run_everything_paths = cli_options
     .possible_env_file_paths_for_watch()
     .collect::<HashSet<_>>();
-  for deno_json in cli_options.workspace().deno_jsons() {
-    if let Ok(path) = deno_path_util::url_to_file_path(&deno_json.specifier)
+  for edno_json in cli_options.workspace().edno_jsons() {
+    if let Ok(path) = deno_path_util::url_to_file_path(&edno_json.specifier)
       && let Ok(path) = canonicalize_path(&path)
     {
       run_everything_paths.insert(path);
@@ -2288,7 +2288,7 @@ async fn filter_specifiers_by_changed(
   }
   // A changed package.json can alter npm dependencies (and thus any test's
   // runtime behavior) in ways the import graph doesn't capture, so treat it
-  // like a deno config change.
+  // like a edno config change.
   for pkg_json in cli_options.workspace().package_jsons() {
     if let Ok(path) = canonicalize_path(&pkg_json.path) {
       run_everything_paths.insert(path);
@@ -2523,11 +2523,11 @@ pub async fn run_tests_with_watch(
   // once a user adds one.
   spawn(async move {
     loop {
-      deno_signals::ctrl_c().await.unwrap();
+      edno_signals::ctrl_c().await.unwrap();
       if !HAS_TEST_RUN_SIGINT_HANDLER.load(Ordering::Relaxed) {
         #[allow(
           clippy::disallowed_methods,
-          reason = "TODO: why is this not using deno_runtime::exit?"
+          reason = "TODO: why is this not using edno_runtime::exit?"
         )]
         std::process::exit(130);
       }

@@ -1,37 +1,37 @@
-Deno.bench({
+Edno.bench({
   name: "success",
   fn() {},
 });
 
-Deno.bench({
+Edno.bench({
   name: "success long",
   fn() {
     1024n ** 10000n;
   },
 });
 
-Deno.bench({
+Edno.bench({
   name: "success but longer",
   fn() {
     1024n ** 1000000n;
   },
 });
 
-Deno.bench({
+Edno.bench({
   name: "success long and the longest name",
   async fn() {
     await new Promise((resolve) => setTimeout(resolve, 100));
   },
 });
 
-Deno.bench({
+Edno.bench({
   name: "fail",
   fn() {
     throw new Error("fail");
   },
 });
 
-Deno.bench({
+Edno.bench({
   name: "ignored",
   ignore: true,
   fn() {},

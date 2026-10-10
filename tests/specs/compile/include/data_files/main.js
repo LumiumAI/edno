@@ -1,1 +1,1 @@
-console.log(Deno.readTextFileSync("./data-file.txt").trim());
+console.log(Edno.readTextFileSync("./data-file.txt").trim());

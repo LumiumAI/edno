@@ -7,7 +7,7 @@ use std::time::Duration;
 /// it will terminate the current process.
 ///
 /// If the process is not visible from the current PID namespace at
-/// startup (for example, when `deno lsp` runs inside a container and
+/// startup (for example, when `edno lsp` runs inside a container and
 /// the editor lives on the host), the monitor is skipped — exiting
 /// based on a `kill(pid, 0)` that can never succeed would terminate
 /// the language server while the editor is still alive. The stdio
@@ -27,7 +27,7 @@ pub fn start(parent_process_id: u32) -> bool {
       std::thread::sleep(Duration::from_secs(10));
 
       if !is_process_active(parent_process_id) {
-        deno_runtime::exit(1);
+        edno_runtime::exit(1);
       }
     }
   });
@@ -93,7 +93,7 @@ mod test {
 
   // Regression test for https://github.com/denoland/deno/issues/22012:
   // When the editor's PID is not visible from the language server's PID
-  // namespace (e.g. `deno lsp` running in a Docker container and the
+  // namespace (e.g. `edno lsp` running in a Docker container and the
   // editor running on the host), `start` must not begin the monitor —
   // otherwise the very first poll would exit the LSP with status 1.
   #[test]

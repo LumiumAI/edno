@@ -4,17 +4,17 @@
 // stays open but silently ignores all messages, so they can never detect
 // the restart and reconnect (broken since 2.7.0).
 
-const watched = `${Deno.cwd()}/watched.js`;
-Deno.writeTextFileSync(watched, "setInterval(() => {}, 1000);\n");
+const watched = `${Edno.cwd()}/watched.js`;
+Edno.writeTextFileSync(watched, "setInterval(() => {}, 1000);\n");
 
 const deadline = setTimeout(() => {
   console.error("test timed out waiting for the inspector to close the socket");
   child.kill();
-  Deno.exit(1);
+  Edno.exit(1);
 }, 60_000);
-Deno.unrefTimer(deadline);
+Edno.unrefTimer(deadline);
 
-const child = new Deno.Command(Deno.execPath(), {
+const child = new Edno.Command(Edno.execPath(), {
   args: ["run", "--watch", "--inspect=127.0.0.1:0", watched],
   stdout: "null",
   stderr: "piped",
@@ -63,7 +63,7 @@ let socketClosed = false;
 closed.then(() => socketClosed = true);
 (async () => {
   for (let i = 0; !socketClosed; i++) {
-    Deno.writeTextFileSync(watched, `setInterval(() => {}, 1000); // ${i}\n`);
+    Edno.writeTextFileSync(watched, `setInterval(() => {}, 1000); // ${i}\n`);
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 })();
@@ -94,10 +94,10 @@ for (let attempt = 0; attempt < 10 && !reconnected; attempt++) {
 if (!reconnected) {
   console.error("failed to reconnect to the restarted runtime");
   child.kill();
-  Deno.exit(1);
+  Edno.exit(1);
 }
 console.log("reconnected to new session");
 
 child.kill();
 await child.status;
-Deno.exit(0);
+Edno.exit(0);

@@ -2,9 +2,9 @@
 //!  This example shows you how to define ops in Rust and then call them from
 //!  JavaScript.
 
-use deno_core::Extension;
-use deno_core::JsRuntime;
-use deno_core::RuntimeOptions;
+use edno_core::Extension;
+use edno_core::JsRuntime;
+use edno_core::RuntimeOptions;
 
 fn main() {
   let my_ext = Extension {
@@ -22,8 +22,8 @@ fn main() {
     ..Default::default()
   });
 
-  // Deno.core.print() will now be a NOP
+  // Edno.core.print() will now be a NOP
   runtime
-    .execute_script("<usage>", r#"Deno.core.print("I'm broken")"#)
+    .execute_script("<usage>", r#"Edno.core.print("I'm broken")"#)
     .unwrap();
 }

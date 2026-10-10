@@ -1,11 +1,11 @@
-Deno.bench("exit(0)", function () {
-  Deno.exit(0);
+Edno.bench("exit(0)", function () {
+  Edno.exit(0);
 });
 
-Deno.bench("exit(1)", function () {
-  Deno.exit(1);
+Edno.bench("exit(1)", function () {
+  Edno.exit(1);
 });
 
-Deno.bench("exit(2)", function () {
-  Deno.exit(2);
+Edno.bench("exit(2)", function () {
+  Edno.exit(2);
 });

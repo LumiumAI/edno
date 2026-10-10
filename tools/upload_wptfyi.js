@@ -4,15 +4,15 @@
 // passed, will automatically add a status check to the commit with a link to
 // the wpt.fyi page.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { gzip } from "https://deno.land/x/compress@v0.4.1/gzip/mod.ts";
 
-const user = Deno.env.get("WPT_FYI_USER");
-const password = Deno.env.get("WPT_FYI_PW");
+const user = Edno.env.get("WPT_FYI_USER");
+const password = Edno.env.get("WPT_FYI_PW");
 
-const fromRawFile = Deno.args.includes("--from-raw-file");
-const dailyRun = Deno.args.includes("--daily-run");
+const fromRawFile = Edno.args.includes("--from-raw-file");
+const dailyRun = Edno.args.includes("--daily-run");
 
 const form = new FormData();
 if (dailyRun) {
@@ -22,12 +22,12 @@ if (dailyRun) {
 }
 
 if (fromRawFile) {
-  const file = Deno.args[0];
-  const raw = Deno.readFileSync(file);
+  const file = Edno.args[0];
+  const raw = Edno.readFileSync(file);
   const gzipped = gzip(raw);
   form.set("result_file", new Blob([gzipped]));
 } else {
-  const commit = Deno.args[0];
+  const commit = Edno.args[0];
   form.set(
     "result_url",
     `https://dl.deno.land/wpt/${commit}-wptreport.json.gz`,
@@ -50,14 +50,14 @@ const body = await resp.text();
 console.log(body);
 
 if (!resp.ok) {
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
-if (!fromRawFile && Deno.args.includes("--ghstatus")) {
-  const githubToken = Deno.env.get("GITHUB_TOKEN");
+if (!fromRawFile && Edno.args.includes("--ghstatus")) {
+  const githubToken = Edno.env.get("GITHUB_TOKEN");
   const taskId = body.split(" ")[1];
   const url = `https://wpt.fyi/results/?run_id=${taskId}`;
-  const commit = Deno.args[0];
+  const commit = Edno.args[0];
   const resp = await fetch(
     `https://api.github.com/repos/denoland/deno/statuses/${commit}`,
     {
@@ -79,6 +79,6 @@ if (!fromRawFile && Deno.args.includes("--ghstatus")) {
   console.log(body2);
 
   if (!resp.ok) {
-    Deno.exit(1);
+    Edno.exit(1);
   }
 }

@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-//! Static command definitions for the Deno CLI.
+//! Static command definitions for the Edno CLI.
 //!
 //! All definitions are `const` - they live in `.rodata` and cost zero
 //! runtime initialization.
@@ -168,7 +168,7 @@ pub static PERMISSION_ARGS: &[ArgDef] = &[
 .hidden(),
   ArgDef::new("no-prompt").long("no-prompt").set_true()
 .hidden(),
-  // Removed in Deno 2 — still accepted so we can print the deprecation
+  // Removed in Edno 2 — still accepted so we can print the deprecation
   // warning in `convert` instead of failing with "unexpected argument".
   ArgDef::new("allow-hrtime")
     .long("allow-hrtime")
@@ -234,7 +234,7 @@ pub static COMPILE_ARGS: &[ArgDef] = &[
     .long("config")
     .action(ArgAction::Set)
     .num_args(NumArgs::Exact(1))
-.help("Configure different aspects of deno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `deno.json` or `deno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
+.help("Configure different aspects of edno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `edno.json` or `edno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
   ArgDef::new("no-config")
     .long("no-config")
     .set_true()
@@ -252,7 +252,7 @@ pub static COMPILE_ARGS: &[ArgDef] = &[
     .long("lock")
     .action(ArgAction::Set)
     .num_args(NumArgs::Optional)
-.help("Check the specified lock file. (If value is not provided, defaults to \"./deno.lock\")"),
+.help("Check the specified lock file. (If value is not provided, defaults to \"./edno.lock\")"),
   ArgDef::new("no-lock").long("no-lock").set_true()
 .help("Disable auto discovery of the lock file"),
   ArgDef::new("frozen-lockfile")
@@ -322,7 +322,7 @@ pub static RUNTIME_MISC_ARGS: &[ArgDef] = &[
     .num_args(NumArgs::ZeroOrMore)
     .require_equals()
     .value_delimiter(',')
-.help("To see a list of all available flags use --v8-flags=--help\n  Flags can also be set via the DENO_V8_FLAGS environment variable.\n  Any flags set with this flag are appended after the DENO_V8_FLAGS environment variable"),
+.help("To see a list of all available flags use --v8-flags=--help\n  Flags can also be set via the EDNO_V8_FLAGS environment variable.\n  Any flags set with this flag are appended after the EDNO_V8_FLAGS environment variable"),
   ArgDef::new("seed")
     .long("seed")
     .action(ArgAction::Set)
@@ -363,7 +363,7 @@ pub static RUNTIME_MISC_ARGS: &[ArgDef] = &[
     .action(ArgAction::Append)
     .num_args(NumArgs::OneOrMore)
     .value_delimiter(',')
-.help("Use this argument to specify custom conditions for npm package exports. You can also use DENO_CONDITIONS env var.\n\nDocs: https://docs.deno.com/go/conditional-exports"),
+.help("Use this argument to specify custom conditions for npm package exports. You can also use EDNO_CONDITIONS env var.\n\nDocs: https://docs.deno.com/go/conditional-exports"),
 ];
 
 pub static CPU_PROF_ARGS: &[ArgDef] = &[
@@ -437,7 +437,7 @@ ArgDef::new("unstable-bare-node-builtins")
     .long("unstable-cron")
     .set_true()
     .hidden()
-.help("Enable unstable `Deno.cron` API"),
+.help("Enable unstable `Edno.cron` API"),
   ArgDef::new("unstable-detect-cjs")
     .long("unstable-detect-cjs")
     .set_true()
@@ -482,7 +482,7 @@ ArgDef::new("unstable-bare-node-builtins")
     .long("unstable-no-legacy-abort")
     .set_true()
     .hidden()
-.help("Enable abort signal in Deno.serve without legacy behavior. This will not abort the server when the request is handled successfully."),
+.help("Enable abort signal in Edno.serve without legacy behavior. This will not abort the server when the request is handled successfully."),
   ArgDef::new("unstable-node-globals")
     .long("unstable-node-globals")
     .set_true()
@@ -585,7 +585,7 @@ pub static LOCK_ARGS: &[ArgDef] = &[
     .long("lock")
     .action(ArgAction::Set)
     .num_args(NumArgs::Optional)
-.help("Check the specified lock file. (If value is not provided, defaults to \"./deno.lock\")"),
+.help("Check the specified lock file. (If value is not provided, defaults to \"./edno.lock\")"),
   ArgDef::new("no-lock").long("no-lock").set_true()
 .help("Disable auto discovery of the lock file"),
   ArgDef::new("frozen-lockfile")
@@ -603,7 +603,7 @@ pub static LOCK_ARGS: &[ArgDef] = &[
 // ============================================================
 
 // Shared between `run` and its alias-like `watch` subcommand
-// (`deno watch` == `deno run --watch-hmr`).
+// (`edno watch` == `edno run --watch-hmr`).
 static RUN_ARGS: &[ArgDef] = &[
   ArgDef::new("script_arg")
     .positional()
@@ -615,7 +615,7 @@ static RUN_ARGS: &[ArgDef] = &[
     .action(ArgAction::Set)
     .num_args(NumArgs::Optional)
     .require_equals()
-.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
   ArgDef::new("watch")
     .long("watch")
     .action(ArgAction::Append)
@@ -667,13 +667,13 @@ static RUN_ARGS: &[ArgDef] = &[
     .num_args(NumArgs::Optional)
     .require_equals()
     .conflicts_with(&["inspect", "inspect-brk", "inspect-wait"])
-.help("Collect coverage profile data into DIR. If DIR is not specified, it uses 'coverage/'.\n  This option can also be set via the DENO_COVERAGE_DIR environment variable."),
+.help("Collect coverage profile data into DIR. If DIR is not specified, it uses 'coverage/'.\n  This option can also be set via the EDNO_COVERAGE_DIR environment variable."),
   ArgDef::new("tunnel")
     .long("tunnel")
     .long_aliases(&["connected"])
     .set_true()
     .hidden()
-.help("Execute tasks with a tunnel to Deno Deploy.\n\n    Create a secure connection between your local machine and Deno Deploy,\n    providing access to centralised environment variables, logging,\n    and serving from your local environment to the public internet"),
+.help("Execute tasks with a tunnel to Edno Deploy.\n\n    Create a secure connection between your local machine and Edno Deploy,\n    providing access to centralised environment variables, logging,\n    and serving from your local environment to the public internet"),
   ArgDef::new("use-env-proxy")
     .long("use-env-proxy")
     .set_true()
@@ -753,15 +753,15 @@ pub static SERVE_SUBCOMMAND: CommandDef = CommandDef {
       .long_aliases(&["connected"])
       .set_true()
       .hidden()
-.help("Execute tasks with a tunnel to Deno Deploy.\n\n    Create a secure connection between your local machine and Deno Deploy,\n    providing access to centralised environment variables, logging,\n    and serving from your local environment to the public internet"),
+.help("Execute tasks with a tunnel to Edno Deploy.\n\n    Create a secure connection between your local machine and Edno Deploy,\n    providing access to centralised environment variables, logging,\n    and serving from your local environment to the public internet"),
     ArgDef::new("parallel").long("parallel").set_true()
-.help("Run multiple server workers in parallel. Parallelism defaults to the number of available CPUs or the value of the DENO_JOBS environment variable"),
+.help("Run multiple server workers in parallel. Parallelism defaults to the number of available CPUs or the value of the EDNO_JOBS environment variable"),
     ArgDef::new("check")
       .long("check")
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
     ArgDef::new("watch")
       .long("watch")
       .action(ArgAction::Append)
@@ -853,7 +853,7 @@ pub static EVAL_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
   ],
   arg_groups: &[
     UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS,
@@ -978,7 +978,7 @@ pub static FMT_SUBCOMMAND: CommandDef = CommandDef {
       .long("config")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-.help("Configure different aspects of deno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `deno.json` or `deno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
+.help("Configure different aspects of edno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `edno.json` or `edno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
     ArgDef::new("no-config").long("no-config").set_true()
 .help("Disable automatic loading of the configuration file"),
     ArgDef::new("no-editorconfig")
@@ -1093,7 +1093,7 @@ pub static LINT_SUBCOMMAND: CommandDef = CommandDef {
       .long("config")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-.help("Configure different aspects of deno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `deno.json` or `deno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
+.help("Configure different aspects of edno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `edno.json` or `edno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
     ArgDef::new("no-config").long("no-config").set_true()
 .help("Disable automatic loading of the configuration file"),
     ArgDef::new("ext")
@@ -1101,7 +1101,7 @@ pub static LINT_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
       .value_parser(ValueParser::Choices(EXECUTABLE_EXTS))
-.help("Specify the file extension to lint when reading from stdin.For example, use `jsx` to lint JSX files or `tsx` for TSX files.This argument is necessary because stdin input does not automatically infer the file type.Example usage: `cat file.jsx | deno lint - --ext=jsx`."),
+.help("Specify the file extension to lint when reading from stdin.For example, use `jsx` to lint JSX files or `tsx` for TSX files.This argument is necessary because stdin input does not automatically infer the file type.Example usage: `cat file.jsx | edno lint - --ext=jsx`."),
     ArgDef::new("allow-import")
       .short('I')
       .long("allow-import")
@@ -1148,9 +1148,9 @@ pub static TEST_SUBCOMMAND: CommandDef = CommandDef {
       .num_args(NumArgs::Optional)
       .require_equals()
       .conflicts_with(&["inspect", "inspect-brk", "inspect-wait"])
-.help("Collect coverage profile data into DIR. If DIR is not specified, it uses 'coverage/'.\n  This option can also be set via the DENO_COVERAGE_DIR environment variable."),
+.help("Collect coverage profile data into DIR. If DIR is not specified, it uses 'coverage/'.\n  This option can also be set via the EDNO_COVERAGE_DIR environment variable."),
     ArgDef::new("clean").long("clean").set_true()
-.help("Empty the temporary coverage profile data directory before running tests.\n  Note: running multiple `deno test --clean` calls in series or parallel for the same coverage directory may cause race conditions."),
+.help("Empty the temporary coverage profile data directory before running tests.\n  Note: running multiple `edno test --clean` calls in series or parallel for the same coverage directory may cause race conditions."),
     ArgDef::new("fail-fast")
       .long("fail-fast")
       .action(ArgAction::Set)
@@ -1171,7 +1171,7 @@ pub static TEST_SUBCOMMAND: CommandDef = CommandDef {
       .value_parser(ValueParser::U64)
 .help("Shuffle the order in which the tests are run"),
     ArgDef::new("parallel").long("parallel").set_true()
-.help("Run test modules in parallel. Parallelism defaults to the number of available CPUs or the value of the DENO_JOBS environment variable"),
+.help("Run test modules in parallel. Parallelism defaults to the number of available CPUs or the value of the EDNO_JOBS environment variable"),
     ArgDef::new("sanitize-ops").long("sanitize-ops").set_true()
 .help("Enable the ops sanitizer, which ensures that all async ops started in a test are completed before the test ends"),
     ArgDef::new("sanitize-resources")
@@ -1295,7 +1295,7 @@ pub static TEST_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
   ],
   arg_groups: &[
     UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS,
@@ -1314,7 +1314,7 @@ pub static TEST_SUBCOMMAND: CommandDef = CommandDef {
 
 pub static UPGRADE_SUBCOMMAND: CommandDef = CommandDef {
   name: "upgrade",
-  about: "Upgrade deno executable to given version",
+  about: "Upgrade edno executable to given version",
   aliases: &[],
   args: &[
     ArgDef::new("dry-run").long("dry-run").set_true()
@@ -1398,7 +1398,7 @@ pub static CACHE_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
     ArgDef::new("ext")
       .long("ext")
       .action(ArgAction::Set)
@@ -1455,7 +1455,7 @@ pub static CHECK_SUBCOMMAND: CommandDef = CommandDef {
     ArgDef::new("check-js").long("check-js").set_true().hidden()
 .help("Enable type-checking of JavaScript files (equivalent to `compilerOptions.checkJs: true`)"),
     ArgDef::new("desktop").long("desktop").set_true()
-.help("Type-check using the type definitions for `deno desktop`"),
+.help("Type-check using the type definitions for `edno desktop`"),
     ArgDef::new("no-code-cache")
       .long("no-code-cache")
       .set_true()
@@ -1607,7 +1607,7 @@ pub static TASK_SUBCOMMAND: CommandDef = CommandDef {
       .long("config")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-.help("Configure different aspects of deno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `deno.json` or `deno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
+.help("Configure different aspects of edno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `edno.json` or `edno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
     ArgDef::new("recursive")
       .short('r')
       .long("recursive")
@@ -1636,7 +1636,7 @@ pub static TASK_SUBCOMMAND: CommandDef = CommandDef {
       .long_aliases(&["concurrency"])
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-.help("Maximum number of tasks to run concurrently.\nOverrides the DENO_JOBS environment variable; defaults to the number of\navailable CPUs. Use 1 to force sequential execution. Only affects runs\nwhere multiple tasks can run concurrently (workspace runs, or a task with\nparallelizable dependencies)"),
+.help("Maximum number of tasks to run concurrently.\nOverrides the EDNO_JOBS environment variable; defaults to the number of\navailable CPUs. Use 1 to force sequential execution. Only affects runs\nwhere multiple tasks can run concurrently (workspace runs, or a task with\nparallelizable dependencies)"),
     ArgDef::new("env-file")
       .long("env-file")
       .long_aliases(&["env"])
@@ -1651,12 +1651,12 @@ pub static TASK_SUBCOMMAND: CommandDef = CommandDef {
       .require_equals()
 .help("Selects the node_modules directory mode for npm packages (not a path). One of: auto (create a local node_modules directory and install npm packages into it), manual (use the existing local node_modules directory, do not modify it), none (do not use a local node_modules directory; resolve npm packages from the global cache). Defaults to auto when the flag is passed without a value."),
     ArgDef::new("tunnel").long("tunnel").set_true().hidden()
-.help("Execute tasks with a tunnel to Deno Deploy.\n\n    Create a secure connection between your local machine and Deno Deploy,\n    providing access to centralised environment variables, logging,\n    and serving from your local environment to the public internet"),
+.help("Execute tasks with a tunnel to Edno Deploy.\n\n    Create a secure connection between your local machine and Edno Deploy,\n    providing access to centralised environment variables, logging,\n    and serving from your local environment to the public internet"),
     ArgDef::new("lock")
       .long("lock")
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
-.help("Check the specified lock file. (If value is not provided, defaults to \"./deno.lock\")"),
+.help("Check the specified lock file. (If value is not provided, defaults to \"./edno.lock\")"),
     ArgDef::new("no-lock").long("no-lock").set_true()
 .help("Disable auto discovery of the lock file"),
     ArgDef::new("frozen-lockfile")
@@ -1735,7 +1735,7 @@ pub static BENCH_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
     ArgDef::new("ext")
       .long("ext")
       .action(ArgAction::Set)
@@ -1835,7 +1835,7 @@ pub static COMPILE_SUBCOMMAND: CommandDef = CommandDef {
       .long("app-name")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-.help("Stable identity for the compiled app.\n  Determines where origin-bound storage such as the default `Deno.openKv()`,\n  `localStorage` and `caches` is persisted (under the platform's app data directory).\n  Defaults to the output file name. Set this to keep storage stable across renames."),
+.help("Stable identity for the compiled app.\n  Determines where origin-bound storage such as the default `Edno.openKv()`,\n  `localStorage` and `caches` is persisted (under the platform's app data directory).\n  Defaults to the output file name. Set this to keep storage stable across renames."),
     ArgDef::new("exclude-unused-npm")
       .long("exclude-unused-npm")
       .set_true()
@@ -1845,7 +1845,7 @@ pub static COMPILE_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
     ArgDef::new("watch")
       .long("watch")
       .action(ArgAction::Append)
@@ -1921,7 +1921,7 @@ pub static COVERAGE_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
       .require_equals()
-.help("Fail if coverage is below this percentage (0-100), applied to line, branch, and function coverage.\n  Per-metric thresholds can be set in deno.json under \"coverage\": { \"thresholds\": { ... } }. The flag takes precedence."),
+.help("Fail if coverage is below this percentage (0-100), applied to line, branch, and function coverage.\n  Per-metric thresholds can be set in edno.json under \"coverage\": { \"thresholds\": { ... } }. The flag takes precedence."),
     ArgDef::new("output")
       .long("output")
       .action(ArgAction::Set)
@@ -1940,7 +1940,7 @@ pub static COVERAGE_SUBCOMMAND: CommandDef = CommandDef {
 
 pub static REPL_SUBCOMMAND: CommandDef = CommandDef {
   name: "repl",
-  about: "Start an interactive Read-Eval-Print Loop (REPL) for Deno",
+  about: "Start an interactive Read-Eval-Print Loop (REPL) for Edno",
   aliases: &[],
   args: &[
     ArgDef::new("eval")
@@ -2077,7 +2077,7 @@ pub static INSTALL_SUBCOMMAND: CommandDef = CommandDef {
       .long("package-json")
       .set_true()
       .conflicts_with(&["entrypoint", "global"])
-.help("Force using package.json for dependency management instead of deno.json"),
+.help("Force using package.json for dependency management instead of edno.json"),
     ArgDef::new("os")
       .long("os")
       .action(ArgAction::Set)
@@ -2110,7 +2110,7 @@ pub static INSTALL_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
   ],
   arg_groups: &[
     UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS,
@@ -2153,7 +2153,7 @@ pub static UNINSTALL_SUBCOMMAND: CommandDef = CommandDef {
       .long("package-json")
       .set_true()
       .conflicts_with(&["global"])
-.help("Force using package.json for dependency management instead of deno.json"),
+.help("Force using package.json for dependency management instead of edno.json"),
   ],
   arg_groups: &[UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS, COMPILE_ARGS],
   subcommands: &[],
@@ -2193,7 +2193,7 @@ pub static COMPLETIONS_SUBCOMMAND: CommandDef = CommandDef {
         "fig",
       ])),
     ArgDef::new("dynamic").long("dynamic").set_true()
-.help("Generate dynamic completions for the given shell (unstable), currently this only provides available tasks for `deno task`."),
+.help("Generate dynamic completions for the given shell (unstable), currently this only provides available tasks for `edno task`."),
   ],
   arg_groups: &[UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS],
   subcommands: &[],
@@ -2221,7 +2221,7 @@ pub static INIT_SUBCOMMAND: CommandDef = CommandDef {
       .long("serve")
       .set_true()
       .conflicts_with(&["lib"])
-      .help("Generate an example project for `deno serve`"),
+      .help("Generate an example project for `edno serve`"),
     ArgDef::new("npm")
       .long("npm")
       .set_true()
@@ -2236,7 +2236,7 @@ pub static INIT_SUBCOMMAND: CommandDef = CommandDef {
       .long("empty")
       .set_true()
       .conflicts_with(&["lib", "serve", "npm", "jsr"])
-      .help("Generate a minimal project with just main.ts and deno.json"),
+      .help("Generate a minimal project with just main.ts and edno.json"),
     ArgDef::new("yes")
       .short('y')
       .long("yes")
@@ -2288,7 +2288,7 @@ pub static CREATE_SUBCOMMAND: CommandDef = CommandDef {
 
 pub static JUPYTER_SUBCOMMAND: CommandDef = CommandDef {
   name: "jupyter",
-  about: "Deno kernel for Jupyter notebooks",
+  about: "Edno kernel for Jupyter notebooks",
   aliases: &[],
   args: &[
     ArgDef::new("install")
@@ -2302,14 +2302,14 @@ pub static JUPYTER_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
       .conflicts_with(&["kernel"])
-.help("Set a name for the kernel (defaults to 'deno'). Useful when maintaing multiple Deno kernels."),
+.help("Set a name for the kernel (defaults to 'edno'). Useful when maintaing multiple Edno kernels."),
     ArgDef::new("display")
       .short('d')
       .long("display")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
       .requires(&["install"])
-.help("Set a display name for the kernel (defaults to 'Deno'). Useful when maintaing multiple Deno kernels."),
+.help("Set a display name for the kernel (defaults to 'Edno'). Useful when maintaing multiple Edno kernels."),
     ArgDef::new("kernel")
       .long("kernel")
       .set_true()
@@ -2370,7 +2370,7 @@ pub static PUBLISH_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
     ArgDef::new("env-file")
       .long("env-file")
       .long_aliases(&["env"])
@@ -2445,7 +2445,7 @@ pub static ADD_SUBCOMMAND: CommandDef = CommandDef {
       .value_delimiter(',')
 .help("Deny importing from remote hosts. Optionally specify denied IP addresses and host names, with ports as necessary."),
     ArgDef::new("package-json").long("package-json").set_true()
-.help("Force using package.json for dependency management instead of deno.json"),
+.help("Force using package.json for dependency management instead of edno.json"),
     ArgDef::new("env-file")
       .long("env-file")
       .long_aliases(&["env"])
@@ -2490,7 +2490,7 @@ pub static REMOVE_SUBCOMMAND: CommandDef = CommandDef {
       .long("package-json")
       .set_true()
       .conflicts_with(&["global"])
-.help("Force using package.json for dependency management instead of deno.json"),
+.help("Force using package.json for dependency management instead of edno.json"),
   ],
   arg_groups: &[UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS, COMPILE_ARGS],
   subcommands: &[],
@@ -2596,7 +2596,7 @@ pub static UPDATE_SUBCOMMAND: CommandDef = CommandDef {
 
 pub static DEPLOY_SUBCOMMAND: CommandDef = CommandDef {
   name: "deploy",
-  about: "Deploy to Deno Deploy",
+  about: "Deploy to Edno Deploy",
   aliases: &[],
   args: &[],
   arg_groups: &[UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS],
@@ -2664,7 +2664,7 @@ pub static CLEAN_SUBCOMMAND: CommandDef = CommandDef {
 
 pub static LIST_SUBCOMMAND: CommandDef = CommandDef {
   name: "list",
-  about: "List the dependencies declared in deno.json / package.json",
+  about: "List the dependencies declared in edno.json / package.json",
   aliases: &[],
   args: &[
     ArgDef::new("filters")
@@ -2738,7 +2738,7 @@ pub static LSP_SUBCOMMAND: CommandDef = CommandDef {
 
 pub static VENDOR_SUBCOMMAND: CommandDef = CommandDef {
   name: "vendor",
-  about: "`deno vendor` was removed in Deno 2.\n\nSee the Deno 1.x to 2.x Migration Guide for migration instructions: https://docs.deno.com/runtime/manual/advanced/migrate_deprecations",
+  about: "`edno vendor` was removed in Edno 2.\n\nSee the Edno 1.x to 2.x Migration Guide for migration instructions: https://docs.deno.com/runtime/manual/advanced/migrate_deprecations",
   aliases: &[],
   args: &[
     ArgDef::new("help")
@@ -2804,8 +2804,8 @@ pub static BUNDLE_SUBCOMMAND: CommandDef = CommandDef {
       .long("platform")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-      .default_value("deno")
-.help("Platform to bundle for. Accepted values are 'browser' or 'deno'"),
+      .default_value("edno")
+.help("Platform to bundle for. Accepted values are 'browser' or 'edno'"),
     ArgDef::new("sourcemap")
       .long("sourcemap")
       .action(ArgAction::Set)
@@ -2841,7 +2841,7 @@ pub static BUNDLE_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
   ],
   arg_groups: &[
     COMPILE_ARGS,
@@ -2940,13 +2940,13 @@ pub static X_SUBCOMMAND: CommandDef = CommandDef {
       .num_args(NumArgs::Optional)
       .default_value("dx")
       .conflicts_with(&["script_arg"])
-.help("Creates a dx alias so you can run dx <command> instead of deno x <command>"),
+.help("Creates a dx alias so you can run dx <command> instead of edno x <command>"),
     ArgDef::new("check")
       .long("check")
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Enable type-checking. This subcommand does not type-check by default; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
     ArgDef::new("env-file")
       .long("env-file")
       .action(ArgAction::Append)
@@ -3057,7 +3057,7 @@ pub static DESKTOP_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Optional)
       .require_equals()
-.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'deno check' subcommand."),
+.help("Set type-checking behavior. This subcommand type-checks local modules by default, so passing --check is redundant; pass --check=all to also type-check remote modules. Alternatively, use the 'edno check' subcommand."),
     ArgDef::new("inspect-renderer")
       .long("inspect-renderer")
       .action(ArgAction::Set)
@@ -3200,7 +3200,7 @@ pub static PACK_SUBCOMMAND: CommandDef = CommandDef {
       .long("config")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-.help("Configure different aspects of deno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `deno.json` or `deno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
+.help("Configure different aspects of edno including TypeScript, linting, and code formatting.\n  Typically the configuration file will be called `edno.json` or `edno.jsonc` and\n  automatically detected; in that case this flag is not necessary.\n  Docs: https://docs.deno.com/go/config"),
     ArgDef::new("no-config")
       .long("no-config")
       .set_true()
@@ -3269,7 +3269,7 @@ pub static BUMP_VERSION_SUBCOMMAND: CommandDef = CommandDef {
       .set_true()
 .help("Bump every package in the workspace (auto-detected at the workspace root)"),
     ArgDef::new("no-workspace").long("no-workspace").set_true()
-.help("Disable workspace mode and only bump the deno.json/package.json in the current directory"),
+.help("Disable workspace mode and only bump the edno.json/package.json in the current directory"),
     ArgDef::new("dry-run").long("dry-run").set_true()
 .help("Print the planned changes without writing any files"),
     ArgDef::new("start")
@@ -3286,7 +3286,7 @@ pub static BUMP_VERSION_SUBCOMMAND: CommandDef = CommandDef {
       .long("import-map")
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
-.help("Path to the import map to rewrite jsr: version constraints in. Defaults to the root deno.json (or its importMap target)"),
+.help("Path to the import map to rewrite jsr: version constraints in. Defaults to the root edno.json (or its importMap target)"),
     ArgDef::new("release-notes")
       .long("release-notes")
       .action(ArgAction::Set)
@@ -3298,7 +3298,7 @@ pub static BUMP_VERSION_SUBCOMMAND: CommandDef = CommandDef {
       .action(ArgAction::Set)
       .num_args(NumArgs::Exact(1))
       .conflicts_with(&["workspace"])
-.help("Explicit path to the manifest file to bump.\n  May point to a `deno.json`/`deno.jsonc` or a `package.json`. When\n  set, single-file mode is forced (workspace auto-detection is bypassed).\n  Useful when both `deno.json` and `package.json` exist in the same\n  directory."),
+.help("Explicit path to the manifest file to bump.\n  May point to a `edno.json`/`edno.jsonc` or a `package.json`. When\n  set, single-file mode is forced (workspace auto-detection is bypassed).\n  Useful when both `edno.json` and `package.json` exist in the same\n  directory."),
   ],
   arg_groups: &[UNSTABLE_DEPRECATED_ARG, UNSTABLE_FEATURE_ARGS],
   subcommands: &[],
@@ -3457,8 +3457,8 @@ pub static SYNC_TYPES_SUBCOMMAND: CommandDef = CommandDef {
   keep_double_dash: false,
 };
 
-pub static DENO_ROOT: CommandDef = CommandDef {
-  name: "deno",
+pub static EDNO_ROOT: CommandDef = CommandDef {
+  name: "edno",
   about: "A modern JavaScript and TypeScript runtime",
   aliases: &[],
   args: GLOBAL_ARGS,

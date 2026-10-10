@@ -40,5 +40,5 @@ assertEquals(
 // Keep the remaining externals alive until shutdown; finalizing them must not
 // re-run the finalizers of the ones already collected above.
 globalThis.keptExternals = kept;
-// deno-lint-ignore no-console
+// edno-lint-ignore no-console
 console.log("shared data externals finalized once");

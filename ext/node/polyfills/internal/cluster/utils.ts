@@ -3,7 +3,7 @@
 
 // Ports lib/internal/cluster/utils.js.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 (function () {
 const { primordials } = __bootstrap;

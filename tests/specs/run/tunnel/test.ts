@@ -1,18 +1,18 @@
 const VERSION = 2;
 
-const server = new Deno.QuicEndpoint({
+const server = new Edno.QuicEndpoint({
   hostname: "localhost",
   port: 0,
 });
 
 const listener = server.listen({
-  cert: Deno.readTextFileSync("../../../testdata/tls/localhost.crt"),
-  key: Deno.readTextFileSync("../../../testdata/tls/localhost.key"),
+  cert: Edno.readTextFileSync("../../../testdata/tls/localhost.crt"),
+  key: Edno.readTextFileSync("../../../testdata/tls/localhost.key"),
   alpnProtocols: ["🦕🕳️"],
 });
 
-const child = new Deno.Command(Deno.execPath(), {
-  cwd: Deno.cwd(),
+const child = new Edno.Command(Edno.execPath(), {
+  cwd: Edno.cwd(),
   args: [
     "run",
     "-A",
@@ -22,10 +22,10 @@ const child = new Deno.Command(Deno.execPath(), {
     "client.ts",
   ],
   env: {
-    DENO_DEPLOY_TUNNEL_ENDPOINT: `localhost:${server.addr.port}`,
-    DENO_DEPLOY_TOKEN: "token",
-    DENO_DEPLOY_ORG: "org",
-    DENO_DEPLOY_APP: "app",
+    EDNO_DEPLOY_TUNNEL_ENDPOINT: `localhost:${server.addr.port}`,
+    EDNO_DEPLOY_TOKEN: "token",
+    EDNO_DEPLOY_ORG: "org",
+    EDNO_DEPLOY_APP: "app",
   },
   stdout: "inherit",
   stderr: "inherit",
@@ -34,14 +34,14 @@ const child = new Deno.Command(Deno.execPath(), {
 setTimeout(() => {
   console.error("timeout, killing");
   child.kill("SIGKILL");
-  Deno.exit(1);
+  Edno.exit(1);
 }, 5000);
 
 for await (const incoming of listener) {
   handleConnection(incoming);
 }
 
-async function handleConnection(incoming: Deno.QuicIncoming) {
+async function handleConnection(incoming: Edno.QuicIncoming) {
   const conn = await incoming.accept();
 
   {
@@ -115,7 +115,7 @@ async function handleConnection(incoming: Deno.QuicIncoming) {
     console.log(new TextDecoder().decode(value));
 
     child.kill("SIGKILL");
-    Deno.exit(0);
+    Edno.exit(0);
   }
 }
 

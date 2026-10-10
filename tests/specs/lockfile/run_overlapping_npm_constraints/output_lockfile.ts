@@ -1,1 +1,1 @@
-console.log(Deno.readTextFileSync("deno.lock").trim());
+console.log(Edno.readTextFileSync("edno.lock").trim());

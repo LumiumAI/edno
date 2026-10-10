@@ -12,15 +12,15 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_cache_dir::file_fetcher::CacheSetting;
-use deno_config::deno_json::NodeModulesDirMode;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::anyhow;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::url::Url;
-use deno_npm_installer::PackagesAllowedScripts;
+use edno_cache_dir::file_fetcher::CacheSetting;
+use edno_config::edno_json::NodeModulesDirMode;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::anyhow;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::url::Url;
+use edno_npm_installer::PackagesAllowedScripts;
 use deno_path_util::resolve_url_or_path;
 use deno_semver::jsr::JsrPackageReqReference;
 use deno_semver::npm::NpmPackageReqReference;
@@ -33,7 +33,7 @@ use regex::RegexBuilder;
 use super::bin_name_resolver::BinNameResolver;
 use crate::args::CompileFlags;
 use crate::args::ConfigFlag;
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::Flags;
 use crate::args::FlagsExt;
 use crate::args::InstallEntrypointsFlags;
@@ -64,9 +64,9 @@ pub async fn install_global(
   let deps_http_cache = factory.global_http_cache()?;
   let create_deps_file_fetcher = |download_log_level: log::Level| {
     Arc::new(create_cli_file_fetcher(
-      Arc::new(deno_runtime::deno_web::BlobStore::default())
-        as Arc<dyn deno_runtime::deno_web::BlobStoreTrait>,
-      deno_cache_dir::GlobalOrLocalHttpCache::Global(deps_http_cache.clone()),
+      Arc::new(edno_runtime::edno_web::BlobStore::default())
+        as Arc<dyn edno_runtime::edno_web::BlobStoreTrait>,
+      edno_cache_dir::GlobalOrLocalHttpCache::Global(deps_http_cache.clone()),
       http_client.clone(),
       factory.memory_files().clone(),
       factory.sys(),
@@ -82,7 +82,7 @@ pub async fn install_global(
   let npmrc = factory.npmrc()?;
 
   if matches!(flags.config_flag, ConfigFlag::Discover)
-    && cli_options.workspace().deno_jsons().next().is_some()
+    && cli_options.workspace().edno_jsons().next().is_some()
   {
     log::warn!(
       "{} discovered config file will be ignored in the installed command. Use the --config flag if you wish to include it.",
@@ -107,7 +107,7 @@ pub async fn install_global(
     };
 
   // Validate every entry and default unprefixed bare package names to the npm
-  // registry (matching `deno add` and local `deno install`) before installing
+  // registry (matching `edno add` and local `edno install`) before installing
   // anything, so an error on entry N doesn't leave entries < N installed.
   let module_urls: Vec<String> = install_flags_global
     .module_urls
@@ -118,7 +118,7 @@ pub async fn install_global(
       if cli_options.initial_cwd().join(entry_text).exists() {
         return Ok(module_url.clone());
       }
-      // Migration error for users coming from Deno < 3.0 who passed script
+      // Migration error for users coming from Edno < 3.0 who passed script
       // args without `--`.
       if i == 1
         && install_flags_global.args.is_empty()
@@ -126,8 +126,8 @@ pub async fn install_global(
       {
         bail!(
           concat!(
-            "{} is missing a prefix. Deno 3.0 requires `--` before script arguments in `deno install -g`. ",
-            "Did you mean `deno install -g {} -- {}`? Or maybe provide a `jsr:` or `npm:` prefix?",
+            "{} is missing a prefix. Edno 3.0 requires `--` before script arguments in `edno install -g`. ",
+            "Did you mean `edno install -g {} -- {}`? Or maybe provide a `jsr:` or `npm:` prefix?",
           ),
           entry_text,
           &install_flags_global.module_urls[0],
@@ -272,22 +272,22 @@ pub async fn uninstall(
     }
 
     // There might be some extra files to delete
-    // Note: tsconfig.json is legacy. We renamed it to deno.json in January 2023.
-    // Note: deno.json and lock.json files were removed Feb 2026 in favor of a sub directory
+    // Note: tsconfig.json is legacy. We renamed it to edno.json in January 2023.
+    // Note: edno.json and lock.json files were removed Feb 2026 in favor of a sub directory
     // Use the base file path (without extension) to compute related files
     let base_file = installation_dir.join(name);
-    for ext in ["tsconfig.json", "deno.json", "lock.json"] {
-      // remove the plain extension files (e.g., name.deno.json, name.lock.json)
+    for ext in ["tsconfig.json", "edno.json", "lock.json"] {
+      // remove the plain extension files (e.g., name.edno.json, name.lock.json)
       let file_path_ext = base_file.with_extension(ext);
       remove_file_if_exists(&file_path_ext)?;
 
       // also remove the hidden per-command copies created at install time
-      // (e.g., .name.deno.json)
+      // (e.g., .name.edno.json)
       let hidden_file = get_hidden_file_with_ext(&base_file, ext);
       remove_file_if_exists(&hidden_file)?;
 
       // On Windows, installs use a shim with a .cmd extension, which means the
-      // hidden files might be named like `.name.cmd.deno.json`. Attempt to remove
+      // hidden files might be named like `.name.cmd.edno.json`. Attempt to remove
       // those as well to be thorough.
       #[cfg(windows)]
       {
@@ -366,7 +366,7 @@ async fn install_global_compiled(
     }
     // Remove the existing file so that the compile step doesn't
     // fail its own safety check (which guards against overwriting
-    // files not produced by `deno compile`).
+    // files not produced by `edno compile`).
     std::fs::remove_file(&output_path).with_context(|| {
       format!(
         concat!(
@@ -401,7 +401,7 @@ async fn install_global_compiled(
   };
 
   let mut new_flags = flags.as_ref().clone();
-  new_flags.subcommand = DenoSubcommand::Compile(compile_flags.clone());
+  new_flags.subcommand = EdnoSubcommand::Compile(compile_flags.clone());
 
   crate::tools::compile::compile(new_flags, compile_flags).await?;
 
@@ -454,7 +454,7 @@ async fn setup_config_dir(
   // install. Remove the stale auto-generated lockfile so dependency resolution
   // isn't constrained to previously pinned versions.
   if force {
-    let lockfile_path = dir.join("deno.lock");
+    let lockfile_path = dir.join("edno.lock");
     if lockfile_path.exists() {
       fs::remove_file(&lockfile_path).with_context(|| {
         format!("failed removing '{}'", lockfile_path.display())
@@ -494,7 +494,7 @@ async fn setup_config_dir(
       crate::colors::yellow("Warning"),
     );
   }
-  // The copied config lives at `<installation_dir>/.<name>/deno.json`, so any
+  // The copied config lives at `<installation_dir>/.<name>/edno.json`, so any
   // relative `./` / `../` paths in `imports` / `scopes` would resolve against
   // that new location instead of the original config dir, breaking module
   // resolution at runtime. Rewrite them to absolute `file://` URLs anchored to
@@ -527,7 +527,7 @@ async fn setup_config_dir(
       CstInputValue::String(mode.as_str().to_string()),
     );
   }
-  fs::write(dir.join("deno.json"), config.to_string())?;
+  fs::write(dir.join("edno.json"), config.to_string())?;
 
   // write package.json for npm specifiers
   if let Ok(pkg_ref) =
@@ -543,13 +543,13 @@ async fn setup_config_dir(
     )?;
   }
 
-  // fetch deno.lock from JSR if this is a JSR package
+  // fetch edno.lock from JSR if this is a JSR package
   if !flags.no_lock
     && let Some(fetcher) = jsr_lockfile_fetcher
     && let Some(lockfile_content) =
       fetcher.fetch_lockfile(&bin_name_and_url.module_url).await
   {
-    fs::write(dir.join("deno.lock"), lockfile_content)?;
+    fs::write(dir.join("edno.lock"), lockfile_content)?;
   }
 
   // create cloned flags to run cache_top_level_deps
@@ -566,14 +566,14 @@ async fn setup_config_dir(
   new_flags.internal.root_node_modules_dir_override =
     Some(dir.join("node_modules"));
   new_flags.config_flag =
-    ConfigFlag::Path(dir.join("deno.json").to_string_lossy().into_owned());
+    ConfigFlag::Path(dir.join("edno.json").to_string_lossy().into_owned());
   let entrypoint_flags = InstallEntrypointsFlags {
     lockfile_only: false,
     entrypoints: vec![bin_name_and_url.module_url.to_string()],
     production: false,
     skip_types: false,
   };
-  new_flags.subcommand = DenoSubcommand::Install(InstallFlags::Local(
+  new_flags.subcommand = EdnoSubcommand::Install(InstallFlags::Local(
     InstallFlagsLocal::Entrypoints(entrypoint_flags.clone()),
     Default::default(),
   ));
@@ -591,7 +591,7 @@ async fn setup_config_dir(
 /// config keeps resolving `@scope/member` specifiers after the `workspace`
 /// field is stripped.
 ///
-/// `deno install -g -c deno.json` copies the workspace root config into a
+/// `edno install -g -c edno.json` copies the workspace root config into a
 /// per-binary directory and removes the `workspace` field to stop workspace
 /// discovery. Without this, bare specifiers that point at workspace members
 /// (e.g. `import { x } from "@scope/member"`) can no longer be resolved. Each
@@ -600,12 +600,12 @@ async fn setup_config_dir(
 /// would when invoked from the original workspace. See
 /// https://github.com/denoland/deno/issues/32057.
 ///
-/// Only `deno.json` members (those with a `name` and `exports`) are flattened,
+/// Only `edno.json` members (those with a `name` and `exports`) are flattened,
 /// since they are the ones resolved through the import map. `package.json`
 /// members resolve via `node_modules`, which is unaffected by stripping the
 /// `workspace` field, so they don't need an entry here.
 fn workspace_member_import_entries(
-  workspace: &deno_config::workspace::Workspace,
+  workspace: &edno_config::workspace::Workspace,
 ) -> Vec<(String, String)> {
   let mut entries = Vec::new();
   for pkg in workspace.resolver_jsr_pkgs() {
@@ -627,7 +627,7 @@ fn workspace_member_import_entries(
 /// Builds import map entries for the dependencies declared in the closest
 /// package.json to a local file entrypoint.
 ///
-/// `deno install -g` copies the supplied config (or an empty one) into a
+/// `edno install -g` copies the supplied config (or an empty one) into a
 /// per-binary directory and the installed command runs with that config, so
 /// dependencies declared in the project's package.json are not visible to it.
 /// Flatten them into the copied config's import map (e.g. `"@std/log":
@@ -636,7 +636,7 @@ fn workspace_member_import_entries(
 /// running the entrypoint directly. See
 /// https://github.com/denoland/deno/issues/26412.
 fn package_json_dep_import_entries(module_url: &Url) -> Vec<(String, String)> {
-  use deno_package_json::PackageJsonDepValue;
+  use edno_package_json::PackageJsonDepValue;
 
   let Ok(file_path) = deno_path_util::url_to_file_path(module_url) else {
     return Vec::new();
@@ -644,7 +644,7 @@ fn package_json_dep_import_entries(module_url: &Url) -> Vec<(String, String)> {
   let sys = crate::sys::CliSys::default();
   let mut maybe_dir = file_path.parent();
   while let Some(dir) = maybe_dir {
-    let pkg_json = match deno_package_json::PackageJson::load_from_path(
+    let pkg_json = match edno_package_json::PackageJson::load_from_path(
       &sys,
       None,
       &dir.join("package.json"),
@@ -706,9 +706,9 @@ fn package_json_dep_import_entries(module_url: &Url) -> Vec<(String, String)> {
 /// Rewrites `./` and `../` paths inside `imports` and `scopes` to absolute
 /// `file://` URLs anchored to the original config file's location.
 ///
-/// `deno install -g -c deno.json` copies the supplied config into a per-binary
+/// `edno install -g -c edno.json` copies the supplied config into a per-binary
 /// directory. Relative specifiers / scope prefixes get resolved relative to
-/// that new directory by `deno_config`, so without rewriting them they end up
+/// that new directory by `edno_config`, so without rewriting them they end up
 /// pointing at non-existent paths under the install dir. See
 /// https://github.com/denoland/deno/issues/20390.
 fn rewrite_relative_import_map_paths(
@@ -807,7 +807,7 @@ fn resolve_native_binary_path(
     node_modules_pkg_dir.join(sub_path)
   } else {
     // Primary entry: resolve the bin script via package.json.
-    let pkg_json = deno_package_json::PackageJson::load_from_path(
+    let pkg_json = edno_package_json::PackageJson::load_from_path(
       &sys,
       None,
       &node_modules_pkg_dir.join("package.json"),
@@ -815,7 +815,7 @@ fn resolve_native_binary_path(
     .ok()
     .flatten()?;
     let bins = pkg_json.resolve_bins().ok()?;
-    let deno_package_json::PackageJsonBins::Bins(bins) = bins else {
+    let edno_package_json::PackageJsonBins::Bins(bins) = bins else {
       return None;
     };
     // For a string bin field, `resolve_bins` keys the entry by the
@@ -836,8 +836,8 @@ fn resolve_native_binary_path(
   // Only treat the bin entry as a native binary if its magic bytes match
   // ELF/Mach-O/PE. `node_resolver::read_bin_value` returns `Executable` for
   // any file whose first line isn't a recognized npx-style shebang (e.g.
-  // `#!/usr/bin/env deno` scripts) — which would incorrectly cause us to
-  // generate an `exec`-the-file shim instead of a `deno run` shim. On
+  // `#!/usr/bin/env edno` scripts) — which would incorrectly cause us to
+  // generate an `exec`-the-file shim instead of a `edno run` shim. On
   // Windows there is no shebang interpretation, so that breaks installs of
   // ordinary npm packages whose bin scripts use a non-Node shebang.
   use std::io::Read;
@@ -925,7 +925,7 @@ fn resolve_shim_data(
     executable_args.push("--location".to_string());
     executable_args.push(url.to_string());
   }
-  if let Some(deno_lib::args::CaData::File(ca_file)) = &flags.ca_data {
+  if let Some(edno_lib::args::CaData::File(ca_file)) = &flags.ca_data {
     executable_args.push("--cert".to_string());
     executable_args.push(ca_file.to_owned())
   }
@@ -1002,9 +1002,9 @@ fn resolve_shim_data(
   let config_dir =
     installation_dir.join(format!(".{}", bin_name_and_url.config_dir_name()));
 
-  let deno_json_path = config_dir.join("deno.json");
+  let edno_json_path = config_dir.join("edno.json");
   executable_args.push("--config".to_string());
-  executable_args.push(deno_json_path.to_string_lossy().into_owned());
+  executable_args.push(edno_json_path.to_string_lossy().into_owned());
 
   if let Some(node_modules_dir) = flags.node_modules_dir {
     executable_args
@@ -1072,7 +1072,7 @@ impl BinaryNameAndUrl {
       None => {
         return Err(anyhow!(
           "An executable name was not provided. One could not be inferred from the URL. Aborting.\n  {} {}",
-          deno_runtime::colors::cyan("hint:"),
+          edno_runtime::colors::cyan("hint:"),
           "provide one with the `--name` flag"
         ));
       }
@@ -1139,7 +1139,7 @@ struct ShimData {
   file_path: PathBuf,
   args: Vec<String>,
   /// If set, the bin entry is a native binary and the shim should exec it
-  /// directly instead of wrapping with `deno run`.
+  /// directly instead of wrapping with `edno run`.
   native_binary_path: Option<PathBuf>,
 }
 
@@ -1153,13 +1153,13 @@ fn generate_executable_file(shim_data: &ShimData) -> Result<(), AnyError> {
     // Native binary: exec it directly
     let native_display = native_path.display();
     let template =
-      format!("% generated by deno install %\n@\"{native_display}\" %*\n",);
+      format!("% generated by edno install %\n@\"{native_display}\" %*\n",);
     let mut file = File::create(&shim_data.file_path)?;
     file.write_all(template.as_bytes())?;
 
     let template = format!(
       r#"#!/bin/sh
-# generated by deno install
+# generated by edno install
 exec "{native_display}" "$@"
 "#,
     );
@@ -1169,7 +1169,7 @@ exec "{native_display}" "$@"
     let args: Vec<String> =
       shim_data.args.iter().map(|c| format!("\"{c}\"")).collect();
     let template = format!(
-      "% generated by deno install %\n@deno {} %*\n",
+      "% generated by edno install %\n@edno {} %*\n",
       args
         .iter()
         .map(|arg| arg.replace('%', "%%"))
@@ -1183,8 +1183,8 @@ exec "{native_display}" "$@"
     // create filepath without extensions
     let template = format!(
       r#"#!/bin/sh
-# generated by deno install
-deno {} "$@"
+# generated by edno install
+edno {} "$@"
 "#,
       args.join(" "),
     );
@@ -1200,7 +1200,7 @@ fn generate_executable_file(shim_data: &ShimData) -> Result<(), AnyError> {
     let path_str = posix_shell_escape(&native_path.to_string_lossy());
     format!(
       r#"#!/bin/sh
-# generated by deno install
+# generated by edno install
 exec {} "$@"
 "#,
       path_str,
@@ -1213,8 +1213,8 @@ exec {} "$@"
       .collect();
     format!(
       r#"#!/bin/sh
-# generated by deno install
-exec deno {} "$@"
+# generated by edno install
+exec edno {} "$@"
 "#,
       args.join(" "),
     )
@@ -1284,13 +1284,13 @@ fn get_installer_bin_dir(
 }
 
 fn get_installer_root() -> Result<PathBuf, AnyError> {
-  if let Some(env_dir) = env::var_os("DENO_INSTALL_ROOT")
+  if let Some(env_dir) = env::var_os("EDNO_INSTALL_ROOT")
     && !env_dir.is_empty()
   {
     let env_dir = PathBuf::from(env_dir);
     return canonicalize_path_maybe_not_exists(&env_dir).with_context(|| {
       format!(
-        "Canonicalizing DENO_INSTALL_ROOT ('{}').",
+        "Canonicalizing EDNO_INSTALL_ROOT ('{}').",
         env_dir.display()
       )
     });
@@ -1307,7 +1307,7 @@ fn get_installer_root() -> Result<PathBuf, AnyError> {
           format!("${home_env_var} is not defined"),
         )
       })?;
-  home_path.push(".deno");
+  home_path.push(".edno");
   Ok(home_path)
 }
 
@@ -1362,8 +1362,8 @@ fn is_in_path(dir: &Path) -> bool {
 struct JsrLockfileFetcher<'a> {
   jsr_resolver: Arc<JsrFetchResolver>,
   file_fetcher: Arc<CliFileFetcher>,
-  npmrc: Arc<deno_npmrc::ResolvedNpmRc>,
-  npm_package_info_provider: &'a dyn deno_lockfile::NpmPackageInfoProvider,
+  npmrc: Arc<edno_npmrc::ResolvedNpmRc>,
+  npm_package_info_provider: &'a dyn edno_lockfile::NpmPackageInfoProvider,
 }
 
 impl JsrLockfileFetcher<'_> {
@@ -1372,7 +1372,7 @@ impl JsrLockfileFetcher<'_> {
     let req = pkg_ref.req();
     let nv = self.jsr_resolver.req_to_nv(req).await.ok().flatten()?;
     let lockfile_url = crate::args::jsr_url()
-      .join(&format!("{}/{}/deno.lock", &nv.name, &nv.version))
+      .join(&format!("{}/{}/edno.lock", &nv.name, &nv.version))
       .ok()?;
     let file = match self
       .file_fetcher
@@ -1395,9 +1395,9 @@ impl JsrLockfileFetcher<'_> {
     };
 
     // Parse and upgrade the lockfile to v5
-    let lockfile = match deno_lockfile::Lockfile::new(
-      deno_lockfile::NewLockfileOptions {
-        file_path: std::path::PathBuf::from("deno.lock"),
+    let lockfile = match edno_lockfile::Lockfile::new(
+      edno_lockfile::NewLockfileOptions {
+        file_path: std::path::PathBuf::from("edno.lock"),
         content,
         overwrite: false,
       },
@@ -1437,13 +1437,13 @@ impl JsrLockfileFetcher<'_> {
 /// configured npm registries (or the default registry.npmjs.org).
 /// Returns `Err(bad_url)` on the first tarball from an unknown registry.
 fn validate_npm_tarball_urls(
-  content: &deno_lockfile::LockfileContent,
-  npmrc: &deno_npmrc::ResolvedNpmRc,
+  content: &edno_lockfile::LockfileContent,
+  npmrc: &edno_npmrc::ResolvedNpmRc,
 ) -> Result<(), String> {
   let mut allowed_registries = npmrc.get_all_known_registries_urls();
   // always allow the default npm registry
   let default_npm_registry =
-    Url::parse(deno_npmrc::NPM_DEFAULT_REGISTRY).unwrap();
+    Url::parse(edno_npmrc::NPM_DEFAULT_REGISTRY).unwrap();
   if !allowed_registries.contains(&default_npm_registry) {
     allowed_registries.push(default_npm_registry);
   }
@@ -1492,8 +1492,8 @@ fn tarball_url_matches_registry(tarball_url: &Url, registry_url: &Url) -> bool {
 mod tests {
   use std::process::Command;
 
-  use deno_lib::args::UnstableConfig;
-  use deno_npm::resolution::NpmVersionResolver;
+  use edno_lib::args::UnstableConfig;
+  use edno_npm::resolution::NpmVersionResolver;
   use test_util::TempDir;
   use test_util::testdata_path;
 
@@ -1512,7 +1512,7 @@ mod tests {
     let _http_server_guard = test_util::http_server();
     let cwd = resolve_cwd(None).unwrap();
     let http_client = HttpClientProvider::new(None, None);
-    let registry_api = deno_npm::registry::TestNpmRegistryApi::default();
+    let registry_api = edno_npm::registry::TestNpmRegistryApi::default();
     let npm_version_resolver = NpmVersionResolver::default();
     let resolver =
       BinNameResolver::new(&http_client, &registry_api, &npm_version_resolver);
@@ -1561,7 +1561,7 @@ mod tests {
     let _http_server_guard = test_util::http_server();
     let cwd = resolve_cwd(None).unwrap();
     let http_client = HttpClientProvider::new(None, None);
-    let registry_api = deno_npm::registry::TestNpmRegistryApi::default();
+    let registry_api = edno_npm::registry::TestNpmRegistryApi::default();
     let npm_version_resolver = NpmVersionResolver::default();
     let resolver =
       BinNameResolver::new(&http_client, &registry_api, &npm_version_resolver);
@@ -1610,7 +1610,7 @@ mod tests {
 
     let content = fs::read_to_string(file_path).unwrap();
     let config_path = config_dir_for(&temp_dir.path().to_string(), "echo_test")
-      .join("deno.json");
+      .join("edno.json");
     if cfg!(windows) {
       assert!(content.contains(&format!(
         r#""run" "--config" "{}" "http://localhost:4545/echo.ts""#,
@@ -1627,7 +1627,7 @@ mod tests {
   #[tokio::test]
   async fn install_inferred_name() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
-    let config_path = config_dir_for(&temp_dir_str, "echo").join("deno.json");
+    let config_path = config_dir_for(&temp_dir_str, "echo").join("edno.json");
     let (bin_info, shim_data) = resolve_shim_data(
       &Flags::default(),
       &InstallFlagsGlobal {
@@ -1657,7 +1657,7 @@ mod tests {
   #[tokio::test]
   async fn install_unstable_legacy() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
-    let config_path = config_dir_for(&temp_dir_str, "echo").join("deno.json");
+    let config_path = config_dir_for(&temp_dir_str, "echo").join("edno.json");
     let (bin_info, shim_data) = resolve_shim_data(
       &Default::default(),
       &InstallFlagsGlobal {
@@ -1687,7 +1687,7 @@ mod tests {
   #[tokio::test]
   async fn install_unstable_features() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
-    let config_path = config_dir_for(&temp_dir_str, "echo").join("deno.json");
+    let config_path = config_dir_for(&temp_dir_str, "echo").join("edno.json");
     let (bin_info, shim_data) = resolve_shim_data(
       &Flags {
         unstable_config: UnstableConfig {
@@ -1725,7 +1725,7 @@ mod tests {
   #[tokio::test]
   async fn install_inferred_name_from_parent() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
-    let config_path = config_dir_for(&temp_dir_str, "subdir").join("deno.json");
+    let config_path = config_dir_for(&temp_dir_str, "subdir").join("edno.json");
     let (bin_info, shim_data) = resolve_shim_data(
       &Flags::default(),
       &InstallFlagsGlobal {
@@ -1756,7 +1756,7 @@ mod tests {
   async fn install_inferred_name_after_redirect_for_no_path_url() {
     let _http_server_guard = test_util::http_server();
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
-    let config_path = config_dir_for(&temp_dir_str, "a").join("deno.json");
+    let config_path = config_dir_for(&temp_dir_str, "a").join("edno.json");
     let (bin_info, shim_data) = resolve_shim_data(
       &Flags::default(),
       &InstallFlagsGlobal {
@@ -1790,7 +1790,7 @@ mod tests {
   async fn install_custom_dir_option() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
     let config_path =
-      config_dir_for(&temp_dir_str, "echo_test").join("deno.json");
+      config_dir_for(&temp_dir_str, "echo_test").join("edno.json");
     let (bin_info, shim_data) = resolve_shim_data(
       &Flags::default(),
       &InstallFlagsGlobal {
@@ -1821,7 +1821,7 @@ mod tests {
   async fn install_with_flags() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
     let config_path =
-      config_dir_for(&temp_dir_str, "echo_test").join("deno.json");
+      config_dir_for(&temp_dir_str, "echo_test").join("edno.json");
     let (bin_info, shim_data) = resolve_shim_data(
       &Flags {
         permissions: PermissionFlags {
@@ -1865,7 +1865,7 @@ mod tests {
   async fn install_prompt() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
     let config_path =
-      config_dir_for(&temp_dir_str, "echo_test").join("deno.json");
+      config_dir_for(&temp_dir_str, "echo_test").join("edno.json");
     let (_, shim_data) = resolve_shim_data(
       &Flags {
         permissions: PermissionFlags {
@@ -1902,7 +1902,7 @@ mod tests {
   async fn install_allow_all() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
     let config_path =
-      config_dir_for(&temp_dir_str, "echo_test").join("deno.json");
+      config_dir_for(&temp_dir_str, "echo_test").join("edno.json");
     let (_, shim_data) = resolve_shim_data(
       &Flags {
         permissions: PermissionFlags {
@@ -1938,7 +1938,7 @@ mod tests {
   #[tokio::test]
   async fn install_npm_lockfile_default() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
-    let config_path = config_dir_for(&temp_dir_str, "cowsay").join("deno.json");
+    let config_path = config_dir_for(&temp_dir_str, "cowsay").join("edno.json");
     let (_, shim_data) = resolve_shim_data(
       &Flags {
         permissions: PermissionFlags {
@@ -1974,7 +1974,7 @@ mod tests {
   #[tokio::test]
   async fn install_npm_no_lock() {
     let temp_dir_str = env::temp_dir().to_string_lossy().into_owned();
-    let config_path = config_dir_for(&temp_dir_str, "cowsay").join("deno.json");
+    let config_path = config_dir_for(&temp_dir_str, "cowsay").join("edno.json");
     let (_, shim_data) = resolve_shim_data(
       &Flags {
         permissions: PermissionFlags {
@@ -2134,7 +2134,7 @@ mod tests {
 
     // simulate a stale auto-generated lockfile from a prior install
     let config_dir = bin_dir.join(".echo_test");
-    let lockfile_path = config_dir.join("deno.lock");
+    let lockfile_path = config_dir.join("edno.lock");
     let stale_lockfile =
       r#"{"version":"5","specifiers":{"npm:cowsay@*":"1.0.0"}}"#;
     fs::write(&lockfile_path, stale_lockfile).unwrap();
@@ -2186,7 +2186,7 @@ mod tests {
     .await;
     assert!(result.is_ok());
 
-    let file_path = bin_dir.join(".echo_test").join("deno.json");
+    let file_path = bin_dir.join(".echo_test").join("edno.json");
     assert!(file_path.exists());
     let content = fs::read_to_string(file_path).unwrap();
     // setup_config_dir appends a workspace field to stop workspace discovery
@@ -2223,7 +2223,7 @@ mod tests {
     assert!(file_path.exists());
     let content = fs::read_to_string(file_path).unwrap();
     let config_path = config_dir_for(&temp_dir.path().to_string(), "echo_test")
-      .join("deno.json");
+      .join("edno.json");
     if cfg!(windows) {
       // TODO: see comment above this test
     } else {
@@ -2267,7 +2267,7 @@ mod tests {
     // We need to actually run it to make sure the URL is interpreted correctly
     let status = Command::new(file_path)
       .env_clear()
-      // use the deno binary in the target directory
+      // use the edno binary in the target directory
       .env("PATH", test_util::target_dir())
       .env("RUST_BACKTRACE", "1")
       .spawn()
@@ -2312,7 +2312,7 @@ mod tests {
     assert!(file_path.exists());
 
     let config_path = config_dir_for(&temp_dir.path().to_string(), "echo_test")
-      .join("deno.json");
+      .join("edno.json");
     let mut expected_string = format!(
       "--import-map '{import_map_url}' --config {} 'http://localhost:4545/cat.ts'",
       config_path.to_string_lossy()
@@ -2360,7 +2360,7 @@ mod tests {
     assert!(file_path.exists());
 
     let config_path = config_dir_for(&temp_dir.path().to_string(), "echo_test")
-      .join("deno.json");
+      .join("edno.json");
     let mut expected_string = format!(
       "run --config {} '{}'",
       config_path.to_string_lossy(),
@@ -2397,7 +2397,7 @@ mod tests {
 
       // create extra files
       {
-        let file_path = file_path.with_extension("deno.json");
+        let file_path = file_path.with_extension("edno.json");
         File::create(file_path).unwrap();
       }
       {
@@ -2413,7 +2413,7 @@ mod tests {
       // create hidden per-command copies as produced by install
       {
         let hidden_file =
-          get_hidden_file_with_ext(shim_path.as_path(), "deno.json");
+          get_hidden_file_with_ext(shim_path.as_path(), "edno.json");
         File::create(hidden_file).unwrap();
       }
       {
@@ -2451,12 +2451,12 @@ mod tests {
     ] {
       assert!(!file_path.exists());
       assert!(!file_path.with_extension("tsconfig.json").exists());
-      assert!(!file_path.with_extension("deno.json").exists());
+      assert!(!file_path.with_extension("edno.json").exists());
       assert!(!file_path.with_extension("lock.json").exists());
 
       // hidden per-command files should also be removed
       assert!(
-        !get_hidden_file_with_ext(shim_path.as_path(), "deno.json").exists()
+        !get_hidden_file_with_ext(shim_path.as_path(), "edno.json").exists()
       );
       assert!(
         !get_hidden_file_with_ext(shim_path.as_path(), "lock.json").exists()
@@ -2475,10 +2475,10 @@ mod tests {
   fn create_npmrc_with_registries(
     default_url: &str,
     scope_urls: &[(&str, &str)],
-  ) -> Arc<deno_npmrc::ResolvedNpmRc> {
-    use deno_npmrc::RegistryConfig;
-    use deno_npmrc::RegistryConfigWithUrl;
-    use deno_npmrc::ResolvedNpmRc;
+  ) -> Arc<edno_npmrc::ResolvedNpmRc> {
+    use edno_npmrc::RegistryConfig;
+    use edno_npmrc::RegistryConfigWithUrl;
+    use edno_npmrc::ResolvedNpmRc;
 
     let mut scopes = std::collections::HashMap::new();
     for (scope, url) in scope_urls {
@@ -2507,9 +2507,9 @@ mod tests {
 
   fn create_lockfile_content_with_npm(
     packages: &[(&str, Option<&str>)],
-  ) -> deno_lockfile::LockfileContent {
-    use deno_lockfile::NpmPackageInfo;
-    let mut content = deno_lockfile::LockfileContent::default();
+  ) -> edno_lockfile::LockfileContent {
+    use edno_lockfile::NpmPackageInfo;
+    let mut content = edno_lockfile::LockfileContent::default();
     for (id, tarball) in packages {
       content.packages.npm.insert(
         (*id).into(),
@@ -2685,8 +2685,8 @@ mod tests {
     macho_bytes.extend_from_slice(&[0u8; 100]); // pad
     std::fs::write(bin_sub.join("tool.exe"), &macho_bytes).unwrap();
 
-    // Write the config dir's deno.json so the directory exists as expected
-    std::fs::write(config_dir.join("deno.json"), "{}").unwrap();
+    // Write the config dir's edno.json so the directory exists as expected
+    std::fs::write(config_dir.join("edno.json"), "{}").unwrap();
 
     let bin_name_and_url = BinaryNameAndUrl {
       name: "mytool".to_string(),
@@ -2737,9 +2737,9 @@ mod tests {
   #[test]
   fn native_binary_not_detected_for_non_node_shebang_js() {
     // Regression: a JS bin script with a non-Node shebang (e.g.
-    // `#!/usr/bin/env deno`) was being misclassified as a native binary,
-    // which broke `deno install -g` on Windows since the generated shim
-    // execed the .js file directly instead of running `deno run`.
+    // `#!/usr/bin/env edno`) was being misclassified as a native binary,
+    // which broke `edno install -g` on Windows since the generated shim
+    // execed the .js file directly instead of running `edno run`.
     let temp_dir = TempDir::new();
     let bin_dir = temp_dir.path().join("bin").to_path_buf();
     let config_dir = bin_dir.join(".mytool");
@@ -2753,7 +2753,7 @@ mod tests {
     .unwrap();
     std::fs::write(
       pkg_dir.join("main.js"),
-      "#!/usr/bin/env deno\nconsole.log('hello');",
+      "#!/usr/bin/env edno\nconsole.log('hello');",
     )
     .unwrap();
 
@@ -2798,7 +2798,7 @@ mod tests {
       args: vec![
         "run".to_string(),
         "--config".to_string(),
-        "path with spaces/deno.json".to_string(),
+        "path with spaces/edno.json".to_string(),
         "https://example.com/it's.ts".to_string(),
         "$(echo hi);&|<>*?[]".to_string(),
         "%PATH%/100%".to_string(),
@@ -2810,7 +2810,7 @@ mod tests {
     let content = fs::read_to_string(&file_path).unwrap();
     assert!(
       content.contains(
-        "exec deno run --config 'path with spaces/deno.json' \
+        "exec edno run --config 'path with spaces/edno.json' \
          'https://example.com/it'\\''s.ts' '$(echo hi);&|<>*?[]' \
          '%PATH%/100%' '' \"$@\""
       ),
@@ -2861,8 +2861,8 @@ mod tests {
       "shim should exec native binary directly, got: {content}"
     );
     assert!(
-      !content.contains("exec deno"),
-      "shim should not exec deno, got: {content}"
+      !content.contains("exec edno"),
+      "shim should not exec edno, got: {content}"
     );
   }
 
@@ -2880,8 +2880,8 @@ mod tests {
     super::generate_executable_file(&shim_data).unwrap();
     let content = fs::read_to_string(&file_path).unwrap();
     assert!(
-      content.contains("exec deno run"),
-      "shim should use deno run, got: {content}"
+      content.contains("exec edno run"),
+      "shim should use edno run, got: {content}"
     );
   }
 }

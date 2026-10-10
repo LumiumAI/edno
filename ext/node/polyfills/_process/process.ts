@@ -24,20 +24,20 @@ const {
 const { build, createLazyLoader } = core;
 
 const { nextTick: _nextTick } = core.loadExtScript(
-  "ext:deno_node/_next_tick.ts",
+  "ext:edno_node/_next_tick.ts",
 );
-const { _exiting } = core.loadExtScript("ext:deno_node/_process/exiting.ts");
-const fs = core.loadExtScript("ext:deno_fs/30_fs.js");
+const { _exiting } = core.loadExtScript("ext:edno_node/_process/exiting.ts");
+const fs = core.loadExtScript("ext:edno_fs/30_fs.js");
 const {
-  denoErrorToNodeError,
+  ednoErrorToNodeError,
   ERR_INVALID_ARG_TYPE,
   ERR_INVALID_OBJECT_DEFINE_PROPERTY,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
 const loadProcess = createLazyLoader<NodeJS.Process>("node:process");
 let nodeProcess: NodeJS.Process | undefined;
 
-/** Returns the operating system CPU architecture for which the Deno binary was compiled */
+/** Returns the operating system CPU architecture for which the Edno binary was compiled */
 function arch(): string {
   if (build.arch == "x86_64") {
     return "x64";
@@ -74,7 +74,7 @@ function chdir(directory: string): void {
   try {
     fs.chdir(directory);
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, {
+    throw ednoErrorToNodeError(err as Error, {
       syscall: "chdir",
       path: fromPath,
       dest: directory,
@@ -88,11 +88,11 @@ const cwd = fs.cwd;
 /** https://nodejs.org/api/process.html#process_process_nexttick_callback_args */
 const nextTick = _nextTick;
 
-/** Wrapper of Deno.env.get, which doesn't throw type error when
+/** Wrapper of Edno.env.get, which doesn't throw type error when
  * the env name has "=" or "\0" in it. */
-function denoEnvGet(name: string) {
+function ednoEnvGet(name: string) {
   try {
-    return Deno.env.get(name);
+    return Edno.env.get(name);
   } catch (e) {
     if (ObjectPrototypeIsPrototypeOf(TypeErrorPrototype, e)) {
       return undefined;
@@ -114,7 +114,7 @@ const env:
         return target[prop];
       }
 
-      const envValue = denoEnvGet(prop);
+      const envValue = ednoEnvGet(prop);
 
       if (envValue) {
         return envValue;
@@ -126,9 +126,9 @@ const env:
 
       return envValue;
     },
-    ownKeys: () => ReflectOwnKeys(Deno.env.toObject()),
+    ownKeys: () => ReflectOwnKeys(Edno.env.toObject()),
     getOwnPropertyDescriptor: (_target, name) => {
-      const value = denoEnvGet(String(name));
+      const value = ednoEnvGet(String(name));
       if (value !== undefined) {
         return {
           __proto__: null,
@@ -155,7 +155,7 @@ const env:
         );
       }
 
-      Deno.env.set(String(prop), String(value));
+      Edno.env.set(String(prop), String(value));
       return true; // success
     },
     has: (target, prop) => {
@@ -163,7 +163,7 @@ const env:
         return ReflectHas(target, prop);
       }
 
-      return typeof denoEnvGet(prop) === "string";
+      return typeof ednoEnvGet(prop) === "string";
     },
     deleteProperty(target, key) {
       if (typeof key === "symbol") {
@@ -171,7 +171,7 @@ const env:
         return true;
       }
 
-      Deno.env.delete(String(key));
+      Edno.env.delete(String(key));
       return true;
     },
     defineProperty(target, property, attributes) {
@@ -204,7 +204,7 @@ const env:
         return true;
       }
 
-      Deno.env.set(String(property), String(attributes?.value));
+      Edno.env.set(String(property), String(attributes?.value));
       return true;
     },
   });
@@ -213,7 +213,7 @@ const env:
  * https://nodejs.org/api/process.html#process_process_version
  *
  * This value tracks a stable release of Node, as some packages are
- * checking it for compatibility. Previously it pointed to Deno version,
+ * checking it for compatibility. Previously it pointed to Edno version,
  * but that led to incompability with some packages.
  *
  * The `__NODE_VERSION__` token is substituted at snapshot build time with
@@ -229,8 +229,8 @@ const version = `v${nodeVersion}`;
  *
  * This value is hard coded to latest stable release of Node, as
  * some packages are checking it for compatibility. Previously
- * it contained only output of `Deno.version`, but that led to incompability
- * with some packages. Value of `v8` field is still taken from `Deno.version`.
+ * it contained only output of `Edno.version`, but that led to incompability
+ * with some packages. Value of `v8` field is still taken from `Edno.version`.
  */
 const versions = {
   node: nodeVersion,
@@ -240,15 +240,15 @@ const versions = {
   ares: "1.34.6",
   modules: "147",
   nghttp2: "1.69.0",
-  // `napi` reflects the N-API version Deno actually implements, not Node's.
+  // `napi` reflects the N-API version Edno actually implements, not Node's.
   // It must match NAPI_VERSION in ext/napi/js_native_api.rs.
   napi: "10",
   llhttp: "9.4.1",
-  // `openssl` is intentionally NOT bumped to Node's value. Deno's crypto/TLS
+  // `openssl` is intentionally NOT bumped to Node's value. Edno's crypto/TLS
   // stack does not ship OpenSSL 3.5 behavior (e.g. no ML-DSA/ML-KEM, different
   // TLS alert strings), and npm packages and Node's own test suite feature
   // detect via `hasOpenSSL()` on this field. Reporting >= 3.2/3.5 here makes
-  // them take code paths Deno cannot satisfy.
+  // them take code paths Edno cannot satisfy.
   openssl: "3.0.7+quic",
   cldr: "48.0",
   icu: "78.3",
@@ -258,7 +258,7 @@ const versions = {
   nghttp3: "",
   sqlite: "3.53.1",
   // Will be filled when calling "__bootstrapNodeProcess()",
-  deno: "",
+  edno: "",
   v8: "",
   typescript: "",
 };

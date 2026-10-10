@@ -8,7 +8,7 @@ import * as net from "node:net";
 import * as http from "node:http";
 import * as crypto from "node:crypto";
 
-const pipeName = `\\\\.\\pipe\\deno_test_${crypto.randomUUID()}`;
+const pipeName = `\\\\.\\pipe\\edno_test_${crypto.randomUUID()}`;
 
 // Raw TCP server on a named pipe that responds with a minimal HTTP response.
 const server = net.createServer((socket) => {

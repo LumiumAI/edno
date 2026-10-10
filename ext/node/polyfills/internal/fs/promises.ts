@@ -1,31 +1,31 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 import { core } from "ext:core/mod.js";
-import type { WriteFileOptions } from "ext:deno_node/_fs/_fs_common.ts";
-import type { Encodings } from "ext:deno_node/_utils.ts";
-const { promisify } = core.loadExtScript("ext:deno_node/internal/util.mjs");
-const constants = core.loadExtScript("ext:deno_node/_fs/_fs_constants.ts");
-import { copyFilePromise } from "ext:deno_node/_fs/_fs_copy.ts";
-const { cpPromise } = core.loadExtScript("ext:deno_node/_fs/_fs_cp.ts");
-import { lutimesPromise } from "ext:deno_node/_fs/_fs_lutimes.ts";
-import { readdirPromise } from "ext:deno_node/_fs/_fs_readdir.ts";
-const { lstatPromise } = core.loadExtScript("ext:deno_node/_fs/_fs_lstat.ts");
+import type { WriteFileOptions } from "ext:edno_node/_fs/_fs_common.ts";
+import type { Encodings } from "ext:edno_node/_utils.ts";
+const { promisify } = core.loadExtScript("ext:edno_node/internal/util.mjs");
+const constants = core.loadExtScript("ext:edno_node/_fs/_fs_constants.ts");
+import { copyFilePromise } from "ext:edno_node/_fs/_fs_copy.ts";
+const { cpPromise } = core.loadExtScript("ext:edno_node/_fs/_fs_cp.ts");
+import { lutimesPromise } from "ext:edno_node/_fs/_fs_lutimes.ts";
+import { readdirPromise } from "ext:edno_node/_fs/_fs_readdir.ts";
+const { lstatPromise } = core.loadExtScript("ext:edno_node/_fs/_fs_lstat.ts");
 const lazyFs = core.createLazyLoader("node:fs");
-import { globPromise } from "ext:deno_node/_fs/_fs_glob.ts";
-import { getValidatedPathToString } from "ext:deno_node/internal/fs/utils.mjs";
+import { globPromise } from "ext:edno_node/_fs/_fs_glob.ts";
+import { getValidatedPathToString } from "ext:edno_node/internal/fs/utils.mjs";
 import type { Buffer } from "node:buffer";
-import Dir from "ext:deno_node/_fs/_fs_dir.ts";
-import { FileHandle } from "ext:deno_node/internal/fs/handle.ts";
+import Dir from "ext:edno_node/_fs/_fs_dir.ts";
+import { FileHandle } from "ext:edno_node/internal/fs/handle.ts";
 import { primordials } from "ext:core/mod.js";
 const { parseFileMode } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 import { op_node_lchmod } from "ext:core/ops";
-const { isMacOS } = core.loadExtScript("ext:deno_node/_util/os.ts");
+const { isMacOS } = core.loadExtScript("ext:edno_node/_util/os.ts");
 const { ERR_METHOD_NOT_IMPLEMENTED, aggregateTwoErrors } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const lazyPath = core.createLazyLoader("node:path");
 const lazyProcess = core.createLazyLoader("node:process");
@@ -361,7 +361,7 @@ function writeFilePromise(
   return (async () => {
     // Match the existing path-based behavior: surface the same `DOMException`
     // that `signal.throwIfAborted()` produces (the fd-based fallback would
-    // throw Deno's `AbortError` instead). Inside the async IIFE so the throw
+    // throw Edno's `AbortError` instead). Inside the async IIFE so the throw
     // becomes a promise rejection, not a sync throw.
     if (opts.signal?.aborted) opts.signal.throwIfAborted();
     const fh = await openPromise(
@@ -423,7 +423,7 @@ function readFilePromise(
   return (async () => {
     // Match the existing path-based behavior: surface the same `DOMException`
     // that `signal.throwIfAborted()` produces (the fd-based fallback would
-    // throw Deno's `AbortError` instead). Inside the async IIFE so the throw
+    // throw Edno's `AbortError` instead). Inside the async IIFE so the throw
     // becomes a promise rejection, not a sync throw.
     if (opts.signal?.aborted) opts.signal.throwIfAborted();
     const fh = await openPromise(path as string | Buffer | URL, flag);

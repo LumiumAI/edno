@@ -3,8 +3,8 @@
 use std::path::Path;
 use std::process::Stdio;
 
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
 use tokio::process::Command;
 
 /// Run `git` with `args` in `cwd`, returning stdout on success.

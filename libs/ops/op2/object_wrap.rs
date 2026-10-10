@@ -52,10 +52,10 @@ use crate::op2::generate_op2;
 // }
 //
 // The generated OpMethodDecl that can be passed to
-// `deno_core::extension!` macro to register the object
+// `edno_core::extension!` macro to register the object
 //
 // ```rust
-// deno_core::extension!(
+// edno_core::extension!(
 //   ...,
 //   objects = [MyObject],
 // )
@@ -169,7 +169,7 @@ pub(crate) fn generate_impl_ops(
 
   let res = quote! {
       impl #self_ty {
-        pub const DECL: deno_core::_ops::OpMethodDecl = deno_core::_ops::OpMethodDecl {
+        pub const DECL: edno_core::_ops::OpMethodDecl = edno_core::_ops::OpMethodDecl {
           methods: &[
             #(
               #self_ty::#methods(),
@@ -181,7 +181,7 @@ pub(crate) fn generate_impl_ops(
             )*
           ],
           constructor: #constructor,
-          name: ::deno_core::__op_name_fast!(#self_ty),
+          name: ::edno_core::__op_name_fast!(#self_ty),
           type_name: || std::any::type_name::<#self_ty>(),
           #inherits_type_name
         };

@@ -1,5 +1,5 @@
 // Confirms --dry-run did not modify files.
-console.log("--- a/deno.json ---");
-console.log(Deno.readTextFileSync("a/deno.json").trim());
-console.log("--- b/deno.json ---");
-console.log(Deno.readTextFileSync("b/deno.json").trim());
+console.log("--- a/edno.json ---");
+console.log(Edno.readTextFileSync("a/edno.json").trim());
+console.log("--- b/edno.json ---");
+console.log(Edno.readTextFileSync("b/edno.json").trim());

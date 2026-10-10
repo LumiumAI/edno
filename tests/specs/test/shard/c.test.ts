@@ -1,1 +1,1 @@
-Deno.test("test_c", () => {});
+Edno.test("test_c", () => {});

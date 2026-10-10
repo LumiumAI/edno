@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import * as http2 from "node:http2";
 import * as https from "node:https";
@@ -21,9 +21,9 @@ net.setDefaultAutoSelectFamilyAttemptTimeout(
 );
 
 for (const url of ["http://localhost:4246", "https://localhost:4247"]) {
-  Deno.test(`[node/http2 client] ${url}`, {
+  Edno.test(`[node/http2 client] ${url}`, {
     // TODO(littledivy): h2 over TLS is not yet implemented
-    ignore: Deno.build.os === "windows" || url.startsWith("https://"),
+    ignore: Edno.build.os === "windows" || url.startsWith("https://"),
   }, async () => {
     // Create a server to respond to the HTTP2 requests
     const client = http2.connect(url, {});
@@ -74,7 +74,7 @@ for (const url of ["http://localhost:4246", "https://localhost:4247"]) {
   });
 }
 
-Deno.test(`[node/http2 client createConnection]`, async () => {
+Edno.test(`[node/http2 client createConnection]`, async () => {
   const url = "http://127.0.0.1:4246";
   const createConnDeferred = Promise.withResolvers<void>();
   // Create a server to respond to the HTTP2 requests
@@ -115,7 +115,7 @@ Deno.test(`[node/http2 client createConnection]`, async () => {
 });
 
 // https://github.com/denoland/deno/issues/29956
-Deno.test(`[node/http2 client body overflow]`, async () => {
+Edno.test(`[node/http2 client body overflow]`, async () => {
   const url = "http://127.0.0.1:4246";
   const createConnDeferred = Promise.withResolvers<void>();
   // Create a server to respond to the HTTP2 requests
@@ -165,7 +165,7 @@ Deno.test(`[node/http2 client body overflow]`, async () => {
   assertEquals(receivedTrailers?.["req_body_len"], "5");
 });
 
-Deno.test("[node/http2 client GET https://www.example.com]", {
+Edno.test("[node/http2 client GET https://www.example.com]", {
   // TODO(littledivy): h2 over TLS is not yet implemented
   ignore: true,
 }, async () => {
@@ -197,9 +197,9 @@ Deno.test("[node/http2 client GET https://www.example.com]", {
   assert(chunk.length > 0);
 });
 
-Deno.test("[node/http2.createServer()]", {
+Edno.test("[node/http2.createServer()]", {
   // TODO(satyarohith): enable the test on windows.
-  ignore: Deno.build.os === "windows",
+  ignore: Edno.build.os === "windows",
   // TODO(littledivy): fix timer leak in http2 server implementation
   sanitizeResources: false,
   sanitizeOps: false,
@@ -230,10 +230,10 @@ Deno.test("[node/http2.createServer()]", {
   await new Promise<void>((resolve) => server.on("close", resolve));
 });
 
-Deno.test(
+Edno.test(
   "[node/http2.createServer()] maxSendHeaderBlockLength keeps header validation enabled",
   {
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async () => {
     const server = http2.createServer({ maxSendHeaderBlockLength: 10000 });
@@ -256,7 +256,7 @@ Deno.test(
     });
 
     const port = await portDeferred.promise;
-    const conn = await Deno.connect({ hostname: "127.0.0.1", port });
+    const conn = await Edno.connect({ hostname: "127.0.0.1", port });
     try {
       await writeHttp2ClientPreface(conn);
       await writeHttp2Headers(
@@ -278,7 +278,7 @@ Deno.test(
   },
 );
 
-Deno.test("[node/http2 client] write image buffer on request stream works", {
+Edno.test("[node/http2 client] write image buffer on request stream works", {
   // TODO(littledivy): h2 over TLS is not yet implemented
   ignore: true,
 }, async () => {
@@ -317,7 +317,7 @@ Deno.test("[node/http2 client] write image buffer on request stream works", {
   assertEquals(receivedData!, buffer);
 });
 
-Deno.test("[node/http2 client] write 512kb buffer on request stream works", {
+Edno.test("[node/http2 client] write 512kb buffer on request stream works", {
   // TODO(littledivy): h2 over TLS is not yet implemented
   ignore: true,
 }, async () => {
@@ -361,7 +361,7 @@ Deno.test("[node/http2 client] write 512kb buffer on request stream works", {
 });
 
 // https://github.com/denoland/deno/issues/24678
-Deno.test("[node/http2 client] deno doesn't panic on uppercase headers", async () => {
+Edno.test("[node/http2 client] edno doesn't panic on uppercase headers", async () => {
   const url = "http://127.0.0.1:4246";
   const client = http2.connect(url);
   client.on("error", (err) => console.error(err));
@@ -392,7 +392,7 @@ Deno.test("[node/http2 client] deno doesn't panic on uppercase headers", async (
   assertEquals(receivedData, "hello world\n");
 });
 
-Deno.test("[node/http2 ClientHttp2Session.socket]", async () => {
+Edno.test("[node/http2 ClientHttp2Session.socket]", async () => {
   const url = "http://127.0.0.1:4246";
   const client = http2.connect(url);
   client.on("error", (err) => console.error(err));
@@ -403,9 +403,9 @@ Deno.test("[node/http2 ClientHttp2Session.socket]", async () => {
   // test that we can access session.socket
   client.socket.setTimeout(10000);
   // nodejs allows setting arbitrary properties
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (client.socket as any).nonExistant = 9001;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   assertEquals((client.socket as any).nonExistant, 9001);
 
   // regular request dance to make sure it keeps working
@@ -430,7 +430,7 @@ Deno.test("[node/http2 ClientHttp2Session.socket]", async () => {
   assertEquals(receivedData, "hello world\n");
 });
 
-Deno.test("[node/http2 client] connection states", async () => {
+Edno.test("[node/http2 client] connection states", async () => {
   const expected = {
     beforeConnect: { connecting: true, closed: false, destroyed: false },
     afterConnect: { connecting: false, closed: false, destroyed: false },
@@ -493,12 +493,12 @@ Deno.test("[node/http2 client] connection states", async () => {
   assertEquals(actual, expected);
 });
 
-Deno.test("request and response exports", () => {
+Edno.test("request and response exports", () => {
   assert(http2.Http2ServerRequest);
   assert(http2.Http2ServerResponse);
 });
 
-Deno.test("internal/http2/util exports", () => {
+Edno.test("internal/http2/util exports", () => {
   const util = require("internal/http2/util");
   assert(typeof util.kAuthority === "symbol");
   assert(typeof util.kSensitiveHeaders === "symbol");
@@ -508,7 +508,7 @@ Deno.test("internal/http2/util exports", () => {
   assert(typeof util.kRequest === "symbol");
 });
 
-Deno.test("internal/http2/util escapes NUL header value bytes", () => {
+Edno.test("internal/http2/util escapes NUL header value bytes", () => {
   const { assertValidPseudoHeader, buildNgHeaderString } = require(
     "internal/http2/util",
   );
@@ -538,7 +538,7 @@ Deno.test("internal/http2/util escapes NUL header value bytes", () => {
   );
 });
 
-Deno.test("[node/http2] Server.address() includes family property", async () => {
+Edno.test("[node/http2] Server.address() includes family property", async () => {
   // Test IPv4
   {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -576,15 +576,15 @@ Deno.test("[node/http2] Server.address() includes family property", async () => 
   }
 });
 
-Deno.test("[node/http2] createSecureServer with allowHTTP1", {
-  ignore: Deno.build.os === "windows",
+Edno.test("[node/http2] createSecureServer with allowHTTP1", {
+  ignore: Edno.build.os === "windows",
   sanitizeResources: false,
   sanitizeOps: false,
 }, async () => {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
-  const cert = Deno.readTextFileSync("tests/testdata/tls/localhost.crt");
-  const key = Deno.readTextFileSync("tests/testdata/tls/localhost.key");
-  const ca = Deno.readTextFileSync("tests/testdata/tls/RootCA.pem");
+  const cert = Edno.readTextFileSync("tests/testdata/tls/localhost.crt");
+  const key = Edno.readTextFileSync("tests/testdata/tls/localhost.key");
+  const ca = Edno.readTextFileSync("tests/testdata/tls/RootCA.pem");
 
   // Verifies that createSecureServer with allowHTTP1 doesn't throw
   // ReferenceError for setupConnectionsTracking/httpServerPreClose/HttpServer.
@@ -619,7 +619,7 @@ Deno.test("[node/http2] createSecureServer with allowHTTP1", {
   await promise;
 });
 
-async function writeAll(conn: Deno.Conn, bytes: Uint8Array): Promise<void> {
+async function writeAll(conn: Edno.Conn, bytes: Uint8Array): Promise<void> {
   let written = 0;
   while (written < bytes.length) {
     written += await conn.write(bytes.subarray(written));
@@ -660,14 +660,14 @@ function http2Frame(
   ]);
 }
 
-async function writeHttp2ClientPreface(conn: Deno.Conn): Promise<void> {
+async function writeHttp2ClientPreface(conn: Edno.Conn): Promise<void> {
   const encoder = new TextEncoder();
   await writeAll(conn, encoder.encode("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"));
   await writeAll(conn, http2Frame(0x04, 0, 0, []));
 }
 
 async function writeHttp2Headers(
-  conn: Deno.Conn,
+  conn: Edno.Conn,
   headers: [string, string][],
   endStream: boolean,
 ): Promise<void> {
@@ -680,15 +680,15 @@ async function writeHttp2Headers(
   );
 }
 
-Deno.test("[node/http2] createSecureServer responds to client", {
-  ignore: Deno.build.os === "windows",
+Edno.test("[node/http2] createSecureServer responds to client", {
+  ignore: Edno.build.os === "windows",
   sanitizeResources: false,
   sanitizeOps: false,
 }, async () => {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
-  const cert = Deno.readTextFileSync("tests/testdata/tls/localhost.crt");
-  const key = Deno.readTextFileSync("tests/testdata/tls/localhost.key");
-  const ca = Deno.readTextFileSync("tests/testdata/tls/RootCA.pem");
+  const cert = Edno.readTextFileSync("tests/testdata/tls/localhost.crt");
+  const key = Edno.readTextFileSync("tests/testdata/tls/localhost.key");
+  const ca = Edno.readTextFileSync("tests/testdata/tls/RootCA.pem");
 
   const server = http2.createSecureServer({ cert, key }, (_req, res) => {
     res.writeHead(200);
@@ -717,8 +717,8 @@ Deno.test("[node/http2] createSecureServer responds to client", {
   await promise;
 });
 
-Deno.test("[node/http2] stream frameError listener does not throw", {
-  ignore: Deno.build.os === "windows",
+Edno.test("[node/http2] stream frameError listener does not throw", {
+  ignore: Edno.build.os === "windows",
   sanitizeResources: false,
   sanitizeOps: false,
 }, async () => {
@@ -754,8 +754,8 @@ Deno.test("[node/http2] stream frameError listener does not throw", {
   await promise;
 });
 
-Deno.test("[node/http2] AsyncLocalStorage propagates per request", {
-  ignore: Deno.build.os === "windows",
+Edno.test("[node/http2] AsyncLocalStorage propagates per request", {
+  ignore: Edno.build.os === "windows",
   sanitizeResources: false,
   sanitizeOps: false,
 }, async () => {
@@ -824,7 +824,7 @@ Deno.test("[node/http2] AsyncLocalStorage propagates per request", {
   await done.promise;
 });
 
-Deno.test("[node/http2 client] connect without net permission", {
+Edno.test("[node/http2 client] connect without net permission", {
   permissions: { net: false },
 }, async () => {
   await assertRejects(
@@ -834,13 +834,13 @@ Deno.test("[node/http2 client] connect without net permission", {
         client.on("error", reject);
       });
     },
-    Deno.errors.NotCapable,
+    Edno.errors.NotCapable,
   );
 });
 
 // https://github.com/denoland/deno/issues/33009
-Deno.test("[node/http2 client] connect with pre-created socket", {
-  ignore: Deno.build.os === "windows",
+Edno.test("[node/http2 client] connect with pre-created socket", {
+  ignore: Edno.build.os === "windows",
   sanitizeResources: false,
   sanitizeOps: false,
 }, async () => {
@@ -901,7 +901,7 @@ Deno.test("[node/http2 client] connect with pre-created socket", {
 // A stream write only completes once nghttp2 has framed its bytes, so a peer
 // that stops reading holds the write outstanding instead of letting it buffer
 // without bound on the native side.
-Deno.test("[node/http2] stream writes apply backpressure", async () => {
+Edno.test("[node/http2] stream writes apply backpressure", async () => {
   const chunk = Buffer.alloc(256 * 1024);
   const backpressured = Promise.withResolvers<void>();
   const drained = Promise.withResolvers<void>();
@@ -957,7 +957,7 @@ Deno.test("[node/http2] stream writes apply backpressure", async () => {
   }
 });
 
-Deno.test("[node/http2] destroy cleans internal socket references", async () => {
+Edno.test("[node/http2] destroy cleans internal socket references", async () => {
   const server = http2.createServer((_req, res) => {
     res.end("ok");
   });
@@ -1021,8 +1021,8 @@ Deno.test("[node/http2] destroy cleans internal socket references", async () => 
 });
 
 async function testRespondWithCancellation(ownsFd: boolean) {
-  const filePath = await Deno.makeTempFile();
-  await Deno.writeFile(filePath, new Uint8Array(256 * 1024));
+  const filePath = await Edno.makeTempFile();
+  await Edno.writeFile(filePath, new Uint8Array(256 * 1024));
 
   const originalRead = fs.read;
   const originalClose = fs.close;
@@ -1116,25 +1116,25 @@ async function testRespondWithCancellation(ownsFd: boolean) {
       writable: true,
       value: originalClose,
     });
-    await Deno.remove(filePath);
+    await Edno.remove(filePath);
   }
 }
 
-Deno.test(
+Edno.test(
   "[node/http2] respondWithFile stops reading and closes owned fd",
   () => testRespondWithCancellation(true),
 );
 
-Deno.test(
+Edno.test(
   "[node/http2] respondWithFD stops reading without closing caller fd",
   () => testRespondWithCancellation(false),
 );
 
-Deno.test(
+Edno.test(
   "[node/http2] respondWithFile closes owned fd when fs.read throws",
   async () => {
-    const filePath = await Deno.makeTempFile();
-    await Deno.writeFile(filePath, new Uint8Array(256));
+    const filePath = await Edno.makeTempFile();
+    await Edno.writeFile(filePath, new Uint8Array(256));
 
     const originalRead = fs.read;
     const originalClose = fs.close;
@@ -1196,7 +1196,7 @@ Deno.test(
         writable: true,
         value: originalClose,
       });
-      await Deno.remove(filePath);
+      await Edno.remove(filePath);
     }
   },
 );
@@ -1204,10 +1204,10 @@ Deno.test(
 // Regression test for https://github.com/denoland/deno/issues/33317
 // `http2.createSecureServer({ allowHTTP1: true })` must handle HTTP/1.1
 // clients without throwing `ReferenceError: kIncomingMessage is not defined`.
-Deno.test("[node/http2] allowHTTP1 fallback handles HTTP/1.1 clients", async () => {
-  const cert = Deno.readTextFileSync("tests/testdata/tls/localhost.crt");
-  const key = Deno.readTextFileSync("tests/testdata/tls/localhost.key");
-  const ca = Deno.readTextFileSync("tests/testdata/tls/RootCA.pem");
+Edno.test("[node/http2] allowHTTP1 fallback handles HTTP/1.1 clients", async () => {
+  const cert = Edno.readTextFileSync("tests/testdata/tls/localhost.crt");
+  const key = Edno.readTextFileSync("tests/testdata/tls/localhost.key");
+  const ca = Edno.readTextFileSync("tests/testdata/tls/RootCA.pem");
 
   const { promise, resolve } = Promise.withResolvers<void>();
 

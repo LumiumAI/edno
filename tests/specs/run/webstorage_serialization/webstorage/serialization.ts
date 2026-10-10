@@ -1,4 +1,4 @@
-globalThis.sessionStorage.setItem("hello", "deno");
+globalThis.sessionStorage.setItem("hello", "edno");
 
 console.log(globalThis.localStorage);
 console.log(globalThis.sessionStorage);

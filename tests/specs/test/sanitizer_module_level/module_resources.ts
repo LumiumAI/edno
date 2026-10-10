@@ -1,5 +1,5 @@
-Deno.test.sanitizer({ resources: true });
+Edno.test.sanitizer({ resources: true });
 
-Deno.test("resource leak caught by module sanitizer", () => {
-  Deno.openSync("module_resources.ts");
+Edno.test("resource leak caught by module sanitizer", () => {
+  Edno.openSync("module_resources.ts");
 });

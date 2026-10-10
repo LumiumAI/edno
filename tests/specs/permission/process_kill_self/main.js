@@ -4,5 +4,5 @@ import process from "node:process";
 // deliver a signal. Sending it to ourselves should not require
 // --allow-run.
 process.kill(process.pid, 0);
-Deno.kill(Deno.pid, 0);
+Edno.kill(Edno.pid, 0);
 console.log("ok");

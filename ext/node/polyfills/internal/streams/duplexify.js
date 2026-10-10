@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 import process from "node:process";
 import { core, primordials } from "ext:core/mod.js";
@@ -13,21 +13,21 @@ const {
   isWritable,
   isWritableNodeStream,
   isWritableStream,
-} = core.loadExtScript("ext:deno_node/internal/streams/utils.js");
+} = core.loadExtScript("ext:edno_node/internal/streams/utils.js");
 
 const eos =
-  core.loadExtScript("ext:deno_node/internal/streams/end-of-stream.js").default;
-const imported1 = core.loadExtScript("ext:deno_node/internal/errors.ts");
+  core.loadExtScript("ext:edno_node/internal/streams/end-of-stream.js").default;
+const imported1 = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { destroyer } = core.loadExtScript(
-  "ext:deno_node/internal/streams/destroy.js",
+  "ext:edno_node/internal/streams/destroy.js",
 );
 import Duplex from "node:_stream_duplex";
 import Readable from "node:_stream_readable";
 import Writable from "node:_stream_writable";
-import from from "ext:deno_node/internal/streams/from.js";
-const { isBlob } = core.loadExtScript("ext:deno_web/09_file.js");
+import from from "ext:edno_node/internal/streams/from.js";
+const { isBlob } = core.loadExtScript("ext:edno_web/09_file.js");
 const { AbortController } = core.loadExtScript(
-  "ext:deno_web/03_abort_signal.js",
+  "ext:edno_web/03_abort_signal.js",
 );
 
 const {

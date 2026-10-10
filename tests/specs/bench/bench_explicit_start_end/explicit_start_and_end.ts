@@ -1,50 +1,50 @@
-Deno.bench("start and end", (t) => {
+Edno.bench("start and end", (t) => {
   const id = setInterval(() => {}, 1000);
   t.start();
-  Deno.inspect(id);
+  Edno.inspect(id);
   t.end();
   clearInterval(id);
 });
 
-Deno.bench("start only", (t) => {
+Edno.bench("start only", (t) => {
   const id = setInterval(() => {}, 1000);
   t.start();
-  Deno.inspect(id);
+  Edno.inspect(id);
   clearInterval(id);
 });
 
-Deno.bench("end only", (t) => {
+Edno.bench("end only", (t) => {
   const id = setInterval(() => {}, 1000);
-  Deno.inspect(id);
+  Edno.inspect(id);
   t.end();
   clearInterval(id);
 });
 
-Deno.bench("double start", (t) => {
+Edno.bench("double start", (t) => {
   const id = setInterval(() => {}, 1000);
   t.start();
   t.start();
-  Deno.inspect(id);
+  Edno.inspect(id);
   t.end();
   clearInterval(id);
 });
 
-let captured: Deno.BenchContext;
+let captured: Edno.BenchContext;
 
-Deno.bench("double end", (t) => {
+Edno.bench("double end", (t) => {
   captured = t;
   const id = setInterval(() => {}, 1000);
   t.start();
-  Deno.inspect(id);
+  Edno.inspect(id);
   t.end();
   t.end();
   clearInterval(id);
 });
 
-Deno.bench("captured", () => {
+Edno.bench("captured", () => {
   const id = setInterval(() => {}, 1000);
   captured!.start();
-  Deno.inspect(id);
+  Edno.inspect(id);
   captured!.end();
   clearInterval(id);
 });

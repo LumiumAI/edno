@@ -1,5 +1,5 @@
 {
   "tempDir": true,
-  "args": "x -y npm:@denotest/bin/cli-esm dev --help",
+  "args": "x -y npm:@ednotest/bin/cli-esm dev --help",
   "output": "run.out"
 }

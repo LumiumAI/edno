@@ -1,2 +1,2 @@
-const value = require("@denotest/CAPITALS");
+const value = require("@ednotest/CAPITALS");
 module.exports = value;

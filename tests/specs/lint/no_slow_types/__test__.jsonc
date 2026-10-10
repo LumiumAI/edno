@@ -9,7 +9,7 @@
         "args": "lint --rules-exclude=no-slow-types",
         "output": "Checked 4 files\n"
       }, {
-        "args": "lint --config=deno.non-package.json",
+        "args": "lint --config=edno.non-package.json",
         "output": "Checked 4 files\n"
       }, {
         // non-entrypoint

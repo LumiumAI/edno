@@ -1,2 +1,2 @@
 console.error("yikes!");
-Deno.exit(1);
+Edno.exit(1);

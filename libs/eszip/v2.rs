@@ -21,10 +21,10 @@ use deno_graph::ModuleGraph;
 use deno_graph::ast::CapturingEsParser;
 use deno_graph::ast::EsParser;
 use deno_graph::ast::ParseOptions;
-use deno_npm::NpmPackageId;
-use deno_npm::resolution::SerializedNpmResolutionSnapshot;
-use deno_npm::resolution::SerializedNpmResolutionSnapshotPackage;
-use deno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
+use edno_npm::NpmPackageId;
+use edno_npm::resolution::SerializedNpmResolutionSnapshot;
+use edno_npm::resolution::SerializedNpmResolutionSnapshotPackage;
+use edno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
 use deno_semver::StackString;
 use deno_semver::npm::NpmPackageNvReference;
 use deno_semver::package::PackageNv;
@@ -357,7 +357,7 @@ pub struct FromGraphOptions<'a> {
 /// modules of all the packages in this struct are guaranteed to be included in the eszip.
 /// The npm modules that are imported from esm modules (using `npm:` specifiers) are included in
 /// the eszip following the graph order (BFS), for an optimal loading of these modules
-/// by Deno. The rest of the modules that might remain are appended at the end of the eszip.
+/// by Edno. The rest of the modules that might remain are appended at the end of the eszip.
 ///
 /// Npm Packages are formed by modules, and optionally "meta" files. The most basic "meta" file
 /// that any Npm package usually have is a package.json, but there can additionally be other
@@ -1570,7 +1570,7 @@ impl EszipV2 {
     let mut to_visit_npm_meta = VecDeque::new();
     let mut to_visit_npm = VecDeque::new();
     let mut to_visit_dynamic = VecDeque::new();
-    // deno_core's module loading traverses the dependencies breadth first. However, v8 evaluates
+    // edno_core's module loading traverses the dependencies breadth first. However, v8 evaluates
     // the source code depth-first. We prioritize module evaluation as it is performed sequentially,
     // thus modules are ordered depth-first within the eszip. Except:
     // - npm package's meta-modules are loaded sync during referrer loading, therefore they have
@@ -1674,7 +1674,7 @@ impl EszipV2 {
     let import_map = self.lookup(specifier)?;
 
     // Import map must be either JSON or JSONC (but JSONC is a special case;
-    // it's allowed when embedded in a Deno's config file)
+    // it's allowed when embedded in a Edno's config file)
     if !matches!(
       import_map.kind,
       ModuleKind::Json | ModuleKind::Jsonc | ModuleKind::OpaqueData
@@ -1998,9 +1998,9 @@ mod tests {
   use deno_graph::source::MemoryLoader;
   use deno_graph::source::ResolveError;
   use deno_graph::source::Source;
-  use deno_npm::NpmPackageId;
-  use deno_npm::resolution::SerializedNpmResolutionSnapshot;
-  use deno_npm::resolution::SerializedNpmResolutionSnapshotPackage;
+  use edno_npm::NpmPackageId;
+  use edno_npm::resolution::SerializedNpmResolutionSnapshot;
+  use edno_npm::resolution::SerializedNpmResolutionSnapshotPackage;
   use deno_semver::npm::NpmPackageNvReference;
   use deno_semver::package::PackageNv;
   use deno_semver::package::PackageReq;
@@ -2778,7 +2778,7 @@ mod tests {
     assert_eq!(module.kind, ModuleKind::JavaScript);
   }
 
-  // https://github.com/denoland/eszip/issues/110
+  // https://github.com/ednoland/eszip/issues/110
   #[tokio::test]
   async fn import_map_imported_from_program() {
     let loader = FileLoader {
@@ -2853,13 +2853,13 @@ mod tests {
   }
 
   #[tokio::test]
-  async fn deno_jsonc_as_import_map() {
+  async fn edno_jsonc_as_import_map() {
     let loader = FileLoader {
-      base_dir: "./testdata/deno_jsonc_as_import_map".to_string(),
+      base_dir: "./testdata/edno_jsonc_as_import_map".to_string(),
     };
     let resp = deno_graph::source::Loader::load(
       &loader,
-      &Url::parse("file:///deno.jsonc").unwrap(),
+      &Url::parse("file:///edno.jsonc").unwrap(),
       LoadOptions {
         in_dynamic_branch: false,
         was_dynamic_root: false,
@@ -2917,32 +2917,32 @@ mod tests {
     assert_eq!(
       eszip.specifiers(),
       vec![
-        "file:///deno.jsonc".to_string(),
+        "file:///edno.jsonc".to_string(),
         "file:///main.ts".to_string(),
         "file:///a.ts".to_string(),
       ],
     );
 
     // JSONC can be obtained by calling `get_import_map`
-    let deno_jsonc = eszip.get_import_map("file:///deno.jsonc").unwrap();
-    let source = deno_jsonc.source().await.unwrap();
+    let edno_jsonc = eszip.get_import_map("file:///edno.jsonc").unwrap();
+    let source = edno_jsonc.source().await.unwrap();
     assert_matches_file!(
       source,
-      "./testdata/deno_jsonc_as_import_map/deno.jsonc"
+      "./testdata/edno_jsonc_as_import_map/edno.jsonc"
     );
 
     // JSONC can NOT be obtained as a module
-    assert!(eszip.get_module("file:///deno.jsonc").is_none());
+    assert!(eszip.get_module("file:///edno.jsonc").is_none());
   }
 
   #[tokio::test]
   async fn eszipv2_iterator_yields_all_modules() {
     let loader = FileLoader {
-      base_dir: "./testdata/deno_jsonc_as_import_map".to_string(),
+      base_dir: "./testdata/edno_jsonc_as_import_map".to_string(),
     };
     let resp = deno_graph::source::Loader::load(
       &loader,
-      &Url::parse("file:///deno.jsonc").unwrap(),
+      &Url::parse("file:///edno.jsonc").unwrap(),
       LoadOptions {
         in_dynamic_branch: false,
         was_dynamic_root: false,
@@ -3005,18 +3005,18 @@ mod tests {
 
     let expected = vec![
       Expected {
-        specifier: "file:///deno.jsonc".to_string(),
-        source: include_str!("testdata/deno_jsonc_as_import_map/deno.jsonc"),
+        specifier: "file:///edno.jsonc".to_string(),
+        source: include_str!("testdata/edno_jsonc_as_import_map/edno.jsonc"),
         kind: ModuleKind::Jsonc,
       },
       Expected {
         specifier: "file:///main.ts".to_string(),
-        source: include_str!("testdata/deno_jsonc_as_import_map/main.ts"),
+        source: include_str!("testdata/edno_jsonc_as_import_map/main.ts"),
         kind: ModuleKind::JavaScript,
       },
       Expected {
         specifier: "file:///a.ts".to_string(),
-        source: include_str!("testdata/deno_jsonc_as_import_map/a.ts"),
+        source: include_str!("testdata/edno_jsonc_as_import_map/a.ts"),
         kind: ModuleKind::JavaScript,
       },
     ];

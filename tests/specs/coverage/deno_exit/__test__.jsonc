@@ -1,11 +1,11 @@
 {
   "tempDir": true,
   "tests": {
-    "deno_exit": {
+    "edno_exit": {
       "steps": [
         {
           "args": "run --coverage=cov_out main.js",
-          "output": "calling Deno.exit()\n"
+          "output": "calling Edno.exit()\n"
         },
         {
           "args": "coverage cov_out",

@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "tests": {
     // Regression test for denoland/deno#35348: `--lockfile-only` must bump the
@@ -28,14 +28,14 @@
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./deno.lock').trim());"
+            "console.log(Edno.readTextFileSync('./edno.lock').trim());"
           ],
-          "output": "deno.lock.out"
+          "output": "edno.lock.out"
         },
         {
           "args": [
             "eval",
-            "console.log(Deno.readTextFileSync('./package.json').trim());"
+            "console.log(Edno.readTextFileSync('./package.json').trim());"
           ],
           "output": "package.json.out"
         }

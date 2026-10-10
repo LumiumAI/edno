@@ -21,11 +21,11 @@ const {
   SymbolFor,
 } = primordials;
 
-const console = core.loadExtScript("ext:deno_web/01_console.js");
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const console = core.loadExtScript("ext:edno_web/01_console.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 
 /**
- * Maps Deno's `core.build.os` value to the OS name reported by
+ * Maps Edno's `core.build.os` value to the OS name reported by
  * `navigator.userAgentData.platform`, mirroring the values browsers return.
  * @param {string} os
  * @returns {string}
@@ -57,7 +57,7 @@ function getPlatform(os) {
 }
 
 /**
- * Maps Deno's `core.build.arch` value to the architecture reported by the
+ * Maps Edno's `core.build.arch` value to the architecture reported by the
  * `architecture` high-entropy hint, mirroring the values browsers return.
  * @param {string} arch
  * @returns {string}
@@ -73,14 +73,14 @@ function getArchitecture(arch) {
   }
 }
 
-// `op_bootstrap_user_agent()` returns a string of the form `Deno/<version>`.
+// `op_bootstrap_user_agent()` returns a string of the form `Edno/<version>`.
 // Derive the version once, lazily.
 let fullVersion_ = null;
 function fullVersion() {
   if (fullVersion_ === null) {
     const ua = op_bootstrap_user_agent();
-    fullVersion_ = StringPrototypeStartsWith(ua, "Deno/")
-      ? StringPrototypeSlice(ua, "Deno/".length)
+    fullVersion_ = StringPrototypeStartsWith(ua, "Edno/")
+      ? StringPrototypeSlice(ua, "Edno/".length)
       : ua;
   }
   return fullVersion_;
@@ -94,11 +94,11 @@ function majorVersion() {
 }
 
 function lowEntropyBrands() {
-  return [{ brand: "Deno", version: majorVersion() }];
+  return [{ brand: "Edno", version: majorVersion() }];
 }
 
 function fullVersionList() {
-  return [{ brand: "Deno", version: fullVersion() }];
+  return [{ brand: "Edno", version: fullVersion() }];
 }
 
 const highEntropyValues = {
@@ -183,7 +183,7 @@ class NavigatorUAData {
     };
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       console.createFilteredInspectProxy({
         object: this,

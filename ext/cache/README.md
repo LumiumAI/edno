@@ -1,6 +1,6 @@
-# deno_cache
+# edno_cache
 
-This crate implements the Cache API for Deno.
+This crate implements the Cache API for Edno.
 
 The following APIs are implemented:
 

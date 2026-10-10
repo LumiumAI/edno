@@ -3,8 +3,8 @@
 // the request exactly once - a failure on a freshly established connection
 // is not safe to retry, since the server may have already processed it.
 
-const listener = Deno.listen({ hostname: "127.0.0.1", port: 0 });
-const port = (listener.addr as Deno.NetAddr).port;
+const listener = Edno.listen({ hostname: "127.0.0.1", port: 0 });
+const port = (listener.addr as Edno.NetAddr).port;
 
 let received = 0;
 const server = (async () => {

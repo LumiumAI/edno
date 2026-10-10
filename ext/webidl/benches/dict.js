@@ -1,11 +1,11 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 import {
   converters,
   createDictionaryConverter,
-} from "ext:deno_webidl/00_webidl.js";
+} from "ext:edno_webidl/00_webidl.js";
 
 const TextDecodeOptions = createDictionaryConverter(
   "TextDecodeOptions",

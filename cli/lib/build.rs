@@ -1,14 +1,14 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 fn main() {
-  // todo(dsherret): remove this after Deno 242.0 is published and then
-  // align the version of this crate with Deno then. We need to wait because
-  // there was previously a deno_lib 2.4.0 published (https://crates.io/crates/deno_lib/versions)
+  // todo(dsherret): remove this after Edno 242.0 is published and then
+  // align the version of this crate with Edno then. We need to wait because
+  // there was previously a edno_lib 2.4.0 published (https://crates.io/crates/edno_lib/versions)
   let version_path = std::path::Path::new(".").join("version.txt");
   println!("cargo:rerun-if-changed={}", version_path.display());
   #[allow(clippy::disallowed_methods, reason = "build code")]
   let text = std::fs::read_to_string(version_path).unwrap();
-  println!("cargo:rustc-env=DENO_VERSION={}", text);
+  println!("cargo:rustc-env=EDNO_VERSION={}", text);
 
   let commit_hash = git_commit_hash();
   println!("cargo:rustc-env=GIT_COMMIT_HASH={}", commit_hash);
@@ -32,7 +32,7 @@ fn git_commit_hash() -> String {
         .to_string()
     } else {
       // When not in git repository
-      // (e.g. when the user install by `cargo install deno`)
+      // (e.g. when the user install by `cargo install edno`)
       "UNKNOWN".to_string()
     }
   } else {

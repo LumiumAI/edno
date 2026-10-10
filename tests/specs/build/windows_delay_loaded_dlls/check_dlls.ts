@@ -1,4 +1,4 @@
-// reads the deno binary's PE headers and outputs all DLLs
+// reads the edno binary's PE headers and outputs all DLLs
 // along with whether they are eagerly or delay-loaded.
 
 function readU16(buf: Uint8Array, offset: number): number {
@@ -63,8 +63,8 @@ function parseDllNames(
   return names;
 }
 
-const exePath = Deno.execPath();
-const buf = Deno.readFileSync(exePath);
+const exePath = Edno.execPath();
+const buf = Edno.readFileSync(exePath);
 
 // parse PE
 const peOffset = readU32(buf, 0x3c);
@@ -75,7 +75,7 @@ const magic = readU16(buf, optStart);
 
 if (magic !== 0x20b) {
   console.error("not a PE32+ binary");
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 // data directories start at optStart + 112, preceded by count at +108

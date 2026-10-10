@@ -1,14 +1,14 @@
 # Copyright 2018-2026 the Deno authors. MIT license.
 
 [package]
-name = "deno_npm_cache"
+name = "edno_npm_cache"
 version = "0.78.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
 readme = "README.md"
 repository.workspace = true
-description = "Helpers for downloading and caching npm dependencies for Deno"
+description = "Helpers for downloading and caching npm dependencies for Edno"
 
 [lib]
 path = "lib.rs"
@@ -17,10 +17,10 @@ path = "lib.rs"
 async-trait.workspace = true
 base64.workspace = true
 chrono = { workspace = true, default-features = false, features = ["serde"] }
-deno_cache_dir = { workspace = true, features = ["sync"] }
+edno_cache_dir = { workspace = true, features = ["sync"] }
 deno_error = { workspace = true, features = ["serde", "serde_json"] }
-deno_npm.workspace = true
-deno_npmrc.workspace = true
+edno_npm.workspace = true
+edno_npmrc.workspace = true
 deno_path_util.workspace = true
 deno_semver.workspace = true
 deno_unsync.workspace = true

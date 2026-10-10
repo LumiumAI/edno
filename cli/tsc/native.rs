@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// The native `deno check` path that consumes this module lands on top of this
+// The native `edno check` path that consumes this module lands on top of this
 // PR, so everything here is unused until then.
 #![allow(dead_code, reason = "Will be used in a follow up")]
 
@@ -11,18 +11,18 @@ use std::process::Stdio;
 use std::sync::Arc;
 use std::sync::LazyLock;
 
-use deno_core::anyhow;
-use deno_core::anyhow::Context;
-use deno_core::error::AnyError;
-use deno_core::serde_json::Value;
-use deno_npm::registry::NpmRegistryApi;
-use deno_npm_cache::TarballCache;
-use deno_npmrc::ResolvedNpmRc;
-use deno_resolver::workspace::WorkspaceNpmLinkPackagesRc;
+use edno_core::anyhow;
+use edno_core::anyhow::Context;
+use edno_core::error::AnyError;
+use edno_core::serde_json::Value;
+use edno_npm::registry::NpmRegistryApi;
+use edno_npm_cache::TarballCache;
+use edno_npmrc::ResolvedNpmRc;
+use edno_resolver::workspace::WorkspaceNpmLinkPackagesRc;
 use deno_semver::package::PackageNv;
 use regex::Regex;
 
-use crate::cache::DenoDir;
+use crate::cache::EdnoDir;
 use crate::npm::CliNpmCache;
 use crate::npm::CliNpmCacheHttpClient;
 use crate::npm::CliNpmRegistryInfoProvider;
@@ -32,9 +32,9 @@ use crate::tsc::DiagnosticCategory;
 use crate::tsc::Position;
 
 /// Pinned version of the native TypeScript compiler (`typescript@N`, the
-/// Go/`tsgo` line) that `deno check` runs. Bumping this constant is the only
-/// supported way to change the compiler; `deno check` never floats to the
-/// latest published version so that a given Deno release always type-checks
+/// Go/`tsgo` line) that `edno check` runs. Bumping this constant is the only
+/// supported way to change the compiler; `edno check` never floats to the
+/// latest published version so that a given Edno release always type-checks
 /// with a known compiler.
 pub const TYPESCRIPT_VERSION: &str = "7.0.2";
 
@@ -76,7 +76,7 @@ fn typescript_platform_for(
 /// in a `lib/` directory next to the default `lib.*.d.ts` files it loads at
 /// runtime, so the whole `lib/` tree is materialized alongside it.
 pub async fn ensure_native_tsc(
-  deno_dir: &DenoDir,
+  edno_dir: &EdnoDir,
   npmrc: &ResolvedNpmRc,
   api: &Arc<CliNpmRegistryInfoProvider>,
   workspace_link_packages: &WorkspaceNpmLinkPackagesRc,
@@ -87,21 +87,21 @@ pub async fn ensure_native_tsc(
   // one, mirroring `DENORT_BIN`. Used by the test harness and CI to avoid
   // re-downloading the compiler for every run, and lets a user supply their
   // own build.
-  if let Some(path) = std::env::var_os("DENO_TSC_BIN") {
+  if let Some(path) = std::env::var_os("EDNO_TSC_BIN") {
     let path = PathBuf::from(path);
     if path.exists() {
       return Ok(path);
     }
     log::warn!(
-      "DENO_TSC_BIN is set to {} but it does not exist; downloading the pinned compiler instead",
+      "EDNO_TSC_BIN is set to {} but it does not exist; downloading the pinned compiler instead",
       path.display()
     );
   }
 
   let target = typescript_platform()?;
-  // Keep the compiler under `$DENO_DIR/tsc/<version>/<platform>` so all of a
+  // Keep the compiler under `$EDNO_DIR/tsc/<version>/<platform>` so all of a
   // given version's files live in one predictable, versioned directory.
-  let install_dir = deno_dir
+  let install_dir = edno_dir
     .root
     .join("tsc")
     .join(TYPESCRIPT_VERSION)
@@ -154,7 +154,7 @@ pub async fn ensure_native_tsc(
 
   // Materialize `lib/` (the native binary plus the default lib `.d.ts` files it
   // resolves relative to itself) atomically: copy into a sibling temp dir and
-  // rename it into place. The rename is atomic, so a concurrent `deno check`
+  // rename it into place. The rename is atomic, so a concurrent `edno check`
   // never observes a half-copied tree through the `exists()` check above.
   let version_dir = install_dir.parent().unwrap();
   std::fs::create_dir_all(version_dir).with_context(|| {
@@ -260,7 +260,7 @@ pub fn output_has_diagnostics(output: &str) -> bool {
     .any(|l| DIAGNOSTIC_RE.is_match(l) || DIAGNOSTIC_NO_POS_RE.is_match(l))
 }
 
-/// Parse `tsc --pretty false` output into Deno diagnostics, remapping the
+/// Parse `tsc --pretty false` output into Edno diagnostics, remapping the
 /// compiler's mirror paths back onto the specifiers the user wrote.
 pub fn parse_tsc_diagnostics(
   output: &str,
@@ -280,7 +280,7 @@ pub fn parse_tsc_diagnostics(
     if let Some(caps) = DIAGNOSTIC_RE.captures(line) {
       let line_no: u64 = caps["line"].parse().unwrap_or(1);
       let col_no: u64 = caps["col"].parse().unwrap_or(1);
-      // tsc positions are 1-based; Deno's `Position` is 0-based and adds one
+      // tsc positions are 1-based; Edno's `Position` is 0-based and adds one
       // back when rendering.
       let start = Position {
         line: line_no.saturating_sub(1),
@@ -330,12 +330,12 @@ pub fn parse_tsc_diagnostics(
     // ignored.
   }
 
-  // `--all` type-checks remote modules for genuine type errors, but Deno doesn't
+  // `--all` type-checks remote modules for genuine type errors, but Edno doesn't
   // apply the `noImplicitOverride` style rule to code that isn't the user's, so
   // drop override-modifier diagnostics (the TS411x family) reported in a
   // non-local (remote/jsr/npm) module. Local `file://` modules keep them.
   diagnostics.retain(|d| {
-    // TS4114..=4116 are the `noImplicitOverride` family (a Deno default we don't
+    // TS4114..=4116 are the `noImplicitOverride` family (a Edno default we don't
     // apply to code that isn't the user's). TS4113 ("member cannot have an
     // 'override' modifier because it is not declared in the base class") is an
     // unconditional error and must never be dropped.
@@ -470,16 +470,16 @@ fn make_diagnostic(
 }
 
 /// Build a reverse map from a mirror-relative path (the part after
-/// `.deno/remote/`, i.e. `<host>__<port>/<path>`) to the original `http(s):`
+/// `.edno/remote/`, i.e. `<host>__<port>/<path>`) to the original `http(s):`
 /// URL, read from the generated tsconfig's `paths`. The mirror layout doesn't
 /// encode the URL scheme, so this recovers the exact specifier (scheme + port)
 /// for diagnostic display. Returns an empty map if the config can't be read.
 fn build_remote_url_map(project_root: &Path) -> HashMap<String, String> {
-  let config = project_root.join(".deno").join("tsconfig.json");
+  let config = project_root.join(".edno").join("tsconfig.json");
   let Ok(text) = std::fs::read_to_string(&config) else {
     return HashMap::new();
   };
-  let Ok(value) = deno_core::serde_json::from_str::<Value>(&text) else {
+  let Ok(value) = edno_core::serde_json::from_str::<Value>(&text) else {
     return HashMap::new();
   };
   build_remote_url_map_from_config(&value)
@@ -514,7 +514,7 @@ fn build_remote_url_map_from_config(config: &Value) -> HashMap<String, String> {
 }
 
 /// Best-effort remap of a path reported by the native compiler back onto the
-/// original module specifier. `deno check` runs tsc against a generated
+/// original module specifier. `edno check` runs tsc against a generated
 /// tsconfig whose `paths` point jsr:/http(s): dependencies into mirror
 /// directories, so the compiler reports those mirror paths rather than the
 /// specifiers the user wrote.
@@ -525,11 +525,11 @@ fn remap_path(
 ) -> String {
   let normalized = raw.replace('\\', "/");
 
-  // http(s): dependencies mirrored under `.deno/remote/<host>/<path>`. The
+  // http(s): dependencies mirrored under `.edno/remote/<host>/<path>`. The
   // mirror layout drops the URL scheme (and encodes `:port` as `__port`), so
   // recover the exact original URL from the generated tsconfig's `paths`; fall
   // back to a best-effort `https://` reconstruction when it isn't found.
-  if let Some(rest) = normalized.split(".deno/remote/").nth(1) {
+  if let Some(rest) = normalized.split(".edno/remote/").nth(1) {
     if let Some(url) = remote_map.get(rest) {
       return url.clone();
     }
@@ -551,7 +551,7 @@ fn remap_path(
 
   // A file in the project itself. tsc reports it relative to the project root
   // (the process cwd); render it as an absolute `file://` URL like the rest of
-  // Deno's diagnostics.
+  // Edno's diagnostics.
   let path = Path::new(raw);
   let absolute = if path.is_absolute() {
     path.to_path_buf()
@@ -675,7 +675,7 @@ mod tests {
     let empty = HashMap::new();
     assert_eq!(
       remap_path(
-        ".deno/remote/html.spec.whatwg.org/entities.json",
+        ".edno/remote/html.spec.whatwg.org/entities.json",
         root,
         &empty
       ),
@@ -689,7 +689,7 @@ mod tests {
     );
     assert_eq!(
       remap_path(
-        ".deno/remote/localhost__4545/subdir/type_error.ts",
+        ".edno/remote/localhost__4545/subdir/type_error.ts",
         root,
         &remote_map
       ),
@@ -718,7 +718,7 @@ mod tests {
   fn build_remote_url_map_reads_http_paths() {
     // Only `http(s):` keys whose target lives under `./remote/` are extracted,
     // keyed by the mirror-relative path; other `paths` entries are ignored.
-    let config = deno_core::serde_json::json!({
+    let config = edno_core::serde_json::json!({
       "compilerOptions": {
         "paths": {
           "https://deno.land/std/fmt/colors.ts": [
@@ -743,7 +743,7 @@ mod tests {
 
   #[test]
   fn build_remote_url_map_no_paths() {
-    let config = deno_core::serde_json::json!({ "compilerOptions": {} });
+    let config = edno_core::serde_json::json!({ "compilerOptions": {} });
     assert!(build_remote_url_map_from_config(&config).is_empty());
   }
 

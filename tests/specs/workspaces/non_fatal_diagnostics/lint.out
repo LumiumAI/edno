@@ -1,5 +1,5 @@
-Warning "lock" field can only be specified in the workspace root deno.json file.
-    at file:///[WILDLINE]/sub/deno.json
-Warning "lint.report" field can only be specified in the workspace root deno.json file.
-    at file:///[WILDLINE]/sub/deno.json
+Warning "lock" field can only be specified in the workspace root edno.json file.
+    at file:///[WILDLINE]/sub/edno.json
+Warning "lint.report" field can only be specified in the workspace root edno.json file.
+    at file:///[WILDLINE]/sub/edno.json
 Checked 1 file

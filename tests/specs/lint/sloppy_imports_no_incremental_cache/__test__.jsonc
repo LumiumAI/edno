@@ -9,7 +9,7 @@
   }, {
     "args": [
       "eval",
-      "Deno.renameSync('file.js', 'file.ts')"
+      "Edno.renameSync('file.js', 'file.ts')"
     ],
     "output": ""
   }, {

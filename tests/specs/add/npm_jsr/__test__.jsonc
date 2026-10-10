@@ -2,26 +2,26 @@
   "tempDir": true,
   "tests": {
     "npm": {
-      "args": "add --npm @denotest/esm-basic jsr:@denotest/add npm:chalk",
+      "args": "add --npm @ednotest/esm-basic jsr:@ednotest/add npm:chalk",
       "output": "npm.out"
     },
     "jsr": {
-      "args": "add --jsr npm:@denotest/esm-basic @denotest/add npm:chalk",
+      "args": "add --jsr npm:@ednotest/esm-basic @ednotest/add npm:chalk",
       "output": "jsr.out"
     },
     "npm_install": {
-      "args": "install --npm @denotest/esm-basic jsr:@denotest/add npm:chalk",
+      "args": "install --npm @ednotest/esm-basic jsr:@ednotest/add npm:chalk",
       "output": "npm.out"
     },
     "jsr_install": {
-      "args": "install --jsr npm:@denotest/esm-basic @denotest/add npm:chalk",
+      "args": "install --jsr npm:@ednotest/esm-basic @ednotest/add npm:chalk",
       "output": "jsr.out"
     },
     "same_prefix": {
       "steps": [
         {
-          "args": "add --jsr jsr:@denotest/add",
-          "output": "Add jsr:@denotest/add@1.0.0\nDownload [WILDCARD]\n"
+          "args": "add --jsr jsr:@ednotest/add",
+          "output": "Add jsr:@ednotest/add@1.0.0\nDownload [WILDCARD]\n"
         },
         {
           "args": "add --npm npm:chalk",

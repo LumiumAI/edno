@@ -1,9 +1,9 @@
 {
   "tests": {
-    "deno_exit_propagates": {
+    "edno_exit_propagates": {
       "args": [
         "eval",
-        "console.log('before'); Deno.exit(42); console.log('after')"
+        "console.log('before'); Edno.exit(42); console.log('after')"
       ],
       "output": "exit42.out",
       "exitCode": 42

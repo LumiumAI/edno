@@ -1,1 +1,1 @@
-module.exports = require("@denotest/non-existent");
+module.exports = require("@ednotest/non-existent");

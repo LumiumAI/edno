@@ -28,7 +28,7 @@ const EMPTY_OPTIONS = ObjectFreeze(ObjectSetPrototypeOf({}, null));
 let _streamsImpl;
 function lazyStreams() {
   return _streamsImpl ??
-    (_streamsImpl = core.loadExtScript("ext:deno_web/06_streams.js"));
+    (_streamsImpl = core.loadExtScript("ext:edno_web/06_streams.js"));
 }
 
 // Seek whence values.

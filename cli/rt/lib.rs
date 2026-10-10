@@ -4,17 +4,17 @@ use std::borrow::Cow;
 use std::env;
 use std::sync::Arc;
 
-use deno_core::error::AnyError;
-use deno_lib::util::result::js_error_downcast_ref;
-use deno_lib::version::otel_runtime_config;
-use deno_runtime::deno_telemetry::OtelConfig;
-use deno_runtime::fmt_errors::format_js_error;
-use deno_runtime::tokio_util::create_and_run_current_thread_with_maybe_metrics;
+use edno_core::error::AnyError;
+use edno_lib::util::result::js_error_downcast_ref;
+use edno_lib::version::otel_runtime_config;
+use edno_runtime::edno_telemetry::OtelConfig;
+use edno_runtime::fmt_errors::format_js_error;
+use edno_runtime::tokio_util::create_and_run_current_thread_with_maybe_metrics;
 use deno_terminal::colors;
 use indexmap::IndexMap;
 
 use self::binary::extract_standalone;
-use self::file_system::DenoRtSys;
+use self::file_system::EdnoRtSys;
 
 pub mod binary;
 mod code_cache;
@@ -29,7 +29,7 @@ pub fn unstable_exit_cb(feature: &str, api_name: &str) {
     "Unstable API '{api_name}'. The `--unstable-{}` flag must be provided.",
     feature
   );
-  deno_runtime::exit(70);
+  edno_runtime::exit(70);
 }
 
 fn exit_with_message(message: &str, code: i32) -> ! {
@@ -38,7 +38,7 @@ fn exit_with_message(message: &str, code: i32) -> ! {
     colors::red_bold("error"),
     message.trim_start_matches("error: ")
   );
-  deno_runtime::exit(code);
+  edno_runtime::exit(code);
 }
 
 fn unwrap_or_exit<T>(result: Result<T, AnyError>) -> T {
@@ -71,11 +71,11 @@ pub fn main() {
   // Enable ANSI virtual terminal processing on Windows consoles that don't
   // do so by default (e.g. Windows Server / classic conhost), so that
   // compiled binaries render colored output instead of raw escape codes.
-  // This mirrors the setup done in the main `deno` binary entrypoint.
+  // This mirrors the setup done in the main `edno` binary entrypoint.
   #[cfg(windows)]
   colors::enable_ansi(); // For Windows 10
 
-  deno_runtime::deno_permissions::mark_standalone();
+  edno_runtime::edno_permissions::mark_standalone();
 
   rustls::crypto::aws_lc_rs::default_provider()
     .install_default()
@@ -88,11 +88,11 @@ pub fn main() {
       Ok(data) => {
         let sys = if data.metadata.self_extracting.is_some() {
           binary::extract_vfs_to_disk(&data.vfs, &data.root_path)?;
-          DenoRtSys::new_self_extracting(data.vfs.clone())
+          EdnoRtSys::new_self_extracting(data.vfs.clone())
         } else {
-          DenoRtSys::new(data.vfs.clone())
+          EdnoRtSys::new(data.vfs.clone())
         };
-        deno_runtime::deno_telemetry::init(
+        edno_runtime::edno_telemetry::init(
           &sys,
           otel_runtime_config(),
           data.metadata.otel_config.clone(),
@@ -103,7 +103,7 @@ pub fn main() {
         );
         load_env_vars(&data.metadata.env_vars_from_env_file);
         let exit_code = run::run(Arc::new(sys.clone()), sys, data).await?;
-        deno_runtime::exit(exit_code);
+        edno_runtime::exit(exit_code);
       }
       Err(err) => Err(err),
     }
@@ -118,7 +118,7 @@ pub fn init_logging(
   maybe_level: Option<log::Level>,
   otel_config: Option<OtelConfig>,
 ) {
-  deno_lib::util::logger::init(deno_lib::util::logger::InitLoggingOptions {
+  edno_lib::util::logger::init(edno_lib::util::logger::InitLoggingOptions {
     maybe_level,
     otel_config,
     on_log_start: || {},

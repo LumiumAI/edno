@@ -1,2 +1,2 @@
-console.log(`FOO=${Deno.env.get("FOO")}`);
-console.log(`BAR=${Deno.env.get("BAR")}`);
+console.log(`FOO=${Edno.env.get("FOO")}`);
+console.log(`BAR=${Edno.env.get("BAR")}`);

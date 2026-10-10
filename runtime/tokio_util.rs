@@ -2,7 +2,7 @@
 use std::fmt::Debug;
 use std::str::FromStr;
 
-use deno_core::unsync::MaskFutureAsSend;
+use edno_core::unsync::MaskFutureAsSend;
 #[cfg(tokio_unstable)]
 use tokio_metrics::RuntimeMonitor;
 
@@ -29,13 +29,13 @@ pub fn create_basic_runtime() -> tokio::runtime::Runtime {
   tokio::runtime::Builder::new_current_thread()
     .enable_io()
     .enable_time()
-    .event_interval(tokio_env("DENO_TOKIO_EVENT_INTERVAL", event_interval))
+    .event_interval(tokio_env("EDNO_TOKIO_EVENT_INTERVAL", event_interval))
     .global_queue_interval(tokio_env(
-      "DENO_TOKIO_GLOBAL_QUEUE_INTERVAL",
+      "EDNO_TOKIO_GLOBAL_QUEUE_INTERVAL",
       global_queue_interval,
     ))
     .max_io_events_per_tick(tokio_env(
-      "DENO_TOKIO_MAX_IO_EVENTS_PER_TICK",
+      "EDNO_TOKIO_MAX_IO_EVENTS_PER_TICK",
       max_io_events_per_tick,
     ))
     // Stack size for the blocking pool only — this is a current_thread
@@ -50,7 +50,7 @@ pub fn create_basic_runtime() -> tokio::runtime::Runtime {
     })
     // This limits the number of threads for blocking operations (like for
     // synchronous fs ops) or CPU bound tasks like when we run dprint in
-    // parallel for deno fmt.
+    // parallel for edno fmt.
     // The default value is 512, which is an unhelpfully large thread pool. We
     // don't ever want to have more than a couple dozen threads.
     .max_blocking_threads(if cfg!(windows) {
@@ -92,7 +92,7 @@ where
   #[cfg(tokio_unstable)]
   let join_handle = if metrics_enabled {
     rt.spawn(async move {
-      let metrics_interval: u64 = std::env::var("DENO_TOKIO_METRICS_INTERVAL")
+      let metrics_interval: u64 = std::env::var("EDNO_TOKIO_METRICS_INTERVAL")
         .ok()
         .and_then(|val| val.parse().ok())
         .unwrap_or(1000);
@@ -145,6 +145,6 @@ where
   F: std::future::Future<Output = R> + 'static,
   R: Send + 'static,
 {
-  let metrics_enabled = std::env::var("DENO_TOKIO_METRICS").ok().is_some();
+  let metrics_enabled = std::env::var("EDNO_TOKIO_METRICS").ok().is_some();
   create_and_run_current_thread_inner(future, metrics_enabled)
 }

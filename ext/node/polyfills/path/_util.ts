@@ -11,9 +11,9 @@ const {
   CHAR_LOWERCASE_Z,
   CHAR_UPPERCASE_A,
   CHAR_UPPERCASE_Z,
-} = core.loadExtScript("ext:deno_node/path/_constants.ts");
+} = core.loadExtScript("ext:edno_node/path/_constants.ts");
 const { ERR_INVALID_ARG_TYPE } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const {
   StringPrototypeCharCodeAt,

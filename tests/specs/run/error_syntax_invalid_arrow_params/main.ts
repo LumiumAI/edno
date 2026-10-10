@@ -1,2 +1,2 @@
-// deno-fmt-ignore-file
+// edno-fmt-ignore-file
 const test = (i, 2 * i) => console.log(i);

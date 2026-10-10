@@ -3,15 +3,15 @@
 
 (function () {
 const { core, primordials } = __bootstrap;
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const async_wrap = core.loadExtScript(
-  "ext:deno_node/internal_binding/async_wrap.ts",
+  "ext:edno_node/internal_binding/async_wrap.ts",
 );
 const { ERR_ASYNC_CALLBACK } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 const { asyncIdSymbol, ownerSymbol } = core.loadExtScript(
-  "ext:deno_node/internal_binding/symbols.ts",
+  "ext:edno_node/internal_binding/symbols.ts",
 );
 const {
   ArrayPrototypeIncludes,
@@ -33,18 +33,18 @@ const {
 
 interface ActiveHooks {
   array: AsyncHook[];
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   call_depth: number;
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   tmp_array: AsyncHook[] | null;
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   tmp_fields: number[] | null;
 }
 
 // Properties in active_hooks are used to keep track of the set of hooks being
 // executed in case another hook is enabled/disabled. The new set of hooks is
 // then restored once the active set of hooks is finished executing.
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const active_hooks: ActiveHooks = {
   // Array of all AsyncHooks that will be iterated whenever an async event
   // fires. Using var instead of (preferably const) in order to assign
@@ -53,7 +53,7 @@ const active_hooks: ActiveHooks = {
   array: [],
   // Use a counter to track nested calls of async hook callbacks and make sure
   // the active_hooks.array isn't altered mid execution.
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   call_depth: 0,
   // Use to temporarily store and updated active_hooks.array if the user
   // enables or disables a hook while hooks are being processed. If a hook is
@@ -62,19 +62,19 @@ const active_hooks: ActiveHooks = {
   // subsequent changes are on the duplicated array. When all hooks have
   // completed executing active_hooks.tmp_array is assigned to
   // active_hooks.array.
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   tmp_array: null,
   // Keep track of the field counts held in active_hooks.tmp_array. Because the
   // async_hook_fields can't be reassigned, store each uint32 in an array that
   // is written back to async_hook_fields when active_hooks.array is restored.
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   tmp_fields: null,
 };
 
 const registerDestroyHook = async_wrap.registerDestroyHook;
 const {
   async_hook_fields,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   asyncIdFields: async_id_fields,
   newAsyncId,
   constants,
@@ -91,12 +91,12 @@ function executionAsyncId(): number {
 // machinery (V8 ContinuationPreservedEmbedderData). This propagates across
 // promises and await transitions automatically. The top-level resource is a
 // shared singleton used before any specific resource has been entered.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const topLevelResource: any = { __proto__: null };
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 const executionResourceVariable: any = new AsyncVariable();
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function executionAsyncResource(): any {
   const r = executionResourceVariable.get();
   return r === undefined ? topLevelResource : r;
@@ -104,17 +104,17 @@ function executionAsyncResource(): any {
 
 // Enter a new "current resource" scope. The returned value is the previous
 // async context snapshot that must be restored by exitAsyncResource.
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function enterAsyncResource(resource: any): any {
   return executionResourceVariable.enter(resource);
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function exitAsyncResource(previousContext: any): void {
   setAsyncContext(previousContext);
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function enterAsyncResourceIfActive(resource: any): any {
   if (active_hooks.array.length > 0) {
     return executionResourceVariable.enter(resource);
@@ -122,7 +122,7 @@ function enterAsyncResourceIfActive(resource: any): any {
   return executionResourceVariable.enterIfActive(resource);
 }
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function exitAsyncResourceIfActive(previousContext: any): void {
   if (previousContext !== kNoAsyncContextRestore) {
     setAsyncContext(previousContext);
@@ -201,45 +201,45 @@ const {
   kStackLength,
 } = constants;
 
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const resource_symbol = Symbol("resource");
 // Alias to the same symbol used by `internal_binding/symbols.ts` so that
 // `socket[asyncIdSymbol]` (set in net.ts/dgram.ts) and
 // `socket[require('internal/async_hooks').symbols.async_id_symbol]`
 // (read by Node test fixtures) refer to the same slot on objects.
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const async_id_symbol = asyncIdSymbol;
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const trigger_async_id_symbol = Symbol("trigger_async_id");
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const init_symbol = Symbol("init");
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const before_symbol = Symbol("before");
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const after_symbol = Symbol("after");
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const destroy_symbol = Symbol("destroy");
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const promise_resolve_symbol = Symbol("promiseResolve");
 
 const symbols = {
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   async_id_symbol,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   trigger_async_id_symbol,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   init_symbol,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   before_symbol,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   after_symbol,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   destroy_symbol,
-  // deno-lint-ignore camelcase
+  // edno-lint-ignore camelcase
   promise_resolve_symbol,
 };
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 function lookupPublicResource(resource: any) {
   if (typeof resource !== "object" || resource === null) return resource;
   // TODO(addaleax): Merge this with owner_symbol and use it across all
@@ -256,10 +256,10 @@ function lookupPublicResource(resource: any) {
 // emitInitScript.
 function emitInitNative(
   asyncId: number,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   type: any,
   triggerAsyncId: number,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   resource: any,
 ) {
   active_hooks.call_depth += 1;
@@ -334,7 +334,7 @@ function restoreActiveHooks() {
   active_hooks.tmp_fields = null;
 }
 
-// deno-lint-ignore no-unused-vars
+// edno-lint-ignore no-unused-vars
 let wantPromiseHook = false;
 function enableHooks() {
   async_hook_fields[kCheck] += 1;
@@ -372,7 +372,7 @@ function getDefaultTriggerAsyncId() {
 
 function defaultTriggerAsyncIdScope(
   triggerAsyncId: number | undefined,
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   block: (...arg: any[]) => void,
   ...args: unknown[]
 ) {
@@ -453,7 +453,7 @@ class AsyncHook {
     // enable()/disable() are run during their execution. The following
     // references are reassigned to the tmp arrays if a hook is currently being
     // processed.
-    // deno-lint-ignore camelcase
+    // edno-lint-ignore camelcase
     const { 0: hooks_array, 1: hook_fields } = getHookArrays();
 
     // Each hook is only allowed to be added once.
@@ -461,7 +461,7 @@ class AsyncHook {
       return this;
     }
 
-    // deno-lint-ignore camelcase
+    // edno-lint-ignore camelcase
     const prev_kTotals = hook_fields[kTotals];
 
     // createHook() has already enforced that the callbacks are all functions,
@@ -486,7 +486,7 @@ class AsyncHook {
   }
 
   disable() {
-    // deno-lint-ignore camelcase
+    // edno-lint-ignore camelcase
     const { 0: hooks_array, 1: hook_fields } = getHookArrays();
 
     const index = ArrayPrototypeIndexOf(hooks_array, this);
@@ -494,7 +494,7 @@ class AsyncHook {
       return this;
     }
 
-    // deno-lint-ignore camelcase
+    // edno-lint-ignore camelcase
     const prev_kTotals = hook_fields[kTotals];
 
     hook_fields[kTotals] = hook_fields[kInit] -= +!!this[init_symbol];

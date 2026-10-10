@@ -2,15 +2,15 @@
   "tempDir": true,
   "steps": [
     {
-      "args": "add jsr:@denotest/add",
+      "args": "add jsr:@ednotest/add",
       "output": "add.out"
     },
     {
       "args": [
         "eval",
-        "console.log(Deno.readTextFileSync('./deno.json').trim())"
+        "console.log(Edno.readTextFileSync('./edno.json').trim())"
       ],
-      "output": "deno.json.out"
+      "output": "edno.json.out"
     }
   ]
 }

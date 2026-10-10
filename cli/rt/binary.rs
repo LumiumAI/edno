@@ -9,31 +9,31 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::OnceLock;
 
-use deno_core::FastString;
-use deno_core::ModuleCodeBytes;
-use deno_core::ModuleSourceCode;
-use deno_core::ModuleType;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::url::Url;
+use edno_core::FastString;
+use edno_core::ModuleCodeBytes;
+use edno_core::ModuleSourceCode;
+use edno_core::ModuleType;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::url::Url;
 use deno_error::JsError;
 use deno_error::JsErrorBox;
-use deno_lib::standalone::binary::DenoRtDeserializable;
-use deno_lib::standalone::binary::MAGIC_BYTES;
-use deno_lib::standalone::binary::Metadata;
-use deno_lib::standalone::binary::RemoteModuleEntry;
-use deno_lib::standalone::binary::SpecifierDataStore;
-use deno_lib::standalone::binary::SpecifierId;
-use deno_lib::standalone::virtual_fs::VfsEntry;
-use deno_lib::standalone::virtual_fs::VirtualDirectory;
-use deno_lib::standalone::virtual_fs::VirtualDirectoryEntries;
+use edno_lib::standalone::binary::EdnoRtDeserializable;
+use edno_lib::standalone::binary::MAGIC_BYTES;
+use edno_lib::standalone::binary::Metadata;
+use edno_lib::standalone::binary::RemoteModuleEntry;
+use edno_lib::standalone::binary::SpecifierDataStore;
+use edno_lib::standalone::binary::SpecifierId;
+use edno_lib::standalone::virtual_fs::VfsEntry;
+use edno_lib::standalone::virtual_fs::VirtualDirectory;
+use edno_lib::standalone::virtual_fs::VirtualDirectoryEntries;
 use deno_media_type::MediaType;
-use deno_npm::NpmPackageId;
-use deno_npm::resolution::SerializedNpmResolutionSnapshot;
-use deno_npm::resolution::SerializedNpmResolutionSnapshotPackage;
-use deno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
+use edno_npm::NpmPackageId;
+use edno_npm::resolution::SerializedNpmResolutionSnapshot;
+use edno_npm::resolution::SerializedNpmResolutionSnapshotPackage;
+use edno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
 use deno_semver::StackString;
 use deno_semver::package::PackageReq;
 use indexmap::IndexMap;
@@ -53,7 +53,7 @@ pub struct StandaloneData {
 }
 
 /// This function will try to run this binary as a standalone binary
-/// produced by `deno compile`. It determines if this is a standalone
+/// produced by `edno compile`. It determines if this is a standalone
 /// binary by skipping over the trailer width at the end of the file,
 /// then checking for the magic trailer string `d3n0l4nd`. If found,
 /// the bundle is executed. If not, this function exits with `Ok(None)`.
@@ -90,7 +90,7 @@ pub fn extract_standalone_with_finder(
       .map(|p| p.to_string_lossy())
       // should never happen
       .unwrap_or_else(|| Cow::Borrowed("binary"));
-    std::env::temp_dir().join(format!("deno-compile-{}", current_exe_name))
+    std::env::temp_dir().join(format!("edno-compile-{}", current_exe_name))
   };
   let root_url = deno_path_util::url_from_directory_path(&root_path)?;
 
@@ -386,7 +386,7 @@ fn create_symlink(
 
 fn find_section() -> Result<&'static [u8], AnyError> {
   #[cfg(windows)]
-  if std::env::var_os("DENO_INTERNAL_RT_USE_FILE_FALLBACK").is_some() {
+  if std::env::var_os("EDNO_INTERNAL_RT_USE_FILE_FALLBACK").is_some() {
     return read_from_file_fallback();
   }
 
@@ -620,7 +620,7 @@ impl StandaloneModules {
   pub fn read<'a>(
     &'a self,
     specifier: &'a Url,
-  ) -> Result<Option<DenoCompileModuleData<'a>>, JsErrorBox> {
+  ) -> Result<Option<EdnoCompileModuleData<'a>>, JsErrorBox> {
     if specifier.scheme() == "file" {
       let path = deno_path_util::url_to_file_path(specifier)
         .map_err(JsErrorBox::from_err)?;
@@ -660,7 +660,7 @@ impl StandaloneModules {
           };
           // A file read from disk at runtime (e.g. a plugin discovered by a
           // compiled program) hasn't been transpiled at compile time, so
-          // transpile TypeScript/JSX here, mirroring `deno run`.
+          // transpile TypeScript/JSX here, mirroring `edno run`.
           let media_type = MediaType::from_specifier(specifier);
           if matches!(
             media_type,
@@ -679,7 +679,7 @@ impl StandaloneModules {
         }
         Err(err) => return Err(JsErrorBox::from_err(err)),
       };
-      Ok(Some(DenoCompileModuleData {
+      Ok(Some(EdnoCompileModuleData {
         media_type: MediaType::from_specifier(specifier),
         specifier,
         is_valid_utf8,
@@ -697,14 +697,14 @@ impl StandaloneModules {
 /// Transpile TypeScript/JSX source to JavaScript for modules that are not
 /// embedded in the binary, namely `data:`/`blob:` URLs and local files read
 /// from disk at runtime. Embedded modules are already transpiled at
-/// `deno compile` time, but a compiled program can still dynamically `import()`
+/// `edno compile` time, but a compiled program can still dynamically `import()`
 /// TypeScript that it builds or discovers while running. `deno_ast` is already
 /// linked into the binary via `ext/node`, so transpiling here adds no extra
 /// binary size.
 ///
 /// JSX configuration (`jsx`, `jsxImportSource`, `jsxFactory`, etc.) is
 /// discovered by walking up from the source file to find the user's
-/// `deno.json` / `deno.jsonc` once and caching the result. Without this,
+/// `edno.json` / `edno.jsonc` once and caching the result. Without this,
 /// every `.tsx` from a Preact-based project would be emitted as
 /// `React.createElement(...)` and fail at runtime with `React is not defined`.
 pub(crate) fn transpile_runtime_module(
@@ -746,13 +746,13 @@ pub(crate) fn transpile_runtime_module(
 }
 
 /// Resolved JSX/decorator options for runtime transpiles, discovered lazily
-/// from the user's project `deno.json[c]` and cached for the lifetime of the
+/// from the user's project `edno.json[c]` and cached for the lifetime of the
 /// process.
 static RUNTIME_TRANSPILE_OPTIONS: OnceLock<deno_ast::TranspileOptions> =
   OnceLock::new();
 
-/// Walk up from `specifier`'s parent directory looking for `deno.json` or
-/// `deno.jsonc`, parse `compilerOptions.jsx` + related, and return a matching
+/// Walk up from `specifier`'s parent directory looking for `edno.json` or
+/// `edno.jsonc`, parse `compilerOptions.jsx` + related, and return a matching
 /// `TranspileOptions`. Falls back to defaults (with `ImportsNotUsedAsValues::Remove`)
 /// if no config is found or parsing fails — those are non-fatal here.
 fn runtime_transpile_options(
@@ -770,7 +770,7 @@ fn runtime_transpile_options(
       return fallback;
     };
     let cfg_path = 'outer: loop {
-      for name in ["deno.json", "deno.jsonc"] {
+      for name in ["edno.json", "edno.jsonc"] {
         let candidate = dir.join(name);
         if candidate.exists() {
           break 'outer Some(candidate);
@@ -871,7 +871,7 @@ fn transpile_options_from_compiler_options(
   }
 }
 
-pub struct DenoCompileModuleData<'a> {
+pub struct EdnoCompileModuleData<'a> {
   pub specifier: &'a Url,
   pub media_type: MediaType,
   pub is_valid_utf8: bool,
@@ -881,21 +881,21 @@ pub struct DenoCompileModuleData<'a> {
   pub cjs_export_analysis: Option<Cow<'static, [u8]>>,
 }
 
-impl<'a> DenoCompileModuleData<'a> {
-  pub fn into_parts(self) -> (&'a Url, ModuleType, DenoCompileModuleSource) {
+impl<'a> EdnoCompileModuleData<'a> {
+  pub fn into_parts(self) -> (&'a Url, ModuleType, EdnoCompileModuleSource) {
     fn into_string_unsafe(
       is_valid_utf8: bool,
       data: Cow<'static, [u8]>,
-    ) -> DenoCompileModuleSource {
+    ) -> EdnoCompileModuleSource {
       match data {
         Cow::Borrowed(d) if is_valid_utf8 => {
-          DenoCompileModuleSource::String(
+          EdnoCompileModuleSource::String(
             // SAFETY: we know this is a valid utf8 string
             unsafe { std::str::from_utf8_unchecked(d) },
           )
         }
-        Cow::Borrowed(_) => DenoCompileModuleSource::Bytes(data),
-        Cow::Owned(d) => DenoCompileModuleSource::Bytes(Cow::Owned(d)),
+        Cow::Borrowed(_) => EdnoCompileModuleSource::Bytes(data),
+        Cow::Owned(d) => EdnoCompileModuleSource::Bytes(Cow::Owned(d)),
       }
     }
 
@@ -920,7 +920,7 @@ impl<'a> DenoCompileModuleData<'a> {
         into_string_unsafe(self.is_valid_utf8, data),
       ),
       MediaType::Wasm => {
-        (ModuleType::Wasm, DenoCompileModuleSource::Bytes(data))
+        (ModuleType::Wasm, EdnoCompileModuleSource::Bytes(data))
       }
       // just assume javascript if we made it here
       MediaType::Css
@@ -931,7 +931,7 @@ impl<'a> DenoCompileModuleData<'a> {
       | MediaType::SourceMap
       | MediaType::Sql
       | MediaType::Unknown => {
-        (ModuleType::JavaScript, DenoCompileModuleSource::Bytes(data))
+        (ModuleType::JavaScript, EdnoCompileModuleSource::Bytes(data))
       }
     };
     (self.specifier, media_type, source)
@@ -939,12 +939,12 @@ impl<'a> DenoCompileModuleData<'a> {
 }
 
 #[derive(Debug)]
-pub enum DenoCompileModuleSource {
+pub enum EdnoCompileModuleSource {
   String(&'static str),
   Bytes(Cow<'static, [u8]>),
 }
 
-impl DenoCompileModuleSource {
+impl EdnoCompileModuleSource {
   pub fn into_for_v8(self) -> ModuleSourceCode {
     match self {
       // todo(https://github.com/denoland/deno_core/pull/943): store whether
@@ -957,8 +957,8 @@ impl DenoCompileModuleSource {
 
   pub fn into_bytes_for_v8(self) -> ModuleCodeBytes {
     match self {
-      DenoCompileModuleSource::String(text) => text.as_bytes().into(),
-      DenoCompileModuleSource::Bytes(b) => module_source_into_bytes(b),
+      EdnoCompileModuleSource::String(text) => text.as_bytes().into(),
+      EdnoCompileModuleSource::Bytes(b) => module_source_into_bytes(b),
     }
   }
 }
@@ -1025,14 +1025,14 @@ impl RemoteModulesStore {
   pub fn read<'a>(
     &'a self,
     original_specifier: &'a Url,
-  ) -> Result<Option<DenoCompileModuleData<'a>>, TooManyRedirectsError> {
+  ) -> Result<Option<EdnoCompileModuleData<'a>>, TooManyRedirectsError> {
     #[allow(clippy::ptr_arg, reason = "Cow on data is relevant here")]
     fn handle_cow_ref(data: &Cow<'static, [u8]>) -> Cow<'static, [u8]> {
       match data {
         Cow::Borrowed(data) => Cow::Borrowed(data),
         Cow::Owned(data) => {
           // this variant should never happen because the data
-          // should always be borrowed static in denort
+          // should always be borrowed static in ednort
           debug_assert!(false);
           Cow::Owned(data.clone())
         }
@@ -1056,7 +1056,7 @@ impl RemoteModulesStore {
           let Some(entry) = self.remote_modules.get(specifier) else {
             return Ok(None);
           };
-          return Ok(Some(DenoCompileModuleData {
+          return Ok(Some(EdnoCompileModuleData {
             specifier: if count == 0 {
               original_specifier
             } else {
@@ -1150,7 +1150,7 @@ fn deserialize_npm_snapshot(
     data_ids_to_npm_ids
       .get(id)
       .cloned()
-      .ok_or_else(|| deno_core::anyhow::anyhow!("Invalid npm package id"))
+      .ok_or_else(|| edno_core::anyhow::anyhow!("Invalid npm package id"))
   };
 
   let (input, root_packages_len) = read_u32_as_usize(input)?;

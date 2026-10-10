@@ -4,13 +4,13 @@ import { assertEquals } from "./test_util.ts";
 // TODO(@kitsonk) remove when we are no longer patching TypeScript to have
 // these types available.
 
-Deno.test(function typeCheckingEsNextArrayString() {
+Edno.test(function typeCheckingEsNextArrayString() {
   const b = ["a", "b", "c", "d", "e", "f"];
   assertEquals(b.findLast((val) => typeof val === "string"), "f");
   assertEquals(b.findLastIndex((val) => typeof val === "string"), 5);
 });
 
-Deno.test(function intlListFormat() {
+Edno.test(function intlListFormat() {
   const formatter = new Intl.ListFormat("en", {
     style: "long",
     type: "conjunction",
@@ -42,14 +42,14 @@ Deno.test(function intlListFormat() {
   ]);
 });
 
-Deno.test(function setUnion() {
+Edno.test(function setUnion() {
   const a = new Set([1, 2, 3]);
   const b = new Set([3, 4, 5]);
   const union = a.union(b);
   assertEquals(union, new Set([1, 2, 3, 4, 5]));
 });
 
-Deno.test(function float16Array() {
+Edno.test(function float16Array() {
   const myNums = Float16Array.from([11.25, 2, -22.5, 1]);
   const sorted = myNums.toSorted((a, b) => a - b);
   assertEquals(sorted[0], -22.5);
@@ -58,7 +58,7 @@ Deno.test(function float16Array() {
   assertEquals(sorted[3], 11.25);
 });
 
-Deno.test(function mathSumPrecise() {
+Edno.test(function mathSumPrecise() {
   assertEquals(Math.sumPrecise([1, 2, 3]), 6);
   assertEquals(Math.sumPrecise([]), -0);
   // Avoids the accumulated rounding error from naive `+` reduction:
@@ -73,7 +73,7 @@ Deno.test(function mathSumPrecise() {
   assertEquals(Math.sumPrecise(gen()), 7.5);
 });
 
-Deno.test(function intlLocaleVariants() {
+Edno.test(function intlLocaleVariants() {
   const variants: string | undefined =
     new Intl.Locale("de-DE-1996-fonipa").variants;
   assertEquals(variants, "1996-fonipa");

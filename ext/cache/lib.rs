@@ -8,15 +8,15 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use bytes::Bytes;
-use deno_core::AsyncRefCell;
-use deno_core::AsyncResult;
-use deno_core::FromV8;
-use deno_core::OpState;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::ToV8;
-use deno_core::convert::ByteString;
-use deno_core::op2;
+use edno_core::AsyncRefCell;
+use edno_core::AsyncResult;
+use edno_core::FromV8;
+use edno_core::OpState;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::ToV8;
+use edno_core::convert::ByteString;
+use edno_core::op2;
 use deno_error::JsErrorBox;
 use futures::Stream;
 use tokio::io::AsyncRead;
@@ -62,7 +62,7 @@ pub enum CacheError {
   JoinError(#[from] tokio::task::JoinError),
   #[class(inherit)]
   #[error(transparent)]
-  Resource(#[from] deno_core::error::ResourceError),
+  Resource(#[from] edno_core::error::ResourceError),
   #[class(inherit)]
   #[error(transparent)]
   Other(JsErrorBox),
@@ -99,8 +99,8 @@ pub enum CacheError {
 #[derive(Clone)]
 pub struct CreateCache(pub Arc<dyn Fn() -> Result<CacheImpl, CacheError>>);
 
-deno_core::extension!(deno_cache,
-  deps = [ deno_webidl, deno_web, deno_fetch ],
+edno_core::extension!(edno_cache,
+  deps = [ edno_webidl, edno_web, edno_fetch ],
   ops = [
     op_cache_storage_open,
     op_cache_storage_has,
@@ -284,7 +284,7 @@ impl CacheResponseResource {
   ) -> Result<usize, std::io::Error> {
     let nread = match &*self {
       CacheResponseResource::Sqlite(_) => {
-        let resource = deno_core::RcRef::map(&self, |r| match r {
+        let resource = edno_core::RcRef::map(&self, |r| match r {
           Self::Sqlite(r) => r,
           _ => unreachable!(),
         });
@@ -292,7 +292,7 @@ impl CacheResponseResource {
         file.read(data).await?
       }
       CacheResponseResource::Lsc(_) => {
-        let resource = deno_core::RcRef::map(&self, |r| match r {
+        let resource = edno_core::RcRef::map(&self, |r| match r {
           Self::Lsc(r) => r,
           _ => unreachable!(),
         });
@@ -306,7 +306,7 @@ impl CacheResponseResource {
 }
 
 impl Resource for CacheResponseResource {
-  deno_core::impl_readable_byob!();
+  edno_core::impl_readable_byob!();
 
   fn name(&self) -> Cow<'_, str> {
     "CacheResponseResource".into()

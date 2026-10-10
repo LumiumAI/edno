@@ -3,7 +3,7 @@ Checking for slow types in the public API...
 error[banned-triple-slash-directives]: triple slash directives that modify globals are not allowed
  --> [WILDLINE]mod.ts:5:1
   | 
-5 | /// <reference lib="deno.unstable" />
+5 | /// <reference lib="edno.unstable" />
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the triple slash directive
   | 
   = hint: remove the triple slash directive

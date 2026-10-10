@@ -9,7 +9,7 @@ function requireFromString(code, filename) {
 }
 
 const code = `
-const add = require("@denotest/cjs-multiple-exports/add");
+const add = require("@ednotest/cjs-multiple-exports/add");
 
 console.log(add(1, 2));
 `;

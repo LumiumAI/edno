@@ -1,11 +1,11 @@
 {
   "tempDir": true,
   "envs": {
-    "DENO_DIR": "$PWD/deno_dir"
+    "EDNO_DIR": "$PWD/edno_dir"
   },
   "steps": [
     {
-      // `deno_dir/` is a genuine npm cache written by Deno 2.8.2 (see
+      // `edno_dir/` is a genuine npm cache written by Edno 2.8.2 (see
       // registry.json: abbreviated install manifest without the `time`
       // field, and predating the `_deno.packumentFormat` marker). Under
       // the default minimumDependencyAge policy (24h) with --cached-only,
@@ -21,7 +21,7 @@
       // know if the abbreviated install manifest is enough, so the full
       // packument is fetched.
       "args": "run --no-lock --minimum-dependency-age=1440 main.ts",
-      "output": "Download http://localhost:4260/@denotest%2fesm-basic (full packument)\nok\n"
+      "output": "Download http://localhost:4260/@ednotest%2fesm-basic (full packument)\nok\n"
     }
   ]
 }

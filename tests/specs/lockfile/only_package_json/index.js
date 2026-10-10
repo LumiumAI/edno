@@ -1,1 +1,1 @@
-import * as basic from "@denotest/esm-basic";
+import * as basic from "@ednotest/esm-basic";

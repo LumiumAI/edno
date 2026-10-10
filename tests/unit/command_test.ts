@@ -8,24 +8,24 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, run: true, read: true } },
   async function commandWithCwdIsAsync() {
     const enc = new TextEncoder();
-    const cwd = await Deno.makeTempDir({ prefix: "deno_command_test" });
+    const cwd = await Edno.makeTempDir({ prefix: "edno_command_test" });
 
-    const exitCodeFileLock = "deno_was_here.lock";
-    const exitCodeFile = "deno_was_here";
+    const exitCodeFileLock = "edno_was_here.lock";
+    const exitCodeFile = "edno_was_here";
     const programFile = "poll_exit.ts";
     const program = `
-const file = await Deno.open("${exitCodeFileLock}", { write: true, create: true });
+const file = await Edno.open("${exitCodeFileLock}", { write: true, create: true });
 async function tryExit() {
   await file.lock(true);
   try {
-    const code = parseInt(await Deno.readTextFile("${exitCodeFile}"));
-    Deno.exit(code);
+    const code = parseInt(await Edno.readTextFile("${exitCodeFile}"));
+    Edno.exit(code);
   } catch {
-    // Retry if we got here before deno wrote the file.
+    // Retry if we got here before edno wrote the file.
     setTimeout(tryExit, 0.01);
   } finally {
     await file.unlock();
@@ -34,9 +34,9 @@ async function tryExit() {
 
 tryExit();
 `;
-    Deno.writeFileSync(`${cwd}/${programFile}`, enc.encode(program));
+    Edno.writeFileSync(`${cwd}/${programFile}`, enc.encode(program));
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       cwd,
       args: ["run", "-RW", programFile],
       stdout: "inherit",
@@ -44,34 +44,34 @@ tryExit();
     });
     const child = command.spawn();
 
-    // Write the expected exit code *after* starting deno.
+    // Write the expected exit code *after* starting edno.
     // This is how we verify that `Child` is actually asynchronous.
     const code = 84;
 
-    await using file = await Deno.open(`${cwd}/${exitCodeFileLock}`, {
+    await using file = await Edno.open(`${cwd}/${exitCodeFileLock}`, {
       write: true,
       create: true,
     });
     await file.lock(true);
-    Deno.writeFileSync(`${cwd}/${exitCodeFile}`, enc.encode(`${code}`));
+    Edno.writeFileSync(`${cwd}/${exitCodeFile}`, enc.encode(`${code}`));
     await file.unlock();
     const status = await child.status;
-    await Deno.remove(cwd, { recursive: true });
+    await Edno.remove(cwd, { recursive: true });
     assertEquals(status.code, code);
     assertEquals(status.success, false);
     assertEquals(status.signal, null);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandStdinPiped() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         `
         const buffer = new Uint8Array(5);
-        await Deno.stdin.read(buffer);
+        await Edno.stdin.read(buffer);
         if (new TextDecoder().decode(buffer) !== "hello") {
           throw new Error('Expected \\'hello\\'')
         }
@@ -107,10 +107,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandStdinPiped() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["info"],
       stdout: "null",
       stderr: "null",
@@ -137,13 +137,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandStdoutPiped() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "await Deno.stdout.write(new TextEncoder().encode('hello'))",
+        "await Edno.stdout.write(new TextEncoder().encode('hello'))",
       ],
       stderr: "null",
       stdout: "piped",
@@ -179,13 +179,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandStderrPiped() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "await Deno.stderr.write(new TextEncoder().encode('hello'))",
+        "await Edno.stderr.write(new TextEncoder().encode('hello'))",
       ],
       stdout: "null",
       stderr: "piped",
@@ -221,20 +221,20 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, write: true, read: true } },
   async function commandRedirectStdoutStderr() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fileName = tempDir + "/redirected_stdio.txt";
-    const file = await Deno.open(fileName, {
+    const file = await Edno.open(fileName, {
       create: true,
       write: true,
     });
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "Deno.stderr.write(new TextEncoder().encode('error\\n')); Deno.stdout.write(new TextEncoder().encode('output\\n'));",
+        "Edno.stderr.write(new TextEncoder().encode('error\\n')); Edno.stdout.write(new TextEncoder().encode('output\\n'));",
       ],
       stdout: "piped",
       stderr: "piped",
@@ -246,7 +246,7 @@ Deno.test(
     await child.stderr.pipeTo(file.writable);
     await child.status;
 
-    const fileContents = await Deno.readFile(fileName);
+    const fileContents = await Edno.readFile(fileName);
     const decoder = new TextDecoder();
     const text = decoder.decode(fileContents);
 
@@ -255,20 +255,20 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, write: true, read: true } },
   async function commandRedirectStdin() {
-    const tempDir = await Deno.makeTempDir();
+    const tempDir = await Edno.makeTempDir();
     const fileName = tempDir + "/redirected_stdio.txt";
-    await Deno.writeTextFile(fileName, "hello");
-    const file = await Deno.open(fileName);
+    await Edno.writeTextFile(fileName, "hello");
+    const file = await Edno.open(fileName);
 
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         `
         const buffer = new Uint8Array(5);
-        await Deno.stdin.read(buffer);
+        await Edno.stdin.read(buffer);
         if (new TextDecoder().decode(buffer) !== "hello") {
           throw new Error('Expected \\'hello\\'')
         }
@@ -289,10 +289,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandKillSuccess() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", "setTimeout(() => {}, 10000)"],
       stdout: "null",
       stderr: "null",
@@ -303,7 +303,7 @@ Deno.test(
     const status = await child.status;
 
     assertEquals(status.success, false);
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       assertEquals(status.code, 1);
       assertEquals(status.signal, null);
     } else {
@@ -313,12 +313,12 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function childProcessExplicitResourceManagement() {
     let dead = undefined;
     {
-      const command = new Deno.Command(Deno.execPath(), {
+      const command = new Edno.Command(Edno.execPath(), {
         args: ["eval", "setTimeout(() => {}, 10000)"],
         stdout: "null",
         stderr: "null",
@@ -329,7 +329,7 @@ Deno.test(
       });
     }
 
-    if (Deno.build.os == "windows") {
+    if (Edno.build.os == "windows") {
       assertEquals(dead, null);
     } else {
       assertEquals(dead, "SIGTERM");
@@ -337,10 +337,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function childProcessExplicitResourceManagementManualClose() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", "setTimeout(() => {}, 10000)"],
       stdout: "null",
       stderr: "null",
@@ -351,10 +351,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandKillFailed() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", "setTimeout(() => {}, 5000)"],
       stdout: "null",
       stderr: "null",
@@ -370,10 +370,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandKillOptional() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", "setTimeout(() => {}, 10000)"],
       stdout: "null",
       stderr: "null",
@@ -384,7 +384,7 @@ Deno.test(
     const status = await child.status;
 
     assertEquals(status.success, false);
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       assertEquals(status.code, 1);
       assertEquals(status.signal, null);
     } else {
@@ -394,13 +394,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function commandKillWithIntegerSignal() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", "setTimeout(() => {}, 10000)"],
       stdout: "null",
       stderr: "null",
@@ -417,13 +417,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function commandKillWithSignalZero() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["eval", "setTimeout(() => {}, 10000)"],
       stdout: "null",
       stderr: "null",
@@ -443,11 +443,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandAbort() {
     const ac = new AbortController();
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         "setTimeout(console.log, 1e8)",
@@ -460,7 +460,7 @@ Deno.test(
     queueMicrotask(() => ac.abort());
     const status = await child.status;
     assertEquals(status.success, false);
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       assertEquals(status.code, 1);
       assertEquals(status.signal, null);
     } else {
@@ -470,11 +470,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandOutputAbort() {
     const ac = new AbortController();
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         "setTimeout(console.log, 1e8)",
@@ -494,7 +494,7 @@ Deno.test(
       }ms`,
     );
     assertEquals(output.success, false);
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       assertEquals(output.code, 1);
       assertEquals(output.signal, null);
     } else {
@@ -503,32 +503,32 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, run: false } },
   async function commandPermissions() {
     await assertRejects(async () => {
-      await new Deno.Command(Deno.execPath(), {
+      await new Edno.Command(Edno.execPath(), {
         args: ["eval", "console.log('hello world')"],
       }).output();
-    }, Deno.errors.NotCapable);
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, run: false } },
   function commandSyncPermissions() {
     assertThrows(() => {
-      new Deno.Command(Deno.execPath(), {
+      new Edno.Command(Edno.execPath(), {
         args: ["eval", "console.log('hello world')"],
       }).outputSync();
-    }, Deno.errors.NotCapable);
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandSuccess() {
-    const output = await new Deno.Command(Deno.execPath(), {
+    const output = await new Edno.Command(Edno.execPath(), {
       args: ["eval", "console.log('hello world')"],
     }).output();
 
@@ -538,10 +538,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function commandSyncSuccess() {
-    const output = new Deno.Command(Deno.execPath(), {
+    const output = new Edno.Command(Edno.execPath(), {
       args: ["eval", "console.log('hello world')"],
     }).outputSync();
 
@@ -551,11 +551,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandUrl() {
-    const output = await new Deno.Command(
-      new URL(`file:///${Deno.execPath()}`),
+    const output = await new Edno.Command(
+      new URL(`file:///${Edno.execPath()}`),
       {
         args: ["eval", "console.log('hello world')"],
       },
@@ -569,11 +569,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function commandSyncUrl() {
-    const output = new Deno.Command(
-      new URL(`file:///${Deno.execPath()}`),
+    const output = new Edno.Command(
+      new URL(`file:///${Edno.execPath()}`),
       {
         args: ["eval", "console.log('hello world')"],
       },
@@ -587,50 +587,50 @@ Deno.test(
   },
 );
 
-Deno.test({ permissions: { run: true } }, function commandNotFound() {
+Edno.test({ permissions: { run: true } }, function commandNotFound() {
   assertThrows(
-    () => new Deno.Command("this file hopefully doesn't exist").output(),
-    Deno.errors.NotFound,
+    () => new Edno.Command("this file hopefully doesn't exist").output(),
+    Edno.errors.NotFound,
   );
 });
 
-Deno.test({ permissions: { run: true } }, function commandSyncNotFound() {
+Edno.test({ permissions: { run: true } }, function commandSyncNotFound() {
   assertThrows(
-    () => new Deno.Command("this file hopefully doesn't exist").outputSync(),
-    Deno.errors.NotFound,
+    () => new Edno.Command("this file hopefully doesn't exist").outputSync(),
+    Edno.errors.NotFound,
   );
 });
 
-Deno.test({ permissions: { run: true, read: true } }, function cwdNotFound() {
+Edno.test({ permissions: { run: true, read: true } }, function cwdNotFound() {
   assertThrows(
     () =>
-      new Deno.Command(Deno.execPath(), {
-        cwd: Deno.cwd() + "/non-existent-directory",
+      new Edno.Command(Edno.execPath(), {
+        cwd: Edno.cwd() + "/non-existent-directory",
       }).output(),
-    Deno.errors.NotFound,
+    Edno.errors.NotFound,
     "No such cwd",
   );
 });
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function cwdNotDirectory() {
     assertThrows(
       () =>
-        new Deno.Command(Deno.execPath(), {
-          cwd: Deno.execPath(),
+        new Edno.Command(Edno.execPath(), {
+          cwd: Edno.execPath(),
         }).output(),
-      Deno.errors.NotFound,
+      Edno.errors.NotFound,
       "cwd is not a directory",
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandFailedWithCode() {
-    const output = await new Deno.Command(Deno.execPath(), {
-      args: ["eval", "Deno.exit(41 + 1)"],
+    const output = await new Edno.Command(Edno.execPath(), {
+      args: ["eval", "Edno.exit(41 + 1)"],
     }).output();
     assertEquals(output.success, false);
     assertEquals(output.code, 42);
@@ -638,11 +638,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function commandSyncFailedWithCode() {
-    const output = new Deno.Command(Deno.execPath(), {
-      args: ["eval", "Deno.exit(41 + 1)"],
+    const output = new Edno.Command(Edno.execPath(), {
+      args: ["eval", "Edno.exit(41 + 1)"],
     }).outputSync();
     assertEquals(output.success, false);
     assertEquals(output.code, 42);
@@ -650,16 +650,16 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
   },
   async function commandFailedWithSignal() {
-    const output = await new Deno.Command(Deno.execPath(), {
-      args: ["eval", "Deno.kill(Deno.pid, 'SIGKILL')"],
+    const output = await new Edno.Command(Edno.execPath(), {
+      args: ["eval", "Edno.kill(Edno.pid, 'SIGKILL')"],
     }).output();
     assertEquals(output.success, false);
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       assertEquals(output.code, 1);
       assertEquals(output.signal, null);
     } else {
@@ -669,16 +669,16 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
   },
   function commandSyncFailedWithSignal() {
-    const output = new Deno.Command(Deno.execPath(), {
-      args: ["eval", "Deno.kill(Deno.pid, 'SIGKILL')"],
+    const output = new Edno.Command(Edno.execPath(), {
+      args: ["eval", "Edno.kill(Edno.pid, 'SIGKILL')"],
     }).outputSync();
     assertEquals(output.success, false);
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       assertEquals(output.code, 1);
       assertEquals(output.signal, null);
     } else {
@@ -688,13 +688,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandOutput() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "await Deno.stdout.write(new TextEncoder().encode('hello'))",
+        "await Edno.stdout.write(new TextEncoder().encode('hello'))",
       ],
     }).output();
 
@@ -703,13 +703,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function commandSyncOutput() {
-    const { stdout } = new Deno.Command(Deno.execPath(), {
+    const { stdout } = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "await Deno.stdout.write(new TextEncoder().encode('hello'))",
+        "await Edno.stdout.write(new TextEncoder().encode('hello'))",
       ],
     }).outputSync();
 
@@ -718,13 +718,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandStderrOutput() {
-    const { stderr } = await new Deno.Command(Deno.execPath(), {
+    const { stderr } = await new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "await Deno.stderr.write(new TextEncoder().encode('error'))",
+        "await Edno.stderr.write(new TextEncoder().encode('error'))",
       ],
     }).output();
 
@@ -733,13 +733,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function commandSyncStderrOutput() {
-    const { stderr } = new Deno.Command(Deno.execPath(), {
+    const { stderr } = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "await Deno.stderr.write(new TextEncoder().encode('error'))",
+        "await Edno.stderr.write(new TextEncoder().encode('error'))",
       ],
     }).outputSync();
 
@@ -748,13 +748,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandEnv() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "Deno.stdout.write(new TextEncoder().encode(Deno.env.get('FOO') + Deno.env.get('BAR')))",
+        "Edno.stdout.write(new TextEncoder().encode(Edno.env.get('FOO') + Edno.env.get('BAR')))",
       ],
       env: {
         FOO: "0123",
@@ -766,15 +766,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os === "windows",
-    permissions: { run: [Deno.execPath()], read: true },
+    ignore: Edno.build.os === "windows",
+    permissions: { run: [Edno.execPath()], read: true },
   },
   function commandLoaderEnvValueValidation() {
     for (const name of ["LD_PRELOAD", "DYLD_INSERT_LIBRARIES"]) {
       const command = (value: string) =>
-        new Deno.Command(Deno.execPath(), {
+        new Edno.Command(Edno.execPath(), {
           args: ["eval", ""],
           clearEnv: true,
           env: { [name]: value },
@@ -783,20 +783,20 @@ Deno.test(
       assertEquals(command("").outputSync().success, true);
       assertThrows(
         () => command("\t").outputSync(),
-        Deno.errors.NotCapable,
+        Edno.errors.NotCapable,
         name,
       );
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   function commandSyncEnv() {
-    const { stdout } = new Deno.Command(Deno.execPath(), {
+    const { stdout } = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
-        "Deno.stdout.write(new TextEncoder().encode(Deno.env.get('FOO') + Deno.env.get('BAR')))",
+        "Edno.stdout.write(new TextEncoder().encode(Edno.env.get('FOO') + Edno.env.get('BAR')))",
       ],
       env: {
         FOO: "0123",
@@ -808,15 +808,15 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true, env: true } },
   async function commandClearEnv() {
-    Deno.env.set("DENO_COMMAND_CLEAR_ENV_TESTING", "TESTING");
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
+    Edno.env.set("EDNO_COMMAND_CLEAR_ENV_TESTING", "TESTING");
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         "-p",
-        "JSON.stringify(Deno.env.toObject())",
+        "JSON.stringify(Edno.env.toObject())",
       ],
       clearEnv: true,
       env: {
@@ -830,20 +830,20 @@ Deno.test(
     // vars for processes, so we check if PATH isn't present as that is a common
     // env var across OS's and isn't set for processes.
     assertEquals(obj.FOO, "23147");
-    assert(!("DENO_COMMAND_CLEAR_ENV_TESTING" in obj));
-    Deno.env.delete("DENO_COMMAND_CLEAR_ENV_TESTING");
+    assert(!("EDNO_COMMAND_CLEAR_ENV_TESTING" in obj));
+    Edno.env.delete("EDNO_COMMAND_CLEAR_ENV_TESTING");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true, env: true } },
   function commandSyncClearEnv() {
-    Deno.env.set("DENO_COMMAND_SYNC_CLEAR_ENV_TESTING", "TESTING");
-    const { stdout } = new Deno.Command(Deno.execPath(), {
+    Edno.env.set("EDNO_COMMAND_SYNC_CLEAR_ENV_TESTING", "TESTING");
+    const { stdout } = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         "-p",
-        "JSON.stringify(Deno.env.toObject())",
+        "JSON.stringify(Edno.env.toObject())",
       ],
       clearEnv: true,
       env: {
@@ -857,23 +857,23 @@ Deno.test(
     // vars for processes, so we check if PATH isn't present as that is a common
     // env var across OS's and isn't set for processes.
     assertEquals(obj.FOO, "23147");
-    assert(!("DENO_COMMAND_SYNC_CLEAR_ENV_TESTING" in obj));
-    Deno.env.delete("DENO_COMMAND_SYNC_CLEAR_ENV_TESTING");
+    assert(!("EDNO_COMMAND_SYNC_CLEAR_ENV_TESTING" in obj));
+    Edno.env.delete("EDNO_COMMAND_SYNC_CLEAR_ENV_TESTING");
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function commandUid() {
-    const { stdout } = await new Deno.Command("id", {
+    const { stdout } = await new Edno.Command("id", {
       args: ["-u"],
     }).output();
 
     const currentUid = new TextDecoder().decode(stdout).trim();
-    const sameUid = await new Deno.Command("id", {
+    const sameUid = await new Edno.Command("id", {
       args: ["-u"],
       uid: Number(currentUid),
     }).output();
@@ -881,23 +881,23 @@ Deno.test(
 
     if (currentUid !== "0") {
       await assertRejects(async () => {
-        await new Deno.Command("echo", {
+        await new Edno.Command("echo", {
           args: ["fhqwhgads"],
           uid: 0,
         }).output();
-      }, Deno.errors.PermissionDenied);
+      }, Edno.errors.PermissionDenied);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true, write: true },
-    ignore: Deno.build.os !== "windows",
+    ignore: Edno.build.os !== "windows",
   },
   async function rejectBatAndCmdFiles() {
-    const tempDir = await Deno.makeTempDir();
-    Deno.writeTextFileSync(tempDir + "/test.bat", "@echo off\r\necho 1 2 3 %*");
+    const tempDir = await Edno.makeTempDir();
+    Edno.writeTextFileSync(tempDir + "/test.bat", "@echo off\r\necho 1 2 3 %*");
     for (
       const ext of [
         ".bat",
@@ -910,7 +910,7 @@ Deno.test(
       ]
     ) {
       const fileName = tempDir + "/test" + ext;
-      const output = await new Deno.Command(fileName, {
+      const output = await new Edno.Command(fileName, {
         args: ["&calc.exe"],
         stdout: "piped",
       }).output();
@@ -921,18 +921,18 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   function commandSyncUid() {
-    const { stdout } = new Deno.Command("id", {
+    const { stdout } = new Edno.Command("id", {
       args: ["-u"],
     }).outputSync();
 
     const currentUid = new TextDecoder().decode(stdout).trim();
-    const sameUid = new Deno.Command("id", {
+    const sameUid = new Edno.Command("id", {
       args: ["-u"],
       uid: Number(currentUid),
     }).outputSync();
@@ -940,27 +940,27 @@ Deno.test(
 
     if (currentUid !== "0") {
       assertThrows(() => {
-        new Deno.Command("echo", {
+        new Edno.Command("echo", {
           args: ["fhqwhgads"],
           uid: 0,
         }).outputSync();
-      }, Deno.errors.PermissionDenied);
+      }, Edno.errors.PermissionDenied);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   async function commandGid() {
-    const { stdout } = await new Deno.Command("id", {
+    const { stdout } = await new Edno.Command("id", {
       args: ["-g"],
     }).output();
 
     const currentGid = new TextDecoder().decode(stdout).trim();
-    const sameGid = await new Deno.Command("id", {
+    const sameGid = await new Edno.Command("id", {
       args: ["-g"],
       gid: Number(currentGid),
     }).output();
@@ -968,27 +968,27 @@ Deno.test(
 
     if (currentGid !== "0") {
       await assertRejects(async () => {
-        await new Deno.Command("echo", {
+        await new Edno.Command("echo", {
           args: ["fhqwhgads"],
           gid: 0,
         }).output();
-      }, Deno.errors.PermissionDenied);
+      }, Edno.errors.PermissionDenied);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   {
     permissions: { run: true, read: true },
-    ignore: Deno.build.os === "windows",
+    ignore: Edno.build.os === "windows",
   },
   function commandSyncGid() {
-    const { stdout } = new Deno.Command("id", {
+    const { stdout } = new Edno.Command("id", {
       args: ["-g"],
     }).outputSync();
 
     const currentGid = new TextDecoder().decode(stdout).trim();
-    const sameGid = new Deno.Command("id", {
+    const sameGid = new Edno.Command("id", {
       args: ["-g"],
       gid: Number(currentGid),
     }).outputSync();
@@ -996,38 +996,38 @@ Deno.test(
 
     if (currentGid !== "0") {
       assertThrows(() => {
-        new Deno.Command("echo", {
+        new Edno.Command("echo", {
           args: ["fhqwhgads"],
           gid: 0,
         }).outputSync();
-      }, Deno.errors.PermissionDenied);
+      }, Edno.errors.PermissionDenied);
     }
   },
 );
 
-Deno.test(function commandStdinPipedFails() {
+Edno.test(function commandStdinPipedFails() {
   assertThrows(
     () =>
-      new Deno.Command("id", {
+      new Edno.Command("id", {
         stdin: "piped",
       }).output(),
     TypeError,
-    "Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead",
+    "Piped stdin is not supported for this function, use 'Edno.Command.spawn()' instead",
   );
 });
 
-Deno.test(function spawnSyncStdinPipedFails() {
+Edno.test(function spawnSyncStdinPipedFails() {
   assertThrows(
     () =>
-      new Deno.Command("id", {
+      new Edno.Command("id", {
         stdin: "piped",
       }).outputSync(),
     TypeError,
-    "Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead",
+    "Piped stdin is not supported for this function, use 'Edno.Command.spawn()' instead",
   );
 });
 
-Deno.test(
+Edno.test(
   // FIXME(bartlomieju): this test is very flaky on CI, fix it
   {
     ignore: true,
@@ -1035,14 +1035,14 @@ Deno.test(
   },
   async function commandChildUnref() {
     const enc = new TextEncoder();
-    const cwd = await Deno.makeTempDir({ prefix: "deno_command_test" });
+    const cwd = await Edno.makeTempDir({ prefix: "edno_command_test" });
 
     const programFile = "unref.ts";
     const program = `
-const command = await new Deno.Command(Deno.execPath(), {
-  cwd: Deno.args[0],
+const command = await new Edno.Command(Edno.execPath(), {
+  cwd: Edno.args[0],
   stdout: "piped",
-  args: ["run", "-A", Deno.args[1]],
+  args: ["run", "-A", Edno.args[1]],
 });
 const child = command.spawn();
 const readable = child.stdout.pipeThrough(new TextDecoderStream());
@@ -1075,13 +1075,13 @@ setInterval(() => {
   console.log("hello from interval");
 }, 100);
 `;
-    Deno.writeFileSync(`${cwd}/${programFile}`, enc.encode(program));
-    Deno.writeFileSync(`${cwd}/${childProgramFile}`, enc.encode(childProgram));
+    Edno.writeFileSync(`${cwd}/${programFile}`, enc.encode(program));
+    Edno.writeFileSync(`${cwd}/${childProgramFile}`, enc.encode(childProgram));
     // In this subprocess we are spawning another subprocess which has
     // an infinite interval set. Following call would never resolve unless
     // child process gets unrefed.
-    const { success, stdout, stderr } = await new Deno.Command(
-      Deno.execPath(),
+    const { success, stdout, stderr } = await new Edno.Command(
+      Edno.execPath(),
       {
         cwd,
         args: ["run", "-A", programFile, cwd, childProgramFile],
@@ -1097,40 +1097,40 @@ setInterval(() => {
     assert(pidStr);
     assertEquals(line2, "cleared interval");
     const pid = Number.parseInt(pidStr, 10);
-    await Deno.remove(cwd, { recursive: true });
+    await Edno.remove(cwd, { recursive: true });
     // Child process should have been killed when parent process exits.
     assertThrows(() => {
-      Deno.kill(pid, "SIGTERM");
-    }, Deno.errors.NotFound);
+      Edno.kill(pid, "SIGTERM");
+    }, Edno.errors.NotFound);
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os !== "windows" },
+Edno.test(
+  { ignore: Edno.build.os !== "windows" },
   async function commandWindowsRawArguments() {
-    let { success, stdout } = await new Deno.Command("cmd", {
-      args: ["/d", "/s", "/c", '"deno ^"--version^""'],
+    let { success, stdout } = await new Edno.Command("cmd", {
+      args: ["/d", "/s", "/c", '"edno ^"--version^""'],
       windowsRawArguments: true,
     }).output();
     assert(success);
     let stdoutText = new TextDecoder().decode(stdout);
-    assertStringIncludes(stdoutText, "deno");
+    assertStringIncludes(stdoutText, "edno");
     assertStringIncludes(stdoutText, "v8");
     assertStringIncludes(stdoutText, "typescript");
 
-    ({ success, stdout } = new Deno.Command("cmd", {
-      args: ["/d", "/s", "/c", '"deno ^"--version^""'],
+    ({ success, stdout } = new Edno.Command("cmd", {
+      args: ["/d", "/s", "/c", '"edno ^"--version^""'],
       windowsRawArguments: true,
     }).outputSync());
     assert(success);
     stdoutText = new TextDecoder().decode(stdout);
-    assertStringIncludes(stdoutText, "deno");
+    assertStringIncludes(stdoutText, "edno");
     assertStringIncludes(stdoutText, "v8");
     assertStringIncludes(stdoutText, "typescript");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, run: true } },
   async function commandWithPrototypePollution() {
     const originalThen = Promise.prototype.then;
@@ -1139,7 +1139,7 @@ Deno.test(
       Promise.prototype.then = Array.prototype[Symbol.iterator] = () => {
         throw new Error();
       };
-      await new Deno.Command(Deno.execPath(), {
+      await new Edno.Command(Edno.execPath(), {
         args: ["eval", "console.log('hello world')"],
       }).output();
     } finally {
@@ -1149,10 +1149,10 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function commandKillAfterStatus() {
-    const command = new Deno.Command(Deno.execPath(), {
+    const command = new Edno.Command(Edno.execPath(), {
       args: ["help"],
       stdout: "null",
       stderr: "null",
@@ -1167,33 +1167,33 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "process that fails to spawn, prints its name in error",
   async () => {
     assertThrows(
-      () => new Deno.Command("doesntexist").outputSync(),
+      () => new Edno.Command("doesntexist").outputSync(),
       Error,
       "Failed to spawn 'doesntexist'",
     );
     await assertRejects(
-      async () => await new Deno.Command("doesntexist").output(),
+      async () => await new Edno.Command("doesntexist").output(),
       Error,
       "Failed to spawn 'doesntexist'",
     );
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: true, run: true, read: true } },
   async function commandWithCwdOrPath() {
-    const cwd = Deno.makeTempDirSync({ prefix: "deno_command_test" });
+    const cwd = Edno.makeTempDirSync({ prefix: "edno_command_test" });
     try {
-      const suffix = Deno.build.os === "windows" ? ".exe" : "";
-      Deno.mkdirSync(`${cwd}/subdir`);
-      Deno.copyFileSync(Deno.execPath(), `${cwd}/subdir/my_binary${suffix}`);
+      const suffix = Edno.build.os === "windows" ? ".exe" : "";
+      Edno.mkdirSync(`${cwd}/subdir`);
+      Edno.copyFileSync(Edno.execPath(), `${cwd}/subdir/my_binary${suffix}`);
       // cwd
       {
-        const output = await new Deno.Command(`./my_binary${suffix}`, {
+        const output = await new Edno.Command(`./my_binary${suffix}`, {
           cwd: `${cwd}/subdir`,
           args: ["-v"],
         }).output();
@@ -1201,7 +1201,7 @@ Deno.test(
       }
       // path
       {
-        const output = await new Deno.Command(`my_binary${suffix}`, {
+        const output = await new Edno.Command(`my_binary${suffix}`, {
           env: {
             PATH: `${cwd}/subdir`,
           },
@@ -1210,13 +1210,13 @@ Deno.test(
         assertEquals(output.success, true);
       }
     } finally {
-      Deno.removeSync(cwd, { recursive: true });
+      Edno.removeSync(cwd, { recursive: true });
     }
   },
 );
 
-Deno.test(async function outputWhenManuallyConsumingStreams() {
-  const command = new Deno.Command(Deno.execPath(), {
+Edno.test(async function outputWhenManuallyConsumingStreams() {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["eval", "console.log('hello world')"],
     stdout: "piped",
     stderr: "piped",
@@ -1236,17 +1236,17 @@ Deno.test(async function outputWhenManuallyConsumingStreams() {
   assertEquals(status.stderr, new Uint8Array());
 });
 
-Deno.test(
+Edno.test(
   {
-    ignore: Deno.build.os !== "windows",
+    ignore: Edno.build.os !== "windows",
     permissions: { run: ["cmd"], read: true, env: true },
   },
   async function envCaseInsensitiveWindows() {
-    const command = new Deno.Command("cmd", {
+    const command = new Edno.Command("cmd", {
       args: ["/d", "/s", "/c", "echo", "1"],
       env: {
         // notice Path is not PATH
-        Path: Deno.env.get("PATH")!,
+        Path: Edno.env.get("PATH")!,
       },
       clearEnv: true,
     });
@@ -1255,13 +1255,13 @@ Deno.test(
   },
 );
 
-Deno.test(
-  { ignore: Deno.build.os === "windows" },
+Edno.test(
+  { ignore: Edno.build.os === "windows" },
   async function abortChildProcessRightWhenItExitsShouldNotThrow() {
     const controller = new AbortController();
     const cb = () => controller.abort();
-    Deno.addSignalListener("SIGCHLD", cb);
-    const output = await new Deno.Command("true", { signal: controller.signal })
+    Edno.addSignalListener("SIGCHLD", cb);
+    const output = await new Edno.Command("true", { signal: controller.signal })
       .output();
     assertEquals(output.success, true);
     assertEquals(output.code, 0);
@@ -1269,12 +1269,12 @@ Deno.test(
     assertEquals(output.stdout, new Uint8Array());
     assertEquals(output.stderr, new Uint8Array());
 
-    Deno.removeSignalListener("SIGCHLD", cb);
+    Edno.removeSignalListener("SIGCHLD", cb);
   },
 );
 
-Deno.test({ permissions: { run: true } }, async function collectArrayBuffer() {
-  const process = new Deno.Command(Deno.execPath(), {
+Edno.test({ permissions: { run: true } }, async function collectArrayBuffer() {
+  const process = new Edno.Command(Edno.execPath(), {
     args: ["eval", "console.log('hello')"],
     stdout: "piped",
   }).spawn();
@@ -1289,8 +1289,8 @@ Deno.test({ permissions: { run: true } }, async function collectArrayBuffer() {
   await process.status;
 });
 
-Deno.test({ permissions: { run: true } }, async function collectBytes() {
-  const process = new Deno.Command(Deno.execPath(), {
+Edno.test({ permissions: { run: true } }, async function collectBytes() {
+  const process = new Edno.Command(Edno.execPath(), {
     args: ["eval", "console.log('hello')"],
     stdout: "piped",
   }).spawn();
@@ -1302,8 +1302,8 @@ Deno.test({ permissions: { run: true } }, async function collectBytes() {
   await process.status;
 });
 
-Deno.test({ permissions: { run: true } }, async function collectJSON() {
-  const process = new Deno.Command(Deno.execPath(), {
+Edno.test({ permissions: { run: true } }, async function collectJSON() {
+  const process = new Edno.Command(Edno.execPath(), {
     args: ["eval", "console.log(JSON.stringify({foo: 'bar'}))"],
     stdout: "piped",
   }).spawn();
@@ -1314,8 +1314,8 @@ Deno.test({ permissions: { run: true } }, async function collectJSON() {
   await process.status;
 });
 
-Deno.test({ permissions: { run: true } }, async function collectText() {
-  const process = new Deno.Command(Deno.execPath(), {
+Edno.test({ permissions: { run: true } }, async function collectText() {
+  const process = new Edno.Command(Edno.execPath(), {
     args: ["eval", "console.log('hello')"],
     stdout: "piped",
   }).spawn();
@@ -1326,16 +1326,16 @@ Deno.test({ permissions: { run: true } }, async function collectText() {
   await process.status;
 });
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  async function denoSpawnBasic() {
-    const child = Deno.spawn(Deno.execPath(), {
+  async function ednoSpawnBasic() {
+    const child = Edno.spawn(Edno.execPath(), {
       args: ["eval", "console.log('hello from spawn')"],
       stdout: "piped",
       stderr: "null",
     });
 
-    assert(child instanceof Deno.ChildProcess);
+    assert(child instanceof Edno.ChildProcess);
     assert(child.pid > 0);
 
     const output = await child.stdout.text();
@@ -1347,12 +1347,12 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  async function denoSpawnDefaultsToInherit() {
-    // Deno.spawn should default stdio to "inherit" like Command.spawn()
-    const child = Deno.spawn(Deno.execPath(), {
-      args: ["eval", "Deno.exit(42)"],
+  async function ednoSpawnDefaultsToInherit() {
+    // Edno.spawn should default stdio to "inherit" like Command.spawn()
+    const child = Edno.spawn(Edno.execPath(), {
+      args: ["eval", "Edno.exit(42)"],
     });
 
     const status = await child.status;
@@ -1361,13 +1361,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  async function denoSpawnWithPipedStdin() {
-    const child = Deno.spawn(Deno.execPath(), {
+  async function ednoSpawnWithPipedStdin() {
+    const child = Edno.spawn(Edno.execPath(), {
       args: [
         "eval",
-        "const buf = new Uint8Array(5); await Deno.stdin.read(buf); console.log(new TextDecoder().decode(buf))",
+        "const buf = new Uint8Array(5); await Edno.stdin.read(buf); console.log(new TextDecoder().decode(buf))",
       ],
       stdin: "piped",
       stdout: "piped",
@@ -1386,11 +1386,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  async function denoSpawnWithArgsArray() {
-    const child = Deno.spawn(
-      Deno.execPath(),
+  async function ednoSpawnWithArgsArray() {
+    const child = Edno.spawn(
+      Edno.execPath(),
       ["eval", "console.log('args overload')"],
       { stdout: "piped", stderr: "null" },
     );
@@ -1404,13 +1404,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnWithArgsArrayAndArgsOptionThrows() {
+  function ednoSpawnWithArgsArrayAndArgsOptionThrows() {
     assertThrows(
       () => {
-        Deno.spawn(
-          Deno.execPath(),
+        Edno.spawn(
+          Edno.execPath(),
           ["eval", "console.log('hello')"],
           // @ts-expect-error - args not allowed when using args array overload
           { args: ["eval", "console.log('hello')"], stdout: "null" },
@@ -1422,11 +1422,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  async function denoSpawnAndWaitBasic() {
-    const { code, stdout, stderr } = await Deno.spawnAndWait(
-      Deno.execPath(),
+  async function ednoSpawnAndWaitBasic() {
+    const { code, stdout, stderr } = await Edno.spawnAndWait(
+      Edno.execPath(),
       {
         args: ["eval", "console.log('waited')"],
       },
@@ -1438,11 +1438,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  async function denoSpawnAndWaitWithArgsArray() {
-    const { code, stdout } = await Deno.spawnAndWait(
-      Deno.execPath(),
+  async function ednoSpawnAndWaitWithArgsArray() {
+    const { code, stdout } = await Edno.spawnAndWait(
+      Edno.execPath(),
       ["eval", "console.log('args overload waited')"],
     );
 
@@ -1451,12 +1451,12 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  async function denoSpawnAndWaitExitCode() {
-    const { code, success } = await Deno.spawnAndWait(
-      Deno.execPath(),
-      ["eval", "Deno.exit(42)"],
+  async function ednoSpawnAndWaitExitCode() {
+    const { code, success } = await Edno.spawnAndWait(
+      Edno.execPath(),
+      ["eval", "Edno.exit(42)"],
     );
 
     assertEquals(success, false);
@@ -1464,12 +1464,12 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnAndWaitPipedStdinThrows() {
+  function ednoSpawnAndWaitPipedStdinThrows() {
     assertThrows(
       () => {
-        Deno.spawnAndWait(Deno.execPath(), {
+        Edno.spawnAndWait(Edno.execPath(), {
           args: ["eval", "console.log('hello')"],
           stdin: "piped",
         });
@@ -1480,13 +1480,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnAndWaitWithArgsArrayAndArgsOptionThrows() {
+  function ednoSpawnAndWaitWithArgsArrayAndArgsOptionThrows() {
     assertThrows(
       () => {
-        Deno.spawnAndWait(
-          Deno.execPath(),
+        Edno.spawnAndWait(
+          Edno.execPath(),
           ["eval", "console.log('hello')"],
           // @ts-expect-error - args not allowed when using args array overload
           { args: ["eval", "console.log('hello')"] },
@@ -1498,11 +1498,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnAndWaitSyncBasic() {
-    const { code, stdout, stderr } = Deno.spawnAndWaitSync(
-      Deno.execPath(),
+  function ednoSpawnAndWaitSyncBasic() {
+    const { code, stdout, stderr } = Edno.spawnAndWaitSync(
+      Edno.execPath(),
       {
         args: ["eval", "console.log('sync waited')"],
       },
@@ -1514,11 +1514,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnAndWaitSyncWithArgsArray() {
-    const { code, stdout } = Deno.spawnAndWaitSync(
-      Deno.execPath(),
+  function ednoSpawnAndWaitSyncWithArgsArray() {
+    const { code, stdout } = Edno.spawnAndWaitSync(
+      Edno.execPath(),
       ["eval", "console.log('sync args overload')"],
     );
 
@@ -1530,12 +1530,12 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnAndWaitSyncExitCode() {
-    const { code, success } = Deno.spawnAndWaitSync(
-      Deno.execPath(),
-      ["eval", "Deno.exit(42)"],
+  function ednoSpawnAndWaitSyncExitCode() {
+    const { code, success } = Edno.spawnAndWaitSync(
+      Edno.execPath(),
+      ["eval", "Edno.exit(42)"],
     );
 
     assertEquals(success, false);
@@ -1543,12 +1543,12 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnAndWaitSyncPipedStdinThrows() {
+  function ednoSpawnAndWaitSyncPipedStdinThrows() {
     assertThrows(
       () => {
-        Deno.spawnAndWaitSync(Deno.execPath(), {
+        Edno.spawnAndWaitSync(Edno.execPath(), {
           args: ["eval", "console.log('hello')"],
           stdin: "piped",
         });
@@ -1559,13 +1559,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true } },
-  function denoSpawnAndWaitSyncWithArgsArrayAndArgsOptionThrows() {
+  function ednoSpawnAndWaitSyncWithArgsArrayAndArgsOptionThrows() {
     assertThrows(
       () => {
-        Deno.spawnAndWaitSync(
-          Deno.execPath(),
+        Edno.spawnAndWaitSync(
+          Edno.execPath(),
           ["eval", "console.log('hello')"],
           // @ts-expect-error - args not allowed when using args array overload
           { args: ["eval", "console.log('hello')"] },

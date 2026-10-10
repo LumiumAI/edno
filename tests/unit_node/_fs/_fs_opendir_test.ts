@@ -11,9 +11,9 @@ import { opendir, opendirSync } from "node:fs";
 import { Buffer } from "node:buffer";
 import { assertCallbackErrorUncaught } from "../_test_utils.ts";
 
-Deno.test("[node/fs] opendir()", async (t) => {
-  const path = await Deno.makeTempDir();
-  const file = await Deno.makeTempFile();
+Edno.test("[node/fs] opendir()", async (t) => {
+  const path = await Edno.makeTempDir();
+  const file = await Edno.makeTempFile();
 
   await t.step(
     "fails if encoding is invalid",
@@ -98,13 +98,13 @@ Deno.test("[node/fs] opendir()", async (t) => {
     });
   });
 
-  await Deno.remove(path);
-  await Deno.remove(file);
+  await Edno.remove(path);
+  await Edno.remove(file);
 });
 
-Deno.test("[node/fs] opendirSync()", async (t) => {
-  const path = await Deno.makeTempDir();
-  const file = await Deno.makeTempFile();
+Edno.test("[node/fs] opendirSync()", async (t) => {
+  const path = await Edno.makeTempDir();
+  const file = await Edno.makeTempFile();
 
   await t.step("fails if encoding is invalid", () => {
     assertThrows(
@@ -141,6 +141,6 @@ Deno.test("[node/fs] opendirSync()", async (t) => {
     assert(opendirSync(new URL(`file://` + path)));
   });
 
-  await Deno.remove(path);
-  await Deno.remove(file);
+  await Edno.remove(path);
+  await Edno.remove(file);
 });

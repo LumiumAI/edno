@@ -8,7 +8,7 @@
       }, {
         "args": [
           "eval",
-          "const tarPath = './test-basic-1.0.0.tgz'; const data = Deno.readFileSync(tarPath); console.log('File exists:', data.length > 0);"
+          "const tarPath = './test-basic-1.0.0.tgz'; const data = Edno.readFileSync(tarPath); console.log('File exists:', data.length > 0);"
         ],
         "output": "File exists: true\n"
       }]

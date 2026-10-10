@@ -1,5 +1,5 @@
 // This file should be excluded from formatting
-Deno.test(
+Edno.test(
     { perms: { net: true } },
     async function fetchBodyUsedCancelStream() {
       const response = await fetch(

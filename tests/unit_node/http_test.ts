@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
 import { EventEmitter, once } from "node:events";
 import {
@@ -43,11 +43,11 @@ import { execCode } from "../unit/test_util.ts";
 
 // Destroy idle keep-alive sockets before each test so that sequential
 // tests reusing the same port (e.g. 4505) don't fail with EADDRINUSE.
-Deno.test.beforeEach(() => {
+Edno.test.beforeEach(() => {
   http.globalAgent.destroy();
 });
 
-Deno.test("[node/http] HTTPParser.consume keeps stream handle alive", async () => {
+Edno.test("[node/http] HTTPParser.consume keeps stream handle alive", async () => {
   v8.setFlagsFromString("--expose_gc");
   const gc = runInNewContext("gc") as () => void;
 
@@ -76,7 +76,7 @@ Deno.test("[node/http] HTTPParser.consume keeps stream handle alive", async () =
   parser.unconsume();
 });
 
-Deno.test("[node/http listen]", async () => {
+Edno.test("[node/http listen]", async () => {
   {
     const server = http.createServer();
     assertEquals(0, EventEmitter.listenerCount(server, "request"));
@@ -132,17 +132,17 @@ Deno.test("[node/http listen]", async () => {
   }
 });
 
-Deno.test("[node/http close]", async () => {
+Edno.test("[node/http close]", async () => {
   {
     const deferred1 = Promise.withResolvers<void>();
     const deferred2 = Promise.withResolvers<void>();
     // Node quirk: callback gets exception object, event listener does not.
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const server = http.createServer().close((err: any) => {
       assertEquals(err.code, "ERR_SERVER_NOT_RUNNING");
       deferred1.resolve();
     });
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     server.on("close", (err: any) => {
       assertEquals(err, undefined);
       deferred2.resolve();
@@ -161,7 +161,7 @@ Deno.test("[node/http close]", async () => {
       assertEquals(err, undefined);
       deferred1.resolve();
     });
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     server.on("close", (err: any) => {
       assertEquals(err, undefined);
       deferred2.resolve();
@@ -174,7 +174,7 @@ Deno.test("[node/http close]", async () => {
   }
 });
 
-Deno.test("[node/http] chunked response", async () => {
+Edno.test("[node/http] chunked response", async () => {
   for (
     const body of [undefined, "", "ok"]
   ) {
@@ -188,7 +188,7 @@ Deno.test("[node/http] chunked response", async () => {
 
     server.listen(async () => {
       const res = await fetch(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         `http://127.0.0.1:${(server.address() as any).port}/`,
       );
       assert(res.ok);
@@ -203,7 +203,7 @@ Deno.test("[node/http] chunked response", async () => {
   }
 });
 
-Deno.test("[node/http] .writeHead()", async (t) => {
+Edno.test("[node/http] .writeHead()", async (t) => {
   async function testWriteHead(
     onRequest: (res: ServerResponse) => void,
     onResponse: (res: Response) => void,
@@ -215,7 +215,7 @@ Deno.test("[node/http] .writeHead()", async (t) => {
     });
     server.listen(async () => {
       const res = await fetch(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         `http://127.0.0.1:${(server.address() as any).port}/`,
       );
       await res.body?.cancel();
@@ -370,7 +370,7 @@ Deno.test("[node/http] .writeHead()", async (t) => {
 });
 
 // Test empty chunks: https://github.com/denoland/deno/issues/17194
-Deno.test("[node/http] empty chunk in the middle of response", async () => {
+Edno.test("[node/http] empty chunk in the middle of response", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
 
   const server = http.createServer((_req, res) => {
@@ -382,7 +382,7 @@ Deno.test("[node/http] empty chunk in the middle of response", async () => {
 
   server.listen(async () => {
     const res = await fetch(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       `http://127.0.0.1:${(server.address() as any).port}/`,
     );
     const actual = await res.text();
@@ -393,7 +393,7 @@ Deno.test("[node/http] empty chunk in the middle of response", async () => {
   await promise;
 });
 
-Deno.test("[node/http] server can respond with 101, 204, 205, 304 status", async () => {
+Edno.test("[node/http] server can respond with 101, 204, 205, 304 status", async () => {
   for (const status of [101, 204, 205, 304]) {
     const { promise, resolve } = Promise.withResolvers<void>();
     const server = http.createServer((_req, res) => {
@@ -402,7 +402,7 @@ Deno.test("[node/http] server can respond with 101, 204, 205, 304 status", async
     });
     server.listen(async () => {
       const res = await fetch(
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         `http://127.0.0.1:${(server.address() as any).port}/`,
       );
       await res.body?.cancel();
@@ -413,7 +413,7 @@ Deno.test("[node/http] server can respond with 101, 204, 205, 304 status", async
   }
 });
 
-Deno.test("[node/http] multiple set-cookie headers", async () => {
+Edno.test("[node/http] multiple set-cookie headers", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
 
   const server = http.createServer((_req, res) => {
@@ -424,7 +424,7 @@ Deno.test("[node/http] multiple set-cookie headers", async () => {
 
   server.listen(async () => {
     const res = await fetch(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       `http://127.0.0.1:${(server.address() as any).port}/`,
     );
     assert(res.ok);
@@ -440,7 +440,7 @@ Deno.test("[node/http] multiple set-cookie headers", async () => {
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse.setHeaders preserves Headers set-cookie entries", async () => {
+Edno.test("[node/http] ServerResponse.setHeaders preserves Headers set-cookie entries", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
 
   const server = http.createServer((_req, res) => {
@@ -455,7 +455,7 @@ Deno.test("[node/http] ServerResponse.setHeaders preserves Headers set-cookie en
 
   server.listen(async () => {
     const res = await fetch(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       `http://127.0.0.1:${(server.address() as any).port}/`,
     );
     assert(res.ok);
@@ -468,7 +468,7 @@ Deno.test("[node/http] ServerResponse.setHeaders preserves Headers set-cookie en
   await promise;
 });
 
-Deno.test("[node/http] IncomingRequest socket has remoteAddress + remotePort", async () => {
+Edno.test("[node/http] IncomingRequest socket has remoteAddress + remotePort", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
 
   let remoteAddress: string | undefined;
@@ -479,7 +479,7 @@ Deno.test("[node/http] IncomingRequest socket has remoteAddress + remotePort", a
     res.end();
   });
   server.listen(async () => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const port = (server.address() as any).port;
     const res = await fetch(
       `http://127.0.0.1:${port}/`,
@@ -498,7 +498,7 @@ Deno.test("[node/http] IncomingRequest socket has remoteAddress + remotePort", a
   await promise;
 });
 
-Deno.test("[node/http] request default protocol", async () => {
+Edno.test("[node/http] request default protocol", async () => {
   const deferred1 = Promise.withResolvers<void>();
   const deferred2 = Promise.withResolvers<void>();
   const server = http.createServer((_, res) => {
@@ -506,13 +506,13 @@ Deno.test("[node/http] request default protocol", async () => {
   });
 
   // @ts-ignore IncomingMessageForClient
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   let clientRes: any;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   let clientReq: any;
   server.listen(() => {
     clientReq = http.request(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       { host: "localhost", port: (server.address() as any).port },
       (res) => {
         assert(res.socket instanceof EventEmitter);
@@ -537,7 +537,7 @@ Deno.test("[node/http] request default protocol", async () => {
   assertEquals(clientRes!.complete, true);
 });
 
-Deno.test("[node/http] request non-ws upgrade header", async () => {
+Edno.test("[node/http] request non-ws upgrade header", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.writeHead(200, { "upgrade": "h2,h2c" });
@@ -547,7 +547,7 @@ Deno.test("[node/http] request non-ws upgrade header", async () => {
     const req = http.request(
       {
         host: "localhost",
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         port: (server.address() as any).port,
       },
       (res) => {
@@ -566,7 +566,7 @@ Deno.test("[node/http] request non-ws upgrade header", async () => {
   await promise;
 });
 
-Deno.test("[node/http] request with headers", async () => {
+Edno.test("[node/http] request with headers", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((req, res) => {
     assertEquals(req.headers["x-foo"], "bar");
@@ -576,7 +576,7 @@ Deno.test("[node/http] request with headers", async () => {
     const req = http.request(
       {
         host: "localhost",
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         port: (server.address() as any).port,
         headers: { "x-foo": "bar" },
       },
@@ -596,7 +596,7 @@ Deno.test("[node/http] request with headers", async () => {
   await promise;
 });
 
-Deno.test("[node/http] request with ipv6 host", async () => {
+Edno.test("[node/http] request with ipv6 host", async () => {
   const server = http.createServer((_req, res) => res.end()).listen(0, "::1");
   await once(server, "listening");
   const { port } = server.address() as AddressInfo;
@@ -609,7 +609,7 @@ Deno.test("[node/http] request with ipv6 host", async () => {
   await once(server, "close");
 });
 
-Deno.test("[node/http] non-string buffer response", {
+Edno.test("[node/http] non-string buffer response", {
   // TODO(kt3k): Enable sanitizer. A "zlib" resource is leaked in this test case.
   sanitizeResources: false,
 }, async () => {
@@ -626,7 +626,7 @@ Deno.test("[node/http] non-string buffer response", {
   });
   server.listen(async () => {
     const res = await fetch(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       `http://localhost:${(server.address() as any).port}`,
     );
     try {
@@ -644,7 +644,7 @@ Deno.test("[node/http] non-string buffer response", {
 // TODO(kt3k): Enable this test
 // Currently IncomingMessage constructor has incompatible signature.
 /*
-Deno.test("[node/http] http.IncomingMessage can be created without url", () => {
+Edno.test("[node/http] http.IncomingMessage can be created without url", () => {
   const message = new http.IncomingMessage(
     // adapted from https://github.com/dougmoscrop/serverless-http/blob/80bfb3e940057d694874a8b0bc12ad96d2abe7ab/lib/request.js#L7
     {
@@ -653,9 +653,9 @@ Deno.test("[node/http] http.IncomingMessage can be created without url", () => {
       readable: false,
       remoteAddress: "foo",
       address: () => ({ port: 443 }),
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       end: Function.prototype as any,
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       destroy: Function.prototype as any,
     },
   );
@@ -663,7 +663,7 @@ Deno.test("[node/http] http.IncomingMessage can be created without url", () => {
 });
 */
 
-Deno.test("[node/http] send request with non-chunked body", async () => {
+Edno.test("[node/http] send request with non-chunked body", async () => {
   let requestHeaders: Headers;
   let requestBody = "";
 
@@ -678,7 +678,7 @@ Deno.test("[node/http] send request with non-chunked body", async () => {
   const { promise: portPromise, resolve: portResolve } = Promise.withResolvers<
     number
   >();
-  const servePromise = Deno.serve({
+  const servePromise = Edno.serve({
     hostname,
     port: 0,
     signal: abortController.signal,
@@ -722,13 +722,13 @@ Deno.test("[node/http] send request with non-chunked body", async () => {
     await new Promise((resolve) => setTimeout(resolve, 100)),
   ]);
 
-  if (Deno.build.os === "windows") {
+  if (Edno.build.os === "windows") {
     // FIXME(kt3k): This is necessary for preventing op leak on windows
     await new Promise((resolve) => setTimeout(resolve, 4000));
   }
 });
 
-Deno.test(
+Edno.test(
   "[node/http] send request with chunked body",
   async () => {
     let requestHeaders: Headers;
@@ -746,7 +746,7 @@ Deno.test(
       .withResolvers<
         number
       >();
-    const servePromise = Deno.serve({
+    const servePromise = Edno.serve({
       hostname,
       port: 0,
       signal: abortController.signal,
@@ -781,14 +781,14 @@ Deno.test(
 
     await servePromise;
     console.log("Server finished.");
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       // FIXME(kt3k): This is necessary for preventing op leak on windows
       await new Promise((resolve) => setTimeout(resolve, 4000));
     }
   },
 );
 
-Deno.test("[node/http] send request with chunked body as default", async () => {
+Edno.test("[node/http] send request with chunked body as default", async () => {
   let requestHeaders: Headers;
   let requestBody = "";
 
@@ -803,7 +803,7 @@ Deno.test("[node/http] send request with chunked body as default", async () => {
   const { promise: portPromise, resolve: portResolve } = Promise.withResolvers<
     number
   >();
-  const servePromise = Deno.serve({
+  const servePromise = Edno.serve({
     hostname,
     port: 0,
     signal: abortController.signal,
@@ -835,17 +835,17 @@ Deno.test("[node/http] send request with chunked body as default", async () => {
 
   await servePromise;
 
-  if (Deno.build.os === "windows") {
+  if (Edno.build.os === "windows") {
     // FIXME(kt3k): This is necessary for preventing op leak on windows
     await new Promise((resolve) => setTimeout(resolve, 4000));
   }
 });
 
-Deno.test("[node/http] ServerResponse _implicitHeader", async () => {
+Edno.test("[node/http] ServerResponse _implicitHeader", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     const writeHeadSpy = spy(res, "writeHead");
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     (res as any)._implicitHeader();
     assertSpyCalls(writeHeadSpy, 1);
     writeHeadSpy.restore();
@@ -893,7 +893,7 @@ async function getRawServerResponse(
   }
 }
 
-Deno.test("[node/http] ServerResponse direct end sets content-length", async () => {
+Edno.test("[node/http] ServerResponse direct end sets content-length", async () => {
   const rawResponse = await getRawServerResponse((_req, res) => {
     res.end("hi");
   });
@@ -904,7 +904,7 @@ Deno.test("[node/http] ServerResponse direct end sets content-length", async () 
   assert(rawResponse.endsWith("\r\n\r\nhi"));
 });
 
-Deno.test("[node/http] ServerResponse empty end sets content-length", async () => {
+Edno.test("[node/http] ServerResponse empty end sets content-length", async () => {
   const rawResponse = await getRawServerResponse((_req, res) => {
     res.end();
   });
@@ -915,7 +915,7 @@ Deno.test("[node/http] ServerResponse empty end sets content-length", async () =
   assert(rawResponse.endsWith("\r\n\r\n"));
 });
 
-Deno.test(
+Edno.test(
   "[node/http] ServerResponse empty end respects pre-generated content-length",
   async () => {
     const rawResponse = await getRawServerResponse((_req, res) => {
@@ -930,7 +930,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] ServerResponse direct end respects explicit chunked transfer-encoding",
   async () => {
     const rawResponse = await getRawServerResponse((_req, res) => {
@@ -946,7 +946,7 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/34002
-Deno.test(
+Edno.test(
   "[node/http] ServerResponse does not emit 'finish' after client abort",
   async () => {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -989,7 +989,7 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/21509
-Deno.test("[node/http] ServerResponse flushHeaders", async () => {
+Edno.test("[node/http] ServerResponse flushHeaders", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.flushHeaders(); // no-op
@@ -1008,7 +1008,7 @@ Deno.test("[node/http] ServerResponse flushHeaders", async () => {
   await promise;
 });
 
-Deno.test("[node/http] server unref", async () => {
+Edno.test("[node/http] server unref", async () => {
   const [statusCode, _output] = await execCode(`
   import http from "node:http";
   const server = http.createServer((_req, res) => {
@@ -1026,8 +1026,8 @@ Deno.test("[node/http] server unref", async () => {
   assertEquals(statusCode, 0);
 });
 
-Deno.test("[node/http] ClientRequest handle non-string headers", async () => {
-  // deno-lint-ignore no-explicit-any
+Edno.test("[node/http] ClientRequest handle non-string headers", async () => {
+  // edno-lint-ignore no-explicit-any
   let headers: any;
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const req = http.request("http://localhost:4545/echo_server", {
@@ -1048,7 +1048,7 @@ Deno.test("[node/http] ClientRequest handle non-string headers", async () => {
   assertEquals(headers!["1"], "2");
 });
 
-Deno.test({
+Edno.test({
   name: "[node/https] ClientRequest uses HTTP/1.1",
   async fn() {
     let body = "";
@@ -1072,7 +1072,7 @@ Deno.test({
   },
 });
 
-Deno.test("[node/http] ClientRequest setTimeout", async () => {
+Edno.test("[node/http] ClientRequest setTimeout", async () => {
   let body = "";
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const timer = setTimeout(() => reject("timed out"), 50000);
@@ -1093,7 +1093,7 @@ Deno.test("[node/http] ClientRequest setTimeout", async () => {
   assertEquals(body, "HTTP/1.1");
 });
 
-Deno.test("[node/http] ClientRequest setNoDelay", async () => {
+Edno.test("[node/http] ClientRequest setNoDelay", async () => {
   let body = "";
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const timer = setTimeout(() => reject("timed out"), 50000);
@@ -1114,7 +1114,7 @@ Deno.test("[node/http] ClientRequest setNoDelay", async () => {
   assertEquals(body, "HTTP/1.1");
 });
 
-Deno.test("[node/http] ClientRequest PATCH", async () => {
+Edno.test("[node/http] ClientRequest PATCH", async () => {
   let body = "";
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const req = http.request("http://localhost:4545/echo_server", {
@@ -1136,7 +1136,7 @@ Deno.test("[node/http] ClientRequest PATCH", async () => {
   assertEquals(body, "hello world");
 });
 
-Deno.test("[node/http] ClientRequest PUT", async () => {
+Edno.test("[node/http] ClientRequest PUT", async () => {
   let body = "";
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const req = http.request("http://localhost:4545/echo_server", {
@@ -1158,7 +1158,7 @@ Deno.test("[node/http] ClientRequest PUT", async () => {
   assertEquals(body, "hello world");
 });
 
-Deno.test("[node/http] ClientRequest search params", async () => {
+Edno.test("[node/http] ClientRequest search params", async () => {
   let body = "";
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const req = http.request({
@@ -1180,22 +1180,22 @@ Deno.test("[node/http] ClientRequest search params", async () => {
   assertEquals(body, "foo=bar");
 });
 
-Deno.test("[node/http] HTTPS server", async () => {
+Edno.test("[node/http] HTTPS server", async () => {
   const deferred = Promise.withResolvers<void>();
   const deferred2 = Promise.withResolvers<void>();
-  const client = Deno.createHttpClient({
-    caCerts: [Deno.readTextFileSync("tests/testdata/tls/RootCA.pem")],
+  const client = Edno.createHttpClient({
+    caCerts: [Edno.readTextFileSync("tests/testdata/tls/RootCA.pem")],
   });
   const server = https.createServer({
-    cert: Deno.readTextFileSync("tests/testdata/tls/localhost.crt"),
-    key: Deno.readTextFileSync("tests/testdata/tls/localhost.key"),
+    cert: Edno.readTextFileSync("tests/testdata/tls/localhost.crt"),
+    key: Edno.readTextFileSync("tests/testdata/tls/localhost.key"),
   }, (req, res) => {
     // @ts-ignore: It exists on TLSSocket
     assert(req.socket.encrypted);
     res.end("success!");
   });
   server.listen(() => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     fetch(`https://localhost:${(server.address() as any).port}`, {
       client,
     }).then(async (res) => {
@@ -1213,7 +1213,7 @@ Deno.test("[node/http] HTTPS server", async () => {
   client.close();
 });
 
-Deno.test(
+Edno.test(
   "[node/http] client upgrade",
   { permissions: { net: true } },
   async () => {
@@ -1274,13 +1274,13 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] client end with callback",
   { permissions: { net: true } },
   async () => {
     let received = false;
     const ac = new AbortController();
-    const server = Deno.serve({
+    const server = Edno.serve({
       port: 0,
       signal: ac.signal,
       onListen: undefined,
@@ -1320,7 +1320,7 @@ Deno.test(
   },
 );
 
-Deno.test("[node/http] server emits error if addr in use", async () => {
+Edno.test("[node/http] server emits error if addr in use", async () => {
   const deferred1 = Promise.withResolvers<void>();
   const deferred2 = Promise.withResolvers<Error>();
 
@@ -1343,14 +1343,14 @@ Deno.test("[node/http] server emits error if addr in use", async () => {
   );
 });
 
-Deno.test(
+Edno.test(
   "[node/http] client destroy doesn't leak",
   { permissions: { net: true } },
   async () => {
     const ac = new AbortController();
     let timerId;
 
-    const server = Deno.serve(
+    const server = Edno.serve(
       { port: 5929, signal: ac.signal },
       async (_req) => {
         await new Promise((resolve) => {
@@ -1377,7 +1377,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] client destroy before sending request should not error",
   async () => {
     const { resolve, promise } = Promise.withResolvers<void>();
@@ -1390,23 +1390,23 @@ Deno.test(
     request.on("close", () => resolve());
     await promise;
 
-    if (Deno.build.os === "windows") {
+    if (Edno.build.os === "windows") {
       // FIXME(kt3k): This is necessary for preventing op leak on windows
       await new Promise((resolve) => setTimeout(resolve, 4000));
     }
   },
 );
 
-const isWindows = Deno.build.os === "windows";
+const isWindows = Edno.build.os === "windows";
 
-Deno.test(
+Edno.test(
   "[node/http] destroyed requests should not be sent",
   { sanitizeResources: !isWindows, sanitizeOps: !isWindows },
   async () => {
     let receivedRequest = false;
     const requestClosed = Promise.withResolvers<void>();
     const ac = new AbortController();
-    const server = Deno.serve({ port: 0, signal: ac.signal }, () => {
+    const server = Edno.serve({ port: 0, signal: ac.signal }, () => {
       receivedRequest = true;
       return new Response(null);
     });
@@ -1426,7 +1426,7 @@ Deno.test(
   },
 );
 
-Deno.test("[node/http] node:http exports globalAgent", async () => {
+Edno.test("[node/http] node:http exports globalAgent", async () => {
   const http = await import("node:http");
   assert(
     http.globalAgent,
@@ -1438,7 +1438,7 @@ Deno.test("[node/http] node:http exports globalAgent", async () => {
   );
 });
 
-Deno.test("[node/https] node:https exports globalAgent", async () => {
+Edno.test("[node/https] node:https exports globalAgent", async () => {
   const https = await import("node:https");
   assert(
     https.globalAgent,
@@ -1450,7 +1450,7 @@ Deno.test("[node/https] node:https exports globalAgent", async () => {
   );
 });
 
-Deno.test("[node/http] node:http request.setHeader(header, null) doesn't throw", async () => {
+Edno.test("[node/http] node:http request.setHeader(header, null) doesn't throw", async () => {
   {
     const { promise, resolve } = Promise.withResolvers<void>();
     const req = http.request("http://localhost:4545/", (res) => {
@@ -1480,7 +1480,7 @@ Deno.test("[node/http] node:http request.setHeader(header, null) doesn't throw",
   }
 });
 
-Deno.test("[node/http] ServerResponse getHeader", async () => {
+Edno.test("[node/http] ServerResponse getHeader", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.setHeader("foo", "bar");
@@ -1501,7 +1501,7 @@ Deno.test("[node/http] ServerResponse getHeader", async () => {
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse appendHeader", async () => {
+Edno.test("[node/http] ServerResponse appendHeader", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.setHeader("foo", "bar");
@@ -1527,7 +1527,7 @@ Deno.test("[node/http] ServerResponse appendHeader", async () => {
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse appendHeader set-cookie", async () => {
+Edno.test("[node/http] ServerResponse appendHeader set-cookie", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.appendHeader("Set-Cookie", "a=b");
@@ -1548,7 +1548,7 @@ Deno.test("[node/http] ServerResponse appendHeader set-cookie", async () => {
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse header names case insensitive", async () => {
+Edno.test("[node/http] ServerResponse header names case insensitive", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.setHeader("Content-Length", "12345");
@@ -1577,7 +1577,7 @@ Deno.test("[node/http] ServerResponse header names case insensitive", async () =
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse .req", async () => {
+Edno.test("[node/http] ServerResponse .req", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((req, res) => {
     assertEquals(res.req, req);
@@ -1596,7 +1596,7 @@ Deno.test("[node/http] ServerResponse .req", async () => {
   await promise;
 });
 
-Deno.test("[node/http] IncomingMessage override", () => {
+Edno.test("[node/http] IncomingMessage override", () => {
   const req = new http.IncomingMessage(new net.Socket());
   // https://github.com/dougmoscrop/serverless-http/blob/3aaa6d0fe241109a8752efb011c242d249f32368/lib/request.js#L20-L30
   Object.assign(req, {
@@ -1612,7 +1612,7 @@ Deno.test("[node/http] IncomingMessage override", () => {
   });
 });
 
-Deno.test("[node/http] IncomingMessage header maps handle built-in names", async () => {
+Edno.test("[node/http] IncomingMessage header maps handle built-in names", async () => {
   const hostname = "127.0.0.1";
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const server = http.createServer((req, res) => {
@@ -1648,7 +1648,7 @@ Deno.test("[node/http] IncomingMessage header maps handle built-in names", async
     server.listen(0, hostname);
     await once(server, "listening");
     const { port } = server.address() as AddressInfo;
-    const conn = await Deno.connect({ hostname, port });
+    const conn = await Edno.connect({ hostname, port });
     try {
       await conn.write(
         new TextEncoder().encode(
@@ -1674,7 +1674,7 @@ Deno.test("[node/http] IncomingMessage header maps handle built-in names", async
   }
 });
 
-Deno.test("[node/http] ServerResponse assignSocket and detachSocket", () => {
+Edno.test("[node/http] ServerResponse assignSocket and detachSocket", () => {
   const req = new http.IncomingMessage(new net.Socket());
   const res = new http.ServerResponse(req);
   let writtenData: string | Uint8Array | undefined = undefined;
@@ -1701,7 +1701,7 @@ Deno.test("[node/http] ServerResponse assignSocket and detachSocket", () => {
 
   res.write("Hello World!", "utf8");
   // The first write includes HTTP headers concatenated with the body.
-  // Both Node.js and Deno concatenate header + data as a string.
+  // Both Node.js and Edno concatenate header + data as a string.
   assert(typeof writtenData === "string");
   assert((writtenData as string).includes("Hello World!"));
   assertEquals(writtenEncoding, "utf8");
@@ -1720,7 +1720,7 @@ Deno.test("[node/http] ServerResponse assignSocket and detachSocket", () => {
   // assertEquals(writtenEncoding, undefined);
 });
 
-Deno.test("[node/http] ServerResponse getHeaders", () => {
+Edno.test("[node/http] ServerResponse getHeaders", () => {
   const req = new http.IncomingMessage(new net.Socket());
   const res = new http.ServerResponse(req);
   res.setHeader("foo", "bar");
@@ -1729,17 +1729,17 @@ Deno.test("[node/http] ServerResponse getHeaders", () => {
   assertEquals(res.getHeaders(), { "foo": "bar", "bar": "baz" });
 });
 
-Deno.test("[node/http] ServerResponse default status code 200", () => {
+Edno.test("[node/http] ServerResponse default status code 200", () => {
   const req = new http.IncomingMessage(new net.Socket());
   const res = new http.ServerResponse(req);
   assertEquals(res.statusCode, 200);
 });
 
-Deno.test("[node/http] maxHeaderSize is defined", () => {
+Edno.test("[node/http] maxHeaderSize is defined", () => {
   assertEquals(http.maxHeaderSize, 16_384);
 });
 
-Deno.test("[node/http] server graceful close", async () => {
+Edno.test("[node/http] server graceful close", async () => {
   const server = http.createServer(function (_, response) {
     response.writeHead(200, {});
     response.end("ok");
@@ -1748,7 +1748,7 @@ Deno.test("[node/http] server graceful close", async () => {
 
   const { promise, resolve } = Promise.withResolvers<void>();
   server.listen(0, function () {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const port = (server.address() as any).port;
     const testURL = url.parse(
       `http://localhost:${port}`,
@@ -1766,7 +1766,7 @@ Deno.test("[node/http] server graceful close", async () => {
   await promise;
 });
 
-Deno.test("[node/http] server closeAllConnections shutdown", async () => {
+Edno.test("[node/http] server closeAllConnections shutdown", async () => {
   const server = http.createServer((_req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({
@@ -1784,7 +1784,7 @@ Deno.test("[node/http] server closeAllConnections shutdown", async () => {
   await promise;
 });
 
-Deno.test("[node/http] server closeIdleConnections shutdown", async () => {
+Edno.test("[node/http] server closeIdleConnections shutdown", async () => {
   const server = http.createServer({ keepAliveTimeout: 60000 }, (_req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({
@@ -1802,7 +1802,7 @@ Deno.test("[node/http] server closeIdleConnections shutdown", async () => {
   await promise;
 });
 
-Deno.test("[node/http] client closing a streaming response doesn't terminate server", async () => {
+Edno.test("[node/http] client closing a streaming response doesn't terminate server", async () => {
   let interval: NodeJS.Timeout;
   const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "text/plain" });
@@ -1822,7 +1822,7 @@ Deno.test("[node/http] client closing a streaming response doesn't terminate ser
 
   const deferred1 = Promise.withResolvers<void>();
   server.listen(0, () => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const port = (server.address() as any).port;
 
     // Create a client connection to the server
@@ -1851,7 +1851,7 @@ Deno.test("[node/http] client closing a streaming response doesn't terminate ser
   clearInterval(interval!);
 });
 
-Deno.test("[node/http] client closing a streaming request doesn't terminate server", async () => {
+Edno.test("[node/http] client closing a streaming request doesn't terminate server", async () => {
   let interval: NodeJS.Timeout;
   let uploadedData = "";
   let requestError: Error | null = null;
@@ -1876,7 +1876,7 @@ Deno.test("[node/http] client closing a streaming request doesn't terminate serv
   });
 
   server.listen(0, () => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const port = (server.address() as any).port;
 
     // Create a client connection to the server
@@ -1930,7 +1930,7 @@ Deno.test("[node/http] client closing a streaming request doesn't terminate serv
   clearInterval(interval!);
 });
 
-Deno.test("[node/http] http.request() post streaming body works", async () => {
+Edno.test("[node/http] http.request() post streaming body works", async () => {
   const server = http.createServer((req, res) => {
     if (req.method === "POST") {
       let receivedBytes = 0;
@@ -1953,10 +1953,10 @@ Deno.test("[node/http] http.request() post streaming body works", async () => {
     responseEnded.reject(new Error("timeout"));
   }, 5000);
   server.listen(0, () => {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const port = (server.address() as any).port;
     const filePath = relative(
-      Deno.cwd(),
+      Edno.cwd(),
       fromFileUrl(new URL("./testdata/lorem_ipsum_512kb.txt", import.meta.url)),
     );
     const contentLength = 524289;
@@ -2003,7 +2003,7 @@ Deno.test("[node/http] http.request() post streaming body works", async () => {
 });
 
 // https://github.com/denoland/deno/issues/24239
-Deno.test("[node/http] ServerResponse write transfer-encoding chunked", async () => {
+Edno.test("[node/http] ServerResponse write transfer-encoding chunked", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
@@ -2034,12 +2034,12 @@ Deno.test("[node/http] ServerResponse write transfer-encoding chunked", async ()
   await promise;
 });
 
-Deno.test("[node/http] Server.address() can be null", () => {
+Edno.test("[node/http] Server.address() can be null", () => {
   const server = http.createServer((_req, res) => res.end("it works"));
   assertEquals(server.address(), null);
 });
 
-Deno.test("[node/http] ClientRequest PUT subarray", async () => {
+Edno.test("[node/http] ClientRequest PUT subarray", async () => {
   const buffer = Buffer.from("hello world");
   const payload = buffer.subarray(6, 11);
   let body = "";
@@ -2061,7 +2061,7 @@ Deno.test("[node/http] ClientRequest PUT subarray", async () => {
   assertEquals(body, "world");
 });
 
-Deno.test("[node/http] req.url equals pathname + search", async () => {
+Edno.test("[node/http] req.url equals pathname + search", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
 
   const server = http.createServer((req, res) => res.end(req.url));
@@ -2079,7 +2079,7 @@ Deno.test("[node/http] req.url equals pathname + search", async () => {
   await promise;
 });
 
-Deno.test("[node/http] ClientRequest content-disposition header works", async () => {
+Edno.test("[node/http] ClientRequest content-disposition header works", async () => {
   const payload = Buffer.from("hello world");
   let body = "";
   let headers = {} as http.IncomingHttpHeaders;
@@ -2106,7 +2106,7 @@ Deno.test("[node/http] ClientRequest content-disposition header works", async ()
   assertEquals(headers["content-disposition"], "attachment");
 });
 
-Deno.test("[node/http] In ClientRequest, option.hostname has precedence over options.host", async () => {
+Edno.test("[node/http] In ClientRequest, option.hostname has precedence over options.host", async () => {
   const responseReceived = Promise.withResolvers<void>();
 
   new http.ClientRequest({
@@ -2123,18 +2123,18 @@ Deno.test("[node/http] In ClientRequest, option.hostname has precedence over opt
   await responseReceived.promise;
 });
 
-Deno.test("[node/http] upgraded socket closes when the server closed without closing handshake", async () => {
+Edno.test("[node/http] upgraded socket closes when the server closed without closing handshake", async () => {
   const clientSocketClosed = Promise.withResolvers<void>();
   const serverProcessClosed = Promise.withResolvers<void>();
 
   // Uses the server in different process to shutdown it without closing handshake
   const server = `
-    Deno.serve({ port: 1337 }, (req) => {
+    Edno.serve({ port: 1337 }, (req) => {
       if (req.headers.get("upgrade") != "websocket") {
         return new Response("ok");
       }
       console.log("upgrade on server");
-      const { socket, response } = Deno.upgradeWebSocket(req);
+      const { socket, response } = Edno.upgradeWebSocket(req);
       socket.addEventListener("message", (event) => {
         console.log("server received", event.data);
         socket.send("pong");
@@ -2143,7 +2143,7 @@ Deno.test("[node/http] upgraded socket closes when the server closed without clo
     });
   `;
 
-  const p = new Deno.Command("deno", { args: ["eval", server] }).spawn();
+  const p = new Edno.Command("edno", { args: ["eval", server] }).spawn();
 
   // Wait for the server to respond
   await retry(async () => {
@@ -2198,20 +2198,20 @@ Deno.test("[node/http] upgraded socket closes when the server closed without clo
   await serverProcessClosed.promise;
 });
 
-// deno-lint-ignore require-await
-Deno.test("[node/http] ServerResponse.call()", async () => {
+// edno-lint-ignore require-await
+Edno.test("[node/http] ServerResponse.call()", async () => {
   function Wrapper(this: unknown, req: IncomingMessage) {
     ServerResponse.call(this, req);
   }
   Object.setPrototypeOf(Wrapper.prototype, ServerResponse.prototype);
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   const wrapper = new (Wrapper as any)(new IncomingMessage(new Socket()));
 
   assert(wrapper instanceof ServerResponse);
 });
 
-Deno.test("[node/http] ServerResponse _header", async () => {
+Edno.test("[node/http] ServerResponse _header", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     assert(Object.hasOwn(res, "_header"));
@@ -2230,7 +2230,7 @@ Deno.test("[node/http] ServerResponse _header", async () => {
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse connection", async () => {
+Edno.test("[node/http] ServerResponse connection", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     assert("connection" in res);
@@ -2250,7 +2250,7 @@ Deno.test("[node/http] ServerResponse connection", async () => {
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse socket", async () => {
+Edno.test("[node/http] ServerResponse socket", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     assert("socket" in res);
@@ -2270,11 +2270,11 @@ Deno.test("[node/http] ServerResponse socket", async () => {
   await promise;
 });
 
-Deno.test("[node/http] decompress brotli response", {
+Edno.test("[node/http] decompress brotli response", {
   permissions: { net: true },
 }, async () => {
   const ac = new AbortController();
-  const server = Deno.serve({
+  const server = Edno.serve({
     port: 0,
     signal: ac.signal,
     onListen: undefined,
@@ -2282,7 +2282,7 @@ Deno.test("[node/http] decompress brotli response", {
     return Response.json([
       ["accept-language", "*"],
       ["host", "localhost:3000"],
-      ["user-agent", "Deno/2.1.1"],
+      ["user-agent", "Edno/2.1.1"],
     ], {});
   });
   const port = server.addr.port;
@@ -2325,10 +2325,10 @@ Deno.test("[node/http] decompress brotli response", {
   assertEquals(JSON.parse(body), [["accept-language", "*"], [
     "host",
     "localhost:3000",
-  ], ["user-agent", "Deno/2.1.1"]]);
+  ], ["user-agent", "Edno/2.1.1"]]);
 });
 
-Deno.test("[node/http] an error with DNS propagates to request object", async () => {
+Edno.test("[node/http] an error with DNS propagates to request object", async () => {
   const { resolve, promise } = Promise.withResolvers<void>();
   const req = http.request("http://invalid-hostname.test", () => {});
   req.on("error", (err) => {
@@ -2339,9 +2339,9 @@ Deno.test("[node/http] an error with DNS propagates to request object", async ()
   await promise;
 });
 
-Deno.test("[node/http] supports proxy http request", async () => {
+Edno.test("[node/http] supports proxy http request", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
-  const server = Deno.serve({ port: 0, onListen }, (req) => {
+  const server = Edno.serve({ port: 0, onListen }, (req) => {
     console.log("server received", req.url);
     assertEquals(req.url, "http://example.com/");
     return new Response("ok");
@@ -2363,7 +2363,7 @@ Deno.test("[node/http] supports proxy http request", async () => {
   await server.finished;
 });
 
-Deno.test("[node/http] `request` requires net permission to host and port", {
+Edno.test("[node/http] `request` requires net permission to host and port", {
   permissions: { net: ["localhost:4545"] },
 }, async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
@@ -2375,9 +2375,9 @@ Deno.test("[node/http] `request` requires net permission to host and port", {
   await promise;
 });
 
-const ca = await Deno.readTextFile("tests/testdata/tls/RootCA.pem");
+const ca = await Edno.readTextFile("tests/testdata/tls/RootCA.pem");
 
-Deno.test({
+Edno.test({
   name: "[node/https] `request` requires net permission to host and port",
   permissions: { net: ["localhost:5545"] },
   async fn() {
@@ -2391,7 +2391,7 @@ Deno.test({
   },
 });
 
-Deno.test(
+Edno.test(
   "[node/http] `request` errors with EPERM error when permission is not granted",
   { permissions: { net: ["localhost:4321"] } }, // wrong permission
   async () => {
@@ -2399,7 +2399,7 @@ Deno.test(
     http.request("http://localhost:4545/echo.ts", async () => {})
       .on("error", (e) => {
         assertEquals(e.message, "getaddrinfo EPERM localhost");
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         assertEquals((e as any).code, "EPERM");
         resolve();
       }).end();
@@ -2407,7 +2407,7 @@ Deno.test(
   },
 );
 
-Deno.test("[node/http] 'close' event is emitted when request finished", async () => {
+Edno.test("[node/http] 'close' event is emitted when request finished", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
 
   const req = http.request("http://localhost:4545/echo.ts", async (res) => {
@@ -2418,7 +2418,7 @@ Deno.test("[node/http] 'close' event is emitted when request finished", async ()
   await promise;
 });
 
-Deno.test("[node/http] 'close' event is emitted on ServerResponse object when the client aborted the request in the middle", async () => {
+Edno.test("[node/http] 'close' event is emitted on ServerResponse object when the client aborted the request in the middle", async () => {
   let responseCloseEmitted = false;
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((req, res) => {
@@ -2457,7 +2457,7 @@ Deno.test("[node/http] 'close' event is emitted on ServerResponse object when th
   assert(responseCloseEmitted);
 });
 
-Deno.test("[node/http] rawHeaders are in flattened format", async () => {
+Edno.test("[node/http] rawHeaders are in flattened format", async () => {
   const getHeader = (req: IncomingMessage, name: string) => {
     const idx = req.rawHeaders.indexOf(name);
     if (idx < 0) {
@@ -2496,7 +2496,7 @@ Deno.test("[node/http] rawHeaders are in flattened format", async () => {
   await new Promise((resolve) => server.close(resolve));
 });
 
-Deno.test("[node/http] request header values trim trailing OWS", async () => {
+Edno.test("[node/http] request header values trim trailing OWS", async () => {
   const parsed = Promise.withResolvers<void>();
   const server = http.createServer((req, res) => {
     try {
@@ -2542,13 +2542,13 @@ Deno.test("[node/http] request header values trim trailing OWS", async () => {
 });
 
 // TODO(@bartlomieju): re-enable once server-side HTTP also uses llhttp
-// (currently the Deno.serve-based server path still needs RID access)
-Deno.test("[node/http] client http over unix socket works", async () => {
+// (currently the Edno.serve-based server path still needs RID access)
+Edno.test("[node/http] client http over unix socket works", async () => {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   // On Windows, IPC uses named pipes; on Unix, use a domain socket path.
-  const socketPath = Deno.build.os === "windows"
-    ? `\\\\?\\pipe\\deno-test-${crypto.randomUUID()}`
-    : Deno.makeTempDirSync() + "/server.sock";
+  const socketPath = Edno.build.os === "windows"
+    ? `\\\\?\\pipe\\edno-test-${crypto.randomUUID()}`
+    : Edno.makeTempDirSync() + "/server.sock";
   const server = http.createServer((_req, res) => {
     res.end("ok");
   });
@@ -2572,7 +2572,7 @@ Deno.test("[node/http] client http over unix socket works", async () => {
   await promise;
 });
 
-Deno.test({
+Edno.test({
   name: "[node/https] null ca, key and cert req options",
   permissions: { net: ["localhost:5545"] },
   async fn() {
@@ -2592,7 +2592,7 @@ Deno.test({
   },
 });
 
-Deno.test("[node/http] server.listen respects signal option", async () => {
+Edno.test("[node/http] server.listen respects signal option", async () => {
   const [exitCode, _output] = await execCode(`
     import { createServer } from 'node:http';
 
@@ -2619,7 +2619,7 @@ Deno.test("[node/http] server.listen respects signal option", async () => {
 
 // Test for empty chunk in chunked POST request
 // Regression test for: https://github.com/denoland/deno/issues/31056
-Deno.test("[node/http] client request with empty write in chunked POST completes", async () => {
+Edno.test("[node/http] client request with empty write in chunked POST completes", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   let requestBody = "";
 
@@ -2660,7 +2660,7 @@ Deno.test("[node/http] client request with empty write in chunked POST completes
   assertEquals(requestBody, "");
 });
 
-Deno.test("[node/http] Server.address() includes family property", async () => {
+Edno.test("[node/http] Server.address() includes family property", async () => {
   // Test IPv4
   {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -2697,7 +2697,7 @@ Deno.test("[node/http] Server.address() includes family property", async () => {
 });
 
 // https://github.com/denoland/deno/issues/31758
-Deno.test("[node/http] address() returns assigned port immediately after listen()", async () => {
+Edno.test("[node/http] address() returns assigned port immediately after listen()", async () => {
   const server = http.createServer();
   server.listen(0);
 
@@ -2712,7 +2712,7 @@ Deno.test("[node/http] address() returns assigned port immediately after listen(
   await promise;
 });
 
-Deno.test("[node/http] ServerResponse.writeEarlyHints", async () => {
+Edno.test("[node/http] ServerResponse.writeEarlyHints", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => {
     res.writeEarlyHints(
@@ -2733,7 +2733,7 @@ Deno.test("[node/http] ServerResponse.writeEarlyHints", async () => {
 });
 
 // https://github.com/denoland/deno/issues/32780
-Deno.test({
+Edno.test({
   name: "[node/http] keep-alive request close fires before socket free",
   sanitizeResources: false,
   async fn() {
@@ -2808,7 +2808,7 @@ Deno.test({
   },
 });
 
-Deno.test("[node/http] keep-alive timer is suspended during active request", async () => {
+Edno.test("[node/http] keep-alive timer is suspended during active request", async () => {
   const server = http.createServer(
     { keepAliveTimeout: 10 },
     async (req, res) => {
@@ -2855,7 +2855,7 @@ Deno.test("[node/http] keep-alive timer is suspended during active request", asy
   }
 });
 
-Deno.test("[node/http] AsyncLocalStorage propagates into request handler", async () => {
+Edno.test("[node/http] AsyncLocalStorage propagates into request handler", async () => {
   const storage = new AsyncLocalStorage<string>();
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const responseDone = Promise.withResolvers<void>();
@@ -2890,7 +2890,7 @@ Deno.test("[node/http] AsyncLocalStorage propagates into request handler", async
   }
 });
 
-Deno.test("[node/http] AsyncLocalStorage enterWith in request handler is isolated", async () => {
+Edno.test("[node/http] AsyncLocalStorage enterWith in request handler is isolated", async () => {
   const storage = new AsyncLocalStorage<string>();
   const firstDone = Promise.withResolvers<void>();
   const secondDone = Promise.withResolvers<void>();
@@ -2941,7 +2941,7 @@ Deno.test("[node/http] AsyncLocalStorage enterWith in request handler is isolate
   }
 });
 
-Deno.test("[node/http] async_hooks observes request execution resource", async () => {
+Edno.test("[node/http] async_hooks observes request execution resource", async () => {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const responseDone = Promise.withResolvers<void>();
   const hook = createHook({
@@ -2974,7 +2974,7 @@ Deno.test("[node/http] async_hooks observes request execution resource", async (
   }
 });
 
-Deno.test("[node/http] abandoned suspended keep-alive timer emits async_hooks destroy", async () => {
+Edno.test("[node/http] abandoned suspended keep-alive timer emits async_hooks destroy", async () => {
   const server = http.createServer(
     { keepAliveTimeout: 10 },
     (_req, res) => res.end("ok"),
@@ -3040,7 +3040,7 @@ Deno.test("[node/http] abandoned suspended keep-alive timer emits async_hooks de
   }
 });
 
-Deno.test("[node/http] user socket timeout still applies after keep-alive reuse", async () => {
+Edno.test("[node/http] user socket timeout still applies after keep-alive reuse", async () => {
   let timeoutCount = 0;
   const serverTimeout = Promise.withResolvers<void>();
   const server = http.createServer(
@@ -3096,7 +3096,7 @@ Deno.test("[node/http] user socket timeout still applies after keep-alive reuse"
   }
 });
 
-Deno.test("[node/http] custom server timeout still applies after keep-alive reuse", async () => {
+Edno.test("[node/http] custom server timeout still applies after keep-alive reuse", async () => {
   let timeoutCount = 0;
   const serverTimeout = Promise.withResolvers<void>();
   const server = http.createServer(
@@ -3152,7 +3152,7 @@ Deno.test("[node/http] custom server timeout still applies after keep-alive reus
   }
 });
 
-Deno.test("[node/http] upgrade detaches reused keep-alive socket timeout", async () => {
+Edno.test("[node/http] upgrade detaches reused keep-alive socket timeout", async () => {
   const upgraded = Promise.withResolvers<void>();
   let upgradedSocket: Duplex | undefined;
   const server = http.createServer(
@@ -3215,7 +3215,7 @@ Deno.test("[node/http] upgrade detaches reused keep-alive socket timeout", async
 });
 
 // https://github.com/denoland/deno/issues/32311
-Deno.test("[node/http] upgrade request can be rejected with non-101 status", async () => {
+Edno.test("[node/http] upgrade request can be rejected with non-101 status", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const server = http.createServer((_req, res) => res.end("ok"));
 
@@ -3255,7 +3255,7 @@ Deno.test("[node/http] upgrade request can be rejected with non-101 status", asy
 // Regression test for https://github.com/denoland/deno/issues/32857
 // h2c upgrade requests with an upgrade listener should trigger the
 // upgrade event (matching Node.js behavior) and not hang.
-Deno.test(
+Edno.test(
   "[node/http] h2c upgrade does not hang when upgrade listener exists",
   { permissions: { net: true } },
   async () => {
@@ -3300,7 +3300,7 @@ Deno.test(
 // headersCompleted=false forever and the watchdog fired ~headersTimeout
 // after the connection was accepted, causing Fastify/etc. to return 400.
 // https://github.com/denoland/deno/issues/34297
-Deno.test(
+Edno.test(
   "[node/http] long-running request does not trigger spurious headersTimeout",
   async () => {
     const { promise, resolve, reject } = Promise.withResolvers<void>();
@@ -3347,7 +3347,7 @@ Deno.test(
 // Previously the ConnectionsList watchdog kept firing requestTimeout against
 // the active entry until the response finished, killing long-lived streams.
 // https://github.com/denoland/deno/issues/35289
-Deno.test(
+Edno.test(
   "[node/http] streaming response does not trigger spurious requestTimeout",
   async () => {
     const { promise, resolve, reject } = Promise.withResolvers<void>();
@@ -3407,7 +3407,7 @@ Deno.test(
 // ConnectionsList entry that now belongs to request 2 (otherwise
 // headersTimeout/requestTimeout silently stop covering request 2).
 // Verifies both pipelined responses succeed without spurious clientError.
-Deno.test(
+Edno.test(
   "[node/http] pipelined requests don't drop timeout tracking",
   async () => {
     const { promise, resolve, reject } = Promise.withResolvers<void>();
@@ -3437,7 +3437,7 @@ Deno.test(
     server.listen(0, async () => {
       try {
         const port = (server.address() as AddressInfo).port;
-        const conn = await Deno.connect({ port, hostname: "127.0.0.1" });
+        const conn = await Edno.connect({ port, hostname: "127.0.0.1" });
         const encoder = new TextEncoder();
         await conn.write(encoder.encode(
           "GET /1 HTTP/1.1\r\nHost: localhost\r\n\r\n" +
@@ -3474,7 +3474,7 @@ Deno.test(
 // server's clientError event, and the default handler should respond with 431.
 // Previously maxHeaderSize was tracked but never enforced.
 // https://github.com/denoland/deno/issues/33060
-Deno.test(
+Edno.test(
   "[node/http] server emits HPE_HEADER_OVERFLOW for oversized headers",
   async () => {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -3521,7 +3521,7 @@ Deno.test(
 // Boundary test: header_nread tracks bytes from the URL, header fields,
 // and header values (not the framing \r\n separators). A request that
 // pushes header_nread to exactly maxHeaderSize must be rejected (>=).
-Deno.test(
+Edno.test(
   "[node/http] header overflow boundary: exactly maxHeaderSize is rejected",
   async () => {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -3576,7 +3576,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] header overflow boundary: maxHeaderSize - 1 is accepted",
   async () => {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -3623,7 +3623,7 @@ Deno.test(
 // up the ExecuteContext, causing a null pointer dereference when the
 // client-side HTTP parser processed the rejected-upgrade response.
 // https://github.com/denoland/deno/issues/28654
-Deno.test(
+Edno.test(
   "[node/http] upgrade rejection via socket.write + socket.end does not crash",
   async () => {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -3672,7 +3672,7 @@ Deno.test(
 // `Request` must produce a byte `ReadableStream`, so that
 // `getReader({ mode: "byob" })` works.
 // https://github.com/denoland/deno/issues/33392
-Deno.test(
+Edno.test(
   "[node/http] IncomingMessage as Request body supports BYOB reader",
   async () => {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -3683,7 +3683,7 @@ Deno.test(
         headers: req.headers as HeadersInit,
         body: req as unknown as BodyInit,
         duplex: "half",
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
       } as any);
 
       const reader = request.body!.getReader({ mode: "byob" });
@@ -3710,7 +3710,7 @@ Deno.test(
 );
 
 // https://github.com/denoland/deno/issues/33567
-Deno.test(
+Edno.test(
   "[node/http] cancelling Readable.toWeb(req) does not destroy the socket",
   async () => {
     const { Readable } = await import("node:stream");
@@ -3767,12 +3767,12 @@ Deno.test(
   },
 );
 
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 type ProxyAgentLike = any;
-// deno-lint-ignore no-explicit-any
+// edno-lint-ignore no-explicit-any
 type HttpWithProxy = any;
 
-Deno.test("[node/http] setGlobalProxyFromEnv validates input", () => {
+Edno.test("[node/http] setGlobalProxyFromEnv validates input", () => {
   for (const bad of [42, "string", null, [], true]) {
     let err: { code?: string } | undefined;
     try {
@@ -3785,7 +3785,7 @@ Deno.test("[node/http] setGlobalProxyFromEnv validates input", () => {
   }
 });
 
-Deno.test("[node/http] setGlobalProxyFromEnv rejects malformed proxy URLs", () => {
+Edno.test("[node/http] setGlobalProxyFromEnv rejects malformed proxy URLs", () => {
   for (
     const cfg of [{ http_proxy: "not a url" }, { https_proxy: "not a url" }]
   ) {
@@ -3800,7 +3800,7 @@ Deno.test("[node/http] setGlobalProxyFromEnv rejects malformed proxy URLs", () =
   }
 });
 
-Deno.test("[node/http] setGlobalProxyFromEnv returns a restore function", () => {
+Edno.test("[node/http] setGlobalProxyFromEnv returns a restore function", () => {
   const restore = (http as HttpWithProxy).setGlobalProxyFromEnv({
     http_proxy: "http://127.0.0.1:9999",
   });
@@ -3810,7 +3810,7 @@ Deno.test("[node/http] setGlobalProxyFromEnv returns a restore function", () => 
   restore();
 });
 
-Deno.test("[node/http] Agent proxyEnv rejects CRLF-injected proxy URLs", () => {
+Edno.test("[node/http] Agent proxyEnv rejects CRLF-injected proxy URLs", () => {
   for (
     const proxyUrl of [
       "http://user\r:pass@proxy.example.com:8080",
@@ -3833,7 +3833,7 @@ Deno.test("[node/http] Agent proxyEnv rejects CRLF-injected proxy URLs", () => {
   }
 });
 
-Deno.test(
+Edno.test(
   "[node/http] http.request through HTTP_PROXY rewrites to absolute URL",
   async () => {
     // Verifies the proxy receives the full URL form (GET http://target/path)
@@ -3886,7 +3886,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] proxied absolute-form target omits the default port",
   async () => {
     // Node builds the absolute-form target with `new URL()`, whose `href`
@@ -3930,7 +3930,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] proxied absolute-form target normalizes the authority",
   async () => {
     // The target goes through the URL parser, like Node's, so the authority
@@ -3993,7 +3993,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] proxied absolute-form target cannot retarget the authority",
   () => {
     // The --allow-net check upstream only validated the requested host and
@@ -4027,7 +4027,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] proxied absolute-form target matching the authority is honored",
   async () => {
     // The authority matches the checked target, so the absolute-form path is
@@ -4062,7 +4062,7 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   "[node/http] NO_PROXY bypasses configured HTTP_PROXY",
   async () => {
     // If NO_PROXY matches the target, the request should hit the origin

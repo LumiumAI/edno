@@ -1,5 +1,5 @@
 {
-  "args": "add jsr:@denotest/add",
+  "args": "add jsr:@ednotest/add",
   "output": "add.out",
   "exitCode": 1
 }

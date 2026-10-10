@@ -1,16 +1,16 @@
-await Deno.mkdir("allowed", { recursive: true });
+await Edno.mkdir("allowed", { recursive: true });
 await Promise.all([
-  Deno.writeTextFile(
+  Edno.writeTextFile(
     "allowed/reexport.cjs",
     'module.exports = require("./inner.cjs");\n',
   ),
-  Deno.writeTextFile("allowed/inner.cjs", 'exports.value = "from-inner";\n'),
-  Deno.writeTextFile(
+  Edno.writeTextFile("allowed/inner.cjs", 'exports.value = "from-inner";\n'),
+  Edno.writeTextFile(
     "allowed/denied.cjs",
     'module.exports = require("../outside.cjs");\n',
   ),
-  Deno.writeTextFile(
+  Edno.writeTextFile(
     "outside.cjs",
-    "DENO_STANDALONE_CJS_SOURCE_CANARY = ;\n",
+    "EDNO_STANDALONE_CJS_SOURCE_CANARY = ;\n",
   ),
 ]);

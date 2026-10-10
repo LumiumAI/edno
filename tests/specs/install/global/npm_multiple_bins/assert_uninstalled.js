@@ -1,7 +1,7 @@
 // Assert that both bin entries were removed after uninstall
 const binsDir = "./bins/bin";
 const entries = [];
-for await (const entry of Deno.readDir(binsDir)) {
+for await (const entry of Edno.readDir(binsDir)) {
   entries.push(entry.name);
 }
 

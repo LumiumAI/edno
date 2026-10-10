@@ -31,7 +31,7 @@ Use `Grep` and `Read` to find the test source, then analyze:
 
 1. **What Node.js API or behavior is being tested?**
 2. **What is the actual error or assertion failure?**
-3. **Where is the relevant Deno implementation?** Check `ext/node/` (polyfills,
+3. **Where is the relevant Edno implementation?** Check `ext/node/` (polyfills,
    ops, internal bindings), `runtime/`, or `cli/`.
 
 Read the corresponding Node.js docs and/or source code to understand the
@@ -43,7 +43,7 @@ Determine which category this failure falls into:
 
 ### A. Fixable bug
 
-The Deno implementation is wrong or incomplete, but can be corrected. This
+The Edno implementation is wrong or incomplete, but can be corrected. This
 includes:
 
 - Missing method/property on a polyfill
@@ -56,7 +56,7 @@ includes:
 
 ### B. Inherent incompatibility
 
-The test relies on Node.js internals or architecture that Deno fundamentally
+The test relies on Node.js internals or architecture that Edno fundamentally
 cannot or will not support:
 
 - `internalBinding()` calls to Node's C++ layer
@@ -115,7 +115,7 @@ If the test cannot or should not be fixed, update
 ```jsonc
 "category/test-name.js": {
   "ignore": true,
-  "reason": "Brief, specific explanation of why this can't work in Deno"
+  "reason": "Brief, specific explanation of why this can't work in Edno"
 }
 ```
 
@@ -152,8 +152,8 @@ implementer to update the config.
 Reasons should be specific and actionable. Good examples:
 
 - "Tests Node.js internal C++ binding (internalBinding('zlib').Zlib) which is
-  not implemented in Deno"
-- "requires `deno --interactive` flag (not yet implemented)"
+  not implemented in Edno"
+- "requires `edno --interactive` flag (not yet implemented)"
 - "URL.createObjectURL does not throw ERR_INVALID_ARG_TYPE for non-Blob
   arguments"
 

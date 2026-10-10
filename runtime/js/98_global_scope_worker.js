@@ -14,14 +14,14 @@ const {
   SymbolFor,
 } = primordials;
 
-const location = core.loadExtScript("ext:deno_web/12_location.js");
-const console = core.loadExtScript("ext:deno_web/01_console.js");
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const location = core.loadExtScript("ext:edno_web/12_location.js");
+const console = core.loadExtScript("ext:edno_web/01_console.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const globalInterfaces = core.loadExtScript(
-  "ext:deno_web/04_global_interfaces.js",
+  "ext:edno_web/04_global_interfaces.js",
 );
-const loadLocks = core.createLazyLoader("ext:deno_web/locks.js");
-const { loadWebGPU } = core.loadExtScript("ext:deno_webgpu/00_init.js");
+const loadLocks = core.createLazyLoader("ext:edno_web/locks.js");
+const { loadWebGPU } = core.loadExtScript("ext:edno_webgpu/00_init.js");
 import {
   NavigatorUAData,
   navigatorUAData,
@@ -87,7 +87,7 @@ class WorkerNavigator {
     webidl.illegalConstructor();
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       console.createFilteredInspectProxy({
         object: this,

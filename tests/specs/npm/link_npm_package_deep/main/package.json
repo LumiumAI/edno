@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@denotest/different-nested-dep": "*"
+    "@ednotest/different-nested-dep": "*"
   }
 }

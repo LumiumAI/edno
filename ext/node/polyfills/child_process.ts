@@ -19,7 +19,7 @@ const {
   stdioStringToArray,
   validateNullByteNotInArg,
   default: internalChildProcess,
-} = core.loadExtScript("ext:deno_node/internal/child_process.ts");
+} = core.loadExtScript("ext:edno_node/internal/child_process.ts");
 const {
   validateAbortSignal,
   validateFunction,
@@ -27,28 +27,28 @@ const {
   validateNumber,
   validateObject,
   validateString,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const {
   ERR_CHILD_PROCESS_IPC_REQUIRED,
   ERR_CHILD_PROCESS_STDIO_MAXBUFFER,
   ERR_INVALID_ARG_TYPE,
   ERR_OUT_OF_RANGE,
   genericNodeError,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const { getSystemErrorName, promisify } = core.loadExtScript(
-  "ext:deno_node/util.ts",
+  "ext:edno_node/util.ts",
 );
 const lazyProcess = core.createLazyLoader("node:process");
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const {
   convertToValidSignal,
   kEmptyObject,
-} = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} = core.loadExtScript("ext:edno_node/internal/util.mjs");
 const { toPathIfFileURL } = core.loadExtScript(
-  "ext:deno_node/internal/url.ts",
+  "ext:edno_node/internal/url.ts",
 );
 const { kNeedsNpmProcessState } = core.loadExtScript(
-  "ext:deno_process/40_process.js",
+  "ext:edno_process/40_process.js",
 );
 
 const {
@@ -78,12 +78,12 @@ const MAX_BUFFER = 1024 * 1024;
 // Internal env var used to tell a compiled-binary child process (spawned by
 // fork()) which embedded module to run as its main module instead of the
 // baked-in entrypoint. Kept in sync with cli/rt/run.rs.
-const INTERNAL_CHILD_ENTRYPOINT_ENV_VAR = "DENO_INTERNAL_CHILD_ENTRYPOINT";
+const INTERNAL_CHILD_ENTRYPOINT_ENV_VAR = "EDNO_INTERNAL_CHILD_ENTRYPOINT";
 
 // `Buffer.prototype.slice` is Buffer-specific (not the Array/String primordial),
 // so the lint match on `.slice` and the spread are false positives here.
 function bufferSlice(buf: string | Buffer, ...args: number[]) {
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return buf.slice(...args);
 }
 
@@ -187,8 +187,8 @@ function fork(
     String,
   );
 
-  if (Deno.build.standalone) {
-    // In standalone (compiled) binaries, skip Node-to-Deno arg translation.
+  if (Edno.build.standalone) {
+    // In standalone (compiled) binaries, skip Node-to-Edno arg translation.
     // The binary already has permissions and unstable config baked in.
     // Translating would inject "run -A --unstable-..." which the compiled
     // binary doesn't understand and would pass through as app args.
@@ -204,35 +204,35 @@ function fork(
       [INTERNAL_CHILD_ENTRYPOINT_ENV_VAR]: modulePath,
     };
   } else {
-    // Use the Rust parser to translate Node.js CLI args to Deno args
-    // The parser handles Deno-style args (e.g., from vitest) by passing them through unchanged
+    // Use the Rust parser to translate Node.js CLI args to Edno args
+    // The parser handles Edno-style args (e.g., from vitest) by passing them through unchanged
     const result = op_node_translate_cli_args(nodeArgs, false, true);
-    const denoArgs = result.denoArgs;
+    const ednoArgs = result.ednoArgs;
     const bootstrapArgs = op_bootstrap_unstable_args();
 
     // Insert bootstrap unstable args after "run" but before other args.
     // Filter out any that the translator already added to avoid duplicates
     // (e.g. --unstable-bare-node-builtins).
-    // denoArgs is like ["run", "-A", "--unstable-...", "script.js", ...]
+    // ednoArgs is like ["run", "-A", "--unstable-...", "script.js", ...]
     // We need ["run", ...uniqueBootstrapArgs, "-A", "--unstable-...", "script.js", ...]
-    const denoArgSet = new SafeSet(denoArgs);
+    const ednoArgSet = new SafeSet(ednoArgs);
     const uniqueBootstrapArgs = ArrayPrototypeFilter(
       bootstrapArgs,
-      (a) => !SetPrototypeHas(denoArgSet, a),
+      (a) => !SetPrototypeHas(ednoArgSet, a),
     );
     if (
-      denoArgs.length > 0 && denoArgs[0] === "run" &&
+      ednoArgs.length > 0 && ednoArgs[0] === "run" &&
       uniqueBootstrapArgs.length > 0
     ) {
       args = [
-        denoArgs[0],
+        ednoArgs[0],
         ...new SafeArrayIterator(uniqueBootstrapArgs),
-        ...new SafeArrayIterator(ArrayPrototypeSlice(denoArgs, 1)),
+        ...new SafeArrayIterator(ArrayPrototypeSlice(ednoArgs, 1)),
       ];
     } else {
       args = [
         ...new SafeArrayIterator(uniqueBootstrapArgs),
-        ...new SafeArrayIterator(denoArgs),
+        ...new SafeArrayIterator(ednoArgs),
       ];
     }
 
@@ -253,21 +253,21 @@ function fork(
     if (result.caStores?.length) {
       options.env = {
         ...(options.env ?? lazyProcess().default.env),
-        DENO_TLS_CA_STORE: ArrayPrototypeJoin(result.caStores, ","),
+        EDNO_TLS_CA_STORE: ArrayPrototypeJoin(result.caStores, ","),
       };
     }
     if (result.useOpensslCa) {
       options.env = {
         ...(options.env ?? lazyProcess().default.env),
-        DENO_NODE_USE_OPENSSL_CA: "1",
+        EDNO_NODE_USE_OPENSSL_CA: "1",
       };
-    } else if (options.env?.DENO_NODE_USE_OPENSSL_CA) {
-      delete options.env.DENO_NODE_USE_OPENSSL_CA;
+    } else if (options.env?.EDNO_NODE_USE_OPENSSL_CA) {
+      delete options.env.EDNO_NODE_USE_OPENSSL_CA;
     }
     if (result.traceEventCategories) {
       options.env = {
         ...(options.env ?? lazyProcess().default.env),
-        DENO_NODE_TRACE_EVENT_CATEGORIES: result.traceEventCategories,
+        EDNO_NODE_TRACE_EVENT_CATEGORIES: result.traceEventCategories,
       };
     }
   }
@@ -285,10 +285,10 @@ function fork(
     throw new ERR_CHILD_PROCESS_IPC_REQUIRED("options.stdio");
   }
 
-  options.execPath = options.execPath || Deno.execPath();
+  options.execPath = options.execPath || Edno.execPath();
   options.shell = false;
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (options as any)[kNeedsNpmProcessState] = true;
 
   return spawn(options.execPath, args, options);
@@ -646,7 +646,7 @@ function execFile(
     ) {
       stdout = ArrayPrototypeJoin(_stdout, "");
     } else {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       stdout = Buffer.concat(_stdout as Buffer[]);
     }
     if (
@@ -658,7 +658,7 @@ function execFile(
     ) {
       stderr = ArrayPrototypeJoin(_stderr, "");
     } else {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       stderr = Buffer.concat(_stderr as Buffer[]);
     }
 
@@ -855,7 +855,7 @@ function checkExecSyncError(
     let msg = "Command failed: ";
     msg += cmd || ArrayPrototypeJoin(args, " ");
     if (ret.stderr && ret.stderr.length > 0) {
-      // deno-lint-ignore deno-internal/prefer-primordials
+      // edno-lint-ignore edno-internal/prefer-primordials
       msg += `\n${ret.stderr.toString()}`;
     }
     err = genericNodeError(msg, ret);

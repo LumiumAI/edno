@@ -20,16 +20,16 @@ const {
   ERR_INVALID_ARG_TYPE,
   ERR_METHOD_NOT_IMPLEMENTED,
   ERR_OUT_OF_RANGE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
-const { kEmptyObject } = core.loadExtScript("ext:deno_node/internal/util.mjs");
-const { deprecate } = core.loadExtScript("ext:deno_node/util.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
+const { kEmptyObject } = core.loadExtScript("ext:edno_node/internal/util.mjs");
+const { deprecate } = core.loadExtScript("ext:edno_node/util.ts");
 const {
   validateBoolean,
   validateFunction,
   validateInteger,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { errorOrDestroy } = core.loadExtScript(
-  "ext:deno_node/internal/streams/destroy.js",
+  "ext:edno_node/internal/streams/destroy.js",
 );
 // Resolve the CJS `node:fs` exports object (fs.ts) rather than the ESM
 // namespace (fs_esm.ts, whose `export const fsync = mod.fsync` bindings are a
@@ -37,20 +37,20 @@ const { errorOrDestroy } = core.loadExtScript(
 // monkey-patches/mocks on the `node:fs` namespace (e.g. the `flush` option's
 // fsync) are observed. `loadExtScript` caches, so repeat calls are cheap; all
 // call sites invoke `lazyFs()` at runtime, never at module-eval time.
-const lazyFs = () => core.loadExtScript("ext:deno_node/fs.ts");
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const lazyFs = () => core.loadExtScript("ext:edno_node/fs.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 import {
   copyObject,
   getOptions,
   getValidatedFd,
   validatePath,
-} from "ext:deno_node/internal/fs/utils.mjs";
+} from "ext:edno_node/internal/fs/utils.mjs";
 const lazyStream = core.createLazyLoader("node:stream");
 const { toPathIfFileURL } = core.loadExtScript(
-  "ext:deno_node/internal/url.ts",
+  "ext:edno_node/internal/url.ts",
 );
-const { nextTick } = core.loadExtScript("ext:deno_node/_next_tick.ts");
-import { FileHandle, kRef, kUnref } from "ext:deno_node/internal/fs/handle.ts";
+const { nextTick } = core.loadExtScript("ext:edno_node/_next_tick.ts");
+import { FileHandle, kRef, kUnref } from "ext:edno_node/internal/fs/handle.ts";
 
 const kIoDone = Symbol("kIoDone");
 const kIsPerformingIO = Symbol("kIsPerformingIO");
@@ -58,7 +58,7 @@ const kFs = Symbol("kFs");
 const kHandle = Symbol("kHandle");
 
 function _construct(callback) {
-  // deno-lint-ignore no-this-alias
+  // edno-lint-ignore no-this-alias
   const stream = this;
   if (typeof stream.fd === "number") {
     callback();
@@ -83,7 +83,7 @@ function _construct(callback) {
     stream.open();
   } else {
     const streamPath = Buffer.isBuffer(stream.path)
-      // deno-lint-ignore deno-internal/prefer-primordials -- uses `toString` method from `node:buffer`
+      // edno-lint-ignore edno-internal/prefer-primordials -- uses `toString` method from `node:buffer`
       ? stream.path.toString()
       : StringPrototypeToString(stream.path);
     stream[kFs].open(
@@ -121,7 +121,7 @@ const FileHandleOperations = (handle) => {
     read: (_fd, buf, offset, length, pos, cb) => {
       PromisePrototypeThen(
         handle.read(buf, offset, length, pos),
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         (r) => cb(null, r.bytesRead, r.buffer),
         (err) => cb(err, 0, buf),
       );
@@ -129,7 +129,7 @@ const FileHandleOperations = (handle) => {
     write: (_fd, buf, offset, length, pos, cb) => {
       PromisePrototypeThen(
         handle.write(buf, offset, length, pos),
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         (r) => cb(null, r.bytesWritten, r.buffer),
         (err) => cb(err, 0, buf),
       );
@@ -293,7 +293,7 @@ ReadStream.prototype._read = async function (n) {
 
   if (n <= 0) {
     // Ignore lint. The `push` method is inherited from the `stream.Readable` class.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     this.push(null);
     return;
   }
@@ -353,11 +353,11 @@ ReadStream.prototype._read = async function (n) {
     }
 
     // Ignore lint. The `push` method is inherited from the `stream.Readable` class.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     this.push(buffer);
   } else {
     // Ignore lint. The `push` method is inherited from the `stream.Readable` class.
-    // deno-lint-ignore deno-internal/prefer-primordials
+    // edno-lint-ignore edno-internal/prefer-primordials
     this.push(null);
   }
 };

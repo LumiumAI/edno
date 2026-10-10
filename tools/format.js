@@ -1,10 +1,10 @@
-#!/usr/bin/env -S deno run --allow-all --config=tests/config/deno.json
+#!/usr/bin/env -S edno run --allow-all --config=tests/config/edno.json
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { join, ROOT_PATH } from "./util.js";
 
-const subcommand = Deno.args.includes("--check") ? "check" : "fmt";
+const subcommand = Edno.args.includes("--check") ? "check" : "fmt";
 const configFile = join(ROOT_PATH, ".dprint.json");
-const cmd = new Deno.Command("deno", {
+const cmd = new Edno.Command("edno", {
   args: [
     "run",
     "-A",
@@ -19,4 +19,4 @@ const cmd = new Deno.Command("deno", {
 });
 
 const { code } = await cmd.output();
-Deno.exit(code);
+Edno.exit(code);

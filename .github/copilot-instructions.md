@@ -1,4 +1,4 @@
-# Deno Development Guide for GitHub Copilot
+# Edno Development Guide for GitHub Copilot
 
 ## Network Access
 
@@ -6,7 +6,7 @@ The development tools in this repository need network access to function. When
 running `tools/format.js` or `tools/lint.js`, ensure the following domains are
 reachable:
 
-- `https://jsr.io` — Deno's package registry, used for `@std/*` imports
+- `https://jsr.io` — Edno's package registry, used for `@std/*` imports
 - `https://dprint.dev` and `https://plugins.dprint.dev` — the formatter
   (`tools/format.js`) runs `npm:dprint` which downloads WASM plugins from
   `plugins.dprint.dev`
@@ -16,13 +16,13 @@ or the tools will fail with network errors.
 
 ## High Level Overview
 
-The user-visible interface and high-level integration is in the `deno` crate
+The user-visible interface and high-level integration is in the `edno` crate
 (located in `./cli`).
 
 This includes flag parsing, subcommands, package management tooling, etc. Flag
 parsing is in `cli/args/flags.rs`. Tools are in `cli/tools/<tool>`.
 
-The `deno_runtime` crate (`./runtime`) assembles the JavaScript runtime,
+The `edno_runtime` crate (`./runtime`) assembles the JavaScript runtime,
 including all of the "extensions" (native functionality exposed to JavaScript).
 The extensions themselves are in the `ext/` directory, and provide system access
 to JavaScript — for instance filesystem operations and networking.
@@ -61,13 +61,13 @@ to JavaScript — for instance filesystem operations and networking.
 cargo check
 
 # Build debug binary
-cargo build --bin deno
+cargo build --bin edno
 
 # Build release version (slow, optimized)
 cargo build --release
 
 # Run the dev build
-./target/debug/deno eval 'console.log("Hello from dev build")'
+./target/debug/edno eval 'console.log("Hello from dev build")'
 ```
 
 ## Code Quality
@@ -92,7 +92,7 @@ The formatter (`tools/format.js`) runs `dprint` via `npm:dprint@0.47.2`. It
 formats TypeScript, JavaScript, JSON, Markdown, YAML, and Rust (via `rustfmt`).
 Configuration is in `.dprint.json`.
 
-The linter (`tools/lint.js`) runs `deno lint` for JS/TS and `cargo clippy` for
+The linter (`tools/lint.js`) runs `edno lint` for JS/TS and `cargo clippy` for
 Rust.
 
 ## Testing
@@ -105,10 +105,10 @@ cargo test
 cargo test <nameOfTest>
 
 # Run tests in a specific package
-cargo test -p deno_core
+cargo test -p edno_core
 
 # Run just the CLI integration tests
-cargo test --bin deno
+cargo test --bin edno
 
 # Run spec tests only
 cargo test specs
@@ -174,7 +174,7 @@ with one of these prefixes:
 - `Reland` — relanding a reverted commit
 - `BREAKING` — breaking changes
 
-Additionally, deno_core/v8 upgrades must NOT use `chore:` — use `feat:`, `fix:`,
+Additionally, edno_core/v8 upgrades must NOT use `chore:` — use `feat:`, `fix:`,
 or `refactor:` instead, with a title describing the actual change.
 
 Release PRs (titles matching `X.Y.Z`) are also valid.
@@ -211,16 +211,16 @@ The validation script is at `tools/verify_pr_title.js`.
 
 ```bash
 # Verbose logging
-DENO_LOG=debug ./target/debug/deno run script.ts
+EDNO_LOG=debug ./target/debug/edno run script.ts
 
 # Module-specific logging
-DENO_LOG=deno_core=debug ./target/debug/deno run script.ts
+EDNO_LOG=edno_core=debug ./target/debug/edno run script.ts
 
 # Full backtrace on panic
-RUST_BACKTRACE=1 ./target/debug/deno run script.ts
+RUST_BACKTRACE=1 ./target/debug/edno run script.ts
 
 # V8 inspector
-./target/debug/deno run --inspect-brk script.ts
+./target/debug/edno run --inspect-brk script.ts
 ```
 
 In Rust code: `eprintln!("Debug: {:?}", var);` or `dbg!(var);`
@@ -253,7 +253,7 @@ Prioritize these (in order):
 Do NOT comment on:
 
 - Style preferences already enforced by the project's formatter (dprint) and
-  linter (clippy + deno lint)
+  linter (clippy + edno lint)
 - Suggesting longer timeouts or shorter delays in tests without evidence of
   flakiness
 - Minor documentation wording unless it is actively misleading
@@ -262,7 +262,7 @@ Do NOT comment on:
 
 ### Understand the runtime model before suggesting fixes
 
-Deno embeds V8 and uses a single-threaded async event loop (tokio). Code that
+Edno embeds V8 and uses a single-threaded async event loop (tokio). Code that
 looks like a busy-spin may actually be required because:
 
 - `poll_sessions(None)` in the inspector drives async I/O — parking the thread
@@ -310,14 +310,14 @@ uses a specific flag/mechanism, understand why before suggesting a different
 approach for a similar function (e.g., `wait_for_sessions_disconnect`). The
 difference may be intentional.
 
-### Deno-specific conventions
+### Edno-specific conventions
 
 - Ops use the `#[op2]` macro. Fast ops use `#[op2(fast)]`.
 - Internal symbols in JS (`ext/process/40_process.js`, `ext/node/polyfills/`)
   use the `k` prefix convention: `kIpc`, `kSerialization`, `kInputOption`. Flag
   deviations.
 - Node.js compatibility code is in `ext/node/polyfills/`. When reviewing these
-  files, check behavior against Node.js docs, not just Deno conventions. Some
+  files, check behavior against Node.js docs, not just Edno conventions. Some
   patterns (like synchronous `throw` in `spawn()` for EPERM but async error
   event for ENOENT) are intentional Node.js compatibility.
 
@@ -344,7 +344,7 @@ difference may be intentional.
 
 ## Troubleshooting
 
-- **Slow compile times**: Use `cargo check`, `--bin deno`, or `sccache`
+- **Slow compile times**: Use `cargo check`, `--bin edno`, or `sccache`
 - **Build failures on macOS**: Run `xcode-select --install`
 - **Build failures on Linux**: Install `build-essential`
 - **Spec test failures**: Check output diffs, use `[WILDCARD]` for

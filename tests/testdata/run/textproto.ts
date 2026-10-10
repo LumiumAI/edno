@@ -81,22 +81,22 @@ export class TextProtoReader {
 
     buf = await this.r.peek(1);
     if (buf === null) {
-      throw new Deno.errors.UnexpectedEof();
+      throw new Edno.errors.UnexpectedEof();
     } else if (WHITESPACES.includes(buf[0])) {
-      throw new Deno.errors.InvalidData(
+      throw new Edno.errors.InvalidData(
         `malformed MIME header initial line: ${str(line)}`,
       );
     }
 
     while (true) {
       const kv = await this.readLineSlice(); // readContinuedLineSlice
-      if (kv === null) throw new Deno.errors.UnexpectedEof();
+      if (kv === null) throw new Edno.errors.UnexpectedEof();
       if (kv.byteLength === 0) return m;
 
       // Key ends at first colon
       let i = kv.indexOf(CHAR_COLON);
       if (i < 0) {
-        throw new Deno.errors.InvalidData(
+        throw new Edno.errors.InvalidData(
           `malformed MIME header line: ${str(kv)}`,
         );
       }
@@ -106,7 +106,7 @@ export class TextProtoReader {
 
       // As per RFC 7230 field-name is a token,
       // tokens consist of one or more chars.
-      // We could throw `Deno.errors.InvalidData` here,
+      // We could throw `Edno.errors.InvalidData` here,
       // but better to be liberal in what we
       // accept, so if we get an empty key, skip it.
       if (key == "") {

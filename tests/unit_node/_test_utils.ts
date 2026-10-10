@@ -23,9 +23,9 @@ export async function assertCallbackErrorUncaught(
     cleanup?: () => Promise<void> | void;
   },
 ) {
-  // Since the error has to be uncaught, and that will kill the Deno process,
+  // Since the error has to be uncaught, and that will kill the Edno process,
   // the only way to test this is to spawn a subprocess.
-  const p = new Deno.Command(Deno.execPath(), {
+  const p = new Edno.Command(Edno.execPath(), {
     args: [
       "eval",
       `${prelude ?? ""}
@@ -77,7 +77,7 @@ const dateFields = [
   "birthtime",
 ];
 
-export function assertStats(actual: Stats, expected: Deno.FileInfo) {
+export function assertStats(actual: Stats, expected: Edno.FileInfo) {
   [...numberFields, ...dateFields].forEach(function (k) {
     assert(k in actual, `${k} should be in Stats`);
     assertNotStrictEquals(
@@ -104,9 +104,9 @@ export function assertStats(actual: Stats, expected: Deno.FileInfo) {
     assert(actual[k as keyof Stats] instanceof Date, `${k} should be a Date`);
   });
 
-  // Some properties from Deno.FileInfo may be null,
+  // Some properties from Edno.FileInfo may be null,
   // while node:fs Stats always has number / Date properties.
-  // So we only check properties that are not null in Deno.FileInfo.
+  // So we only check properties that are not null in Edno.FileInfo.
   assertEquals(actual.dev, expected.dev);
   if (expected.gid) assertEquals(actual.gid, expected.gid, "Stats.gid");
   assertEquals(actual.size, expected.size, "Stats.size");
@@ -166,22 +166,22 @@ export function assertStats(actual: Stats, expected: Deno.FileInfo) {
   );
   assertEquals(
     actual.isBlockDevice(),
-    Deno.build.os === "windows" ? false : expected.isBlockDevice,
+    Edno.build.os === "windows" ? false : expected.isBlockDevice,
     "Stats.isBlockDevice",
   );
   assertEquals(
     actual.isFIFO(),
-    Deno.build.os === "windows" ? false : expected.isFifo,
+    Edno.build.os === "windows" ? false : expected.isFifo,
     "Stats.isFIFO",
   );
   assertEquals(
     actual.isCharacterDevice(),
-    Deno.build.os === "windows" ? false : expected.isCharDevice,
+    Edno.build.os === "windows" ? false : expected.isCharDevice,
     "Stats.isCharacterDevice",
   );
   assertEquals(
     actual.isSocket(),
-    Deno.build.os === "windows" ? false : expected.isSocket,
+    Edno.build.os === "windows" ? false : expected.isSocket,
     "Stats.isSocket",
   );
 }
@@ -193,7 +193,7 @@ function toBigInt(num?: number | null) {
 
 export function assertStatsBigInt(
   actual: BigIntStats,
-  expected: Deno.FileInfo,
+  expected: Edno.FileInfo,
 ) {
   [...bigintFields, ...dateFields].forEach(function (k) {
     assert(k in actual, `${k} should be in BigIntStats`);
@@ -224,9 +224,9 @@ export function assertStatsBigInt(
     );
   });
 
-  // Some properties from Deno.FileInfo may be null,
+  // Some properties from Edno.FileInfo may be null,
   // while node:fs BigIntStats always has bigint / Date properties.
-  // So we only check properties that are not null in Deno.FileInfo.
+  // So we only check properties that are not null in Edno.FileInfo.
   assertEquals(actual.dev, toBigInt(expected.dev), "BigIntStats.dev");
   if (expected.gid) {
     assertEquals(actual.gid, toBigInt(expected.gid), "BigIntStats.gid");
@@ -331,22 +331,22 @@ export function assertStatsBigInt(
   }
   assertEquals(
     actual.isBlockDevice(),
-    Deno.build.os === "windows" ? false : expected.isBlockDevice,
+    Edno.build.os === "windows" ? false : expected.isBlockDevice,
     "BigIntStats.isBlockDevice",
   );
   assertEquals(
     actual.isFIFO(),
-    Deno.build.os === "windows" ? false : expected.isFifo,
+    Edno.build.os === "windows" ? false : expected.isFifo,
     "BigIntStats.isFIFO",
   );
   assertEquals(
     actual.isCharacterDevice(),
-    Deno.build.os === "windows" ? false : expected.isCharDevice,
+    Edno.build.os === "windows" ? false : expected.isCharDevice,
     "BigIntStats.isCharacterDevice",
   );
   assertEquals(
     actual.isSocket(),
-    Deno.build.os === "windows" ? false : expected.isSocket,
+    Edno.build.os === "windows" ? false : expected.isSocket,
     "BigIntStats.isSocket",
   );
 }

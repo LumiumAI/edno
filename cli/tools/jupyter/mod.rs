@@ -2,19 +2,19 @@
 
 use std::sync::Arc;
 
-use deno_core::anyhow::Context;
-use deno_core::anyhow::anyhow;
-use deno_core::anyhow::bail;
-use deno_core::error::AnyError;
-use deno_core::located_script_name;
-use deno_core::serde_json;
-use deno_core::url::Url;
-use deno_core::v8;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::anyhow;
+use edno_core::anyhow::bail;
+use edno_core::error::AnyError;
+use edno_core::located_script_name;
+use edno_core::serde_json;
+use edno_core::url::Url;
+use edno_core::v8;
 use deno_path_util::resolve_url_or_path;
-use deno_runtime::WorkerExecutionMode;
-use deno_runtime::deno_io::Stdio;
-use deno_runtime::deno_io::StdioPipe;
-use deno_runtime::deno_permissions::PermissionsContainer;
+use edno_runtime::WorkerExecutionMode;
+use edno_runtime::edno_io::Stdio;
+use edno_runtime::edno_io::StdioPipe;
+use edno_runtime::edno_permissions::PermissionsContainer;
 use deno_terminal::colors;
 use tokio::sync::mpsc;
 use tokio::sync::oneshot;
@@ -43,7 +43,7 @@ pub async fn kernel(
   jupyter_flags: JupyterFlags,
 ) -> Result<(), AnyError> {
   log::info!(
-    "{} \"deno jupyter\" is unstable and might change in the future.",
+    "{} \"edno jupyter\" is unstable and might change in the future.",
     colors::yellow("Warning"),
   );
 
@@ -106,7 +106,7 @@ pub async fn kernel(
   // --- Spawn the REPL on a background OS thread ---------------------
   let repl_worker_factory = Arc::clone(&worker_factory);
   let repl_main_module = resolve_url_or_path(
-    "./$deno$jupyter_repl.mts",
+    "./$edno$jupyter_repl.mts",
     cli_options_arc.initial_cwd(),
   )
   .unwrap();
@@ -132,8 +132,8 @@ pub async fn kernel(
           vec![],
           repl_permissions,
           vec![
-            ops::jupyter::deno_jupyter_repl::init(repl_iopub_tx, repl_input_tx),
-            ops::testing::deno_test::init(test_event_sender),
+            ops::jupyter::edno_jupyter_repl::init(repl_iopub_tx, repl_input_tx),
+            ops::testing::edno_test::init(test_event_sender),
           ],
           Stdio {
             stdin: StdioPipe::inherit(),
@@ -147,7 +147,7 @@ pub async fn kernel(
       worker.setup_repl().await?;
       worker.execute_script_static(
         located_script_name!(),
-        "Deno[Deno.internal].enableJupyter();",
+        "Edno[Edno.internal].enableJupyter();",
       )?;
       let worker = worker.into_main_worker();
 
@@ -179,7 +179,7 @@ pub async fn kernel(
 
       Ok::<(), AnyError>(())
     };
-    deno_runtime::tokio_util::create_and_run_current_thread(fut)
+    edno_runtime::tokio_util::create_and_run_current_thread(fut)
   });
 
   // Wait for the REPL to be ready.
@@ -189,7 +189,7 @@ pub async fn kernel(
 
   // --- Create the ZMQ kernel worker on the main thread ---------------
   let kernel_main_module = resolve_url_or_path(
-    "./$deno$jupyter_kernel.mts",
+    "./$edno$jupyter_kernel.mts",
     cli_options.initial_cwd(),
   )
   .unwrap();
@@ -217,7 +217,7 @@ pub async fn kernel(
       vec![],
       vec![],
       permissions,
-      vec![ops::jupyter::deno_jupyter_kernel::init()],
+      vec![ops::jupyter::edno_jupyter_kernel::init()],
       Stdio {
         stdin: StdioPipe::inherit(),
         stdout: StdioPipe::file(stdout2),
@@ -248,7 +248,7 @@ pub async fn kernel(
   // Bootstrap the JS ZMQ kernel then run the event loop.
   kernel_worker.execute_script_static(
     located_script_name!(),
-    "Deno[Deno.internal].startJupyterKernel();",
+    "Edno[Edno.internal].startJupyterKernel();",
   )?;
   let mut kernel_main = kernel_worker.into_main_worker();
   kernel_main.run_event_loop(false).await?;
@@ -364,7 +364,7 @@ impl JupyterReplSession {
             "Runtime.callFunctionOn",
             Some(serde_json::json!({
               "functionDeclaration": r#"async function (execution_count, result) {
-                await Deno[Deno.internal].jupyter.broadcastResult(execution_count, result);
+                await Edno[Edno.internal].jupyter.broadcastResult(execution_count, result);
               }"#,
               "arguments": [arg0, arg1],
               "executionContextId": self.repl_session.context_id,

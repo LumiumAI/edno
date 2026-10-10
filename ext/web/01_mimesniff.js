@@ -2,9 +2,9 @@
 
 // @ts-check
 /// <reference path="../../core/internal.d.ts" />
-/// <reference path="../../core/lib.deno_core.d.ts" />
+/// <reference path="../../core/lib.edno_core.d.ts" />
 /// <reference path="../web/internal.d.ts" />
-/// <reference path="../../cli/tsc/dts/lib.deno_web.d.ts" />
+/// <reference path="../../cli/tsc/dts/lib.edno_web.d.ts" />
 
 (function () {
 const { core, primordials } = __bootstrap;
@@ -34,7 +34,7 @@ const {
   HTTP_WHITESPACE,
   HTTP_WHITESPACE_PREFIX_RE,
   HTTP_WHITESPACE_SUFFIX_RE,
-} = core.loadExtScript("ext:deno_web/00_infra.js");
+} = core.loadExtScript("ext:edno_web/00_infra.js");
 
 /**
  * @typedef MimeType

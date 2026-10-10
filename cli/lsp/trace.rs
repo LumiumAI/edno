@@ -30,7 +30,7 @@ impl fmt::Debug for TracingGuard {
 mod real_tracing {
   use std::sync::Mutex;
 
-  use deno_core::anyhow;
+  use edno_core::anyhow;
   pub use opentelemetry::Context;
   use opentelemetry::trace::TracerProvider;
   use opentelemetry_otlp::WithExportConfig;
@@ -66,13 +66,13 @@ mod real_tracing {
       .with_batch_exporter(exporter)
       .with_resource(
         Resource::builder_empty()
-          .with_service_name("deno-lsp")
+          .with_service_name("edno-lsp")
           .build(),
       )
       .build();
     opentelemetry::global::set_tracer_provider(provider.clone());
     *TRACER_PROVIDER.lock().unwrap() = Some(provider.clone());
-    Ok(provider.tracer("deno-lsp-tracer"))
+    Ok(provider.tracer("edno-lsp-tracer"))
   }
 
   pub(crate) fn init_tracing_subscriber(
@@ -86,7 +86,7 @@ mod real_tracing {
     let filter = if let Some(directive) = config.filter.as_ref() {
       filter.parse(directive)?
     } else {
-      filter.with_env_var("DENO_LSP_TRACE").from_env()?
+      filter.with_env_var("EDNO_LSP_TRACE").from_env()?
     };
     let open_telemetry_layer = match config.collector {
       TracingCollector::OpenTelemetry => Some(OpenTelemetryLayer::new(
@@ -172,7 +172,7 @@ mod stub_tracing {
 
   pub(crate) fn init_tracing_subscriber(
     _config: &super::TracingConfig,
-  ) -> Result<super::TracingGuard, deno_core::anyhow::Error> {
+  ) -> Result<super::TracingGuard, edno_core::anyhow::Error> {
     Ok(super::TracingGuard {
       defused: false,
       guard: {},

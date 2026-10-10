@@ -3,12 +3,12 @@ import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import assert from "node:assert/strict";
 
-const cwdUrl = pathToFileURL(Deno.cwd() + "/").href;
+const cwdUrl = pathToFileURL(Edno.cwd() + "/").href;
 const resolvedExternalUrl = pathToFileURL(
-  join(Deno.cwd(), "external_resolved.mjs"),
+  join(Edno.cwd(), "external_resolved.mjs"),
 ).href;
 const loadedExternalUrl = pathToFileURL(
-  join(Deno.cwd(), "external_loaded.mjs"),
+  join(Edno.cwd(), "external_loaded.mjs"),
 ).href;
 
 const calls = [];

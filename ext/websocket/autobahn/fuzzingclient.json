@@ -2,7 +2,7 @@
   "outdir": "./reports/servers",
   "servers": [
     {
-      "agent": "deno_websocket",
+      "agent": "edno_websocket",
       "url": "ws://localhost:6969"
     }
   ],

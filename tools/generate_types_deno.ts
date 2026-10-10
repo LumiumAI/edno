@@ -1,7 +1,7 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S edno run -A
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// This script is used to generate the @types/deno package on DefinitelyTyped.
+// This script is used to generate the @types/edno package on DefinitelyTyped.
 
 import $ from "jsr:@david/dax@0.42.0";
 import { type NamedNode, Node, Project } from "jsr:@ts-morph/ts-morph@27.0.0";
@@ -9,18 +9,18 @@ import * as semver from "jsr:@std/semver@1.0.3";
 
 const rootDir = $.path(import.meta.dirname!).parentOrThrow();
 const definitelyTypedDir = rootDir.join(
-  "../DefinitelyTyped/types/deno/",
+  "../DefinitelyTyped/types/edno/",
 );
 
 if (!definitelyTypedDir.existsSync()) {
   throw new Error(`Makes sure ${definitelyTypedDir} exists.`);
 }
 
-const denoExec = rootDir.join(
-  "target/debug/deno" + (Deno.build.os === "windows" ? ".exe" : ""),
+const ednoExec = rootDir.join(
+  "target/debug/edno" + (Edno.build.os === "windows" ? ".exe" : ""),
 );
 
-$.logStep("Building Deno executable...");
+$.logStep("Building Edno executable...");
 await $`cargo build`;
 
 $.logStep("Creating declaration file...");
@@ -43,7 +43,7 @@ async function createDenoDtsFile() {
     return false;
   }
 
-  const text = await $`${denoExec} types`.text();
+  const text = await $`${ednoExec} types`.text();
   const project = new Project();
   const file = project.createSourceFile(
     definitelyTypedDir.join("index.d.ts").toString(),
@@ -60,7 +60,7 @@ async function createDenoDtsFile() {
     }
     const shouldKeepNode = (namedNode: NamedNode) => {
       return matchesAny(namedNode.getName(), [
-        "Deno",
+        "Edno",
       ]) || namedNode.getName()?.startsWith("GPU");
     };
     if (Node.isVariableStatement(statement)) {
@@ -89,12 +89,12 @@ async function updatePkgJson() {
   version.patch = 9999;
   version.prerelease = undefined;
   version.build = undefined;
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   (obj as any).version = semver.format(version);
   pkgJsonFile.writeTextSync(JSON.stringify(obj, undefined, 4) + "\n"); // 4 spaces indent
 }
 
 async function getDenoVersion() {
-  const text = await $`${denoExec} -v`.text();
-  return text.match(/deno (.*)/)![1];
+  const text = await $`${ednoExec} -v`.text();
+  return text.match(/edno (.*)/)![1];
 }

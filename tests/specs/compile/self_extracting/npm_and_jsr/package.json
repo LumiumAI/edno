@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@denotest/esm-basic": "*",
-    "@denotest/node-addon": "*"
+    "@ednotest/esm-basic": "*",
+    "@ednotest/node-addon": "*"
   }
 }

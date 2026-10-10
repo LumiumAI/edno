@@ -21,29 +21,29 @@ const {
   SymbolFor,
 } = primordials;
 
-const webidl = core.loadExtScript("ext:deno_webidl/00_webidl.js");
+const webidl = core.loadExtScript("ext:edno_webidl/00_webidl.js");
 const { createFilteredInspectProxy } = core.loadExtScript(
-  "ext:deno_web/01_console.js",
+  "ext:edno_web/01_console.js",
 );
-const { URL } = core.loadExtScript("ext:deno_web/00_url.js");
-const { DOMException } = core.loadExtScript("ext:deno_web/01_dom_exception.js");
+const { URL } = core.loadExtScript("ext:edno_web/00_url.js");
+const { DOMException } = core.loadExtScript("ext:edno_web/01_dom_exception.js");
 const {
   defineEventHandler,
   EventTarget,
   setIsTrusted,
-} = core.loadExtScript("ext:deno_web/02_event.js");
-const { TransformStream } = core.loadExtScript("ext:deno_web/06_streams.js");
+} = core.loadExtScript("ext:edno_web/02_event.js");
+const { TransformStream } = core.loadExtScript("ext:edno_web/06_streams.js");
 const { TextDecoderStream } = core.loadExtScript(
-  "ext:deno_web/08_text_encoding.js",
+  "ext:edno_web/08_text_encoding.js",
 );
-const { getLocationHref } = core.loadExtScript("ext:deno_web/12_location.js");
-const { newInnerRequest } = core.loadExtScript("ext:deno_fetch/23_request.js");
-const { mainFetch } = core.loadExtScript("ext:deno_fetch/26_fetch.js");
+const { getLocationHref } = core.loadExtScript("ext:edno_web/12_location.js");
+const { newInnerRequest } = core.loadExtScript("ext:edno_fetch/23_request.js");
+const { mainFetch } = core.loadExtScript("ext:edno_fetch/26_fetch.js");
 const {
   fillHeaders,
   headerListFromHeaders,
   headersFromHeaderList,
-} = core.loadExtScript("ext:deno_fetch/20_headers.js");
+} = core.loadExtScript("ext:edno_fetch/20_headers.js");
 
 // Same semantics as
 // https://github.com/denoland/deno_std/blob/e0753abe0c8602552862a568348c046996709521/streams/text_line_stream.ts#L20-L74
@@ -297,7 +297,7 @@ class EventSource extends EventTarget {
 
     try {
       for await (
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const chunk of res.body.stream
           .pipeThrough(new TextDecoderStream())
           .pipeThrough(new TextLineStream({ allowCR: true }))
@@ -396,7 +396,7 @@ class EventSource extends EventTarget {
     }
   }
 
-  [SymbolFor("Deno.privateCustomInspect")](inspect, inspectOptions) {
+  [SymbolFor("Edno.privateCustomInspect")](inspect, inspectOptions) {
     return inspect(
       createFilteredInspectProxy({
         object: this,

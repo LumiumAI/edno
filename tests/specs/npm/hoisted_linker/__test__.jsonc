@@ -3,13 +3,13 @@
   "tests": {
     "basic_install": {
       // Install with hoisted linker and verify packages are directly
-      // in node_modules (not under .deno symlinks)
+      // in node_modules (not under .edno symlinks)
       "steps": [{
         "args": "install --node-modules-dir=manual --node-modules-linker=hoisted",
         "output": "install.out"
       }, {
         // chalk should be a real directory, not a symlink
-        "args": "eval console.log(Deno.statSync('node_modules/chalk').isDirectory)",
+        "args": "eval console.log(Edno.statSync('node_modules/chalk').isDirectory)",
         "output": "true\n"
       }]
     },
@@ -23,8 +23,8 @@
         "output": "main.out"
       }]
     },
-    "deno_json_config": {
-      // Test that nodeModulesLinker + nodeModulesDir in deno.json works
+    "edno_json_config": {
+      // Test that nodeModulesLinker + nodeModulesDir in edno.json works
       // without any CLI flags
       "steps": [{
         "args": "install",

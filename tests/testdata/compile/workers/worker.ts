@@ -1,5 +1,5 @@
 /// <reference no-default-lib="true" />
-/// <reference lib="deno.worker" />
+/// <reference lib="edno.worker" />
 
 if (import.meta.main) {
   console.log("Hello from worker!");

@@ -1,23 +1,23 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-use deno_npm::NpmPackageCacheFolderId;
-use deno_npm::NpmPackageId;
-use deno_npm::NpmResolutionPackage;
-use deno_npm::NpmSystemInfo;
-use deno_npm::resolution::NpmPackagesPartitioned;
-use deno_npm::resolution::NpmResolutionSnapshot;
-use deno_npm::resolution::PackageCacheFolderIdNotFoundError;
-use deno_npm::resolution::PackageNotFoundFromReferrerError;
-use deno_npm::resolution::PackageNvNotFoundError;
-use deno_npm::resolution::PackageReqNotFoundError;
-use deno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
+use edno_npm::NpmPackageCacheFolderId;
+use edno_npm::NpmPackageId;
+use edno_npm::NpmResolutionPackage;
+use edno_npm::NpmSystemInfo;
+use edno_npm::resolution::NpmPackagesPartitioned;
+use edno_npm::resolution::NpmResolutionSnapshot;
+use edno_npm::resolution::PackageCacheFolderIdNotFoundError;
+use edno_npm::resolution::PackageNotFoundFromReferrerError;
+use edno_npm::resolution::PackageNvNotFoundError;
+use edno_npm::resolution::PackageReqNotFoundError;
+use edno_npm::resolution::ValidSerializedNpmResolutionSnapshot;
 use deno_semver::package::PackageNv;
 use deno_semver::package::PackageReq;
 use deno_unsync::sync::AtomicFlag;
 use parking_lot::RwLock;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-pub type NpmResolutionCellRc = deno_maybe_sync::MaybeArc<NpmResolutionCell>;
+pub type NpmResolutionCellRc = edno_maybe_sync::MaybeArc<NpmResolutionCell>;
 
 /// Handles updating and storing npm resolution in memory.
 ///
@@ -87,7 +87,7 @@ impl NpmResolutionCell {
       .cloned()
   }
 
-  /// Resolve a node package from a deno module.
+  /// Resolve a node package from a edno module.
   pub fn resolve_pkg_id_from_pkg_req(
     &self,
     req: &PackageReq,
@@ -199,7 +199,7 @@ impl NpmResolutionCell {
   /// Checks if the resolution is "pending" meaning that its
   /// current state requires an npm install to get it up
   /// to date. This occurs when the workspace config changes
-  /// and deno_lockfile has incompletely updated the npm
+  /// and edno_lockfile has incompletely updated the npm
   /// snapshot.
   pub fn is_pending(&self) -> bool {
     self.is_pending.is_raised()

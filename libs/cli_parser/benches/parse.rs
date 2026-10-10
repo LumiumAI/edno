@@ -8,18 +8,18 @@ use criterion::BatchSize;
 use criterion::Criterion;
 use criterion::criterion_group;
 use criterion::criterion_main;
-use deno_cli_parser::convert::flags_from_vec;
-use deno_cli_parser::defs::DENO_ROOT;
-use deno_cli_parser::parse;
+use edno_cli_parser::convert::flags_from_vec;
+use edno_cli_parser::defs::EDNO_ROOT;
+use edno_cli_parser::parse;
 
 fn svec(args: &[&str]) -> Vec<String> {
   args.iter().map(|s| s.to_string()).collect()
 }
 
 fn benches(c: &mut Criterion) {
-  let bare = svec(&["deno", "run", "script.ts"]);
+  let bare = svec(&["edno", "run", "script.ts"]);
   let with_flags = svec(&[
-    "deno",
+    "edno",
     "run",
     "-A",
     "--no-check",
@@ -28,7 +28,7 @@ fn benches(c: &mut Criterion) {
     "arg2",
   ]);
   let complex = svec(&[
-    "deno",
+    "edno",
     "run",
     "--allow-read=/a,/b",
     "--allow-net=example.com",
@@ -42,7 +42,7 @@ fn benches(c: &mut Criterion) {
     "arg1",
     "arg2",
   ]);
-  let bare_repl = svec(&["deno"]);
+  let bare_repl = svec(&["edno"]);
 
   // Full parse + convert into `Flags` (the production entry point).
   let mut g = c.benchmark_group("flags_from_vec");
@@ -66,7 +66,7 @@ fn benches(c: &mut Criterion) {
   let mut g = c.benchmark_group("parse_only");
   for (name, input) in [("bare_run", &bare), ("run_with_flags", &with_flags)] {
     g.bench_function(name, |b| {
-      b.iter(|| black_box(parse(&DENO_ROOT, black_box(input))));
+      b.iter(|| black_box(parse(&EDNO_ROOT, black_box(input))));
     });
   }
   g.finish();

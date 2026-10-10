@@ -2,10 +2,10 @@
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
-/// <reference lib="deno.net" />
+/// <reference lib="edno.net" />
 
-/** Deno provides extra properties on `import.meta`. These are included here
- * to ensure that these are still available when using the Deno namespace in
+/** Edno provides extra properties on `import.meta`. These are included here
+ * to ensure that these are still available when using the Edno namespace in
  * conjunction with other type libs, like `dom`.
  *
  * @category Platform
@@ -61,7 +61,7 @@ interface ImportMeta {
   dirname: string;
 
   /** A flag that indicates if the current module is the main module that was
-   * called when starting the program under Deno.
+   * called when starting the program under Edno.
    *
    * ```ts
    * if (import.meta.main) {
@@ -82,7 +82,7 @@ interface ImportMeta {
   resolve(specifier: string): string;
 }
 
-/** Deno supports [User Timing Level 3](https://w3c.github.io/user-timing)
+/** Edno supports [User Timing Level 3](https://w3c.github.io/user-timing)
  * which is not widely supported yet in other runtimes.
  *
  * Check out the
@@ -113,7 +113,7 @@ interface Performance {
  */
 interface PerformanceMarkOptions {
   /** Metadata to be included in the mark. */
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   detail?: any;
 
   /** Timestamp to be used as the mark time. */
@@ -130,7 +130,7 @@ interface PerformanceMarkOptions {
  */
 interface PerformanceMeasureOptions {
   /** Metadata to be included in the measure. */
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   detail?: any;
 
   /** Timestamp to be used as the start time or string to be used as start
@@ -144,19 +144,19 @@ interface PerformanceMeasureOptions {
   end?: string | number;
 }
 
-/** The global namespace where Deno specific, non-standard APIs are located. */
-declare namespace Deno {
-  /** A set of error constructors that are raised by Deno APIs.
+/** The global namespace where Edno specific, non-standard APIs are located. */
+declare namespace Edno {
+  /** A set of error constructors that are raised by Edno APIs.
    *
    * Can be used to provide more specific handling of failures within code
-   * which is using Deno APIs. For example, handling attempting to open a file
+   * which is using Edno APIs. For example, handling attempting to open a file
    * which does not exist:
    *
    * ```ts
    * try {
-   *   const file = await Deno.open("./some/file.txt");
+   *   const file = await Edno.open("./some/file.txt");
    * } catch (error) {
-   *   if (error instanceof Deno.errors.NotFound) {
+   *   if (error instanceof Edno.errors.NotFound) {
    *     console.error("the file was not found");
    *   } else {
    *     // otherwise re-throw
@@ -176,11 +176,11 @@ declare namespace Deno {
     export class NotFound extends Error {}
     /**
      * Raised when the underlying operating system indicates the current user
-     * which the Deno process is running under does not have the appropriate
+     * which the Edno process is running under does not have the appropriate
      * permissions to a file or resource.
      *
-     * Before Deno 2.0, this error was raised when the user _did not_ provide
-     * required `--allow-*` flag. As of Deno 2.0, that case is now handled by
+     * Before Edno 2.0, this error was raised when the user _did not_ provide
+     * required `--allow-*` flag. As of Edno 2.0, that case is now handled by
      * the {@link NotCapable} error.
      *
      * @category Errors */
@@ -225,7 +225,7 @@ declare namespace Deno {
      * Raised when trying to write to a resource and a broken pipe error occurs.
      * This can happen when trying to write directly to `stdout` or `stderr`
      * and the operating system is unable to pipe the output for a reason
-     * external to the Deno runtime.
+     * external to the Edno runtime.
      *
      * @category Errors */
     export class BrokenPipe extends Error {}
@@ -250,7 +250,7 @@ declare namespace Deno {
     /**
      * Raised when the underlying operating system reports an `EINTR` error. In
      * many cases, this underlying IO error will be handled internally within
-     * Deno, or result in an {@link BadResource} error instead.
+     * Edno, or result in an {@link BadResource} error instead.
      *
      * @category Errors */
     export class Interrupted extends Error {}
@@ -291,7 +291,7 @@ declare namespace Deno {
      * @category Errors */
     export class Busy extends Error {}
     /**
-     * Raised when the underlying Deno API is asked to perform a function that
+     * Raised when the underlying Edno API is asked to perform a function that
      * is not currently supported.
      *
      * @category Errors */
@@ -321,10 +321,10 @@ declare namespace Deno {
     export class NotADirectory extends Error {}
 
     /**
-     * Raised when trying to perform an operation while the relevant Deno
+     * Raised when trying to perform an operation while the relevant Edno
      * permission (like `--allow-read`) has not been granted.
      *
-     * Before Deno 2.0, this condition was covered by the {@link PermissionDenied}
+     * Before Edno 2.0, this condition was covered by the {@link PermissionDenied}
      * error.
      *
      * @category Errors */
@@ -333,10 +333,10 @@ declare namespace Deno {
     export {}; // only export exports
   }
 
-  /** The current process ID of this instance of the Deno CLI.
+  /** The current process ID of this instance of the Edno CLI.
    *
    * ```ts
-   * console.log(Deno.pid);
+   * console.log(Edno.pid);
    * ```
    *
    * @category Runtime
@@ -344,10 +344,10 @@ declare namespace Deno {
   export const pid: number;
 
   /**
-   * The process ID of parent process of this instance of the Deno CLI.
+   * The process ID of parent process of this instance of the Edno CLI.
    *
    * ```ts
-   * console.log(Deno.ppid);
+   * console.log(Edno.ppid);
    * ```
    *
    * @category Runtime
@@ -356,7 +356,7 @@ declare namespace Deno {
 
   /** @category Runtime */
   export interface MemoryUsage {
-    /** The number of bytes of the current Deno's process resident set size,
+    /** The number of bytes of the current Edno's process resident set size,
      * which is the amount of memory occupied in main memory (RAM). */
     rss: number;
     /** The total size of the heap for V8, in bytes. */
@@ -369,7 +369,7 @@ declare namespace Deno {
   }
 
   /**
-   * Returns an object describing the memory usage of the Deno process and the
+   * Returns an object describing the memory usage of the Edno process and the
    * V8 subsystem measured in bytes.
    *
    * @category Runtime
@@ -377,10 +377,10 @@ declare namespace Deno {
   export function memoryUsage(): MemoryUsage;
 
   /**
-   * Get the `hostname` of the machine the Deno process is running on.
+   * Get the `hostname` of the machine the Edno process is running on.
    *
    * ```ts
-   * console.log(Deno.hostname());
+   * console.log(Edno.hostname());
    * ```
    *
    * Requires `allow-sys` permission.
@@ -398,7 +398,7 @@ declare namespace Deno {
    * the current load, not the 1, 5 and 15 minute load averages.
    *
    * ```ts
-   * console.log(Deno.loadavg());  // e.g. [ 0.71, 0.44, 0.44 ]
+   * console.log(Edno.loadavg());  // e.g. [ 0.71, 0.44, 0.44 ]
    * ```
    *
    * Requires `allow-sys` permission.
@@ -412,7 +412,7 @@ declare namespace Deno {
 
   /**
    * The information for a network interface returned from a call to
-   * {@linkcode Deno.networkInterfaces}.
+   * {@linkcode Edno.networkInterfaces}.
    *
    * @category Network
    */
@@ -437,7 +437,7 @@ declare namespace Deno {
    * Returns an array of the network interface information.
    *
    * ```ts
-   * console.log(Deno.networkInterfaces());
+   * console.log(Edno.networkInterfaces());
    * ```
    *
    * Requires `allow-sys` permission.
@@ -454,7 +454,7 @@ declare namespace Deno {
    * This is similar to the `free` command in Linux
    *
    * ```ts
-   * console.log(Deno.systemMemoryInfo());
+   * console.log(Edno.systemMemoryInfo());
    * ```
    *
    * Requires `allow-sys` permission.
@@ -465,7 +465,7 @@ declare namespace Deno {
   export function systemMemoryInfo(): SystemMemoryInfo;
 
   /**
-   * Information returned from a call to {@linkcode Deno.systemMemoryInfo}.
+   * Information returned from a call to {@linkcode Edno.systemMemoryInfo}.
    *
    * @category Runtime
    */
@@ -492,7 +492,7 @@ declare namespace Deno {
 
   /** Reflects the `NO_COLOR` environment variable at program start.
    *
-   * When the value is `true`, the Deno CLI will attempt to not send color codes
+   * When the value is `true`, the Edno CLI will attempt to not send color codes
    * to `stderr` or `stdout` and other command line programs should also attempt
    * to respect this value.
    *
@@ -506,11 +506,11 @@ declare namespace Deno {
    * Returns the release version of the Operating System.
    *
    * ```ts
-   * console.log(Deno.osRelease());
+   * console.log(Edno.osRelease());
    * ```
    *
    * Requires `allow-sys` permission.
-   * Under consideration to possibly move to Deno.build or Deno.versions and if
+   * Under consideration to possibly move to Edno.build or Edno.versions and if
    * it should depend sys-info, which may not be desirable.
    *
    * @tags allow-sys
@@ -522,7 +522,7 @@ declare namespace Deno {
    * Returns the Operating System uptime in number of seconds.
    *
    * ```ts
-   * console.log(Deno.osUptime());
+   * console.log(Edno.osUptime());
    * ```
    *
    * Requires `allow-sys` permission.
@@ -590,13 +590,13 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "inherit",
      *   permissions: {
      *     net: "inherit",
      *   },
      *   async fn() {
-     *     const status = await Deno.permissions.query({ name: "net" })
+     *     const status = await Edno.permissions.query({ name: "net" })
      *     assertEquals(status.state, "granted");
      *   },
      * });
@@ -605,13 +605,13 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "true",
      *   permissions: {
      *     net: true,
      *   },
      *   async fn() {
-     *     const status = await Deno.permissions.query({ name: "net" });
+     *     const status = await Edno.permissions.query({ name: "net" });
      *     assertEquals(status.state, "granted");
      *   },
      * });
@@ -620,13 +620,13 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "false",
      *   permissions: {
      *     net: false,
      *   },
      *   async fn() {
-     *     const status = await Deno.permissions.query({ name: "net" });
+     *     const status = await Edno.permissions.query({ name: "net" });
      *     assertEquals(status.state, "denied");
      *   },
      * });
@@ -635,13 +635,13 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "localhost:8080",
      *   permissions: {
      *     net: ["localhost:8080"],
      *   },
      *   async fn() {
-     *     const status = await Deno.permissions.query({ name: "net", host: "localhost:8080" });
+     *     const status = await Edno.permissions.query({ name: "net", host: "localhost:8080" });
      *     assertEquals(status.state, "granted");
      *   },
      * });
@@ -713,7 +713,7 @@ declare namespace Deno {
      * If the test was ignored the promise returns `false`.
      *
      * ```ts
-     * Deno.test({
+     * Edno.test({
      *   name: "a parent test",
      *   async fn(t) {
      *     console.log("before the step");
@@ -738,7 +738,7 @@ declare namespace Deno {
      * If the test was ignored the promise returns `false`.
      *
      * ```ts
-     * Deno.test(
+     * Edno.test(
      *   "a parent test",
      *   async (t) => {
      *     console.log("before the step");
@@ -766,7 +766,7 @@ declare namespace Deno {
      * If the test was ignored the promise returns `false`.
      *
      * ```ts
-     * Deno.test(async function aParentTest(t) {
+     * Edno.test(async function aParentTest(t) {
      *   console.log("before the step");
      *   await t.step(function step1(t) {
      *     console.log("current step:", t.name);
@@ -795,7 +795,7 @@ declare namespace Deno {
      * [`@std/testing/snapshot`](https://jsr.io/@std/testing/doc/snapshot).
      *
      * ```ts
-     * Deno.test("matches snapshot", async (t) => {
+     * Edno.test("matches snapshot", async (t) => {
      *   await t.assertSnapshot({ hello: "world", example: 123 });
      * });
      * ```
@@ -809,7 +809,7 @@ declare namespace Deno {
      * using `message` as the failure message if it does not.
      *
      * ```ts
-     * Deno.test("matches snapshot", async (t) => {
+     * Edno.test("matches snapshot", async (t) => {
      *   await t.assertSnapshot(2 + 3, "should be five");
      * });
      * ```
@@ -818,7 +818,7 @@ declare namespace Deno {
   }
 
   /** Options which can be set when calling
-   * {@linkcode Deno.TestContext.assertSnapshot}.
+   * {@linkcode Edno.TestContext.assertSnapshot}.
    *
    * @category Testing */
   export interface TestSnapshotOptions<T = unknown> {
@@ -843,7 +843,7 @@ declare namespace Deno {
      * generated diff message. */
     msg?: string;
     /** Function used to serialize the value to a string before comparing it
-     * with the stored snapshot. Defaults to a `Deno.inspect()`-based
+     * with the stored snapshot. Defaults to a `Edno.inspect()`-based
      * serializer. */
     serializer?: (actual: T) => string;
   }
@@ -877,7 +877,7 @@ declare namespace Deno {
      * Defaults to the parent test or step's value. */
     sanitizeResources?: boolean;
     /** Ensure the test step does not prematurely cause the process to exit,
-     * for example via a call to {@linkcode Deno.exit}.
+     * for example via a call to {@linkcode Edno.exit}.
      *
      * Defaults to the parent test or step's value. */
     sanitizeExit?: boolean;
@@ -904,9 +904,9 @@ declare namespace Deno {
      * in the application code.
      *
      * Can also be enabled globally with the `--sanitize-ops` CLI flag,
-     * the `DENO_TEST_SANITIZE_OPS=1` environment variable, or the
-     * `test.sanitizeOps` option in `deno.json`. Can be set per-module
-     * with {@linkcode Deno.test.sanitizer}.
+     * the `EDNO_TEST_SANITIZE_OPS=1` environment variable, or the
+     * `test.sanitizeOps` option in `edno.json`. Can be set per-module
+     * with {@linkcode Edno.test.sanitizer}.
      *
      * @default {false} */
     sanitizeOps?: boolean;
@@ -915,14 +915,14 @@ declare namespace Deno {
      * test match the open resources at the end of the test.
      *
      * Can also be enabled globally with the `--sanitize-resources` CLI flag,
-     * the `DENO_TEST_SANITIZE_RESOURCES=1` environment variable, or the
-     * `test.sanitizeResources` option in `deno.json`. Can be set per-module
-     * with {@linkcode Deno.test.sanitizer}.
+     * the `EDNO_TEST_SANITIZE_RESOURCES=1` environment variable, or the
+     * `test.sanitizeResources` option in `edno.json`. Can be set per-module
+     * with {@linkcode Edno.test.sanitizer}.
      *
      * @default {false} */
     sanitizeResources?: boolean;
     /** Ensure the test case does not prematurely cause the process to exit,
-     * for example via a call to {@linkcode Deno.exit}.
+     * for example via a call to {@linkcode Edno.exit}.
      *
      * @default {true} */
     sanitizeExit?: boolean;
@@ -961,39 +961,39 @@ declare namespace Deno {
     repeats?: number;
   }
 
-  /** Register a test which will be run when `deno test` is used on the command
+  /** Register a test which will be run when `edno test` is used on the command
    * line and the containing module looks like a test module.
    *
    * `fn` can be async if required.
    *
    * Tests are discovered before they are executed, so registrations must happen
    * at module load time.
-   * Nested `Deno.test()` calls are not supported.
+   * Nested `Edno.test()` calls are not supported.
    * Use `t.step()` for nested tests.
    *
    * ```ts
    * import { assertEquals } from "jsr:@std/assert";
    *
-   * Deno.test({
+   * Edno.test({
    *   name: "example test",
    *   fn() {
    *     assertEquals("world", "world");
    *   },
    * });
    *
-   * Deno.test({
+   * Edno.test({
    *   name: "example ignored test",
-   *   ignore: Deno.build.os === "windows",
+   *   ignore: Edno.build.os === "windows",
    *   fn() {
    *     // This test is ignored only on Windows machines
    *   },
    * });
    *
-   * Deno.test({
+   * Edno.test({
    *   name: "example async test",
    *   async fn() {
    *     const decoder = new TextDecoder("utf-8");
-   *     const data = await Deno.readFile("hello_world.txt");
+   *     const data = await Edno.readFile("hello_world.txt");
    *     assertEquals(decoder.decode(data), "Hello world");
    *   }
    * });
@@ -1001,13 +1001,13 @@ declare namespace Deno {
    *
    * @category Testing
    */
-  export const test: DenoTest;
+  export const test: EdnoTest;
 
   /**
    * @category Testing
    */
-  export interface DenoTest {
-    /** Register a test which will be run when `deno test` is used on the command
+  export interface EdnoTest {
+    /** Register a test which will be run when `edno test` is used on the command
      * line and the containing module looks like a test module.
      *
      * `fn` can be async if required.
@@ -1015,26 +1015,26 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "example test",
      *   fn() {
      *     assertEquals("world", "world");
      *   },
      * });
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "example ignored test",
-     *   ignore: Deno.build.os === "windows",
+     *   ignore: Edno.build.os === "windows",
      *   fn() {
      *     // This test is ignored only on Windows machines
      *   },
      * });
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "example async test",
      *   async fn() {
      *     const decoder = new TextDecoder("utf-8");
-     *     const data = await Deno.readFile("hello_world.txt");
+     *     const data = await Edno.readFile("hello_world.txt");
      *     assertEquals(decoder.decode(data), "Hello world");
      *   }
      * });
@@ -1044,7 +1044,7 @@ declare namespace Deno {
      */
     (t: TestDefinition): void;
 
-    /** Register a test which will be run when `deno test` is used on the command
+    /** Register a test which will be run when `edno test` is used on the command
      * line and the containing module looks like a test module.
      *
      * `fn` can be async if required.
@@ -1052,13 +1052,13 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test("My test description", () => {
+     * Edno.test("My test description", () => {
      *   assertEquals("hello", "hello");
      * });
      *
-     * Deno.test("My async test description", async () => {
+     * Edno.test("My async test description", async () => {
      *   const decoder = new TextDecoder("utf-8");
-     *   const data = await Deno.readFile("hello_world.txt");
+     *   const data = await Edno.readFile("hello_world.txt");
      *   assertEquals(decoder.decode(data), "Hello world");
      * });
      * ```
@@ -1067,7 +1067,7 @@ declare namespace Deno {
      */
     (name: string, fn: (t: TestContext) => void | Promise<void>): void;
 
-    /** Register a test which will be run when `deno test` is used on the command
+    /** Register a test which will be run when `edno test` is used on the command
      * line and the containing module looks like a test module.
      *
      * `fn` can be async if required. Declared function must have a name.
@@ -1075,13 +1075,13 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test(function myTestName() {
+     * Edno.test(function myTestName() {
      *   assertEquals("hello", "hello");
      * });
      *
-     * Deno.test(async function myOtherTestName() {
+     * Edno.test(async function myOtherTestName() {
      *   const decoder = new TextDecoder("utf-8");
-     *   const data = await Deno.readFile("hello_world.txt");
+     *   const data = await Edno.readFile("hello_world.txt");
      *   assertEquals(decoder.decode(data), "Hello world");
      * });
      * ```
@@ -1090,7 +1090,7 @@ declare namespace Deno {
      */
     (fn: (t: TestContext) => void | Promise<void>): void;
 
-    /** Register a test which will be run when `deno test` is used on the command
+    /** Register a test which will be run when `edno test` is used on the command
      * line and the containing module looks like a test module.
      *
      * `fn` can be async if required.
@@ -1098,13 +1098,13 @@ declare namespace Deno {
      * ```ts
      * import { assert, fail, assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test("My test description", { permissions: { read: true } }, (): void => {
+     * Edno.test("My test description", { permissions: { read: true } }, (): void => {
      *   assertEquals("hello", "hello");
      * });
      *
-     * Deno.test("My async test description", { permissions: { read: false } }, async (): Promise<void> => {
+     * Edno.test("My async test description", { permissions: { read: false } }, async (): Promise<void> => {
      *   const decoder = new TextDecoder("utf-8");
-     *   const data = await Deno.readFile("hello_world.txt");
+     *   const data = await Edno.readFile("hello_world.txt");
      *   assertEquals(decoder.decode(data), "Hello world");
      * });
      * ```
@@ -1117,7 +1117,7 @@ declare namespace Deno {
       fn: (t: TestContext) => void | Promise<void>,
     ): void;
 
-    /** Register a test which will be run when `deno test` is used on the command
+    /** Register a test which will be run when `edno test` is used on the command
      * line and the containing module looks like a test module.
      *
      * `fn` can be async if required.
@@ -1125,7 +1125,7 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test(
+     * Edno.test(
      *   {
      *     name: "My test description",
      *     permissions: { read: true },
@@ -1135,14 +1135,14 @@ declare namespace Deno {
      *   },
      * );
      *
-     * Deno.test(
+     * Edno.test(
      *   {
      *     name: "My async test description",
      *     permissions: { read: false },
      *   },
      *   async () => {
      *     const decoder = new TextDecoder("utf-8");
-     *     const data = await Deno.readFile("hello_world.txt");
+     *     const data = await Edno.readFile("hello_world.txt");
      *     assertEquals(decoder.decode(data), "Hello world");
      *   },
      * );
@@ -1155,7 +1155,7 @@ declare namespace Deno {
       fn: (t: TestContext) => void | Promise<void>,
     ): void;
 
-    /** Register a test which will be run when `deno test` is used on the command
+    /** Register a test which will be run when `edno test` is used on the command
      * line and the containing module looks like a test module.
      *
      * `fn` can be async if required. Declared function must have a name.
@@ -1163,18 +1163,18 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test(
+     * Edno.test(
      *   { permissions: { read: true } },
      *   function myTestName() {
      *     assertEquals("hello", "hello");
      *   },
      * );
      *
-     * Deno.test(
+     * Edno.test(
      *   { permissions: { read: false } },
      *   async function myOtherTestName() {
      *     const decoder = new TextDecoder("utf-8");
-     *     const data = await Deno.readFile("hello_world.txt");
+     *     const data = await Edno.readFile("hello_world.txt");
      *     assertEquals(decoder.decode(data), "Hello world");
      *   },
      * );
@@ -1204,7 +1204,7 @@ declare namespace Deno {
      * ```ts
      * import { assertEquals } from "jsr:@std/assert";
      *
-     * Deno.test.each([
+     * Edno.test.each([
      *   [1, 1, 2],
      *   [1, 2, 3],
      *   [2, 1, 3],
@@ -1212,7 +1212,7 @@ declare namespace Deno {
      *   assertEquals(a + b, expected);
      * });
      *
-     * Deno.test.each([
+     * Edno.test.each([
      *   { a: 1, b: 1, sum: 2 },
      *   { a: 1, b: 2, sum: 3 },
      * ])("$a + $b = $sum", ({ a, b, sum }) => {
@@ -1237,7 +1237,7 @@ declare namespace Deno {
      * If an exception is raised during execution of this hook, the remaining `beforeAll` hooks will not be run.
      *
      * ```ts
-     * Deno.test.beforeAll(() => {
+     * Edno.test.beforeAll(() => {
      *   // Setup code that runs once before all tests
      *   console.log("Setting up test suite");
      * });
@@ -1257,7 +1257,7 @@ declare namespace Deno {
      * test case will be marked as failed.
      *
      * ```ts
-     * Deno.test.beforeEach(() => {
+     * Edno.test.beforeEach(() => {
      *   // Setup code that runs before each test
      *   console.log("Setting up test");
      * });
@@ -1275,7 +1275,7 @@ declare namespace Deno {
      * test case will be marked as failed.
      *
      * ```ts
-     * Deno.test.afterEach(() => {
+     * Edno.test.afterEach(() => {
      *   // Cleanup code that runs after each test
      *   console.log("Cleaning up test");
      * });
@@ -1292,7 +1292,7 @@ declare namespace Deno {
      * If an exception is raised during execution of this hook, the remaining `afterAll` hooks will not be run.
      *
      * ```ts
-     * Deno.test.afterAll(() => {
+     * Edno.test.afterAll(() => {
      *   // Cleanup code that runs once after all tests
      *   console.log("Cleaning up test suite");
      * });
@@ -1306,20 +1306,20 @@ declare namespace Deno {
      * config file settings, but can still be overridden per-test via
      * `sanitizeOps` / `sanitizeResources` in test options.
      *
-     * Should be called at the top of the module, before any `Deno.test()`
+     * Should be called at the top of the module, before any `Edno.test()`
      * registrations — each call sets the defaults that subsequently registered
      * tests inherit, so tests registered before the call use the previous
      * defaults.
      *
      * ```ts
      * // Enable both sanitizers for all tests in this file
-     * Deno.test.sanitizer({ ops: true, resources: true });
+     * Edno.test.sanitizer({ ops: true, resources: true });
      *
-     * Deno.test("my test", () => {
+     * Edno.test("my test", () => {
      *   // This test will have ops and resources sanitizers enabled
      * });
      *
-     * Deno.test({
+     * Edno.test({
      *   name: "override per-test",
      *   sanitizeOps: false,
      *   fn() {
@@ -1338,7 +1338,7 @@ declare namespace Deno {
     }): void;
   }
 
-  /** Register a parameterized group of tests. See {@linkcode DenoTest.each}.
+  /** Register a parameterized group of tests. See {@linkcode EdnoTest.each}.
    *
    * The first overload handles array cases (their values are spread as
    * positional arguments); the second handles object or primitive cases (each
@@ -1380,7 +1380,7 @@ declare namespace Deno {
   }
 
   /** Shorthand property for ignoring a particular test case. See
-   * {@linkcode DenoTest.ignore}.
+   * {@linkcode EdnoTest.ignore}.
    *
    * @category Testing
    */
@@ -1402,12 +1402,12 @@ declare namespace Deno {
       fn: (t: TestContext) => void | Promise<void>,
     ): void;
     /** Register a parameterized group of ignored tests. See
-     * {@linkcode DenoTest.each}. */
+     * {@linkcode EdnoTest.each}. */
     each: TestEach;
   }
 
   /** Shorthand property for focusing a particular test case. See
-   * {@linkcode DenoTest.only}.
+   * {@linkcode EdnoTest.only}.
    *
    * @category Testing
    */
@@ -1429,7 +1429,7 @@ declare namespace Deno {
       fn: (t: TestContext) => void | Promise<void>,
     ): void;
     /** Register a parameterized group of focused tests. See
-     * {@linkcode DenoTest.each}. */
+     * {@linkcode EdnoTest.each}. */
     each: TestEach;
   }
 
@@ -1454,8 +1454,8 @@ declare namespace Deno {
      * will still have noticeable overhead, resulting in a warning.
      *
      * ```ts
-     * Deno.bench("foo", async (t) => {
-     *   const data = await Deno.readFile("data.txt");
+     * Edno.bench("foo", async (t) => {
+     *   const data = await Edno.readFile("data.txt");
      *   t.start();
      *   // some operation on `data`...
      * });
@@ -1471,8 +1471,8 @@ declare namespace Deno {
      * will still have noticeable overhead, resulting in a warning.
      *
      * ```ts
-     * Deno.bench("foo", async (t) => {
-     *   using file = await Deno.open("data.txt");
+     * Edno.bench("foo", async (t) => {
+     *   using file = await Edno.open("data.txt");
      *   t.start();
      *   // some operation on `file`...
      *   t.end();
@@ -1483,7 +1483,7 @@ declare namespace Deno {
   }
 
   /**
-   * The interface for defining a benchmark test using {@linkcode Deno.bench}.
+   * The interface for defining a benchmark test using {@linkcode Edno.bench}.
    *
    * @category Testing
    */
@@ -1519,7 +1519,7 @@ declare namespace Deno {
      */
     warmup?: number;
     /** Ensure the bench case does not prematurely cause the process to exit,
-     * for example via a call to {@linkcode Deno.exit}.
+     * for example via a call to {@linkcode Edno.exit}.
      *
      * @default {true} */
     sanitizeExit?: boolean;
@@ -1535,12 +1535,12 @@ declare namespace Deno {
   }
 
   /**
-   * Register a benchmark test which will be run when `deno bench` is used on
+   * Register a benchmark test which will be run when `edno bench` is used on
    * the command line and the containing module looks like a bench module.
    *
-   * A module "looks like a bench module" when `deno bench` selects it for
-   * execution. When you pass explicit file paths to `deno bench`, those files
-   * are always run. When you run `deno bench` without paths, it walks the
+   * A module "looks like a bench module" when `edno bench` selects it for
+   * execution. When you pass explicit file paths to `edno bench`, those files
+   * are always run. When you run `edno bench` without paths, it walks the
    * directory looking for files whose name (ignoring the extension) ends with
    * `_bench` or `.bench`, or is exactly `bench`. Examples are `foo_bench.ts`,
    * `foo.bench.js`, or `bench.ts`. Supported extensions are the same as for
@@ -1552,26 +1552,26 @@ declare namespace Deno {
    * ```ts
    * import { assertEquals } from "jsr:@std/assert";
    *
-   * Deno.bench({
+   * Edno.bench({
    *   name: "example test",
    *   fn() {
    *     assertEquals("world", "world");
    *   },
    * });
    *
-   * Deno.bench({
+   * Edno.bench({
    *   name: "example ignored test",
-   *   ignore: Deno.build.os === "windows",
+   *   ignore: Edno.build.os === "windows",
    *   fn() {
    *     // This test is ignored only on Windows machines
    *   },
    * });
    *
-   * Deno.bench({
+   * Edno.bench({
    *   name: "example async test",
    *   async fn() {
    *     const decoder = new TextDecoder("utf-8");
-   *     const data = await Deno.readFile("hello_world.txt");
+   *     const data = await Edno.readFile("hello_world.txt");
    *     assertEquals(decoder.decode(data), "Hello world");
    *   }
    * });
@@ -1582,7 +1582,7 @@ declare namespace Deno {
   export function bench(b: BenchDefinition): void;
 
   /**
-   * Register a benchmark test which will be run when `deno bench` is used on
+   * Register a benchmark test which will be run when `edno bench` is used on
    * the command line and the containing module looks like a bench module.
    *
    * If the test function (`fn`) returns a promise or is async, the test runner
@@ -1591,13 +1591,13 @@ declare namespace Deno {
    * ```ts
    * import { assertEquals } from "jsr:@std/assert";
    *
-   * Deno.bench("My test description", () => {
+   * Edno.bench("My test description", () => {
    *   assertEquals("hello", "hello");
    * });
    *
-   * Deno.bench("My async test description", async () => {
+   * Edno.bench("My async test description", async () => {
    *   const decoder = new TextDecoder("utf-8");
-   *   const data = await Deno.readFile("hello_world.txt");
+   *   const data = await Edno.readFile("hello_world.txt");
    *   assertEquals(decoder.decode(data), "Hello world");
    * });
    * ```
@@ -1610,7 +1610,7 @@ declare namespace Deno {
   ): void;
 
   /**
-   * Register a benchmark test which will be run when `deno bench` is used on
+   * Register a benchmark test which will be run when `edno bench` is used on
    * the command line and the containing module looks like a bench module.
    *
    * If the test function (`fn`) returns a promise or is async, the test runner
@@ -1619,13 +1619,13 @@ declare namespace Deno {
    * ```ts
    * import { assertEquals } from "jsr:@std/assert";
    *
-   * Deno.bench(function myTestName() {
+   * Edno.bench(function myTestName() {
    *   assertEquals("hello", "hello");
    * });
    *
-   * Deno.bench(async function myOtherTestName() {
+   * Edno.bench(async function myOtherTestName() {
    *   const decoder = new TextDecoder("utf-8");
-   *   const data = await Deno.readFile("hello_world.txt");
+   *   const data = await Edno.readFile("hello_world.txt");
    *   assertEquals(decoder.decode(data), "Hello world");
    * });
    * ```
@@ -1635,7 +1635,7 @@ declare namespace Deno {
   export function bench(fn: (b: BenchContext) => void | Promise<void>): void;
 
   /**
-   * Register a benchmark test which will be run when `deno bench` is used on
+   * Register a benchmark test which will be run when `edno bench` is used on
    * the command line and the containing module looks like a bench module.
    *
    * If the test function (`fn`) returns a promise or is async, the test runner
@@ -1644,7 +1644,7 @@ declare namespace Deno {
    * ```ts
    * import { assertEquals } from "jsr:@std/assert";
    *
-   * Deno.bench(
+   * Edno.bench(
    *   "My test description",
    *   { permissions: { read: true } },
    *   () => {
@@ -1652,12 +1652,12 @@ declare namespace Deno {
    *   }
    * );
    *
-   * Deno.bench(
+   * Edno.bench(
    *   "My async test description",
    *   { permissions: { read: false } },
    *   async () => {
    *     const decoder = new TextDecoder("utf-8");
-   *     const data = await Deno.readFile("hello_world.txt");
+   *     const data = await Edno.readFile("hello_world.txt");
    *     assertEquals(decoder.decode(data), "Hello world");
    *   }
    * );
@@ -1672,7 +1672,7 @@ declare namespace Deno {
   ): void;
 
   /**
-   * Register a benchmark test which will be run when `deno bench` is used on
+   * Register a benchmark test which will be run when `edno bench` is used on
    * the command line and the containing module looks like a bench module.
    *
    * If the test function (`fn`) returns a promise or is async, the test runner
@@ -1681,18 +1681,18 @@ declare namespace Deno {
    * ```ts
    * import { assertEquals } from "jsr:@std/assert";
    *
-   * Deno.bench(
+   * Edno.bench(
    *   { name: "My test description", permissions: { read: true } },
    *   () => {
    *     assertEquals("hello", "hello");
    *   }
    * );
    *
-   * Deno.bench(
+   * Edno.bench(
    *   { name: "My async test description", permissions: { read: false } },
    *   async () => {
    *     const decoder = new TextDecoder("utf-8");
-   *     const data = await Deno.readFile("hello_world.txt");
+   *     const data = await Edno.readFile("hello_world.txt");
    *     assertEquals(decoder.decode(data), "Hello world");
    *   }
    * );
@@ -1706,7 +1706,7 @@ declare namespace Deno {
   ): void;
 
   /**
-   * Register a benchmark test which will be run when `deno bench` is used on
+   * Register a benchmark test which will be run when `edno bench` is used on
    * the command line and the containing module looks like a bench module.
    *
    * If the test function (`fn`) returns a promise or is async, the test runner
@@ -1715,18 +1715,18 @@ declare namespace Deno {
    * ```ts
    * import { assertEquals } from "jsr:@std/assert";
    *
-   * Deno.bench(
+   * Edno.bench(
    *   { permissions: { read: true } },
    *   function myTestName() {
    *     assertEquals("hello", "hello");
    *   }
    * );
    *
-   * Deno.bench(
+   * Edno.bench(
    *   { permissions: { read: false } },
    *   async function myOtherTestName() {
    *     const decoder = new TextDecoder("utf-8");
-   *     const data = await Deno.readFile("hello_world.txt");
+   *     const data = await Edno.readFile("hello_world.txt");
    *     assertEquals(decoder.decode(data), "Hello world");
    *   }
    * );
@@ -1739,32 +1739,32 @@ declare namespace Deno {
     fn: (b: BenchContext) => void | Promise<void>,
   ): void;
 
-  /** Exit the Deno process with optional exit code.
+  /** Exit the Edno process with optional exit code.
    *
-   * If no exit code is supplied then Deno will exit with return code of `0`.
+   * If no exit code is supplied then Edno will exit with return code of `0`.
    *
-   * In worker contexts this closes the current worker using Deno's internal
+   * In worker contexts this closes the current worker using Edno's internal
    * worker close operation. It does not call the current `self.close` property.
    *
    * ```ts
-   * Deno.exit(5);
+   * Edno.exit(5);
    * ```
    *
    * @category Runtime
    */
   export function exit(code?: number): never;
 
-  /** The exit code for the Deno process.
+  /** The exit code for the Edno process.
    *
-   * If no exit code has been supplied, then Deno will assume a return code of `0`.
+   * If no exit code has been supplied, then Edno will assume a return code of `0`.
    *
    * When setting an exit code value, a number or non-NaN string must be provided,
    * otherwise a TypeError will be thrown.
    *
    * ```ts
-   * console.log(Deno.exitCode); //-> 0
-   * Deno.exitCode = 1;
-   * console.log(Deno.exitCode); //-> 1
+   * console.log(Edno.exitCode); //-> 0
+   * Edno.exitCode = 1;
+   * console.log(Edno.exitCode); //-> 1
    * ```
    *
    * @category Runtime
@@ -1775,20 +1775,20 @@ declare namespace Deno {
    * variables.
    *
    * Environment variables can also be loaded from a `.env` file by using the
-   * `--env-file` flag when running a Deno program:
+   * `--env-file` flag when running a Edno program:
    *
    * ```sh
-   * deno run --env-file=.env --allow-env main.ts
+   * edno run --env-file=.env --allow-env main.ts
    * ```
    *
    * If `--env-file` is specified without a value, it defaults to loading `.env`
    * from the current working directory:
    *
    * ```sh
-   * deno run --env-file --allow-env main.ts
+   * edno run --env-file --allow-env main.ts
    * ```
    *
-   * Learn more at [the Deno docs](https://docs.deno.com/runtime/reference/env_variables/).
+   * Learn more at [the Edno docs](https://docs.deno.com/runtime/reference/env_variables/).
    *
    * @tags allow-env
    * @category Runtime
@@ -1799,8 +1799,8 @@ declare namespace Deno {
      * Returns `undefined` if the supplied environment variable is not defined.
      *
      * ```ts
-     * console.log(Deno.env.get("HOME"));  // e.g. outputs "/home/alice"
-     * console.log(Deno.env.get("MADE_UP_VAR"));  // outputs undefined
+     * console.log(Edno.env.get("HOME"));  // e.g. outputs "/home/alice"
+     * console.log(Edno.env.get("MADE_UP_VAR"));  // outputs undefined
      * ```
      *
      * Requires `allow-env` permission.
@@ -1812,8 +1812,8 @@ declare namespace Deno {
     /** Set the value of an environment variable.
      *
      * ```ts
-     * Deno.env.set("SOME_VAR", "Value");
-     * Deno.env.get("SOME_VAR");  // outputs "Value"
+     * Edno.env.set("SOME_VAR", "Value");
+     * Edno.env.get("SOME_VAR");  // outputs "Value"
      * ```
      *
      * Requires `allow-env` permission.
@@ -1825,8 +1825,8 @@ declare namespace Deno {
     /** Delete the value of an environment variable.
      *
      * ```ts
-     * Deno.env.set("SOME_VAR", "Value");
-     * Deno.env.delete("SOME_VAR");  // outputs "undefined"
+     * Edno.env.set("SOME_VAR", "Value");
+     * Edno.env.delete("SOME_VAR");  // outputs "undefined"
      * ```
      *
      * Requires `allow-env` permission.
@@ -1838,8 +1838,8 @@ declare namespace Deno {
     /** Check whether an environment variable is present or not.
      *
      * ```ts
-     * Deno.env.set("SOME_VAR", "Value");
-     * Deno.env.has("SOME_VAR");  // outputs true
+     * Edno.env.set("SOME_VAR", "Value");
+     * Edno.env.has("SOME_VAR");  // outputs true
      * ```
      *
      * Requires `allow-env` permission.
@@ -1852,10 +1852,10 @@ declare namespace Deno {
      * simple object of keys and values.
      *
      * ```ts
-     * Deno.env.set("TEST_VAR", "A");
-     * const myEnv = Deno.env.toObject();
+     * Edno.env.set("TEST_VAR", "A");
+     * const myEnv = Edno.env.toObject();
      * console.log(myEnv.SHELL);
-     * Deno.env.set("TEST_VAR", "B");
+     * Edno.env.set("TEST_VAR", "B");
      * console.log(myEnv.TEST_VAR);  // outputs "A"
      * ```
      *
@@ -1875,10 +1875,10 @@ declare namespace Deno {
   export const env: Env;
 
   /**
-   * Returns the path to the current deno executable.
+   * Returns the path to the current edno executable.
    *
    * ```ts
-   * console.log(Deno.execPath());  // e.g. "/home/alice/.local/bin/deno"
+   * console.log(Edno.execPath());  // e.g. "/home/alice/.local/bin/edno"
    * ```
    *
    * @category Runtime
@@ -1889,14 +1889,14 @@ declare namespace Deno {
    * Change the current working directory to the specified path.
    *
    * ```ts
-   * Deno.chdir("/home/userA");
-   * Deno.chdir("../userB");
-   * Deno.chdir("C:\\Program Files (x86)\\Java");
+   * Edno.chdir("/home/userA");
+   * Edno.chdir("../userB");
+   * Edno.chdir("C:\\Program Files (x86)\\Java");
    * ```
    *
-   * Throws {@linkcode Deno.errors.NotFound} if directory not found.
+   * Throws {@linkcode Edno.errors.NotFound} if directory not found.
    *
-   * Throws {@linkcode Deno.errors.PermissionDenied} if the user does not have
+   * Throws {@linkcode Edno.errors.PermissionDenied} if the user does not have
    * operating system file access rights.
    *
    * Requires `allow-read` permission.
@@ -1913,10 +1913,10 @@ declare namespace Deno {
    * links), `cwd()` may return any one of them.
    *
    * ```ts
-   * const currentWorkingDirectory = Deno.cwd();
+   * const currentWorkingDirectory = Edno.cwd();
    * ```
    *
-   * Throws {@linkcode Deno.errors.NotFound} if directory not available.
+   * Throws {@linkcode Edno.errors.NotFound} if directory not available.
    *
    * @category Runtime
    */
@@ -1926,7 +1926,7 @@ declare namespace Deno {
    * Creates `newpath` as a hard link to `oldpath`.
    *
    * ```ts
-   * await Deno.link("old/name", "new/name");
+   * await Edno.link("old/name", "new/name");
    * ```
    *
    * Requires `allow-read` and `allow-write` permissions.
@@ -1940,7 +1940,7 @@ declare namespace Deno {
    * Synchronously creates `newpath` as a hard link to `oldpath`.
    *
    * ```ts
-   * Deno.linkSync("old/name", "new/name");
+   * Edno.linkSync("old/name", "new/name");
    * ```
    *
    * Requires `allow-read` and `allow-write` permissions.
@@ -1964,14 +1964,14 @@ declare namespace Deno {
     End = 2,
   }
 
-  /** Open a file and resolve to an instance of {@linkcode Deno.FsFile}. The
+  /** Open a file and resolve to an instance of {@linkcode Edno.FsFile}. The
    * file does not need to previously exist if using the `create` or `createNew`
    * open options. The caller may have the resulting file automatically closed
    * by the runtime once it's out of scope by declaring the file variable with
    * the `using` keyword.
    *
    * ```ts
-   * using file = await Deno.open("/foo/bar.txt", { read: true, write: true });
+   * using file = await Edno.open("/foo/bar.txt", { read: true, write: true });
    * // Do work with file
    * ```
    *
@@ -1979,7 +1979,7 @@ declare namespace Deno {
    * it.
    *
    * ```ts
-   * const file = await Deno.open("/foo/bar.txt", { read: true, write: true });
+   * const file = await Edno.open("/foo/bar.txt", { read: true, write: true });
    * // Do work with file
    * file.close();
    * ```
@@ -1996,13 +1996,13 @@ declare namespace Deno {
   ): Promise<FsFile>;
 
   /** Synchronously open a file and return an instance of
-   * {@linkcode Deno.FsFile}. The file does not need to previously exist if
+   * {@linkcode Edno.FsFile}. The file does not need to previously exist if
    * using the `create` or `createNew` open options. The caller may have the
    * resulting file automatically closed by the runtime once it's out of scope
    * by declaring the file variable with the `using` keyword.
    *
    * ```ts
-   * using file = Deno.openSync("/foo/bar.txt", { read: true, write: true });
+   * using file = Edno.openSync("/foo/bar.txt", { read: true, write: true });
    * // Do work with file
    * ```
    *
@@ -2010,7 +2010,7 @@ declare namespace Deno {
    * it.
    *
    * ```ts
-   * const file = Deno.openSync("/foo/bar.txt", { read: true, write: true });
+   * const file = Edno.openSync("/foo/bar.txt", { read: true, write: true });
    * // Do work with file
    * file.close();
    * ```
@@ -2024,10 +2024,10 @@ declare namespace Deno {
   export function openSync(path: string | URL, options?: OpenOptions): FsFile;
 
   /** Creates a file if none exists or truncates an existing file and resolves to
-   *  an instance of {@linkcode Deno.FsFile}.
+   *  an instance of {@linkcode Edno.FsFile}.
    *
    * ```ts
-   * const file = await Deno.create("/foo/bar.txt");
+   * const file = await Edno.create("/foo/bar.txt");
    * ```
    *
    * Requires `allow-read` and `allow-write` permissions.
@@ -2038,10 +2038,10 @@ declare namespace Deno {
   export function create(path: string | URL): Promise<FsFile>;
 
   /** Creates a file if none exists or truncates an existing file and returns
-   *  an instance of {@linkcode Deno.FsFile}.
+   *  an instance of {@linkcode Edno.FsFile}.
    *
    * ```ts
-   * const file = Deno.createSync("/foo/bar.txt");
+   * const file = Edno.createSync("/foo/bar.txt");
    * ```
    *
    * Requires `allow-read` and `allow-write` permissions.
@@ -2051,13 +2051,13 @@ declare namespace Deno {
    */
   export function createSync(path: string | URL): FsFile;
 
-  /** The Deno abstraction for reading and writing files.
+  /** The Edno abstraction for reading and writing files.
    *
-   * This is the most straight forward way of handling files within Deno and is
-   * recommended over using the discrete functions within the `Deno` namespace.
+   * This is the most straight forward way of handling files within Edno and is
+   * recommended over using the discrete functions within the `Edno` namespace.
    *
    * ```ts
-   * using file = await Deno.open("/foo/bar.txt", { read: true });
+   * using file = await Edno.open("/foo/bar.txt", { read: true });
    * const fileInfo = await file.stat();
    * if (fileInfo.isFile) {
    *   const buf = new Uint8Array(100);
@@ -2074,7 +2074,7 @@ declare namespace Deno {
      * based APIs.
      *
      * ```ts
-     * using file = await Deno.open("my_file.txt", { read: true });
+     * using file = await Edno.open("my_file.txt", { read: true });
      * const decoder = new TextDecoder();
      * for await (const chunk of file.readable) {
      *   console.log(decoder.decode(chunk));
@@ -2093,7 +2093,7 @@ declare namespace Deno {
      *
      * ```ts
      * const items = ["hello", "world"];
-     * using file = await Deno.open("my_file.txt", { write: true });
+     * using file = await Edno.open("my_file.txt", { write: true });
      * const encoder = new TextEncoder();
      * const writer = file.writable.getWriter();
      * for (const item of items) {
@@ -2116,7 +2116,7 @@ declare namespace Deno {
      * ```ts
      * const encoder = new TextEncoder();
      * const data = encoder.encode("Hello world");
-     * using file = await Deno.open("/foo/bar.txt", { write: true });
+     * using file = await Edno.open("/foo/bar.txt", { write: true });
      * const bytesWritten = await file.write(data); // 11
      * ```
      *
@@ -2133,7 +2133,7 @@ declare namespace Deno {
      * ```ts
      * const encoder = new TextEncoder();
      * const data = encoder.encode("Hello world");
-     * using file = Deno.openSync("/foo/bar.txt", { write: true });
+     * using file = Edno.openSync("/foo/bar.txt", { write: true });
      * const bytesWritten = file.writeSync(data); // 11
      * ```
      */
@@ -2144,7 +2144,7 @@ declare namespace Deno {
      * ### Truncate the entire file
      *
      * ```ts
-     * using file = await Deno.open("my_file.txt", { write: true });
+     * using file = await Edno.open("my_file.txt", { write: true });
      * await file.truncate();
      * ```
      *
@@ -2152,7 +2152,7 @@ declare namespace Deno {
      *
      * ```ts
      * // if "my_file.txt" contains the text "hello world":
-     * using file = await Deno.open("my_file.txt", { write: true });
+     * using file = await Edno.open("my_file.txt", { write: true });
      * await file.truncate(7);
      * const buf = new Uint8Array(100);
      * await file.read(buf);
@@ -2167,7 +2167,7 @@ declare namespace Deno {
      * ### Truncate the entire file
      *
      * ```ts
-     * using file = Deno.openSync("my_file.txt", { write: true });
+     * using file = Edno.openSync("my_file.txt", { write: true });
      * file.truncateSync();
      * ```
      *
@@ -2175,7 +2175,7 @@ declare namespace Deno {
      *
      * ```ts
      * // if "my_file.txt" contains the text "hello world":
-     * using file = Deno.openSync("my_file.txt", { write: true });
+     * using file = Edno.openSync("my_file.txt", { write: true });
      * file.truncateSync(7);
      * const buf = new Uint8Array(100);
      * file.readSync(buf);
@@ -2196,7 +2196,7 @@ declare namespace Deno {
      *
      * ```ts
      * // if "/foo/bar.txt" contains the text "hello world":
-     * using file = await Deno.open("/foo/bar.txt");
+     * using file = await Edno.open("/foo/bar.txt");
      * const buf = new Uint8Array(100);
      * const numberOfBytesRead = await file.read(buf); // 11 bytes
      * const text = new TextDecoder().decode(buf);  // "hello world"
@@ -2216,7 +2216,7 @@ declare namespace Deno {
      *
      * ```ts
      * // if "/foo/bar.txt" contains the text "hello world":
-     * using file = Deno.openSync("/foo/bar.txt");
+     * using file = Edno.openSync("/foo/bar.txt");
      * const buf = new Uint8Array(100);
      * const numberOfBytesRead = file.readSync(buf); // 11 bytes
      * const text = new TextDecoder().decode(buf);  // "hello world"
@@ -2228,14 +2228,14 @@ declare namespace Deno {
      *
      * ```ts
      * // Given the file contains "Hello world" text, which is 11 bytes long:
-     * using file = await Deno.open(
+     * using file = await Edno.open(
      *   "hello.txt",
      *   { read: true, write: true, truncate: true, create: true },
      * );
      * await file.write(new TextEncoder().encode("Hello world"));
      *
      * // advance cursor 6 bytes
-     * const cursorPosition = await file.seek(6, Deno.SeekMode.Start);
+     * const cursorPosition = await file.seek(6, Edno.SeekMode.Start);
      * console.log(cursorPosition);  // 6
      * const buf = new Uint8Array(100);
      * await file.read(buf);
@@ -2246,18 +2246,18 @@ declare namespace Deno {
      *
      * ```ts
      * // Given the file contains "Hello world" text, which is 11 bytes long:
-     * const file = await Deno.open(
+     * const file = await Edno.open(
      *   "hello.txt",
      *   { read: true, write: true, truncate: true, create: true },
      * );
      * await file.write(new TextEncoder().encode("Hello world"));
      *
      * // Seek 6 bytes from the start of the file
-     * console.log(await file.seek(6, Deno.SeekMode.Start)); // "6"
+     * console.log(await file.seek(6, Edno.SeekMode.Start)); // "6"
      * // Seek 2 more bytes from the current position
-     * console.log(await file.seek(2, Deno.SeekMode.Current)); // "8"
+     * console.log(await file.seek(2, Edno.SeekMode.Current)); // "8"
      * // Seek backwards 2 bytes from the end of the file
-     * console.log(await file.seek(-2, Deno.SeekMode.End)); // "9" (i.e. 11-2)
+     * console.log(await file.seek(-2, Edno.SeekMode.End)); // "9" (i.e. 11-2)
      * ```
      */
     seek(offset: number | bigint, whence: SeekMode): Promise<number>;
@@ -2265,14 +2265,14 @@ declare namespace Deno {
      * The new position within the resource (bytes from the start) is returned.
      *
      * ```ts
-     * using file = Deno.openSync(
+     * using file = Edno.openSync(
      *   "hello.txt",
      *   { read: true, write: true, truncate: true, create: true },
      * );
      * file.writeSync(new TextEncoder().encode("Hello world"));
      *
      * // advance cursor 6 bytes
-     * const cursorPosition = file.seekSync(6, Deno.SeekMode.Start);
+     * const cursorPosition = file.seekSync(6, Edno.SeekMode.Start);
      * console.log(cursorPosition);  // 6
      * const buf = new Uint8Array(100);
      * file.readSync(buf);
@@ -2283,38 +2283,38 @@ declare namespace Deno {
      *
      * ```ts
      * // Given the file contains "Hello world" text, which is 11 bytes long:
-     * using file = Deno.openSync(
+     * using file = Edno.openSync(
      *   "hello.txt",
      *   { read: true, write: true, truncate: true, create: true },
      * );
      * file.writeSync(new TextEncoder().encode("Hello world"));
      *
      * // Seek 6 bytes from the start of the file
-     * console.log(file.seekSync(6, Deno.SeekMode.Start)); // "6"
+     * console.log(file.seekSync(6, Edno.SeekMode.Start)); // "6"
      * // Seek 2 more bytes from the current position
-     * console.log(file.seekSync(2, Deno.SeekMode.Current)); // "8"
+     * console.log(file.seekSync(2, Edno.SeekMode.Current)); // "8"
      * // Seek backwards 2 bytes from the end of the file
-     * console.log(file.seekSync(-2, Deno.SeekMode.End)); // "9" (i.e. 11-2)
+     * console.log(file.seekSync(-2, Edno.SeekMode.End)); // "9" (i.e. 11-2)
      * ```
      */
     seekSync(offset: number | bigint, whence: SeekMode): number;
-    /** Resolves to a {@linkcode Deno.FileInfo} for the file.
+    /** Resolves to a {@linkcode Edno.FileInfo} for the file.
      *
      * ```ts
      * import { assert } from "jsr:@std/assert";
      *
-     * using file = await Deno.open("hello.txt");
+     * using file = await Edno.open("hello.txt");
      * const fileInfo = await file.stat();
      * assert(fileInfo.isFile);
      * ```
      */
     stat(): Promise<FileInfo>;
-    /** Synchronously returns a {@linkcode Deno.FileInfo} for the file.
+    /** Synchronously returns a {@linkcode Edno.FileInfo} for the file.
      *
      * ```ts
      * import { assert } from "jsr:@std/assert";
      *
-     * using file = Deno.openSync("hello.txt")
+     * using file = Edno.openSync("hello.txt")
      * const fileInfo = file.statSync();
      * assert(fileInfo.isFile);
      * ```
@@ -2325,14 +2325,14 @@ declare namespace Deno {
      * stream to disk.
      *
      * ```ts
-     * const file = await Deno.open(
+     * const file = await Edno.open(
      *   "my_file.txt",
      *   { read: true, write: true, create: true },
      * );
      * await file.write(new TextEncoder().encode("Hello World"));
      * await file.truncate(1);
      * await file.sync();
-     * console.log(await Deno.readTextFile("my_file.txt")); // H
+     * console.log(await Edno.readTextFile("my_file.txt")); // H
      * ```
      *
      * @category I/O
@@ -2343,14 +2343,14 @@ declare namespace Deno {
      * file stream to disk.
      *
      * ```ts
-     * const file = Deno.openSync(
+     * const file = Edno.openSync(
      *   "my_file.txt",
      *   { read: true, write: true, create: true },
      * );
      * file.writeSync(new TextEncoder().encode("Hello World"));
      * file.truncateSync(1);
      * file.syncSync();
-     * console.log(Deno.readTextFileSync("my_file.txt")); // H
+     * console.log(Edno.readTextFileSync("my_file.txt")); // H
      * ```
      *
      * @category I/O
@@ -2359,13 +2359,13 @@ declare namespace Deno {
     /**
      * Flushes any pending data operations of the given file stream to disk.
      *  ```ts
-     * using file = await Deno.open(
+     * using file = await Edno.open(
      *   "my_file.txt",
      *   { read: true, write: true, create: true },
      * );
      * await file.write(new TextEncoder().encode("Hello World"));
      * await file.syncData();
-     * console.log(await Deno.readTextFile("my_file.txt")); // Hello World
+     * console.log(await Edno.readTextFile("my_file.txt")); // Hello World
      * ```
      *
      * @category I/O
@@ -2376,13 +2376,13 @@ declare namespace Deno {
      * to disk.
      *
      *  ```ts
-     * using file = Deno.openSync(
+     * using file = Edno.openSync(
      *   "my_file.txt",
      *   { read: true, write: true, create: true },
      * );
      * file.writeSync(new TextEncoder().encode("Hello World"));
      * file.syncDataSync();
-     * console.log(Deno.readTextFileSync("my_file.txt")); // Hello World
+     * console.log(Edno.readTextFileSync("my_file.txt")); // Hello World
      * ```
      *
      * @category I/O
@@ -2394,7 +2394,7 @@ declare namespace Deno {
      * time) or as `Date` objects.
      *
      * ```ts
-     * using file = await Deno.open("file.txt", { create: true, write: true });
+     * using file = await Edno.open("file.txt", { create: true, write: true });
      * await file.utime(1556495550, new Date());
      * ```
      *
@@ -2407,7 +2407,7 @@ declare namespace Deno {
      * (UNIX epoch time) or as `Date` objects.
      *
      * ```ts
-     * using file = Deno.openSync("file.txt", { create: true, write: true });
+     * using file = Edno.openSync("file.txt", { create: true, write: true });
      * file.utime(1556495550, new Date());
      * ```
      *
@@ -2419,7 +2419,7 @@ declare namespace Deno {
      *
      * ```ts
      * // This example is system and context specific
-     * using file = await Deno.open("/dev/tty6");
+     * using file = await Edno.open("/dev/tty6");
      * file.isTerminal(); // true
      * ```
      */
@@ -2432,7 +2432,7 @@ declare namespace Deno {
      * from a TTY device in canonical mode.
      *
      * ```ts
-     * using file = await Deno.open("/dev/tty6");
+     * using file = await Edno.open("/dev/tty6");
      * file.setRaw(true, { cbreak: true });
      * ```
      */
@@ -2453,7 +2453,7 @@ declare namespace Deno {
      * Try to acquire an advisory file-system lock for the file. Returns `true`
      * if the lock was acquired, `false` if the file is already locked.
      *
-     * Unlike {@linkcode Deno.FsFile.lock}, this method will not block if the
+     * Unlike {@linkcode Edno.FsFile.lock}, this method will not block if the
      * lock cannot be acquired.
      *
      * @param [exclusive=false]
@@ -2463,7 +2463,7 @@ declare namespace Deno {
      * Synchronously try to acquire an advisory file-system lock for the file.
      * Returns `true` if the lock was acquired, `false` if the file is already locked.
      *
-     * Unlike {@linkcode Deno.FsFile.lockSync}, this method will not block if the
+     * Unlike {@linkcode Edno.FsFile.lockSync}, this method will not block if the
      * lock cannot be acquired.
      *
      * @param [exclusive=false]
@@ -2481,7 +2481,7 @@ declare namespace Deno {
      * important to avoid leaking resources.
      *
      * ```ts
-     * using file = await Deno.open("my_file.txt");
+     * using file = await Edno.open("my_file.txt");
      * // do work with "file" object
      * ```
      */
@@ -2493,7 +2493,7 @@ declare namespace Deno {
   /** Gets the size of the console as columns/rows.
    *
    * ```ts
-   * const { columns, rows } = Deno.consoleSize();
+   * const { columns, rows } = Edno.consoleSize();
    * ```
    *
    * This returns the size of the console window as reported by the operating
@@ -2501,7 +2501,7 @@ declare namespace Deno {
    * console window, but can be used as part of that calculation.
    *
    * Throws if none of stdin, stdout, or stderr is connected to a terminal
-   * (e.g. all are piped or redirected). Use {@linkcode Deno.stdout.isTerminal}
+   * (e.g. all are piped or redirected). Use {@linkcode Edno.stdout.isTerminal}
    * to check before calling.
    *
    * @category I/O
@@ -2524,7 +2524,7 @@ declare namespace Deno {
 
   /** A reference to `stdin` which can be used to read directly from `stdin`.
    *
-   * It implements the Deno specific
+   * It implements the Edno specific
    * {@linkcode https://jsr.io/@std/io/doc/types/~/Reader | Reader},
    * {@linkcode https://jsr.io/@std/io/doc/types/~/ReaderSync | ReaderSync},
    * and {@linkcode https://jsr.io/@std/io/doc/types/~/Closer | Closer}
@@ -2534,7 +2534,7 @@ declare namespace Deno {
    *
    * ```ts
    * const decoder = new TextDecoder();
-   * for await (const chunk of Deno.stdin.readable) {
+   * for await (const chunk of Edno.stdin.readable) {
    *   const text = decoder.decode(chunk);
    *   // do something with the text
    * }
@@ -2557,7 +2557,7 @@ declare namespace Deno {
      * ```ts
      * // If the text "hello world" is piped into the script:
      * const buf = new Uint8Array(100);
-     * const numberOfBytesRead = await Deno.stdin.read(buf); // 11 bytes
+     * const numberOfBytesRead = await Edno.stdin.read(buf); // 11 bytes
      * const text = new TextDecoder().decode(buf);  // "hello world"
      * ```
      *
@@ -2579,7 +2579,7 @@ declare namespace Deno {
      * ```ts
      * // If the text "hello world" is piped into the script:
      * const buf = new Uint8Array(100);
-     * const numberOfBytesRead = Deno.stdin.readSync(buf); // 11 bytes
+     * const numberOfBytesRead = Edno.stdin.readSync(buf); // 11 bytes
      * const text = new TextDecoder().decode(buf);  // "hello world"
      * ```
      *
@@ -2589,7 +2589,7 @@ declare namespace Deno {
     /** Closes `stdin`, freeing the resource.
      *
      * ```ts
-     * Deno.stdin.close();
+     * Edno.stdin.close();
      * ```
      */
     close(): void;
@@ -2603,7 +2603,7 @@ declare namespace Deno {
      * from a TTY device in canonical mode.
      *
      * ```ts
-     * Deno.stdin.setRaw(true, { cbreak: true });
+     * Edno.stdin.setRaw(true, { cbreak: true });
      * ```
      *
      * @category I/O
@@ -2614,7 +2614,7 @@ declare namespace Deno {
      *
      * ```ts
      * // This example is system and context specific
-     * Deno.stdin.isTerminal(); // true
+     * Edno.stdin.isTerminal(); // true
      * ```
      *
      * @category I/O
@@ -2622,7 +2622,7 @@ declare namespace Deno {
     isTerminal(): boolean;
   };
   /** A reference to `stdout` which can be used to write directly to `stdout`.
-   * It implements the Deno specific
+   * It implements the Edno specific
    * {@linkcode https://jsr.io/@std/io/doc/types/~/Writer | Writer},
    * {@linkcode https://jsr.io/@std/io/doc/types/~/WriterSync | WriterSync},
    * and {@linkcode https://jsr.io/@std/io/doc/types/~/Closer | Closer} interfaces as well as provides a
@@ -2644,7 +2644,7 @@ declare namespace Deno {
      * ```ts
      * const encoder = new TextEncoder();
      * const data = encoder.encode("Hello world");
-     * const bytesWritten = await Deno.stdout.write(data); // 11
+     * const bytesWritten = await Edno.stdout.write(data); // 11
      * ```
      *
      * @category I/O
@@ -2660,14 +2660,14 @@ declare namespace Deno {
      * ```ts
      * const encoder = new TextEncoder();
      * const data = encoder.encode("Hello world");
-     * const bytesWritten = Deno.stdout.writeSync(data); // 11
+     * const bytesWritten = Edno.stdout.writeSync(data); // 11
      * ```
      */
     writeSync(p: Uint8Array): number;
     /** Closes `stdout`, freeing the resource.
      *
      * ```ts
-     * Deno.stdout.close();
+     * Edno.stdout.close();
      * ```
      */
     close(): void;
@@ -2678,7 +2678,7 @@ declare namespace Deno {
      *
      * ```ts
      * // This example is system and context specific
-     * Deno.stdout.isTerminal(); // true
+     * Edno.stdout.isTerminal(); // true
      * ```
      *
      * @category I/O
@@ -2686,7 +2686,7 @@ declare namespace Deno {
     isTerminal(): boolean;
   };
   /** A reference to `stderr` which can be used to write directly to `stderr`.
-   * It implements the Deno specific
+   * It implements the Edno specific
    * {@linkcode https://jsr.io/@std/io/doc/types/~/Writer | Writer},
    * {@linkcode https://jsr.io/@std/io/doc/types/~/WriterSync | WriterSync},
    * and {@linkcode https://jsr.io/@std/io/doc/types/~/Closer | Closer} interfaces as well as provides a
@@ -2708,7 +2708,7 @@ declare namespace Deno {
      * ```ts
      * const encoder = new TextEncoder();
      * const data = encoder.encode("Hello world");
-     * const bytesWritten = await Deno.stderr.write(data); // 11
+     * const bytesWritten = await Edno.stderr.write(data); // 11
      * ```
      *
      * @category I/O
@@ -2724,14 +2724,14 @@ declare namespace Deno {
      * ```ts
      * const encoder = new TextEncoder();
      * const data = encoder.encode("Hello world");
-     * const bytesWritten = Deno.stderr.writeSync(data); // 11
+     * const bytesWritten = Edno.stderr.writeSync(data); // 11
      * ```
      */
     writeSync(p: Uint8Array): number;
     /** Closes `stderr`, freeing the resource.
      *
      * ```ts
-     * Deno.stderr.close();
+     * Edno.stderr.close();
      * ```
      */
     close(): void;
@@ -2742,7 +2742,7 @@ declare namespace Deno {
      *
      * ```ts
      * // This example is system and context specific
-     * Deno.stderr.isTerminal(); // true
+     * Edno.stderr.isTerminal(); // true
      * ```
      *
      * @category I/O
@@ -2751,8 +2751,8 @@ declare namespace Deno {
   };
 
   /**
-   * Options which can be set when doing {@linkcode Deno.open} and
-   * {@linkcode Deno.openSync}.
+   * Options which can be set when doing {@linkcode Edno.open} and
+   * {@linkcode Edno.openSync}.
    *
    * @category File System */
   export interface OpenOptions {
@@ -2804,8 +2804,8 @@ declare namespace Deno {
   }
 
   /**
-   * Options which can be set when using {@linkcode Deno.readFile} or
-   * {@linkcode Deno.readFileSync}.
+   * Options which can be set when using {@linkcode Edno.readFile} or
+   * {@linkcode Edno.readFileSync}.
    *
    * @category File System */
   export interface ReadFileOptions {
@@ -2818,8 +2818,8 @@ declare namespace Deno {
   }
 
   /**
-   * Options which can be set when using {@linkcode Deno.mkdir} and
-   * {@linkcode Deno.mkdirSync}.
+   * Options which can be set when using {@linkcode Edno.mkdir} and
+   * {@linkcode Edno.mkdirSync}.
    *
    * @category File System */
   export interface MkdirOptions {
@@ -2844,9 +2844,9 @@ declare namespace Deno {
   /** Creates a new directory with the specified path.
    *
    * ```ts
-   * await Deno.mkdir("new_dir");
-   * await Deno.mkdir("nested/directories", { recursive: true });
-   * await Deno.mkdir("restricted_access_dir", { mode: 0o700 });
+   * await Edno.mkdir("new_dir");
+   * await Edno.mkdir("nested/directories", { recursive: true });
+   * await Edno.mkdir("restricted_access_dir", { mode: 0o700 });
    * ```
    *
    * Throws if the directory already exists, unless `recursive` is set to
@@ -2865,9 +2865,9 @@ declare namespace Deno {
   /** Synchronously creates a new directory with the specified path.
    *
    * ```ts
-   * Deno.mkdirSync("new_dir");
-   * Deno.mkdirSync("nested/directories", { recursive: true });
-   * Deno.mkdirSync("restricted_access_dir", { mode: 0o700 });
+   * Edno.mkdirSync("new_dir");
+   * Edno.mkdirSync("nested/directories", { recursive: true });
+   * Edno.mkdirSync("restricted_access_dir", { mode: 0o700 });
    * ```
    *
    * Throws if the directory already exists, unless `recursive` is set to
@@ -2881,9 +2881,9 @@ declare namespace Deno {
   export function mkdirSync(path: string | URL, options?: MkdirOptions): void;
 
   /**
-   * Options which can be set when using {@linkcode Deno.makeTempDir},
-   * {@linkcode Deno.makeTempDirSync}, {@linkcode Deno.makeTempFile}, and
-   * {@linkcode Deno.makeTempFileSync}.
+   * Options which can be set when using {@linkcode Edno.makeTempDir},
+   * {@linkcode Edno.makeTempDirSync}, {@linkcode Edno.makeTempFile}, and
+   * {@linkcode Edno.makeTempFileSync}.
    *
    * @category File System */
   export interface MakeTempOptions {
@@ -2914,8 +2914,8 @@ declare namespace Deno {
    * no longer needed.
    *
    * ```ts
-   * const tempDirName0 = await Deno.makeTempDir();  // e.g. /tmp/2894ea76
-   * const tempDirName1 = await Deno.makeTempDir({ prefix: 'my_temp' }); // e.g. /tmp/my_temp339c944d
+   * const tempDirName0 = await Edno.makeTempDir();  // e.g. /tmp/2894ea76
+   * const tempDirName1 = await Edno.makeTempDir({ prefix: 'my_temp' }); // e.g. /tmp/my_temp339c944d
    * ```
    *
    * Requires `allow-write` permission.
@@ -2938,8 +2938,8 @@ declare namespace Deno {
    * no longer needed.
    *
    * ```ts
-   * const tempDirName0 = Deno.makeTempDirSync();  // e.g. /tmp/2894ea76
-   * const tempDirName1 = Deno.makeTempDirSync({ prefix: 'my_temp' });  // e.g. /tmp/my_temp339c944d
+   * const tempDirName0 = Edno.makeTempDirSync();  // e.g. /tmp/2894ea76
+   * const tempDirName1 = Edno.makeTempDirSync({ prefix: 'my_temp' });  // e.g. /tmp/my_temp339c944d
    * ```
    *
    * Requires `allow-write` permission.
@@ -2963,8 +2963,8 @@ declare namespace Deno {
    * no longer needed.
    *
    * ```ts
-   * const tmpFileName0 = await Deno.makeTempFile();  // e.g. /tmp/419e0bf2
-   * const tmpFileName1 = await Deno.makeTempFile({ prefix: 'my_temp' });  // e.g. /tmp/my_temp754d3098
+   * const tmpFileName0 = await Edno.makeTempFile();  // e.g. /tmp/419e0bf2
+   * const tmpFileName1 = await Edno.makeTempFile({ prefix: 'my_temp' });  // e.g. /tmp/my_temp754d3098
    * ```
    *
    * Requires `allow-write` permission.
@@ -2987,8 +2987,8 @@ declare namespace Deno {
    * no longer needed.
    *
    * ```ts
-   * const tempFileName0 = Deno.makeTempFileSync(); // e.g. /tmp/419e0bf2
-   * const tempFileName1 = Deno.makeTempFileSync({ prefix: 'my_temp' });  // e.g. /tmp/my_temp754d3098
+   * const tempFileName0 = Edno.makeTempFileSync(); // e.g. /tmp/419e0bf2
+   * const tempFileName1 = Edno.makeTempFileSync({ prefix: 'my_temp' });  // e.g. /tmp/my_temp754d3098
    * ```
    *
    * Requires `allow-write` permission.
@@ -3002,7 +3002,7 @@ declare namespace Deno {
    * Ignores the process's umask.
    *
    * ```ts
-   * await Deno.chmod("/path/to/file", 0o666);
+   * await Edno.chmod("/path/to/file", 0o666);
    * ```
    *
    * The mode is a sequence of 3 octal numbers. The first/left-most number
@@ -3037,10 +3037,10 @@ declare namespace Deno {
    * specified path. Ignores the process's umask.
    *
    * ```ts
-   * Deno.chmodSync("/path/to/file", 0o666);
+   * Edno.chmodSync("/path/to/file", 0o666);
    * ```
    *
-   * For a full description, see {@linkcode Deno.chmod}.
+   * For a full description, see {@linkcode Edno.chmod}.
    *
    * Requires `allow-write` permission.
    *
@@ -3054,7 +3054,7 @@ declare namespace Deno {
    * This functionality is not available on Windows.
    *
    * ```ts
-   * await Deno.chown("myFile.txt", 1000, 1002);
+   * await Edno.chown("myFile.txt", 1000, 1002);
    * ```
    *
    * Requires `allow-write` permission.
@@ -3079,7 +3079,7 @@ declare namespace Deno {
    * This functionality is not available on Windows.
    *
    * ```ts
-   * Deno.chownSync("myFile.txt", 1000, 1002);
+   * Edno.chownSync("myFile.txt", 1000, 1002);
    * ```
    *
    * Requires `allow-write` permission.
@@ -3100,8 +3100,8 @@ declare namespace Deno {
   ): void;
 
   /**
-   * Options which can be set when using {@linkcode Deno.remove} and
-   * {@linkcode Deno.removeSync}.
+   * Options which can be set when using {@linkcode Edno.remove} and
+   * {@linkcode Edno.removeSync}.
    *
    * @category File System */
   export interface RemoveOptions {
@@ -3114,8 +3114,8 @@ declare namespace Deno {
   /** Removes the named file or directory.
    *
    * ```ts
-   * await Deno.remove("/path/to/empty_dir/or/file");
-   * await Deno.remove("/path/to/populated_dir/or/file", { recursive: true });
+   * await Edno.remove("/path/to/empty_dir/or/file");
+   * await Edno.remove("/path/to/populated_dir/or/file", { recursive: true });
    * ```
    *
    * Throws error if permission denied, path not found, or path is a non-empty
@@ -3134,8 +3134,8 @@ declare namespace Deno {
   /** Synchronously removes the named file or directory.
    *
    * ```ts
-   * Deno.removeSync("/path/to/empty_dir/or/file");
-   * Deno.removeSync("/path/to/populated_dir/or/file", { recursive: true });
+   * Edno.removeSync("/path/to/empty_dir/or/file");
+   * Edno.removeSync("/path/to/populated_dir/or/file", { recursive: true });
    * ```
    *
    * Throws error if permission denied, path not found, or path is a non-empty
@@ -3154,7 +3154,7 @@ declare namespace Deno {
    * `oldpath` and `newpath` are in different directories.
    *
    * ```ts
-   * Deno.renameSync("old/path", "new/path");
+   * Edno.renameSync("old/path", "new/path");
    * ```
    *
    * On Unix-like OSes, this operation does not follow symlinks at either path.
@@ -3178,7 +3178,7 @@ declare namespace Deno {
    * different directories.
    *
    * ```ts
-   * await Deno.rename("old/path", "new/path");
+   * await Edno.rename("old/path", "new/path");
    * ```
    *
    * On Unix-like OSes, this operation does not follow symlinks at either path.
@@ -3201,14 +3201,14 @@ declare namespace Deno {
    *  decoded string.
    *
    * ```ts
-   * const data = await Deno.readTextFile("hello.txt");
+   * const data = await Edno.readTextFile("hello.txt");
    * console.log(data);
    * ```
    *
    * The returned promise rejects if the operation fails, for example with
-   * {@linkcode Deno.errors.NotFound} if the file does not exist,
-   * {@linkcode Deno.errors.IsADirectory} if `path` refers to a directory, or
-   * {@linkcode Deno.errors.PermissionDenied} if the required permission has not
+   * {@linkcode Edno.errors.NotFound} if the file does not exist,
+   * {@linkcode Edno.errors.IsADirectory} if `path` refers to a directory, or
+   * {@linkcode Edno.errors.PermissionDenied} if the required permission has not
    * been granted.
    *
    * Requires `allow-read` permission.
@@ -3225,14 +3225,14 @@ declare namespace Deno {
    *  decoded string.
    *
    * ```ts
-   * const data = Deno.readTextFileSync("hello.txt");
+   * const data = Edno.readTextFileSync("hello.txt");
    * console.log(data);
    * ```
    *
    * Throws if the operation fails, for example with
-   * {@linkcode Deno.errors.NotFound} if the file does not exist,
-   * {@linkcode Deno.errors.IsADirectory} if `path` refers to a directory, or
-   * {@linkcode Deno.errors.PermissionDenied} if the required permission has not
+   * {@linkcode Edno.errors.NotFound} if the file does not exist,
+   * {@linkcode Edno.errors.IsADirectory} if `path` refers to a directory, or
+   * {@linkcode Edno.errors.PermissionDenied} if the required permission has not
    * been granted.
    *
    * Requires `allow-read` permission.
@@ -3248,7 +3248,7 @@ declare namespace Deno {
    *
    * ```ts
    * const decoder = new TextDecoder("utf-8");
-   * const data = await Deno.readFile("hello.txt");
+   * const data = await Edno.readFile("hello.txt");
    * console.log(decoder.decode(data));
    * ```
    *
@@ -3268,7 +3268,7 @@ declare namespace Deno {
    *
    * ```ts
    * const decoder = new TextDecoder("utf-8");
-   * const data = Deno.readFileSync("hello.txt");
+   * const data = Edno.readFileSync("hello.txt");
    * console.log(decoder.decode(data));
    * ```
    *
@@ -3280,9 +3280,9 @@ declare namespace Deno {
   export function readFileSync(path: string | URL): Uint8Array<ArrayBuffer>;
 
   /** Provides information about a file and is returned by
-   * {@linkcode Deno.stat}, {@linkcode Deno.lstat}, {@linkcode Deno.statSync},
-   * and {@linkcode Deno.lstatSync} or from calling `stat()` and `statSync()`
-   * on an {@linkcode Deno.FsFile} instance.
+   * {@linkcode Edno.stat}, {@linkcode Edno.lstat}, {@linkcode Edno.statSync},
+   * and {@linkcode Edno.lstatSync} or from calling `stat()` and `statSync()`
+   * on an {@linkcode Edno.FsFile} instance.
    *
    * @category File System
    */
@@ -3366,9 +3366,9 @@ declare namespace Deno {
    *
    * ```ts
    * // e.g. given /home/alice/file.txt and current directory /home/alice
-   * await Deno.symlink("file.txt", "symlink_file.txt");
-   * const realPath = await Deno.realPath("./file.txt");
-   * const realSymLinkPath = await Deno.realPath("./symlink_file.txt");
+   * await Edno.symlink("file.txt", "symlink_file.txt");
+   * const realPath = await Edno.realPath("./file.txt");
+   * const realSymLinkPath = await Edno.realPath("./symlink_file.txt");
    * console.log(realPath);  // outputs "/home/alice/file.txt"
    * console.log(realSymLinkPath);  // outputs "/home/alice/file.txt"
    * ```
@@ -3388,9 +3388,9 @@ declare namespace Deno {
    *
    * ```ts
    * // e.g. given /home/alice/file.txt and current directory /home/alice
-   * Deno.symlinkSync("file.txt", "symlink_file.txt");
-   * const realPath = Deno.realPathSync("./file.txt");
-   * const realSymLinkPath = Deno.realPathSync("./symlink_file.txt");
+   * Edno.symlinkSync("file.txt", "symlink_file.txt");
+   * const realPath = Edno.realPathSync("./file.txt");
+   * const realSymLinkPath = Edno.realPathSync("./symlink_file.txt");
    * console.log(realPath);  // outputs "/home/alice/file.txt"
    * console.log(realSymLinkPath);  // outputs "/home/alice/file.txt"
    * ```
@@ -3406,8 +3406,8 @@ declare namespace Deno {
   export function realPathSync(path: string | URL): string;
 
   /**
-   * Information about a directory entry returned from {@linkcode Deno.readDir}
-   * and {@linkcode Deno.readDirSync}.
+   * Information about a directory entry returned from {@linkcode Edno.readDir}
+   * and {@linkcode Edno.readDirSync}.
    *
    * @category File System */
   export interface DirEntry {
@@ -3426,10 +3426,10 @@ declare namespace Deno {
   }
 
   /** Reads the directory given by `path` and returns an async iterable of
-   * {@linkcode Deno.DirEntry}. The order of entries is not guaranteed.
+   * {@linkcode Edno.DirEntry}. The order of entries is not guaranteed.
    *
    * ```ts
-   * for await (const dirEntry of Deno.readDir("/")) {
+   * for await (const dirEntry of Edno.readDir("/")) {
    *   console.log(dirEntry.name);
    * }
    * ```
@@ -3444,10 +3444,10 @@ declare namespace Deno {
   export function readDir(path: string | URL): AsyncIterable<DirEntry>;
 
   /** Synchronously reads the directory given by `path` and returns an iterable
-   * of {@linkcode Deno.DirEntry}. The order of entries is not guaranteed.
+   * of {@linkcode Edno.DirEntry}. The order of entries is not guaranteed.
    *
    * ```ts
-   * for (const dirEntry of Deno.readDirSync("/")) {
+   * for (const dirEntry of Edno.readDirSync("/")) {
    *   console.log(dirEntry.name);
    * }
    * ```
@@ -3466,7 +3466,7 @@ declare namespace Deno {
    * path is a directory or is unwritable.
    *
    * ```ts
-   * await Deno.copyFile("from.txt", "to.txt");
+   * await Edno.copyFile("from.txt", "to.txt");
    * ```
    *
    * Requires `allow-read` permission on `fromPath`.
@@ -3486,7 +3486,7 @@ declare namespace Deno {
    * Fails if target path is a directory or is unwritable.
    *
    * ```ts
-   * Deno.copyFileSync("from.txt", "to.txt");
+   * Edno.copyFileSync("from.txt", "to.txt");
    * ```
    *
    * Requires `allow-read` permission on `fromPath`.
@@ -3504,8 +3504,8 @@ declare namespace Deno {
   /** Resolves to the full path destination of the named symbolic link.
    *
    * ```ts
-   * await Deno.symlink("./test.txt", "./test_link.txt");
-   * const target = await Deno.readLink("./test_link.txt"); // full path of ./test.txt
+   * await Edno.symlink("./test.txt", "./test_link.txt");
+   * const target = await Edno.readLink("./test_link.txt"); // full path of ./test.txt
    * ```
    *
    * Throws TypeError if called with a hard link.
@@ -3521,8 +3521,8 @@ declare namespace Deno {
    * link.
    *
    * ```ts
-   * Deno.symlinkSync("./test.txt", "./test_link.txt");
-   * const target = Deno.readLinkSync("./test_link.txt"); // full path of ./test.txt
+   * Edno.symlinkSync("./test.txt", "./test_link.txt");
+   * const target = Edno.readLinkSync("./test_link.txt"); // full path of ./test.txt
    * ```
    *
    * Throws TypeError if called with a hard link.
@@ -3534,13 +3534,13 @@ declare namespace Deno {
    */
   export function readLinkSync(path: string | URL): string;
 
-  /** Resolves to a {@linkcode Deno.FileInfo} for the specified `path`. If
+  /** Resolves to a {@linkcode Edno.FileInfo} for the specified `path`. If
    * `path` is a symlink, information for the symlink will be returned instead
    * of what it points to.
    *
    * ```ts
    * import { assert } from "jsr:@std/assert";
-   * const fileInfo = await Deno.lstat("hello.txt");
+   * const fileInfo = await Edno.lstat("hello.txt");
    * assert(fileInfo.isFile);
    * ```
    *
@@ -3551,13 +3551,13 @@ declare namespace Deno {
    */
   export function lstat(path: string | URL): Promise<FileInfo>;
 
-  /** Synchronously returns a {@linkcode Deno.FileInfo} for the specified
+  /** Synchronously returns a {@linkcode Edno.FileInfo} for the specified
    * `path`. If `path` is a symlink, information for the symlink will be
    * returned instead of what it points to.
    *
    * ```ts
    * import { assert } from "jsr:@std/assert";
-   * const fileInfo = Deno.lstatSync("hello.txt");
+   * const fileInfo = Edno.lstatSync("hello.txt");
    * assert(fileInfo.isFile);
    * ```
    *
@@ -3568,12 +3568,12 @@ declare namespace Deno {
    */
   export function lstatSync(path: string | URL): FileInfo;
 
-  /** Resolves to a {@linkcode Deno.FileInfo} for the specified `path`. Will
+  /** Resolves to a {@linkcode Edno.FileInfo} for the specified `path`. Will
    * always follow symlinks.
    *
    * ```ts
    * import { assert } from "jsr:@std/assert";
-   * const fileInfo = await Deno.stat("hello.txt");
+   * const fileInfo = await Edno.stat("hello.txt");
    * assert(fileInfo.isFile);
    * ```
    *
@@ -3584,12 +3584,12 @@ declare namespace Deno {
    */
   export function stat(path: string | URL): Promise<FileInfo>;
 
-  /** Synchronously returns a {@linkcode Deno.FileInfo} for the specified
+  /** Synchronously returns a {@linkcode Edno.FileInfo} for the specified
    * `path`. Will always follow symlinks.
    *
    * ```ts
    * import { assert } from "jsr:@std/assert";
-   * const fileInfo = Deno.statSync("hello.txt");
+   * const fileInfo = Edno.statSync("hello.txt");
    * assert(fileInfo.isFile);
    * ```
    *
@@ -3636,10 +3636,10 @@ declare namespace Deno {
    * ```ts
    * const encoder = new TextEncoder();
    * const data = encoder.encode("Hello world\n");
-   * await Deno.writeFile("hello1.txt", data);  // overwrite "hello1.txt" or create it
-   * await Deno.writeFile("hello2.txt", data, { create: false });  // only works if "hello2.txt" exists
-   * await Deno.writeFile("hello3.txt", data, { mode: 0o777 });  // set permissions on new file
-   * await Deno.writeFile("hello4.txt", data, { append: true });  // add data to the end of the file
+   * await Edno.writeFile("hello1.txt", data);  // overwrite "hello1.txt" or create it
+   * await Edno.writeFile("hello2.txt", data, { create: false });  // only works if "hello2.txt" exists
+   * await Edno.writeFile("hello3.txt", data, { mode: 0o777 });  // set permissions on new file
+   * await Edno.writeFile("hello4.txt", data, { append: true });  // add data to the end of the file
    * ```
    *
    * Requires `allow-write` permission, and `allow-read` if `options.create` is
@@ -3660,10 +3660,10 @@ declare namespace Deno {
    * ```ts
    * const encoder = new TextEncoder();
    * const data = encoder.encode("Hello world\n");
-   * Deno.writeFileSync("hello1.txt", data);  // overwrite "hello1.txt" or create it
-   * Deno.writeFileSync("hello2.txt", data, { create: false });  // only works if "hello2.txt" exists
-   * Deno.writeFileSync("hello3.txt", data, { mode: 0o777 });  // set permissions on new file
-   * Deno.writeFileSync("hello4.txt", data, { append: true });  // add data to the end of the file
+   * Edno.writeFileSync("hello1.txt", data);  // overwrite "hello1.txt" or create it
+   * Edno.writeFileSync("hello2.txt", data, { create: false });  // only works if "hello2.txt" exists
+   * Edno.writeFileSync("hello3.txt", data, { mode: 0o777 });  // set permissions on new file
+   * Edno.writeFileSync("hello4.txt", data, { append: true });  // add data to the end of the file
    * ```
    *
    * Requires `allow-write` permission, and `allow-read` if `options.create` is
@@ -3682,15 +3682,15 @@ declare namespace Deno {
    * needed, else overwriting.
    *
    * ```ts
-   * await Deno.writeTextFile("hello1.txt", "Hello world\n");  // overwrite "hello1.txt" or create it
+   * await Edno.writeTextFile("hello1.txt", "Hello world\n");  // overwrite "hello1.txt" or create it
    * ```
    *
    * The data is written to the file and the file is closed, but this does not
    * guarantee that the contents have been flushed from the operating system's
    * buffers to the physical storage device. If you need such a durability
    * guarantee (for example before signalling that a write has been committed),
-   * open the file with {@linkcode Deno.open} and call
-   * {@linkcode Deno.FsFile.sync} before closing it.
+   * open the file with {@linkcode Edno.open} and call
+   * {@linkcode Edno.FsFile.sync} before closing it.
    *
    * Requires `allow-write` permission, and `allow-read` if `options.create` is
    * `false`.
@@ -3708,14 +3708,14 @@ declare namespace Deno {
    * a new file if needed, else overwriting.
    *
    * ```ts
-   * Deno.writeTextFileSync("hello1.txt", "Hello world\n");  // overwrite "hello1.txt" or create it
+   * Edno.writeTextFileSync("hello1.txt", "Hello world\n");  // overwrite "hello1.txt" or create it
    * ```
    *
-   * As with {@linkcode Deno.writeTextFile}, the data is written and the file is
+   * As with {@linkcode Edno.writeTextFile}, the data is written and the file is
    * closed, but this does not guarantee the contents have been flushed from the
    * operating system's buffers to the physical storage device. If you need such
-   * a durability guarantee, open the file with {@linkcode Deno.openSync} and
-   * call {@linkcode Deno.FsFile.syncSync} before closing it.
+   * a durability guarantee, open the file with {@linkcode Edno.openSync} and
+   * call {@linkcode Edno.FsFile.syncSync} before closing it.
    *
    * Requires `allow-write` permission, and `allow-read` if `options.create` is
    * `false`.
@@ -3734,16 +3734,16 @@ declare namespace Deno {
    *
    * ### Truncate the entire file
    * ```ts
-   * await Deno.truncate("my_file.txt");
+   * await Edno.truncate("my_file.txt");
    * ```
    *
    * ### Truncate part of the file
    *
    * ```ts
-   * const file = await Deno.makeTempFile();
-   * await Deno.writeTextFile(file, "Hello World");
-   * await Deno.truncate(file, 7);
-   * const data = await Deno.readFile(file);
+   * const file = await Edno.makeTempFile();
+   * await Edno.writeTextFile(file, "Hello World");
+   * await Edno.truncate(file, 7);
+   * const data = await Edno.readFile(file);
    * console.log(new TextDecoder().decode(data));  // "Hello W"
    * ```
    *
@@ -3761,16 +3761,16 @@ declare namespace Deno {
    * ### Truncate the entire file
    *
    * ```ts
-   * Deno.truncateSync("my_file.txt");
+   * Edno.truncateSync("my_file.txt");
    * ```
    *
    * ### Truncate part of the file
    *
    * ```ts
-   * const file = Deno.makeTempFileSync();
-   * Deno.writeFileSync(file, new TextEncoder().encode("Hello World"));
-   * Deno.truncateSync(file, 7);
-   * const data = Deno.readFileSync(file);
+   * const file = Edno.makeTempFileSync();
+   * Edno.writeFileSync(file, new TextEncoder().encode("Hello World"));
+   * Edno.truncateSync(file, 7);
+   * const data = Edno.readFileSync(file);
    * console.log(new TextDecoder().decode(data));
    * ```
    *
@@ -3798,7 +3798,7 @@ declare namespace Deno {
 
   /**
    * Represents a unique file system event yielded by a
-   * {@linkcode Deno.FsWatcher}.
+   * {@linkcode Edno.FsWatcher}.
    *
    * @category File System */
   export interface FsEvent {
@@ -3818,7 +3818,7 @@ declare namespace Deno {
   }
 
   /**
-   * Returned by {@linkcode Deno.watchFs}. It is an async iterator yielding up
+   * Returned by {@linkcode Edno.watchFs}. It is an async iterator yielding up
    * system events. To stop watching the file system by calling `.close()`
    * method.
    *
@@ -3847,7 +3847,7 @@ declare namespace Deno {
    * systems.
    *
    * ```ts
-   * const watcher = Deno.watchFs("/");
+   * const watcher = Edno.watchFs("/");
    * for await (const event of watcher) {
    *    console.log(">>>> event", event);
    *    // { kind: "create", paths: [ "/foo.txt" ] }
@@ -3862,13 +3862,13 @@ declare namespace Deno {
    *
    * ```ts
    * // Watch the project but skip the `.git` directory and `build` output.
-   * const watcher = Deno.watchFs(".", { ignore: [".git", "build"] });
+   * const watcher = Edno.watchFs(".", { ignore: [".git", "build"] });
    * ```
    *
    * Call `watcher.close()` to stop watching.
    *
    * ```ts
-   * const watcher = Deno.watchFs("/");
+   * const watcher = Edno.watchFs("/");
    *
    * setTimeout(() => {
    *   watcher.close();
@@ -3934,7 +3934,7 @@ declare namespace Deno {
   /** Registers the given function as a listener of the given signal event.
    *
    * ```ts
-   * Deno.addSignalListener(
+   * Edno.addSignalListener(
    *   "SIGTERM",
    *   () => {
    *     console.log("SIGTERM!")
@@ -3950,14 +3950,14 @@ declare namespace Deno {
   export function addSignalListener(signal: Signal, handler: () => void): void;
 
   /** Removes the given signal listener that has been registered with
-   * {@linkcode Deno.addSignalListener}.
+   * {@linkcode Edno.addSignalListener}.
    *
    * ```ts
    * const listener = () => {
    *   console.log("SIGTERM!")
    * };
-   * Deno.addSignalListener("SIGTERM", listener);
-   * Deno.removeSignalListener("SIGTERM", listener);
+   * Edno.addSignalListener("SIGTERM", listener);
+   * Edno.removeSignalListener("SIGTERM", listener);
    * ```
    *
    * _Note_: On Windows only `"SIGINT"` (CTRL+C), `"SIGBREAK"` (CTRL+Break),
@@ -3984,7 +3984,7 @@ declare namespace Deno {
    * @example Spawn a subprocess and pipe the output to a file
    *
    * ```ts
-   * const command = new Deno.Command(Deno.execPath(), {
+   * const command = new Edno.Command(Edno.execPath(), {
    *   args: [
    *     "eval",
    *     "console.log('Hello World')",
@@ -3996,7 +3996,7 @@ declare namespace Deno {
    *
    * // open a file and pipe the subprocess output to it.
    * child.stdout.pipeTo(
-   *   Deno.openSync("output", { write: true, create: true }).writable,
+   *   Edno.openSync("output", { write: true, create: true }).writable,
    * );
    *
    * // manually close stdin
@@ -4007,7 +4007,7 @@ declare namespace Deno {
    * @example Spawn a subprocess and collect its output
    *
    * ```ts
-   * const command = new Deno.Command(Deno.execPath(), {
+   * const command = new Edno.Command(Edno.execPath(), {
    *   args: [
    *     "eval",
    *     "console.log('hello'); console.error('world')",
@@ -4022,7 +4022,7 @@ declare namespace Deno {
    * @example Spawn a subprocess and collect its output synchronously
    *
    * ```ts
-   * const command = new Deno.Command(Deno.execPath(), {
+   * const command = new Edno.Command(Edno.execPath(), {
    *   args: [
    *     "eval",
    *     "console.log('hello'); console.error('world')",
@@ -4040,23 +4040,23 @@ declare namespace Deno {
   export class Command {
     constructor(command: string | URL, options?: CommandOptions);
     /**
-     * Executes the {@linkcode Deno.Command}, waiting for it to finish and
+     * Executes the {@linkcode Edno.Command}, waiting for it to finish and
      * collecting all of its output.
      *
      * Will throw an error if `stdin: "piped"` is set.
      *
      * If options `stdout` or `stderr` are not set to `"piped"`, accessing the
-     * corresponding field on {@linkcode Deno.CommandOutput} will throw a `TypeError`.
+     * corresponding field on {@linkcode Edno.CommandOutput} will throw a `TypeError`.
      */
     output(): Promise<CommandOutput>;
     /**
-     * Synchronously executes the {@linkcode Deno.Command}, waiting for it to
+     * Synchronously executes the {@linkcode Edno.Command}, waiting for it to
      * finish and collecting all of its output.
      *
      * Will throw an error if `stdin: "piped"` is set.
      *
      * If options `stdout` or `stderr` are not set to `"piped"`, accessing the
-     * corresponding field on {@linkcode Deno.CommandOutput} will throw a `TypeError`.
+     * corresponding field on {@linkcode Edno.CommandOutput} will throw a `TypeError`.
      */
     outputSync(): CommandOutput;
     /**
@@ -4067,7 +4067,7 @@ declare namespace Deno {
 
   /**
    * The interface for handling a child process returned from
-   * {@linkcode Deno.Command.spawn}.
+   * {@linkcode Edno.Command.spawn}.
    *
    * @category Subprocess
    */
@@ -4079,14 +4079,14 @@ declare namespace Deno {
     /** A promise that resolves once the child process has exited, with its
      * exit code and terminating signal (if any). The promise never rejects; if
      * the process is still running the promise is pending. Accessing this
-     * property does not, on its own, prevent the Deno process from exiting -
+     * property does not, on its own, prevent the Edno process from exiting -
      * see {@linkcode ChildProcess.ref}. */
     readonly status: Promise<CommandStatus>;
 
     /** Waits for the child to exit completely, returning all its output and
      * status. */
     output(): Promise<CommandOutput>;
-    /** Kills the process with given {@linkcode Deno.Signal} or numeric signal.
+    /** Kills the process with given {@linkcode Edno.Signal} or numeric signal.
      *
      * Defaults to `SIGTERM` if no signal is provided.
      *
@@ -4094,10 +4094,10 @@ declare namespace Deno {
      */
     kill(signo?: Signal | number): void;
 
-    /** Ensure that the status of the child process prevents the Deno process
+    /** Ensure that the status of the child process prevents the Edno process
      * from exiting. */
     ref(): void;
-    /** Ensure that the status of the child process does not block the Deno
+    /** Ensure that the status of the child process does not block the Edno
      * process from exiting. */
     unref(): void;
 
@@ -4106,7 +4106,7 @@ declare namespace Deno {
 
   /**
    * The interface for stdout and stderr streams for child process returned from
-   * {@linkcode Deno.Command.spawn}.
+   * {@linkcode Edno.Command.spawn}.
    *
    * @category Subprocess
    */
@@ -4135,7 +4135,7 @@ declare namespace Deno {
   }
 
   /**
-   * Options which can be set when calling {@linkcode Deno.Command}.
+   * Options which can be set when calling {@linkcode Edno.Command}.
    *
    * @category Subprocess
    */
@@ -4171,7 +4171,7 @@ declare namespace Deno {
      * corresponding {@linkcode AbortController} by sending the process a
      * SIGTERM signal.
      *
-     * Not supported in {@linkcode Deno.Command.outputSync}.
+     * Not supported in {@linkcode Edno.Command.outputSync}.
      */
     signal?: AbortSignal;
 
@@ -4226,8 +4226,8 @@ declare namespace Deno {
   }
 
   /**
-   * The interface returned from calling {@linkcode Deno.Command.output} or
-   * {@linkcode Deno.Command.outputSync} which represents the result of spawning the
+   * The interface returned from calling {@linkcode Edno.Command.output} or
+   * {@linkcode Edno.Command.outputSync} which represents the result of spawning the
    * child process.
    *
    * @category Subprocess
@@ -4239,18 +4239,18 @@ declare namespace Deno {
     readonly stderr: Uint8Array<ArrayBuffer>;
   }
 
-  /** Spawns a new subprocess, returning a {@linkcode Deno.ChildProcess} handle.
+  /** Spawns a new subprocess, returning a {@linkcode Edno.ChildProcess} handle.
    *
    * @experimental **UNSTABLE**: New API, yet to be vetted.
    *
-   * This is a shorthand for `new Deno.Command(command, options).spawn()`.
+   * This is a shorthand for `new Edno.Command(command, options).spawn()`.
    *
    * By default, `stdin`, `stdout`, and `stderr` are set to `"inherit"`.
    *
    * @example Spawn a subprocess
    *
    * ```ts
-   * const child = Deno.spawn(Deno.execPath(), {
+   * const child = Edno.spawn(Edno.execPath(), {
    *   args: ["eval", "console.log('hello')"],
    *   stdout: "piped",
    * });
@@ -4267,18 +4267,18 @@ declare namespace Deno {
     options?: CommandOptions,
   ): ChildProcess;
   /** Spawns a new subprocess with the given arguments, returning a
-   * {@linkcode Deno.ChildProcess} handle.
+   * {@linkcode Edno.ChildProcess} handle.
    *
    * @experimental **UNSTABLE**: New API, yet to be vetted.
    *
-   * This is a shorthand for `new Deno.Command(command, { ...options, args }).spawn()`.
+   * This is a shorthand for `new Edno.Command(command, { ...options, args }).spawn()`.
    *
    * By default, `stdin`, `stdout`, and `stderr` are set to `"inherit"`.
    *
    * @example Spawn a subprocess with args
    *
    * ```ts
-   * const child = Deno.spawn(Deno.execPath(), ["eval", "console.log('hello')"], {
+   * const child = Edno.spawn(Edno.execPath(), ["eval", "console.log('hello')"], {
    *   stdout: "piped",
    * });
    * const output = await child.stdout.text();
@@ -4299,14 +4299,14 @@ declare namespace Deno {
    *
    * @experimental **UNSTABLE**: New API, yet to be vetted.
    *
-   * This is a shorthand for `new Deno.Command(command, options).output()`.
+   * This is a shorthand for `new Edno.Command(command, options).output()`.
    *
    * Will throw an error if `stdin: "piped"` is set.
    *
    * @example Spawn and wait for output
    *
    * ```ts
-   * const { code, stdout, stderr } = await Deno.spawnAndWait(Deno.execPath(), {
+   * const { code, stdout, stderr } = await Edno.spawnAndWait(Edno.execPath(), {
    *   args: ["eval", "console.log('hello')"],
    * });
    * console.log(new TextDecoder().decode(stdout)); // "hello\n"
@@ -4324,15 +4324,15 @@ declare namespace Deno {
    *
    * @experimental **UNSTABLE**: New API, yet to be vetted.
    *
-   * This is a shorthand for `new Deno.Command(command, { ...options, args }).output()`.
+   * This is a shorthand for `new Edno.Command(command, { ...options, args }).output()`.
    *
    * Will throw an error if `stdin: "piped"` is set.
    *
    * @example Spawn and wait with args
    *
    * ```ts
-   * const { code, stdout } = await Deno.spawnAndWait(
-   *   Deno.execPath(),
+   * const { code, stdout } = await Edno.spawnAndWait(
+   *   Edno.execPath(),
    *   ["eval", "console.log('hello')"],
    * );
    * console.log(new TextDecoder().decode(stdout)); // "hello\n"
@@ -4352,14 +4352,14 @@ declare namespace Deno {
    *
    * @experimental **UNSTABLE**: New API, yet to be vetted.
    *
-   * This is a shorthand for `new Deno.Command(command, options).outputSync()`.
+   * This is a shorthand for `new Edno.Command(command, options).outputSync()`.
    *
    * Will throw an error if `stdin: "piped"` is set.
    *
    * @example Spawn and wait synchronously
    *
    * ```ts
-   * const { code, stdout } = Deno.spawnAndWaitSync(Deno.execPath(), {
+   * const { code, stdout } = Edno.spawnAndWaitSync(Edno.execPath(), {
    *   args: ["eval", "console.log('hello')"],
    * });
    * console.log(new TextDecoder().decode(stdout)); // "hello\n"
@@ -4378,15 +4378,15 @@ declare namespace Deno {
    * @experimental **UNSTABLE**: New API, yet to be vetted.
    *
    * This is a shorthand for
-   * `new Deno.Command(command, { ...options, args }).outputSync()`.
+   * `new Edno.Command(command, { ...options, args }).outputSync()`.
    *
    * Will throw an error if `stdin: "piped"` is set.
    *
    * @example Spawn and wait synchronously with args
    *
    * ```ts
-   * const { code, stdout } = Deno.spawnAndWaitSync(
-   *   Deno.execPath(),
+   * const { code, stdout } = Edno.spawnAndWaitSync(
+   *   Edno.execPath(),
    *   ["eval", "console.log('hello')"],
    * );
    * console.log(new TextDecoder().decode(stdout)); // "hello\n"
@@ -4401,7 +4401,7 @@ declare namespace Deno {
     options?: Omit<CommandOptions, "args">,
   ): CommandOutput;
 
-  /** Option which can be specified when performing {@linkcode Deno.inspect}.
+  /** Option which can be specified when performing {@linkcode Edno.inspect}.
    *
    * @category I/O */
   export interface InspectOptions {
@@ -4462,31 +4462,31 @@ declare namespace Deno {
    *   a: 10,
    *   b: "hello",
    * };
-   * const objAsString = Deno.inspect(obj); // { a: 10, b: "hello" }
+   * const objAsString = Edno.inspect(obj); // { a: 10, b: "hello" }
    * console.log(obj);  // prints same value as objAsString, e.g. { a: 10, b: "hello" }
    * ```
    *
    * A custom inspect functions can be registered on objects, via the symbol
-   * `Symbol.for("Deno.customInspect")`, to control and customize the output
+   * `Symbol.for("Edno.customInspect")`, to control and customize the output
    * of `inspect()` or when using `console` logging:
    *
    * ```ts
    * class A {
    *   x = 10;
    *   y = "hello";
-   *   [Symbol.for("Deno.customInspect")]() {
+   *   [Symbol.for("Edno.customInspect")]() {
    *     return `x=${this.x}, y=${this.y}`;
    *   }
    * }
    *
-   * const inStringFormat = Deno.inspect(new A()); // "x=10, y=hello"
+   * const inStringFormat = Edno.inspect(new A()); // "x=10, y=hello"
    * console.log(inStringFormat);  // prints "x=10, y=hello"
    * ```
    *
    * A depth can be specified by using the `depth` option:
    *
    * ```ts
-   * Deno.inspect({a: {b: {c: {d: 'hello'}}}}, {depth: 2}); // { a: { b: [Object] } }
+   * Edno.inspect({a: {b: {c: {d: 'hello'}}}}, {depth: 2}); // { a: { b: [Object] } }
    * ```
    *
    * @category I/O
@@ -4517,7 +4517,7 @@ declare namespace Deno {
   export type PermissionState = "granted" | "denied" | "prompt";
 
   /** The permission descriptor for the `allow-run` and `deny-run` permissions, which controls
-   * access to what sub-processes can be executed by Deno. The option `command`
+   * access to what sub-processes can be executed by Edno. The option `command`
    * allows scoping the permission to a specific executable.
    *
    * **Warning, in practice, `allow-run` is effectively the same as `allow-all`
@@ -4528,7 +4528,7 @@ declare namespace Deno {
   export interface RunPermissionDescriptor {
     name: "run";
     /** An `allow-run` or `deny-run` permission can be scoped to a specific executable,
-     * which would be relative to the start-up CWD of the Deno CLI. */
+     * which would be relative to the start-up CWD of the Edno CLI. */
     command?: string | URL;
   }
 
@@ -4624,7 +4624,7 @@ declare namespace Deno {
   /** The permission descriptor for the `allow-ffi` and `deny-ffi` permissions, which controls
    * access to loading _foreign_ code and interfacing with it via the
    * [Foreign Function Interface API](https://docs.deno.com/runtime/manual/runtime/ffi_api)
-   * available in Deno.  The option `path` allows scoping the permission to a
+   * available in Edno.  The option `path` allows scoping the permission to a
    * specific path on the host.
    *
    * @category Permissions */
@@ -4675,12 +4675,12 @@ declare namespace Deno {
     change: Event;
   }
 
-  /** An {@linkcode EventTarget} returned from the {@linkcode Deno.permissions}
+  /** An {@linkcode EventTarget} returned from the {@linkcode Edno.permissions}
    * API which can provide updates to any state changes of the permission.
    *
    * @category Permissions */
   export class PermissionStatus extends EventTarget {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     onchange: ((this: PermissionStatus, ev: Event) => any) | null;
     readonly state: PermissionState;
     /**
@@ -4719,17 +4719,17 @@ declare namespace Deno {
   }
 
   /**
-   * Deno's permission management API.
+   * Edno's permission management API.
    *
-   * The class which provides the interface for the {@linkcode Deno.permissions}
+   * The class which provides the interface for the {@linkcode Edno.permissions}
    * global instance and is based on the web platform
    * [Permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API),
    * though some proposed parts of the API which are useful in a server side
    * runtime context were removed or abandoned in the web platform specification
-   * which is why it was chosen to locate it in the {@linkcode Deno} namespace
+   * which is why it was chosen to locate it in the {@linkcode Edno} namespace
    * instead.
    *
-   * By default, if the `stdin`/`stdout` is TTY for the Deno CLI (meaning it can
+   * By default, if the `stdin`/`stdout` is TTY for the Edno CLI (meaning it can
    * send and receive text), then the CLI will prompt the user to grant
    * permission when an un-granted permission is requested. This behavior can
    * be changed by using the `--no-prompt` command at startup. When prompting
@@ -4748,7 +4748,7 @@ declare namespace Deno {
      * or prompt the user to modify them.
      *
      * ```ts
-     * const status = await Deno.permissions.query({ name: "read", path: "/etc" });
+     * const status = await Edno.permissions.query({ name: "read", path: "/etc" });
      * console.log(status.state);
      * ```
      */
@@ -4762,7 +4762,7 @@ declare namespace Deno {
      * or prompt the user to modify them.
      *
      * ```ts
-     * const status = Deno.permissions.querySync({ name: "read", path: "/etc" });
+     * const status = Edno.permissions.querySync({ name: "read", path: "/etc" });
      * console.log(status.state);
      * ```
      */
@@ -4773,7 +4773,7 @@ declare namespace Deno {
      * ```ts
      * import { assert } from "jsr:@std/assert";
      *
-     * const status = await Deno.permissions.revoke({ name: "run" });
+     * const status = await Edno.permissions.revoke({ name: "run" });
      * assert(status.state !== "granted")
      * ```
      */
@@ -4784,7 +4784,7 @@ declare namespace Deno {
      * ```ts
      * import { assert } from "jsr:@std/assert";
      *
-     * const status = Deno.permissions.revokeSync({ name: "run" });
+     * const status = Edno.permissions.revokeSync({ name: "run" });
      * assert(status.state !== "granted")
      * ```
      */
@@ -4796,7 +4796,7 @@ declare namespace Deno {
      * grant the permission again.
      *
      * ```ts
-     * const status = await Deno.permissions.request({ name: "env" });
+     * const status = await Edno.permissions.request({ name: "env" });
      * if (status.state === "granted") {
      *   console.log("'env' permission is granted.");
      * } else {
@@ -4812,7 +4812,7 @@ declare namespace Deno {
      * grant the permission again.
      *
      * ```ts
-     * const status = Deno.permissions.requestSync({ name: "env" });
+     * const status = Edno.permissions.requestSync({ name: "env" });
      * if (status.state === "granted") {
      *   console.log("'env' permission is granted.");
      * } else {
@@ -4823,17 +4823,17 @@ declare namespace Deno {
     requestSync(desc: PermissionDescriptor): PermissionStatus;
   }
 
-  /** Deno's permission management API.
+  /** Edno's permission management API.
    *
    * It is a singleton instance of the {@linkcode Permissions} object and is
    * based on the web platform
    * [Permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API),
    * though some proposed parts of the API which are useful in a server side
    * runtime context were removed or abandoned in the web platform specification
-   * which is why it was chosen to locate it in the {@linkcode Deno} namespace
+   * which is why it was chosen to locate it in the {@linkcode Edno} namespace
    * instead.
    *
-   * By default, if the `stdin`/`stdout` is TTY for the Deno CLI (meaning it can
+   * By default, if the `stdin`/`stdout` is TTY for the Edno CLI (meaning it can
    * send and receive text), then the CLI will prompt the user to grant
    * permission when an un-granted permission is requested. This behavior can
    * be changed by using the `--no-prompt` command at startup. When prompting
@@ -4848,12 +4848,12 @@ declare namespace Deno {
    * ### Querying
    *
    * ```ts
-   * const status = await Deno.permissions.query({ name: "read", path: "/etc" });
+   * const status = await Edno.permissions.query({ name: "read", path: "/etc" });
    * console.log(status.state);
    * ```
    *
    * ```ts
-   * const status = Deno.permissions.querySync({ name: "read", path: "/etc" });
+   * const status = Edno.permissions.querySync({ name: "read", path: "/etc" });
    * console.log(status.state);
    * ```
    *
@@ -4862,21 +4862,21 @@ declare namespace Deno {
    * ```ts
    * import { assert } from "jsr:@std/assert";
    *
-   * const status = await Deno.permissions.revoke({ name: "run" });
+   * const status = await Edno.permissions.revoke({ name: "run" });
    * assert(status.state !== "granted")
    * ```
    *
    * ```ts
    * import { assert } from "jsr:@std/assert";
    *
-   * const status = Deno.permissions.revokeSync({ name: "run" });
+   * const status = Edno.permissions.revokeSync({ name: "run" });
    * assert(status.state !== "granted")
    * ```
    *
    * ### Requesting
    *
    * ```ts
-   * const status = await Deno.permissions.request({ name: "env" });
+   * const status = await Edno.permissions.request({ name: "env" });
    * if (status.state === "granted") {
    *   console.log("'env' permission is granted.");
    * } else {
@@ -4885,7 +4885,7 @@ declare namespace Deno {
    * ```
    *
    * ```ts
-   * const status = Deno.permissions.requestSync({ name: "env" });
+   * const status = Edno.permissions.requestSync({ name: "env" });
    * if (status.state === "granted") {
    *   console.log("'env' permission is granted.");
    * } else {
@@ -4897,7 +4897,7 @@ declare namespace Deno {
    */
   export const permissions: Permissions;
 
-  /** Information related to the build of the current Deno runtime.
+  /** Information related to the build of the current Edno runtime.
    *
    * Users are discouraged from code branching based on this information, as
    * assumptions about what is available in what build environment might change
@@ -4913,9 +4913,9 @@ declare namespace Deno {
      * of `${arch}-${vendor}-${os}` and represent the specific build target that
      * the current runtime was built for. */
     target: string;
-    /** Instruction set architecture that the Deno CLI was built for. */
+    /** Instruction set architecture that the Edno CLI was built for. */
     arch: "x86_64" | "aarch64";
-    /** The operating system that the Deno CLI was built for. `"darwin"` is
+    /** The operating system that the Edno CLI was built for. `"darwin"` is
      * also known as OSX or MacOS. */
     os:
       | "darwin"
@@ -4928,13 +4928,13 @@ declare namespace Deno {
       | "solaris"
       | "illumos";
     standalone: boolean;
-    /** The computer vendor that the Deno CLI was built for. */
+    /** The computer vendor that the Edno CLI was built for. */
     vendor: string;
-    /** Optional environment flags that were set for this build of Deno CLI. */
+    /** Optional environment flags that were set for this build of Edno CLI. */
     env?: string;
   };
 
-  /** Version information related to the current Deno CLI runtime environment.
+  /** Version information related to the current Edno CLI runtime environment.
    *
    * Users are discouraged from code branching based on this information, as
    * assumptions about what is available in what build environment might change
@@ -4946,29 +4946,29 @@ declare namespace Deno {
    * @category Runtime
    */
   export const version: {
-    /** Deno CLI's version. For example: `"1.26.0"`. */
-    deno: string;
-    /** The V8 version used by Deno. For example: `"10.7.100.0"`.
+    /** Edno CLI's version. For example: `"1.26.0"`. */
+    edno: string;
+    /** The V8 version used by Edno. For example: `"10.7.100.0"`.
      *
-     * V8 is the underlying JavaScript runtime platform that Deno is built on
+     * V8 is the underlying JavaScript runtime platform that Edno is built on
      * top of. */
     v8: string;
-    /** The TypeScript version used by Deno. For example: `"4.8.3"`.
+    /** The TypeScript version used by Edno. For example: `"4.8.3"`.
      *
      * A version of the TypeScript type checker and language server is built-in
-     * to the Deno CLI. */
+     * to the Edno CLI. */
     typescript: string;
   };
 
   /** Returns the script arguments to the program.
    *
-   * Give the following command line invocation of Deno:
+   * Give the following command line invocation of Edno:
    *
    * ```sh
-   * deno eval "console.log(Deno.args)" Sushi Maguro Hamachi
+   * edno eval "console.log(Edno.args)" Sushi Maguro Hamachi
    * ```
    *
-   * Then `Deno.args` will contain:
+   * Then `Edno.args` will contain:
    *
    * ```ts
    * [ "Sushi", "Maguro", "Hamachi" ]
@@ -4976,7 +4976,7 @@ declare namespace Deno {
    *
    * If you are looking for a structured way to parse arguments, there is
    * [`parseArgs()`](https://jsr.io/@std/cli/doc/parse-args/~/parseArgs) from
-   * the Deno Standard Library.
+   * the Edno Standard Library.
    *
    * @category Runtime
    */
@@ -5009,7 +5009,7 @@ declare namespace Deno {
    * This argument is only available on Windows and ignored on other platforms.
    *
    * ```ts
-   * await Deno.symlink("old/name", "new/name");
+   * await Edno.symlink("old/name", "new/name");
    * ```
    *
    * Requires `allow-read` and `allow-write` permissions granted *without* a
@@ -5035,7 +5035,7 @@ declare namespace Deno {
    * This argument is only available on Windows and ignored on other platforms.
    *
    * ```ts
-   * Deno.symlinkSync("old/name", "new/name");
+   * Edno.symlinkSync("old/name", "new/name");
    * ```
    *
    * Requires `allow-read` and `allow-write` permissions granted *without* a
@@ -5060,7 +5060,7 @@ declare namespace Deno {
    * seconds (UNIX epoch time) or as `Date` objects.
    *
    * ```ts
-   * Deno.utimeSync("myfile.txt", 1556495550, new Date());
+   * Edno.utimeSync("myfile.txt", 1556495550, new Date());
    * ```
    *
    * Requires `allow-write` permission.
@@ -5080,7 +5080,7 @@ declare namespace Deno {
    * (UNIX epoch time) or as `Date` objects.
    *
    * ```ts
-   * await Deno.utime("myfile.txt", 1556495550, new Date());
+   * await Edno.utime("myfile.txt", 1556495550, new Date());
    * ```
    *
    * Requires `allow-write` permission.
@@ -5098,9 +5098,9 @@ declare namespace Deno {
    * This call always returns what the umask was before the call.
    *
    * ```ts
-   * console.log(Deno.umask());  // e.g. 18 (0o022)
-   * const prevUmaskValue = Deno.umask(0o077);  // e.g. 18 (0o022)
-   * console.log(Deno.umask());  // e.g. 63 (0o077)
+   * console.log(Edno.umask());  // e.g. 18 (0o022)
+   * const prevUmaskValue = Edno.umask(0o077);  // e.g. 18 (0o022)
+   * console.log(Edno.umask());  // e.g. 63 (0o077)
    * ```
    *
    * Requires `allow-sys="umask"` permission.
@@ -5112,7 +5112,7 @@ declare namespace Deno {
    */
   export function umask(mask?: number): number;
 
-  /** The object that is returned from a {@linkcode Deno.upgradeWebSocket}
+  /** The object that is returned from a {@linkcode Edno.upgradeWebSocket}
    * request.
    *
    * @category WebSockets */
@@ -5127,7 +5127,7 @@ declare namespace Deno {
   }
 
   /** Options which can be set when performing a
-   * {@linkcode Deno.upgradeWebSocket} upgrade of a {@linkcode Request}
+   * {@linkcode Edno.upgradeWebSocket} upgrade of a {@linkcode Request}
    *
    * @category WebSockets */
   export interface UpgradeWebSocketOptions {
@@ -5146,7 +5146,7 @@ declare namespace Deno {
     idleTimeout?: number;
     /** A `node:net` `Socket` from a `node:http` server's `"upgrade"` event.
      * When provided, the WebSocket upgrade is performed over this existing
-     * TCP connection instead of through `Deno.serve`'s built-in upgrade
+     * TCP connection instead of through `Edno.serve`'s built-in upgrade
      * mechanism. The 101 Switching Protocols response is written
      * automatically.
      *
@@ -5155,7 +5155,7 @@ declare namespace Deno {
      *
      * const server = http.createServer();
      * server.on("upgrade", (req, socket, head) => {
-     *   const { socket: ws } = Deno.upgradeWebSocket(
+     *   const { socket: ws } = Edno.upgradeWebSocket(
      *     new Request(`http://${req.headers.host}/`, {
      *       headers: req.headers as HeadersInit,
      *     }),
@@ -5181,11 +5181,11 @@ declare namespace Deno {
    * with the returned response for the websocket upgrade to be successful.
    *
    * ```ts
-   * Deno.serve((req) => {
+   * Edno.serve((req) => {
    *   if (req.headers.get("upgrade") !== "websocket") {
    *     return new Response(null, { status: 501 });
    *   }
-   *   const { socket, response } = Deno.upgradeWebSocket(req);
+   *   const { socket, response } = Edno.upgradeWebSocket(req);
    *   socket.addEventListener("open", () => {
    *     console.log("a client connected!");
    *   });
@@ -5224,10 +5224,10 @@ declare namespace Deno {
    * Windows.
    *
    * ```ts
-   * const command = new Deno.Command("sleep", { args: ["10000"] });
+   * const command = new Edno.Command("sleep", { args: ["10000"] });
    * const child = command.spawn();
    *
-   * Deno.kill(child.pid, "SIGINT");
+   * Edno.kill(child.pid, "SIGINT");
    * ```
    *
    * As a special case, a signal of 0 can be used to test for the existence of a process.
@@ -5240,7 +5240,7 @@ declare namespace Deno {
   export function kill(pid: number, signo?: Signal | number): void;
 
   /** The type of the resource record to resolve via DNS using
-   * {@linkcode Deno.resolveDns}.
+   * {@linkcode Edno.resolveDns}.
    *
    * Only the listed types are supported currently.
    *
@@ -5261,7 +5261,7 @@ declare namespace Deno {
     | "TXT";
 
   /**
-   * Options which can be set when using {@linkcode Deno.resolveDns}.
+   * Options which can be set when using {@linkcode Edno.resolveDns}.
    *
    * @category Network */
   export interface ResolveDnsOptions {
@@ -5285,7 +5285,7 @@ declare namespace Deno {
     signal?: AbortSignal;
   }
 
-  /** If {@linkcode Deno.resolveDns} is called with `"CAA"` record type
+  /** If {@linkcode Edno.resolveDns} is called with `"CAA"` record type
    * specified, it will resolve with an array of objects with this interface.
    *
    * @category Network
@@ -5306,7 +5306,7 @@ declare namespace Deno {
     value: string;
   }
 
-  /** If {@linkcode Deno.resolveDns} is called with `"MX"` record type
+  /** If {@linkcode Edno.resolveDns} is called with `"MX"` record type
    * specified, it will return an array of objects with this interface.
    *
    * @category Network */
@@ -5318,7 +5318,7 @@ declare namespace Deno {
     exchange: string;
   }
 
-  /** If {@linkcode Deno.resolveDns} is called with `"NAPTR"` record type
+  /** If {@linkcode Edno.resolveDns} is called with `"NAPTR"` record type
    * specified, it will return an array of objects with this interface.
    *
    * @category Network */
@@ -5331,7 +5331,7 @@ declare namespace Deno {
     replacement: string;
   }
 
-  /** If {@linkcode Deno.resolveDns} is called with `"SOA"` record type
+  /** If {@linkcode Edno.resolveDns} is called with `"SOA"` record type
    * specified, it will return an array of objects with this interface.
    *
    * @category Network */
@@ -5345,7 +5345,7 @@ declare namespace Deno {
     minimum: number;
   }
 
-  /** If {@linkcode Deno.resolveDns} is called with `"SRV"` record type
+  /** If {@linkcode Edno.resolveDns} is called with `"SRV"` record type
    * specified, it will return an array of objects with this interface.
    *
    * @category Network
@@ -5372,10 +5372,10 @@ declare namespace Deno {
    * resolve to an array of strings.
    *
    * ```ts
-   * const a = await Deno.resolveDns("example.com", "A");
+   * const a = await Edno.resolveDns("example.com", "A");
    * // ["93.184.215.14"]
    *
-   * const aaaa = await Deno.resolveDns("example.com", "AAAA", {
+   * const aaaa = await Edno.resolveDns("example.com", "AAAA", {
    *   nameServer: { ipAddr: "8.8.8.8", port: 53 },
    * });
    * // ["2606:2800:21f:cb07:6820:80da:af6b:8b2c"]
@@ -5404,10 +5404,10 @@ declare namespace Deno {
    * - the request timed out.
    *
    * The `"CAA"` record type resolves to an array of
-   * {@linkcode Deno.CaaRecord} objects.
+   * {@linkcode Edno.CaaRecord} objects.
    *
    * ```ts
-   * const caa = await Deno.resolveDns("example.com", "CAA");
+   * const caa = await Edno.resolveDns("example.com", "CAA");
    * // [{ critical: false, tag: "issue", value: "letsencrypt.org" }]
    * ```
    *
@@ -5434,10 +5434,10 @@ declare namespace Deno {
    * - the request timed out.
    *
    * The `"MX"` record type resolves to an array of
-   * {@linkcode Deno.MxRecord} objects.
+   * {@linkcode Edno.MxRecord} objects.
    *
    * ```ts
-   * const mx = await Deno.resolveDns("example.com", "MX");
+   * const mx = await Edno.resolveDns("example.com", "MX");
    * // [{ preference: 10, exchange: "mail.example.com" }]
    * ```
    *
@@ -5464,10 +5464,10 @@ declare namespace Deno {
    * - the request timed out.
    *
    * The `"NAPTR"` record type resolves to an array of
-   * {@linkcode Deno.NaptrRecord} objects.
+   * {@linkcode Edno.NaptrRecord} objects.
    *
    * ```ts
-   * const naptr = await Deno.resolveDns("example.com", "NAPTR");
+   * const naptr = await Edno.resolveDns("example.com", "NAPTR");
    * // [{
    * //   order: 100,
    * //   preference: 10,
@@ -5501,10 +5501,10 @@ declare namespace Deno {
    * - the request timed out.
    *
    * The `"SOA"` record type resolves to an array of
-   * {@linkcode Deno.SoaRecord} objects.
+   * {@linkcode Edno.SoaRecord} objects.
    *
    * ```ts
-   * const soa = await Deno.resolveDns("example.com", "SOA");
+   * const soa = await Edno.resolveDns("example.com", "SOA");
    * // [{
    * //   mname: "ns.example.com",
    * //   rname: "hostmaster.example.com",
@@ -5539,10 +5539,10 @@ declare namespace Deno {
    * - the request timed out.
    *
    * The `"SRV"` record type resolves to an array of
-   * {@linkcode Deno.SrvRecord} objects.
+   * {@linkcode Edno.SrvRecord} objects.
    *
    * ```ts
-   * const srv = await Deno.resolveDns("_sip._tcp.example.com", "SRV");
+   * const srv = await Edno.resolveDns("_sip._tcp.example.com", "SRV");
    * // [{ priority: 10, weight: 5, port: 5060, target: "sip.example.com" }]
    * ```
    *
@@ -5572,7 +5572,7 @@ declare namespace Deno {
    * single TXT record can be split into multiple character strings.
    *
    * ```ts
-   * const txt = await Deno.resolveDns("example.com", "TXT");
+   * const txt = await Edno.resolveDns("example.com", "TXT");
    * // [["v=spf1 include:_spf.example.com ~all"]]
    * ```
    *
@@ -5599,13 +5599,13 @@ declare namespace Deno {
    * - the request timed out.
    *
    * This overload is selected when the record type is only known at runtime. The
-   * shape of each resolved record depends on the {@linkcode Deno.RecordType}
+   * shape of each resolved record depends on the {@linkcode Edno.RecordType}
    * that was requested - see the more specific overloads above for the exact
    * return type of each record type.
    *
    * ```ts
-   * const recordType: Deno.RecordType = "A";
-   * const records = await Deno.resolveDns("example.com", recordType, {
+   * const recordType: Edno.RecordType = "A";
+   * const records = await Edno.resolveDns("example.com", recordType, {
    *   nameServer: { ipAddr: "8.8.8.8", port: 53 },
    * });
    * ```
@@ -5647,7 +5647,7 @@ declare namespace Deno {
    * Returns the user id of the process on POSIX platforms. Returns null on Windows.
    *
    * ```ts
-   * console.log(Deno.uid());
+   * console.log(Edno.uid());
    * ```
    *
    * Requires `allow-sys` permission.
@@ -5661,7 +5661,7 @@ declare namespace Deno {
    * Returns the group id of the process on POSIX platforms. Returns null on windows.
    *
    * ```ts
-   * console.log(Deno.gid());
+   * console.log(Edno.gid());
    * ```
    *
    * Requires `allow-sys` permission.
@@ -5675,7 +5675,7 @@ declare namespace Deno {
    *
    * @category HTTP Server
    */
-  export interface ServeHandlerInfo<Addr extends Deno.Addr = Deno.Addr> {
+  export interface ServeHandlerInfo<Addr extends Edno.Addr = Edno.Addr> {
     /** The remote address of the connection. */
     remoteAddr: Addr;
     /** A promise that settles when the request has been fully handled and the
@@ -5683,7 +5683,7 @@ declare namespace Deno {
      *
      * It resolves once the response (including its body) has been completely
      * delivered to the client. It **rejects** with a
-     * {@linkcode Deno.errors.Interrupted} error if the response could not be
+     * {@linkcode Edno.errors.Interrupted} error if the response could not be
      * sent successfully — for example when the client
      * disconnects before the response body has been fully written. Attach a
      * `.catch()` (or wrap an `await` in `try`/`catch`) if you need to observe
@@ -5696,7 +5696,7 @@ declare namespace Deno {
    * The `request` argument is a standard Web platform {@linkcode Request}, and
    * the handler must return a standard Web platform {@linkcode Response} (or a
    * promise resolving to one). These are the same `Request` and `Response`
-   * classes available as globals in Deno and in browsers, so the body, headers,
+   * classes available as globals in Edno and in browsers, so the body, headers,
    * URL, and method can all be read from the incoming `Request`.
    *
    * If a handler throws, the server calling the handler will assume the impact
@@ -5705,14 +5705,14 @@ declare namespace Deno {
    *
    * @category HTTP Server
    */
-  export type ServeHandler<Addr extends Deno.Addr = Deno.Addr> = (
+  export type ServeHandler<Addr extends Edno.Addr = Edno.Addr> = (
     request: Request,
     info: ServeHandlerInfo<Addr>,
   ) => Response | Promise<Response>;
 
-  /** Interface that module run with `deno serve` subcommand must conform to.
+  /** Interface that module run with `edno serve` subcommand must conform to.
    *
-   * To ensure your code is type-checked properly, make sure to add `satisfies Deno.ServeDefaultExport`
+   * To ensure your code is type-checked properly, make sure to add `satisfies Edno.ServeDefaultExport`
    * to the `export default { ... }` like so:
    *
    * ```ts
@@ -5720,7 +5720,7 @@ declare namespace Deno {
    *   fetch(req) {
    *     return new Response("Hello world");
    *   }
-   * } satisfies Deno.ServeDefaultExport;
+   * } satisfies Edno.ServeDefaultExport;
    * ```
    *
    * @category HTTP Server
@@ -5740,14 +5740,14 @@ declare namespace Deno {
      *
      * @category HTTP Server
      */
-    onListen?: (localAddr: Deno.Addr) => void;
+    onListen?: (localAddr: Edno.Addr) => void;
   }
 
-  /** Options which can be set when calling {@linkcode Deno.serve}.
+  /** Options which can be set when calling {@linkcode Edno.serve}.
    *
    * @category HTTP Server
    */
-  export interface ServeOptions<Addr extends Deno.Addr = Deno.Addr> {
+  export interface ServeOptions<Addr extends Edno.Addr = Edno.Addr> {
     /** An {@linkcode AbortSignal} to close the server and all connections. */
     signal?: AbortSignal;
 
@@ -5767,12 +5767,12 @@ declare namespace Deno {
   }
 
   /**
-   * Options that can be passed to `Deno.serve` to create a server listening on
+   * Options that can be passed to `Edno.serve` to create a server listening on
    * a TCP port.
    *
    * @category HTTP Server
    */
-  export interface ServeTcpOptions extends ServeOptions<Deno.NetAddr> {
+  export interface ServeTcpOptions extends ServeOptions<Edno.NetAddr> {
     /** The transport to use. */
     transport?: "tcp";
 
@@ -5810,12 +5810,12 @@ declare namespace Deno {
   }
 
   /**
-   * Options that can be passed to `Deno.serve` to create a server listening on
+   * Options that can be passed to `Edno.serve` to create a server listening on
    * a Unix domain socket.
    *
    * @category HTTP Server
    */
-  export interface ServeUnixOptions extends ServeOptions<Deno.UnixAddr> {
+  export interface ServeUnixOptions extends ServeOptions<Edno.UnixAddr> {
     /** The transport to use. */
     transport?: "unix";
 
@@ -5824,14 +5824,14 @@ declare namespace Deno {
   }
 
   /**
-   * Options that can be passed to `Deno.serve` to create a server listening on
+   * Options that can be passed to `Edno.serve` to create a server listening on
    * a VSOCK socket.
    *
    * @experimental **UNSTABLE**: New API, yet to be vetted.
    *
    * @category HTTP Server
    */
-  export interface ServeVsockOptions extends ServeOptions<Deno.VsockAddr> {
+  export interface ServeVsockOptions extends ServeOptions<Edno.VsockAddr> {
     /** The transport to use. */
     transport?: "vsock";
 
@@ -5845,16 +5845,16 @@ declare namespace Deno {
   /**
    * @category HTTP Server
    */
-  export interface ServeInit<Addr extends Deno.Addr = Deno.Addr> {
+  export interface ServeInit<Addr extends Edno.Addr = Edno.Addr> {
     /** The handler to invoke to process each incoming request. */
     handler: ServeHandler<Addr>;
   }
 
-  /** An instance of the server created using `Deno.serve()` API.
+  /** An instance of the server created using `Edno.serve()` API.
    *
    * @category HTTP Server
    */
-  export interface HttpServer<Addr extends Deno.Addr = Deno.Addr>
+  export interface HttpServer<Addr extends Edno.Addr = Edno.Addr>
     extends AsyncDisposable {
     /** A promise that resolves once server finishes - eg. when aborted using
      * the signal passed to {@linkcode ServeOptions.signal}.
@@ -5886,20 +5886,20 @@ declare namespace Deno {
    * The below example serves with the port `8000` on hostname `"127.0.0.1"`.
    *
    * ```ts
-   * Deno.serve((_req) => new Response("Hello, world"));
+   * Edno.serve((_req) => new Response("Hello, world"));
    * ```
    *
    * @category HTTP Server
    */
   export function serve(
-    handler: ServeHandler<Deno.NetAddr>,
-  ): HttpServer<Deno.NetAddr>;
+    handler: ServeHandler<Edno.NetAddr>,
+  ): HttpServer<Edno.NetAddr>;
   /** Serves HTTP requests with the given option bag and handler.
    *
    * You can specify the socket path with `path` option.
    *
    * ```ts
-   * Deno.serve(
+   * Edno.serve(
    *   { path: "path/to/socket" },
    *   (_req) => new Response("Hello, world")
    * );
@@ -5908,12 +5908,12 @@ declare namespace Deno {
    * You can stop the server with an {@linkcode AbortSignal}. The abort signal
    * needs to be passed as the `signal` option in the options bag. The server
    * aborts when the abort signal is aborted. To wait for the server to close,
-   * await the promise returned from the `Deno.serve` API.
+   * await the promise returned from the `Edno.serve` API.
    *
    * ```ts
    * const ac = new AbortController();
    *
-   * const server = Deno.serve(
+   * const server = Edno.serve(
    *    { signal: ac.signal, path: "path/to/socket" },
    *    (_req) => new Response("Hello, world")
    * );
@@ -5923,12 +5923,12 @@ declare namespace Deno {
    * ac.abort();
    * ```
    *
-   * By default `Deno.serve` prints the message
+   * By default `Edno.serve` prints the message
    * `Listening on path/to/socket` on listening. If you like to
    * change this behavior, you can specify a custom `onListen` callback.
    *
    * ```ts
-   * Deno.serve({
+   * Edno.serve({
    *   onListen({ path }) {
    *     console.log(`Server started at ${path}`);
    *     // ... more info specific to your server ..
@@ -5941,8 +5941,8 @@ declare namespace Deno {
    */
   export function serve(
     options: ServeUnixOptions,
-    handler: ServeHandler<Deno.UnixAddr>,
-  ): HttpServer<Deno.UnixAddr>;
+    handler: ServeHandler<Edno.UnixAddr>,
+  ): HttpServer<Edno.UnixAddr>;
   /** Serves HTTP requests with the given option bag and handler.
    *
    * @experimental **UNSTABLE**: New API, yet to be vetted.
@@ -5952,7 +5952,7 @@ declare namespace Deno {
    * The VSOCK address family facilitates communication between virtual machines and the host they are running on: https://man7.org/linux/man-pages/man7/vsock.7.html
    *
    * ```ts
-   * Deno.serve(
+   * Edno.serve(
    *   { cid: -1, port: 3000 },
    *   (_req) => new Response("Hello, world")
    * );
@@ -5961,12 +5961,12 @@ declare namespace Deno {
    * You can stop the server with an {@linkcode AbortSignal}. The abort signal
    * needs to be passed as the `signal` option in the options bag. The server
    * aborts when the abort signal is aborted. To wait for the server to close,
-   * await the promise returned from the `Deno.serve` API.
+   * await the promise returned from the `Edno.serve` API.
    *
    * ```ts
    * const ac = new AbortController();
    *
-   * const server = Deno.serve(
+   * const server = Edno.serve(
    *    { signal: ac.signal, cid: -1, port: 3000 },
    *    (_req) => new Response("Hello, world")
    * );
@@ -5976,12 +5976,12 @@ declare namespace Deno {
    * ac.abort();
    * ```
    *
-   * By default `Deno.serve` prints the message `Listening on cid:port`.
+   * By default `Edno.serve` prints the message `Listening on cid:port`.
    * If you want to change this behavior, you can specify a custom `onListen`
    * callback.
    *
    * ```ts
-   * Deno.serve({
+   * Edno.serve({
    *   onListen({ cid, port }) {
    *     console.log(`Server started at ${cid}:${port}`);
    *     // ... more info specific to your server ..
@@ -5995,8 +5995,8 @@ declare namespace Deno {
    */
   export function serve(
     options: ServeVsockOptions,
-    handler: ServeHandler<Deno.VsockAddr>,
-  ): HttpServer<Deno.VsockAddr>;
+    handler: ServeHandler<Edno.VsockAddr>,
+  ): HttpServer<Edno.VsockAddr>;
   /** Serves HTTP requests with the given option bag and handler.
    *
    * You can specify an object with a port and hostname option, which is the
@@ -6006,7 +6006,7 @@ declare namespace Deno {
    * options. The below example serves on port `3000` and hostname `"127.0.0.1"`.
    *
    * ```ts
-   * Deno.serve(
+   * Edno.serve(
    *   { port: 3000, hostname: "127.0.0.1" },
    *   (_req) => new Response("Hello, world")
    * );
@@ -6015,12 +6015,12 @@ declare namespace Deno {
    * You can stop the server with an {@linkcode AbortSignal}. The abort signal
    * needs to be passed as the `signal` option in the options bag. The server
    * aborts when the abort signal is aborted. To wait for the server to close,
-   * await the promise returned from the `Deno.serve` API.
+   * await the promise returned from the `Edno.serve` API.
    *
    * ```ts
    * const ac = new AbortController();
    *
-   * const server = Deno.serve(
+   * const server = Edno.serve(
    *    { signal: ac.signal },
    *    (_req) => new Response("Hello, world")
    * );
@@ -6030,12 +6030,12 @@ declare namespace Deno {
    * ac.abort();
    * ```
    *
-   * By default `Deno.serve` prints the message
+   * By default `Edno.serve` prints the message
    * `Listening on http://<hostname>:<port>/` on listening. If you like to
    * change this behavior, you can specify a custom `onListen` callback.
    *
    * ```ts
-   * Deno.serve({
+   * Edno.serve({
    *   onListen({ port, hostname }) {
    *     console.log(`Server started at http://${hostname}:${port}`);
    *     // ... more info specific to your server ..
@@ -6048,15 +6048,15 @@ declare namespace Deno {
    * ```ts
    * const cert = "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----\n";
    * const key = "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n";
-   * Deno.serve({ cert, key }, (_req) => new Response("Hello, world"));
+   * Edno.serve({ cert, key }, (_req) => new Response("Hello, world"));
    * ```
    *
    * @category HTTP Server
    */
   export function serve(
     options: ServeTcpOptions | (ServeTcpOptions & TlsCertifiedKeyPem),
-    handler: ServeHandler<Deno.NetAddr>,
-  ): HttpServer<Deno.NetAddr>;
+    handler: ServeHandler<Edno.NetAddr>,
+  ): HttpServer<Edno.NetAddr>;
   /** Serves HTTP requests with the given option bag.
    *
    * You can specify an object with the path option, which is the
@@ -6065,7 +6065,7 @@ declare namespace Deno {
    * ```ts
    * const ac = new AbortController();
    *
-   * const server = Deno.serve({
+   * const server = Edno.serve({
    *   path: "path/to/socket",
    *   handler: (_req) => new Response("Hello, world"),
    *   signal: ac.signal,
@@ -6082,8 +6082,8 @@ declare namespace Deno {
    * @category HTTP Server
    */
   export function serve(
-    options: ServeUnixOptions & ServeInit<Deno.UnixAddr>,
-  ): HttpServer<Deno.UnixAddr>;
+    options: ServeUnixOptions & ServeInit<Edno.UnixAddr>,
+  ): HttpServer<Edno.UnixAddr>;
   /** Serves HTTP requests with the given option bag.
    *
    * The VSOCK address family facilitates communication between virtual machines and the host they are running on: https://man7.org/linux/man-pages/man7/vsock.7.html
@@ -6095,7 +6095,7 @@ declare namespace Deno {
    * ```ts
    * const ac = new AbortController();
    *
-   * const server = Deno.serve({
+   * const server = Edno.serve({
    *   cid: -1,
    *   port: 3000,
    *   handler: (_req) => new Response("Hello, world"),
@@ -6113,8 +6113,8 @@ declare namespace Deno {
    * @category HTTP Server
    */
   export function serve(
-    options: ServeVsockOptions & ServeInit<Deno.VsockAddr>,
-  ): HttpServer<Deno.VsockAddr>;
+    options: ServeVsockOptions & ServeInit<Edno.VsockAddr>,
+  ): HttpServer<Edno.VsockAddr>;
   /** Serves HTTP requests with the given option bag.
    *
    * You can specify an object with a port and hostname option, which is the
@@ -6123,7 +6123,7 @@ declare namespace Deno {
    * ```ts
    * const ac = new AbortController();
    *
-   * const server = Deno.serve({
+   * const server = Edno.serve({
    *   port: 3000,
    *   hostname: "127.0.0.1",
    *   handler: (_req) => new Response("Hello, world"),
@@ -6143,8 +6143,8 @@ declare namespace Deno {
   export function serve(
     options:
       & (ServeTcpOptions | (ServeTcpOptions & TlsCertifiedKeyPem))
-      & ServeInit<Deno.NetAddr>,
-  ): HttpServer<Deno.NetAddr>;
+      & ServeInit<Edno.NetAddr>,
+  ): HttpServer<Edno.NetAddr>;
 
   /** All plain number types for interfacing with foreign functions.
    *
@@ -6517,7 +6517,7 @@ declare namespace Deno {
     static equals<T = unknown>(a: PointerValue<T>, b: PointerValue<T>): boolean;
     /** Return the direct memory pointer to the typed array in memory. */
     static of<T = unknown>(
-      value: Deno.UnsafeCallback | AllowSharedBufferSource,
+      value: Edno.UnsafeCallback | AllowSharedBufferSource,
     ): PointerValue<T>;
     /** Return a new pointer offset from the original by `offset` bytes. */
     static offset<T = unknown>(
@@ -6666,17 +6666,17 @@ declare namespace Deno {
    * The function pointer remains valid until the `close()` method is called.
    *
    * All `UnsafeCallback` are always thread safe in that they can be called from
-   * foreign threads without crashing. However, they do not wake up the Deno event
+   * foreign threads without crashing. However, they do not wake up the Edno event
    * loop by default.
    *
    * If a callback is to be called from foreign threads, use the `threadSafe()`
    * static constructor or explicitly call `ref()` to have the callback wake up
-   * the Deno event loop when called from foreign threads. This also stops
-   * Deno's process from exiting while the callback still exists and is not
+   * the Edno event loop when called from foreign threads. This also stops
+   * Edno's process from exiting while the callback still exists and is not
    * unref'ed.
    *
-   * Use `deref()` to then allow Deno's process to exit. Calling `deref()` on
-   * a ref'ed callback does not stop it from waking up the Deno event loop when
+   * Use `deref()` to then allow Edno's process to exit. Calling `deref()` on
+   * a ref'ed callback does not stop it from waking up the Edno event loop when
    * called from foreign threads.
    *
    * @category FFI
@@ -6705,9 +6705,9 @@ declare namespace Deno {
 
     /**
      * Creates an {@linkcode UnsafeCallback} and calls `ref()` once to allow it to
-     * wake up the Deno event loop when called from foreign threads.
+     * wake up the Edno event loop when called from foreign threads.
      *
-     * This also stops Deno's process from exiting while the callback still
+     * This also stops Edno's process from exiting while the callback still
      * exists and is not unref'ed.
      */
     static threadSafe<
@@ -6725,9 +6725,9 @@ declare namespace Deno {
      * reference count.
      *
      * After `ref()` has been called, the callback always wakes up the
-     * Deno event loop when called from foreign threads.
+     * Edno event loop when called from foreign threads.
      *
-     * If the callback's reference count is non-zero, it keeps Deno's
+     * If the callback's reference count is non-zero, it keeps Edno's
      * process from exiting.
      */
     ref(): number;
@@ -6736,11 +6736,11 @@ declare namespace Deno {
      * Decrements the callback's reference counting and returns the new
      * reference count.
      *
-     * Calling `unref()` does not stop a callback from waking up the Deno
+     * Calling `unref()` does not stop a callback from waking up the Edno
      * event loop when called from foreign threads.
      *
      * If the callback's reference counter is zero, it no longer keeps
-     * Deno's process from exiting.
+     * Edno's process from exiting.
      */
     unref(): number;
 
@@ -6751,13 +6751,13 @@ declare namespace Deno {
      * the `UnsafeCallback` will lead to errors and crashes.
      *
      * Calling this method sets the callback's reference counting to zero,
-     * stops the callback from waking up the Deno event loop when called from
-     * foreign threads and no longer keeps Deno's process from exiting.
+     * stops the callback from waking up the Edno event loop when called from
+     * foreign threads and no longer keeps Edno's process from exiting.
      */
     close(): void;
   }
 
-  /** A dynamic library resource.  Use {@linkcode Deno.dlopen} to load a dynamic
+  /** A dynamic library resource.  Use {@linkcode Edno.dlopen} to load a dynamic
    * library and return this interface.
    *
    * @category FFI
@@ -6771,7 +6771,7 @@ declare namespace Deno {
      * errors and crashes.
      *
      * Calling this method will also immediately set any references to zero and
-     * will no longer keep Deno's process from exiting.
+     * will no longer keep Edno's process from exiting.
      */
     close(): void;
   }
@@ -6790,7 +6790,7 @@ declare namespace Deno {
    * // Determine library extension based on
    * // your OS.
    * let libSuffix = "";
-   * switch (Deno.build.os) {
+   * switch (Edno.build.os) {
    *   case "windows":
    *     libSuffix = "dll";
    *     break;
@@ -6804,7 +6804,7 @@ declare namespace Deno {
    *
    * const libName = `./libadd.${libSuffix}`;
    * // Open library and define exported symbols
-   * const dylib = Deno.dlopen(
+   * const dylib = Edno.dlopen(
    *   libName,
    *   {
    *     "add": { parameters: ["isize", "isize"], result: "isize" },
@@ -6830,8 +6830,8 @@ declare namespace Deno {
    * designed to allow custom certificates or proxies to be used with `fetch()`.
    *
    * @example ```ts
-   * const caCert = await Deno.readTextFile("./ca.pem");
-   * const client = Deno.createHttpClient({ caCerts: [ caCert ] });
+   * const caCert = await Edno.readTextFile("./ca.pem");
+   * const client = Edno.createHttpClient({ caCerts: [ caCert ] });
    * const req = await fetch("https://myserver.com", { client });
    * ```
    *
@@ -6845,7 +6845,7 @@ declare namespace Deno {
   }
 
   /**
-   * The options used when creating a {@linkcode Deno.HttpClient}.
+   * The options used when creating a {@linkcode Edno.HttpClient}.
    *
    * @category Fetch
    */
@@ -6889,7 +6889,7 @@ declare namespace Deno {
 
   /**
    * The definition for alternative transports (or proxies) in
-   * {@linkcode Deno.CreateHttpClientOptions}.
+   * {@linkcode Edno.CreateHttpClientOptions}.
    *
    * Supported proxies:
    *  - HTTP/HTTPS proxy: this uses passthrough to tunnel HTTP requests, or HTTP
@@ -6937,8 +6937,8 @@ declare namespace Deno {
   };
 
   /**
-   * Basic authentication credentials to be used with a {@linkcode Deno.Proxy}
-   * server when specifying {@linkcode Deno.CreateHttpClientOptions}.
+   * Basic authentication credentials to be used with a {@linkcode Edno.Proxy}
+   * server when specifying {@linkcode Edno.CreateHttpClientOptions}.
    *
    * @category Fetch
    */
@@ -6950,7 +6950,7 @@ declare namespace Deno {
   }
 
   /** Create a custom HttpClient to use with {@linkcode fetch}. This is an
-   * extension of the web platform Fetch API which allows Deno to use custom
+   * extension of the web platform Fetch API which allows Edno to use custom
    * TLS CA certificates and connect via a proxy while using `fetch()`.
    *
    * The `cert` and `key` options can be used to specify a client certificate
@@ -6959,13 +6959,13 @@ declare namespace Deno {
    * provided in PEM format.
    *
    * @example ```ts
-   * const caCert = await Deno.readTextFile("./ca.pem");
-   * const client = Deno.createHttpClient({ caCerts: [ caCert ] });
+   * const caCert = await Edno.readTextFile("./ca.pem");
+   * const client = Edno.createHttpClient({ caCerts: [ caCert ] });
    * const response = await fetch("https://myserver.com", { client });
    * ```
    *
    * @example ```ts
-   * const client = Deno.createHttpClient({
+   * const client = Edno.createHttpClient({
    *   proxy: { url: "http://myproxy.com:8080" }
    * });
    * const response = await fetch("https://myserver.com", { client });
@@ -6974,7 +6974,7 @@ declare namespace Deno {
    * @example ```ts
    * const key = "----BEGIN PRIVATE KEY----...";
    * const cert = "----BEGIN CERTIFICATE----...";
-   * const client = Deno.createHttpClient({ key, cert });
+   * const client = Edno.createHttpClient({ key, cert });
    * const response = await fetch("https://myserver.com", { client });
    * ```
    *
@@ -6987,11 +6987,11 @@ declare namespace Deno {
   ): HttpClient;
 
   /**
-   * APIs for working with the OpenTelemetry observability framework. Deno can
+   * APIs for working with the OpenTelemetry observability framework. Edno can
    * export traces, metrics, and logs to OpenTelemetry compatible backends via
    * the OTLP protocol.
    *
-   * Deno automatically instruments the runtime with OpenTelemetry traces and
+   * Edno automatically instruments the runtime with OpenTelemetry traces and
    * metrics. This data is exported via OTLP to OpenTelemetry compatible
    * backends. User logs from the `console` API are exported as OpenTelemetry
    * logs via OTLP.
@@ -7000,9 +7000,9 @@ declare namespace Deno {
    * OpenTelemetry API. This is done using the official OpenTelemetry package
    * for JavaScript:
    * [`npm:@opentelemetry/api`](https://opentelemetry.io/docs/languages/js/).
-   * Deno integrates with this package to provide tracing, metrics, and trace
-   * context propagation between native Deno APIs (like `Deno.serve` or `fetch`)
-   * and custom user code. Deno automatically registers the providers with the
+   * Edno integrates with this package to provide tracing, metrics, and trace
+   * context propagation between native Edno APIs (like `Edno.serve` or `fetch`)
+   * and custom user code. Edno automatically registers the providers with the
    * OpenTelemetry API, so users can start creating custom traces, metrics, and
    * logs without any additional setup.
    *
@@ -7020,7 +7020,7 @@ declare namespace Deno {
    *   });
    * }
    *
-   * Deno.serve(async (req) => {
+   * Edno.serve(async (req) => {
    *   await doWork();
    *   const resp = await fetch("https://example.com");
    *   return resp;
@@ -7039,7 +7039,7 @@ declare namespace Deno {
      *
      * @category Telemetry
      */
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     export const tracerProvider: any;
 
     /**
@@ -7051,7 +7051,7 @@ declare namespace Deno {
      *
      * @category Telemetry
      */
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     export const contextManager: any;
 
     /**
@@ -7063,7 +7063,7 @@ declare namespace Deno {
      *
      * @category Telemetry
      */
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     export const meterProvider: any;
 
     export {}; // only export exports

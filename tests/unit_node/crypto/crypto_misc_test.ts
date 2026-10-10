@@ -12,16 +12,16 @@ import { assertNotEquals } from "@std/assert";
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
-Deno.test("[node/crypto.getRandomUUID] works the same way as Web Crypto API", () => {
+Edno.test("[node/crypto.getRandomUUID] works the same way as Web Crypto API", () => {
   assertEquals(randomUUID().length, crypto.randomUUID().length);
   assertEquals(typeof randomUUID(), typeof crypto.randomUUID());
 });
 
-Deno.test("[node/crypto.randomUUID] supports disableEntropyCache", () => {
+Edno.test("[node/crypto.randomUUID] supports disableEntropyCache", () => {
   assertMatch(randomUUID({ disableEntropyCache: true }), UUID_REGEX);
 });
 
-Deno.test("[node/crypto.randomFillSync] supported arguments", () => {
+Edno.test("[node/crypto.randomFillSync] supported arguments", () => {
   const buf = new Uint8Array(10);
 
   assert(randomFillSync(buf));
@@ -31,7 +31,7 @@ Deno.test("[node/crypto.randomFillSync] supported arguments", () => {
   assert(randomFillSync(new DataView(buf.buffer)));
 });
 
-Deno.test("[node/crypto.randomFillSync] array buffer view", () => {
+Edno.test("[node/crypto.randomFillSync] array buffer view", () => {
   const buf = new Uint8Array(32);
   const view = new Uint8Array(buf.buffer, 8, 16);
 
@@ -42,14 +42,14 @@ Deno.test("[node/crypto.randomFillSync] array buffer view", () => {
   assertEquals(buf.subarray(24, 32), new Uint8Array(8));
 });
 
-Deno.test("[node/crypto.timingSafeEqual] compares equal Buffer with different byteOffset", () => {
+Edno.test("[node/crypto.timingSafeEqual] compares equal Buffer with different byteOffset", () => {
   const a = Buffer.from([212, 213]);
   const b = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0, 212, 213]).subarray(8);
 
   assert(timingSafeEqual(a, b));
 });
 
-Deno.test("[node/crypto.timingSafeEqual] RangeError on Buffer with different byteLength", () => {
+Edno.test("[node/crypto.timingSafeEqual] RangeError on Buffer with different byteLength", () => {
   const a = Buffer.from([212, 213]);
   const b = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0, 212, 213, 0]);
 

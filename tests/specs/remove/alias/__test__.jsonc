@@ -3,12 +3,12 @@
   "tests": {
     "alias_with_pkg": {
       "steps": [{
-        "args": "remove my-alias@npm:@denotest/add",
+        "args": "remove my-alias@npm:@ednotest/add",
         "output": "[WILDCARD]"
       }, {
         "args": [
           "eval",
-          "console.log(Deno.readTextFileSync('package.json').trim())"
+          "console.log(Edno.readTextFileSync('package.json').trim())"
         ],
         "output": "package.json.out"
       }]
@@ -20,7 +20,7 @@
       }, {
         "args": [
           "eval",
-          "console.log(Deno.readTextFileSync('package.json').trim())"
+          "console.log(Edno.readTextFileSync('package.json').trim())"
         ],
         "output": "package.json.out"
       }]

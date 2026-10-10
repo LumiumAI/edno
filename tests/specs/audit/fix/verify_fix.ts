@@ -1,2 +1,2 @@
-const p = JSON.parse(Deno.readTextFileSync("package.json"));
-console.log(p.dependencies["@denotest/with-vuln1"]);
+const p = JSON.parse(Edno.readTextFileSync("package.json"));
+console.log(p.dependencies["@ednotest/with-vuln1"]);

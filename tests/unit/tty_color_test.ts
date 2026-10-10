@@ -1,12 +1,12 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assertEquals } from "./test_util.ts";
 
-// Note tests for Deno.stdin.setRaw is in integration tests.
+// Note tests for Edno.stdin.setRaw is in integration tests.
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
   async function noColorIfNotTty() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
       args: ["eval", "console.log(1)"],
     }).output();
     const output = new TextDecoder().decode(stdout);
@@ -14,22 +14,22 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
-  async function denoNoColorIsNotAffectedByNonTty() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
-      args: ["eval", "console.log(Deno.noColor)"],
+  async function ednoNoColorIsNotAffectedByNonTty() {
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
+      args: ["eval", "console.log(Edno.noColor)"],
     }).output();
     const output = new TextDecoder().decode(stdout);
     assertEquals(output, "false\n");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
-  async function denoNoColorTrueEmptyVar() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
-      args: ["eval", "console.log(Deno.noColor)"],
+  async function ednoNoColorTrueEmptyVar() {
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
+      args: ["eval", "console.log(Edno.noColor)"],
       env: {
         // https://no-color.org/ -- should not be true when empty
         NO_COLOR: "",
@@ -40,11 +40,11 @@ Deno.test(
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { run: true, read: true } },
-  async function denoNoColorTrueEmptyVar() {
-    const { stdout } = await new Deno.Command(Deno.execPath(), {
-      args: ["eval", "console.log(Deno.noColor)"],
+  async function ednoNoColorTrueEmptyVar() {
+    const { stdout } = await new Edno.Command(Edno.execPath(), {
+      args: ["eval", "console.log(Edno.noColor)"],
       env: {
         NO_COLOR: "1",
       },

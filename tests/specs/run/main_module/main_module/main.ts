@@ -1,3 +1,3 @@
-console.log("main", Deno.mainModule);
+console.log("main", Edno.mainModule);
 
 import "./other.ts";

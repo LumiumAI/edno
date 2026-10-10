@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@denotest/esm-import-cjs-default": "*"
+    "@ednotest/esm-import-cjs-default": "*"
   }
 }

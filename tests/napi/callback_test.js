@@ -4,28 +4,28 @@ import { assertEquals, assertThrows, loadTestLibrary } from "./common.js";
 
 const callback = loadTestLibrary();
 
-Deno.test("napi callback run with args", function () {
+Edno.test("napi callback run with args", function () {
   const result = callback.test_callback_run((a, b) => a + b, [1, 2]);
   assertEquals(result, 3);
 });
 
-Deno.test("napi callback run with args (no return)", function () {
+Edno.test("napi callback run with args (no return)", function () {
   const result = callback.test_callback_run(() => {}, []);
   assertEquals(result, undefined);
 });
 
-Deno.test("napi callback run with args (extra arguments)", function () {
+Edno.test("napi callback run with args (extra arguments)", function () {
   const result = callback.test_callback_run((a, b) => a + b, [
     "Hello,",
-    " Deno!",
+    " Edno!",
     1,
     2,
     3,
   ]);
-  assertEquals(result, "Hello, Deno!");
+  assertEquals(result, "Hello, Edno!");
 });
 
-Deno.test("napi callback run with args & recv", function () {
+Edno.test("napi callback run with args & recv", function () {
   const result = callback.test_callback_run_with_recv(
     function () {
       assertEquals(this, 69);
@@ -37,7 +37,7 @@ Deno.test("napi callback run with args & recv", function () {
   assertEquals(result, 69);
 });
 
-Deno.test("napi callback handles errors correctly", function () {
+Edno.test("napi callback handles errors correctly", function () {
   const e = new Error("hi!");
   assertThrows(() => {
     callback.test_callback_throws(() => {
@@ -46,7 +46,7 @@ Deno.test("napi callback handles errors correctly", function () {
   }, e);
 });
 
-Deno.test("napi callback info remains scoped during reentrant calls", function () {
+Edno.test("napi callback info remains scoped during reentrant calls", function () {
   let reentered = false;
   const result = callback.test_callback_info_reentrant(() => {
     if (!reentered) {

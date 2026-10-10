@@ -1,5 +1,5 @@
 Download [WILDCARD]
-error: Unable to choose binary for @denotest/bin
+error: Unable to choose binary for @ednotest/bin
   Available bins:
     cli-cjs
     cli-esm

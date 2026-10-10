@@ -1,3 +1,3 @@
-import getValue from "@denotest/tarballs-privateserver2";
+import getValue from "@ednotest/tarballs-privateserver2";
 
 console.log(getValue());

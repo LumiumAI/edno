@@ -1,9 +1,9 @@
-const binaryName = Deno.build.os === "windows" ? "binary.exe" : "binary";
-Deno.copyFileSync(Deno.execPath(), binaryName);
+const binaryName = Edno.build.os === "windows" ? "binary.exe" : "binary";
+Edno.copyFileSync(Edno.execPath(), binaryName);
 
 console.log("Running...");
-const result = new Deno.Command(
-  Deno.execPath(),
+const result = new Edno.Command(
+  Edno.execPath(),
   {
     args: ["run", "--allow-write", `--allow-run=./${binaryName}`, "sub.ts"],
     stderr: "inherit",

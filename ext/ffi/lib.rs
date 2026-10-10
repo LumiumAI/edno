@@ -21,8 +21,8 @@ pub use callback::CallbackError;
 use callback::op_ffi_unsafe_callback_close;
 use callback::op_ffi_unsafe_callback_create;
 use callback::op_ffi_unsafe_callback_ref;
-pub use denort_helper::DenoRtNativeAddonLoader;
-pub use denort_helper::DenoRtNativeAddonLoaderRc;
+pub use ednort_helper::EdnoRtNativeAddonLoader;
+pub use ednort_helper::EdnoRtNativeAddonLoaderRc;
 pub use dlfcn::DlfcnError;
 use dlfcn::ForeignFunction;
 use dlfcn::op_ffi_load;
@@ -46,8 +46,8 @@ const _: () = {
 
 pub const UNSTABLE_FEATURE_NAME: &str = "ffi";
 
-deno_core::extension!(deno_ffi,
-  deps = [ deno_web ],
+edno_core::extension!(edno_ffi,
+  deps = [ edno_web ],
   ops = [
     op_ffi_load,
     op_ffi_get_static,
@@ -82,10 +82,10 @@ deno_core::extension!(deno_ffi,
   ],
   lazy_loaded_js = [ "00_ffi.js" ],
   options = {
-    deno_rt_native_addon_loader: Option<DenoRtNativeAddonLoaderRc>,
+    edno_rt_native_addon_loader: Option<EdnoRtNativeAddonLoaderRc>,
   },
   state = |state, options| {
-    if let Some(loader) = options.deno_rt_native_addon_loader {
+    if let Some(loader) = options.edno_rt_native_addon_loader {
       state.put(loader);
     }
   },

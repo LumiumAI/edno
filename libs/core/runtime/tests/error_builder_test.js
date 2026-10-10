@@ -1,5 +1,5 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-const { core } = Deno;
+const { core } = Edno;
 const { ops } = core;
 
 class DOMException {

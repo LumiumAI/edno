@@ -11,11 +11,11 @@ use std::sync::Mutex;
 use std::sync::OnceLock;
 
 use async_trait::async_trait;
-use deno_core::OpState;
-use deno_core::unsync::spawn_blocking;
+use edno_core::OpState;
+use edno_core::unsync::spawn_blocking;
 use deno_error::JsErrorBox;
-use deno_permissions::OpenAccessKind;
-use deno_permissions::PermissionsContainer;
+use edno_permissions::OpenAccessKind;
+use edno_permissions::PermissionsContainer;
 pub use denokv_sqlite::SqliteBackendError;
 use denokv_sqlite::SqliteConfig;
 use denokv_sqlite::SqliteNotifier;
@@ -145,7 +145,7 @@ impl DatabaseHandler for SqliteDbHandler {
           .check_open(
             Cow::Owned(PathBuf::from(path)),
             OpenAccessKind::ReadWriteNoFollow,
-            Some("Deno.openKv"),
+            Some("Edno.openKv"),
           )
           .map_err(JsErrorBox::from_err)?;
         Ok(Some(PathOrInMemory::Path(
@@ -160,14 +160,14 @@ impl DatabaseHandler for SqliteDbHandler {
       Arc<dyn Fn() -> rusqlite::Result<rusqlite::Connection> + Send + Sync>;
     let (conn_gen, notifier_key): (ConnGen, _) = spawn_blocking(move || {
       denokv_sqlite::sqlite_retry_loop(move || {
-        let mode = match std::env::var("DENO_KV_DB_MODE")
+        let mode = match std::env::var("EDNO_KV_DB_MODE")
           .unwrap_or_default()
           .as_str()
         {
           "disk" | "" => Mode::Disk,
           "memory" => Mode::InMemory,
           _ => {
-            log::warn!("Unknown DENO_KV_DB_MODE value, defaulting to disk");
+            log::warn!("Unknown EDNO_KV_DB_MODE value, defaulting to disk");
             Mode::Disk
           }
         };

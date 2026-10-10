@@ -1,7 +1,7 @@
 # napi
 
-This directory contains source for Deno's Node-API implementation. It depends on
-`napi_sym` and `deno_napi`.
+This directory contains source for Edno's Node-API implementation. It depends on
+`napi_sym` and `edno_napi`.
 
 Files are generally organized the same as in Node.js's implementation to ease in
 ensuring compatibility.
@@ -44,7 +44,7 @@ fn napi_get_boolean(
 Update the generated symbol lists using the script:
 
 ```
-deno run --allow-write tools/napi/generate_symbols_lists.js
+edno run --allow-write tools/napi/generate_symbols_lists.js
 ```
 
 Add a test in [`/tests/napi`](../../tests/napi/). You can also refer to Node.js
@@ -54,7 +54,7 @@ test suite for Node-API.
 // tests/napi/boolean_test.js
 import { assertEquals, loadTestLibrary } from "./common.js";
 const lib = loadTestLibrary();
-Deno.test("napi get boolean", function () {
+Edno.test("napi get boolean", function () {
   assertEquals(lib.test_get_boolean(true), true);
   assertEquals(lib.test_get_boolean(false), false);
 });

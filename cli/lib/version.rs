@@ -2,42 +2,42 @@
 
 use std::borrow::Cow;
 
-use deno_runtime::deno_telemetry::OtelRuntimeConfig;
+use edno_runtime::edno_telemetry::OtelRuntimeConfig;
 
 use crate::shared::ReleaseChannel;
 
 pub fn otel_runtime_config() -> OtelRuntimeConfig {
   OtelRuntimeConfig {
-    runtime_name: Cow::Borrowed("deno"),
-    runtime_version: Cow::Borrowed(crate::version::DENO_VERSION_INFO.deno),
+    runtime_name: Cow::Borrowed("edno"),
+    runtime_version: Cow::Borrowed(crate::version::EDNO_VERSION_INFO.edno),
   }
 }
 
 const GIT_COMMIT_HASH: &str = env!("GIT_COMMIT_HASH");
 const TYPESCRIPT: &str = "6.0.3";
-pub const DENO_VERSION: &str = env!("DENO_VERSION");
+pub const EDNO_VERSION: &str = env!("EDNO_VERSION");
 
-/// The Node.js version that Deno reports through `process.version` /
+/// The Node.js version that Edno reports through `process.version` /
 /// `process.versions.node`, used to enforce package.json `engines.node`
 /// constraints.
 ///
 /// Re-exported from `ext/node`, which is the single source of truth shared with
 /// the `process.version` polyfill, so the engines check and the reported value
 /// can never drift.
-pub use deno_node::NODE_VERSION;
+pub use edno_node::NODE_VERSION;
 // TODO(bartlomieju): ideally we could remove this const.
-const IS_CANARY: bool = option_env!("DENO_CANARY").is_some();
+const IS_CANARY: bool = option_env!("EDNO_CANARY").is_some();
 // TODO(bartlomieju): this is temporary, to allow Homebrew to cut RC releases as well
-const IS_RC: bool = option_env!("DENO_RC").is_some();
+const IS_RC: bool = option_env!("EDNO_RC").is_some();
 
-pub static DENO_VERSION_INFO: std::sync::LazyLock<DenoVersionInfo> =
+pub static EDNO_VERSION_INFO: std::sync::LazyLock<EdnoVersionInfo> =
   std::sync::LazyLock::new(|| {
     #[cfg(not(all(
       debug_assertions,
       target_os = "macos",
       target_arch = "x86_64"
     )))]
-    let release_channel = libsui::find_section("denover")
+    let release_channel = libsui::find_section("ednover")
       .ok()
       .flatten()
       .and_then(|buf| std::str::from_utf8(buf).ok())
@@ -48,7 +48,7 @@ pub static DENO_VERSION_INFO: std::sync::LazyLock<DenoVersionInfo> =
         } else if IS_RC {
           ReleaseChannel::Rc
         } else {
-          release_channel_from_version_string(DENO_VERSION)
+          release_channel_from_version_string(EDNO_VERSION)
         }
       });
 
@@ -58,42 +58,42 @@ pub static DENO_VERSION_INFO: std::sync::LazyLock<DenoVersionInfo> =
     } else if IS_RC {
       ReleaseChannel::Rc
     } else {
-      release_channel_from_version_string(DENO_VERSION)
+      release_channel_from_version_string(EDNO_VERSION)
     };
 
-    DenoVersionInfo {
-      deno: if release_channel == ReleaseChannel::Canary {
-        concat!(env!("DENO_VERSION"), "+", env!("GIT_COMMIT_HASH_SHORT"))
+    EdnoVersionInfo {
+      edno: if release_channel == ReleaseChannel::Canary {
+        concat!(env!("EDNO_VERSION"), "+", env!("GIT_COMMIT_HASH_SHORT"))
       } else {
-        env!("DENO_VERSION")
+        env!("EDNO_VERSION")
       },
 
       release_channel,
 
       git_hash: GIT_COMMIT_HASH,
 
-      // Keep in sync with `deno` field.
+      // Keep in sync with `edno` field.
       user_agent: if release_channel == ReleaseChannel::Canary {
         concat!(
-          "Deno/",
-          env!("DENO_VERSION"),
+          "Edno/",
+          env!("EDNO_VERSION"),
           "+",
           env!("GIT_COMMIT_HASH_SHORT")
         )
       } else {
-        concat!("Deno/", env!("DENO_VERSION"))
+        concat!("Edno/", env!("EDNO_VERSION"))
       },
 
       typescript: TYPESCRIPT,
     }
   });
 
-pub struct DenoVersionInfo {
-  /// Human-readable version of the current Deno binary.
+pub struct EdnoVersionInfo {
+  /// Human-readable version of the current Edno binary.
   ///
   /// For stable release, a semver, eg. `v1.46.2`.
   /// For canary release, a semver + 7-char git hash, eg. `v1.46.3+asdfqwq`.
-  pub deno: &'static str,
+  pub edno: &'static str,
 
   pub release_channel: ReleaseChannel,
 
@@ -106,14 +106,14 @@ pub struct DenoVersionInfo {
   pub typescript: &'static str,
 }
 
-impl DenoVersionInfo {
+impl EdnoVersionInfo {
   /// For stable release, a semver like, eg. `v1.46.2`.
   /// For canary release a full git hash, eg. `9bdab6fb6b93eb43b1930f40987fa4997287f9c8`.
   pub fn version_or_git_hash(&self) -> &'static str {
     if self.release_channel == ReleaseChannel::Canary {
       self.git_hash
     } else {
-      DENO_VERSION
+      EDNO_VERSION
     }
   }
 }

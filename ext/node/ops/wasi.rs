@@ -15,11 +15,11 @@ use std::io::SeekFrom;
 use std::io::Write;
 use std::path::Path;
 
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::op2;
-use deno_permissions::OpenAccessKind;
-use deno_permissions::PermissionsContainer;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_permissions::OpenAccessKind;
+use edno_permissions::PermissionsContainer;
 use rand::RngCore;
 
 const ERRNO_SUCCESS: i32 = 0;
@@ -107,7 +107,7 @@ const RIGHTS_FILE: u64 = RIGHTS_FD_READ
 // Rights whose presence indicates the caller intends to mutate the file or
 // its metadata (write data, extend it, change its times, fsync, etc.). When
 // any of these is requested at path_open, we treat the open as needing
-// Deno write permission so a read-only --allow-read can't be turned into a
+// Edno write permission so a read-only --allow-read can't be turned into a
 // write-capable handle.
 const RIGHTS_MUTATING: u64 = RIGHTS_FD_WRITE
   | RIGHTS_FD_DATASYNC
@@ -204,7 +204,7 @@ impl WasiInner {
   ///
   /// Note: callers pair this with [`has_right`], which treats `None` as
   /// "all rights granted". For inherited stdio that's fine. For HostFile,
-  /// the per-op rights gate is intentionally skipped because the Deno
+  /// the per-op rights gate is intentionally skipped because the Edno
   /// permission for the underlying path was already paid when node:fs
   /// opened the user fd (see [`make_stdio_entry`]'s `FdTable` check);
   /// the OS-level open mode then limits what actually succeeds.
@@ -420,7 +420,7 @@ pub struct WasiContext {
 
 // SAFETY: WasiContext contains no pointers to trace
 unsafe impl GarbageCollected for WasiContext {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"WasiContext"
@@ -533,7 +533,7 @@ pub enum WasiError {
   Type(String),
   #[class(inherit)]
   #[error(transparent)]
-  Permission(#[from] deno_permissions::PermissionCheckError),
+  Permission(#[from] edno_permissions::PermissionCheckError),
 }
 
 #[op2]
@@ -1396,7 +1396,7 @@ impl WasiContext {
     let fdflags_u16 = fdflags as u16;
     let rights = fs_rights_base as u64;
     // Any right that would let the caller mutate file state or metadata
-    // requires Deno write permission. RIGHTS_FD_WRITE alone is not enough
+    // requires Edno write permission. RIGHTS_FD_WRITE alone is not enough
     // because RIGHTS_FD_FILESTAT_SET_TIMES (utimens via fd) succeeds at the
     // OS level even on read-only handles when the caller owns the file.
     let needs_write_perm = rights & RIGHTS_MUTATING != 0;
@@ -1871,7 +1871,7 @@ impl WasiContext {
       return ERRNO_FAULT;
     };
     let inner = self.inner.borrow();
-    // The Deno permission check inside `resolve_preopen_path` is what
+    // The Edno permission check inside `resolve_preopen_path` is what
     // actually gates the OS-level hardlink; the per-fd rights check here
     // is purely for parity with the other path_* ops that consult the
     // dirfd's stored rights (`path_create_directory`, `path_unlink_file`,
@@ -2311,9 +2311,9 @@ fn resolve_filestat_times_from_meta(
 /// handle so the user-side fd stays open after WASI exits.
 ///
 /// Permissions: we only accept fds that node:fs has registered in
-/// `deno_io::FdTable`, so an opener went through Deno's permission system
+/// `edno_io::FdTable`, so an opener went through Edno's permission system
 /// (op_node_open_sync). Naked OS fds inherited from the parent process or
-/// internal Deno opens are rejected so the WASI constructor can't become
+/// internal Edno opens are rejected so the WASI constructor can't become
 /// an escape hatch around `--allow-read` / `--allow-write`.
 fn make_stdio_entry(
   state: &mut OpState,
@@ -2324,7 +2324,7 @@ fn make_stdio_entry(
     0..=2 => None,
     fd if fd < 0 => None,
     fd => {
-      if !state.borrow::<deno_io::FdTable>().contains(fd) {
+      if !state.borrow::<edno_io::FdTable>().contains(fd) {
         return None;
       }
       dup_user_fd_to_file(state, fd)

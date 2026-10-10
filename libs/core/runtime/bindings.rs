@@ -318,7 +318,7 @@ where
 
 /// Create an object on the `globalThis` that looks like this:
 /// ```ignore
-/// globalThis.Deno = {
+/// globalThis.Edno = {
 ///   core: {
 ///     ops: {},
 ///   },
@@ -334,31 +334,31 @@ pub(crate) fn initialize_deno_core_namespace<'s, 'i>(
   init_mode: InitMode,
 ) {
   let global = context.global(scope);
-  let deno_str = DENO.v8_string(scope).unwrap();
+  let edno_str = EDNO.v8_string(scope).unwrap();
 
-  let maybe_deno_obj_val = global.get(scope, deno_str.into());
+  let maybe_deno_obj_val = global.get(scope, edno_str.into());
 
-  // If `Deno.core` is already set up, let's exit early.
-  if let Some(deno_obj_val) = maybe_deno_obj_val
-    && !deno_obj_val.is_undefined()
+  // If `Edno.core` is already set up, let's exit early.
+  if let Some(edno_obj_val) = maybe_deno_obj_val
+    && !edno_obj_val.is_undefined()
   {
     return;
   }
 
-  let deno_obj = v8::Object::new(scope);
-  let deno_core_key = CORE.v8_string(scope).unwrap();
-  // Set up `Deno.core.ops` object
-  let deno_core_ops_obj = v8::Object::new(scope);
-  let deno_core_ops_key = OPS.v8_string(scope).unwrap();
+  let edno_obj = v8::Object::new(scope);
+  let edno_core_key = CORE.v8_string(scope).unwrap();
+  // Set up `Edno.core.ops` object
+  let edno_core_ops_obj = v8::Object::new(scope);
+  let edno_core_ops_key = OPS.v8_string(scope).unwrap();
 
-  let deno_core_obj = v8::Object::new(scope);
-  deno_core_obj
-    .set(scope, deno_core_ops_key.into(), deno_core_ops_obj.into())
+  let edno_core_obj = v8::Object::new(scope);
+  edno_core_obj
+    .set(scope, edno_core_ops_key.into(), edno_core_ops_obj.into())
     .unwrap();
 
   // If we're initializing fresh context set up the console
   if init_mode == InitMode::New {
-    // Bind `call_console` to Deno.core.callConsole. Like Node's
+    // Bind `call_console` to Edno.core.callConsole. Like Node's
     // `consoleCall`, it must not be constructable so that the bound console
     // methods throw when invoked with `new`.
     let call_console_fn = v8::Function::builder(call_console)
@@ -366,9 +366,9 @@ pub(crate) fn initialize_deno_core_namespace<'s, 'i>(
       .build(scope)
       .unwrap();
     let call_console_key = CALL_CONSOLE.v8_string(scope).unwrap();
-    deno_core_obj.set(scope, call_console_key.into(), call_console_fn.into());
+    edno_core_obj.set(scope, call_console_key.into(), call_console_fn.into());
 
-    // Bind v8 console object to Deno.core.console
+    // Bind v8 console object to Edno.core.console
     let extra_binding_obj = context.get_extras_binding_object(scope);
     let console_obj: v8::Local<v8::Object> = get(
       scope,
@@ -377,11 +377,11 @@ pub(crate) fn initialize_deno_core_namespace<'s, 'i>(
       "ExtrasBindingObject.console",
     );
     let console_key = CONSOLE.v8_string(scope).unwrap();
-    deno_core_obj.set(scope, console_key.into(), console_obj.into());
+    edno_core_obj.set(scope, console_key.into(), console_obj.into());
   }
 
-  deno_obj.set(scope, deno_core_key.into(), deno_core_obj.into());
-  global.set(scope, deno_str.into(), deno_obj.into());
+  edno_obj.set(scope, edno_core_key.into(), edno_core_obj.into());
+  global.set(scope, edno_str.into(), edno_obj.into());
 }
 
 /// Execute `00_primordials.js` and `00_infra.js` that are required for ops
@@ -430,18 +430,18 @@ pub(crate) fn initialize_deno_core_ops_bindings<'s, 'i>(
   let global = context.global(scope);
 
   // Set up JavaScript bindings for the defined op - this will insert proper
-  // `v8::Function` into `Deno.core.ops` object. For async ops, there a bit
+  // `v8::Function` into `Edno.core.ops` object. For async ops, there a bit
   // more machinery involved, see comment below.
-  let deno_obj = get(scope, global, DENO, "Deno");
-  let deno_core_obj = get(scope, deno_obj, CORE, "Deno.core");
-  let deno_core_ops_obj: v8::Local<v8::Object> =
-    get(scope, deno_core_obj, OPS, "Deno.core.ops");
+  let edno_obj = get(scope, global, EDNO, "Edno");
+  let edno_core_obj = get(scope, edno_obj, CORE, "Edno.core");
+  let edno_core_ops_obj: v8::Local<v8::Object> =
+    get(scope, edno_core_obj, OPS, "Edno.core.ops");
 
   let set_up_async_stub_fn: v8::Local<v8::Function> = get(
     scope,
-    deno_core_obj,
+    edno_core_obj,
     SET_UP_ASYNC_STUB,
-    "Deno.core.setUpAsyncStub",
+    "Edno.core.setUpAsyncStub",
   );
 
   let prototype_key = v8::String::new(scope, "prototype").unwrap();
@@ -566,7 +566,7 @@ pub(crate) fn initialize_deno_core_ops_bindings<'s, 'i>(
       }
     }
 
-    deno_core_ops_obj.set(scope, key.into(), op_fn.into());
+    edno_core_ops_obj.set(scope, key.into(), op_fn.into());
 
     let id = (decl.type_name)().to_string();
     fn_template_store.insert(id, v8::Global::new(scope, tmpl));
@@ -582,7 +582,7 @@ pub(crate) fn initialize_deno_core_ops_bindings<'s, 'i>(
     };
     let key = op_ctx.decl().name_fast.v8_string(scope).unwrap();
 
-    // For async ops we need to set them up, by calling `Deno.core.setUpAsyncStub` -
+    // For async ops we need to set them up, by calling `Edno.core.setUpAsyncStub` -
     // this call will generate an optimized function that binds to the provided
     // op, while keeping track of promises and error remapping.
     if op_ctx.decl().is_async {
@@ -592,7 +592,7 @@ pub(crate) fn initialize_deno_core_ops_bindings<'s, 'i>(
       op_fn = result.try_into().unwrap()
     }
 
-    deno_core_ops_obj.set(scope, key.into(), op_fn.into());
+    edno_core_ops_obj.set(scope, key.into(), op_fn.into());
   }
 }
 
@@ -604,7 +604,7 @@ pub(crate) fn initialize_deno_core_ops_bindings<'s, 'i>(
 /// fresh fast-call-equipped functions for each op that declares a `fast_fn`
 /// and overwrites:
 ///
-/// 1. the top-level entries in `Deno.core.ops`,
+/// 1. the top-level entries in `Edno.core.ops`,
 /// 2. instance methods on each cppgc class prototype,
 /// 3. static methods on each cppgc class function itself.
 ///
@@ -612,12 +612,12 @@ pub(crate) fn initialize_deno_core_ops_bindings<'s, 'i>(
 /// `FunctionTemplate::build` (no `Managed`) and survived the snapshot.
 pub(crate) fn upgrade_snapshotted_ops_with_fast_calls<'s, 'i>(
   scope: &mut v8::PinScope<'s, 'i>,
-  // `Deno.core.ops` and `Deno.core.setUpAsyncStub`, passed in directly because
-  // `Deno.core` is scrubbed from the public `Deno` after bootstrap and the
+  // `Edno.core.ops` and `Edno.core.setUpAsyncStub`, passed in directly because
+  // `Edno.core` is scrubbed from the public `Edno` after bootstrap and the
   // deferred caller can no longer read them from the global (see
   // `snapshotted_fast_op_refs` / `ensure_fast_ops_upgraded`).
-  deno_core_ops_obj: v8::Local<'s, v8::Object>,
-  // The captured-bootstrap clone of `Deno.core.ops` (`capturedCore.ops` in
+  edno_core_ops_obj: v8::Local<'s, v8::Object>,
+  // The captured-bootstrap clone of `Edno.core.ops` (`capturedCore.ops` in
   // 01_core.js) that residual ext modules read ops through. The flat-op `.set`s
   // below replace slots on the ops object, which the shallow clone doesn't see;
   // mirror them here so residual ext modules get the fast functions too.
@@ -642,10 +642,10 @@ pub(crate) fn upgrade_snapshotted_ops_with_fast_calls<'s, 'i>(
       index += 1;
     }
 
-    // Resolve the class function from `Deno.core.ops`; we need it both as the
+    // Resolve the class function from `Edno.core.ops`; we need it both as the
     // anchor for prototype methods and to receive static methods.
     let class_key = decl.name.1.v8_string(scope).unwrap();
-    let class_fn_val = deno_core_ops_obj.get(scope, class_key.into());
+    let class_fn_val = edno_core_ops_obj.get(scope, class_key.into());
     let class_fn =
       class_fn_val.and_then(|v| v8::Local::<v8::Function>::try_from(v).ok());
     let prototype = class_fn.and_then(|f| {
@@ -709,7 +709,7 @@ pub(crate) fn upgrade_snapshotted_ops_with_fast_calls<'s, 'i>(
       op_fn = result.try_into().unwrap();
     }
 
-    deno_core_ops_obj.set(scope, key.into(), op_fn.into());
+    edno_core_ops_obj.set(scope, key.into(), op_fn.into());
     if let Some(clone_ops_obj) = clone_ops_obj {
       clone_ops_obj.set(scope, key.into(), op_fn.into());
     }
@@ -720,28 +720,28 @@ pub(crate) fn upgrade_snapshotted_ops_with_fast_calls<'s, 'i>(
 /// residual ext-module loaders (`op_lazy_load_esm` / `op_load_ext_script`)
 /// before the loaded module's body captures its op references, so runtime
 /// modules see the fast-call overloads. Programs that never load a residual
-/// module (e.g. `deno run empty.js`) never trigger it, saving the ~0.9ms pass.
+/// module (e.g. `edno run empty.js`) never trigger it, saving the ~0.9ms pass.
 /// No-op during snapshot build / fresh-bind (flag pre-set in `new_inner`).
-/// Read `Deno.core.ops` + `Deno.core.setUpAsyncStub` from the global. Valid
-/// only while `Deno.core` is still present (during `new_inner`, before the
-/// bootstrap scrubs `Deno.core` from the public `Deno`). The deferred upgrade
+/// Read `Edno.core.ops` + `Edno.core.setUpAsyncStub` from the global. Valid
+/// only while `Edno.core` is still present (during `new_inner`, before the
+/// bootstrap scrubs `Edno.core` from the public `Edno`). The deferred upgrade
 /// stashes the result (`ContextState::deferred_fast_ops`) for later use.
 pub(crate) fn snapshotted_fast_op_refs<'s, 'i>(
   scope: &mut v8::PinScope<'s, 'i>,
   context: v8::Local<'s, v8::Context>,
 ) -> (v8::Local<'s, v8::Object>, v8::Local<'s, v8::Function>) {
   let global = context.global(scope);
-  let deno_obj = get(scope, global, DENO, "Deno");
-  let deno_core_obj = get(scope, deno_obj, CORE, "Deno.core");
-  let deno_core_ops_obj: v8::Local<v8::Object> =
-    get(scope, deno_core_obj, OPS, "Deno.core.ops");
+  let edno_obj = get(scope, global, EDNO, "Edno");
+  let edno_core_obj = get(scope, edno_obj, CORE, "Edno.core");
+  let edno_core_ops_obj: v8::Local<v8::Object> =
+    get(scope, edno_core_obj, OPS, "Edno.core.ops");
   let set_up_async_stub_fn: v8::Local<v8::Function> = get(
     scope,
-    deno_core_obj,
+    edno_core_obj,
     SET_UP_ASYNC_STUB,
-    "Deno.core.setUpAsyncStub",
+    "Edno.core.setUpAsyncStub",
   );
-  (deno_core_ops_obj, set_up_async_stub_fn)
+  (edno_core_ops_obj, set_up_async_stub_fn)
 }
 
 pub(crate) fn ensure_fast_ops_upgraded(scope: &mut v8::PinScope) {
@@ -756,7 +756,7 @@ pub(crate) fn ensure_fast_ops_upgraded(scope: &mut v8::PinScope) {
   let Some((ops_global, stub_global)) = refs else {
     return;
   };
-  let deno_core_ops_obj = v8::Local::new(scope, &ops_global);
+  let edno_core_ops_obj = v8::Local::new(scope, &ops_global);
   let set_up_async_stub_fn = v8::Local::new(scope, &stub_global);
 
   // Residual ext modules read ops through the captured-bootstrap clone of
@@ -777,7 +777,7 @@ pub(crate) fn ensure_fast_ops_upgraded(scope: &mut v8::PinScope) {
 
   upgrade_snapshotted_ops_with_fast_calls(
     scope,
-    deno_core_ops_obj,
+    edno_core_ops_obj,
     clone_ops_obj,
     set_up_async_stub_fn,
     &context_state.op_ctxs,
@@ -1391,7 +1391,7 @@ fn host_import_module_with_vm_dynamic_import_callback<'s, 'i>(
 
 /// Build a Node-style `ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING` TypeError.
 /// The error code and message string match Node.js exactly so that user
-/// code switching on `err.code` behaves the same under Deno.
+/// code switching on `err.code` behaves the same under Edno.
 fn vm_dynamic_import_callback_missing_exception<'s>(
   scope: &mut v8::PinScope<'s, '_>,
 ) -> v8::Local<'s, v8::Value> {
@@ -1426,7 +1426,7 @@ pub extern "C" fn host_initialize_import_meta_object_callback(
 
   let module_global = v8::Global::new(scope, module);
   let Some(name) = module_map.get_name_by_module(&module_global) else {
-    // The module is not tracked by deno_core's module map. This is the
+    // The module is not tracked by edno_core's module map. This is the
     // happy path for `node:vm` `SourceTextModule`, whose v8::Module is
     // created directly by the `node:vm` op and never registered. Delegate
     // to the external hook (set by `node:vm`) if one is registered; if
@@ -1747,11 +1747,11 @@ fn call_console(
   let receiver = args.this();
   let inspector_console_method =
     v8::Local::<v8::Function>::try_from(args.get(0)).unwrap();
-  let deno_console_method =
+  let edno_console_method =
     v8::Local::<v8::Function>::try_from(args.get(1)).unwrap();
 
   inspector_console_method.call(scope, receiver.into(), &call_args);
-  deno_console_method.call(scope, receiver.into(), &call_args);
+  edno_console_method.call(scope, receiver.into(), &call_args);
 }
 
 fn cast_closure<F>(f: F) -> F
@@ -1840,9 +1840,9 @@ pub fn create_exports_for_ops_virtual_module<'s, 'i>(
 ) -> Vec<(FastStaticString, v8::Local<'s, v8::Value>)> {
   let mut exports = Vec::with_capacity(op_ctxs.len());
 
-  let deno_obj = get(scope, global, DENO, "Deno");
-  let deno_core_obj = get(scope, deno_obj, CORE, "Deno.core");
-  let ops_obj = get(scope, deno_core_obj, OPS, "Deno.core.ops");
+  let edno_obj = get(scope, global, EDNO, "Edno");
+  let edno_core_obj = get(scope, edno_obj, CORE, "Edno.core");
+  let ops_obj = get(scope, edno_core_obj, OPS, "Edno.core.ops");
 
   let mut index = 0;
 

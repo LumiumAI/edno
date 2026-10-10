@@ -2,8 +2,8 @@
 
 use std::ffi::CStr;
 
-use deno_core::GarbageCollected;
-use deno_core::v8;
+use edno_core::GarbageCollected;
+use edno_core::v8;
 
 use crate::shared::RawKeyData;
 

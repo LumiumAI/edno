@@ -2,6 +2,6 @@
   "nodeModulesDir": "manual",
   "workspace": ["./member"],
   "imports": {
-    "@denotest/add": "npm:@denotest/add@0.5"
+    "@ednotest/add": "npm:@ednotest/add@0.5"
   }
 }

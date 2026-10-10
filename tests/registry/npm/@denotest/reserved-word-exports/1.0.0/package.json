@@ -1,5 +1,5 @@
 {
-    "name": "@denotest/reserved-word-exports",
+    "name": "@ednotest/reserved-word-exports",
     "version": "1.0.0",
     "main": "index.cjs"
   }

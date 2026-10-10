@@ -1,7 +1,7 @@
-# Deno CLI Crate
+# Edno CLI Crate
 
-[![crates](https://img.shields.io/crates/v/deno.svg)](https://crates.io/crates/deno)
+[![crates](https://img.shields.io/crates/v/edno.svg)](https://crates.io/crates/edno)
 
-This provides the actual deno executable and the user-facing APIs.
+This provides the actual edno executable and the user-facing APIs.
 
-The deno crate uses the deno_core to provide the executable.
+The edno crate uses the edno_core to provide the executable.

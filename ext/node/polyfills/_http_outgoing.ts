@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent and Node contributors. All rights reserved. MIT license.
 
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 import { core, primordials } from "ext:core/mod.js";
 const {
@@ -33,21 +33,21 @@ const {
   TypedArrayPrototypeGetByteLength,
 } = primordials;
 const { getDefaultHighWaterMark } = core.loadExtScript(
-  "ext:deno_node/internal/streams/state.js",
+  "ext:edno_node/internal/streams/state.js",
 );
 const assert = core.loadExtScript(
-  "ext:deno_node/internal/assert.mjs",
+  "ext:edno_node/internal/assert.mjs",
 );
-const { EventEmitter: EE } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter: EE } = core.loadExtScript("ext:edno_node/_events.mjs");
 import { Stream } from "node:stream";
-const { deprecate } = core.loadExtScript("ext:deno_node/util.ts");
+const { deprecate } = core.loadExtScript("ext:edno_node/util.ts");
 import type { Socket } from "node:net";
 const {
   kNeedDrain,
   kOutHeaders,
   utcDate,
-} = core.loadExtScript("ext:deno_node/internal/http.ts");
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+} = core.loadExtScript("ext:edno_node/internal/http.ts");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 import {
   _checkInvalidHeaderChar as checkInvalidHeaderChar,
   _checkIsHttpToken as checkIsHttpToken,
@@ -56,7 +56,7 @@ import {
 const {
   defaultTriggerAsyncIdScope,
   symbols,
-} = core.loadExtScript("ext:deno_node/internal/async_hooks.ts");
+} = core.loadExtScript("ext:edno_node/internal/async_hooks.ts");
 const { async_id_symbol } = symbols;
 const {
   ERR_HTTP_BODY_NOT_ALLOWED,
@@ -75,20 +75,20 @@ const {
   ERR_STREAM_WRITE_AFTER_END,
   errnoException,
   hideStackFrames,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 const {
   kLastWriteWasAsync,
   streamBaseState,
-} = core.loadExtScript("ext:deno_node/internal_binding/stream_wrap.ts");
+} = core.loadExtScript("ext:edno_node/internal_binding/stream_wrap.ts");
 const { validateString } = core.loadExtScript(
-  "ext:deno_node/internal/validators.mjs",
+  "ext:edno_node/internal/validators.mjs",
 );
 const { isUint8Array } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 
 const { debuglog } = core.loadExtScript(
-  "ext:deno_node/internal/util/debuglog.ts",
+  "ext:edno_node/internal/util/debuglog.ts",
 );
 let debug = debuglog("http", (fn) => {
   debug = fn;
@@ -938,7 +938,7 @@ ObjectDefineProperties(OutgoingMessage.prototype, {
       if (headers) {
         if (headers === this[kOutHeaders]) {
           // kOutHeaders format: { lowercase: [OriginalName, value] }
-          // deno-lint-ignore guard-for-in
+          // edno-lint-ignore guard-for-in
           for (const key in headers) {
             const entry = headers[key];
             this._storeHeaderEntry(state, entry[0], entry[1], false);
@@ -1120,7 +1120,7 @@ ObjectDefineProperties(OutgoingMessage.prototype, {
       value: any,
     ) {
       // Ignore lint to keep the code as similar to Nodejs as possible
-      // deno-lint-ignore no-this-alias
+      // edno-lint-ignore no-this-alias
       const self = this;
       if (field.length < 4 || field.length > 17) {
         return;
@@ -1194,7 +1194,7 @@ ObjectDefineProperties(OutgoingMessage.prototype, {
       let cookies = null;
       const iterator = headers[SymbolIterator]();
       while (true) {
-        // deno-lint-ignore deno-internal/prefer-primordials
+        // edno-lint-ignore edno-internal/prefer-primordials
         const { done, value: entry } = iterator.next();
         if (done) {
           break;
@@ -1356,7 +1356,7 @@ ObjectDefineProperty(OutgoingMessage.prototype, "headersSent", {
   },
 });
 
-// deno-lint-ignore camelcase
+// edno-lint-ignore camelcase
 const crlf_buf = Buffer.from("\r\n");
 
 function _checkStrictContentLength(msg: any) {

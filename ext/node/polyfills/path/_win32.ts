@@ -9,9 +9,9 @@ const {
   CHAR_COLON,
   CHAR_DOT,
   CHAR_QUESTION_MARK,
-} = core.loadExtScript("ext:deno_node/path/_constants.ts");
+} = core.loadExtScript("ext:edno_node/path/_constants.ts");
 const { ERR_INVALID_ARG_TYPE } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 
 const {
@@ -21,10 +21,10 @@ const {
   isPosixPathSeparator,
   isWindowsDeviceRoot,
   normalizeString,
-} = core.loadExtScript("ext:deno_node/path/_util.ts");
-const { default: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+} = core.loadExtScript("ext:edno_node/path/_util.ts");
+const { default: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 const lazyLoadGlob = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_glob.ts",
+  "ext:edno_node/_fs/_fs_glob.ts",
 );
 
 const {
@@ -95,15 +95,15 @@ function resolve(...pathSegments: string[]): string {
 
   for (let i = pathSegments.length - 1; i >= -1; i--) {
     let path: string;
-    // deno-lint-ignore no-explicit-any
-    const { Deno } = globalThis as any;
+    // edno-lint-ignore no-explicit-any
+    const { Edno } = globalThis as any;
     if (i >= 0) {
       path = pathSegments[i];
     } else if (!resolvedDevice) {
-      if (typeof Deno?.cwd !== "function") {
+      if (typeof Edno?.cwd !== "function") {
         throw new TypeError("Resolved a drive-letter-less path without a CWD.");
       }
-      path = Deno.cwd();
+      path = Edno.cwd();
       if (
         pathSegments.length === 0 ||
         ((pathSegments.length === 1 &&
@@ -114,7 +114,7 @@ function resolve(...pathSegments: string[]): string {
       }
     } else {
       if (
-        typeof Deno?.env?.get !== "function" || typeof Deno?.cwd !== "function"
+        typeof Edno?.env?.get !== "function" || typeof Edno?.cwd !== "function"
       ) {
         throw new TypeError("Resolved a relative path without a CWD.");
       }
@@ -123,7 +123,7 @@ function resolve(...pathSegments: string[]): string {
       // absolute path, get cwd for that drive, or the process cwd if
       // the drive cwd is not available. We're sure the device is not
       // a UNC path at this points, because UNC paths are always absolute.
-      path = globalThis.process.env[`=${resolvedDevice}`] || Deno.cwd();
+      path = globalThis.process.env[`=${resolvedDevice}`] || Edno.cwd();
 
       // Verify that a cwd was found and that it actually points
       // to our drive. If not, default to the drive's root.

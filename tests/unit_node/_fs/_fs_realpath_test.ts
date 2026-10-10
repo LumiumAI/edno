@@ -4,10 +4,10 @@ import { assertEquals } from "@std/assert";
 import { assertCallbackErrorUncaught } from "../_test_utils.ts";
 import { realpath, realpathSync } from "node:fs";
 
-Deno.test("realpath", async function () {
-  const tempFile = await Deno.makeTempFile();
+Edno.test("realpath", async function () {
+  const tempFile = await Edno.makeTempFile();
   const tempFileAlias = tempFile + ".alias";
-  await Deno.symlink(tempFile, tempFileAlias);
+  await Edno.symlink(tempFile, tempFileAlias);
   const realPath = await new Promise((resolve, reject) => {
     realpath(tempFile, (err, path) => {
       if (err) {
@@ -29,27 +29,27 @@ Deno.test("realpath", async function () {
   assertEquals(realPath, realSymLinkPath);
 });
 
-Deno.test("realpathSync", function () {
-  const tempFile = Deno.makeTempFileSync();
+Edno.test("realpathSync", function () {
+  const tempFile = Edno.makeTempFileSync();
   const tempFileAlias = tempFile + ".alias";
-  Deno.symlinkSync(tempFile, tempFileAlias);
+  Edno.symlinkSync(tempFile, tempFileAlias);
   const realPath = realpathSync(tempFile);
   const realSymLinkPath = realpathSync(tempFileAlias);
   assertEquals(realPath, realSymLinkPath);
 });
 
-Deno.test("[std/node/fs] realpath callback isn't called twice if error is thrown", async () => {
-  const tempDir = await Deno.makeTempDir();
+Edno.test("[std/node/fs] realpath callback isn't called twice if error is thrown", async () => {
+  const tempDir = await Edno.makeTempDir();
   const tempFile = path.join(tempDir, "file.txt");
   const linkFile = path.join(tempDir, "link.txt");
-  await Deno.writeTextFile(tempFile, "hello world");
-  await Deno.symlink(tempFile, linkFile, { type: "file" });
+  await Edno.writeTextFile(tempFile, "hello world");
+  await Edno.symlink(tempFile, linkFile, { type: "file" });
   const importUrl = new URL("node:fs", import.meta.url);
   await assertCallbackErrorUncaught({
     prelude: `import { realpath } from ${JSON.stringify(importUrl)}`,
     invocation: `realpath(${JSON.stringify(`${tempDir}/link.txt`)}, `,
     async cleanup() {
-      await Deno.remove(tempDir, { recursive: true });
+      await Edno.remove(tempDir, { recursive: true });
     },
   });
 });

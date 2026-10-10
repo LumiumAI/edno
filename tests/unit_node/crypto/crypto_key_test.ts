@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 
 // Copyright 2018-2026 the Deno authors. MIT license.
 import {
@@ -22,7 +22,7 @@ import { promisify } from "node:util";
 import { Buffer } from "node:buffer";
 import { assert, assertEquals, assertThrows } from "@std/assert";
 
-const RUN_SLOW_TESTS = Deno.env.get("SLOW_TESTS") === "1";
+const RUN_SLOW_TESTS = Edno.env.get("SLOW_TESTS") === "1";
 
 const generateKeyPairAsync = promisify(
   (
@@ -66,12 +66,12 @@ function x448RawPublicKey(key: KeyObject): Buffer {
 }
 
 const pemBuffer = Buffer.from(
-  await Deno.readTextFile(
+  await Edno.readTextFile(
     new URL("../testdata/x509.pem", import.meta.url),
   ),
 );
 
-Deno.test("X448 imported private key derives RFC 7748 values", () => {
+Edno.test("X448 imported private key derives RFC 7748 values", () => {
   const privateKey = x448PrivateKey(Buffer.from(
     "27a4354608f3bdd38f1f5af305f3e0682efe4e25808249d8fcb55927f6a9f446b8dc1d0a2c3b8cb133a5673b59a6d55ce754ec0c9a555401",
     "hex",
@@ -98,7 +98,7 @@ Deno.test("X448 imported private key derives RFC 7748 values", () => {
   );
 });
 
-Deno.test("X448 generated peers derive the same secret", () => {
+Edno.test("X448 generated peers derive the same secret", () => {
   const alice = generateKeyPairSync("x448");
   const bob = generateKeyPairSync("x448");
   const aliceSecret = diffieHellman({
@@ -112,7 +112,7 @@ Deno.test("X448 generated peers derive the same secret", () => {
   assertEquals(aliceSecret, bobSecret);
 });
 
-Deno.test("X448 rejects low-order public keys", () => {
+Edno.test("X448 rejects low-order public keys", () => {
   const privateKey = x448PrivateKey(Buffer.alloc(56, 42));
   const pMinusOne = Buffer.alloc(56, 0xff);
   pMinusOne[0] = 0xfe;
@@ -130,7 +130,7 @@ Deno.test("X448 rejects low-order public keys", () => {
   }
 });
 
-Deno.test({
+Edno.test({
   name: "create secret key",
   fn() {
     const key = createSecretKey(Buffer.alloc(0));
@@ -140,7 +140,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "export secret key",
   fn() {
     const material = Buffer.from(randomBytes(32));
@@ -149,7 +149,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "export jwk secret key",
   fn() {
     const material = Buffer.from("secret");
@@ -161,7 +161,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "createHmac with secret key",
   fn() {
     const key = createSecretKey(Buffer.from("secret"));
@@ -176,7 +176,7 @@ const modulusLengths = RUN_SLOW_TESTS ? [2048, 3072] : [2048];
 
 for (const type of ["rsa", "rsa-pss", "dsa"]) {
   for (const modulusLength of modulusLengths) {
-    Deno.test({
+    Edno.test({
       name: `generate ${type} key ${modulusLength}`,
       fn() {
         const { publicKey, privateKey } = generateKeyPairSync(type as any, {
@@ -188,7 +188,7 @@ for (const type of ["rsa", "rsa-pss", "dsa"]) {
       },
     });
 
-    Deno.test({
+    Edno.test({
       name: `generate ${type} key async ${modulusLength}`,
       async fn() {
         const x = await generateKeyPairAsync(type as any, {
@@ -212,7 +212,7 @@ for (
     "secp256r1",
   ]
 ) {
-  Deno.test({
+  Edno.test({
     name: `generate ec key ${namedCurve}`,
     fn() {
       const { publicKey, privateKey } = generateKeyPairSync("ec", {
@@ -224,7 +224,7 @@ for (
     },
   });
 
-  Deno.test({
+  Edno.test({
     name: `generate ec key ${namedCurve} async`,
     async fn() {
       const { publicKey, privateKey } = await generateKeyPairAsync("ec", {
@@ -236,7 +236,7 @@ for (
     },
   });
 
-  Deno.test({
+  Edno.test({
     name: `generate ec key ${namedCurve} paramEncoding=explicit`,
     fn() {
       // @ts-ignore: @types/node is broken?
@@ -254,7 +254,7 @@ for (
 for (
   const groupName of ["modp5", "modp14", "modp15", "modp16", "modp17", "modp18"]
 ) {
-  Deno.test({
+  Edno.test({
     name: `generate dh key ${groupName}`,
     fn() {
       // @ts-ignore: @types/node is broken?
@@ -267,7 +267,7 @@ for (
     },
   });
 
-  Deno.test({
+  Edno.test({
     name: `generate dh key ${groupName} async`,
     async fn() {
       // @ts-ignore: @types/node is broken?
@@ -284,7 +284,7 @@ for (
 const primeLengths = RUN_SLOW_TESTS ? [1024, 2048, 4096] : [1024];
 
 for (const primeLength of primeLengths) {
-  Deno.test({
+  Edno.test({
     name: `generate dh key ${primeLength}`,
     fn() {
       // @ts-ignore: @types/node is broken?
@@ -298,7 +298,7 @@ for (const primeLength of primeLengths) {
     },
   });
 
-  Deno.test({
+  Edno.test({
     name: `generate dh key ${primeLength} async`,
     async fn() {
       // @ts-ignore: @types/node is broken?
@@ -313,11 +313,11 @@ for (const primeLength of primeLengths) {
   });
 }
 
-const rsaPrivateKey = Deno.readTextFileSync(
+const rsaPrivateKey = Edno.readTextFileSync(
   new URL("../testdata/rsa_private.pem", import.meta.url),
 );
 
-Deno.test("createPrivateKey rsa", function () {
+Edno.test("createPrivateKey rsa", function () {
   const key = createPrivateKey(rsaPrivateKey);
   assertEquals(key.type, "private");
   assertEquals(key.asymmetricKeyType, "rsa");
@@ -329,7 +329,7 @@ Deno.test("createPrivateKey rsa", function () {
   );
 });
 
-Deno.test("createPrivateKey dh", function () {
+Edno.test("createPrivateKey dh", function () {
   // 1.2.840.113549.1.3.1
   const pem = "-----BEGIN PRIVATE KEY-----\n" +
     "MIIBoQIBADCB1QYJKoZIhvcNAQMBMIHHAoHBAP//////////yQ/aoiFowjTExmKL\n" +
@@ -347,7 +347,7 @@ Deno.test("createPrivateKey dh", function () {
   assertEquals(key.asymmetricKeyType, "dh");
 });
 
-Deno.test("createPublicKey dh", function () {
+Edno.test("createPublicKey dh", function () {
   // 1.2.840.113549.1.3.1
   const pem = "-----BEGIN PUBLIC KEY-----\n" +
     "MIIBnzCB1QYJKoZIhvcNAQMBMIHHAoHBAP//////////yQ/aoiFowjTExmKLgNwc\n" +
@@ -367,22 +367,22 @@ Deno.test("createPublicKey dh", function () {
 
 // openssl ecparam -name secp256r1 -genkey -noout -out a.pem
 // openssl pkcs8 -topk8 -nocrypt -in a.pem -out b.pem
-const ecPrivateKey = Deno.readTextFileSync(
+const ecPrivateKey = Edno.readTextFileSync(
   new URL("./ec_private_secp256r1.pem", import.meta.url),
 );
 
-Deno.test("createPrivateKey ec", function () {
+Edno.test("createPrivateKey ec", function () {
   const key = createPrivateKey(ecPrivateKey);
   assertEquals(key.type, "private");
   assertEquals(key.asymmetricKeyType, "ec");
   assertEquals(key.asymmetricKeyDetails?.namedCurve, "prime256v1");
 });
 
-const rsaPublicKey = Deno.readTextFileSync(
+const rsaPublicKey = Edno.readTextFileSync(
   new URL("../testdata/rsa_public.pem", import.meta.url),
 );
 
-Deno.test("createPublicKey() RSA", () => {
+Edno.test("createPublicKey() RSA", () => {
   const key = createPublicKey(rsaPublicKey);
   assertEquals(key.type, "public");
   assertEquals(key.asymmetricKeyType, "rsa");
@@ -396,7 +396,7 @@ Deno.test("createPublicKey() RSA", () => {
 const nonCanonicalRsaSpki =
   "MDswDQYJKoZIhvcNAQEBBQADKgAwJwIg3wUvyMOfq7G6dT5bIM6keoShd9YGwP7PIc2Tfa8Q99ECAwEAAQ==";
 
-Deno.test("createPublicKey() accepts non-canonical RSA SPKI", () => {
+Edno.test("createPublicKey() accepts non-canonical RSA SPKI", () => {
   const spki = Buffer.from(nonCanonicalRsaSpki, "base64");
   const key = createPublicKey({ key: spki, format: "der", type: "spki" });
 
@@ -423,7 +423,7 @@ Deno.test("createPublicKey() accepts non-canonical RSA SPKI", () => {
 const nonCanonicalRsaSpki2048 =
   "MIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQDBrXYgS+MmJHsQV/SJhI1iOx9rEDKpbxx8L224GWBYRL+18/9n/hV+WrJlHj8YR+9oFy5k+cb/oTfOuU0Sa/imxZsHt8DYqQsSBiefKvZ8/OgrhUapnXIs3uh2Qg6ck0RoFksAAvpck1nAxwL9tIc32Z1qesIgAO8U+PyhJEUpv1cYvNpACVRnaNx9izlLGjvlhilwB4UQxDZDGCahnsig5UTt+24K3thJTt6aYAYyHA/9aPLBJn0D2l7GM9IpTeaX5YQr+qjyLMzjK5rKZHhP9GxyobGtFCr2v/qmpnd6J7LD+xWr4STI3iEHOFxmsbd/f/tYrdgpxnmakOZgxuChAgMBAAE=";
 
-Deno.test("createPublicKey() accepts non-canonical RSA SPKI (long-form lengths)", () => {
+Edno.test("createPublicKey() accepts non-canonical RSA SPKI (long-form lengths)", () => {
   const spki = Buffer.from(nonCanonicalRsaSpki2048, "base64");
   const key = createPublicKey({ key: spki, format: "der", type: "spki" });
 
@@ -441,7 +441,7 @@ Deno.test("createPublicKey() accepts non-canonical RSA SPKI (long-form lengths)"
   assertEquals(jwk.e, "AQAB");
 });
 
-Deno.test("createPublicKey() rejects malformed non-canonical RSA SPKI", () => {
+Edno.test("createPublicKey() rejects malformed non-canonical RSA SPKI", () => {
   const spki = Buffer.from(nonCanonicalRsaSpki, "base64");
   // Append a trailing NULL inside the inner RSAPublicKey SEQUENCE, growing the
   // enclosing lengths by 2 to keep the outer SPKI structurally valid so it
@@ -463,18 +463,18 @@ Deno.test("createPublicKey() rejects malformed non-canonical RSA SPKI", () => {
 
 // openssl ecparam -name prime256v1 -genkey -noout -out a.pem
 // openssl ec -in a.pem -pubout -out b.pem
-const ecPublicKey = Deno.readTextFileSync(
+const ecPublicKey = Edno.readTextFileSync(
   new URL("../testdata/ec_prime256v1_public.pem", import.meta.url),
 );
 
-Deno.test("createPublicKey() EC", function () {
+Edno.test("createPublicKey() EC", function () {
   const key = createPublicKey(ecPublicKey);
   assertEquals(key.type, "public");
   assertEquals(key.asymmetricKeyType, "ec");
   assertEquals(key.asymmetricKeyDetails?.namedCurve, "prime256v1");
 });
 
-Deno.test("createPublicKey SPKI for DH", async function () {
+Edno.test("createPublicKey SPKI for DH", async function () {
   const { publicKey, privateKey } = await crypto.subtle.generateKey(
     {
       name: "ECDH",
@@ -503,7 +503,7 @@ Deno.test("createPublicKey SPKI for DH", async function () {
   assertEquals(privKey.asymmetricKeyType, "ec");
 });
 
-Deno.test("ECDH generateKeys compressed", function () {
+Edno.test("ECDH generateKeys compressed", function () {
   const ecdh = createECDH("secp256k1");
   const publicKey = ecdh.generateKeys("binary", "compressed");
   assertEquals(publicKey.length, 33);
@@ -512,7 +512,7 @@ Deno.test("ECDH generateKeys compressed", function () {
   assertEquals(uncompressedKey.length, 65);
 });
 
-Deno.test("ECDH getPublicKey compressed", function () {
+Edno.test("ECDH getPublicKey compressed", function () {
   const ecdh = createECDH("secp256k1");
   for (const format of ["compressed", "uncompressed"] as const) {
     ecdh.generateKeys("binary", format);
@@ -526,7 +526,7 @@ Deno.test("ECDH getPublicKey compressed", function () {
 });
 
 // https://github.com/denoland/deno/issues/20938
-Deno.test("rsa jwt signer", function () {
+Edno.test("rsa jwt signer", function () {
   const token = `-----BEGIN PRIVATE KEY-----
 MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCVoKHiWLQKlnCG
 oR4d8g+OSGXoJ3yY+BFubB+1TSaCvWGLkqHjYAA0UCgOoaazE2YnXhVlO4tLDLn/
@@ -572,7 +572,7 @@ SogaIHQjE81ZkmNtU5gM5Q==
   );
 });
 
-Deno.test("generate rsa export public key", async function () {
+Edno.test("generate rsa export public key", async function () {
   const { publicKey } = await generateKeyPairAsync("rsa", {
     modulusLength: 2048,
   });
@@ -585,7 +585,7 @@ Deno.test("generate rsa export public key", async function () {
   assert(der instanceof Uint8Array);
 });
 
-Deno.test("create public key with invalid utf-8 string", function () {
+Edno.test("create public key with invalid utf-8 string", function () {
   // This is an invalid UTF-8 string because it contains a lone utf-16 surrogate.
   const invalidPem = Buffer.from(new Uint8Array([0xE2, 0x28, 0xA1]));
   assertThrows(
@@ -597,7 +597,7 @@ Deno.test("create public key with invalid utf-8 string", function () {
   );
 });
 
-Deno.test("create private key with invalid utf-8 string", function () {
+Edno.test("create private key with invalid utf-8 string", function () {
   // This is an invalid UTF-8 string because it contains a lone utf-16 surrogate.
   const invalidPem = Buffer.from(new Uint8Array([0xE2, 0x28, 0xA1]));
   assertThrows(
@@ -609,7 +609,7 @@ Deno.test("create private key with invalid utf-8 string", function () {
   );
 });
 
-Deno.test("RSA JWK import public key", function () {
+Edno.test("RSA JWK import public key", function () {
   const key = {
     "kty": "RSA",
     "alg": "RS256",
@@ -643,7 +643,7 @@ nse0Qk4vDc2fc+sbnQ1jPiECAwEAAQ==
   assertEquals(pem, expectedPem);
 });
 
-Deno.test("Ed25519 import jwk public key #1", function () {
+Edno.test("Ed25519 import jwk public key #1", function () {
   const key = {
     "kty": "OKP",
     "crv": "Ed25519",
@@ -663,7 +663,7 @@ MCowBQYDK2VwAyEA11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo=
   assertEquals(spkiActual, spkiExpected);
 });
 
-Deno.test("Ed25519 import jwk public key #2", function () {
+Edno.test("Ed25519 import jwk public key #2", function () {
   const key = {
     "kty": "OKP",
     "crv": "Ed25519",
@@ -681,7 +681,7 @@ MCowBQYDK2VwAyEA11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo=
   assertEquals(spki, spkiExpected);
 });
 
-Deno.test("Ed25519 import jwk private key", function () {
+Edno.test("Ed25519 import jwk private key", function () {
   const key = {
     "kty": "OKP",
     "crv": "Ed25519",
@@ -701,7 +701,7 @@ MC4CAQAwBQYDK2VwBCIEIJ1hsZ3v/VpguoRK9JLsLMREScVpezJpGXA7rAMcrn9g
   assertEquals(pkcs8Actual, pkcs8Expected);
 });
 
-Deno.test("RSA export public JWK", function () {
+Edno.test("RSA export public JWK", function () {
   const importKey = "-----BEGIN PUBLIC KEY-----\n" +
     "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAqF66soiDvuqUB7ufWtuV\n" +
     "5a1nZIw90m9qHEl2MeNt66HeEjG2GeHDfF5a4uplutnAh3dwpFweHqGIyB16POTI\n" +
@@ -726,7 +726,7 @@ Deno.test("RSA export public JWK", function () {
   });
 });
 
-Deno.test("EC export public jwk", function () {
+Edno.test("EC export public jwk", function () {
   const key = "-----BEGIN PUBLIC KEY-----\n" +
     "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVEEIrFEZ+40Pk90LtKBQ3r7FGAPl\n" +
     "v4bvX9grC8bNiNiVAcyEKs+QZKQj/0/CUPJV10AmavrUoPk/7Wy0sejopQ==\n" +
@@ -742,7 +742,7 @@ Deno.test("EC export public jwk", function () {
   });
 });
 
-Deno.test("Ed25519 export public jwk", function () {
+Edno.test("Ed25519 export public jwk", function () {
   const key = "-----BEGIN PUBLIC KEY-----\n" +
     "MCowBQYDK2VwAyEAKCVFOD6Le61XM7HbN/MB/N06mX5bti2p50qjLvT1mzE=\n" +
     "-----END PUBLIC KEY-----\n";
@@ -756,7 +756,7 @@ Deno.test("Ed25519 export public jwk", function () {
   });
 });
 
-Deno.test("EC import jwk public key", function () {
+Edno.test("EC import jwk public key", function () {
   const publicKey = createPublicKey({
     key: {
       kty: "EC",
@@ -777,7 +777,7 @@ bsY8H6U2TnVlt+lNxkbl59dkMiE0YOnpe66Ogmo4QlTYPZySMb2c6dI8hA==
   assertEquals(publicSpki, spkiExpected);
 });
 
-Deno.test("EC import jwk private key", function () {
+Edno.test("EC import jwk private key", function () {
   const privateKey = createPrivateKey({
     key: {
       kty: "EC",
@@ -801,7 +801,7 @@ xjwfpTZOdWW36U3GRuXn12QyITRg6el7ro6CajhCVNg9nJIxvZzp0jyE
   assertEquals(privatePkcs8, pkcs8Expected);
 });
 
-Deno.test("createPublicKey x509", function () {
+Edno.test("createPublicKey x509", function () {
   const certificate = `-----BEGIN CERTIFICATE-----
 MIIC8zCCAdugAwIBAgIBATANBgkqhkiG9w0BAQsFADAbMRkwFwYDVQQDExB0ZXN0
 LWNlcnRpZmljYXRlMB4XDTI0MDkxNzA5MTczNVoXDTI3MDkxNzA5MTczNVowGzEZ
@@ -827,7 +827,7 @@ z6TExWlQMjt66nV7R8cRAkzmABrG+NW3e8Zpac7Lkuv+zu0S+K7c
 });
 
 // https://github.com/denoland/deno/issues/26188
-Deno.test("generateKeyPair large pem", function () {
+Edno.test("generateKeyPair large pem", function () {
   const passphrase = "mypassphrase";
   const cipher = "aes-256-cbc";
   const modulusLength = 4096;
@@ -847,7 +847,7 @@ Deno.test("generateKeyPair large pem", function () {
   });
 });
 
-Deno.test("generateKeyPair promisify", async () => {
+Edno.test("generateKeyPair promisify", async () => {
   const passphrase = "mypassphrase";
   const cipher = "aes-256-cbc";
   const modulusLength = 4096;
@@ -870,7 +870,7 @@ Deno.test("generateKeyPair promisify", async () => {
   assert(privateKey.startsWith("-----BEGIN ENCRYPTED PRIVATE KEY-----"));
 });
 
-Deno.test("private key export preserves passphrase bytes", async (t) => {
+Edno.test("private key export preserves passphrase bytes", async (t) => {
   const { privateKey } = generateKeyPairSync("ec", {
     namedCurve: "P-256",
   });
@@ -980,7 +980,7 @@ Deno.test("private key export preserves passphrase bytes", async (t) => {
   });
 });
 
-Deno.test("private key export validates passphrase options", () => {
+Edno.test("private key export validates passphrase options", () => {
   const { privateKey } = generateKeyPairSync("ec", {
     namedCurve: "P-256",
   });
@@ -1019,7 +1019,7 @@ Deno.test("private key export validates passphrase options", () => {
   );
 });
 
-Deno.test("RSA export private JWK", function () {
+Edno.test("RSA export private JWK", function () {
   // @ts-ignore @types/node broken
   const { privateKey, publicKey } = generateKeyPairSync("rsa", {
     modulusLength: 4096,
@@ -1035,7 +1035,7 @@ Deno.test("RSA export private JWK", function () {
   assertEquals((privateKey as any).n, (publicKey as any).n);
 });
 
-Deno.test("X509Certificate checkHost", function () {
+Edno.test("X509Certificate checkHost", function () {
   const der = Buffer.from(
     "308203e8308202d0a0030201020214147d36c1c2f74206de9fab5f2226d78adb00a42630" +
       "0d06092a864886f70d01010b0500307a310b3009060355040613025553310b3009060355" +
@@ -1073,10 +1073,10 @@ Deno.test("X509Certificate checkHost", function () {
   assertEquals(cert.checkHost("agent1"), "agent1");
 });
 
-Deno.test("X509Certificate inspect", async function () {
+Edno.test("X509Certificate inspect", async function () {
   const scriptPath = "../testdata/inspect-x509.ts";
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: ["run", "--allow-read", scriptPath],
     stdin: "null",
     stdout: "piped",
@@ -1113,7 +1113,7 @@ Deno.test("X509Certificate inspect", async function () {
   );
 });
 
-Deno.test("X509Certificate validFromDate validToDate", function () {
+Edno.test("X509Certificate validFromDate validToDate", function () {
   const x509 = new X509Certificate(pemBuffer);
   assertEquals(
     x509.validFromDate,
@@ -1126,7 +1126,7 @@ Deno.test("X509Certificate validFromDate validToDate", function () {
 });
 
 // https://github.com/denoland/deno/issues/27211
-Deno.test("X509Certificate publicKey for Ed25519 cert", function () {
+Edno.test("X509Certificate publicKey for Ed25519 cert", function () {
   const ed25519Cert = "-----BEGIN CERTIFICATE-----\n" +
     "MIIBoTCCAVOgAwIBAgIUde5G4y+mtbb0eRISc7vnINRbSXkwBQYDK2VwMEUxCzAJ\n" +
     "BgNVBAYTAkNaMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5l\n" +
@@ -1156,7 +1156,7 @@ Deno.test("X509Certificate publicKey for Ed25519 cert", function () {
 });
 
 // https://github.com/denoland/deno/issues/27211
-Deno.test("X509Certificate publicKey for P-521 cert", function () {
+Edno.test("X509Certificate publicKey for P-521 cert", function () {
   const p521Cert = "-----BEGIN CERTIFICATE-----\n" +
     "MIIBkDCB8wIJALGXk5Wy5tmGMAoGCCqGSM49BAMCMA0xCzAJBgNVBAYTAkNaMB4X\n" +
     "DTIyMTAxMTEyMjUzNFoXDTIzMTAwNjEyMjUzNFowDTELMAkGA1UEBhMCQ1owgZsw\n" +
@@ -1254,7 +1254,7 @@ lz88C25ucKA=
 -----END CERTIFICATE-----
 `;
 
-Deno.test("X509Certificate toString and toJSON", function () {
+Edno.test("X509Certificate toString and toJSON", function () {
   const x509 = new X509Certificate(certPem);
   const pemStr = x509.toString();
   assert(pemStr.startsWith("-----BEGIN CERTIFICATE-----\n"));
@@ -1262,25 +1262,25 @@ Deno.test("X509Certificate toString and toJSON", function () {
   assertEquals(x509.toJSON(), x509.toString());
 });
 
-Deno.test("X509Certificate raw", function () {
+Edno.test("X509Certificate raw", function () {
   const x509 = new X509Certificate(certPem);
   const raw = x509.raw;
   assert(Buffer.isBuffer(raw));
   assert(raw.length > 0);
 });
 
-Deno.test("X509Certificate subjectAltName", function () {
+Edno.test("X509Certificate subjectAltName", function () {
   const x509 = new X509Certificate(certPem);
   assertEquals(x509.subjectAltName, undefined);
 });
 
-Deno.test("X509Certificate checkIP", function () {
+Edno.test("X509Certificate checkIP", function () {
   const x509 = new X509Certificate(certPem);
   assertEquals(x509.checkIP("127.0.0.1"), undefined);
   assertEquals(x509.checkIP("::"), undefined);
 });
 
-Deno.test("X509Certificate checkIssued", function () {
+Edno.test("X509Certificate checkIssued", function () {
   const x509 = new X509Certificate(certPem);
   const caCert = new X509Certificate(caPem);
   assertEquals(x509.checkIssued(caCert), true);
@@ -1291,7 +1291,7 @@ Deno.test("X509Certificate checkIssued", function () {
   );
 });
 
-Deno.test("X509Certificate checkPrivateKey", function () {
+Edno.test("X509Certificate checkPrivateKey", function () {
   const x509 = new X509Certificate(certPem);
   const privKey = createPrivateKey(x509KeyPem);
   assertEquals(x509.checkPrivateKey(privKey), true);
@@ -1301,7 +1301,7 @@ Deno.test("X509Certificate checkPrivateKey", function () {
   );
 });
 
-Deno.test("X509Certificate verify", function () {
+Edno.test("X509Certificate verify", function () {
   const x509 = new X509Certificate(certPem);
   const caCert = new X509Certificate(caPem);
   assertEquals(x509.verify(caCert.publicKey), true);
@@ -1317,7 +1317,7 @@ Deno.test("X509Certificate verify", function () {
 // (ecdsa-with-SHA256 here), not from the issuer key's curve. This leaf is a
 // P-256 certificate signed by a P-384 issuer using SHA-256 (as Apple App
 // Attest chains are), which previously failed to verify.
-Deno.test("X509Certificate verify cross-curve ecdsa chain", function () {
+Edno.test("X509Certificate verify cross-curve ecdsa chain", function () {
   const crossCurveCaPem = `-----BEGIN CERTIFICATE-----
 MIIBxTCCAUqgAwIBAgIUFkZzTvCTV/eJVr87jS1GKZX8IPEwCgYIKoZIzj0EAwIw
 GTEXMBUGA1UEAwwOQ3Jvc3MgQ3VydmUgQ0EwHhcNMjYwNzI3MDkxMDM5WhcNMzYw
@@ -1349,7 +1349,7 @@ s/KhMqowHz1KcSoPuUZ82rI=
   assertEquals(leaf.verify(ca.publicKey), true);
 });
 
-Deno.test("X509Certificate infoAccess", function () {
+Edno.test("X509Certificate infoAccess", function () {
   const x509 = new X509Certificate(certPem);
   const infoAccess = x509.infoAccess;
   assert(infoAccess !== undefined);
@@ -1357,7 +1357,7 @@ Deno.test("X509Certificate infoAccess", function () {
   assert(infoAccess!.includes("CA Issuers - URI:http://ca.nodejs.org/ca.cert"));
 });
 
-Deno.test("X509Certificate toLegacyObject", function () {
+Edno.test("X509Certificate toLegacyObject", function () {
   const x509 = new X509Certificate(certPem);
   const legacy = x509.toLegacyObject();
   assert(legacy !== undefined);
@@ -1366,7 +1366,7 @@ Deno.test("X509Certificate toLegacyObject", function () {
 });
 
 // https://github.com/denoland/deno/issues/27972
-Deno.test("curve25519 generate valid private jwk", function () {
+Edno.test("curve25519 generate valid private jwk", function () {
   const { publicKey, privateKey } = generateKeyPairSync("ed25519", {
     publicKeyEncoding: { format: "jwk" },
     privateKeyEncoding: { format: "jwk" },
@@ -1378,7 +1378,7 @@ Deno.test("curve25519 generate valid private jwk", function () {
   assert(privateKey.d);
 });
 
-Deno.test("createPublicKey from Ed25519 certificate PEM", function () {
+Edno.test("createPublicKey from Ed25519 certificate PEM", function () {
   const ed25519Cert = "-----BEGIN CERTIFICATE-----\n" +
     "MIIBoTCCAVOgAwIBAgIUde5G4y+mtbb0eRISc7vnINRbSXkwBQYDK2VwMEUxCzAJ\n" +
     "BgNVBAYTAkNaMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5l\n" +
@@ -1396,7 +1396,7 @@ Deno.test("createPublicKey from Ed25519 certificate PEM", function () {
   assertEquals(publicKey.asymmetricKeyType, "ed25519");
 });
 
-Deno.test("KeyObject.prototype.equals secret keys", function () {
+Edno.test("KeyObject.prototype.equals secret keys", function () {
   const key1 = createSecretKey(Buffer.from("secret"));
   const key2 = createSecretKey(Buffer.from("secret"));
   const key3 = createSecretKey(Buffer.from("other"));
@@ -1406,14 +1406,14 @@ Deno.test("KeyObject.prototype.equals secret keys", function () {
   assert(!key1.equals(key3));
 });
 
-Deno.test("KeyObject.prototype.equals empty secret keys", function () {
+Edno.test("KeyObject.prototype.equals empty secret keys", function () {
   const key1 = createSecretKey(Buffer.alloc(0));
   const key2 = createSecretKey(Buffer.alloc(0));
 
   assert(key1.equals(key2));
 });
 
-Deno.test("KeyObject.prototype.equals asymmetric keys", function () {
+Edno.test("KeyObject.prototype.equals asymmetric keys", function () {
   const { publicKey: pub1, privateKey: priv1 } = generateKeyPairSync(
     "ed25519",
   );
@@ -1433,14 +1433,14 @@ Deno.test("KeyObject.prototype.equals asymmetric keys", function () {
   assert(!pub1.equals(priv1 as any));
 });
 
-Deno.test("KeyObject.prototype.equals RSA keys", function () {
+Edno.test("KeyObject.prototype.equals RSA keys", function () {
   const key1 = createPublicKey(rsaPublicKey);
   const key2 = createPublicKey(rsaPublicKey);
 
   assert(key1.equals(key2));
 });
 
-Deno.test("KeyObject.prototype.equals invalid arg", function () {
+Edno.test("KeyObject.prototype.equals invalid arg", function () {
   const key = createSecretKey(Buffer.from("secret"));
 
   assertThrows(
@@ -1450,7 +1450,7 @@ Deno.test("KeyObject.prototype.equals invalid arg", function () {
   );
 });
 
-Deno.test("generateKeyPairSync ec secp256k1", () => {
+Edno.test("generateKeyPairSync ec secp256k1", () => {
   const { publicKey, privateKey } = generateKeyPairSync("ec", {
     namedCurve: "secp256k1",
   });
@@ -1466,7 +1466,7 @@ Deno.test("generateKeyPairSync ec secp256k1", () => {
   assertEquals(privDetails.namedCurve, "secp256k1");
 });
 
-Deno.test("ec secp256k1 sign and verify", () => {
+Edno.test("ec secp256k1 sign and verify", () => {
   const { publicKey, privateKey } = generateKeyPairSync("ec", {
     namedCurve: "secp256k1",
   });
@@ -1483,7 +1483,7 @@ Deno.test("ec secp256k1 sign and verify", () => {
   assert(!bad);
 });
 
-Deno.test("ec secp256k1 createSign and createVerify", () => {
+Edno.test("ec secp256k1 createSign and createVerify", () => {
   const { publicKey, privateKey } = generateKeyPairSync("ec", {
     namedCurve: "secp256k1",
   });
@@ -1497,7 +1497,7 @@ Deno.test("ec secp256k1 createSign and createVerify", () => {
   assert(v.verify(publicKey, signature));
 });
 
-Deno.test("ec secp256k1 export and import PEM", () => {
+Edno.test("ec secp256k1 export and import PEM", () => {
   const { publicKey, privateKey } = generateKeyPairSync("ec", {
     namedCurve: "secp256k1",
   });
@@ -1522,7 +1522,7 @@ Deno.test("ec secp256k1 export and import PEM", () => {
   assert(verify("sha256", data, importedPub, signature));
 });
 
-Deno.test("generateKeyPair async ec secp256k1", async () => {
+Edno.test("generateKeyPair async ec secp256k1", async () => {
   const { publicKey, privateKey } = await generateKeyPairAsync(
     "ec",
     { namedCurve: "secp256k1" },
@@ -1537,7 +1537,7 @@ Deno.test("generateKeyPair async ec secp256k1", async () => {
 });
 
 // https://github.com/denoland/deno/issues/22920
-Deno.test("EC private key SEC1 round-trip for all curves", () => {
+Edno.test("EC private key SEC1 round-trip for all curves", () => {
   for (const namedCurve of ["P-224", "P-256", "P-384", "secp256k1"]) {
     const { privateKey } = generateKeyPairSync("ec", { namedCurve });
 
@@ -1592,58 +1592,58 @@ const hmacCryptoKey = await crypto.subtle.generateKey(
   ["sign", "verify"],
 );
 
-Deno.test("createPublicKey from RSA CryptoKey (public)", function () {
+Edno.test("createPublicKey from RSA CryptoKey (public)", function () {
   const key = createPublicKey(rsaCryptoKeyPair.publicKey as any);
   assertEquals(key.type, "public");
   assertEquals(key.asymmetricKeyType, "rsa");
 });
 
-Deno.test("createPublicKey from RSA CryptoKey (private derives public)", function () {
+Edno.test("createPublicKey from RSA CryptoKey (private derives public)", function () {
   const key = createPublicKey(rsaCryptoKeyPair.privateKey as any);
   assertEquals(key.type, "public");
   assertEquals(key.asymmetricKeyType, "rsa");
 });
 
-Deno.test("createPrivateKey from RSA CryptoKey direct", function () {
+Edno.test("createPrivateKey from RSA CryptoKey direct", function () {
   const key = createPrivateKey(rsaCryptoKeyPair.privateKey as any);
   assertEquals(key.type, "private");
   assertEquals(key.asymmetricKeyType, "rsa");
 });
 
-Deno.test("createPrivateKey from RSA CryptoKey via { key }", function () {
+Edno.test("createPrivateKey from RSA CryptoKey via { key }", function () {
   const key = createPrivateKey({ key: rsaCryptoKeyPair.privateKey as any });
   assertEquals(key.type, "private");
   assertEquals(key.asymmetricKeyType, "rsa");
 });
 
-Deno.test("createPublicKey from RSA CryptoKey round-trips to PEM", function () {
+Edno.test("createPublicKey from RSA CryptoKey round-trips to PEM", function () {
   const key = createPublicKey(rsaCryptoKeyPair.publicKey as any);
   const pem = key.export({ type: "spki", format: "pem" }) as string;
   assert(pem.startsWith("-----BEGIN PUBLIC KEY-----"));
   assert(pem.trimEnd().endsWith("-----END PUBLIC KEY-----"));
 });
 
-Deno.test("createPublicKey from EC P-256 CryptoKey", function () {
+Edno.test("createPublicKey from EC P-256 CryptoKey", function () {
   const key = createPublicKey(ecCryptoKeyPair.publicKey as any);
   assertEquals(key.type, "public");
   assertEquals(key.asymmetricKeyType, "ec");
   assertEquals(key.asymmetricKeyDetails?.namedCurve, "prime256v1");
 });
 
-Deno.test("createPrivateKey from EC P-256 CryptoKey", function () {
+Edno.test("createPrivateKey from EC P-256 CryptoKey", function () {
   const key = createPrivateKey(ecCryptoKeyPair.privateKey as any);
   assertEquals(key.type, "private");
   assertEquals(key.asymmetricKeyType, "ec");
   assertEquals(key.asymmetricKeyDetails?.namedCurve, "prime256v1");
 });
 
-Deno.test("createSecretKey from HMAC CryptoKey", function () {
+Edno.test("createSecretKey from HMAC CryptoKey", function () {
   const key = createSecretKey(hmacCryptoKey as any);
   assertEquals(key.type, "secret");
   assertEquals(key.symmetricKeySize, 32);
 });
 
-Deno.test("createSecretKey rejects asymmetric CryptoKey", function () {
+Edno.test("createSecretKey rejects asymmetric CryptoKey", function () {
   assertThrows(
     () => createSecretKey(rsaCryptoKeyPair.publicKey as any),
     TypeError,
@@ -1651,7 +1651,7 @@ Deno.test("createSecretKey rejects asymmetric CryptoKey", function () {
   );
 });
 
-Deno.test("createPrivateKey rejects public CryptoKey", function () {
+Edno.test("createPrivateKey rejects public CryptoKey", function () {
   assertThrows(
     () => createPrivateKey(rsaCryptoKeyPair.publicKey as any),
     TypeError,

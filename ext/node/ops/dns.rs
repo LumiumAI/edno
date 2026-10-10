@@ -7,13 +7,13 @@ use std::rc::Rc;
 #[cfg(target_family = "windows")]
 use std::sync::OnceLock;
 
-use deno_core::OpState;
-use deno_core::op2;
-use deno_core::unsync::spawn_blocking;
+use edno_core::OpState;
+use edno_core::op2;
+use edno_core::unsync::spawn_blocking;
 use deno_error::JsError;
-use deno_net::ops::NetPermToken;
-use deno_permissions::PermissionCheckError;
-use deno_permissions::PermissionsContainer;
+use edno_net::ops::NetPermToken;
+use edno_permissions::PermissionCheckError;
+use edno_permissions::PermissionsContainer;
 use socket2::SockAddr;
 
 #[derive(Debug, thiserror::Error, JsError)]

@@ -6,22 +6,22 @@ settings:
 
 catalogs:
   default:
-    '@denotest/add':
+    '@ednotest/add':
       specifier: 1.0.0
       version: 1.0.0
 
 importers:
   .:
     dependencies:
-      '@denotest/add':
+      '@ednotest/add':
         specifier: 'catalog:'
         version: 1.0.0
 
 packages:
-  '@denotest/add@1.0.0':
+  '@ednotest/add@1.0.0':
     resolution: {
       integrity: sha512-uvNpnVPU/CC2Do/LNF3TkhoLGLLKC6jFDPiSnojuZCEwmoXJjS2+Sn+LYk7eUix4vsMKA9ctxaMhcfb6pdHQTQ==,
     }
 
 snapshots:
-  '@denotest/add@1.0.0': {}
+  '@ednotest/add@1.0.0': {}

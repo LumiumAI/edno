@@ -17,7 +17,7 @@ fn install_basic() {
   let temp_dir_str = temp_dir.path().to_string();
 
   // ensure a lockfile doesn't get created or updated locally
-  temp_dir.write("deno.json", "{}");
+  temp_dir.write("edno.json", "{}");
 
   let output = context
     .new_command()
@@ -25,7 +25,7 @@ fn install_basic() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", ""),
+      ("EDNO_INSTALL_ROOT", ""),
     ])
     .run();
 
@@ -34,9 +34,9 @@ fn install_basic() {
   assert_contains!(output_text, "✅ Successfully installed echo_test");
 
   // no lockfile should be created locally
-  assert!(!temp_dir.path().join("deno.lock").exists());
+  assert!(!temp_dir.path().join("edno.lock").exists());
 
-  let mut file_path = temp_dir.path().join(".deno/bin/echo_test");
+  let mut file_path = temp_dir.path().join(".edno/bin/echo_test");
   assert!(file_path.exists());
 
   if cfg!(windows) {
@@ -48,9 +48,9 @@ fn install_basic() {
   // more versatile.
   assert_eq!(content.chars().last().unwrap(), '\n');
 
-  // shim should point to a per-command config in .<name>/deno.json
-  let config_dir = temp_dir.path().join(".deno").join("bin").join(".echo_test");
-  let config_path = config_dir.join("deno.json");
+  // shim should point to a per-command config in .<name>/edno.json
+  let config_dir = temp_dir.path().join(".edno").join("bin").join(".echo_test");
+  let config_path = config_dir.join("edno.json");
   assert!(config_path.exists());
   if cfg!(windows) {
     assert_contains!(
@@ -75,14 +75,14 @@ fn install_basic() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", ""),
+      ("EDNO_INSTALL_ROOT", ""),
     ])
     .run()
     .skip_output_check()
     .assert_exit_code(0);
 
   // ensure local lockfile still doesn't exist
-  assert!(!temp_dir.path().join("deno.lock").exists());
+  assert!(!temp_dir.path().join("edno.lock").exists());
   // ensure uninstall occurred
   assert!(!file_path.exists());
   // ensure config dir was cleaned up
@@ -99,7 +99,7 @@ fn install_basic_global() {
   let temp_dir_str = temp_dir.path().to_string();
 
   // ensure a lockfile doesn't get created or updated locally
-  temp_dir.write("deno.json", "{}");
+  temp_dir.write("edno.json", "{}");
 
   let output = context
     .new_command()
@@ -109,7 +109,7 @@ fn install_basic_global() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", ""),
+      ("EDNO_INSTALL_ROOT", ""),
     ])
     .run();
 
@@ -117,13 +117,13 @@ fn install_basic_global() {
   let output_text = output.combined_output();
   assert_not_contains!(
     output_text,
-    "`deno install` behavior will change in Deno 2. To preserve the current behavior use the `-g` or `--global` flag."
+    "`edno install` behavior will change in Edno 2. To preserve the current behavior use the `-g` or `--global` flag."
   );
 
   // no lockfile should be created locally
-  assert!(!temp_dir.path().join("deno.lock").exists());
+  assert!(!temp_dir.path().join("edno.lock").exists());
 
-  let mut file_path = temp_dir.path().join(".deno/bin/echo_test");
+  let mut file_path = temp_dir.path().join(".edno/bin/echo_test");
   assert!(file_path.exists());
 
   if cfg!(windows) {
@@ -135,13 +135,13 @@ fn install_basic_global() {
   // more versatile.
   assert_eq!(content.chars().last().unwrap(), '\n');
 
-  // shim should point to a per-command config in .<name>/deno.json
+  // shim should point to a per-command config in .<name>/edno.json
   let config_path = temp_dir
     .path()
-    .join(".deno")
+    .join(".edno")
     .join("bin")
     .join(".echo_test")
-    .join("deno.json");
+    .join("edno.json");
   if cfg!(windows) {
     assert_contains!(
       content,
@@ -165,31 +165,31 @@ fn install_basic_global() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", ""),
+      ("EDNO_INSTALL_ROOT", ""),
     ])
     .run()
     .skip_output_check()
     .assert_exit_code(0);
 
   // ensure local lockfile still doesn't exist
-  assert!(!temp_dir.path().join("deno.lock").exists());
+  assert!(!temp_dir.path().join("edno.lock").exists());
   // ensure uninstall occurred
   assert!(!file_path.exists());
 }
 
 // Regression test for #32798: a relative `--import-map` passed to a global
-// install (typically via `deno task`) must resolve against the user's cwd,
-// not the generated `~/.deno/bin/.<name>/` install dir.
+// install (typically via `edno task`) must resolve against the user's cwd,
+// not the generated `~/.edno/bin/.<name>/` install dir.
 #[test]
 fn install_global_from_task_with_relative_import_map() {
   let context = TestContextBuilder::new().use_temp_cwd().build();
   let temp_dir = context.temp_dir();
 
   temp_dir.write(
-    "deno.json",
+    "edno.json",
     r#"{
   "tasks": {
-    "install": "deno install -A --global --root ./root --import-map imports.json -n test main.ts"
+    "install": "edno install -A --global --root ./root --import-map imports.json -n test main.ts"
   }
 }
 "#,
@@ -290,7 +290,7 @@ fn install_custom_dir_env_var() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", temp_dir_str.as_str()),
+      ("EDNO_INSTALL_ROOT", temp_dir_str.as_str()),
     ])
     .run()
     .skip_output_check()
@@ -310,7 +310,7 @@ fn install_custom_dir_env_var() {
     .join("bin")
     .canonicalize()
     .join(".echo_test")
-    .join("deno.json");
+    .join("edno.json");
   if cfg!(windows) {
     assert_contains!(
       content,
@@ -342,7 +342,7 @@ fn installer_test_custom_dir_with_bin() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", temp_dir_with_bin.as_str()),
+      ("EDNO_INSTALL_ROOT", temp_dir_with_bin.as_str()),
     ])
     .run()
     .skip_output_check()
@@ -362,7 +362,7 @@ fn installer_test_custom_dir_with_bin() {
     .join("bin")
     .canonicalize()
     .join(".echo_test")
-    .join("deno.json");
+    .join("edno.json");
   if cfg!(windows) {
     assert_contains!(
       content,
@@ -404,7 +404,7 @@ fn installer_test_local_module_run() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", ""),
+      ("EDNO_INSTALL_ROOT", ""),
     ])
     .run()
     .skip_output_check()
@@ -484,7 +484,7 @@ fn check_local_by_default() {
     .envs([
       ("HOME", temp_dir_str.as_str()),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", ""),
+      ("EDNO_INSTALL_ROOT", ""),
     ])
     .run()
     .skip_output_check()
@@ -509,7 +509,7 @@ fn check_local_by_default2() {
       ("HOME", temp_dir_str.as_str()),
       ("NO_COLOR", "1"),
       ("USERPROFILE", temp_dir_str.as_str()),
-      ("DENO_INSTALL_ROOT", ""),
+      ("EDNO_INSTALL_ROOT", ""),
     ])
     .run()
     .skip_output_check()
@@ -518,8 +518,8 @@ fn check_local_by_default2() {
 
 #[test]
 fn unprefixed_global_install_defaults_to_npm() {
-  // Unprefixed package names in `deno install -g` default to the npm
-  // registry, matching `deno add` and local `deno install`.
+  // Unprefixed package names in `edno install -g` default to the npm
+  // registry, matching `edno add` and local `edno install`.
   let context = TestContextBuilder::new()
     .add_npm_env_vars()
     .add_jsr_env_vars()
@@ -532,13 +532,13 @@ fn unprefixed_global_install_defaults_to_npm() {
   let env_vars = [
     ("HOME", temp_dir_str.as_str()),
     ("USERPROFILE", temp_dir_str.as_str()),
-    ("DENO_INSTALL_ROOT", ""),
+    ("EDNO_INSTALL_ROOT", ""),
   ];
 
   // Bare npm name (no prefix) installs successfully from npm.
   context
     .new_command()
-    .args_vec(["install", "-g", "--name", "bin", "@denotest/bin"])
+    .args_vec(["install", "-g", "--name", "bin", "@ednotest/bin"])
     .envs(env_vars)
     .run()
     .skip_output_check()
@@ -588,7 +588,7 @@ fn installer_second_module_looks_like_script_argument() {
     .use_http_server()
     .use_temp_cwd()
     .build();
-  // in Deno < 3.0, we didn't require `--` before script arguments, so we try
+  // in Edno < 3.0, we didn't require `--` before script arguments, so we try
   // to provide a helpful error message for people migrating. Validation
   // happens up-front for the whole entry list, so the migration error fires
   // before any entry is installed.
@@ -598,8 +598,8 @@ fn installer_second_module_looks_like_script_argument() {
     .run()
     .assert_matches_text(concat!(
       "error: non_existent is missing a prefix. ",
-      "Deno 3.0 requires `--` before script arguments in `deno install -g`. ",
-      "Did you mean `deno install -g http://localhost:4545/echo.ts -- non_existent`? ",
+      "Edno 3.0 requires `--` before script arguments in `edno install -g`. ",
+      "Did you mean `edno install -g http://localhost:4545/echo.ts -- non_existent`? ",
       "Or maybe provide a `jsr:` or `npm:` prefix?\n"
     ))
     .assert_exit_code(1);
@@ -608,7 +608,7 @@ fn installer_second_module_looks_like_script_argument() {
 #[test]
 fn install_npm_global_config_dir() {
   // installing an npm: package should create a .<name>/ config dir
-  // with deno.json containing nodeModulesDir
+  // with edno.json containing nodeModulesDir
   let context = TestContextBuilder::new()
     .add_npm_env_vars()
     .use_http_server()
@@ -620,7 +620,7 @@ fn install_npm_global_config_dir() {
 
   context
     .new_command()
-    .args("install -g --root ./root --name cli-esm npm:@denotest/bin")
+    .args("install -g --root ./root --name cli-esm npm:@ednotest/bin")
     .run()
     .skip_output_check()
     .assert_exit_code(0);
@@ -629,14 +629,14 @@ fn install_npm_global_config_dir() {
   let config_dir = bin_dir.join(".cli-esm");
   assert!(config_dir.exists(), "config dir should exist");
 
-  // deno.json should exist with nodeModulesDir
-  let deno_json = config_dir.join("deno.json");
-  assert!(deno_json.exists(), "deno.json should exist");
-  let deno_json_content = deno_json.read_to_string();
-  assert_contains!(deno_json_content, "nodeModulesDir");
-  assert_contains!(deno_json_content, "manual");
+  // edno.json should exist with nodeModulesDir
+  let edno_json = config_dir.join("edno.json");
+  assert!(edno_json.exists(), "edno.json should exist");
+  let edno_json_content = edno_json.read_to_string();
+  assert_contains!(edno_json_content, "nodeModulesDir");
+  assert_contains!(edno_json_content, "manual");
   // should have workspace field to stop workspace discovery
-  assert_contains!(deno_json_content, "workspace");
+  assert_contains!(edno_json_content, "workspace");
 
   // shim should use --config pointing to the config dir
   let mut shim_path = bin_dir.join("cli-esm");
@@ -674,7 +674,7 @@ fn install_npm_global_allow_scripts() {
 
   let output = context
     .new_command()
-    .args("install -g --allow-scripts --root ./root npm:@denotest/lifecycle-scripts-simple")
+    .args("install -g --allow-scripts --root ./root npm:@ednotest/lifecycle-scripts-simple")
     .run();
 
   output.assert_exit_code(0);
@@ -685,11 +685,11 @@ fn install_npm_global_allow_scripts() {
   let config_dir = bin_dir.join(".lifecycle-scripts-simple");
   assert!(config_dir.exists(), "config dir should exist");
 
-  // deno.json should have nodeModulesDir
-  let deno_json = config_dir.join("deno.json");
-  assert!(deno_json.exists(), "deno.json should exist");
-  let deno_json_content = deno_json.read_to_string();
-  assert_contains!(deno_json_content, "nodeModulesDir");
+  // edno.json should have nodeModulesDir
+  let edno_json = config_dir.join("edno.json");
+  assert!(edno_json.exists(), "edno.json should exist");
+  let edno_json_content = edno_json.read_to_string();
+  assert_contains!(edno_json_content, "nodeModulesDir");
 
   // node_modules should exist (populated by cache_top_level_deps)
   let node_modules = config_dir.join("node_modules");
@@ -699,5 +699,5 @@ fn install_npm_global_allow_scripts() {
   let package_json = config_dir.join("package.json");
   assert!(package_json.exists(), "package.json should exist");
   let package_json_content = package_json.read_to_string();
-  assert_contains!(package_json_content, "@denotest/lifecycle-scripts-simple");
+  assert_contains!(package_json_content, "@ednotest/lifecycle-scripts-simple");
 }

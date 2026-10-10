@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-explicit-any
+// edno-lint-ignore-file no-explicit-any
 function logged(value: any, { kind, name }: { kind: string; name: string }) {
   if (kind === "method") {
     return function (...args: unknown[]) {

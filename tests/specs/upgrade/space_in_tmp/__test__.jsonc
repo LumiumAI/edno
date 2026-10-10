@@ -3,17 +3,17 @@
   "tempDir": true,
   "steps": [
     {
-      "args": "eval Deno.copyFileSync(Deno.execPath(),'./deno_copy');",
+      "args": "eval Edno.copyFileSync(Edno.execPath(),'./edno_copy');",
       "exitCode": 0,
       "output": ""
     },
     {
-      "args": ["eval", "Deno.mkdirSync('space in cwd')"],
+      "args": ["eval", "Edno.mkdirSync('space in cwd')"],
       "exitCode": 0,
       "output": "[WILDCARD]"
     },
     {
-      "commandName": "./deno_copy",
+      "commandName": "./edno_copy",
       "args": "upgrade --force --version 1.43.2",
       "envs": { "TMP": "./space in cwd" },
       "output": "upgrade.out",
@@ -21,7 +21,7 @@
       "flaky": true
     },
     {
-      "commandName": "./deno_copy",
+      "commandName": "./edno_copy",
       "args": "--version",
       "exitCode": 0,
       "output": "version.out"

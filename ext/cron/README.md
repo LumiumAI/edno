@@ -1,3 +1,3 @@
-# deno_cron
+# edno_cron
 
-This crate implements scheduled tasks (crons) API for Deno.
+This crate implements scheduled tasks (crons) API for Edno.

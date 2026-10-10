@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30,7 +30,7 @@ const {
   ReflectApply,
 } = primordials;
 
-const internalUtil = core.loadExtScript("ext:deno_node/internal/util.mjs");
+const internalUtil = core.loadExtScript("ext:edno_node/internal/util.mjs");
 const {
   promisify: { custom: customPromisify },
 } = internalUtil;
@@ -38,43 +38,43 @@ const {
 import {
   promiseReturningOperators,
   streamReturningOperators,
-} from "ext:deno_node/internal/streams/operators.js";
+} from "ext:edno_node/internal/streams/operators.js";
 
-import compose from "ext:deno_node/internal/streams/compose.js";
+import compose from "ext:edno_node/internal/streams/compose.js";
 const {
   getDefaultHighWaterMark,
   setDefaultHighWaterMark,
-} = core.loadExtScript("ext:deno_node/internal/streams/state.js");
-import { pipeline } from "ext:deno_node/internal/streams/pipeline.js";
+} = core.loadExtScript("ext:edno_node/internal/streams/state.js");
+import { pipeline } from "ext:edno_node/internal/streams/pipeline.js";
 const { destroyer } = core.loadExtScript(
-  "ext:deno_node/internal/streams/destroy.js",
+  "ext:edno_node/internal/streams/destroy.js",
 );
 const { eos } = core.loadExtScript(
-  "ext:deno_node/internal/streams/end-of-stream.js",
+  "ext:edno_node/internal/streams/end-of-stream.js",
 );
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 
 import * as promises from "node:stream/promises";
-const utils = core.loadExtScript("ext:deno_node/internal/streams/utils.js");
+const utils = core.loadExtScript("ext:edno_node/internal/streams/utils.js");
 const {
   isArrayBufferView,
   isUint8Array,
-} = core.loadExtScript("ext:deno_node/internal/util/types.ts");
+} = core.loadExtScript("ext:edno_node/internal/util/types.ts");
 
 const { Stream } = core.loadExtScript(
-  "ext:deno_node/internal/streams/legacy.js",
+  "ext:edno_node/internal/streams/legacy.js",
 );
 import Readable from "node:_stream_readable";
 import Writable from "node:_stream_writable";
 import Duplex from "node:_stream_duplex";
 import Transform from "node:_stream_transform";
 import PassThrough from "node:_stream_passthrough";
-import duplexPair from "ext:deno_node/internal/streams/duplexpair.js";
+import duplexPair from "ext:edno_node/internal/streams/duplexpair.js";
 const { addAbortSignal } = core.loadExtScript(
-  "ext:deno_node/internal/streams/add-abort-signal.js",
+  "ext:edno_node/internal/streams/add-abort-signal.js",
 );
 const { ERR_ILLEGAL_CONSTRUCTOR } = core.loadExtScript(
-  "ext:deno_node/internal/errors.ts",
+  "ext:edno_node/internal/errors.ts",
 );
 
 Stream.isDestroyed = utils.isDestroyed;
@@ -169,7 +169,7 @@ Stream.Stream = Stream;
 Stream._isArrayBufferView = isArrayBufferView;
 Stream._isUint8Array = isUint8Array;
 Stream._uint8ArrayToBuffer = function _uint8ArrayToBuffer(chunk) {
-  // Note: Diverging from Node.js here. Deno doesn't implement
+  // Note: Diverging from Node.js here. Edno doesn't implement
   // FastBuffer so we use regular Buffer.
   return Buffer.from(chunk.buffer, chunk.byteOffset, chunk.byteLength);
 };

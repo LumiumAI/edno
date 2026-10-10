@@ -3,7 +3,7 @@
 use std::path::PathBuf;
 
 use anyhow::Context;
-use deno_config::workspace::WorkspaceRc;
+use edno_config::workspace::WorkspaceRc;
 
 #[derive(Debug, Clone)]
 pub struct ExternalImportMap {
@@ -13,7 +13,7 @@ pub struct ExternalImportMap {
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type WorkspaceExternalImportMapLoaderRc<TSys> =
-  deno_maybe_sync::MaybeArc<WorkspaceExternalImportMapLoader<TSys>>;
+  edno_maybe_sync::MaybeArc<WorkspaceExternalImportMapLoader<TSys>>;
 
 #[derive(Debug)]
 pub struct WorkspaceExternalImportMapLoader<TSys: sys_traits::FsRead> {
@@ -38,13 +38,13 @@ impl<TSys: sys_traits::FsRead> WorkspaceExternalImportMapLoader<TSys> {
     self
       .maybe_external_import_map
       .get_or_try_init(|| {
-        let Some(deno_json) = self.workspace.root_deno_json() else {
+        let Some(edno_json) = self.workspace.root_deno_json() else {
           return Ok(None);
         };
-        if deno_json.is_an_import_map() {
+        if edno_json.is_an_import_map() {
           return Ok(None);
         }
-        let Some(path) = deno_json.to_import_map_path()? else {
+        let Some(path) = edno_json.to_import_map_path()? else {
           return Ok(None);
         };
         let contents =

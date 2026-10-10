@@ -9,8 +9,8 @@ use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
 use std::time::Instant;
 
-use deno_core::parking_lot::Mutex;
-use deno_core::uv_compat;
+use edno_core::parking_lot::Mutex;
+use edno_core::uv_compat;
 
 use crate::util::SendPtr;
 use crate::*;
@@ -355,7 +355,7 @@ unsafe extern "C" fn _napi_uv_close(
 //
 // The Sentry profiling-node native addon (and a handful of other native
 // addons that link against libuv directly) reaches into libuv for handle
-// types beyond `uv_async_t` and `uv_mutex_t`. Deno does not run on libuv,
+// types beyond `uv_async_t` and `uv_mutex_t`. Edno does not run on libuv,
 // so we satisfy these symbols with lightweight polyfills:
 //
 // * `uv_hrtime` returns a monotonic timestamp.
@@ -363,11 +363,11 @@ unsafe extern "C" fn _napi_uv_close(
 //   trivial libuv behavior.
 // * `uv_cpu_info` returns an error so callers degrade gracefully (the
 //   profiler skips per-tick CPU stats but still produces a valid profile).
-// * `uv_timer_*` is bridged onto deno_core's libuv-compat layer (see
-//   `deno_core::uv_compat`). That layer is the same one driving Node's
+// * `uv_timer_*` is bridged onto edno_core's libuv-compat layer (see
+//   `edno_core::uv_compat`). That layer is the same one driving Node's
 //   timer/idle/check/prepare handles on top of tokio, so timers scheduled
 //   by a NAPI addon (e.g. the Sentry profiler's measurement ticker) fire
-//   on the Deno event loop. We keep our own libuv-ABI `uv_timer_t` so the
+//   on the Edno event loop. We keep our own libuv-ABI `uv_timer_t` so the
 //   addon-allocated struct layout matches what its compiler saw in
 //   `<uv.h>`, and stash a pointer to a heap-allocated bridge containing
 //   the matching `uv_compat::uv_timer_t` plus user callbacks in the
@@ -388,7 +388,7 @@ const UV_TIMER_SIZE: usize = 160;
 
 type uv_timer_cb = Option<unsafe extern "C" fn(handle: *mut uv_timer_t)>;
 
-// The deno_core uv_compat loop the current JsRuntime is using. Populated by
+// The edno_core uv_compat loop the current JsRuntime is using. Populated by
 // `register_default_uv_loop` on each `op_napi_open` call so that
 // `uv_default_loop()` (called from native addons) and `uv_timer_init` with
 // a null loop fall back to a real, tokio-backed loop. Per-thread because
@@ -408,7 +408,7 @@ fn current_uv_compat_loop() -> *mut uv_compat::uv_loop_t {
 }
 
 // Heap-allocated bridge between a libuv-ABI `uv_timer_t` exposed to the
-// NAPI addon and a `uv_compat::uv_timer_t` driven by the Deno event loop.
+// NAPI addon and a `uv_compat::uv_timer_t` driven by the Edno event loop.
 //
 // `inner` is the first field so `*mut NapiTimerBridge` and
 // `*mut uv_compat::uv_timer_t` share an address — the trampoline
@@ -1360,7 +1360,7 @@ unsafe extern "C" fn uv_strerror(err: c_int) -> *const std::ffi::c_char {
 // portable threading and synchronization primitives (`uv_thread_*`,
 // `uv_sem_*`) for their own background work instead of the raw OS APIs —
 // e.g. a worker thread that signals readiness through a counting
-// semaphore. Deno does not run on libuv, but these primitives are
+// semaphore. Edno does not run on libuv, but these primitives are
 // self-contained (they never touch the event loop), so we back them with
 // Rust's std threading and a parking_lot-based counting semaphore.
 //
@@ -1377,7 +1377,7 @@ type uv_thread_cb = unsafe extern "C" fn(arg: *mut c_void);
 
 struct SemInner {
   count: Mutex<i64>,
-  cond: deno_core::parking_lot::Condvar,
+  cond: edno_core::parking_lot::Condvar,
 }
 
 static SEMS: OnceLock<
@@ -1410,7 +1410,7 @@ unsafe extern "C" fn uv_sem_init(
   let id = SEM_NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
   let inner = std::sync::Arc::new(SemInner {
     count: Mutex::new(value as i64),
-    cond: deno_core::parking_lot::Condvar::new(),
+    cond: edno_core::parking_lot::Condvar::new(),
   });
   sems().lock().insert(id, inner);
   unsafe {
@@ -1577,7 +1577,7 @@ const UV_ETIMEDOUT: c_int = {
 
 struct CondInner {
   mutex: Mutex<()>,
-  condvar: deno_core::parking_lot::Condvar,
+  condvar: edno_core::parking_lot::Condvar,
 }
 
 static CONDS: OnceLock<
@@ -1607,7 +1607,7 @@ unsafe extern "C" fn uv_cond_init(cond: *mut u32) -> c_int {
   let id = COND_NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
   let inner = std::sync::Arc::new(CondInner {
     mutex: Mutex::new(()),
-    condvar: deno_core::parking_lot::Condvar::new(),
+    condvar: edno_core::parking_lot::Condvar::new(),
   });
   conds().lock().insert(id, inner);
   unsafe {

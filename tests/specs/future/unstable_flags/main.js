@@ -1,5 +1,5 @@
-console.log(typeof Deno.dlopen === "function"); // Undefined without `--unstable-ffi`
+console.log(typeof Edno.dlopen === "function"); // Undefined without `--unstable-ffi`
 console.log(
   // Undefined without `--unstable-fs`
-  Deno.build.os === "windows" ? true : typeof Deno.umask === "function",
+  Edno.build.os === "windows" ? true : typeof Edno.umask === "function",
 );

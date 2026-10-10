@@ -15,7 +15,7 @@ addEventListener("unload", () => {
   clearInterval(interval);
 });
 
-Deno.bench("bench", () => {
+Edno.bench("bench", () => {
   if (!interval) {
     throw new Error("Interval was not set");
   }

@@ -10,13 +10,13 @@ use sys_traits::EnvVar;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum DenoDirResolutionError {
+pub enum EdnoDirResolutionError {
   #[error(
-    "Could not resolve global Deno cache directory. Please make sure that either the DENO_DIR environment variable is set or the cache directory is available."
+    "Could not resolve global Edno cache directory. Please make sure that either the EDNO_DIR environment variable is set or the cache directory is available."
   )]
   NoCacheOrHomeDir,
   #[error(
-    "Could not resolve global Deno cache directory because the current working directory could not be resolved. Please set the DENO_DIR environment variable and ensure it is pointing at an absolute path."
+    "Could not resolve global Edno cache directory because the current working directory could not be resolved. Please set the EDNO_DIR environment variable and ensure it is pointing at an absolute path."
   )]
   FailedCwd {
     #[source]
@@ -41,25 +41,25 @@ pub struct ResolveDenoDirOptions<'a> {
 pub fn resolve_deno_dir<'a, Sys: ResolveDenoDirSys>(
   sys: &Sys,
   options: ResolveDenoDirOptions<'a>,
-) -> Result<Cow<'a, Path>, DenoDirResolutionError> {
+) -> Result<Cow<'a, Path>, EdnoDirResolutionError> {
   let maybe_custom_root = options
     .maybe_custom_root
     .map(Cow::Borrowed)
-    .or_else(|| sys.env_var_path("DENO_DIR").map(Cow::Owned));
+    .or_else(|| sys.env_var_path("EDNO_DIR").map(Cow::Owned));
   let root = if let Some(root) = maybe_custom_root {
     root
   } else if let Some(xdg_cache_dir) = sys.env_var_path("XDG_CACHE_HOME") {
-    Cow::Owned(xdg_cache_dir.join("deno"))
+    Cow::Owned(xdg_cache_dir.join("edno"))
   } else if let Some(cache_dir) = sys.env_cache_dir() {
-    // We use the OS cache dir because all files deno writes are cache files
-    // Once that changes we need to start using different roots if DENO_DIR
+    // We use the OS cache dir because all files edno writes are cache files
+    // Once that changes we need to start using different roots if EDNO_DIR
     // is not set, and keep a single one if it is.
-    Cow::Owned(cache_dir.join("deno"))
+    Cow::Owned(cache_dir.join("edno"))
   } else if let Some(home_dir) = sys.env_home_dir() {
     // fallback path
-    Cow::Owned(home_dir.join(".deno"))
+    Cow::Owned(home_dir.join(".edno"))
   } else {
-    return Err(DenoDirResolutionError::NoCacheOrHomeDir);
+    return Err(EdnoDirResolutionError::NoCacheOrHomeDir);
   };
   let root = if root.is_absolute() {
     root
@@ -75,7 +75,7 @@ pub fn resolve_deno_dir<'a, Sys: ResolveDenoDirSys>(
         )]
         sys
           .env_current_dir()
-          .map_err(|source| DenoDirResolutionError::FailedCwd { source })?,
+          .map_err(|source| EdnoDirResolutionError::FailedCwd { source })?,
       ),
     };
 

@@ -1,4 +1,4 @@
-Deno.test({
+Edno.test({
   name: "completes well before deadline",
   timeout: 1000,
   async fn() {

@@ -8,7 +8,7 @@
  *
  * @experimental
  *
- * Extends {@linkcode Deno.ServeHandlerInfo} by adding adding a `params` argument.
+ * Extends {@linkcode Edno.ServeHandlerInfo} by adding adding a `params` argument.
  *
  * @param request Request
  * @param info Request info
@@ -16,7 +16,7 @@
  */
 export type Handler = (
   request: Request,
-  info?: Deno.ServeHandlerInfo,
+  info?: Edno.ServeHandlerInfo,
   params?: URLPatternResult | null,
 ) => Response | Promise<Response>;
 
@@ -77,7 +77,7 @@ export interface Route {
  *   return new Response("Not found", { status: 404 });
  * }
  *
- * Deno.serve(route(routes, defaultHandler));
+ * Edno.serve(route(routes, defaultHandler));
  * ```
  *
  * @param routes Route configurations
@@ -90,14 +90,14 @@ export function route(
   routes: Route[],
   defaultHandler: (
     request: Request,
-    info?: Deno.ServeHandlerInfo,
+    info?: Edno.ServeHandlerInfo,
   ) => Response | Promise<Response>,
 ): (
   request: Request,
-  info?: Deno.ServeHandlerInfo,
+  info?: Edno.ServeHandlerInfo,
 ) => Response | Promise<Response> {
   // TODO(iuioiua): Use `URLPatternList` once available (https://github.com/whatwg/urlpattern/pull/166)
-  return (request: Request, info?: Deno.ServeHandlerInfo) => {
+  return (request: Request, info?: Edno.ServeHandlerInfo) => {
     for (const route of routes) {
       const match = route.pattern.exec(request.url);
       if (match) return route.handler(request, info, match);

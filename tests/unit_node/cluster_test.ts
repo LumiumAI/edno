@@ -3,7 +3,7 @@ import { assertEquals } from "@std/assert";
 import cluster from "node:cluster";
 import * as clusterNamed from "node:cluster";
 
-Deno.test("[node/cluster] has all node exports", () => {
+Edno.test("[node/cluster] has all node exports", () => {
   assertEquals(cluster.isPrimary, true);
   assertEquals(cluster.isMaster, true);
   assertEquals(cluster.isWorker, false);

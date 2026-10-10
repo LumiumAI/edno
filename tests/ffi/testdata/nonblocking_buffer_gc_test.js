@@ -1,19 +1,19 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 // Test that nonblocking FFI calls retain ArrayBuffer backing stores
 // so they are not freed by GC while the native call is in progress.
 // Run with: --v8-flags=--expose-gc
 
-const targetDir = Deno.execPath().replace(/[^\/\\]+$/, "");
+const targetDir = Edno.execPath().replace(/[^\/\\]+$/, "");
 const [libPrefix, libSuffix] = {
   darwin: ["lib", "dylib"],
   linux: ["lib", "so"],
   windows: ["", "dll"],
-}[Deno.build.os];
+}[Edno.build.os];
 const libPath = `${targetDir}/${libPrefix}test_ffi.${libSuffix}`;
 
-const dylib = Deno.dlopen(libPath, {
+const dylib = Edno.dlopen(libPath, {
   nonblocking_buffer_checksum: {
     parameters: ["buffer", "usize", "u8"],
     result: "u64",
@@ -48,7 +48,7 @@ const expected = BigInt(FILL_VALUE * BUF_SIZE);
 
 if (checksum !== expected) {
   console.log(`FAIL: checksum ${checksum} !== expected ${expected}`);
-  Deno.exit(1);
+  Edno.exit(1);
 }
 
 console.log("nonblocking_buffer_gc_test passed");

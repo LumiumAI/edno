@@ -1,7 +1,7 @@
 {
   "tempDir": true,
   "tests": {
-    // Unprefixed packages default to npm, so `deno add ajv` should work
+    // Unprefixed packages default to npm, so `edno add ajv` should work
     "npm_default": {
       "steps": [
         {
@@ -14,8 +14,8 @@
     "jsr_needs_prefix": {
       "steps": [
         {
-          "args": "add @denotest/echo",
-          "output": "error: npm:@denotest/echo was not found, but a matching jsr package exists. Did you mean `deno add jsr:@denotest/echo`?\n",
+          "args": "add @ednotest/echo",
+          "output": "error: npm:@ednotest/echo was not found, but a matching jsr package exists. Did you mean `edno add jsr:@ednotest/echo`?\n",
           "exitCode": 1
         }
       ]
@@ -24,8 +24,8 @@
     "jsr_flag_override": {
       "steps": [
         {
-          "args": "add --jsr @denotest/add",
-          "output": "Add jsr:@denotest/add@1.0.0\n[WILDCARD]\n"
+          "args": "add --jsr @ednotest/add",
+          "output": "Add jsr:@ednotest/add@1.0.0\n[WILDCARD]\n"
         }
       ]
     }

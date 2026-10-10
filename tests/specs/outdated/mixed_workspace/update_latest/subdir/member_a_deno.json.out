@@ -1,10 +1,10 @@
 {
-  "name": "@denotest/member-a",
+  "name": "@ednotest/member-a",
   "exports": "./mod.ts",
   "imports": {
-    "@denotest/add": "jsr:@denotest/add@^1.0.0",
-    "@denotest/add/": "jsr:/@denotest/add@^1.0.0/",
-    "@denotest/with-subpath": "jsr:@denotest/multiple-exports@1.0.0/data-json",
-    "@denotest/breaking-change-between-versions": "npm:@denotest/breaking-change-between-versions@2.0.0"
+    "@ednotest/add": "jsr:@ednotest/add@^1.0.0",
+    "@ednotest/add/": "jsr:/@ednotest/add@^1.0.0/",
+    "@ednotest/with-subpath": "jsr:@ednotest/multiple-exports@1.0.0/data-json",
+    "@ednotest/breaking-change-between-versions": "npm:@ednotest/breaking-change-between-versions@2.0.0"
   }
 }

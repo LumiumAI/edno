@@ -9,16 +9,16 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::rc::Rc;
 
-use deno_config::deno_json::CompilerOptions;
-use deno_config::glob::FilePatterns;
-use deno_config::glob::PathOrPattern;
-use deno_config::glob::PathOrPatternSet;
-use deno_config::workspace::CompilerOptionsSource;
-use deno_config::workspace::TsTypeLib;
-use deno_config::workspace::WorkspaceDirectory;
-use deno_config::workspace::WorkspaceRc;
+use edno_config::edno_json::CompilerOptions;
+use edno_config::glob::FilePatterns;
+use edno_config::glob::PathOrPattern;
+use edno_config::glob::PathOrPatternSet;
+use edno_config::workspace::CompilerOptionsSource;
+use edno_config::workspace::TsTypeLib;
+use edno_config::workspace::WorkspaceDirectory;
+use edno_config::workspace::WorkspaceRc;
 use deno_error::JsError;
-use deno_maybe_sync::new_rc;
+use edno_maybe_sync::new_rc;
 use deno_path_util::normalize_path;
 use deno_path_util::url_from_directory_path;
 use deno_path_util::url_from_file_path;
@@ -27,7 +27,7 @@ use deno_terminal::colors;
 use deno_unsync::sync::AtomicFlag;
 use indexmap::IndexMap;
 use indexmap::IndexSet;
-use node_resolver::DenoIsBuiltInNodeModuleChecker;
+use node_resolver::EdnoIsBuiltInNodeModuleChecker;
 use node_resolver::NodeResolutionKind;
 use node_resolver::NodeResolver;
 use node_resolver::NpmPackageFolderResolver;
@@ -46,16 +46,16 @@ use url::Url;
 
 use crate::collections::FolderScopedWithUnscopedMap;
 use crate::factory::ConfigDiscoveryOption;
-use crate::npm::DenoInNpmPackageChecker;
+use crate::npm::EdnoInNpmPackageChecker;
 use crate::npm::NpmResolverSys;
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-type UrlRc = deno_maybe_sync::MaybeArc<Url>;
+type UrlRc = edno_maybe_sync::MaybeArc<Url>;
 #[allow(clippy::disallowed_types, reason = "definition")]
-type CompilerOptionsRc = deno_maybe_sync::MaybeArc<CompilerOptions>;
+type CompilerOptionsRc = edno_maybe_sync::MaybeArc<CompilerOptions>;
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type CompilerOptionsTypesRc =
-  deno_maybe_sync::MaybeArc<Vec<(Url, Vec<String>)>>;
+  edno_maybe_sync::MaybeArc<Vec<(Url, Vec<String>)>>;
 
 /// A structure that represents a set of options that were ignored and the
 /// path those options came from.
@@ -241,7 +241,7 @@ impl JsxImportSourceConfig {
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type JsxImportSourceConfigRc =
-  deno_maybe_sync::MaybeArc<JsxImportSourceConfig>;
+  edno_maybe_sync::MaybeArc<JsxImportSourceConfig>;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 enum CompilerOptionsModule {
@@ -288,7 +288,7 @@ pub enum CompilerOptionsType {
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CompilerOptionsSourceKind {
-  DenoJson,
+  EdnoJson,
   TsConfig,
 }
 
@@ -327,25 +327,25 @@ pub fn get_base_compiler_options_for_emit(
       "inlineSources": true,
       "isolatedModules": true,
       "lib": match (lib, source_kind) {
-        (TsTypeLib::DenoWindow, CompilerOptionsSourceKind::DenoJson) => vec!["deno.window", "deno.unstable", "node"],
-        (TsTypeLib::DenoWindow, CompilerOptionsSourceKind::TsConfig) => vec!["deno.window", "deno.unstable", "dom", "node"],
-        (TsTypeLib::DenoWorker, CompilerOptionsSourceKind::DenoJson) => vec!["deno.worker", "deno.unstable", "node"],
-        (TsTypeLib::DenoWorker, CompilerOptionsSourceKind::TsConfig) => vec!["deno.worker", "deno.unstable", "dom", "node"],
-        (TsTypeLib::DenoDesktop, CompilerOptionsSourceKind::DenoJson) => vec!["deno.desktop", "deno.unstable", "node"],
-        (TsTypeLib::DenoDesktop, CompilerOptionsSourceKind::TsConfig) => vec!["deno.desktop", "deno.unstable", "dom", "node"],
+        (TsTypeLib::EdnoWindow, CompilerOptionsSourceKind::EdnoJson) => vec!["edno.window", "edno.unstable", "node"],
+        (TsTypeLib::EdnoWindow, CompilerOptionsSourceKind::TsConfig) => vec!["edno.window", "edno.unstable", "dom", "node"],
+        (TsTypeLib::EdnoWorker, CompilerOptionsSourceKind::EdnoJson) => vec!["edno.worker", "edno.unstable", "node"],
+        (TsTypeLib::EdnoWorker, CompilerOptionsSourceKind::TsConfig) => vec!["edno.worker", "edno.unstable", "dom", "node"],
+        (TsTypeLib::EdnoDesktop, CompilerOptionsSourceKind::EdnoJson) => vec!["edno.desktop", "edno.unstable", "node"],
+        (TsTypeLib::EdnoDesktop, CompilerOptionsSourceKind::TsConfig) => vec!["edno.desktop", "edno.unstable", "dom", "node"],
       },
       "module": "NodeNext",
       "moduleDetection": "force",
       "noEmit": true,
       "noImplicitOverride": match source_kind {
-        CompilerOptionsSourceKind::DenoJson => true,
+        CompilerOptionsSourceKind::EdnoJson => true,
         CompilerOptionsSourceKind::TsConfig => false,
       },
       "resolveJsonModule": true,
       "sourceMap": false,
       "skipLibCheck": false,
       "strict": match source_kind {
-        CompilerOptionsSourceKind::DenoJson => true,
+        CompilerOptionsSourceKind::EdnoJson => true,
         CompilerOptionsSourceKind::TsConfig => false,
       },
       "target": "esnext",
@@ -384,7 +384,7 @@ pub struct TranspileAndEmitOptions {
 #[cfg(feature = "deno_ast")]
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type TranspileAndEmitOptionsRc =
-  deno_maybe_sync::MaybeArc<TranspileAndEmitOptions>;
+  edno_maybe_sync::MaybeArc<TranspileAndEmitOptions>;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 struct WildcardString {
@@ -482,19 +482,19 @@ impl CompilerOptionsPaths {
 #[derive(Debug, Default)]
 struct LoggedWarnings {
   experimental_decorators: AtomicFlag,
-  folders: deno_maybe_sync::MaybeDashSet<Url>,
+  folders: edno_maybe_sync::MaybeDashSet<Url>,
 }
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-type LoggedWarningsRc = deno_maybe_sync::MaybeArc<LoggedWarnings>;
+type LoggedWarningsRc = edno_maybe_sync::MaybeArc<LoggedWarnings>;
 
 #[derive(Default, Debug)]
 struct MemoizedValues {
-  deno_window_check_compiler_options:
+  edno_window_check_compiler_options:
     OnceCell<Result<CompilerOptionsRc, CompilerOptionsParseError>>,
-  deno_worker_check_compiler_options:
+  edno_worker_check_compiler_options:
     OnceCell<Result<CompilerOptionsRc, CompilerOptionsParseError>>,
-  deno_desktop_check_compiler_options:
+  edno_desktop_check_compiler_options:
     OnceCell<Result<CompilerOptionsRc, CompilerOptionsParseError>>,
   emit_compiler_options:
     OnceCell<Result<CompilerOptionsRc, CompilerOptionsParseError>>,
@@ -534,7 +534,7 @@ pub struct CompilerOptionsOverrides {
   /// import that is re-exported without the `type` modifier
   /// (`import { type X }` + `export { X }`) is left as a dangling value
   /// export and crashes at runtime. Falling back to heuristic import
-  /// elision matches the `deno compile` runtime, which forces verbatim
+  /// elision matches the `edno compile` runtime, which forces verbatim
   /// off too.
   pub force_disable_verbatim_module_syntax: bool,
 }
@@ -595,14 +595,14 @@ impl CompilerOptionsData {
     let cell = match typ {
       CompilerOptionsType::Bundle => unreachable!(),
       CompilerOptionsType::Check {
-        lib: TsTypeLib::DenoWindow,
-      } => &self.memoized.deno_window_check_compiler_options,
+        lib: TsTypeLib::EdnoWindow,
+      } => &self.memoized.edno_window_check_compiler_options,
       CompilerOptionsType::Check {
-        lib: TsTypeLib::DenoWorker,
-      } => &self.memoized.deno_worker_check_compiler_options,
+        lib: TsTypeLib::EdnoWorker,
+      } => &self.memoized.edno_worker_check_compiler_options,
       CompilerOptionsType::Check {
-        lib: TsTypeLib::DenoDesktop,
-      } => &self.memoized.deno_desktop_check_compiler_options,
+        lib: TsTypeLib::EdnoDesktop,
+      } => &self.memoized.edno_desktop_check_compiler_options,
       CompilerOptionsType::Emit => &self.memoized.emit_compiler_options,
     };
     let result = cell.get_or_init(|| {
@@ -1022,7 +1022,7 @@ impl TsConfigFileFilter {
 }
 
 #[allow(clippy::disallowed_types, reason = "definition")]
-type TsConfigFileFilterRc = deno_maybe_sync::MaybeArc<TsConfigFileFilter>;
+type TsConfigFileFilterRc = edno_maybe_sync::MaybeArc<TsConfigFileFilter>;
 
 #[derive(Debug)]
 pub struct TsConfigData {
@@ -1056,8 +1056,8 @@ fn is_maybe_directory_error(err: &std::io::Error) -> bool {
 }
 
 pub(crate) type TsConfigNodeResolver<TSys, TNpfr> = NodeResolver<
-  DenoInNpmPackageChecker,
-  DenoIsBuiltInNodeModuleChecker,
+  EdnoInNpmPackageChecker,
+  EdnoIsBuiltInNodeModuleChecker,
   TNpfr,
   TSys,
 >;
@@ -1150,9 +1150,9 @@ impl<
   }
 
   fn visit_reference(&mut self, ts_config: Rc<TsConfigData>) {
-    // `deno sync-types` generates referenced projects solely for stock
-    // TypeScript's resolver. They point into Deno's npm cache and must not
-    // become Deno compiler-option scopes or project roots themselves.
+    // `edno sync-types` generates referenced projects solely for stock
+    // TypeScript's resolver. They point into Edno's npm cache and must not
+    // become Edno compiler-option scopes or project roots themselves.
     if ts_config.is_deno_generated {
       return;
     }
@@ -1265,7 +1265,7 @@ impl<
         self.read_ts_config_with_cache(Cow::Owned(path)).ok()
       })
       // Generated stock-TypeScript compatibility configs should not affect
-      // Deno's own compiler options when a root tsconfig extends them.
+      // Edno's own compiler options when a root tsconfig extends them.
       .filter(|config| !config.is_deno_generated)
       .collect::<Vec<_>>();
     let sources = extends_targets
@@ -1447,7 +1447,7 @@ impl Default for CompilerOptionsResolver {
       workspace_configs: FolderScopedWithUnscopedMap::new(
         CompilerOptionsData::new(
           Vec::new(),
-          CompilerOptionsSourceKind::DenoJson,
+          CompilerOptionsSourceKind::EdnoJson,
           None,
           Default::default(),
           Default::default(),
@@ -1475,7 +1475,7 @@ impl CompilerOptionsResolver {
         workspace_configs: FolderScopedWithUnscopedMap::new(
           CompilerOptionsData::new(
             Vec::new(),
-            CompilerOptionsSourceKind::DenoJson,
+            CompilerOptionsSourceKind::EdnoJson,
             None,
             Default::default(),
             overrides.clone(),
@@ -1495,7 +1495,7 @@ impl CompilerOptionsResolver {
     let mut workspace_configs =
       FolderScopedWithUnscopedMap::new(CompilerOptionsData::new(
         root_dir.to_configured_compiler_options_sources(),
-        CompilerOptionsSourceKind::DenoJson,
+        CompilerOptionsSourceKind::EdnoJson,
         Some(root_dir.dir_url().clone()),
         logged_warnings.clone(),
         overrides.clone(),
@@ -1509,7 +1509,7 @@ impl CompilerOptionsResolver {
           dir.dir_url().clone(),
           CompilerOptionsData::new(
             dir.to_configured_compiler_options_sources(),
-            CompilerOptionsSourceKind::DenoJson,
+            CompilerOptionsSourceKind::EdnoJson,
             Some(dir.dir_url().clone()),
             logged_warnings.clone(),
             overrides.clone(),
@@ -1621,7 +1621,7 @@ impl CompilerOptionsResolver {
     let mut workspace_configs =
       FolderScopedWithUnscopedMap::new(CompilerOptionsData::new(
         Vec::new(),
-        CompilerOptionsSourceKind::DenoJson,
+        CompilerOptionsSourceKind::EdnoJson,
         None,
         logged_warnings.clone(),
         Default::default(),
@@ -1634,7 +1634,7 @@ impl CompilerOptionsResolver {
         scope.clone(),
         CompilerOptionsData::new(
           dir.to_configured_compiler_options_sources(),
-          CompilerOptionsSourceKind::DenoJson,
+          CompilerOptionsSourceKind::EdnoJson,
           Some(scope.clone()),
           logged_warnings.clone(),
           Default::default(),
@@ -1711,7 +1711,7 @@ impl deno_graph::CheckJsResolver for CompilerOptionsResolver {
 
 #[allow(clippy::disallowed_types, reason = "definition")]
 pub type CompilerOptionsResolverRc =
-  deno_maybe_sync::MaybeArc<CompilerOptionsResolver>;
+  edno_maybe_sync::MaybeArc<CompilerOptionsResolver>;
 
 #[derive(Debug, Default)]
 struct JsxImportSourceConfigData {
@@ -1773,10 +1773,10 @@ impl JsxImportSourceConfigResolver {
 
 #[cfg(feature = "deno_ast")]
 fn compiler_options_to_transpile_and_emit_options(
-  config: deno_config::deno_json::CompilerOptions,
+  config: edno_config::edno_json::CompilerOptions,
   overrides: &CompilerOptionsOverrides,
 ) -> Result<TranspileAndEmitOptions, serde_json::Error> {
-  let options: deno_config::deno_json::EmitConfigOptions =
+  let options: edno_config::edno_json::EmitConfigOptions =
     serde_json::from_value(config.0)?;
   let imports_not_used_as_values =
     match options.imports_not_used_as_values.as_str() {

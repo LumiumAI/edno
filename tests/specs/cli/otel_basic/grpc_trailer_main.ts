@@ -51,16 +51,16 @@ function collectData(body: Record<string, unknown>) {
 }
 
 // The grpc-status to send in trailers. "0" = OK, anything else = error.
-// Forward host env vars except OTEL_*/DENO_UNSTABLE_OTEL* to prevent leaking
+// Forward host env vars except OTEL_*/EDNO_UNSTABLE_OTEL* to prevent leaking
 // host telemetry config into the test child process.
 const forwardedEnv = Object.fromEntries(
-  Object.entries(Deno.env.toObject()).filter(
-    ([k]) => !k.startsWith("OTEL_") && !k.startsWith("DENO_UNSTABLE_OTEL"),
+  Object.entries(Edno.env.toObject()).filter(
+    ([k]) => !k.startsWith("OTEL_") && !k.startsWith("EDNO_UNSTABLE_OTEL"),
   ),
 );
 
-const grpcStatus = Deno.env.get("GRPC_TRAILER_STATUS") || "0";
-const grpcMessage = Deno.env.get("GRPC_TRAILER_MESSAGE") || "";
+const grpcStatus = Edno.env.get("GRPC_TRAILER_STATUS") || "0";
+const grpcMessage = Edno.env.get("GRPC_TRAILER_MESSAGE") || "";
 
 const server = http2.createSecureServer({
   key: fs.readFileSync("../../../testdata/tls/localhost.key"),
@@ -107,21 +107,21 @@ server.listen(0, "localhost", () => {
   const port = addr.port;
   const endpoint = `https://localhost:${port}`;
 
-  const command = new Deno.Command(Deno.execPath(), {
+  const command = new Edno.Command(Edno.execPath(), {
     args: [
       "run",
       "--env-file=env_file",
       "-A",
       "-q",
       "--unstable-cron",
-      Deno.args[0],
+      Edno.args[0],
     ],
     clearEnv: true,
     env: {
       ...forwardedEnv,
       OTEL_EXPORTER_OTLP_ENDPOINT: endpoint,
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc",
-      ...(grpcStatus !== "0" ? { DENO_LOG: "error" } : {}),
+      ...(grpcStatus !== "0" ? { EDNO_LOG: "error" } : {}),
     },
     stdout: "null",
   });

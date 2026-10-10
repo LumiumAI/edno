@@ -1,5 +1,5 @@
 Add npm:cowsay@1.5.0
-error: Failed to install '@denotest/cjs-default-export'
+error: Failed to install '@ednotest/cjs-default-export'
     at file:///[WILDLINE]/package.json
 
 Caused by:

@@ -15,7 +15,7 @@ import { isInternalThread } from "node:worker_threads";
 import { EventEmitter, once } from "node:events";
 import process from "node:process";
 
-Deno.test("[node/worker_threads] BroadcastChannel is exported", () => {
+Edno.test("[node/worker_threads] BroadcastChannel is exported", () => {
   const bc = new workerThreads.BroadcastChannel("test");
   assert(bc instanceof BroadcastChannel);
   assert(typeof bc.ref === "function");
@@ -23,44 +23,44 @@ Deno.test("[node/worker_threads] BroadcastChannel is exported", () => {
   bc.close();
 });
 
-Deno.test("[node/worker_threads] MessageChannel are MessagePort are exported", () => {
+Edno.test("[node/worker_threads] MessageChannel are MessagePort are exported", () => {
   assert(workerThreads.MessageChannel);
   assertEquals<unknown>(workerThreads.MessagePort, MessagePort);
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] isMainThread",
   fn() {
     assertEquals(workerThreads.isMainThread, true);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] isInternalThread",
   fn() {
     // Both the named export and the property on the module object must
-    // resolve, and be false in the main thread (Deno has no internal
+    // resolve, and be false in the main thread (Edno has no internal
     // Node worker threads). Regression test for #35149.
     assertEquals(isInternalThread, false);
     assertEquals(workerThreads.isInternalThread, false);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] threadId",
   fn() {
     assertEquals(workerThreads.threadId, 0);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] resourceLimits",
   fn() {
     assertObjectMatch(workerThreads.resourceLimits, {});
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] locks reuses Web Locks",
   fn() {
     const webLocks =
@@ -70,10 +70,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] locks request and query",
   async fn() {
-    const lockName = "deno-worker-threads-locks-basic";
+    const lockName = "edno-worker-threads-locks-basic";
     const result = await workerThreads.locks.request(
       lockName,
       async (lock) => {
@@ -101,10 +101,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] locks request can be aborted while pending",
   async fn() {
-    const lockName = "deno-worker-threads-locks-abort";
+    const lockName = "edno-worker-threads-locks-abort";
     await workerThreads.locks.request(lockName, async () => {
       const ac = new AbortController();
       const pending = workerThreads.locks.request(
@@ -137,10 +137,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] locks ifAvailable and option validation",
   async fn() {
-    const lockName = "deno-worker-threads-locks-if-available";
+    const lockName = "edno-worker-threads-locks-if-available";
     await workerThreads.locks.request(lockName, async () => {
       const unavailable = await workerThreads.locks.request(
         lockName,
@@ -161,10 +161,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] locks shared mode allows concurrent holders",
   async fn() {
-    const lockName = "deno-worker-threads-locks-shared";
+    const lockName = "edno-worker-threads-locks-shared";
     await workerThreads.locks.request(
       lockName,
       { mode: "shared" },
@@ -190,21 +190,21 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] parentPort",
   fn() {
     assertEquals(workerThreads.parentPort, null);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] workerData",
   fn() {
     assertEquals(workerThreads.workerData, null);
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] setEnvironmentData / getEnvironmentData",
   fn() {
     workerThreads.setEnvironmentData("test", "test");
@@ -212,7 +212,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker threadId",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -234,7 +234,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker basics",
   async fn() {
     workerThreads.setEnvironmentData("test", "test");
@@ -247,7 +247,7 @@ Deno.test({
       new URL("./testdata/worker_threads.mjs", import.meta.url),
       {
         workerData: ["hey", true, false, 2, port1],
-        // deno-lint-ignore no-explicit-any
+        // edno-lint-ignore no-explicit-any
         transferList: [port1 as any],
       },
     );
@@ -267,7 +267,7 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker eval",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -284,10 +284,10 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] locks are shared with workers",
   async fn() {
-    const lockName = "deno-worker-threads-locks-cross-worker";
+    const lockName = "edno-worker-threads-locks-cross-worker";
     const worker = new workerThreads.Worker(
       `
       const { parentPort, locks } = require("node:worker_threads");
@@ -320,10 +320,10 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] locks are released when worker exits",
   async fn() {
-    const lockName = "deno-worker-threads-locks-worker-exit";
+    const lockName = "edno-worker-threads-locks-worker-exit";
     const worker = new workerThreads.Worker(
       `
       const { parentPort, locks } = require("node:worker_threads");
@@ -348,11 +348,11 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] pending worker locks are cleaned up on terminate",
   async fn() {
-    const lockName = "deno-worker-threads-locks-pending-worker-exit";
+    const lockName = "edno-worker-threads-locks-pending-worker-exit";
     const worker = new workerThreads.Worker(
       `
       const { parentPort, locks } = require("node:worker_threads");
@@ -396,10 +396,10 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] exclusive locks are handed off to workers",
   async fn() {
-    const lockName = "deno-worker-threads-locks-worker-handoff";
+    const lockName = "edno-worker-threads-locks-worker-handoff";
     const worker = new workerThreads.Worker(
       `
       const { parentPort, locks } = require("node:worker_threads");
@@ -438,11 +438,11 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] terminating a worker halts its locked callback before handoff",
   async fn() {
-    const lockName = "deno-worker-threads-locks-worker-halt";
+    const lockName = "edno-worker-threads-locks-worker-halt";
     // The worker holds an exclusive lock and mutates shared memory in a
     // synchronous loop that never yields. When the parent terminates it, the
     // host re-grants the held lock to the next waiter synchronously; if the
@@ -492,7 +492,7 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker eval",
   async fn() {
     // Check that newlines are encoded properly
@@ -511,7 +511,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] worker thread with type module",
   async fn() {
     function p() {
@@ -527,7 +527,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] worker thread in nested module",
   async fn() {
     function p() {
@@ -543,7 +543,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] .cjs worker file within module",
   async fn() {
     function p() {
@@ -559,7 +559,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] relativ path string",
   async fn() {
     function p() {
@@ -575,7 +575,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] utf-8 path string",
   async fn() {
     function p() {
@@ -591,7 +591,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] utf-8 path URL",
   async fn() {
     function p() {
@@ -610,7 +610,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] throws on relativ path without leading dot",
   fn() {
     assertThrows(
@@ -623,7 +623,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] throws on unsupported URL protcol",
   fn() {
     assertThrows(
@@ -634,7 +634,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] inheritances",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -660,7 +660,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker workerData",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -684,12 +684,12 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker with relative path",
   async fn() {
     const worker = new workerThreads.Worker(
       `.${SEPARATOR}` + relative(
-        Deno.cwd(),
+        Edno.cwd(),
         fromFileUrl(new URL("./testdata/worker_threads.mjs", import.meta.url)),
       ),
     );
@@ -699,11 +699,11 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] unref",
   async fn() {
     const timeout = setTimeout(() => fail("Test timed out"), 60_000);
-    const child = new Deno.Command(Deno.execPath(), {
+    const child = new Edno.Command(Edno.execPath(), {
       args: [
         "eval",
         "import { Worker } from 'node:worker_threads'; new Worker('setTimeout(() => {}, 1_000_000)', {eval:true}).unref();",
@@ -714,7 +714,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] SharedArrayBuffer",
   async fn() {
     const sab = new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT);
@@ -734,7 +734,7 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker workerData with MessagePort",
   async fn() {
     const { port1: mainPort, port2: workerPort } = new workerThreads
@@ -784,7 +784,7 @@ Deno.test({
 });
 
 // Regression test for https://github.com/denoland/deno/issues/23362
-Deno.test("[node/worker_threads] receiveMessageOnPort works if there's pending read", function () {
+Edno.test("[node/worker_threads] receiveMessageOnPort works if there's pending read", function () {
   const { port1, port2 } = new workerThreads.MessageChannel();
   const { port1: port3, port2: port4 } = new workerThreads.MessageChannel();
   const { port1: port5, port2: port6 } = new workerThreads.MessageChannel();
@@ -829,7 +829,7 @@ Deno.test("[node/worker_threads] receiveMessageOnPort works if there's pending r
   port6.close();
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker env",
   async fn() {
     const deferred = Promise.withResolvers<void>();
@@ -855,7 +855,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Worker env using process.env",
   async fn() {
     const deferred = Promise.withResolvers<void>();
@@ -883,7 +883,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Returns terminate promise with exit code",
   async fn() {
     const deferred = Promise.withResolvers<void>();
@@ -909,7 +909,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] MessagePort.on all message listeners are invoked",
   async fn() {
@@ -934,7 +934,7 @@ Deno.test({
 // Node's MessagePort.on('message', fn) deduplicates by listener
 // reference. Registering the same function multiple times must
 // deliver only once, and `.off` must clean up the listener fully.
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] MessagePort.on deduplicates listeners",
   async fn() {
     const output: string[] = [];
@@ -963,7 +963,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] MessagePort.on dedup is per-event-name and per-port",
   async fn() {
@@ -997,7 +997,7 @@ Deno.test({
 });
 
 // Test for https://github.com/denoland/deno/issues/23854
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] MessagePort.addListener is present",
   async fn() {
     const channel = new workerThreads.MessageChannel();
@@ -1024,7 +1024,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] Emits online event",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -1053,7 +1053,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] receiveMessageOnPort doesn't exit receive loop",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -1106,7 +1106,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] MessagePort.unref doesn't exit receive loop",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -1166,7 +1166,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] npm:piscina wait loop hang regression",
   async fn() {
     const worker = new workerThreads.Worker(
@@ -1254,7 +1254,7 @@ Deno.test({
   },
 });
 
-Deno.test("[node/worker_threads] Worker runs async ops correctly", async () => {
+Edno.test("[node/worker_threads] Worker runs async ops correctly", async () => {
   const recvMessage = Promise.withResolvers<void>();
   const timer = setTimeout(() => recvMessage.reject(), 1000);
   const worker = new workerThreads.Worker(
@@ -1277,7 +1277,7 @@ Deno.test("[node/worker_threads] Worker runs async ops correctly", async () => {
   await recvMessage.promise;
 });
 
-Deno.test("[node/worker_threads] Worker works with CJS require", async () => {
+Edno.test("[node/worker_threads] Worker works with CJS require", async () => {
   const recvMessage = Promise.withResolvers<void>();
   const worker = new workerThreads.Worker(
     `
@@ -1304,7 +1304,7 @@ Deno.test("[node/worker_threads] Worker works with CJS require", async () => {
   await recvMessage.promise;
 });
 
-Deno.test({
+Edno.test({
   name: "[node/worker_threads] terminate emits 'exit' and stops receiving",
   async fn() {
     const recv: string[] = [];
@@ -1357,7 +1357,7 @@ Deno.test({
   sanitizeResources: false,
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] 'online' fires before first user message (pollMessages)",
   async fn() {
@@ -1388,7 +1388,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] V8 profiling flags in execArgv are accepted and ignored",
   async fn() {
@@ -1415,7 +1415,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] V8 profiling flags in NODE_OPTIONS env are accepted",
   async fn() {
@@ -1435,7 +1435,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] unknown execArgv flags still throw ERR_WORKER_INVALID_EXEC_ARGV",
   fn() {
@@ -1451,7 +1451,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "[node/worker_threads] disallowed NODE_OPTIONS flag with =value is still rejected",
   fn() {
@@ -1469,7 +1469,7 @@ Deno.test({
 
 // Placed last: creating a Worker bumps the process-global threadId counter,
 // which the "Worker threadId" test above asserts absolute values for.
-Deno.test("[node/worker_threads] postMessage of non-serializable value throws", async () => {
+Edno.test("[node/worker_threads] postMessage of non-serializable value throws", async () => {
   // URL is not [Serializable] per the WHATWG/HTML spec; posting it must throw
   // a DataCloneError instead of silently delivering `{}`. Regression test for
   // denoland/deno#35401.

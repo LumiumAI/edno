@@ -3640,7 +3640,7 @@ declare module "crypto" {
          * both malicious and legitimate certificates can contain subject alternative names
          * that include this sequence when represented as a string.
          *
-         * After the prefix denoting the type of the entry, the remainder of each entry
+         * After the prefix ednoting the type of the entry, the remainder of each entry
          * might be enclosed in quotes to indicate that the value is a JSON string literal.
          * For backward compatibility, Node.js only uses JSON string literals within this
          * property when necessary to avoid ambiguity. Third-party code should be prepared
@@ -3656,7 +3656,7 @@ declare module "crypto" {
          * the access method and the kind of the access location, followed by a colon and
          * the value associated with the access location.
          *
-         * After the prefix denoting the access method and the kind of the access location,
+         * After the prefix ednoting the access method and the kind of the access location,
          * the remainder of each line might be enclosed in quotes to indicate that the
          * value is a JSON string literal. For backward compatibility, Node.js only uses
          * JSON string literals within this property when necessary to avoid ambiguity.

@@ -2,14 +2,14 @@
 
 use std::borrow::Cow;
 
-use deno_core::WebIDL;
-use deno_core::cppgc::Ref;
-use deno_core::v8;
-use deno_core::webidl::ContextFn;
-use deno_core::webidl::IntOptions;
-use deno_core::webidl::WebIdlConverter;
-use deno_core::webidl::WebIdlError;
-use deno_core::webidl::WebIdlErrorKind;
+use edno_core::WebIDL;
+use edno_core::cppgc::Ref;
+use edno_core::v8;
+use edno_core::webidl::ContextFn;
+use edno_core::webidl::IntOptions;
+use edno_core::webidl::WebIdlConverter;
+use edno_core::webidl::WebIdlError;
+use edno_core::webidl::WebIdlErrorKind;
 use deno_error::JsErrorBox;
 
 #[derive(WebIDL)]

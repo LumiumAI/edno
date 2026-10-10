@@ -1,16 +1,16 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-console
+// edno-lint-ignore-file no-console
 
-const targetDir = Deno.execPath().replace(/[^\/\\]+$/, "");
+const targetDir = Edno.execPath().replace(/[^\/\\]+$/, "");
 const [libPrefix, libSuffix] = {
   darwin: ["lib", "dylib"],
   linux: ["lib", "so"],
   windows: ["", "dll"],
-}[Deno.build.os];
+}[Edno.build.os];
 const libPath = `${targetDir}/${libPrefix}test_ffi.${libSuffix}`;
 
-const dylib = Deno.dlopen(
+const dylib = Edno.dlopen(
   libPath,
   {
     store_function: {
@@ -49,7 +49,7 @@ const tripleLogCallback = () => {
   }, 100);
 };
 
-const callback = Deno.UnsafeCallback.threadSafe(
+const callback = Edno.UnsafeCallback.threadSafe(
   {
     parameters: [],
     result: "void",

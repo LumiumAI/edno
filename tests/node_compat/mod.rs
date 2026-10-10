@@ -89,7 +89,7 @@ struct TestConfig {
   /// override (e.g. `node_shared_openssl=1`) which would regress other tests
   /// if applied globally.
   env: Option<HashMap<String, String>>,
-  /// Extra `deno run`/`deno test` CLI flags to append for this test only,
+  /// Extra `edno run`/`edno test` CLI flags to append for this test only,
   /// appearing after the standard `RUN_ARGS`/`TEST_ARGS` and after any
   /// flags derived from the test source's `// Flags:` directive. Use
   /// sparingly - typically for security knobs like
@@ -122,7 +122,7 @@ fn main() {
     hasher
       .hash_dir(tests.join("node_compat"))
       .hash_dir(tests.join("util"))
-      .hash_file(test_util::deno_exe_path())
+      .hash_file(test_util::edno_exe_path())
       .hash_file(test_util::test_server_path());
   });
   if matches!(ci_hash, test_util::hash::CiHashStatus::Skip) {
@@ -292,7 +292,7 @@ fn load_config() -> NodeCompatConfig {
 }
 
 // Directories that don't contain runnable tests
-// from https://github.com/denoland/std/pull/2787#discussion_r1001237016
+// from https://github.com/ednoland/std/pull/2787#discussion_r1001237016
 const IGNORED_TEST_DIRS: &[&str] = &[
   "addons",
   "async-hooks",
@@ -517,7 +517,7 @@ fn uses_node_test_module(source: &str) -> bool {
 fn parse_flags(source: &str) -> (Vec<String>, Vec<String>, Vec<String>) {
   let mut v8_flags = Vec::new();
   let mut node_options = Vec::new();
-  let mut deno_args = Vec::new();
+  let mut edno_args = Vec::new();
 
   let re = Regex::new(r"^// Flags: (.+)$").unwrap();
   for line in source.lines() {
@@ -576,8 +576,8 @@ fn parse_flags(source: &str) -> (Vec<String>, Vec<String>, Vec<String>) {
           }
           // Inspector tests opt in to the inspector via `--inspect=PORT`
           // (commonly `--inspect=0` to pick a random port). Forward to
-          // Deno, normalizing the bare port form to `127.0.0.1:PORT` since
-          // Deno's CLI expects `host:port`.
+          // Edno, normalizing the bare port form to `127.0.0.1:PORT` since
+          // Edno's CLI expects `host:port`.
           n if n == "--inspect" || n.starts_with("--inspect=") => {
             let mapped = match n.strip_prefix("--inspect=") {
               None | Some("") => "--inspect=127.0.0.1:0".to_string(),
@@ -586,10 +586,10 @@ fn parse_flags(source: &str) -> (Vec<String>, Vec<String>, Vec<String>) {
               }
               Some(rest) => format!("--inspect={}", rest),
             };
-            deno_args.push(mapped);
+            edno_args.push(mapped);
           }
           "--experimental-network-inspection" => {
-            // Deno emits Network.* events when the inspector is attached;
+            // Edno emits Network.* events when the inspector is attached;
             // no separate opt-in flag.
           }
           _ => {}
@@ -599,7 +599,7 @@ fn parse_flags(source: &str) -> (Vec<String>, Vec<String>, Vec<String>) {
     }
   }
 
-  (v8_flags, node_options, deno_args)
+  (v8_flags, node_options, edno_args)
 }
 
 fn truncate_output(output: &str, max_len: usize) -> String {
@@ -695,7 +695,7 @@ impl TestSetup {
   }
 
   fn run_piped(&self) -> (bool, String, Option<i32>) {
-    let mut cmd = util::deno_cmd().disable_diagnostic_logging();
+    let mut cmd = util::edno_cmd().disable_diagnostic_logging();
     cmd = cmd.current_dir(&self.test_suite_path);
     for arg in &self.args {
       cmd = cmd.arg(arg);
@@ -723,7 +723,7 @@ impl TestSetup {
   }
 
   fn run_pty(&self) -> (bool, String, Option<i32>) {
-    let deno_exe = util::deno_exe_path();
+    let edno_exe = util::edno_exe_path();
     let args: Vec<&str> = self.args.iter().map(|s| s.as_str()).collect();
 
     // PTY needs the full environment (inherit + our overrides)
@@ -733,7 +733,7 @@ impl TestSetup {
     }
 
     let pty_output = util::pty::run_in_pty(
-      deno_exe.as_path(),
+      edno_exe.as_path(),
       &args,
       self.test_suite_path.as_path(),
       Some(env_vars),
@@ -787,7 +787,7 @@ impl TestSetup {
     format!(
       "Command: {}",
       deno_terminal::colors::gray(format!(
-        "{}NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 NODE_OPTIONS='{}' deno {}",
+        "{}NODE_TEST_KNOWN_GLOBALS=0 NODE_SKIP_FLAG_CHECK=1 NODE_OPTIONS='{}' edno {}",
         extras_str,
         node_options.replace("'", "\\'"),
         args_str,

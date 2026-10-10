@@ -1,52 +1,52 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 import { assert, assertEquals, assertThrows } from "./test_util.ts";
 
-Deno.test({ permissions: { read: true } }, function dirCwdNotNull() {
-  assert(Deno.cwd() != null);
+Edno.test({ permissions: { read: true } }, function dirCwdNotNull() {
+  assert(Edno.cwd() != null);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function dirCwdChdirSuccess() {
-    const initialdir = Deno.cwd();
-    const path = Deno.makeTempDirSync();
-    Deno.chdir(path);
-    const current = Deno.cwd();
-    if (Deno.build.os === "darwin") {
+    const initialdir = Edno.cwd();
+    const path = Edno.makeTempDirSync();
+    Edno.chdir(path);
+    const current = Edno.cwd();
+    if (Edno.build.os === "darwin") {
       assertEquals(current, "/private" + path);
     } else {
       assertEquals(current, path);
     }
-    Deno.chdir(initialdir);
+    Edno.chdir(initialdir);
   },
 );
 
-Deno.test({ permissions: { read: true, write: true } }, function dirCwdError() {
+Edno.test({ permissions: { read: true, write: true } }, function dirCwdError() {
   // excluding windows since it throws resource busy, while removeSync
-  if (["linux", "darwin"].includes(Deno.build.os)) {
-    const initialdir = Deno.cwd();
-    const path = Deno.makeTempDirSync();
-    Deno.chdir(path);
-    Deno.removeSync(path);
+  if (["linux", "darwin"].includes(Edno.build.os)) {
+    const initialdir = Edno.cwd();
+    const path = Edno.makeTempDirSync();
+    Edno.chdir(path);
+    Edno.removeSync(path);
     try {
       assertThrows(() => {
-        Deno.cwd();
-      }, Deno.errors.NotFound);
+        Edno.cwd();
+      }, Edno.errors.NotFound);
     } finally {
-      Deno.chdir(initialdir);
+      Edno.chdir(initialdir);
     }
   }
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function dirChdirError() {
-    const path = Deno.makeTempDirSync() + "test";
+    const path = Edno.makeTempDirSync() + "test";
     assertThrows(
       () => {
-        Deno.chdir(path);
+        Edno.chdir(path);
       },
-      Deno.errors.NotFound,
+      Edno.errors.NotFound,
       `chdir '${path}'`,
     );
   },

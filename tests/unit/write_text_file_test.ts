@@ -7,201 +7,201 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function writeTextFileSyncSuccess() {
-    const filename = Deno.makeTempDirSync() + "/test.txt";
-    Deno.writeTextFileSync(filename, "Hello");
-    const dataRead = Deno.readTextFileSync(filename);
+    const filename = Edno.makeTempDirSync() + "/test.txt";
+    Edno.writeTextFileSync(filename, "Hello");
+    const dataRead = Edno.readTextFileSync(filename);
     assertEquals(dataRead, "Hello");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function writeTextFileSyncByUrl() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const fileUrl = new URL(
-      `file://${Deno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
+      `file://${Edno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
     );
-    Deno.writeTextFileSync(fileUrl, "Hello");
-    const dataRead = Deno.readTextFileSync(fileUrl);
+    Edno.writeTextFileSync(fileUrl, "Hello");
+    const dataRead = Edno.readTextFileSync(fileUrl);
     assertEquals(dataRead, "Hello");
 
-    Deno.removeSync(fileUrl, { recursive: true });
+    Edno.removeSync(fileUrl, { recursive: true });
   },
 );
 
-Deno.test({ permissions: { write: true } }, function writeTextFileSyncFail() {
+Edno.test({ permissions: { write: true } }, function writeTextFileSyncFail() {
   const filename = "/baddir/test.txt";
   // The following should fail because /baddir doesn't exist (hopefully).
   assertThrows(() => {
-    Deno.writeTextFileSync(filename, "hello");
-  }, Deno.errors.NotFound);
+    Edno.writeTextFileSync(filename, "hello");
+  }, Edno.errors.NotFound);
 });
 
-Deno.test({ permissions: { write: false } }, function writeTextFileSyncPerm() {
+Edno.test({ permissions: { write: false } }, function writeTextFileSyncPerm() {
   const filename = "/baddir/test.txt";
   // The following should fail due to no write permission
   assertThrows(() => {
-    Deno.writeTextFileSync(filename, "Hello");
-  }, Deno.errors.NotCapable);
+    Edno.writeTextFileSync(filename, "Hello");
+  }, Edno.errors.NotCapable);
 });
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function writeTextFileSyncUpdateMode() {
-    if (Deno.build.os !== "windows") {
+    if (Edno.build.os !== "windows") {
       const data = "Hello";
-      const filename = Deno.makeTempDirSync() + "/test.txt";
-      Deno.writeTextFileSync(filename, data, { mode: 0o755 });
-      assertEquals(Deno.statSync(filename).mode! & 0o777, 0o755);
-      Deno.writeTextFileSync(filename, data, { mode: 0o666 });
-      assertEquals(Deno.statSync(filename).mode! & 0o777, 0o666);
+      const filename = Edno.makeTempDirSync() + "/test.txt";
+      Edno.writeTextFileSync(filename, data, { mode: 0o755 });
+      assertEquals(Edno.statSync(filename).mode! & 0o777, 0o755);
+      Edno.writeTextFileSync(filename, data, { mode: 0o666 });
+      assertEquals(Edno.statSync(filename).mode! & 0o777, 0o666);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function writeTextFileSyncCreate() {
     const data = "Hello";
-    const filename = Deno.makeTempDirSync() + "/test.txt";
+    const filename = Edno.makeTempDirSync() + "/test.txt";
     let caughtError = false;
     // if create turned off, the file won't be created
     try {
-      Deno.writeTextFileSync(filename, data, { create: false });
+      Edno.writeTextFileSync(filename, data, { create: false });
     } catch (e) {
       caughtError = true;
-      assert(e instanceof Deno.errors.NotFound);
+      assert(e instanceof Edno.errors.NotFound);
     }
     assert(caughtError);
 
     // Turn on create, should have no error
-    Deno.writeTextFileSync(filename, data, { create: true });
-    Deno.writeTextFileSync(filename, data, { create: false });
-    assertEquals(Deno.readTextFileSync(filename), "Hello");
+    Edno.writeTextFileSync(filename, data, { create: true });
+    Edno.writeTextFileSync(filename, data, { create: false });
+    assertEquals(Edno.readTextFileSync(filename), "Hello");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   function writeTextFileSyncAppend() {
     const data = "Hello";
-    const filename = Deno.makeTempDirSync() + "/test.txt";
-    Deno.writeTextFileSync(filename, data);
-    Deno.writeTextFileSync(filename, data, { append: true });
-    assertEquals(Deno.readTextFileSync(filename), "HelloHello");
+    const filename = Edno.makeTempDirSync() + "/test.txt";
+    Edno.writeTextFileSync(filename, data);
+    Edno.writeTextFileSync(filename, data, { append: true });
+    assertEquals(Edno.readTextFileSync(filename), "HelloHello");
     // Now attempt overwrite
-    Deno.writeTextFileSync(filename, data, { append: false });
-    assertEquals(Deno.readTextFileSync(filename), "Hello");
+    Edno.writeTextFileSync(filename, data, { append: false });
+    assertEquals(Edno.readTextFileSync(filename), "Hello");
     // append not set should also overwrite
-    Deno.writeTextFileSync(filename, data);
-    assertEquals(Deno.readTextFileSync(filename), "Hello");
+    Edno.writeTextFileSync(filename, data);
+    assertEquals(Edno.readTextFileSync(filename), "Hello");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writeTextFileSuccess() {
-    const filename = Deno.makeTempDirSync() + "/test.txt";
-    await Deno.writeTextFile(filename, "Hello");
-    const dataRead = Deno.readTextFileSync(filename);
+    const filename = Edno.makeTempDirSync() + "/test.txt";
+    await Edno.writeTextFile(filename, "Hello");
+    const dataRead = Edno.readTextFileSync(filename);
     assertEquals(dataRead, "Hello");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writeTextFileByUrl() {
-    const tempDir = Deno.makeTempDirSync();
+    const tempDir = Edno.makeTempDirSync();
     const fileUrl = new URL(
-      `file://${Deno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
+      `file://${Edno.build.os === "windows" ? "/" : ""}${tempDir}/test.txt`,
     );
-    await Deno.writeTextFile(fileUrl, "Hello");
-    const dataRead = Deno.readTextFileSync(fileUrl);
+    await Edno.writeTextFile(fileUrl, "Hello");
+    const dataRead = Edno.readTextFileSync(fileUrl);
     assertEquals(dataRead, "Hello");
 
-    Deno.removeSync(fileUrl, { recursive: true });
+    Edno.removeSync(fileUrl, { recursive: true });
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writeTextFileNotFound() {
     const filename = "/baddir/test.txt";
     // The following should fail because /baddir doesn't exist (hopefully).
     await assertRejects(async () => {
-      await Deno.writeTextFile(filename, "Hello");
-    }, Deno.errors.NotFound);
+      await Edno.writeTextFile(filename, "Hello");
+    }, Edno.errors.NotFound);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { write: false } },
   async function writeTextFilePerm() {
     const filename = "/baddir/test.txt";
     // The following should fail due to no write permission
     await assertRejects(async () => {
-      await Deno.writeTextFile(filename, "Hello");
-    }, Deno.errors.NotCapable);
+      await Edno.writeTextFile(filename, "Hello");
+    }, Edno.errors.NotCapable);
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writeTextFileUpdateMode() {
-    if (Deno.build.os !== "windows") {
+    if (Edno.build.os !== "windows") {
       const data = "Hello";
-      const filename = Deno.makeTempDirSync() + "/test.txt";
-      await Deno.writeTextFile(filename, data, { mode: 0o755 });
-      assertEquals(Deno.statSync(filename).mode! & 0o777, 0o755);
-      await Deno.writeTextFile(filename, data, { mode: 0o666 });
-      assertEquals(Deno.statSync(filename).mode! & 0o777, 0o666);
+      const filename = Edno.makeTempDirSync() + "/test.txt";
+      await Edno.writeTextFile(filename, data, { mode: 0o755 });
+      assertEquals(Edno.statSync(filename).mode! & 0o777, 0o755);
+      await Edno.writeTextFile(filename, data, { mode: 0o666 });
+      assertEquals(Edno.statSync(filename).mode! & 0o777, 0o666);
     }
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writeTextFileCreate() {
     const data = "Hello";
-    const filename = Deno.makeTempDirSync() + "/test.txt";
+    const filename = Edno.makeTempDirSync() + "/test.txt";
     let caughtError = false;
     // if create turned off, the file won't be created
     try {
-      await Deno.writeTextFile(filename, data, { create: false });
+      await Edno.writeTextFile(filename, data, { create: false });
     } catch (e) {
       caughtError = true;
-      assert(e instanceof Deno.errors.NotFound);
+      assert(e instanceof Edno.errors.NotFound);
     }
     assert(caughtError);
 
     // Turn on create, should have no error
-    await Deno.writeTextFile(filename, data, { create: true });
-    await Deno.writeTextFile(filename, data, { create: false });
-    assertEquals(Deno.readTextFileSync(filename), "Hello");
+    await Edno.writeTextFile(filename, data, { create: true });
+    await Edno.writeTextFile(filename, data, { create: false });
+    assertEquals(Edno.readTextFileSync(filename), "Hello");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writeTextFileAppend() {
     const data = "Hello";
-    const filename = Deno.makeTempDirSync() + "/test.txt";
-    await Deno.writeTextFile(filename, data);
-    await Deno.writeTextFile(filename, data, { append: true });
-    assertEquals(Deno.readTextFileSync(filename), "HelloHello");
+    const filename = Edno.makeTempDirSync() + "/test.txt";
+    await Edno.writeTextFile(filename, data);
+    await Edno.writeTextFile(filename, data, { append: true });
+    assertEquals(Edno.readTextFileSync(filename), "HelloHello");
     // Now attempt overwrite
-    await Deno.writeTextFile(filename, data, { append: false });
-    assertEquals(Deno.readTextFileSync(filename), "Hello");
+    await Edno.writeTextFile(filename, data, { append: false });
+    assertEquals(Edno.readTextFileSync(filename), "Hello");
     // append not set should also overwrite
-    await Deno.writeTextFile(filename, data);
-    assertEquals(Deno.readTextFileSync(filename), "Hello");
+    await Edno.writeTextFile(filename, data);
+    assertEquals(Edno.readTextFileSync(filename), "Hello");
   },
 );
 
-Deno.test(
+Edno.test(
   { permissions: { read: true, write: true } },
   async function writeTextFileStream() {
     const stream = new ReadableStream({
@@ -211,8 +211,8 @@ Deno.test(
         controller.close();
       },
     });
-    const filename = Deno.makeTempDirSync() + "/test.txt";
-    await Deno.writeTextFile(filename, stream);
-    assertEquals(Deno.readTextFileSync(filename), "HelloWorld");
+    const filename = Edno.makeTempDirSync() + "/test.txt";
+    await Edno.writeTextFile(filename, stream);
+    assertEquals(Edno.readTextFileSync(filename), "HelloWorld");
   },
 );

@@ -3,27 +3,27 @@
 import { decodeBase64 } from "@std/encoding/base64";
 import { assertEquals } from "@std/assert";
 
-const cert = Deno.readTextFileSync("../../../testdata/tls/localhost.crt");
+const cert = Edno.readTextFileSync("../../../testdata/tls/localhost.crt");
 const certHash = await crypto.subtle.digest(
   "SHA-256",
   decodeBase64(cert.split("\n").slice(1, -2).join("")),
 );
 
-Deno.test("WebTransport", async () => {
-  const server = new Deno.QuicEndpoint({
+Edno.test("WebTransport", async () => {
+  const server = new Edno.QuicEndpoint({
     hostname: "localhost",
     port: 0,
   });
   const listener = server.listen({
     cert,
-    key: Deno.readTextFileSync("../../../testdata/tls/localhost.key"),
+    key: Edno.readTextFileSync("../../../testdata/tls/localhost.key"),
     alpnProtocols: ["h3"],
   });
 
   (async () => {
     for await (const incoming of listener) {
       const conn = await incoming.accept();
-      const wt = await Deno.upgradeWebTransport(conn);
+      const wt = await Edno.upgradeWebTransport(conn);
 
       assertEquals(wt.url, `https://localhost:${server.addr.port}/path`);
 
@@ -105,14 +105,14 @@ Deno.test("WebTransport", async () => {
   });
 });
 
-Deno.test("WebTransport ignores overridden URL toString", async () => {
-  const server = new Deno.QuicEndpoint({
+Edno.test("WebTransport ignores overridden URL toString", async () => {
+  const server = new Edno.QuicEndpoint({
     hostname: "localhost",
     port: 0,
   });
   const listener = server.listen({
     cert,
-    key: Deno.readTextFileSync("../../../testdata/tls/localhost.key"),
+    key: Edno.readTextFileSync("../../../testdata/tls/localhost.key"),
     alpnProtocols: ["h3"],
   });
   const expectedUrl = `https://localhost:${server.addr.port}/path`;
@@ -120,7 +120,7 @@ Deno.test("WebTransport ignores overridden URL toString", async () => {
   const serverDone = (async () => {
     for await (const incoming of listener) {
       const conn = await incoming.accept();
-      const wt = await Deno.upgradeWebTransport(conn);
+      const wt = await Edno.upgradeWebTransport(conn);
       await wt.ready;
       assertEquals(wt.url, expectedUrl);
       return;

@@ -2473,7 +2473,7 @@ export const db: {
     "source": "iana",
     "extensions": ["uvz", "uvvz"],
   },
-  "application/vnd.denovo.fcselayout-link": {
+  "application/vnd.ednovo.fcselayout-link": {
     "source": "iana",
     "extensions": ["fe_launch"],
   },

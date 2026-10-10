@@ -18,7 +18,7 @@ use std::task::Poll;
 
 use deno_error::JsErrorBox;
 use deno_error::JsErrorClass;
-use deno_ops::op2;
+use edno_ops::op2;
 use futures::future::FutureExt;
 use parking_lot::Mutex;
 use tokio::task::LocalSet;
@@ -33,8 +33,8 @@ use crate::ModuleType;
 use crate::ResolutionKind;
 use crate::RuntimeOptions;
 use crate::ascii_str;
-// deno_ops macros generate code assuming deno_core in scope.
-use crate::deno_core;
+// edno_ops macros generate code assuming edno_core in scope.
+use crate::edno_core;
 use crate::error::CoreErrorKind;
 use crate::error::exception_to_err_result;
 use crate::modules::CustomModuleEvaluationKind;
@@ -111,37 +111,37 @@ if (import.meta.url != 'file:///d.js') throw Error();
 
   const CIRCULAR1_SRC: &str = r#"
 import "/circular2.js";
-Deno.core.print("circular1");
+Edno.core.print("circular1");
 "#;
 
   const CIRCULAR2_SRC: &str = r#"
 import "/circular3.js";
-Deno.core.print("circular2");
+Edno.core.print("circular2");
 "#;
 
   const CIRCULAR3_SRC: &str = r#"
 import "/circular1.js";
 import "/circular2.js";
-Deno.core.print("circular3");
+Edno.core.print("circular3");
 "#;
 
   const REDIRECT1_SRC: &str = r#"
 import "./redirect2.js";
-Deno.core.print("redirect1");
+Edno.core.print("redirect1");
 "#;
 
   const REDIRECT2_SRC: &str = r#"
 import "./redirect3.js";
-Deno.core.print("redirect2");
+Edno.core.print("redirect2");
 "#;
 
-  const REDIRECT3_SRC: &str = r#"Deno.core.print("redirect3");"#;
+  const REDIRECT3_SRC: &str = r#"Edno.core.print("redirect3");"#;
 
   const CONCURRENT_REDIRECT_SRC: &str = r#"
 import "./redirect2.js";  // This import loads the module and registers the redirect alias
 import "./dir/redirect2.js";  // This import aborts load only after detecting it's an already loaded redirect
 import "./dir/redirect3.js";  // Tihs import is still in the queue, preventing RecursiveModuleLoad to transition to LoadState::Done
-Deno.core.print("concurrent_redirect");
+Edno.core.print("concurrent_redirect");
 "#;
 
   const MAIN_SRC: &str = r#"
@@ -445,7 +445,7 @@ fn test_mods() {
     43
   }
 
-  deno_core::extension!(test_ext, ops = [op_test]);
+  edno_core::extension!(test_ext, ops = [op_test]);
 
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
@@ -471,7 +471,7 @@ fn test_mods() {
   let module_map = runtime.module_map().clone();
 
   let (mod_a, mod_b) = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let mod_a = module_map
       .new_es_module(
         scope,
@@ -482,7 +482,7 @@ fn test_mods() {
           import { b } from './b.js'
           if (b() != 'b') throw Error();
           let control = 42;
-          Deno.core.ops.op_test(control);
+          Edno.core.ops.op_test(control);
         "#
         )
         .into(),
@@ -547,7 +547,7 @@ fn test_mods() {
 
 #[test]
 fn test_lazy_loaded_esm() {
-  deno_core::extension!(test_ext, lazy_loaded_esm = [dir "modules/testdata", "lazy_loaded.js"]);
+  edno_core::extension!(test_ext, lazy_loaded_esm = [dir "modules/testdata", "lazy_loaded.js"]);
 
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
@@ -565,11 +565,11 @@ fn test_lazy_loaded_esm() {
     .execute_script(
       "setup.js",
       r#"
-      Deno.core.print("1\n");
-      const module = Deno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
+      Edno.core.print("1\n");
+      const module = Edno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
       module.blah("hello\n");
-      Deno.core.print(`${JSON.stringify(module)}\n`);
-      const module1 = Deno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
+      Edno.core.print(`${JSON.stringify(module)}\n`);
+      const module1 = Edno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
       if (module !== module1) throw new Error("should return the same error");
       "#,
     )
@@ -584,7 +584,7 @@ fn test_lazy_loaded_esm_rejects_non_lazy_cached_module() {
     .execute_script(
       "setup.js",
       r#"
-      const load = Deno.core.createLazyLoader("ext:core/ops");
+      const load = Edno.core.createLazyLoader("ext:core/ops");
       let error;
       try {
         load();
@@ -604,7 +604,7 @@ fn test_lazy_loaded_esm_rejects_non_lazy_cached_module() {
 
 #[test]
 fn test_lazy_loaded_esm_aliased_specifier() {
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     lazy_loaded_esm = [
       dir "modules/testdata",
@@ -622,10 +622,10 @@ fn test_lazy_loaded_esm_aliased_specifier() {
     .execute_script(
       "setup.js",
       r#"
-      const module = Deno.core.createLazyLoader("custom:aliased")();
+      const module = Edno.core.createLazyLoader("custom:aliased")();
       if (module.value !== "aliased") throw new Error("expected 'aliased', got " + module.value);
       if (module.default.value !== "aliased") throw new Error("expected default.value to be 'aliased'");
-      Deno.core.print("lazy_loaded_esm aliased specifier works\n");
+      Edno.core.print("lazy_loaded_esm aliased specifier works\n");
       "#,
     )
     .unwrap();
@@ -633,7 +633,7 @@ fn test_lazy_loaded_esm_aliased_specifier() {
 
 #[tokio::test]
 async fn test_lazy_loaded_esm_aliased_via_import() {
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     lazy_loaded_esm = [
       dir "modules/testdata",
@@ -677,7 +677,7 @@ async fn test_lazy_loaded_esm_aliased_via_import() {
 /// getter lazy-loads `async_hooks_esm.ts` (a sibling in the user's bundle).
 #[tokio::test]
 async fn test_lazy_load_esm_evaluates_pre_instantiated_sibling() {
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     lazy_loaded_esm = [
       dir "modules/testdata",
@@ -717,7 +717,7 @@ fn test_cached_synthetic_esm_evaluation_allows_dynamic_import() {
   let mut runtime = JsRuntime::new(Default::default());
   let module_map = runtime.module_map().clone();
 
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
   module_map.add_synthetic_esm_module(
     ascii_str!("custom:synthetic").into(),
     ascii_str!("ext:test/backing.js").into(),
@@ -751,7 +751,7 @@ fn test_cached_synthetic_esm_evaluation_allows_dynamic_import() {
 /// + react-router 7.15 under a CJS bin).
 #[tokio::test]
 async fn test_lazy_loaded_esm_concurrent_loads() {
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     lazy_loaded_esm = [
       dir "modules/testdata",
@@ -794,7 +794,7 @@ async fn test_lazy_loaded_esm_concurrent_loads() {
 
 #[test]
 fn test_lazy_loaded_script() {
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     lazy_loaded_js = [dir "modules/testdata", "lazy_script.js", "lazy_script_dep.js"]
   );
@@ -809,20 +809,20 @@ fn test_lazy_loaded_script() {
       "test_load_ext_script.js",
       r#"
       // Load a lazy script
-      const module = Deno.core.loadExtScript("ext:test_ext/lazy_script.js");
+      const module = Edno.core.loadExtScript("ext:test_ext/lazy_script.js");
       if (module.foo !== "foo") throw new Error("expected foo");
       if (module.bar !== 123) throw new Error("expected 123");
 
       // Should be cached - same object returned
-      const module2 = Deno.core.loadExtScript("ext:test_ext/lazy_script.js");
+      const module2 = Edno.core.loadExtScript("ext:test_ext/lazy_script.js");
       if (module !== module2) throw new Error("should return the same cached object");
 
       // Load a script that depends on another lazy script
-      const dep = Deno.core.loadExtScript("ext:test_ext/lazy_script_dep.js");
+      const dep = Edno.core.loadExtScript("ext:test_ext/lazy_script_dep.js");
       if (dep.fromDep !== true) throw new Error("expected fromDep");
       if (dep.utils.foo !== "foo") throw new Error("expected nested foo");
 
-      Deno.core.print("lazy script test passed\n");
+      Edno.core.print("lazy script test passed\n");
       "#,
     )
     .unwrap();
@@ -830,7 +830,7 @@ fn test_lazy_loaded_script() {
 
 #[test]
 fn test_lazy_loaded_script_not_found() {
-  deno_core::extension!(test_ext);
+  edno_core::extension!(test_ext);
 
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
@@ -839,7 +839,7 @@ fn test_lazy_loaded_script_not_found() {
 
   let result = runtime.execute_script(
     "test_not_found.js",
-    r#"Deno.core.loadExtScript("ext:test_ext/nonexistent.js")"#,
+    r#"Edno.core.loadExtScript("ext:test_ext/nonexistent.js")"#,
   );
   assert!(result.is_err());
   let err = result.unwrap_err();
@@ -874,7 +874,7 @@ fn test_json_text_bytes_modules() {
   let module_map = runtime.module_map().clone();
 
   let (mod_b, mod_c, mod_d, mod_e) = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let specifier_b = ascii_str!("file:///b.js");
 
     let mod_b = module_map
@@ -1010,7 +1010,7 @@ fn test_validate_import_attributes_default() {
   });
 
   let module_map_rc = runtime.module_map().clone();
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
   module_map_rc
     .new_es_module(
       scope,
@@ -1128,7 +1128,7 @@ fn test_validate_import_attributes_callback() {
   let module_map_rc = runtime.module_map().clone();
 
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let module_err = module_map_rc
       .new_es_module(
         scope,
@@ -1154,7 +1154,7 @@ fn test_validate_import_attributes_callback() {
   }
 
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let module_err = module_map_rc
       .new_es_module(
         scope,
@@ -1202,7 +1202,7 @@ fn test_validate_import_attributes_callback2() {
   let module_map = runtime.module_map().clone();
 
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let module_err = module_map
       .new_es_module(
         scope,
@@ -1290,7 +1290,7 @@ fn test_custom_module_type_default() {
   let module_map = runtime.module_map().clone();
 
   let err = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let specifier_a = ascii_str!("file:///a.png").into();
     module_map
       .new_module(
@@ -1355,7 +1355,7 @@ fn test_custom_module_type_callback_synthetic() {
   let module_map = runtime.module_map().clone();
 
   let err = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let specifier_a = ascii_str!("file:///a.png").into();
     module_map
       .new_module(
@@ -1381,7 +1381,7 @@ fn test_custom_module_type_callback_synthetic() {
   };
 
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let specifier_a = ascii_str!("file:///b.png").into();
     module_map
       .new_module(
@@ -1452,7 +1452,7 @@ export const foo = bytes;
   let module_map = runtime.module_map().clone();
 
   let mod_id = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let specifier_a = ascii_str!("file:///b.png").into();
     module_map
       .new_module(
@@ -2423,7 +2423,7 @@ fn safe_array_iterator_remains_done_after_array_grows() {
 }
 
 // An internal module that is lazily loaded at runtime gets its imports
-// resolved by the embedder's loader, which in Deno applies the user's import
+// resolved by the embedder's loader, which in Edno applies the user's import
 // map. Mapping `ext:core/mod.js` used to rewrite internal imports too and
 // break instantiation. Regression test for
 // https://github.com/denoland/deno/issues/36302.
@@ -2620,7 +2620,7 @@ fn test_load_with_code_cache() {
 //
 // JSON modules do not produce a V8 code cache, so even when the loader
 // provides `SourceCodeCacheInfo` for one, `code_cache_ready` must never be
-// invoked for it. The `deno compile` runtime relies on this: it counts every
+// invoked for it. The `edno compile` runtime relies on this: it counts every
 // code cache request and only serializes its cache once a matching number of
 // `code_cache_ready` callbacks fire, so a JSON (or Wasm) module that requested
 // a cache but never produced one would otherwise stall serialization forever.
@@ -2852,7 +2852,7 @@ async fn evaluate_already_evaluated_module_sync() {
   // Evaluate synchronously using scope
   {
     let module_map = runtime.module_map();
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     module_map.mod_evaluate_sync(scope, mod_id).unwrap();
   }
 
@@ -2864,7 +2864,7 @@ async fn evaluate_already_evaluated_module_sync() {
   // Try to evaluate the same module again synchronously - should not panic
   {
     let module_map = runtime.module_map();
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     module_map.mod_evaluate_sync(scope, mod_id).unwrap();
   }
 
@@ -3179,7 +3179,7 @@ async fn test_lazy_loaded_esm_with_tla_no_panic() {
     42
   }
 
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     ops = [op_eager_resolve],
     lazy_loaded_esm = [
@@ -3210,7 +3210,7 @@ async fn test_lazy_loaded_esm_with_tla_no_panic() {
   // prematurely resolve the main module evaluation promise.
 
   let (mod_main, mod_tla, mod_lazy) = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let mod_tla = module_map
       .new_es_module(
@@ -3219,10 +3219,10 @@ async fn test_lazy_loaded_esm_with_tla_no_panic() {
         ascii_str!("file:///tla_mod.js").into(),
         ascii_str!(
           r#"
-          const lazy1 = Deno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
+          const lazy1 = Edno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
           if (lazy1.foo !== "foo") throw new Error("lazy1.foo: " + lazy1.foo);
           if (lazy1.bar !== 123) throw new Error("lazy1.bar: " + lazy1.bar);
-          const result = await Deno.core.ops.op_eager_resolve();
+          const result = await Edno.core.ops.op_eager_resolve();
           if (result !== 42) throw new Error("unexpected: " + result);
           "#
         )
@@ -3239,7 +3239,7 @@ async fn test_lazy_loaded_esm_with_tla_no_panic() {
         ascii_str!("file:///lazy_mod.js").into(),
         ascii_str!(
           r#"
-          const lazy2 = Deno.core.createLazyLoader("ext:test_ext/lazy_loaded_2.js")();
+          const lazy2 = Edno.core.createLazyLoader("ext:test_ext/lazy_loaded_2.js")();
           if (lazy2.baz !== "baz") throw new Error("lazy2.baz: " + lazy2.baz);
           "#
         )
@@ -3299,7 +3299,7 @@ async fn test_tla_with_tick_scheduled_no_hang() {
     42
   }
 
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     ops = [op_async_resolve],
     lazy_loaded_esm = [
@@ -3331,7 +3331,7 @@ async fn test_tla_with_tick_scheduled_no_hang() {
   // evaluation promise stays Pending forever.
 
   let (mod_main, mod_tick, mod_tla) = {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
 
     let mod_tick = module_map
       .new_es_module(
@@ -3340,7 +3340,7 @@ async fn test_tla_with_tick_scheduled_no_hang() {
         ascii_str!("file:///tick_mod.js").into(),
         ascii_str!(
           r#"
-          Deno.core.setHasTickScheduled(true);
+          Edno.core.setHasTickScheduled(true);
           "#
         )
         .into(),
@@ -3356,9 +3356,9 @@ async fn test_tla_with_tick_scheduled_no_hang() {
         ascii_str!("file:///tla_mod.js").into(),
         ascii_str!(
           r#"
-          const lazy1 = Deno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
+          const lazy1 = Edno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
           if (lazy1.foo !== "foo") throw new Error("lazy1.foo: " + lazy1.foo);
-          const result = await Deno.core.ops.op_async_resolve();
+          const result = await Edno.core.ops.op_async_resolve();
           if (result !== 42) throw new Error("unexpected: " + result);
           "#
         )
@@ -3416,7 +3416,7 @@ async fn test_tla_with_tick_scheduled_no_hang() {
 /// microtask checkpoint.
 #[tokio::test]
 async fn test_dyn_import_async_graph_with_lazy_esm_no_stall() {
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     lazy_loaded_esm = [
       dir "modules/testdata",
@@ -3457,7 +3457,7 @@ async fn test_dyn_import_async_graph_with_lazy_esm_no_stall() {
         "file:///tla.js" => r#"await Promise.resolve();"#,
         "file:///helper.js" => {
           r#"
-          const lazy = Deno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
+          const lazy = Edno.core.createLazyLoader("ext:test_ext/lazy_loaded.js")();
           if (lazy.foo !== "foo") throw new Error("lazy.foo: " + lazy.foo);
           "#
         }
@@ -3486,7 +3486,7 @@ async fn test_dyn_import_async_graph_with_lazy_esm_no_stall() {
 
   // Confirm main.js's TLA actually completed (not just that we didn't
   // hit a stall error).
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
   let g = scope.get_current_context().global(scope);
   let key = v8::String::new(scope, "done").unwrap();
   let v = g.get(scope, key.into()).unwrap();

@@ -3,22 +3,22 @@
 
 // Mirrors lib/cluster.js. Node decides at module-load whether to require
 // `internal/cluster/primary` or `internal/cluster/child` from
-// process.env.NODE_UNIQUE_ID. In Deno, the IIFE initializes the primary side
+// process.env.NODE_UNIQUE_ID. In Edno, the IIFE initializes the primary side
 // at module load, and `01_require.js`'s `initialize` flips to the child side
 // via the `__initCluster` callback (after triggering this script when
 // NODE_UNIQUE_ID is set).
 
 // TODO(petamoriken): enable prefer-primordials for node polyfills
-// deno-lint-ignore-file no-explicit-any deno-internal/prefer-primordials
+// edno-lint-ignore-file no-explicit-any edno-internal/prefer-primordials
 
 (function () {
 const { core, internals } = __bootstrap;
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const { init: initPrimary } = core.loadExtScript(
-  "ext:deno_node/internal/cluster/primary.ts",
+  "ext:edno_node/internal/cluster/primary.ts",
 );
 const { init: initChild } = core.loadExtScript(
-  "ext:deno_node/internal/cluster/child.ts",
+  "ext:edno_node/internal/cluster/child.ts",
 );
 
 const cluster: any = new EventEmitter();

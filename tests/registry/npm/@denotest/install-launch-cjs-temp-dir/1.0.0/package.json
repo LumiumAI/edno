@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/install-launch-cjs-temp-dir",
+  "name": "@ednotest/install-launch-cjs-temp-dir",
   "version": "1.0.0",
   "scripts": {
     "install": "node install.js"

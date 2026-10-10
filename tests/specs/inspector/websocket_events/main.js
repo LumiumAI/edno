@@ -1,6 +1,6 @@
 // Covers the WebSocket inspector instrumentation that the upstream
 // node_compat test can't exercise (it asserts an "undici" frame in the
-// initiator stack, which Deno's native WebSocket doesn't produce).
+// initiator stack, which Edno's native WebSocket doesn't produce).
 //
 //   1. Happy path - server accepts the upgrade, client closes cleanly.
 //      Expect: webSocketCreated -> webSocketWillSendHandshakeRequest ->
@@ -55,11 +55,11 @@ function waitForClose(ws) {
 
 // ---- Test 1: happy path ---------------------------------------------------
 {
-  const server = Deno.serve({ port: 0, onListen: () => {} }, (req) => {
+  const server = Edno.serve({ port: 0, onListen: () => {} }, (req) => {
     if (req.headers.get("upgrade") !== "websocket") {
       return new Response("not a ws request", { status: 400 });
     }
-    const { socket, response } = Deno.upgradeWebSocket(req);
+    const { socket, response } = Edno.upgradeWebSocket(req);
     socket.addEventListener("message", (e) => socket.send(e.data));
     return response;
   });
@@ -84,7 +84,7 @@ function waitForClose(ws) {
   const closed = events.filter((e) => e.method === "Network.webSocketClosed");
 
   // The inspector sees both sides in this process: the `new WebSocket()`
-  // (client) and the `Deno.upgradeWebSocket(req)` (server) each emit their
+  // (client) and the `Edno.upgradeWebSocket(req)` (server) each emit their
   // own `webSocketCreated` with distinct requestIds.
   assert.equal(created.length, 2, "client + server webSocketCreated");
   assert.equal(
@@ -127,7 +127,7 @@ function waitForClose(ws) {
 
 // ---- Test 2: failed handshake ---------------------------------------------
 {
-  const server = Deno.serve(
+  const server = Edno.serve(
     { port: 0, onListen: () => {} },
     () => new Response("nope", { status: 404 }),
   );
@@ -177,11 +177,11 @@ function waitForClose(ws) {
 
 // ---- Test 3: frame events + server-side instrumentation ------------------
 {
-  const server = Deno.serve({ port: 0, onListen: () => {} }, (req) => {
+  const server = Edno.serve({ port: 0, onListen: () => {} }, (req) => {
     if (req.headers.get("upgrade") !== "websocket") {
       return new Response("not a ws request", { status: 400 });
     }
-    const { socket, response } = Deno.upgradeWebSocket(req);
+    const { socket, response } = Edno.upgradeWebSocket(req);
     socket.binaryType = "arraybuffer";
     socket.addEventListener("message", (e) => {
       // Echo text back as text, binary back as binary.
@@ -235,7 +235,7 @@ function waitForClose(ws) {
   const closed = events.filter((e) => e.method === "Network.webSocketClosed");
 
   // Two webSocketCreated: one from the client `new WebSocket`, one from
-  // the server-side Deno.upgradeWebSocket. Both in the same process so the
+  // the server-side Edno.upgradeWebSocket. Both in the same process so the
   // inspector sees both.
   assert.equal(created.length, 2, "client + server both emit webSocketCreated");
   const requestIds = new Set(created.map((e) => e.params.requestId));

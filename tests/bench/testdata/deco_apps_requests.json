@@ -7,7 +7,7 @@
         "uri": "file:///decohub/mod.ts",
         "languageId": "typescript",
         "version": 1,
-        "text": "import { ImportMap } from \"deco/blocks/app.ts\";\nimport { buildImportMap } from \"deco/blocks/utils.tsx\";\nimport { notUndefined } from \"deco/engine/core/utils.ts\";\nimport { type App, AppModule, context, type FnContext } from \"deco/mod.ts\";\nimport { Markdown } from \"./components/Markdown.tsx\";\nimport manifest, { Manifest } from \"./manifest.gen.ts\";\n\n/**\n * @title App\n */\nexport interface DynamicApp {\n  importUrl: string;\n  name: string;\n  importMap?: ImportMap;\n}\n\nexport interface State {\n  enableAdmin?: boolean;\n  apps: DynamicApp[];\n}\n\nconst DENY_DYNAMIC_IMPORT = Deno.env.get(\"DENY_DYNAMIC_IMPORT\") === \"true\";\n\n/**\n * @title Deco Hub\n * @description Unlock apps and integrations on deco.cx\n * @category Tool\n * @logo https://raw.githubusercontent.com/deco-cx/apps/main/decohub/logo.png\n */\nconst ADMIN_APP = \"decohub/apps/admin.ts\";\nconst FILES_APP = \"decohub/apps/files.ts\";\nexport default async function App(\n  state: State,\n): Promise<App<Manifest, State>> {\n  const resolvedAdminImport = import.meta.resolve(\"../admin/mod.ts\");\n  const resolvedFilesImport = import.meta.resolve(\"../files/mod.ts\");\n  const baseImportMap = buildImportMap(manifest);\n  const appModules = DENY_DYNAMIC_IMPORT ? [] : await Promise.all(\n    (state?.apps ?? []).filter(Boolean).map(async (app) => {\n      const appMod = await import(app.importUrl).catch((err) => {\n        console.error(\"error when importing app\", app.name, app.importUrl, err);\n        return null;\n      });\n      if (!appMod) {\n        return null;\n      }\n      return {\n        module: appMod,\n        importUrl: app.importUrl,\n        importMap: app.importMap,\n        name: app.name,\n      };\n    }),\n  );\n  const [dynamicApps, enhancedImportMap] = appModules.filter(notUndefined)\n    .reduce(\n      ([apps, importmap], app) => {\n        const appTs = `${app.name}.ts`;\n        const appName = `${manifest.name}/apps/${appTs}`;\n        return [{\n          ...apps,\n          [appName]: app.module,\n        }, {\n          ...importmap,\n          ...app.importMap ?? {},\n          imports: {\n            ...importmap?.imports ?? {},\n            ...app.importMap?.imports ?? {},\n            [appName]: app.importUrl,\n          },\n        }];\n      },\n      [{} as Record<string, AppModule>, baseImportMap],\n    );\n  return {\n    manifest: {\n      ...manifest,\n      apps: {\n        // build apps based on name\n        ...dynamicApps,\n        ...manifest.apps,\n        ...context.play || state.enableAdmin // this is an optimization to not include the admin code for everyone in case of play is not being used.\n          ? {\n            [ADMIN_APP]: await import(\n              resolvedAdminImport\n            ),\n            [FILES_APP]: await import(\n              resolvedFilesImport\n            ),\n          }\n          : {},\n      },\n    } as Manifest,\n    state,\n    ...context.play || state.enableAdmin\n      ? {\n        importMap: {\n          ...enhancedImportMap,\n          imports: {\n            ...enhancedImportMap?.imports ?? {},\n            [ADMIN_APP]: ADMIN_APP,\n            [FILES_APP]: FILES_APP,\n          },\n        },\n      }\n      : {},\n  };\n}\n\nexport type AppContext = FnContext<State, Manifest>;\n\nexport const Preview = await Markdown(\n  new URL(\"./README.md\", import.meta.url).href,\n);\n"
+        "text": "import { ImportMap } from \"deco/blocks/app.ts\";\nimport { buildImportMap } from \"deco/blocks/utils.tsx\";\nimport { notUndefined } from \"deco/engine/core/utils.ts\";\nimport { type App, AppModule, context, type FnContext } from \"deco/mod.ts\";\nimport { Markdown } from \"./components/Markdown.tsx\";\nimport manifest, { Manifest } from \"./manifest.gen.ts\";\n\n/**\n * @title App\n */\nexport interface DynamicApp {\n  importUrl: string;\n  name: string;\n  importMap?: ImportMap;\n}\n\nexport interface State {\n  enableAdmin?: boolean;\n  apps: DynamicApp[];\n}\n\nconst DENY_DYNAMIC_IMPORT = Edno.env.get(\"DENY_DYNAMIC_IMPORT\") === \"true\";\n\n/**\n * @title Deco Hub\n * @description Unlock apps and integrations on deco.cx\n * @category Tool\n * @logo https://raw.githubusercontent.com/deco-cx/apps/main/decohub/logo.png\n */\nconst ADMIN_APP = \"decohub/apps/admin.ts\";\nconst FILES_APP = \"decohub/apps/files.ts\";\nexport default async function App(\n  state: State,\n): Promise<App<Manifest, State>> {\n  const resolvedAdminImport = import.meta.resolve(\"../admin/mod.ts\");\n  const resolvedFilesImport = import.meta.resolve(\"../files/mod.ts\");\n  const baseImportMap = buildImportMap(manifest);\n  const appModules = DENY_DYNAMIC_IMPORT ? [] : await Promise.all(\n    (state?.apps ?? []).filter(Boolean).map(async (app) => {\n      const appMod = await import(app.importUrl).catch((err) => {\n        console.error(\"error when importing app\", app.name, app.importUrl, err);\n        return null;\n      });\n      if (!appMod) {\n        return null;\n      }\n      return {\n        module: appMod,\n        importUrl: app.importUrl,\n        importMap: app.importMap,\n        name: app.name,\n      };\n    }),\n  );\n  const [dynamicApps, enhancedImportMap] = appModules.filter(notUndefined)\n    .reduce(\n      ([apps, importmap], app) => {\n        const appTs = `${app.name}.ts`;\n        const appName = `${manifest.name}/apps/${appTs}`;\n        return [{\n          ...apps,\n          [appName]: app.module,\n        }, {\n          ...importmap,\n          ...app.importMap ?? {},\n          imports: {\n            ...importmap?.imports ?? {},\n            ...app.importMap?.imports ?? {},\n            [appName]: app.importUrl,\n          },\n        }];\n      },\n      [{} as Record<string, AppModule>, baseImportMap],\n    );\n  return {\n    manifest: {\n      ...manifest,\n      apps: {\n        // build apps based on name\n        ...dynamicApps,\n        ...manifest.apps,\n        ...context.play || state.enableAdmin // this is an optimization to not include the admin code for everyone in case of play is not being used.\n          ? {\n            [ADMIN_APP]: await import(\n              resolvedAdminImport\n            ),\n            [FILES_APP]: await import(\n              resolvedFilesImport\n            ),\n          }\n          : {},\n      },\n    } as Manifest,\n    state,\n    ...context.play || state.enableAdmin\n      ? {\n        importMap: {\n          ...enhancedImportMap,\n          imports: {\n            ...enhancedImportMap?.imports ?? {},\n            [ADMIN_APP]: ADMIN_APP,\n            [FILES_APP]: FILES_APP,\n          },\n        },\n      }\n      : {},\n  };\n}\n\nexport type AppContext = FnContext<State, Manifest>;\n\nexport const Preview = await Markdown(\n  new URL(\"./README.md\", import.meta.url).href,\n);\n"
       }
     }
   },
@@ -1210,7 +1210,7 @@
             "message": "Cannot find name 'impo'.",
             "code": 2304,
             "severity": 1,
-            "source": "deno-ts"
+            "source": "edno-ts"
           }
         ],
         "triggerKind": 2
@@ -1784,7 +1784,7 @@
             "message": "Import \"\" not a dependency and not in import map from \"file:///decohub/mod.ts\"",
             "code": "resolver-error",
             "severity": 1,
-            "source": "deno"
+            "source": "edno"
           }
         ],
         "triggerKind": 2
@@ -1865,7 +1865,7 @@
             "message": "Import \"\" not a dependency and not in import map from \"file:///decohub/mod.ts\"",
             "code": "resolver-error",
             "severity": 1,
-            "source": "deno"
+            "source": "edno"
           },
           {
             "range": {
@@ -1884,7 +1884,7 @@
             "tags": [
               1
             ],
-            "source": "deno-ts"
+            "source": "edno-ts"
           }
         ],
         "triggerKind": 2
@@ -2310,13 +2310,13 @@
                 "character": 38
               }
             },
-            "message": "Uncached or missing remote URL: https://denopkg.com/deco-cx/deco@1.57.17/blocks/",
+            "message": "Uncached or missing remote URL: https://ednopkg.com/deco-cx/deco@1.57.17/blocks/",
             "data": {
-              "specifier": "https://denopkg.com/deco-cx/deco@1.57.17/blocks/"
+              "specifier": "https://ednopkg.com/deco-cx/deco@1.57.17/blocks/"
             },
             "code": "no-cache",
             "severity": 1,
-            "source": "deno"
+            "source": "edno"
           }
         ],
         "triggerKind": 2
@@ -2394,13 +2394,13 @@
                 "character": 38
               }
             },
-            "message": "Uncached or missing remote URL: https://denopkg.com/deco-cx/deco@1.57.17/blocks/",
+            "message": "Uncached or missing remote URL: https://ednopkg.com/deco-cx/deco@1.57.17/blocks/",
             "data": {
-              "specifier": "https://denopkg.com/deco-cx/deco@1.57.17/blocks/"
+              "specifier": "https://ednopkg.com/deco-cx/deco@1.57.17/blocks/"
             },
             "code": "no-cache",
             "severity": 1,
-            "source": "deno"
+            "source": "edno"
           },
           {
             "range": {
@@ -2419,7 +2419,7 @@
             "tags": [
               1
             ],
-            "source": "deno-ts"
+            "source": "edno-ts"
           }
         ],
         "triggerKind": 2
@@ -2545,13 +2545,13 @@
                 "character": 41
               }
             },
-            "message": "Uncached or missing remote URL: https://denopkg.com/deco-cx/deco@1.57.17/blocks/app",
+            "message": "Uncached or missing remote URL: https://ednopkg.com/deco-cx/deco@1.57.17/blocks/app",
             "data": {
-              "specifier": "https://denopkg.com/deco-cx/deco@1.57.17/blocks/app"
+              "specifier": "https://ednopkg.com/deco-cx/deco@1.57.17/blocks/app"
             },
             "code": "no-cache",
             "severity": 1,
-            "source": "deno"
+            "source": "edno"
           }
         ],
         "triggerKind": 2
@@ -2711,7 +2711,7 @@
             "tags": [
               1
             ],
-            "source": "deno-ts"
+            "source": "edno-ts"
           }
         ],
         "triggerKind": 2
@@ -2864,7 +2864,7 @@
             "tags": [
               1
             ],
-            "source": "deno-ts"
+            "source": "edno-ts"
           }
         ],
         "triggerKind": 2

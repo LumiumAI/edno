@@ -18,4 +18,4 @@ function prompt() {
 
 await prompt();
 await prompt();
-Deno.exit(0);
+Edno.exit(0);

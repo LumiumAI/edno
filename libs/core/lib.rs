@@ -50,12 +50,12 @@ pub mod webidl;
 
 // Re-exports
 pub use anyhow;
-pub use deno_ops::CppgcBase;
-pub use deno_ops::CppgcInherits;
-pub use deno_ops::FromV8;
-pub use deno_ops::ToV8;
-pub use deno_ops::WebIDL;
-pub use deno_ops::op2;
+pub use edno_ops::CppgcBase;
+pub use edno_ops::CppgcInherits;
+pub use edno_ops::FromV8;
+pub use edno_ops::ToV8;
+pub use edno_ops::WebIDL;
+pub use edno_ops::op2;
 pub use deno_path_util::normalize_path;
 pub use deno_path_util::resolve_path;
 pub use deno_path_util::resolve_url_or_path;
@@ -208,10 +208,10 @@ pub use crate::source_map::SourceMapper;
 pub use crate::tasks::V8CrossThreadTaskSpawner;
 pub use crate::tasks::V8TaskSpawner;
 
-// Ensure we can use op2 in deno_core without any hackery.
-extern crate self as deno_core;
+// Ensure we can use op2 in edno_core without any hackery.
+extern crate self as edno_core;
 
-/// An internal module re-exporting functions used by the #[op] (`deno_ops`) macro
+/// An internal module re-exporting functions used by the #[op] (`edno_ops`) macro
 #[doc(hidden)]
 pub mod _ops {
   pub use inventory;
@@ -289,12 +289,12 @@ mod tests {
     assert_eq!(&name[..expected.len()], expected);
   }
 
-  // If the deno command is available, we ensure the async stubs are correctly rebuilt.
+  // If the edno command is available, we ensure the async stubs are correctly rebuilt.
   #[test]
   #[cfg_attr(all(target_os = "windows", target_arch = "aarch64"), ignore)]
   fn test_rebuild_async_stubs() {
-    // Check for deno first
-    if let Err(e) = Command::new("deno")
+    // Check for edno first
+    if let Err(e) = Command::new("edno")
       .arg("--version")
       .stderr(Stdio::null())
       .stdout(Stdio::null())
@@ -305,13 +305,13 @@ mod tests {
         reason = "intentional test diagnostic output"
       )]
       {
-        eprintln!("Ignoring test because we couldn't find deno: {e:?}");
+        eprintln!("Ignoring test because we couldn't find edno: {e:?}");
       }
     }
 
     let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
       .join("rebuild_async_stubs.js");
-    let status = Command::new("deno")
+    let status = Command::new("edno")
       .args(["run", "-A", path.as_os_str().to_str().unwrap(), "--check"])
       .stderr(Stdio::null())
       .stdout(Stdio::null())

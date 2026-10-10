@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 
 type Foo = import("./ts_type_imports_foo.ts").Foo;
 

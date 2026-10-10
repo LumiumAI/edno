@@ -39,12 +39,12 @@ const {
 const EMPTY_OPTIONS = ObjectFreeze(ObjectSetPrototypeOf({}, null));
 
 const { FsFile, fsFileConstructorKey } = core.loadExtScript(
-  "ext:deno_fs/30_fs.js",
+  "ext:edno_fs/30_fs.js",
 );
-const { readAll } = core.loadExtScript("ext:deno_io/12_io.js");
-const { assert, pathFromURL } = core.loadExtScript("ext:deno_web/00_infra.js");
-const { packageData } = core.loadExtScript("ext:deno_fetch/22_body.js");
-const abortSignal = core.loadExtScript("ext:deno_web/03_abort_signal.js");
+const { readAll } = core.loadExtScript("ext:edno_io/12_io.js");
+const { assert, pathFromURL } = core.loadExtScript("ext:edno_web/00_infra.js");
+const { packageData } = core.loadExtScript("ext:edno_fetch/22_body.js");
+const abortSignal = core.loadExtScript("ext:edno_web/03_abort_signal.js");
 const {
   ReadableStream,
   readableStreamCollectIntoUint8Array,
@@ -53,13 +53,13 @@ const {
   readableStreamForRidUnrefableUnref,
   ReadableStreamPrototype,
   writableStreamForRid,
-} = core.loadExtScript("ext:deno_web/06_streams.js");
+} = core.loadExtScript("ext:edno_web/06_streams.js");
 
-// The key for private `input` option for `Deno.Command`
+// The key for private `input` option for `Edno.Command`
 const kInputOption = Symbol("kInputOption");
-// The key for private `timeout` option for `Deno.Command`
+// The key for private `timeout` option for `Edno.Command`
 const kTimeoutOption = Symbol("kTimeoutOption");
-// The key for private `killSignal` option for `Deno.Command`
+// The key for private `killSignal` option for `Edno.Command`
 const kKillSignalOption = Symbol("kKillSignalOption");
 
 function opKill(pid, signo, apiName) {
@@ -67,7 +67,7 @@ function opKill(pid, signo, apiName) {
 }
 
 function kill(pid, signo = "SIGTERM") {
-  opKill(pid, signo, "Deno.kill()");
+  opKill(pid, signo, "Edno.kill()");
 }
 
 function opRunStatus(rid) {
@@ -147,11 +147,11 @@ class Process {
   }
 
   kill(signo = "SIGTERM") {
-    opKill(this.pid, signo, "Deno.Process.kill()");
+    opKill(this.pid, signo, "Edno.Process.kill()");
   }
 }
 
-// Note: This function was soft-removed in Deno 2. Its types have been removed,
+// Note: This function was soft-removed in Edno 2. Its types have been removed,
 // but its implementation has been kept to avoid breaking changes.
 function run({
   cmd,
@@ -233,7 +233,7 @@ function spawnChildInner(command, apiName, {
 function spawnChild(command, options = EMPTY_OPTIONS) {
   return spawnChildInner(
     command,
-    "Deno.Command().spawn()",
+    "Edno.Command().spawn()",
     options,
   );
 }
@@ -284,7 +284,7 @@ internals.getExtraPipeRids = (process) => process[_extraPipeRids];
 internals.kExtraStdio = kExtraStdio;
 
 // Node compat spawn: returns a lightweight object with raw fds for stdio
-// instead of a full Deno.ChildProcess with web streams.
+// instead of a full Edno.ChildProcess with web streams.
 // The caller (child_process.ts) is responsible for providing all fields.
 function nodeSpawnChild(command, {
   args = [],
@@ -362,7 +362,7 @@ function nodeSpawnChild(command, {
 }
 
 // Node compat sync spawn: calls op_spawn_sync and returns pid/killedByTimeout
-// as normal fields instead of hidden properties on a Deno.CommandOutput.
+// as normal fields instead of hidden properties on a Edno.CommandOutput.
 function nodeSpawnSyncChild({
   args,
   cwd,
@@ -648,7 +648,7 @@ function spawnInner(command, {
 } = EMPTY_OPTIONS) {
   if (stdin === "piped") {
     throw new TypeError(
-      "Piped stdin is not supported for this function, use 'Deno.Command().spawn()' instead",
+      "Piped stdin is not supported for this function, use 'Edno.Command().spawn()' instead",
     );
   }
   // Bypass ChildProcess and ReadableStream machinery. Creating streams
@@ -673,7 +673,7 @@ function spawnInner(command, {
     extraStdio: [],
     detached: false,
     needsNpmProcessState,
-  }, "Deno.Command().output()");
+  }, "Edno.Command().output()");
 
   const stdoutRid = child.stdoutRid;
   const stderrRid = child.stderrRid;
@@ -744,7 +744,7 @@ function spawnSyncInner(command, {
 } = EMPTY_OPTIONS) {
   if (stdin === "piped") {
     throw new TypeError(
-      "Piped stdin is not supported for this function, use 'Deno.Command().spawn()' instead",
+      "Piped stdin is not supported for this function, use 'Edno.Command().spawn()' instead",
     );
   }
   const spawnArgs = {
@@ -804,7 +804,7 @@ class Command {
   output() {
     if (this.#options?.stdin === "piped") {
       throw new TypeError(
-        "Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead",
+        "Piped stdin is not supported for this function, use 'Edno.Command.spawn()' instead",
       );
     }
     return spawnInner(this.#command, this.#options);
@@ -813,7 +813,7 @@ class Command {
   outputSync() {
     if (this.#options?.stdin === "piped") {
       throw new TypeError(
-        "Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead",
+        "Piped stdin is not supported for this function, use 'Edno.Command.spawn()' instead",
       );
     }
     return spawnSyncInner(this.#command, this.#options);

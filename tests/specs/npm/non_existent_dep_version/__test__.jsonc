@@ -1,5 +1,5 @@
 {
-  "args": "cache npm:@denotest/non-existent-dep-version",
+  "args": "cache npm:@ednotest/non-existent-dep-version",
   "exitCode": 1,
   "output": "err.out"
 }

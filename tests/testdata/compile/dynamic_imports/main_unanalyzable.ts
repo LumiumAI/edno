@@ -9,7 +9,7 @@ const IMPORT_PATH_FILE_PATH =
 
 setTimeout(async () => {
   console.log("Dynamic importing");
-  const importPath = (await Deno.readTextFile(IMPORT_PATH_FILE_PATH)).trim();
+  const importPath = (await Edno.readTextFile(IMPORT_PATH_FILE_PATH)).trim();
   import(import.meta.resolve(importPath)).then(() =>
     console.log("Dynamic import done.")
   );

@@ -1,2 +1,2 @@
-error: deno ci requires a lockfile, but none was found.
-  hint: run `deno install` to create one.
+error: edno ci requires a lockfile, but none was found.
+  hint: run `edno install` to create one.

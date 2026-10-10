@@ -3,6 +3,6 @@
 // file require()s another sibling CJS module. Before `--bundle` forced
 // bundle-style resolver config, the deep CJS files were skipped from the
 // module graph and the compile bundle tripped an esbuild parse error.
-import fn from "@denotest/esm-import-deep-cjs";
+import fn from "@ednotest/esm-import-deep-cjs";
 
 console.log(fn());

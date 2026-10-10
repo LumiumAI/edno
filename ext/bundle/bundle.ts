@@ -1,8 +1,8 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-/// <reference path="../../cli/tsc/dts/lib.deno.unstable.d.ts" />
+/// <reference path="../../cli/tsc/dts/lib.edno.unstable.d.ts" />
 import { op_bundle } from "ext:core/ops";
 import { core, primordials } from "ext:core/mod.js";
-const { TextDecoder } = core.loadExtScript("ext:deno_web/08_text_encoding.js");
+const { TextDecoder } = core.loadExtScript("ext:edno_web/08_text_encoding.js");
 
 const { SafeArrayIterator, Uint8Array, ObjectPrototypeIsPrototypeOf } =
   primordials;
@@ -10,8 +10,8 @@ const { SafeArrayIterator, Uint8Array, ObjectPrototypeIsPrototypeOf } =
 const decoder = new TextDecoder();
 
 export async function bundle(
-  options: Deno.bundle.Options,
-): Promise<Deno.bundle.Result> {
+  options: Edno.bundle.Options,
+): Promise<Edno.bundle.Result> {
   const result = {
     success: false,
     ...await op_bundle(
@@ -22,11 +22,11 @@ export async function bundle(
 
   for (
     const f of new SafeArrayIterator(
-      // deno-lint-ignore no-explicit-any
+      // edno-lint-ignore no-explicit-any
       result.outputFiles as any ?? [],
     )
   ) {
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
     const file = f as any;
     if (file.contents?.length === 0) {
       delete file.contents;

@@ -4,15 +4,15 @@ import { assert, assertEquals, assertThrows } from "./test_util.ts";
 
 let isCI: boolean;
 try {
-  isCI = (Deno.env.get("CI")?.length ?? 0) > 0;
+  isCI = (Edno.env.get("CI")?.length ?? 0) > 0;
 } catch {
   isCI = true;
 }
 
 // Skip these tests on linux CI, because the vulkan emulator is not good enough
 // yet, and skip on macOS x86 CI because these do not have virtual GPUs.
-const isCIWithoutGPU = (Deno.build.os === "linux" ||
-  (Deno.build.os === "darwin" && Deno.build.arch === "x86_64")) && isCI;
+const isCIWithoutGPU = (Edno.build.os === "linux" ||
+  (Edno.build.os === "darwin" && Edno.build.arch === "x86_64")) && isCI;
 // Skip these tests in WSL because it doesn't have good GPU support.
 const isWsl = await checkIsWsl();
 // Skip the window surface tests when there is no windowing system available
@@ -21,15 +21,15 @@ const isWsl = await checkIsWsl();
 const hasWindowingSystem = checkWindowingSystem();
 
 function checkWindowingSystem(): boolean {
-  if (Deno.build.os === "windows") {
+  if (Edno.build.os === "windows") {
     // Window creation is asserted in the test itself.
     return true;
   }
-  if (Deno.build.os !== "linux") {
+  if (Edno.build.os !== "linux") {
     return false;
   }
   try {
-    const x11 = Deno.dlopen(
+    const x11 = Edno.dlopen(
       "libX11.so.6",
       {
         XOpenDisplay: { parameters: ["pointer"], result: "pointer" },
@@ -53,7 +53,7 @@ function checkWindowingSystem(): boolean {
   }
 }
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuComputePass() {
@@ -65,7 +65,7 @@ Deno.test({
   const device = await adapter.requestDevice();
   assert(device);
 
-  const shaderCode = await Deno.readTextFile(
+  const shaderCode = await Edno.readTextFile(
     "tests/testdata/webgpu/computepass_shader.wgsl",
   );
 
@@ -169,7 +169,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuBufferUnmapWritesMappedRangesBack() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -231,7 +231,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuBufferDestroyDetachesMappedRange() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -259,7 +259,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuHelloTriangle() {
@@ -269,7 +269,7 @@ Deno.test({
   const device = await adapter.requestDevice();
   assert(device);
 
-  const shaderCode = await Deno.readTextFile(
+  const shaderCode = await Edno.readTextFile(
     "tests/testdata/webgpu/hellotriangle_shader.wgsl",
   );
 
@@ -363,7 +363,7 @@ Deno.test({
 
   assertEquals(
     data,
-    await Deno.readFile("tests/testdata/webgpu/hellotriangle.out"),
+    await Edno.readFile("tests/testdata/webgpu/hellotriangle.out"),
   );
 
   outputBuffer.unmap();
@@ -371,7 +371,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuAdapterHasFeatures() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -381,7 +381,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuNullWindowSurfaceThrows() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -394,7 +394,7 @@ Deno.test({
 
   assertThrows(
     () => {
-      new Deno.UnsafeWindowSurface({
+      new Edno.UnsafeWindowSurface({
         system: "cocoa",
         windowHandle: null,
         displayHandle: null,
@@ -409,13 +409,13 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test(function webgpuWindowSurfaceNoWidthHeight() {
+Edno.test(function webgpuWindowSurfaceNoWidthHeight() {
   const msgIncludes = "expected type `v8::data::Number`, got `v8::data::Value`";
 
   assertThrows(
     () => {
       // @ts-expect-error width and height are required
-      new Deno.UnsafeWindowSurface({
+      new Edno.UnsafeWindowSurface({
         system: "x11",
         windowHandle: null,
         displayHandle: null,
@@ -426,7 +426,7 @@ Deno.test(function webgpuWindowSurfaceNoWidthHeight() {
   );
 });
 
-Deno.test(
+Edno.test(
   { permissions: { ffi: false } },
   function webgpuWindowSurfaceFfiPermission() {
     const response = new Response("ok", { status: 201 });
@@ -435,15 +435,15 @@ Deno.test(
     );
     assert(nativeResponseSymbol !== undefined);
     const nativeResponse =
-      (response as unknown as Record<symbol, Deno.PointerValue>)[
+      (response as unknown as Record<symbol, Edno.PointerValue>)[
         nativeResponseSymbol
       ];
     assert(nativeResponse);
-    const system = Deno.build.os === "darwin" ? "x11" : "cocoa";
+    const system = Edno.build.os === "darwin" ? "x11" : "cocoa";
 
     assertThrows(
       () => {
-        new Deno.UnsafeWindowSurface({
+        new Edno.UnsafeWindowSurface({
           system,
           windowHandle: nativeResponse,
           displayHandle: nativeResponse,
@@ -451,20 +451,20 @@ Deno.test(
           height: 1,
         });
       },
-      Deno.errors.NotCapable,
+      Edno.errors.NotCapable,
       "Requires ffi access",
     );
   },
 );
 
-Deno.test({
+Edno.test({
   permissions: { ffi: true },
   ignore: isWsl || isCIWithoutGPU || !hasWindowingSystem,
 }, async function webgpuWindowSurfaceResizeAfterConfigure() {
   // Regression test for the RefCell double-borrow panic where the
   // UnsafeWindowSurface width/height setters held the SurfaceData borrow
   // across the canvas context resize.
-  const nativeWindow = Deno.build.os === "windows"
+  const nativeWindow = Edno.build.os === "windows"
     ? createWin32Window()
     : createX11Window();
   try {
@@ -473,7 +473,7 @@ Deno.test({
     const device = await adapter.requestDevice();
     assert(device);
     try {
-      const surface = new Deno.UnsafeWindowSurface({
+      const surface = new Edno.UnsafeWindowSurface({
         system: nativeWindow.system,
         windowHandle: nativeWindow.windowHandle,
         displayHandle: nativeWindow.displayHandle,
@@ -507,13 +507,13 @@ Deno.test({
 // the driver. close() only releases the dlopen handle.
 interface NativeWindow {
   system: "win32" | "x11";
-  windowHandle: Deno.PointerValue;
-  displayHandle: Deno.PointerValue;
+  windowHandle: Edno.PointerValue;
+  displayHandle: Edno.PointerValue;
   close(): void;
 }
 
 function createWin32Window(): NativeWindow {
-  const user32 = Deno.dlopen(
+  const user32 = Edno.dlopen(
     "user32.dll",
     {
       CreateWindowExW: {
@@ -551,7 +551,7 @@ function createWin32Window(): NativeWindow {
   const hwnd = user32.symbols.CreateWindowExW(
     0,
     wide("STATIC"),
-    wide("deno webgpu test"),
+    wide("edno webgpu test"),
     WS_OVERLAPPEDWINDOW,
     0,
     0,
@@ -597,7 +597,7 @@ function createX11Window(): NativeWindow {
   } as const;
   // The top-level windowing system check already dlopened libX11 and opened a
   // display, so any failure here is a real error rather than a reason to skip.
-  const x11 = Deno.dlopen("libX11.so.6", symbols);
+  const x11 = Edno.dlopen("libX11.so.6", symbols);
   const display = x11.symbols.XOpenDisplay(null);
   assert(display !== null, "XOpenDisplay failed");
   const root = x11.symbols.XDefaultRootWindow(display);
@@ -616,7 +616,7 @@ function createX11Window(): NativeWindow {
   return {
     system: "x11",
     // The windowHandle external's value is the X11 window XID itself.
-    windowHandle: Deno.UnsafePointer.create(BigInt(win)),
+    windowHandle: Edno.UnsafePointer.create(BigInt(win)),
     displayHandle: display,
     close() {
       x11.close();
@@ -624,12 +624,12 @@ function createX11Window(): NativeWindow {
   };
 }
 
-Deno.test(function getPreferredCanvasFormat() {
+Edno.test(function getPreferredCanvasFormat() {
   const preferredFormat = navigator.gpu.getPreferredCanvasFormat();
   assert(preferredFormat === "bgra8unorm" || preferredFormat === "rgba8unorm");
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function validateGPUColor() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -692,7 +692,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function validateGPUExtent3D() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -786,13 +786,13 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: true,
 }, async function validateGPUOrigin2D() {
   // NOTE: GPUQueue.copyExternalImageToTexture needs to be validated the argument of source.origin property's length when its a sequence, but it is not implemented yet
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function validateGPUOrigin3D() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -885,7 +885,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function beginRenderPassWithoutDepthClearValue() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -922,7 +922,7 @@ Deno.test({
 // recorded after the render pass (including a compute pass writing to an
 // unrelated storage buffer) to silently no-op. The storage buffer was returned
 // in its zero-initialized state.
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function renderPass2dArrayColorAttachmentDoesNotCorruptComputePass() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -999,7 +999,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function adapterLimitsAreNumbers() {
   const limitNames = [
@@ -1034,13 +1034,13 @@ Deno.test({
   assert(adapter);
 
   for (const limitName of limitNames) {
-    // deno-lint-ignore ban-ts-comment
+    // edno-lint-ignore ban-ts-comment
     // @ts-ignore
     assertEquals(typeof adapter.limits[limitName], "number", limitName);
   }
 
   const device = await adapter.requestDevice({
-    // deno-lint-ignore ban-ts-comment
+    // edno-lint-ignore ban-ts-comment
     // @ts-ignore
     requiredLimits: adapter.limits,
   });
@@ -1049,7 +1049,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   ignore: isWsl || isCIWithoutGPU,
 }, async function testOnSubmittedWorkDone() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -1066,7 +1066,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuWriteBufferTypedArrayElementOffsets() {
@@ -1107,7 +1107,7 @@ Deno.test({
   device.destroy();
 });
 
-Deno.test({
+Edno.test({
   permissions: { env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function writeBufferAcceptsArrayBuffer() {
@@ -1149,7 +1149,7 @@ Deno.test({
 // out-of-range length panicked inside the op's `extern "C"` callback,
 // which crosses the C ABI as a process abort. After the fix, the
 // bounds-check surfaces a GPUValidationError instead.
-Deno.test({
+Edno.test({
   permissions: { read: true, env: true },
   ignore: isWsl || isCIWithoutGPU,
 }, async function webgpuSetBindGroupBoundsCheck() {
@@ -1203,12 +1203,12 @@ Deno.test({
 });
 
 async function checkIsWsl() {
-  return Deno.build.os === "linux" && await hasMicrosoftProcVersion();
+  return Edno.build.os === "linux" && await hasMicrosoftProcVersion();
 
   async function hasMicrosoftProcVersion() {
     // https://github.com/microsoft/WSL/issues/423#issuecomment-221627364
     try {
-      const procVersion = await Deno.readTextFile("/proc/version");
+      const procVersion = await Edno.readTextFile("/proc/version");
       return /microsoft/i.test(procVersion);
     } catch {
       return false;

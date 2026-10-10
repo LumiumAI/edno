@@ -1,6 +1,6 @@
 [WILDCARD]
 Hi
-TypeError: Error in @denotest/dep-cannot-parse@1.0.0 parsing version requirement for dependency "@denotest/esm-basic": "unknown-scheme:unknown"
+TypeError: Error in @ednotest/dep-cannot-parse@1.0.0 parsing version requirement for dependency "@ednotest/esm-basic": "unknown-scheme:unknown"
     0: Invalid version requirement
     1: Unexpected character.
          unknown-scheme:unknown

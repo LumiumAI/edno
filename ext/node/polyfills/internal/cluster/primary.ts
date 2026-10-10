@@ -7,28 +7,28 @@
 // driven by NODE_UNIQUE_ID through `cluster.ts`'s dispatch.
 
 // TODO(petamoriken): enable prefer-primordials for node polyfills
-// deno-lint-ignore-file no-explicit-any deno-internal/prefer-primordials
+// edno-lint-ignore-file no-explicit-any edno-internal/prefer-primordials
 
 (function () {
 const { core, primordials } = __bootstrap;
 const { op_get_env_no_permission_check } = core.ops;
-const { EventEmitter } = core.loadExtScript("ext:deno_node/_events.mjs");
+const { EventEmitter } = core.loadExtScript("ext:edno_node/_events.mjs");
 const lazyChildProcess = core.createLazyLoader("node:child_process");
 const lazyPath = core.createLazyLoader("node:path");
 const lazyProcess = core.createLazyLoader("node:process");
-const { isWindows } = core.loadExtScript("ext:deno_node/_util/os.ts");
+const { isWindows } = core.loadExtScript("ext:edno_node/_util/os.ts");
 
 const { Worker } = core.loadExtScript(
-  "ext:deno_node/internal/cluster/worker.ts",
+  "ext:edno_node/internal/cluster/worker.ts",
 );
 const { internal, sendHelper } = core.loadExtScript(
-  "ext:deno_node/internal/cluster/utils.ts",
+  "ext:edno_node/internal/cluster/utils.ts",
 );
 const { RoundRobinHandle } = core.loadExtScript(
-  "ext:deno_node/internal/cluster/round_robin_handle.ts",
+  "ext:edno_node/internal/cluster/round_robin_handle.ts",
 );
 const { SharedHandle } = core.loadExtScript(
-  "ext:deno_node/internal/cluster/shared_handle.ts",
+  "ext:edno_node/internal/cluster/shared_handle.ts",
 );
 
 const {
@@ -142,7 +142,7 @@ function init(cluster: any) {
     // If the inspector is activated (via execArgv or the inherited
     // NODE_OPTIONS), give each worker its own port so they don't all try to
     // bind the default 9229. Node appends `--inspect-port=<port>` to execArgv
-    // and lets it combine with the NODE_OPTIONS activation flag. Deno doesn't
+    // and lets it combine with the NODE_OPTIONS activation flag. Edno doesn't
     // carry `--inspect-port` as a runtime flag, so we instead append an
     // activating `--inspect[-brk|-wait]=host:port`; an explicit CLI inspector
     // flag takes precedence over the inherited NODE_OPTIONS one, so the worker

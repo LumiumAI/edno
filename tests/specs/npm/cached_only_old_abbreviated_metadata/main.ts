@@ -1,3 +1,3 @@
-import "npm:@denotest/esm-basic";
+import "npm:@ednotest/esm-basic";
 
 console.log("ok");

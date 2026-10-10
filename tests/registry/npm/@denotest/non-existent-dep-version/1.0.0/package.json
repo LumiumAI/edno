@@ -1,7 +1,7 @@
 {
-  "name": "@denotest/non-existent-dep-version",
+  "name": "@ednotest/non-existent-dep-version",
   "version": "1.0.0",
   "dependencies": {
-    "@denotest/esm-basic": "=99.99.99"
+    "@ednotest/esm-basic": "=99.99.99"
   }
 }

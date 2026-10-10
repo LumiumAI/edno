@@ -1,2 +1,2 @@
-#!/usr/bin/env -S deno run -A
-console.log(Deno.cwd());
+#!/usr/bin/env -S edno run -A
+console.log(Edno.cwd());

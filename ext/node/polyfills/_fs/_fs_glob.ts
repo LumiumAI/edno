@@ -9,17 +9,17 @@ const {
   validateObject,
   validateString,
   validateStringArray,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
-const { isMacOS, isWindows } = core.loadExtScript("ext:deno_node/_util/os.ts");
-const { kEmptyObject } = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
+const { isMacOS, isWindows } = core.loadExtScript("ext:edno_node/_util/os.ts");
+const { kEmptyObject } = core.loadExtScript("ext:edno_node/internal/util.mjs");
 const lazyProcess = core.createLazyLoader("node:process");
 const lazyReaddir = core.createLazyLoader(
-  "ext:deno_node/_fs/_fs_readdir.ts",
+  "ext:edno_node/_fs/_fs_readdir.ts",
 );
 const {
   lstatPromise: lstat,
   lstatSync,
-} = core.loadExtScript("ext:deno_node/_fs/_fs_lstat.ts");
+} = core.loadExtScript("ext:edno_node/_fs/_fs_lstat.ts");
 
 const {
   basename,
@@ -27,22 +27,22 @@ const {
   isAbsolute,
   join,
   resolve,
-} = core.loadExtScript("ext:deno_node/path/mod.ts");
+} = core.loadExtScript("ext:edno_node/path/mod.ts");
 import {
   type Dirent,
   DirentFromStats,
-} from "ext:deno_node/internal/fs/utils.mjs";
+} from "ext:edno_node/internal/fs/utils.mjs";
 
 const {
   ERR_INVALID_ARG_TYPE,
   hideStackFrames,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 
-const { default: assert } = core.loadExtScript("ext:deno_node/assert.ts");
+const { default: assert } = core.loadExtScript("ext:edno_node/assert.ts");
 
-import type { ErrnoException } from "ext:deno_node/_global.d.ts";
+import type { ErrnoException } from "ext:edno_node/_global.d.ts";
 const { toPathIfFileURL } = core.loadExtScript(
-  "ext:deno_node/internal/url.ts",
+  "ext:edno_node/internal/url.ts",
 );
 
 interface GlobOptionsBase {
@@ -66,7 +66,7 @@ interface GlobOptionsBase {
   /**
    * Function to filter out files/directories. Return true to exclude the item, false to include it.
    */
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   exclude?: ((fileName: any) => boolean) | undefined;
 }
 export interface GlobOptionsWithFileTypes extends GlobOptionsBase {
@@ -121,7 +121,7 @@ const {
   ObjectPrototypeIsPrototypeOf,
 } = primordials;
 
-const lazyMinimatch = core.createLazyLoader("ext:deno_node/deps/minimatch.js");
+const lazyMinimatch = core.createLazyLoader("ext:edno_node/deps/minimatch.js");
 
 /**
  * @param {string} path
@@ -477,7 +477,7 @@ export class Glob {
         this.#isExcluded = (value) =>
           ArrayPrototypeSome(matchers, (matcher) => {
             // No primordial exists for Minimatch.prototype.match.
-            // deno-lint-ignore deno-internal/prefer-primordials
+            // edno-lint-ignore edno-internal/prefer-primordials
             return matcher.match(value);
           });
         this.#results.setup(this.#root, this.#isExcluded);
@@ -863,7 +863,7 @@ export class Glob {
       for (let i = 0; i < item.patterns.length; i++) {
         const iter = this.#iterateSubpatterns(item.path, item.patterns[i]);
         while (true) {
-          // deno-lint-ignore deno-internal/prefer-primordials
+          // edno-lint-ignore edno-internal/prefer-primordials
           const { done, value } = await iter.next();
           if (done) break;
           yield value;
@@ -1191,7 +1191,7 @@ export function matchGlobPattern(
 ): boolean {
   validateString(path, "path");
   validateString(pattern, "pattern");
-  // deno-lint-ignore deno-internal/prefer-primordials
+  // edno-lint-ignore edno-internal/prefer-primordials
   return cachedMatcher(pattern, windows).match(path);
 }
 

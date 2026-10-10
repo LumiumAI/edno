@@ -6,7 +6,7 @@ const { core, primordials } = __bootstrap;
 const {
   validateFunction,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const {
   AsyncHook,
   emitAfter,
@@ -18,8 +18,8 @@ const {
   executionAsyncId: internalExecutionAsyncId,
   executionAsyncResource: internalExecutionAsyncResource,
   newAsyncId,
-} = core.loadExtScript("ext:deno_node/internal/async_hooks.ts");
-const { kEmptyObject } = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} = core.loadExtScript("ext:edno_node/internal/async_hooks.ts");
+const { kEmptyObject } = core.loadExtScript("ext:edno_node/internal/util.mjs");
 
 const {
   ObjectDefineProperties,
@@ -108,7 +108,7 @@ class AsyncResource {
     validateFunction(fn, "fn");
     let bound;
     if (thisArg === undefined) {
-      // deno-lint-ignore no-this-alias
+      // edno-lint-ignore no-this-alias
       const resource = this;
       bound = function (...args) {
         ArrayPrototypeUnshift(args, fn, this);
@@ -135,14 +135,14 @@ class AsyncResource {
     thisArg?: AsyncResource,
   ) {
     type = type || fn.name || "bound-anonymous-fn";
-    // deno-lint-ignore deno-internal/prefer-primordials -- `bind` is AsyncResource's own method, not Function.prototype.bind
+    // edno-lint-ignore edno-internal/prefer-primordials -- `bind` is AsyncResource's own method, not Function.prototype.bind
     return (new AsyncResource(type)).bind(fn, thisArg);
   }
 }
 
 class AsyncLocalStorage {
   #variable = new AsyncVariable();
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   #defaultValue: any = undefined;
   #name = "";
   enabled = false;
@@ -161,7 +161,7 @@ class AsyncLocalStorage {
     return this.#name;
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   run(store: any, callback: any, ...args: any[]): any {
     this.enabled = true;
     const previous = this.#variable.enter(
@@ -174,7 +174,7 @@ class AsyncLocalStorage {
     }
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   exit(callback: (...args: unknown[]) => any, ...args: any[]): any {
     const previous = this.#variable.enter(kExitedStore);
     try {
@@ -184,7 +184,7 @@ class AsyncLocalStorage {
     }
   }
 
-  // deno-lint-ignore no-explicit-any
+  // edno-lint-ignore no-explicit-any
   getStore(): any {
     const store = this.#variable.get();
     // `exit()` means "no store", regardless of `enabled` or `defaultValue`.
@@ -212,7 +212,7 @@ class AsyncLocalStorage {
   }
 
   static bind(fn: (...args: unknown[]) => unknown) {
-    // deno-lint-ignore deno-internal/prefer-primordials -- `bind` is AsyncResource's own static method, not Function.prototype.bind
+    // edno-lint-ignore edno-internal/prefer-primordials -- `bind` is AsyncResource's own static method, not Function.prototype.bind
     return AsyncResource.bind(fn);
   }
 

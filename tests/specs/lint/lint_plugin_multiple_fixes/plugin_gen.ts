@@ -22,4 +22,4 @@ export default {
       },
     },
   },
-} satisfies Deno.lint.Plugin;
+} satisfies Edno.lint.Plugin;

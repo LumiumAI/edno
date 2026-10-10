@@ -1,9 +1,9 @@
-# deno_ops
+# edno_ops
 
 `proc_macro` for generating highly optimized V8 functions from Rust functions.
 
 ```rust,ignore
-use deno_core::{op2, extension};
+use edno_core::{op2, extension};
 
 // Declare an op.
 #[op2(fast)]

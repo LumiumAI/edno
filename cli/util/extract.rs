@@ -17,9 +17,9 @@ use deno_ast::swc::ecma_visit::VisitMut;
 use deno_ast::swc::ecma_visit::VisitWith as _;
 use deno_ast::swc::ecma_visit::visit_mut_pass;
 use deno_ast::swc::utils as swc_utils;
-use deno_cache_dir::file_fetcher::File;
-use deno_core::ModuleSpecifier;
-use deno_core::error::AnyError;
+use edno_cache_dir::file_fetcher::File;
+use edno_core::ModuleSpecifier;
+use edno_core::error::AnyError;
 use regex::Regex;
 
 use crate::args::PermissionFlags;
@@ -28,23 +28,23 @@ use crate::file_fetcher::TextDecodedFile;
 use crate::util::path::mapped_specifier_for_tsc;
 
 /// Extracts doc tests from a given file, transforms them into pseudo test
-/// files by wrapping the content of the doc tests in a `Deno.test` call, and
+/// files by wrapping the content of the doc tests in a `Edno.test` call, and
 /// returns a list of the pseudo test files.
 ///
 /// The difference from [`extract_snippet_files`] is that this function wraps
-/// extracted code snippets in a `Deno.test` call.
+/// extracted code snippets in a `Edno.test` call.
 pub fn extract_doc_tests(file: File) -> Result<Vec<File>, AnyError> {
-  extract_inner(file, WrapKind::DenoTest)
+  extract_inner(file, WrapKind::EdnoTest)
 }
 
 /// Extracts code snippets from a given file and returns a list of the extracted
 /// files.
 ///
 /// The difference from [`extract_doc_tests`] is that this function does *not*
-/// wrap extracted code snippets in a `Deno.test` call.
+/// wrap extracted code snippets in a `Edno.test` call.
 #[allow(
   dead_code,
-  reason = "re-enabled once `deno check --doc` is supported by the native type checker"
+  reason = "re-enabled once `edno check --doc` is supported by the native type checker"
 )]
 pub fn extract_snippet_files(file: File) -> Result<Vec<File>, AnyError> {
   extract_inner(file, WrapKind::NoWrap)
@@ -52,7 +52,7 @@ pub fn extract_snippet_files(file: File) -> Result<Vec<File>, AnyError> {
 
 #[derive(Clone, Copy)]
 enum WrapKind {
-  DenoTest,
+  EdnoTest,
   NoWrap,
 }
 
@@ -425,7 +425,7 @@ fn extract_file_from_block(
   is_markdown_blockquote: bool,
   lines_regex: &Regex,
 ) -> Option<TestOrSnippet> {
-  let tests_regex = lazy_regex::regex!(r"(?m)^\s*Deno\.test\(");
+  let tests_regex = lazy_regex::regex!(r"(?m)^\s*Edno\.test\(");
 
   if file_media_type == MediaType::Unknown {
     return None;
@@ -462,7 +462,7 @@ fn extract_file_from_block(
     } else {
       captured
     };
-    // Strip shebang from the very first line to forward it to `Deno.test`.
+    // Strip shebang from the very first line to forward it to `Edno.test`.
     if is_first_line && text.starts_with("#!") {
       shebang = Some(parse_shebang(text));
       is_first_line = false;
@@ -502,7 +502,7 @@ fn extract_file_from_block(
       HashMap::from([("content-type".to_string(), content_type.to_string())])
     }),
     source: file_source.into_bytes().into(),
-    loaded_from: deno_cache_dir::file_fetcher::LoadedFrom::Local,
+    loaded_from: edno_cache_dir::file_fetcher::LoadedFrom::Local,
   };
   Some(TestOrSnippet {
     file,
@@ -534,22 +534,22 @@ fn strip_markdown_blockquote_marker(line: &str) -> &str {
 
 enum Shebang {
   Permissions(Box<PermissionFlags>),
-  /// Message describing why the shebang could not be parsed as a `deno`
+  /// Message describing why the shebang could not be parsed as a `edno`
   /// command. The generated test is made to throw with this message.
   Invalid(String),
 }
 
-/// Parses a shebang line like `#!/usr/bin/env -S deno run --allow-read`.
+/// Parses a shebang line like `#!/usr/bin/env -S edno run --allow-read`.
 ///
-/// The flags are parsed using deno's own CLI argument parser and the resulting
-/// permissions are forwarded to `Deno.test`.
+/// The flags are parsed using edno's own CLI argument parser and the resulting
+/// permissions are forwarded to `Edno.test`.
 ///
 /// Known limitations:
-/// - The `deno` executable is matched by file name, so custom-named binaries
-///   (e.g. `deno-canary`) are not recognized and yield an invalid shebang.
-/// - A scoped `--deny-*=<path>` cannot be represented in the `Deno.test`
+/// - The `edno` executable is matched by file name, so custom-named binaries
+///   (e.g. `edno-canary`) are not recognized and yield an invalid shebang.
+/// - A scoped `--deny-*=<path>` cannot be represented in the `Edno.test`
 ///   permissions object yet and yields an invalid shebang to force failure
-/// - A `--ignore-*` cannnot be represented in the `Deno.test` permissions
+/// - A `--ignore-*` cannnot be represented in the `Edno.test` permissions
 ///   object either yet, so they are currently ignored
 fn parse_shebang(shebang: &str) -> Shebang {
   let invalid = |reason: &str| {
@@ -564,17 +564,17 @@ fn parse_shebang(shebang: &str) -> Shebang {
   let Some(tokens) = shlex::split(line) else {
     return invalid("tokenization failed, possibly due to unterminated quotes");
   };
-  // Find the `deno` executable in the shebang (e.g. `deno`, `/usr/bin/deno`).
-  let Some(deno_index) = tokens.iter().position(|token| {
+  // Find the `edno` executable in the shebang (e.g. `edno`, `/usr/bin/edno`).
+  let Some(edno_index) = tokens.iter().position(|token| {
     std::path::Path::new(token)
       .file_stem()
       .and_then(|stem| stem.to_str())
-      == Some("deno")
+      == Some("edno")
   }) else {
-    return invalid("binary basename needs to be 'deno'");
+    return invalid("binary basename needs to be 'edno'");
   };
-  let mut args = vec![OsString::from("deno")];
-  args.extend(tokens[deno_index + 1..].iter().cloned().map(OsString::from));
+  let mut args = vec![OsString::from("edno")];
+  args.extend(tokens[edno_index + 1..].iter().cloned().map(OsString::from));
   args.push(OsString::from("./__doctest_shebang__.ts"));
   match flags_from_vec(args) {
     Ok(flags) if has_scoped_deny(&flags.permissions) => invalid(
@@ -858,8 +858,8 @@ fn extract_sym_from_pat(pat: &ast::Pat) -> Vec<Atom> {
 /// transformations:
 ///
 /// 1. Injects `import` statements for expoted items from the base file
-/// 2. If `wrap_kind` is [`WrapKind::DenoTest`], wraps the content of the file
-///    in a `Deno.test` call.
+/// 2. If `wrap_kind` is [`WrapKind::EdnoTest`], wraps the content of the file
+///    in a `Edno.test` call.
 ///
 /// For example, given a file that looks like:
 ///
@@ -885,7 +885,7 @@ fn extract_sym_from_pat(pat: &ast::Pat) -> Vec<Atom> {
 /// import { assertEquals } from "@std/assert/equals";
 /// import { increment, SOME_CONST } from "./base.ts";
 ///
-/// Deno.test("./base.ts#1-3.ts", async () => {
+/// Edno.test("./base.ts#1-3.ts", async () => {
 ///   assertEquals(increment(1), 2);
 /// });
 /// ```
@@ -905,15 +905,15 @@ fn extract_sym_from_pat(pat: &ast::Pat) -> Vec<Atom> {
 /// import { assertEquals } from "@std/assert/equals";
 /// import { doSomething } from "./some_external_module.ts";
 ///
-/// Deno.test("./base.ts#1-3.ts", async () => {
+/// Edno.test("./base.ts#1-3.ts", async () => {
 ///   assertEquals(doSomething(1), 2);
 /// });
 /// ```
 ///
-/// # Edge case 2 - exports can't be put inside `Deno.test` blocks
+/// # Edge case 2 - exports can't be put inside `Edno.test` blocks
 ///
 /// All exports like `export const foo = 42` must be at the top level of the
-/// module, making it impossible to wrap exports in `Deno.test` blocks. For
+/// module, making it impossible to wrap exports in `Edno.test` blocks. For
 /// example, when the following code snippet is provided:
 ///
 /// ```ts
@@ -929,7 +929,7 @@ fn extract_sym_from_pat(pat: &ast::Pat) -> Vec<Atom> {
 /// file would look like:
 ///
 /// ```ts
-/// Deno.test("./base.ts#1-7.ts", async () => {
+/// Edno.test("./base.ts#1-7.ts", async () => {
 ///   const logger = createLogger("my-awesome-module");
 ///
 ///   export function sum(a: number, b: number): number {
@@ -943,10 +943,10 @@ fn extract_sym_from_pat(pat: &ast::Pat) -> Vec<Atom> {
 /// at the top level of the module.
 ///
 /// To address this issue, the `export` keyword is removed so that the item can
-/// stay in the `Deno.test` block's scope:
+/// stay in the `Edno.test` block's scope:
 ///
 /// ```ts
-/// Deno.test("./base.ts#1-7.ts", async () => {
+/// Edno.test("./base.ts#1-7.ts", async () => {
 ///   const logger = createLogger("my-awesome-module");
 ///
 ///   function sum(a: number, b: number): number {
@@ -1007,7 +1007,7 @@ fn generate_pseudo_file(
       HashMap::from([("content-type".to_string(), content_type.to_string())])
     }),
     source: source.into_bytes().into(),
-    loaded_from: deno_cache_dir::file_fetcher::LoadedFrom::Local,
+    loaded_from: edno_cache_dir::file_fetcher::LoadedFrom::Local,
   })
 }
 
@@ -1034,8 +1034,8 @@ impl VisitMut for Transform<'_> {
                 module_decls.push(decl.clone());
               }
               // We remove `export` keywords so that they can be put inside
-              // `Deno.test` block scope.
-              WrapKind::DenoTest => match decl {
+              // `Edno.test` block scope.
+              WrapKind::EdnoTest => match decl {
                 ast::ModuleDecl::ExportDecl(export_decl) => {
                   stmts.push(ast::Stmt::Decl(export_decl.decl.clone()));
                 }
@@ -1103,7 +1103,7 @@ impl VisitMut for Transform<'_> {
           ));
         }
         match self.wrap_kind {
-          WrapKind::DenoTest => {
+          WrapKind::EdnoTest => {
             transformed_items.push(ast::ModuleItem::Stmt(wrap_in_deno_test(
               stmts,
               self.specifier.to_string().into(),
@@ -1142,7 +1142,7 @@ impl VisitMut for Transform<'_> {
         }
 
         match self.wrap_kind {
-          WrapKind::DenoTest => {
+          WrapKind::EdnoTest => {
             transformed_items.push(ast::ModuleItem::Stmt(wrap_in_deno_test(
               script.body.clone(),
               self.specifier.to_string().into(),
@@ -1212,7 +1212,7 @@ fn wrap_in_deno_test(
         span: DUMMY_SP,
         obj: Box::new(ast::Expr::Ident(ast::Ident {
           span: DUMMY_SP,
-          sym: "Deno".into(),
+          sym: "Edno".into(),
           optional: false,
           ..Default::default()
         })),
@@ -1260,7 +1260,7 @@ fn string_lit(value: &str) -> ast::Expr {
   }))
 }
 
-/// Builds the `{ permissions: ... }` options object passed to `Deno.test` for a
+/// Builds the `{ permissions: ... }` options object passed to `Edno.test` for a
 /// snippet that declared a shebang.
 ///
 /// - `--allow-all` becomes `{ permissions: "inherit" }`.
@@ -1273,7 +1273,7 @@ fn string_lit(value: &str) -> ast::Expr {
 /// - No permissions flags becomes `{ permissions: "none" }`
 ///
 /// The currently unsupported flags are due to the current
-/// `Deno.PermissionOptionsObject` not being able to properly model them.
+/// `Edno.PermissionOptionsObject` not being able to properly model them.
 fn permissions_options_object(permissions: &PermissionFlags) -> ast::Expr {
   let prop = |name: &str, value: ast::Expr| {
     ast::PropOrSpread::Prop(Box::new(ast::Prop::KeyValue(ast::KeyValueProp {
@@ -1409,7 +1409,7 @@ export function add(a: number, b: number): number {
         expected: vec![Expected {
           source: r#"import { assertEquals } from "@std/assert/equal";
 import { add } from "file:///main.ts";
-Deno.test("file:///main.ts#3-8.ts", async ()=>{
+Edno.test("file:///main.ts#3-8.ts", async ()=>{
     assertEquals(add(1, 2), 3);
 });
 "#,
@@ -1433,7 +1433,7 @@ export default class Bar {}
         },
         expected: vec![Expected {
           source: r#"import Bar, { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-6.ts", async ()=>{
+Edno.test("file:///main.ts#3-6.ts", async ()=>{
     foo();
 });
 "#,
@@ -1458,7 +1458,7 @@ export type Args = { a: number };
         },
         expected: vec![Expected {
           source: r#"import { type Args, foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", async ()=>{
+Edno.test("file:///main.ts#3-7.ts", async ()=>{
     const input = {
         a: 42
     } satisfies Args;
@@ -1477,7 +1477,7 @@ Deno.test("file:///main.ts#3-7.ts", async ()=>{
  *
  * @example Usage
  * ```ts
- * #!/usr/bin/env -S deno run --allow-read
+ * #!/usr/bin/env -S edno run --allow-read
  * foo("bar")
  * ```
  */
@@ -1489,7 +1489,7 @@ export function foo(s: string) {
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#6-10.ts", {
+Edno.test("file:///main.ts#6-10.ts", {
     permissions: {
         read: "inherit"
     }
@@ -1517,7 +1517,7 @@ Deno.test("file:///main.ts#6-10.ts", {
           specifier: "file:///main.ts",
         },
         expected: vec![Expected {
-          source: r#"Deno.test("file:///main.ts#5-8.ts", async ()=>{
+          source: r#"Edno.test("file:///main.ts#5-8.ts", async ()=>{
     foo();
 });
 "#,
@@ -1554,7 +1554,7 @@ export * from "./other.ts";
         expected: vec![
           Expected {
             source: r#"import MyClass, { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#5-8.js", async ()=>{
+Edno.test("file:///main.ts#5-8.js", async ()=>{
     const cls = new MyClass();
 });
 "#,
@@ -1563,7 +1563,7 @@ Deno.test("file:///main.ts#5-8.js", async ()=>{
           },
           Expected {
             source: r#"import MyClass, { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#13-16.ts", async ()=>{
+Edno.test("file:///main.ts#13-16.ts", async ()=>{
     foo();
 });
 "#,
@@ -1590,7 +1590,7 @@ export default TWO;
         },
         expected: vec![Expected {
           source: r#"import TWO, { ONE, foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-6.ts", async ()=>{
+Edno.test("file:///main.ts#3-6.ts", async ()=>{
     foo();
 });
 "#,
@@ -1626,7 +1626,7 @@ export { DUPLICATE3 };
 import * as DUPLICATE2 from "./other2.js";
 import { foo as DUPLICATE3 } from "./other3.tsx";
 import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-10.ts", async ()=>{
+Edno.test("file:///main.ts#3-10.ts", async ()=>{
     foo();
 });
 "#,
@@ -1654,7 +1654,7 @@ export const foo = () => "foo";
         },
         expected: vec![Expected {
           source: r#"import { createFoo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", async ()=>{
+Edno.test("file:///main.ts#3-7.ts", async ()=>{
     const foo = createFoo();
     foo();
 });
@@ -1666,8 +1666,8 @@ Deno.test("file:///main.ts#3-7.ts", async ()=>{
       // https://github.com/denoland/deno/issues/25718
       // A case where the example code has an exported item which references
       // a variable from one upper scope.
-      // Naive application of `Deno.test` wrap would cause a reference error
-      // because the variable would go inside the `Deno.test` block while the
+      // Naive application of `Edno.test` wrap would cause a reference error
+      // because the variable would go inside the `Edno.test` block while the
       // exported item would be moved to the top level. To suppress the auto
       // move of the exported item to the top level, the `export` keyword is
       // removed so that the item stays in the same scope as the variable.
@@ -1692,7 +1692,7 @@ Deno.test("file:///main.ts#3-7.ts", async ()=>{
         },
         expected: vec![Expected {
           source: r#"import { getLogger } from "@std/log";
-Deno.test("file:///main.ts#3-12.ts", async ()=>{
+Edno.test("file:///main.ts#3-12.ts", async ()=>{
     const logger = getLogger("my-awesome-module");
     function foo() {
         logger.debug("hello");
@@ -1712,7 +1712,7 @@ This is a *markdown*.
 
 ```js
 import { assertEquals } from "@std/assert/equal";
-import { add } from "jsr:@deno/non-existent";
+import { add } from "jsr:@edno/non-existent";
 
 assertEquals(add(1, 2), 3);
 ```
@@ -1721,8 +1721,8 @@ assertEquals(add(1, 2), 3);
         },
         expected: vec![Expected {
           source: r#"import { assertEquals } from "@std/assert/equal";
-import { add } from "jsr:@deno/non-existent";
-Deno.test("file:///README.md#6-12.js", async ()=>{
+import { add } from "jsr:@edno/non-existent";
+Edno.test("file:///README.md#6-12.js", async ()=>{
     assertEquals(add(1, 2), 3);
 });
 "#,
@@ -1760,7 +1760,7 @@ console.log("ts");
           specifier: "file:///README.md",
         },
         expected: vec![Expected {
-          source: r#"Deno.test("file:///README.md#4-7.ts", async ()=>{
+          source: r#"Edno.test("file:///README.md#4-7.ts", async ()=>{
     console.log("ts");
 });
 "#,
@@ -1784,7 +1784,7 @@ console.log("ts");
         },
         expected: vec![Expected {
           source: r#"import { assertEquals } from "@std/assert/equals";
-Deno.test("file:///README.md#4-9.ts", async ()=>{
+Edno.test("file:///README.md#4-9.ts", async ()=>{
     assertEquals(1 + 2, 3);
 });
 "#,
@@ -1808,7 +1808,7 @@ export default Foo
         },
         expected: vec![Expected {
           source: r#"import { Foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-6.ts", async ()=>{
+Edno.test("file:///main.ts#3-6.ts", async ()=>{
     console.log(Foo);
 });
 "#,
@@ -1834,7 +1834,7 @@ export function add(first: number, second: number) {
         },
         expected: vec![Expected {
           source: r#"import { add } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", async ()=>{
+Edno.test("file:///main.ts#3-7.ts", async ()=>{
     // @ts-expect-error: can only add numbers
     add('1', '2');
 });
@@ -1852,7 +1852,7 @@ Deno.test("file:///main.ts#3-7.ts", async ()=>{
 ```ts
 import { assertEquals } from "@std/assert/equals";
 
-Deno.test("add", () => {
+Edno.test("add", () => {
   assertEquals(1 + 2, 3);
 });
 ```
@@ -1861,7 +1861,7 @@ Deno.test("add", () => {
         },
         expected: vec![Expected {
           source: r#"import { assertEquals } from "@std/assert/equals";
-Deno.test("add", ()=>{
+Edno.test("add", ()=>{
     assertEquals(1 + 2, 3);
 });
 "#,
@@ -1876,7 +1876,7 @@ Deno.test("add", ()=>{
  * ```ts
  * import { assertEquals } from "@std/assert/equals";
  *
- * Deno.test("add", () => {
+ * Edno.test("add", () => {
  *   assertEquals(add(1, 2), 3);
  * });
  * ```
@@ -1890,7 +1890,7 @@ export function add(a: number, b: number): number {
         expected: vec![Expected {
           source: r#"import { assertEquals } from "@std/assert/equals";
 import { add } from "file:///main.ts";
-Deno.test("add", ()=>{
+Edno.test("add", ()=>{
     assertEquals(add(1, 2), 3);
 });
 "#,
@@ -1898,14 +1898,14 @@ Deno.test("add", ()=>{
           media_type: MediaType::TypeScript,
         }],
       },
-      // commented out `Deno.test` should be ignored
+      // commented out `Edno.test` should be ignored
       Test {
         input: Input {
           source: r#"
 /**
  * ```ts
  * import { assertEquals } from "@std/assert/equals";
- * // Deno.test("add", () => {});
+ * // Edno.test("add", () => {});
  * assertEquals(add(1, 2), 3);
  * ```
  */
@@ -1918,8 +1918,8 @@ export function add(a: number, b: number): number {
         expected: vec![Expected {
           source: r#"import { assertEquals } from "@std/assert/equals";
 import { add } from "file:///main.ts";
-Deno.test("file:///main.ts#3-8.ts", async ()=>{
-    // Deno.test("add", () => {});
+Edno.test("file:///main.ts#3-8.ts", async ()=>{
+    // Edno.test("add", () => {});
     assertEquals(add(1, 2), 3);
 });
 "#,
@@ -1933,7 +1933,7 @@ Deno.test("file:///main.ts#3-8.ts", async ()=>{
           source: r#"
 /**
  * ```ts
- * #!/usr/bin/env -S deno run -A
+ * #!/usr/bin/env -S edno run -A
  * foo();
  * ```
  */
@@ -1943,7 +1943,7 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", {
+Edno.test("file:///main.ts#3-7.ts", {
     permissions: "inherit"
 }, async ()=>{
     foo();
@@ -1959,7 +1959,7 @@ Deno.test("file:///main.ts#3-7.ts", {
           source: r#"
 /**
  * ```ts
- * #!/usr/bin/env -S deno run
+ * #!/usr/bin/env -S edno run
  * foo();
  * ```
  */
@@ -1969,7 +1969,7 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", {
+Edno.test("file:///main.ts#3-7.ts", {
     permissions: "none"
 }, async ()=>{
     foo();
@@ -1985,7 +1985,7 @@ Deno.test("file:///main.ts#3-7.ts", {
           source: r#"
 /**
  * ```ts
- * #!/usr/bin/env -S deno run --allow-read
+ * #!/usr/bin/env -S edno run --allow-read
  * foo();
  * ```
  */
@@ -1995,7 +1995,7 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", {
+Edno.test("file:///main.ts#3-7.ts", {
     permissions: {
         read: "inherit"
     }
@@ -2013,7 +2013,7 @@ Deno.test("file:///main.ts#3-7.ts", {
           source: r#"
 /**
  * ```ts
- * #!/usr/bin/env -S deno run --allow-read=/tmp,/var
+ * #!/usr/bin/env -S edno run --allow-read=/tmp,/var
  * foo();
  * ```
  */
@@ -2023,7 +2023,7 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", {
+Edno.test("file:///main.ts#3-7.ts", {
     permissions: {
         read: [
             "/tmp",
@@ -2054,8 +2054,8 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", async ()=>{
-    throw new Error("invalid doc test hashbang: #!/bin/sh (binary basename needs to be 'deno')");
+Edno.test("file:///main.ts#3-7.ts", async ()=>{
+    throw new Error("invalid doc test hashbang: #!/bin/sh (binary basename needs to be 'edno')");
     foo();
 });
 "#,
@@ -2070,7 +2070,7 @@ Deno.test("file:///main.ts#3-7.ts", async ()=>{
           source: r#"
 /**
  * ```ts
- * #!/usr/bin/env -S deno run --allow-read --deny-read=/etc
+ * #!/usr/bin/env -S edno run --allow-read --deny-read=/etc
  * foo();
  * ```
  */
@@ -2080,8 +2080,8 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", async ()=>{
-    throw new Error("invalid doc test hashbang: #!/usr/bin/env -S deno run --allow-read --deny-read=/etc (scoped --deny-* flags aren't supported yet, either remove them or ignore the test)");
+Edno.test("file:///main.ts#3-7.ts", async ()=>{
+    throw new Error("invalid doc test hashbang: #!/usr/bin/env -S edno run --allow-read --deny-read=/etc (scoped --deny-* flags aren't supported yet, either remove them or ignore the test)");
     foo();
 });
 "#,
@@ -2096,7 +2096,7 @@ Deno.test("file:///main.ts#3-7.ts", async ()=>{
           source: r#"
 /**
  * ```ts
- * #!/usr/bin/env -S deno run --allow-read --deny-env
+ * #!/usr/bin/env -S edno run --allow-read --deny-env
  * foo();
  * ```
  */
@@ -2106,7 +2106,7 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", {
+Edno.test("file:///main.ts#3-7.ts", {
     permissions: {
         env: false,
         read: "inherit"
@@ -2125,7 +2125,7 @@ Deno.test("file:///main.ts#3-7.ts", {
           source: r#"
 /**
  * ```ts
- * #!/usr/bin/env -S deno run --allow-read="/tmp/with space"
+ * #!/usr/bin/env -S edno run --allow-read="/tmp/with space"
  * foo();
  * ```
  */
@@ -2135,7 +2135,7 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-7.ts", {
+Edno.test("file:///main.ts#3-7.ts", {
     permissions: {
         read: [
             "/tmp/with space"
@@ -2155,14 +2155,14 @@ Deno.test("file:///main.ts#3-7.ts", {
           source: r#"# Title
 
 ```ts
-#!/usr/bin/env -S deno run --allow-net=example.com
+#!/usr/bin/env -S edno run --allow-net=example.com
 foo();
 ```
 "#,
           specifier: "file:///README.md",
         },
         expected: vec![Expected {
-          source: r#"Deno.test("file:///README.md#3-7.ts", {
+          source: r#"Edno.test("file:///README.md#3-7.ts", {
     permissions: {
         net: [
             "example.com"
@@ -2196,7 +2196,7 @@ export class Quux {}
         },
         expected: vec![Expected {
           source: r#"import { type Bar, type Foo, Quux, useFoo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-6.ts", async ()=>{
+Edno.test("file:///main.ts#3-6.ts", async ()=>{
     useFoo();
 });
 "#,
@@ -2224,7 +2224,7 @@ export { null_ as null, dashed as "key-with-hyphens" };
         },
         expected: vec![Expected {
           source: r#"import { useFoo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-6.ts", async ()=>{
+Edno.test("file:///main.ts#3-6.ts", async ()=>{
     useFoo();
 });
 "#,
@@ -2247,7 +2247,7 @@ export { nullValue as null, dashed as "key-with-hyphens" } from "./deps.ts";
         },
         expected: vec![Expected {
           source: r#"import { useFoo } from "file:///main.ts";
-Deno.test("file:///main.ts#3-6.ts", async ()=>{
+Edno.test("file:///main.ts#3-6.ts", async ()=>{
     useFoo();
 });
 "#,
@@ -2276,7 +2276,7 @@ export const Foo = 1;
         },
         expected: vec![Expected {
           source: r#"import { Foo, doSomething } from "file:///main.ts";
-Deno.test("file:///main.ts#3-6.ts", async ()=>{
+Edno.test("file:///main.ts#3-6.ts", async ()=>{
     doSomething();
 });
 "#,
@@ -2308,7 +2308,7 @@ export function foo() {}
         expected: vec![
           Expected {
             source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#2-5.ts", async ()=>{
+Edno.test("file:///main.ts#2-5.ts", async ()=>{
     console.log("outside");
 });
 "#,
@@ -2317,7 +2317,7 @@ Deno.test("file:///main.ts#2-5.ts", async ()=>{
           },
           Expected {
             source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#9-12.ts", async ()=>{
+Edno.test("file:///main.ts#9-12.ts", async ()=>{
     console.log("inside blockquote");
 });
 "#,
@@ -2341,7 +2341,7 @@ export function foo() {}
         },
         expected: vec![Expected {
           source: r#"import { foo } from "file:///main.ts";
-Deno.test("file:///main.ts#2-5.ts", async ()=>{
+Edno.test("file:///main.ts#2-5.ts", async ()=>{
     console.log("nested");
 });
 "#,
@@ -2367,7 +2367,7 @@ export function bar() {}
         },
         expected: vec![Expected {
           source: r#"import { bar } from "file:///main.ts";
-Deno.test("file:///main.ts#2-8.ts", async ()=>{
+Edno.test("file:///main.ts#2-8.ts", async ()=>{
     const s = `
 > real content
 `;
@@ -2386,7 +2386,7 @@ Deno.test("file:///main.ts#2-8.ts", async ()=>{
         maybe_headers: None,
         mtime: None,
         source: test.input.source.as_bytes().into(),
-        loaded_from: deno_cache_dir::file_fetcher::LoadedFrom::Local,
+        loaded_from: edno_cache_dir::file_fetcher::LoadedFrom::Local,
       };
       let got_decoded = extract_doc_tests(file)
         .unwrap()
@@ -2553,7 +2553,7 @@ This is a *markdown*.
 
 ```js
 import { assertEquals } from "@std/assert/equal";
-import { add } from "jsr:@deno/non-existent";
+import { add } from "jsr:@edno/non-existent";
 
 assertEquals(add(1, 2), 3);
 ```
@@ -2562,7 +2562,7 @@ assertEquals(add(1, 2), 3);
         },
         expected: vec![Expected {
           source: r#"import { assertEquals } from "@std/assert/equal";
-import { add } from "jsr:@deno/non-existent";
+import { add } from "jsr:@edno/non-existent";
 assertEquals(add(1, 2), 3);
 "#,
           specifier: "file:///README.md#6-12.js",
@@ -2624,7 +2624,7 @@ add('1', '2');
         maybe_headers: None,
         mtime: None,
         source: test.input.source.as_bytes().into(),
-        loaded_from: deno_cache_dir::file_fetcher::LoadedFrom::Local,
+        loaded_from: edno_cache_dir::file_fetcher::LoadedFrom::Local,
       };
       let got_decoded = extract_snippet_files(file)
         .unwrap()

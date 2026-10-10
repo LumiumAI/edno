@@ -4,7 +4,7 @@ import { assertEquals, loadTestLibrary } from "./common.js";
 
 const date = loadTestLibrary();
 
-Deno.test("napi date", function () {
+Edno.test("napi date", function () {
   const dateTypeTestDate = date.createDate(1549183351);
   assertEquals(date.isDate(dateTypeTestDate), true);
   assertEquals(date.isDate(new Date(1549183351)), true);

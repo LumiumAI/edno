@@ -12,10 +12,10 @@ use std::sync::Mutex;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 
-use deno_core::OpState;
-use deno_core::Resource;
-use deno_core::ResourceId;
-use deno_core::op2;
+use edno_core::OpState;
+use edno_core::Resource;
+use edno_core::ResourceId;
+use edno_core::op2;
 use tokio::sync::oneshot;
 
 #[derive(

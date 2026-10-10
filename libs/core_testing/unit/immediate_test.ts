@@ -117,7 +117,7 @@ test(async function testImmediateException() {
   globalThis.onerror = ((e: ErrorEvent) => {
     resolve(e.error);
     e.preventDefault();
-    // deno-lint-ignore no-explicit-any
+    // edno-lint-ignore no-explicit-any
   }) as any;
   try {
     setImmediate(() => {
@@ -138,8 +138,8 @@ test(async function testUnrefImmediateFiresWithOtherWork() {
   const imm = setImmediate(() => {
     immediateFired = true;
   });
-  // deno-lint-ignore no-explicit-any
-  (Deno as any).unrefImmediate(imm);
+  // edno-lint-ignore no-explicit-any
+  (Edno as any).unrefImmediate(imm);
   // The timer keeps the loop alive. After it fires, check the flag.
   setTimeout(() => {
     // Use a second immediate (refed) to check after the check phase

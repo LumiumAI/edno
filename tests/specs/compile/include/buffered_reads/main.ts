@@ -1,6 +1,6 @@
 // buffer larger than file
 {
-  using file = Deno.openSync(import.meta.dirname + "/data/1.txt");
+  using file = Edno.openSync(import.meta.dirname + "/data/1.txt");
   const data = new Uint8Array(13);
   const len = file.readSync(data);
   if (len !== 13) {
@@ -17,7 +17,7 @@
 
 // buffer smaller than file
 {
-  using file = Deno.openSync(import.meta.dirname + "/data/1.txt");
+  using file = Edno.openSync(import.meta.dirname + "/data/1.txt");
   const finalData = new Uint8Array(13);
   const data = new Uint8Array(2);
   let pos = 0;
@@ -38,7 +38,7 @@
 // large amount of data, small reads
 {
   const bytes = new Uint8Array((1024 ** 2) * 20);
-  using file = Deno.openSync(import.meta.dirname + "/data/2.dat");
+  using file = Edno.openSync(import.meta.dirname + "/data/2.dat");
   const buffer = new Uint8Array(2);
   let pos = 0;
   while (true) {

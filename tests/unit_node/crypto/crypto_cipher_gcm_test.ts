@@ -78,7 +78,7 @@ for (
       tag: new Uint8Array(rawTest.tag),
     };
 
-    Deno.test({
+    Edno.test({
       name: `aes-${bits}-gcm encrypt ${i + 1}/${vectors.length}`,
       fn() {
         const cipher = aesGcm(bits, test.key);
@@ -88,7 +88,7 @@ for (
       },
     });
 
-    Deno.test({
+    Edno.test({
       name: `aes-${bits}-gcm decrypt ${i + 1}/${vectors.length}`,
       fn() {
         const cipher = aesGcm(bits, test.key);
@@ -104,7 +104,7 @@ for (
   }
 }
 
-Deno.test({
+Edno.test({
   name: "aes-128-gcm encrypt multiple",
   fn() {
     const key = Buffer.alloc(16);
@@ -124,7 +124,7 @@ Deno.test({
 
 // Issue #27441
 // https://github.com/denoland/deno/issues/27441
-Deno.test({
+Edno.test({
   name: "aes-256-gcm supports IV of non standard length and auth tag check",
   fn() {
     const decipher = crypto.createDecipheriv(
@@ -146,7 +146,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes-128-gcm and aes-256-gcm with setAutoPadding(false)",
   fn() {
     for (const bits of ["128", "256"] as const) {
@@ -179,7 +179,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes gcm with invalid key length",
   fn() {
     assertThrows(
@@ -208,7 +208,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes gcm rejects empty IV",
   fn() {
     for (const algo of ["aes-128-gcm", "aes-256-gcm"] as const) {
@@ -229,7 +229,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes gcm setAuthTag validates tag length",
   fn() {
     const invalidLengths = [0, 1, 2, 3, 5, 6, 7, 9, 10, 11, 17];
@@ -272,7 +272,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes gcm setAuthTag cannot be called twice",
   fn() {
     const key = Buffer.alloc(16);
@@ -292,7 +292,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes gcm setAAD cannot be called after final",
   fn() {
     const cipher = crypto.createCipheriv(
@@ -309,7 +309,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "aes gcm getAuthTag before final throws state error",
   fn() {
     const cipher = crypto.createCipheriv(

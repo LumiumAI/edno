@@ -1,7 +1,7 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
-#![allow(dead_code, reason = "types are used by the deno CLI crate")]
+#![allow(dead_code, reason = "types are used by the edno CLI crate")]
 
-// Flag types using real Deno dependencies. These are the canonical type
+// Flag types using real Edno dependencies. These are the canonical type
 // definitions shared by both the parser crate and `cli/args/flags.rs`.
 
 use std::net::SocketAddr;
@@ -10,19 +10,19 @@ use std::num::NonZeroU32;
 use std::num::NonZeroUsize;
 use std::path::PathBuf;
 
-pub use deno_bundle_runtime::BundleFormat;
-use deno_bundle_runtime::BundleOptions;
-pub use deno_bundle_runtime::BundlePlatform;
-pub use deno_bundle_runtime::PackageHandling;
-pub use deno_bundle_runtime::SourceMapType;
-pub use deno_config::deno_json::NewestDependencyDate;
-pub use deno_config::deno_json::NodeModulesDirMode;
-pub use deno_config::deno_json::NodeModulesLinkerMode;
-pub use deno_core::url::Url;
-pub use deno_lib::args::CaData;
-pub use deno_lib::args::UnstableConfig;
-pub use deno_npm_installer::PackagesAllowedScripts;
-pub use deno_runtime::deno_inspector_server::InspectPublishUid;
+pub use edno_bundle_runtime::BundleFormat;
+use edno_bundle_runtime::BundleOptions;
+pub use edno_bundle_runtime::BundlePlatform;
+pub use edno_bundle_runtime::PackageHandling;
+pub use edno_bundle_runtime::SourceMapType;
+pub use edno_config::edno_json::NewestDependencyDate;
+pub use edno_config::edno_json::NodeModulesDirMode;
+pub use edno_config::edno_json::NodeModulesLinkerMode;
+pub use edno_core::url::Url;
+pub use edno_lib::args::CaData;
+pub use edno_lib::args::UnstableConfig;
+pub use edno_npm_installer::PackagesAllowedScripts;
+pub use edno_runtime::edno_inspector_server::InspectPublishUid;
 use deno_semver::package::PackageReq;
 pub use log::Level;
 use serde::Deserialize;
@@ -110,16 +110,16 @@ pub struct VersionFlags {
   pub start: Option<String>,
   pub base: Option<String>,
   /// Path to the import map to rewrite jsr: version constraints in. Defaults
-  /// to the root deno.json (or whatever its `importMap` field points to).
+  /// to the root edno.json (or whatever its `importMap` field points to).
   pub import_map: Option<String>,
   /// Path to the release notes markdown file to prepend in conventional-commits
   /// mode. Defaults to `Releases.md`.
   pub release_notes: Option<String>,
   /// Don't write any files; just print what would happen.
   pub dry_run: bool,
-  /// Explicit path to the manifest file to bump. May point to a `deno.json`
+  /// Explicit path to the manifest file to bump. May point to a `edno.json`
   /// (or `.jsonc`) or a `package.json`. When set, single-file mode is forced
-  /// (workspace auto-detection is bypassed). Useful when both `deno.json` and
+  /// (workspace auto-detection is bypassed). Useful when both `edno.json` and
   /// `package.json` exist in the same directory.
   pub config: Option<String>,
 }
@@ -209,7 +209,7 @@ pub struct CompileFlags {
   /// shipping the entire node_modules tree. Experimental.
   pub bundle: bool,
   /// Stable identity for the compiled app. Determines where origin-bound
-  /// storage (default `Deno.openKv()`, `localStorage`, `caches`) is persisted.
+  /// storage (default `Edno.openKv()`, `localStorage`, `caches`) is persisted.
   /// Defaults to the output file name when not set.
   pub app_name: Option<String>,
   /// Minify the bundle. Only meaningful with `bundle: true`.
@@ -220,7 +220,7 @@ pub struct CompileFlags {
   /// `--include npm:<pkg>` for any such packages.
   pub exclude_unused_npm: bool,
   /// JS engine the compiled binary should run on. Named `engine` because
-  /// `deno desktop --backend` already means the render backend.
+  /// `edno desktop --backend` already means the render backend.
   pub engine: JavaScriptEngine,
 }
 
@@ -256,11 +256,11 @@ pub struct DesktopFlags {
   /// Reverse-DNS bundle / application identifier (e.g. `com.acme.foo`).
   /// Used for the macOS `CFBundleIdentifier`, the Linux `.desktop` file
   /// identifier, and (eventually) the Windows AppUserModelID. When unset
-  /// a synthetic `com.deno.desktop.<app-slug>` is generated.
+  /// a synthetic `com.edno.desktop.<app-slug>` is generated.
   pub identifier: Option<String>,
   /// Custom URL schemes (deep links) to register with the OS, e.g. `["acme"]`
   /// for `acme://...` links. Sourced from `desktop.app.deepLinks` in
-  /// `deno.json`. Each entry is a bare scheme with no `://`.
+  /// `edno.json`. Each entry is a bare scheme with no `://`.
   pub deep_links: Vec<String>,
   /// macOS codesigning identity (e.g. `Developer ID Application: Acme,
   /// Inc. (TEAMID)`, or `-` for ad-hoc). When unset the bundle is left
@@ -278,7 +278,7 @@ pub struct DesktopFlags {
   pub compress: Option<String>,
   /// Embed only the npm packages reachable from the module graph instead of
   /// the full managed snapshot. Same opt-in semantics as
-  /// `deno compile --exclude-unused-npm`.
+  /// `edno compile --exclude-unused-npm`.
   pub exclude_unused_npm: bool,
 }
 
@@ -309,7 +309,7 @@ pub struct CoverageFlags {
   pub exclude: Vec<String>,
   pub r#type: CoverageType,
   /// Minimum coverage percentage (0-100) applied to line, branch, and function
-  /// coverage. Overrides per-metric thresholds from `deno.json`.
+  /// coverage. Overrides per-metric thresholds from `edno.json`.
   pub threshold: Option<u32>,
 }
 
@@ -463,7 +463,7 @@ pub struct InstallEntrypointsFlags {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct JSONReferenceFlags {
-  pub json: deno_core::serde_json::Value,
+  pub json: edno_core::serde_json::Value,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -545,19 +545,19 @@ impl RunFlags {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
-pub enum DenoXShimName {
+pub enum EdnoXShimName {
   #[default]
   Dx,
-  Denox,
+  Ednox,
   Dnx,
   Other(String),
 }
 
-impl DenoXShimName {
+impl EdnoXShimName {
   pub fn name(&self) -> &str {
     match self {
       Self::Dx => "dx",
-      Self::Denox => "denox",
+      Self::Ednox => "ednox",
       Self::Dnx => "dnx",
       Self::Other(name) => name,
     }
@@ -566,7 +566,7 @@ impl DenoXShimName {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum XFlagsKind {
-  InstallAlias(DenoXShimName),
+  InstallAlias(EdnoXShimName),
   Command(XCommandFlags),
   Print,
 }
@@ -627,7 +627,7 @@ pub struct TaskFlags {
   pub eval: bool,
   pub no_prefix: bool,
   /// Maximum number of workspace tasks to run concurrently. Overrides the
-  /// `DENO_JOBS` env var and the `available_parallelism()` default. Only
+  /// `EDNO_JOBS` env var and the `available_parallelism()` default. Only
   /// meaningful for multi-task (`-r`/`--filter`) runs.
   pub concurrency: Option<NonZeroUsize>,
   /// Exit with code 0 instead of an error when the named task is not found.
@@ -650,7 +650,7 @@ pub struct TestFlags {
   pub coverage_dir: Option<String>,
   pub coverage_raw_data_only: bool,
   /// Minimum coverage percentage (0-100) required when `--coverage` is set.
-  /// Overrides per-metric thresholds from `deno.json`.
+  /// Overrides per-metric thresholds from `edno.json`.
   pub coverage_threshold: Option<u32>,
   pub clean: bool,
   pub fail_fast: Option<NonZeroUsize>,
@@ -783,7 +783,7 @@ impl From<BundleOptions> for BundleFlags {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum DenoSubcommand {
+pub enum EdnoSubcommand {
   Add(AddFlags),
   Audit(AuditFlags),
   ApproveScripts(ApproveScriptsFlags),
@@ -857,7 +857,7 @@ pub struct ApproveScriptsFlags {
   pub packages: Vec<String>,
 }
 
-impl DenoSubcommand {
+impl EdnoSubcommand {
   pub fn is_run(&self) -> bool {
     matches!(self, Self::Run(_))
   }
@@ -876,9 +876,9 @@ impl DenoSubcommand {
   }
 }
 
-impl Default for DenoSubcommand {
-  fn default() -> DenoSubcommand {
-    DenoSubcommand::Repl(ReplFlags {
+impl Default for EdnoSubcommand {
+  fn default() -> EdnoSubcommand {
+    EdnoSubcommand::Repl(ReplFlags {
       eval_files: None,
       eval: None,
       is_default_command: true,
@@ -891,11 +891,11 @@ impl Default for DenoSubcommand {
 pub enum TypeCheckMode {
   /// Type-check all modules.
   All,
-  /// Skip type-checking of all modules. The default value for "deno run" and
+  /// Skip type-checking of all modules. The default value for "edno run" and
   /// several other subcommands.
   #[default]
   None,
-  /// Only type-check local modules. The default value for "deno test" and
+  /// Only type-check local modules. The default value for "edno test" and
   /// several other subcommands.
   Local,
 }
@@ -921,7 +921,7 @@ pub struct InternalFlags {
   pub lockfile_skip_write: bool,
   /// Set when running the desktop subcommand to use desktop type libs.
   pub is_desktop: bool,
-  /// Set by `deno compile --bundle` when the bundled output contains
+  /// Set by `edno compile --bundle` when the bundled output contains
   /// references that need to resolve against npm packages at runtime
   /// (CJS dependencies, native addons). When true, the standalone
   /// binary writer embeds (a subset of) the npm tree. Pure-ESM bundles
@@ -935,17 +935,17 @@ pub struct InternalFlags {
   /// Force-enable bundle-style resolution config regardless of the
   /// current subcommand. Set by `compile --bundle` so the bundle phase
   /// of compilation pulls deep CJS files (e.g. `jiti.cjs`) into the
-  /// module graph the same way `deno bundle` does.
+  /// module graph the same way `edno bundle` does.
   pub force_bundle_mode: bool,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct Flags {
   pub initial_cwd: Option<PathBuf>,
-  /// Vector of CLI arguments - these are user script arguments, all Deno
+  /// Vector of CLI arguments - these are user script arguments, all Edno
   /// specific flags are removed.
   pub argv: Vec<String>,
-  pub subcommand: DenoSubcommand,
+  pub subcommand: EdnoSubcommand,
 
   pub frozen_lockfile: Option<bool>,
   pub ca_stores: Option<Vec<String>>,

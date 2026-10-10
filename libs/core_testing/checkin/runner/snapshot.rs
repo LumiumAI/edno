@@ -2,8 +2,8 @@
 
 use std::rc::Rc;
 
-use deno_core::JsRuntimeForSnapshot;
-use deno_core::RuntimeOptions;
+use edno_core::JsRuntimeForSnapshot;
+use edno_core::RuntimeOptions;
 
 use super::extensions;
 use super::ts_module_loader::maybe_transpile_source;

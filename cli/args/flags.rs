@@ -9,50 +9,50 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 use color_print::cstr;
-use deno_cli_parser::CliError;
-pub use deno_cli_parser::flags::*;
-use deno_config::glob::FilePatterns;
-use deno_config::glob::PathOrPatternSet;
-use deno_core::anyhow::Context;
-use deno_core::error::AnyError;
+use edno_cli_parser::CliError;
+pub use edno_cli_parser::flags::*;
+use edno_config::glob::FilePatterns;
+use edno_config::glob::PathOrPatternSet;
+use edno_core::anyhow::Context;
+use edno_core::error::AnyError;
 use deno_graph::GraphKind;
-use deno_lib::version::DENO_VERSION_INFO;
-use deno_npm::NpmSystemInfo;
+use edno_lib::version::EDNO_VERSION_INFO;
+use edno_npm::NpmSystemInfo;
 use deno_path_util::normalize_path;
 use deno_path_util::resolve_url_or_path;
 use deno_path_util::url_to_file_path;
-pub use deno_runtime::deno_inspector_server::InspectPublishUid;
-use deno_telemetry::OtelConfig;
-use deno_telemetry::OtelConsoleConfig;
-use deno_telemetry::OtelPropagators;
+pub use edno_runtime::edno_inspector_server::InspectPublishUid;
+use edno_telemetry::OtelConfig;
+use edno_telemetry::OtelConsoleConfig;
+use edno_telemetry::OtelPropagators;
 
 use crate::util::env::resolve_cwd;
 use crate::util::fs::canonicalize_path;
 
 // ---------------------------------------------------------------------------
 // CLI-only helpers. These stay in the CLI because they depend on deno_graph /
-// deno_telemetry / the cli build env, which the parser crate intentionally
+// edno_telemetry / the cli build env, which the parser crate intentionally
 // does not.
 // ---------------------------------------------------------------------------
 
 pub static UPGRADE_USAGE: &str = cstr!(
   "<g>Latest</>
-  <bold>deno upgrade</>
+  <bold>edno upgrade</>
 
 <g>Specific version</>
-  <bold>deno upgrade</> <p(245)>1.45.0</>
-  <bold>deno upgrade</> <p(245)>1.46.0-rc.1</>
-  <bold>deno upgrade</> <p(245)>9bc2dd29ad6ba334fd57a20114e367d3c04763d4</>
+  <bold>edno upgrade</> <p(245)>1.45.0</>
+  <bold>edno upgrade</> <p(245)>1.46.0-rc.1</>
+  <bold>edno upgrade</> <p(245)>9bc2dd29ad6ba334fd57a20114e367d3c04763d4</>
 
 <g>Channel</>
-  <bold>deno upgrade</> <p(245)>stable</>
-  <bold>deno upgrade</> <p(245)>alpha</>
-  <bold>deno upgrade</> <p(245)>beta</>
-  <bold>deno upgrade</> <p(245)>rc</>
-  <bold>deno upgrade</> <p(245)>canary</>
+  <bold>edno upgrade</> <p(245)>stable</>
+  <bold>edno upgrade</> <p(245)>alpha</>
+  <bold>edno upgrade</> <p(245)>beta</>
+  <bold>edno upgrade</> <p(245)>rc</>
+  <bold>edno upgrade</> <p(245)>canary</>
 
 <g>From a pull request</> <p(245)>(requires gh CLI)</>
-  <bold>deno upgrade</> <p(245)>pr 12345</>"
+  <bold>edno upgrade</> <p(245)>pr 12345</>"
 );
 
 fn join_paths(allowlist: &[String], d: &str) -> String {
@@ -85,7 +85,7 @@ pub fn resolve_file_patterns(
   })
 }
 
-/// The `--target` triple for `deno compile`, defaulting to the triple this
+/// The `--target` triple for `edno compile`, defaulting to the triple this
 /// binary was built for.
 pub fn resolve_compile_target(flags: &CompileFlags) -> String {
   flags
@@ -95,7 +95,7 @@ pub fn resolve_compile_target(flags: &CompileFlags) -> String {
 }
 
 fn npm_system_info_from_env() -> NpmSystemInfo {
-  let arch = std::env::var_os("DENO_INSTALL_ARCH");
+  let arch = std::env::var_os("EDNO_INSTALL_ARCH");
   if let Some(var) = arch.as_ref().and_then(|s| s.to_str()) {
     NpmSystemInfo::from_rust(std::env::consts::OS, var)
   } else {
@@ -106,13 +106,13 @@ fn npm_system_info_from_env() -> NpmSystemInfo {
 /// The npm platform/arch a subcommand should resolve packages for. `compile`
 /// and `desktop` follow their `--target`; `install` follows `--os`/`--arch`;
 /// everything else uses the current system.
-pub fn npm_system_info(subcommand: &DenoSubcommand) -> NpmSystemInfo {
+pub fn npm_system_info(subcommand: &EdnoSubcommand) -> NpmSystemInfo {
   match subcommand {
-    DenoSubcommand::Compile(CompileFlags {
+    EdnoSubcommand::Compile(CompileFlags {
       target: Some(target),
       ..
     })
-    | DenoSubcommand::Desktop(DesktopFlags {
+    | EdnoSubcommand::Desktop(DesktopFlags {
       target: Some(target),
       ..
     }) => {
@@ -152,7 +152,7 @@ pub fn npm_system_info(subcommand: &DenoSubcommand) -> NpmSystemInfo {
         }
       }
     }
-    DenoSubcommand::Install(InstallFlags::Local(
+    EdnoSubcommand::Install(InstallFlags::Local(
       _,
       NpmInstallTargetFlags { os, arch },
     )) => {
@@ -470,13 +470,13 @@ impl FlagsExt for Flags {
           }
         }
       },
-      deterministic_prefix: std::env::var("DENO_UNSTABLE_OTEL_DETERMINISTIC")
+      deterministic_prefix: std::env::var("EDNO_UNSTABLE_OTEL_DETERMINISTIC")
         .as_deref()
         .map(u8::from_str)
         .map(|x| match x {
           Ok(x) => Some(x),
           Err(_) => {
-            log::warn!("'DENO_UNSTABLE_OTEL_DETERMINISTIC' env var value not recognized, only integers are accepted");
+            log::warn!("'EDNO_UNSTABLE_OTEL_DETERMINISTIC' env var value not recognized, only integers are accepted");
             None
           }
         })
@@ -538,7 +538,7 @@ impl FlagsExt for Flags {
       }
     }
 
-    use DenoSubcommand::*;
+    use EdnoSubcommand::*;
     match &self.subcommand {
       Fmt(FmtFlags { files, .. }) => {
         Some(resolve_multiple_files(&files.include, current_dir))
@@ -558,7 +558,7 @@ impl FlagsExt for Flags {
         source_file: script,
         ..
       }) => resolve_single_folder_path(script, current_dir, |p| {
-        // The desktop entrypoint is commonly a directory (e.g. `deno desktop
+        // The desktop entrypoint is commonly a directory (e.g. `edno desktop
         // .` for framework detection), in which case the config lives in that
         // directory itself — don't pop up to its parent. Only pop when the
         // entrypoint is a file.
@@ -630,7 +630,7 @@ pub fn flags_from_vec(args: Vec<OsString>) -> Result<Flags, CliError> {
 /// Strip a single trailing carriage return from an argument.
 ///
 /// When a script with CRLF line endings starts with a shebang like
-/// `#!/usr/bin/env -S deno run --allow-net`, the kernel passes the trailing
+/// `#!/usr/bin/env -S edno run --allow-net`, the kernel passes the trailing
 /// `\r` as part of the final argument (e.g. `--allow-net\r`), which then
 /// fails clap parsing with a confusing "isn't valid in this context" error.
 /// Trimming a trailing CR here makes such scripts run as the author intended.
@@ -648,10 +648,10 @@ fn strip_trailing_cr(arg: OsString) -> OsString {
   }
 }
 
-/// Fast path for `deno run <file> [script args...]` with no deno-level flags
+/// Fast path for `edno run <file> [script args...]` with no edno-level flags
 /// before the file. Building the parse tree / walking the parser costs a couple
 /// microseconds; for the overwhelmingly common bare-run case we skip it and
-/// build `RunFlags` directly. Any deno flag before the file (anything starting
+/// build `RunFlags` directly. Any edno flag before the file (anything starting
 /// with `-`, or `-` itself) falls through to the full parser. `args` must be
 /// already `\r`-stripped and dx-shimmed. Returns `None` when the fast path does
 /// not apply. Must stay output-identical to the full parse (see the
@@ -668,7 +668,7 @@ fn bare_run_fast_path(args: &[OsString]) -> Option<Flags> {
       .map(|a| a.to_string_lossy().into_owned())
       .collect::<Vec<_>>();
     let mut flags = Flags {
-      subcommand: DenoSubcommand::Run(RunFlags {
+      subcommand: EdnoSubcommand::Run(RunFlags {
         script: script.to_string(),
         bare: false,
         coverage_dir: None,
@@ -680,16 +680,16 @@ fn bare_run_fast_path(args: &[OsString]) -> Option<Flags> {
       code_cache_enabled: true,
       ..Default::default()
     };
-    deno_cli_parser::convert::apply_node_options(&mut flags);
+    edno_cli_parser::convert::apply_node_options(&mut flags);
     Some(flags)
   } else {
     None
   }
 }
 
-/// Main entry point for parsing deno's command line flags. Routes through the
-/// hand-written `deno_cli_parser`; the `Flags` type is shared between this
-/// crate and the parser crate (`pub use deno_cli_parser::flags::*`), so no
+/// Main entry point for parsing edno's command line flags. Routes through the
+/// hand-written `edno_cli_parser`; the `Flags` type is shared between this
+/// crate and the parser crate (`pub use edno_cli_parser::flags::*`), so no
 /// conversion is needed.
 pub fn flags_from_vec_with_initial_cwd(
   args: Vec<OsString>,
@@ -698,15 +698,15 @@ pub fn flags_from_vec_with_initial_cwd(
   // Strip a trailing `\r` from each arg so a CRLF-shebang script isn't poisoned
   // by a stray carriage return. The hand-written parser also does this
   // internally; doing it here first keeps the fast path below consistent with
-  // the full parse. (`deno_cli_parser::convert::flags_from_vec` re-strips, which
+  // the full parse. (`edno_cli_parser::convert::flags_from_vec` re-strips, which
   // is a no-op on already-stripped args.)
   let args: Vec<OsString> = args.into_iter().map(strip_trailing_cr).collect();
 
-  // dx/denox/dnx shim: rewrite the binary name into an explicit `x` subcommand
+  // dx/ednox/dnx shim: rewrite the binary name into an explicit `x` subcommand
   // before parsing (the hand-written parser doesn't special-case argv[0]).
   let args = if !args.is_empty()
     && (args[0].as_encoded_bytes().ends_with(b"dx")
-      || args[0].as_encoded_bytes().ends_with(b"denox")
+      || args[0].as_encoded_bytes().ends_with(b"ednox")
       || args[0].as_encoded_bytes().ends_with(b"dnx"))
   {
     let mut new_args = Vec::with_capacity(args.len() + 1);
@@ -718,8 +718,8 @@ pub fn flags_from_vec_with_initial_cwd(
     args
   };
 
-  // Fast path for the overwhelmingly common `deno run <file> [args...]` with no
-  // deno-level flags before the file: build `RunFlags` directly and skip the
+  // Fast path for the overwhelmingly common `edno run <file> [args...]` with no
+  // edno-level flags before the file: build `RunFlags` directly and skip the
   // parser entirely. `bare_run_fast_path` produces output identical to the full
   // parse (asserted by `fast_path_matches_full_parse`).
   if let Some(mut flags) = bare_run_fast_path(&args) {
@@ -731,18 +731,18 @@ pub fn flags_from_vec_with_initial_cwd(
   // `OsString` natively. Args are almost always UTF-8; the lossy conversion is
   // a deliberate behavior change for the rare non-UTF-8 arg (e.g. a script path
   // with invalid bytes), which becomes mangled (replacement chars) here instead
-  // of being carried through verbatim. Accepted as a Deno 3 simplification.
+  // of being carried through verbatim. Accepted as a Edno 3 simplification.
   let string_args: Vec<String> = args
     .iter()
     .map(|a| a.to_string_lossy().into_owned())
     .collect();
 
-  match deno_cli_parser::convert::flags_from_vec(string_args) {
+  match edno_cli_parser::convert::flags_from_vec(string_args) {
     Ok(mut flags) => {
       // Set (and, for compile/desktop, canonicalize) the initial cwd — the
       // parser crate has no filesystem access, so this stays on the CLI side.
       flags.initial_cwd = match &flags.subcommand {
-        DenoSubcommand::Compile(_) | DenoSubcommand::Desktop(_) => {
+        EdnoSubcommand::Compile(_) | EdnoSubcommand::Desktop(_) => {
           initial_cwd.map(|cwd| canonicalize_path(&cwd).ok().unwrap_or(cwd))
         }
         _ => initial_cwd,
@@ -753,23 +753,23 @@ pub fn flags_from_vec_with_initial_cwd(
   }
 }
 
-/// Render the text printed by `deno --version` (`long`) and `deno -V` (short).
+/// Render the text printed by `edno --version` (`long`) and `edno -V` (short).
 /// Both forms are prefixed with the binary name and terminated by a newline,
 /// matching what clap's `render_long_version` / `render_version` used to emit.
 pub fn render_version(long: bool) -> String {
   if long {
-    debug_assert_eq!(DENO_VERSION_INFO.typescript, deno_snapshots::TS_VERSION);
+    debug_assert_eq!(EDNO_VERSION_INFO.typescript, edno_snapshots::TS_VERSION);
     format!(
-      "deno {} ({}, {}, {})\nv8 {}\ntypescript {}\n",
-      DENO_VERSION_INFO.deno,
-      DENO_VERSION_INFO.release_channel.name(),
+      "edno {} ({}, {}, {})\nv8 {}\ntypescript {}\n",
+      EDNO_VERSION_INFO.edno,
+      EDNO_VERSION_INFO.release_channel.name(),
       env!("PROFILE"),
       env!("TARGET"),
-      deno_core::v8::VERSION_STRING,
-      DENO_VERSION_INFO.typescript,
+      edno_core::v8::VERSION_STRING,
+      EDNO_VERSION_INFO.typescript,
     )
   } else {
-    format!("deno {}\n", DENO_VERSION_INFO.deno)
+    format!("edno {}\n", EDNO_VERSION_INFO.edno)
   }
 }
 
@@ -795,13 +795,13 @@ where
 /// Handle a dynamic-completion callback: the shell invoked us with
 /// `COMPLETE=<shell>` set and the words being completed passed after a `--`
 /// separator. Candidates are computed from the hand-written command tree via
-/// `deno_cli_parser::completions` (no clap), with `deno task` names supplied by
+/// `edno_cli_parser::completions` (no clap), with `edno task` names supplied by
 /// [`dynamic_task_completer`].
 pub fn handle_shell_completion(_cwd: &Path) -> Result<(), AnyError> {
   let shell = std::env::var("COMPLETE").unwrap_or_default();
   let words = shell_completion_words();
-  deno_cli_parser::completions::try_complete(
-    &deno_cli_parser::defs::DENO_ROOT,
+  edno_cli_parser::completions::try_complete(
+    &edno_cli_parser::defs::EDNO_ROOT,
     &words,
     &shell,
     &dynamic_task_completer,
@@ -818,18 +818,18 @@ pub fn handle_dynamic_shell_completion(shell: &str) -> Result<(), AnyError> {
   let completer = std::env::args_os()
     .next()
     .map(|s| s.to_string_lossy().into_owned())
-    .unwrap_or_else(|| "deno".to_string());
+    .unwrap_or_else(|| "edno".to_string());
   let completer = shlex::try_quote(&completer)
     .map(|c| c.into_owned())
     .unwrap_or(completer);
   let script =
-    deno_cli_parser::completions::generate_dynamic(shell, "deno", &completer);
-  deno_print::drop_write_stdout(&script);
+    edno_cli_parser::completions::generate_dynamic(shell, "edno", &completer);
+  edno_print::drop_write_stdout(&script);
   Ok(())
 }
 
 /// The words being completed, extracted from the callback invocation. The
-/// registration scripts invoke `<deno> -- <typed words...>`, so everything
+/// registration scripts invoke `<edno> -- <typed words...>`, so everything
 /// after the first `--` is the command line (starting with the command name).
 fn shell_completion_words() -> Vec<String> {
   let mut words = Vec::new();
@@ -845,11 +845,11 @@ fn shell_completion_words() -> Vec<String> {
 }
 
 /// Positional-argument completer injected into the parser's completion engine.
-/// Completes `deno task <TAB>` with the available task names read from the
-/// resolved config (the only dynamic completion Deno offers). Kept CLI-side
+/// Completes `edno task <TAB>` with the available task names read from the
+/// resolved config (the only dynamic completion Edno offers). Kept CLI-side
 /// because the parser crate has no config/workspace access.
 fn dynamic_task_completer(
-  active_cmd: &deno_cli_parser::CommandDef,
+  active_cmd: &edno_cli_parser::CommandDef,
   _current: &str,
 ) -> Vec<(String, Option<String>)> {
   if active_cmd.name != "task" {
@@ -873,24 +873,24 @@ fn dynamic_task_completer(
 }
 
 /// Best-effort parse of the completion command line into `Flags`, used to pick
-/// up `deno task`'s `--config`/`--recursive`/`--filter` for task resolution.
+/// up `edno task`'s `--config`/`--recursive`/`--filter` for task resolution.
 fn task_flags_for_completion() -> Option<Flags> {
   let words = shell_completion_words();
   // The last word is the partial being completed; if the full line doesn't
   // parse, retry without it (mirrors clap's `ignore_errors`).
-  let flags = deno_cli_parser::convert::flags_from_vec(words.clone())
+  let flags = edno_cli_parser::convert::flags_from_vec(words.clone())
     .or_else(|_| {
       let mut w = words;
       w.pop();
-      deno_cli_parser::convert::flags_from_vec(w)
+      edno_cli_parser::convert::flags_from_vec(w)
     })
     .ok()?;
-  matches!(flags.subcommand, DenoSubcommand::Task(_)).then_some(flags)
+  matches!(flags.subcommand, EdnoSubcommand::Task(_)).then_some(flags)
 }
 
 #[cfg(test)]
 mod tests {
-  use deno_cli_parser::defs::DENO_ROOT;
+  use edno_cli_parser::defs::EDNO_ROOT;
   use pretty_assertions::assert_eq;
 
   use super::*;
@@ -908,17 +908,17 @@ mod tests {
   /// parser and builds `RunFlags` by hand, so it must produce output identical
   /// to running the args through the full hand-written parser. Assert that for
   /// every case where the fast path fires, and assert it correctly declines
-  /// (returns `None`) when any deno-level flag precedes the script.
+  /// (returns `None`) when any edno-level flag precedes the script.
   #[test]
   fn fast_path_matches_full_parse() {
     // Cases where the fast path SHOULD fire; its output must equal the full
     // parse (neither sets `initial_cwd`, so both default to `None`).
     let fires: &[&[&str]] = &[
-      &["deno", "run", "script.ts"],
-      &["deno", "run", "./path/to/mod.ts"],
-      &["deno", "run", "script.ts", "a", "b"],
-      &["deno", "run", "script.ts", "--", "--foo", "-x"],
-      &["deno", "run", "https://example.com/mod.ts", "arg"],
+      &["edno", "run", "script.ts"],
+      &["edno", "run", "./path/to/mod.ts"],
+      &["edno", "run", "script.ts", "a", "b"],
+      &["edno", "run", "script.ts", "--", "--foo", "-x"],
+      &["edno", "run", "https://example.com/mod.ts", "arg"],
     ];
     for case in fires {
       let os_args: Vec<OsString> = case.iter().map(OsString::from).collect();
@@ -927,7 +927,7 @@ mod tests {
       });
       let string_args: Vec<String> =
         case.iter().map(|s| s.to_string()).collect();
-      let full = deno_cli_parser::convert::flags_from_vec(string_args)
+      let full = edno_cli_parser::convert::flags_from_vec(string_args)
         .unwrap_or_else(|e| panic!("full parse failed for {case:?}: {e:?}"));
       assert_eq!(
         fast, full,
@@ -937,11 +937,11 @@ mod tests {
 
     // Cases where the fast path must decline and fall through to the parser.
     let declines: &[&[&str]] = &[
-      &["deno", "run"],                    // no script
-      &["deno", "run", "-"],               // stdin
-      &["deno", "run", "-A", "script.ts"], // flag before script
-      &["deno", "run", "--watch", "s.ts"], // flag before script
-      &["deno", "test", "script.ts"],      // not `run`
+      &["edno", "run"],                    // no script
+      &["edno", "run", "-"],               // stdin
+      &["edno", "run", "-A", "script.ts"], // flag before script
+      &["edno", "run", "--watch", "s.ts"], // flag before script
+      &["edno", "test", "script.ts"],      // not `run`
     ];
     for case in declines {
       let os_args: Vec<OsString> = case.iter().map(OsString::from).collect();
@@ -955,12 +955,12 @@ mod tests {
   #[test]
   fn install_os_arch_flags() {
     let r = flags_from_vec(svec![
-      "deno", "install", "--os", "linux", "--arch", "arm64"
+      "edno", "install", "--os", "linux", "--arch", "arm64"
     ]);
     let flags = r.unwrap();
     assert_eq!(
       flags.subcommand,
-      DenoSubcommand::Install(InstallFlags::Local(
+      EdnoSubcommand::Install(InstallFlags::Local(
         InstallFlagsLocal::TopLevel(InstallTopLevelFlags {
           lockfile_only: false,
           production: false,
@@ -983,11 +983,11 @@ mod tests {
 
   #[test]
   fn install_os_only_flag() {
-    let r = flags_from_vec(svec!["deno", "install", "--os", "win32"]);
+    let r = flags_from_vec(svec!["edno", "install", "--os", "win32"]);
     let flags = r.unwrap();
     assert_eq!(
       flags.subcommand,
-      DenoSubcommand::Install(InstallFlags::Local(
+      EdnoSubcommand::Install(InstallFlags::Local(
         InstallFlagsLocal::TopLevel(InstallTopLevelFlags {
           lockfile_only: false,
           production: false,
@@ -1008,9 +1008,9 @@ mod tests {
     // The package management subcommands that resolve versions must accept the
     // flag so users can act on the "blocked by minimum dependency age" hint.
     let cases = [
-      svec!["deno", "add", "--min-dep-age=0", "jsr:@std/path"],
-      svec!["deno", "add", "--minimum-dependency-age=0", "jsr:@std/path"],
-      svec!["deno", "remove", "--min-dep-age=0", "@std/path"],
+      svec!["edno", "add", "--min-dep-age=0", "jsr:@std/path"],
+      svec!["edno", "add", "--minimum-dependency-age=0", "jsr:@std/path"],
+      svec!["edno", "remove", "--min-dep-age=0", "@std/path"],
     ];
     for args in cases {
       let flags = flags_from_vec(args.clone())
@@ -1025,12 +1025,12 @@ mod tests {
 
   #[test]
   fn test_config_path_args() {
-    let flags = flags_from_vec(svec!["deno", "run", "foo.js"]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "run", "foo.js"]).unwrap();
     let cwd = resolve_cwd(None).unwrap().into_owned();
 
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.clone()]));
 
-    let flags = flags_from_vec(svec!["deno", "run", "sub_dir/foo.js"]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "run", "sub_dir/foo.js"]).unwrap();
     let cwd = resolve_cwd(None).unwrap().into_owned();
     assert_eq!(
       flags.config_path_args(&cwd),
@@ -1038,38 +1038,38 @@ mod tests {
     );
 
     let flags =
-      flags_from_vec(svec!["deno", "https://example.com/foo.js"]).unwrap();
+      flags_from_vec(svec!["edno", "https://example.com/foo.js"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), None);
 
-    let flags = flags_from_vec(svec!["deno", "run", "jsr:@scope/foo"]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "run", "jsr:@scope/foo"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.clone()]));
 
-    let flags = flags_from_vec(svec!["deno", "run", "npm:@scope/foo"]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "run", "npm:@scope/foo"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.clone()]));
 
     let flags =
-      flags_from_vec(svec!["deno", "lint", "dir/a/a.js", "dir/b/b.js"])
+      flags_from_vec(svec!["edno", "lint", "dir/a/a.js", "dir/b/b.js"])
         .unwrap();
     assert_eq!(
       flags.config_path_args(&cwd),
       Some(vec![cwd.join("dir/a/a.js"), cwd.join("dir/b/b.js")])
     );
 
-    let flags = flags_from_vec(svec!["deno", "lint"]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "lint"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.clone()]));
 
-    let flags = flags_from_vec(svec!["deno", "cache", "sub/test.js"]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "cache", "sub/test.js"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.join("sub")]));
 
-    let flags = flags_from_vec(svec!["deno", "cache", "."]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "cache", "."]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.clone()]));
 
     let flags =
-      flags_from_vec(svec!["deno", "install", "-e", "sub/test.js"]).unwrap();
+      flags_from_vec(svec!["edno", "install", "-e", "sub/test.js"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.join("sub")]));
 
     let flags = flags_from_vec(svec![
-      "deno",
+      "edno",
       "fmt",
       "dir/a/a.js",
       "dir/a/a2.js",
@@ -1085,25 +1085,25 @@ mod tests {
       ])
     );
 
-    // `deno desktop .` (and bare `deno desktop`) runs framework detection on
+    // `edno desktop .` (and bare `edno desktop`) runs framework detection on
     // the current directory, so config discovery must start in that directory
     // rather than its parent. See issue #35653.
-    let flags = flags_from_vec(svec!["deno", "desktop", "."]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "desktop", "."]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.clone()]));
 
-    let flags = flags_from_vec(svec!["deno", "desktop"]).unwrap();
+    let flags = flags_from_vec(svec!["edno", "desktop"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.clone()]));
 
     // An explicit file entrypoint resolves to its containing directory.
     let flags =
-      flags_from_vec(svec!["deno", "desktop", "sub/main.ts"]).unwrap();
+      flags_from_vec(svec!["edno", "desktop", "sub/main.ts"]).unwrap();
     assert_eq!(flags.config_path_args(&cwd), Some(vec![cwd.join("sub")]));
   }
-  /// `deno <sub> --help`, `deno <sub> -h` and `deno help <sub>` must all render
+  /// `edno <sub> --help`, `edno <sub> -h` and `edno help <sub>` must all render
   /// the same text for every subcommand.
   #[test]
   fn equal_help_output() {
-    for command in DENO_ROOT.subcommands {
+    for command in EDNO_ROOT.subcommands {
       // `help` has no help of its own, and passthrough commands (deploy,
       // sandbox) forward `--help` to the external tool they proxy rather than
       // rendering their own.
@@ -1113,24 +1113,24 @@ mod tests {
 
       let render =
         |args: Vec<OsString>| match flags_from_vec(args).unwrap().subcommand {
-          DenoSubcommand::Help(help) => help.help.to_string(),
+          EdnoSubcommand::Help(help) => help.help.to_string(),
           _ => unreachable!("{} did not render help", command.name),
         };
 
-      let long_flag = render(svec!["deno", command.name, "--help"]);
-      let short_flag = render(svec!["deno", command.name, "-h"]);
-      let subcommand = render(svec!["deno", "help", command.name]);
+      let long_flag = render(svec!["edno", command.name, "--help"]);
+      let short_flag = render(svec!["edno", command.name, "-h"]);
+      let subcommand = render(svec!["edno", "help", command.name]);
 
       assert_eq!(long_flag, short_flag, "{} subcommand", command.name);
       assert_eq!(long_flag, subcommand, "{} subcommand", command.name);
     }
   }
 
-  /// When `deno <subcommand>` is spawned via `node:child_process`, the args are
+  /// When `edno <subcommand>` is spawned via `node:child_process`, the args are
   /// passed through unchanged only if node_shim recognizes the subcommand.
-  /// Otherwise it is misinterpreted as a script for `deno run` (see #35591).
+  /// Otherwise it is misinterpreted as a script for `edno run` (see #35591).
   /// This test fails if a subcommand is added to the CLI without also adding it
-  /// to `DENO_SUBCOMMANDS` in `libs/node_shim/lib.rs`.
+  /// to `EDNO_SUBCOMMANDS` in `libs/node_shim/lib.rs`.
   ///
   /// Aliases are checked too. Under clap this only covered *visible* aliases
   /// (`install`'s `i`), which let the hidden-but-working `rm` and
@@ -1138,11 +1138,11 @@ mod tests {
   /// visibility, and every alias is equally spawnable, so all are required.
   #[test]
   fn subcommands_recognized_by_node_shim() {
-    for command in DENO_ROOT.subcommands {
+    for command in EDNO_ROOT.subcommands {
       let name = command.name;
       assert!(
         node_shim::is_deno_subcommand(name),
-        "subcommand `{name}` is missing from node_shim's DENO_SUBCOMMANDS list; \
+        "subcommand `{name}` is missing from node_shim's EDNO_SUBCOMMANDS list; \
          add it to `libs/node_shim/lib.rs` so it is passed through when spawned \
          via node:child_process",
       );
@@ -1150,7 +1150,7 @@ mod tests {
         assert!(
           node_shim::is_deno_subcommand(alias),
           "alias `{alias}` of subcommand `{name}` is missing from node_shim's \
-           DENO_SUBCOMMANDS list; add it to `libs/node_shim/lib.rs`",
+           EDNO_SUBCOMMANDS list; add it to `libs/node_shim/lib.rs`",
         );
       }
     }
@@ -1160,7 +1160,7 @@ mod tests {
   /// uses `:` to separate a completion candidate from its description.
   #[test]
   fn no_colon_in_value_name() {
-    fn check(cmd: &'static deno_cli_parser::CommandDef) {
+    fn check(cmd: &'static edno_cli_parser::CommandDef) {
       for arg in cmd.all_args() {
         if let Some(value_name) = arg.value_name {
           assert!(
@@ -1176,6 +1176,6 @@ mod tests {
         check(sub);
       }
     }
-    check(&DENO_ROOT);
+    check(&EDNO_ROOT);
   }
 }

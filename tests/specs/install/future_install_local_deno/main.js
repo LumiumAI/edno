@@ -1,5 +1,5 @@
-import { setValue } from "@denotest/esm-basic";
-import { add } from "@denotest/add";
+import { setValue } from "@ednotest/esm-basic";
+import { add } from "@ednotest/add";
 import { returnsHi } from "test-http";
 setValue(5);
 returnsHi();

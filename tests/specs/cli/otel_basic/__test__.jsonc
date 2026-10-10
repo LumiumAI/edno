@@ -16,9 +16,9 @@
       "args": "run -A main.ts natural_exit.ts",
       "output": "natural_exit.out"
     },
-    "deno_dot_exit": {
-      "args": "run -A main.ts deno_dot_exit.ts",
-      "output": "deno_dot_exit.out"
+    "edno_dot_exit": {
+      "args": "run -A main.ts edno_dot_exit.ts",
+      "output": "edno_dot_exit.out"
     },
     "uncaught": {
       "args": "run -A main.ts uncaught.ts",

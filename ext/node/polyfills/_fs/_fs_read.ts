@@ -1,31 +1,31 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-const { Buffer } = core.loadExtScript("ext:deno_node/internal/buffer.mjs");
+const { Buffer } = core.loadExtScript("ext:edno_node/internal/buffer.mjs");
 const {
-  denoErrorToNodeError,
+  ednoErrorToNodeError,
   ERR_INVALID_ARG_VALUE,
-} = core.loadExtScript("ext:deno_node/internal/errors.ts");
+} = core.loadExtScript("ext:edno_node/internal/errors.ts");
 import {
   arrayBufferViewToUint8Array,
   getValidatedFd,
   validateOffsetLengthRead,
   validatePosition,
-} from "ext:deno_node/internal/fs/utils.mjs";
+} from "ext:edno_node/internal/fs/utils.mjs";
 import { core, primordials } from "ext:core/mod.js";
 const {
   validateBuffer,
   validateFunction,
   validateInteger,
   validateObject,
-} = core.loadExtScript("ext:deno_node/internal/validators.mjs");
+} = core.loadExtScript("ext:edno_node/internal/validators.mjs");
 const { isArrayBufferView, isDataView } = core.loadExtScript(
-  "ext:deno_node/internal/util/types.ts",
+  "ext:edno_node/internal/util/types.ts",
 );
 import { op_node_fs_read_deferred, op_node_fs_read_sync } from "ext:core/ops";
 const {
   customPromisifyArgs,
   kEmptyObject,
-} = core.loadExtScript("ext:deno_node/internal/util.mjs");
+} = core.loadExtScript("ext:edno_node/internal/util.mjs");
 const lazyProcess = core.createLazyLoader("node:process");
 
 const {
@@ -177,7 +177,7 @@ export function read(
       callback!(null, nread ?? 0, buffer);
     },
     (error: Error) => {
-      callback!(denoErrorToNodeError(error, { syscall: "read" }), null);
+      callback!(ednoErrorToNodeError(error, { syscall: "read" }), null);
     },
   );
 }
@@ -265,6 +265,6 @@ export function readSync(
 
     return numberOfBytesRead ?? 0;
   } catch (err) {
-    throw denoErrorToNodeError(err as Error, { syscall: "read" });
+    throw ednoErrorToNodeError(err as Error, { syscall: "read" });
   }
 }

@@ -6,7 +6,7 @@ import {
   workerData,
 } from "node:worker_threads";
 
-const useParentPort = Deno.env.get("PARENT_PORT") === "1";
+const useParentPort = Edno.env.get("PARENT_PORT") === "1";
 
 if (useParentPort) {
   if (isMainThread) {

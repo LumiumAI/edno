@@ -4,11 +4,11 @@
 macro_rules! prelude {
   () => {
     #[allow(unused_imports)]
-    use deno_ops::FromV8;
+    use edno_ops::FromV8;
     #[allow(unused_imports)]
-    use deno_ops::WebIDL;
+    use edno_ops::WebIDL;
     #[allow(unused_imports)]
-    use deno_ops::op2;
+    use edno_ops::op2;
 
     pub fn main() {}
   };

@@ -1,6 +1,6 @@
 {
-  // ignored: deno.ns lib is always resolvable now, so the "Cannot find lib
-  // definition for 'deno.ns'" error no longer fires.
+  // ignored: edno.ns lib is always resolvable now, so the "Cannot find lib
+  // definition for 'edno.ns'" error no longer fires.
   // https://github.com/denoland/deno/issues/36085
   "ignore": true,
   "steps": [

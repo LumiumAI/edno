@@ -1,7 +1,7 @@
-./denodir
+./ednodir
 [WILDCARD]- npm
 -- localhost_4260
---- @denotest
+--- @ednotest
 ---- add
 ----- 1.0.0
 ----- registry.json
@@ -13,15 +13,15 @@
 -- http
 --- localhost_port_4260
 ---- http://localhost:4260/chalk ([WILDLINE])
----- http://localhost:4260/@denotest%2fadd ([WILDLINE])
+---- http://localhost:4260/@ednotest%2fadd ([WILDLINE])
 
 ./node_modules
-- .deno
+- .edno
 -- [WILDCARD]
--- @denotest+add@1.0.0
+-- @ednotest+add@1.0.0
 --- .initialized
 --- node_modules
----- @denotest
+---- @ednotest
 ----- add
 -- chalk@5.0.1
 --- .initialized
@@ -29,6 +29,6 @@
 ---- chalk
 ----- [WILDCARD]
 -- node_modules
-- @denotest
+- @ednotest
 -- add (symlink)
 - chalk (symlink)

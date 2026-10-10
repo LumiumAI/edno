@@ -1,4 +1,4 @@
-const content = Deno.readTextFileSync(
+const content = Edno.readTextFileSync(
   new URL("__snapshots__/mismatch_test.ts.snap", import.meta.url),
 );
 console.log("has stale entry:", content.includes("stale entry"));

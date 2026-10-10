@@ -1,2 +1,2 @@
-import value from "@denotest/bundled-deps";
+import value from "@ednotest/bundled-deps";
 console.log(value);

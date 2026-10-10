@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/types-entry-value-not-exists",
+  "name": "@ednotest/types-entry-value-not-exists",
   "version": "1.0.0",
   "main": "./dist/main.js",
   "types": "./index.d.ts",

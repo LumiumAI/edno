@@ -5,6 +5,6 @@
 //
 // Verify that the prompt instead bails out with a clear message and
 // denies the permission.
-Deno.stdin.setRaw(true);
-const status = Deno.permissions.requestSync({ name: "env", variable: "FOO" });
+Edno.stdin.setRaw(true);
+const status = Edno.permissions.requestSync({ name: "env", variable: "FOO" });
 console.log("STATUS:", status.state);

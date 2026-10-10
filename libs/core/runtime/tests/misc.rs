@@ -46,13 +46,13 @@ fn test_execute_script_return_value() {
   let mut runtime = JsRuntime::new(Default::default());
   let value_global = runtime.execute_script("a.js", "a = 1 + 2").unwrap();
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let value = value_global.open(scope);
     assert_eq!(value.integer_value(scope).unwrap(), 3);
   }
   let value_global = runtime.execute_script("b.js", "b = 'foobar'").unwrap();
   {
-    deno_core::scope!(scope, runtime);
+    edno_core::scope!(scope, runtime);
     let value = value_global.open(scope);
     assert!(value.is_string());
     assert_eq!(
@@ -79,7 +79,7 @@ impl WakeRef for LoggingWaker {
   }
 }
 
-/// This is a reproduction for a very obscure bug where the Deno runtime locks up we end up polling
+/// This is a reproduction for a very obscure bug where the Edno runtime locks up we end up polling
 /// an empty JoinSet and attempt to resolve ops after-the-fact. There's a small footgun in the JoinSet
 /// API where polling it while empty returns Ready(None), which means that it never holds on to the
 /// waker. This means that if we aren't testing for this particular return value and don't stash the waker
@@ -102,7 +102,7 @@ async fn test_wakers_for_async_ops() {
   let logging_waker = Arc::new(LoggingWaker::default());
   let waker = logging_waker.clone().into_waker();
 
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -125,7 +125,7 @@ async fn test_wakers_for_async_ops() {
     .execute_script(
       "",
       ascii_str!(
-        "const { op_async_sleep } = Deno.core.ops; (async () => { await op_async_sleep(); })()"
+        "const { op_async_sleep } = Edno.core.ops; (async () => { await op_async_sleep(); })()"
       ),
     )
     .unwrap();
@@ -171,7 +171,7 @@ async fn test_resolve_promise(
   let out = runtime
     .with_event_loop_promise(resolve, PollEventLoopOptions::default())
     .await;
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
   match result {
     Ok(value) => {
       let out = v8::Local::new(scope, out.expect("expected success"));
@@ -231,12 +231,12 @@ async fn test_resolve_promise(
 // happens.
 #[case(
   "call",
-  "() => { Deno.core.reportUnhandledException(new Error('fail')); return 1; }",
+  "() => { Edno.core.reportUnhandledException(new Error('fail')); return 1; }",
   Ok(Some(1))
 )]
 #[case(
   "call",
-  "() => { Deno.core.reportUnhandledException(new Error('fail')); willNotCall(); }",
+  "() => { Edno.core.reportUnhandledException(new Error('fail')); willNotCall(); }",
   Err("Uncaught Error: fail")
 )]
 #[tokio::test]
@@ -268,7 +268,7 @@ async fn test_resolve_value_generic(
   } else {
     unreachable!()
   };
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
 
   match output {
     Ok(None) => {
@@ -360,7 +360,7 @@ fn terminate_execution() {
   let v8_isolate_handle = isolate.v8_isolate().thread_safe_handle();
 
   let terminator_thread = std::thread::spawn(move || {
-    // allow deno to boot and run
+    // allow edno to boot and run
     std::thread::sleep(std::time::Duration::from_millis(100));
 
     // terminate execution
@@ -396,10 +396,10 @@ async fn wasm_streaming_op_invocation_in_import() {
   // Run an infinite loop in WebAssembly code, which should be terminated.
   runtime.execute_script("setup.js",
                          r#"
-                                Deno.core.setWasmStreamingCallback((source, rid) => {
-                                  Deno.core.ops.op_wasm_streaming_set_url(rid, "file:///foo.wasm");
-                                  Deno.core.ops.op_wasm_streaming_feed(rid, source);
-                                  Deno.core.close(rid);
+                                Edno.core.setWasmStreamingCallback((source, rid) => {
+                                  Edno.core.ops.op_wasm_streaming_set_url(rid, "file:///foo.wasm");
+                                  Edno.core.ops.op_wasm_streaming_feed(rid, source);
+                                  Edno.core.close(rid);
                                 });
                                "#).unwrap();
 
@@ -417,7 +417,7 @@ async fn wasm_streaming_op_invocation_in_import() {
                             "#).unwrap();
   #[allow(deprecated, reason = "test code")]
   let value = runtime.resolve_value(promise).await.unwrap();
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
   let val = value.open(scope);
   assert!(val.is_object());
 }
@@ -523,7 +523,7 @@ fn test_get_module_namespace() {
 
   let module_namespace = runtime.get_module_namespace(module_id).unwrap();
 
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
 
   let module_namespace = v8::Local::<v8::Object>::new(scope, module_namespace);
 
@@ -720,12 +720,12 @@ fn test_is_proxy() {
     (function () {
       const o = { a: 1, b: 2};
       const p = new Proxy(o, {});
-      return Deno.core.ops.op_is_proxy(p) && !Deno.core.ops.op_is_proxy(o) && !Deno.core.ops.op_is_proxy(42);
+      return Edno.core.ops.op_is_proxy(p) && !Edno.core.ops.op_is_proxy(o) && !Edno.core.ops.op_is_proxy(42);
     })()
   "#,
     )
     .unwrap();
-  deno_core::scope!(scope, runtime);
+  edno_core::scope!(scope, runtime);
   let all_true = v8::Local::<v8::Value>::new(scope, &all_true);
   assert!(all_true.is_true());
 }
@@ -739,7 +739,7 @@ async fn test_set_macrotask_callback_set_next_tick_callback() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -749,10 +749,10 @@ async fn test_set_macrotask_callback_set_next_tick_callback() {
     .execute_script(
       "macrotasks_and_nextticks.js",
       r#"
-      const { op_async_sleep } = Deno.core.ops;
+      const { op_async_sleep } = Edno.core.ops;
       (async function () {
         const results = [];
-        Deno.core.queueNextTick({
+        Edno.core.queueNextTick({
           callback: () => results.push("nextTick"),
           args: undefined,
           snapshot: undefined,
@@ -767,13 +767,13 @@ async fn test_set_macrotask_callback_set_next_tick_callback() {
           ref() { this._refed = true; return this; },
           unref() { this._refed = false; return this; },
         };
-        Deno.core.queueImmediate(imm);
+        Edno.core.queueImmediate(imm);
         await op_async_sleep();
         if (results[0] != "nextTick") {
           throw new Error(`expected nextTick, got: ${results[0]}`);
         }
         // Manually trigger immediate callbacks to test they were registered
-        Deno.core.runImmediateCallbacks();
+        Edno.core.runImmediateCallbacks();
         if (results[1] != "immediate") {
           throw new Error(`expected immediate, got: ${results[1]}`);
         }
@@ -801,7 +801,7 @@ async fn test_next_tick() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_next_tick, op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_next_tick, op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -813,24 +813,24 @@ async fn test_next_tick() {
       r#"
         (async function() {
           // Queue multiple ticks and verify they all drain
-          Deno.core.queueNextTick({
-            callback: () => Deno.core.ops.op_next_tick(),
+          Edno.core.queueNextTick({
+            callback: () => Edno.core.ops.op_next_tick(),
             args: undefined,
             snapshot: undefined,
           });
-          Deno.core.queueNextTick({
-            callback: () => Deno.core.ops.op_next_tick(),
+          Edno.core.queueNextTick({
+            callback: () => Edno.core.ops.op_next_tick(),
             args: undefined,
             snapshot: undefined,
           });
-          Deno.core.queueNextTick({
-            callback: () => Deno.core.ops.op_next_tick(),
+          Edno.core.queueNextTick({
+            callback: () => Edno.core.ops.op_next_tick(),
             args: undefined,
             snapshot: undefined,
           });
           // Wait for the event loop to drain the ticks
-          await Deno.core.ops.op_async_sleep();
-          if (Deno.core.ops.op_next_tick.length !== 0) {
+          await Edno.core.ops.op_async_sleep();
+          if (Edno.core.ops.op_next_tick.length !== 0) {
             // Just a no-op to ensure op is used
           }
         })();
@@ -854,7 +854,7 @@ async fn test_promise_rejection_nexttick_interleave() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -864,14 +864,14 @@ async fn test_promise_rejection_nexttick_interleave() {
     .execute_script(
       "promise_rejection_nexttick_interleave.js",
       r#"
-      const { op_async_sleep } = Deno.core.ops;
+      const { op_async_sleep } = Edno.core.ops;
       (async function () {
         const order = [];
 
         // Register a rejection handler that queues a nextTick
-        Deno.core.setUnhandledPromiseRejectionHandler((promise, reason) => {
+        Edno.core.setUnhandledPromiseRejectionHandler((promise, reason) => {
           order.push("rejection-handler");
-          Deno.core.queueNextTick({
+          Edno.core.queueNextTick({
             callback: () => order.push("tick-from-rejection-handler"),
             args: undefined,
             snapshot: undefined,
@@ -880,7 +880,7 @@ async fn test_promise_rejection_nexttick_interleave() {
         });
 
         // Queue a tick that creates an unhandled rejection
-        Deno.core.queueNextTick({
+        Edno.core.queueNextTick({
           callback: () => {
             order.push("first-tick");
             Promise.reject(new Error("test rejection"));
@@ -926,7 +926,7 @@ async fn test_next_tick_error_continues_drain() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_tick_count, op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_tick_count, op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -936,27 +936,27 @@ async fn test_next_tick_error_continues_drain() {
     .execute_script(
       "nexttick_error_continues.js",
       r#"
-      Deno.core.setReportExceptionCallback((e) => {
+      Edno.core.setReportExceptionCallback((e) => {
         // Swallow the error so the event loop doesn't abort
       });
 
-      Deno.core.queueNextTick({
-        callback: () => Deno.core.ops.op_tick_count(),
+      Edno.core.queueNextTick({
+        callback: () => Edno.core.ops.op_tick_count(),
         args: undefined,
         snapshot: undefined,
       });
-      Deno.core.queueNextTick({
+      Edno.core.queueNextTick({
         callback: () => { throw new Error("boom"); },
         args: undefined,
         snapshot: undefined,
       });
-      Deno.core.queueNextTick({
-        callback: () => Deno.core.ops.op_tick_count(),
+      Edno.core.queueNextTick({
+        callback: () => Edno.core.ops.op_tick_count(),
         args: undefined,
         snapshot: undefined,
       });
 
-      (async () => { await Deno.core.ops.op_async_sleep(); })();
+      (async () => { await Edno.core.ops.op_async_sleep(); })();
       "#,
     )
     .unwrap();
@@ -978,7 +978,7 @@ fn terminate_during_module_eval() {
 
   let module_id = futures::executor::block_on(
     runtime
-      .load_main_es_module_from_code(&specifier, "Deno.core.print('hello\\n')"),
+      .load_main_es_module_from_code(&specifier, "Edno.core.print('hello\\n')"),
   )
   .unwrap();
 
@@ -997,7 +997,7 @@ async fn test_promise_rejection_handler_generic(
   #[op2(fast)]
   fn op_breakpoint() {}
 
-  deno_core::extension!(test_ext, ops = [op_breakpoint]);
+  edno_core::extension!(test_ext, ops = [op_breakpoint]);
 
   // We don't test throw_ cases in non-module mode since those don't reject
   if !module && case.starts_with("throw_") {
@@ -1014,14 +1014,14 @@ async fn test_promise_rejection_handler_generic(
     function throwError() {
       throw new Error("boom");
     }
-    const { op_void_async, op_void_async_deferred } = Deno.core.ops;
+    const { op_void_async, op_void_async_deferred } = Edno.core.ops;
     if (test != "no_handler") {
-      Deno.core.setUnhandledPromiseRejectionHandler((promise, rejection) => {
+      Edno.core.setUnhandledPromiseRejectionHandler((promise, rejection) => {
         if (test.startsWith("exception_")) {
           try {
             throwError();
           } catch (e) {
-            Deno.core.reportUnhandledException(e);
+            Edno.core.reportUnhandledException(e);
           }
         }
         return test.endsWith("_true");
@@ -1029,14 +1029,14 @@ async fn test_promise_rejection_handler_generic(
     }
     if (test != "no_reject") {
       if (test.startsWith("async_op_eager_")) {
-        op_void_async().then(() => { Deno.core.ops.op_breakpoint(); throw new Error("fail") });
+        op_void_async().then(() => { Edno.core.ops.op_breakpoint(); throw new Error("fail") });
       } else if (test.startsWith("async_op_deferred_")) {
-        op_void_async_deferred().then(() => { Deno.core.ops.op_breakpoint(); throw new Error("fail") });
+        op_void_async_deferred().then(() => { Edno.core.ops.op_breakpoint(); throw new Error("fail") });
       } else if (test.startsWith("throw_")) {
-        Deno.core.ops.op_breakpoint();
+        Edno.core.ops.op_breakpoint();
         throw new Error("fail");
       } else {
-        Deno.core.ops.op_breakpoint();
+        Edno.core.ops.op_breakpoint();
         Promise.reject(new Error("fail"));
       }
     }
@@ -1120,10 +1120,10 @@ async fn test_promise_rejection_handler_preserves_async_context() {
   let mut runtime = JsRuntime::new(Default::default());
 
   let script = r#"
-    const v = new Deno.core.AsyncVariable();
+    const v = new Edno.core.AsyncVariable();
     let capturedValue = undefined;
 
-    Deno.core.setUnhandledPromiseRejectionHandler((promise, rejection) => {
+    Edno.core.setUnhandledPromiseRejectionHandler((promise, rejection) => {
       capturedValue = v.get();
       return true;
     });
@@ -1131,7 +1131,7 @@ async fn test_promise_rejection_handler_preserves_async_context() {
     // Enter an async context with a known value, then reject a promise
     const prev = v.enter("my_context_data");
     Promise.reject(new Error("fail"));
-    Deno.core.setAsyncContext(prev);
+    Edno.core.setAsyncContext(prev);
 
     // capturedValue will be checked after the event loop tick
   "#;
@@ -1200,7 +1200,7 @@ async fn test_dynamic_import_module_error_stack() {
     tokio::time::sleep(std::time::Duration::from_millis(1)).await;
     Err(deno_error::JsErrorBox::type_error("foo"))
   }
-  deno_core::extension!(test_ext, ops = [op_async_error]);
+  edno_core::extension!(test_ext, ops = [op_async_error]);
   let loader = StaticModuleLoader::new([
     (
       Url::parse("file:///main.js").unwrap(),
@@ -1208,7 +1208,7 @@ async fn test_dynamic_import_module_error_stack() {
     ),
     (
       Url::parse("file:///import.js").unwrap(),
-      "const { op_async_error } = Deno.core.ops; await op_async_error();",
+      "const { op_async_error } = Edno.core.ops; await op_async_error();",
     ),
   ]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
@@ -1252,7 +1252,7 @@ async fn tla_in_esm_extensions_panics() {
     tokio::time::sleep(Duration::from_millis(ms as u64)).await
   }
 
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     ops = [op_wait],
     esm_entry_point = "mod:test",
@@ -1260,7 +1260,7 @@ async fn tla_in_esm_extensions_panics() {
       "mod:test" = { source = "import 'mod:tla';" },
       "mod:tla" = {
         source = r#"
-          const { op_wait } = Deno.core.ops;
+          const { op_wait } = Edno.core.ops;
           await op_wait(0);
           export const TEST = "foo";
       "#
@@ -1304,7 +1304,7 @@ async fn generic_in_extension_middleware() {
     "Goodbye!".to_string()
   }
 
-  deno_core::extension!(welcome_ext, parameters = [W: WelcomeWorld], ops = [say_greeting<W>, say_goodbye],
+  edno_core::extension!(welcome_ext, parameters = [W: WelcomeWorld], ops = [say_greeting<W>, say_goodbye],
     middleware = |op| {
         match op.name {
             "say_goodbye" => say_greeting::<W>(),
@@ -1330,15 +1330,15 @@ async fn generic_in_extension_middleware() {
     .execute_script(
       "greet.js",
       r#"
-        const greet = Deno.core.ops.say_greeting();
-        const bye = Deno.core.ops.say_goodbye();
+        const greet = Edno.core.ops.say_greeting();
+        const bye = Edno.core.ops.say_goodbye();
         greet + " and " + bye;
       "#,
     )
     .unwrap();
 
   // Check the result
-  deno_core::scope!(scope, &mut runtime);
+  edno_core::scope!(scope, &mut runtime);
   let value = value_global.open(scope);
 
   let result = value.to_rust_string_lossy(scope);
@@ -1358,7 +1358,7 @@ async fn esm_extensions_throws() {
     tokio::time::sleep(Duration::from_millis(ms as u64)).await
   }
 
-  deno_core::extension!(
+  edno_core::extension!(
     test_ext,
     ops = [op_wait],
     esm_entry_point = "mod:test",
@@ -1496,14 +1496,14 @@ async fn terminate_execution_run_event_loop_js() {
     tokio::time::sleep(std::time::Duration::from_millis(100)).await;
     Ok(())
   }
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
   });
 
   // Start async task
-  runtime.execute_script("sleep.js", "(async () => { while (true) { await Deno.core.ops.op_async_sleep(); } })()").unwrap();
+  runtime.execute_script("sleep.js", "(async () => { while (true) { await Edno.core.ops.op_async_sleep(); } })()").unwrap();
 
   // Terminate execution after 1 second.
   let v8_isolate_handle = runtime.v8_isolate().thread_safe_handle();
@@ -1594,7 +1594,7 @@ async fn global_template_middleware() {
     template
   }
 
-  deno_core::extension!(test_ext, global_template_middleware = gt_middleware);
+  edno_core::extension!(test_ext, global_template_middleware = gt_middleware);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -1644,7 +1644,7 @@ fn eval_context_with_code_cache() {
     runtime
       .execute_script(
         "",
-        ascii_str!("Deno.core.evalContext('const i = 10;', 'file:///foo.js');"),
+        ascii_str!("Edno.core.evalContext('const i = 10;', 'file:///foo.js');"),
       )
       .unwrap();
 
@@ -1683,7 +1683,7 @@ fn eval_context_with_code_cache() {
     runtime
       .execute_script(
         "",
-        ascii_str!("Deno.core.evalContext('const i = 10;', 'file:///foo.js');"),
+        ascii_str!("Edno.core.evalContext('const i = 10;', 'file:///foo.js');"),
       )
       .unwrap();
 
@@ -1713,7 +1713,7 @@ fn eval_context_code_cache_error_is_cache_miss() {
     .execute_script(
       "",
       ascii_str!(
-        r#"const [result, err] = Deno.core.evalContext('1 + 1', 'file:///foo.js');
+        r#"const [result, err] = Edno.core.evalContext('1 + 1', 'file:///foo.js');
         if (err !== null) throw new Error(`unexpected error: ${err}`);
         if (result !== 2) throw new Error(`unexpected result: ${result}`);"#
       ),
@@ -1756,7 +1756,7 @@ fn eval_context_code_cache_key_sees_full_source() {
       .execute_script(
         "",
         format!(
-          "Deno.core.evalContext({}, 'file:///foo.js');",
+          "Edno.core.evalContext({}, 'file:///foo.js');",
           serde_json::to_string(source).unwrap()
         ),
       )
@@ -1792,7 +1792,7 @@ async fn test_nexttick_before_promise_then() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -1805,14 +1805,14 @@ async fn test_nexttick_before_promise_then() {
       (async function() {
         const order = [];
 
-        Deno.core.queueNextTick({
+        Edno.core.queueNextTick({
           callback: () => order.push("tick"),
           args: undefined,
           snapshot: undefined,
         });
         Promise.resolve().then(() => order.push("then"));
 
-        await Deno.core.ops.op_async_sleep();
+        await Edno.core.ops.op_async_sleep();
 
         const result = order.join(",");
         if (result !== "tick,then") {
@@ -1840,7 +1840,7 @@ async fn test_timer_return_protocol_keeps_timers_armed_from_promise_hook() {
     Ok(())
   }
 
-  deno_core::extension!(
+  edno_core::extension!(
     timer_return_protocol_ext,
     ops = [op_mark_timer_race_fired, op_async_sleep]
   );
@@ -1849,14 +1849,14 @@ async fn test_timer_return_protocol_keeps_timers_armed_from_promise_hook() {
     (
       "stale_zero",
       r#"
-        Deno.core.createTimer(() => {}, 20, undefined, false, true, false);
+        Edno.core.createTimer(() => {}, 20, undefined, false, true, false);
       "#,
     ),
     (
       "stale_negative_unrefed_later",
       r#"
-        Deno.core.createTimer(() => {}, 20, undefined, false, true, false);
-        laterTimer = Deno.core.createTimer(
+        Edno.core.createTimer(() => {}, 20, undefined, false, true, false);
+        laterTimer = Edno.core.createTimer(
           () => {},
           1000,
           undefined,
@@ -1869,8 +1869,8 @@ async fn test_timer_return_protocol_keeps_timers_armed_from_promise_hook() {
     (
       "stale_positive_refed_later",
       r#"
-        Deno.core.createTimer(() => {}, 20, undefined, false, true, false);
-        laterTimer = Deno.core.createTimer(
+        Edno.core.createTimer(() => {}, 20, undefined, false, true, false);
+        laterTimer = Edno.core.createTimer(
           () => {},
           1000,
           undefined,
@@ -1896,16 +1896,16 @@ async fn test_timer_return_protocol_keeps_timers_armed_from_promise_hook() {
         format!(
           r#"
           const {{ op_mark_timer_race_fired, op_async_sleep }} =
-            Deno.core.ops;
+            Edno.core.ops;
           let armed = false;
           let laterTimer;
 
-          Deno.core.setPromiseHooks(null, null, null, () => {{
+          Edno.core.setPromiseHooks(null, null, null, () => {{
             if (armed) return;
             armed = true;
-            Deno.core.createTimer(() => {{
+            Edno.core.createTimer(() => {{
               if (laterTimer !== undefined) {{
-                Deno.core.cancelTimer(laterTimer);
+                Edno.core.cancelTimer(laterTimer);
               }}
               op_mark_timer_race_fired();
             }}, 5, undefined, false, true, false);
@@ -1949,7 +1949,7 @@ async fn test_timer_return_protocol_keeps_timers_armed_from_run_next_ticks() {
     FIRED.store(true, Ordering::SeqCst);
   }
 
-  deno_core::extension!(
+  edno_core::extension!(
     timer_run_next_ticks_ext,
     ops = [op_mark_run_next_ticks_timer_fired]
   );
@@ -1965,13 +1965,13 @@ async fn test_timer_return_protocol_keeps_timers_armed_from_run_next_ticks() {
     .execute_script(
       "timer_return_protocol_run_next_ticks.js",
       r#"
-      const { op_mark_run_next_ticks_timer_fired } = Deno.core.ops;
+      const { op_mark_run_next_ticks_timer_fired } = Edno.core.ops;
       let armed = false;
 
-      Deno.core.setPromiseHooks(null, () => {
+      Edno.core.setPromiseHooks(null, () => {
         if (armed) return;
         armed = true;
-        Deno.core.createTimer(() => {
+        Edno.core.createTimer(() => {
           op_mark_run_next_ticks_timer_fired();
         }, 5, undefined, false, true, false);
       }, null, null);
@@ -1979,10 +1979,10 @@ async fn test_timer_return_protocol_keeps_timers_armed_from_run_next_ticks() {
       // These timers share a timeout list. processTimers() drains ticks and
       // microtasks between callbacks, so the Promise callback below runs from
       // processTimers()'s runNextTicks() path before the second timer fires.
-      Deno.core.createTimer(() => {
+      Edno.core.createTimer(() => {
         Promise.resolve().then(() => {});
       }, 1, undefined, false, true, false);
-      Deno.core.createTimer(() => {}, 1, undefined, false, true, false);
+      Edno.core.createTimer(() => {}, 1, undefined, false, true, false);
       "#,
     )
     .unwrap();
@@ -2016,7 +2016,7 @@ async fn test_nexttick_queue_drains_before_microtasks() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -2029,13 +2029,13 @@ async fn test_nexttick_queue_drains_before_microtasks() {
       (async function() {
         const order = [];
 
-        Deno.core.queueNextTick({
+        Edno.core.queueNextTick({
           callback: () => {
             order.push("tick1");
             // Promise queued during tick should run after all ticks
             Promise.resolve().then(() => order.push("then-from-tick1"));
             // Nested tick should run before that promise
-            Deno.core.queueNextTick({
+            Edno.core.queueNextTick({
               callback: () => order.push("tick2"),
               args: undefined,
               snapshot: undefined,
@@ -2047,7 +2047,7 @@ async fn test_nexttick_queue_drains_before_microtasks() {
         Promise.resolve().then(() => order.push("then1"));
         Promise.resolve().then(() => order.push("then2"));
 
-        await Deno.core.ops.op_async_sleep();
+        await Edno.core.ops.op_async_sleep();
 
         const result = order.join(",");
         const expected = "tick1,tick2,then1,then2,then-from-tick1";
@@ -2074,7 +2074,7 @@ async fn test_nexttick_ordering_after_await() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -2088,11 +2088,11 @@ async fn test_nexttick_ordering_after_await() {
         const order = [];
 
         // First await to get into a "later turn"
-        await Deno.core.ops.op_async_sleep();
+        await Edno.core.ops.op_async_sleep();
 
         // Inside an await continuation (which is a microtask), a .then
         // runs in the same microtask checkpoint, before nextTick.
-        Deno.core.queueNextTick({
+        Edno.core.queueNextTick({
           callback: () => order.push("tick-after-await"),
           args: undefined,
           snapshot: undefined,
@@ -2100,7 +2100,7 @@ async fn test_nexttick_ordering_after_await() {
         Promise.resolve().then(() => order.push("then-after-await"));
 
         // Wait for drain
-        await Deno.core.ops.op_async_sleep();
+        await Edno.core.ops.op_async_sleep();
 
         const result = order.join(",");
         if (result !== "then-after-await,tick-after-await") {
@@ -2123,7 +2123,7 @@ async fn test_nexttick_before_queue_microtask() {
     Ok(())
   }
 
-  deno_core::extension!(test_ext, ops = [op_async_sleep]);
+  edno_core::extension!(test_ext, ops = [op_async_sleep]);
   let mut runtime = JsRuntime::new(RuntimeOptions {
     extensions: vec![test_ext::init()],
     ..Default::default()
@@ -2136,7 +2136,7 @@ async fn test_nexttick_before_queue_microtask() {
       (async function() {
         const order = [];
 
-        Deno.core.queueNextTick({
+        Edno.core.queueNextTick({
           callback: () => order.push("tick"),
           args: undefined,
           snapshot: undefined,
@@ -2144,7 +2144,7 @@ async fn test_nexttick_before_queue_microtask() {
         queueMicrotask(() => order.push("microtask"));
         Promise.resolve().then(() => order.push("then"));
 
-        await Deno.core.ops.op_async_sleep();
+        await Edno.core.ops.op_async_sleep();
 
         const result = order.join(",");
         if (result !== "tick,microtask,then") {

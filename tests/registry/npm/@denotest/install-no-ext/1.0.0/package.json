@@ -1,5 +1,5 @@
 {
-  "name": "@denotest/install-no-ext",
+  "name": "@ednotest/install-no-ext",
   "version": "1.0.0",
   "scripts": {
     "install": "node install/check && node install"

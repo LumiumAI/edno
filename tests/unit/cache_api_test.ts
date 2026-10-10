@@ -7,7 +7,7 @@ import {
   assertThrows,
 } from "./test_util.ts";
 
-Deno.test(async function cacheStorage() {
+Edno.test(async function cacheStorage() {
   const cacheName = "cache-v1";
   const _cache = await caches.open(cacheName);
   assert(await caches.has(cacheName));
@@ -15,7 +15,7 @@ Deno.test(async function cacheStorage() {
   assertFalse(await caches.has(cacheName));
 });
 
-Deno.test(async function cacheStorageKeys() {
+Edno.test(async function cacheStorageKeys() {
   const names = ["keys-a", "keys-b", "keys-c"];
   for (const name of names) {
     await caches.delete(name);
@@ -46,7 +46,7 @@ Deno.test(async function cacheStorageKeys() {
   assert(await caches.delete("keys-c"));
 });
 
-Deno.test(async function cacheKeys() {
+Edno.test(async function cacheKeys() {
   const cacheName = "cache-keys";
   await caches.delete(cacheName);
   const cache = await caches.open(cacheName);
@@ -114,7 +114,7 @@ Deno.test(async function cacheKeys() {
   assert(await caches.delete(cacheName));
 });
 
-Deno.test(async function cacheApi() {
+Edno.test(async function cacheApi() {
   const cacheName = "cache-v1";
   const cache = await caches.open(cacheName);
   // Test cache.put() with url string as key.
@@ -195,7 +195,7 @@ Deno.test(async function cacheApi() {
   assertFalse(await caches.has(cacheName));
 });
 
-Deno.test(async function cacheVaryUsesCombinedHeaderValues() {
+Edno.test(async function cacheVaryUsesCombinedHeaderValues() {
   const cacheName = "cache-vary-combined-values";
   await caches.delete(cacheName);
   const cache = await caches.open(cacheName);
@@ -242,7 +242,7 @@ Deno.test(async function cacheVaryUsesCombinedHeaderValues() {
   await caches.delete(cacheName);
 });
 
-Deno.test(async function cacheStorageMatch() {
+Edno.test(async function cacheStorageMatch() {
   const names = ["match-a", "match-b", "match-c"];
   for (const name of names) {
     await caches.delete(name);
@@ -311,13 +311,13 @@ Deno.test(async function cacheStorageMatch() {
   }
 });
 
-Deno.test(function cacheIllegalConstructor() {
+Edno.test(function cacheIllegalConstructor() {
   assertThrows(() => new Cache(), TypeError, "Illegal constructor");
   // @ts-expect-error illegal constructor
   assertThrows(() => new Cache("foo", "bar"), TypeError, "Illegal constructor");
 });
 
-Deno.test(async function cachePutReaderLock() {
+Edno.test(async function cachePutReaderLock() {
   const cacheName = "cache-v1";
   const cache = await caches.open(cacheName);
 
@@ -339,7 +339,7 @@ Deno.test(async function cachePutReaderLock() {
   await promise;
 });
 
-Deno.test(async function cachePutResourceLeak() {
+Edno.test(async function cachePutResourceLeak() {
   const cacheName = "cache-v1";
   const cache = await caches.open(cacheName);
 
@@ -361,7 +361,7 @@ Deno.test(async function cachePutResourceLeak() {
   );
 });
 
-Deno.test(async function cachePutFailedBody() {
+Edno.test(async function cachePutFailedBody() {
   const cacheName = "cache-v1";
   const cache = await caches.open(cacheName);
 
@@ -388,7 +388,7 @@ Deno.test(async function cachePutFailedBody() {
   assertEquals(response, undefined);
 });
 
-Deno.test(async function cachePutOverwrite() {
+Edno.test(async function cachePutOverwrite() {
   const cacheName = "cache-v1";
   const cache = await caches.open(cacheName);
 
@@ -406,11 +406,11 @@ Deno.test(async function cachePutOverwrite() {
 });
 
 // Ensure that we can successfully put a response backed by a resource
-Deno.test(async function cachePutResource() {
-  const tempFile = Deno.makeTempFileSync({ prefix: "deno-", suffix: ".txt" });
-  Deno.writeTextFileSync(tempFile, "Contents".repeat(1024));
+Edno.test(async function cachePutResource() {
+  const tempFile = Edno.makeTempFileSync({ prefix: "edno-", suffix: ".txt" });
+  Edno.writeTextFileSync(tempFile, "Contents".repeat(1024));
 
-  const file = Deno.openSync(tempFile);
+  const file = Edno.openSync(tempFile);
 
   const cacheName = "cache-v1";
   const cache = await caches.open(cacheName);

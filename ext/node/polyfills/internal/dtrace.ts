@@ -20,7 +20,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// deno-lint-ignore-file
+// edno-lint-ignore-file
 (function () {
 const {
   DTRACE_HTTP_CLIENT_REQUEST = (..._args: any[]) => {},

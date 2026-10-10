@@ -1,3 +1,3 @@
-import { add } from "jsr:@denotest/add";
+import { add } from "jsr:@ednotest/add";
 
 console.log(add(1, 2));

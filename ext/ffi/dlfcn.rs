@@ -7,15 +7,15 @@ use std::ffi::c_void;
 use std::path::Path;
 use std::rc::Rc;
 
-use deno_core::GarbageCollected;
-use deno_core::OpState;
-use deno_core::Resource;
-use deno_core::op2;
-use deno_core::v8;
+use edno_core::GarbageCollected;
+use edno_core::OpState;
+use edno_core::Resource;
+use edno_core::op2;
+use edno_core::v8;
 use deno_error::JsErrorBox;
 use deno_error::JsErrorClass;
-use deno_permissions::PermissionsContainer;
-use denort_helper::DenoRtNativeAddonLoaderRc;
+use edno_permissions::PermissionsContainer;
+use ednort_helper::EdnoRtNativeAddonLoaderRc;
 use dlopen2::raw::Library;
 use serde::Deserialize;
 
@@ -49,10 +49,10 @@ pub enum DlfcnError {
   Dlopen(#[from] dlopen2::Error),
   #[class(inherit)]
   #[error(transparent)]
-  Permission(#[from] deno_permissions::PermissionCheckError),
+  Permission(#[from] edno_permissions::PermissionCheckError),
   #[class(inherit)]
   #[error(transparent)]
-  DenoRtLoad(#[from] denort_helper::LoadError),
+  EdnoRtLoad(#[from] ednort_helper::LoadError),
   #[class(inherit)]
   #[error(transparent)]
   Other(#[from] JsErrorBox),
@@ -148,17 +148,17 @@ pub fn op_ffi_load<'scope>(
   #[string] path: &str,
   #[serde] symbols: HashMap<String, ForeignSymbol>,
 ) -> Result<v8::Local<'scope, v8::Value>, DlfcnError> {
-  let (path, denort_helper) = {
+  let (path, ednort_helper) = {
     let mut state = state.borrow_mut();
     let permissions = state.borrow_mut::<PermissionsContainer>();
     (
       permissions
         .check_ffi_partial_with_path(Cow::Borrowed(Path::new(path)))?,
-      state.try_borrow::<DenoRtNativeAddonLoaderRc>().cloned(),
+      state.try_borrow::<EdnoRtNativeAddonLoaderRc>().cloned(),
     )
   };
 
-  let real_path = match denort_helper {
+  let real_path = match ednort_helper {
     Some(loader) => loader.load_and_resolve_path(&path)?,
     None => Cow::Borrowed(path.as_ref()),
   };
@@ -257,7 +257,7 @@ pub struct FunctionData {
 
 // SAFETY: we're sure `FunctionData` can be GCed
 unsafe impl GarbageCollected for FunctionData {
-  fn trace(&self, _visitor: &mut deno_core::v8::cppgc::Visitor) {}
+  fn trace(&self, _visitor: &mut edno_core::v8::cppgc::Visitor) {}
 
   fn get_name(&self) -> &'static std::ffi::CStr {
     c"FunctionData"
@@ -294,7 +294,7 @@ fn make_sync_fn<'s>(
     .map(|turbocall| unsafe { turbocall.overloads() });
 
   let data = FunctionData { symbol, turbocall };
-  let data = deno_core::cppgc::make_cppgc_object(scope, data);
+  let data = edno_core::cppgc::make_cppgc_object(scope, data);
 
   let builder = v8::FunctionTemplate::builder(sync_fn_impl).data(data.into());
 
@@ -311,7 +311,7 @@ fn sync_fn_impl<'s>(
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
-  let data = deno_core::cppgc::try_unwrap_cppgc_object::<FunctionData>(
+  let data = edno_core::cppgc::try_unwrap_cppgc_object::<FunctionData>(
     scope,
     args.data(),
   )
@@ -332,7 +332,7 @@ fn sync_fn_impl<'s>(
             unsafe { result.to_v8(scope, data.symbol.result_type.clone()) };
       rv.set(result);
     }
-    Err(err) => deno_core::error::throw_js_error_class(scope, &err),
+    Err(err) => edno_core::error::throw_js_error_class(scope, &err),
   };
 }
 
@@ -421,9 +421,9 @@ mod tests {
   use std::sync::atomic::AtomicUsize;
   use std::sync::atomic::Ordering;
 
-  use deno_core::JsRuntime;
-  use deno_core::RuntimeOptions;
-  use deno_core::v8;
+  use edno_core::JsRuntime;
+  use edno_core::RuntimeOptions;
+  use edno_core::v8;
   use serde_json::json;
 
   use super::ForeignFunction;
@@ -482,7 +482,7 @@ mod tests {
 
     let mut runtime = JsRuntime::new(RuntimeOptions::default());
     {
-      deno_core::scope!(scope, runtime);
+      edno_core::scope!(scope, runtime);
       let function = make_sync_fn(scope, Box::new(symbol));
       let key = v8::String::new(scope, "makeRect").unwrap();
       let global = scope.get_current_context().global(scope);

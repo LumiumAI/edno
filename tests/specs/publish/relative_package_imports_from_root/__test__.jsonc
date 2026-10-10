@@ -6,7 +6,7 @@
       "output": "publish.out"
     },
     "excluded": {
-      "args": "publish --config deno.excluded.jsonc --dry-run",
+      "args": "publish --config edno.excluded.jsonc --dry-run",
       "exitCode": 1,
       "output": "publish_excluded.out"
     }

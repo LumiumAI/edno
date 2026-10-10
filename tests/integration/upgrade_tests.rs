@@ -14,15 +14,15 @@ use util::test;
 fn upgrade_invalid_lockfile() {
   let context = upgrade_context();
   let temp_dir = context.temp_dir();
-  temp_dir.write("deno.deno", r#"{ \"lock\": true }"#);
+  temp_dir.write("edno.edno", r#"{ \"lock\": true }"#);
   temp_dir.write(
-    "deno.lock",
+    "edno.lock",
     r#"{
   "version": "invalid",
 }"#,
   );
-  let exe_path = temp_dir.path().join("deno");
-  util::deno_exe_path().copy(&exe_path);
+  let exe_path = temp_dir.path().join("edno");
+  util::edno_exe_path().copy(&exe_path);
   assert!(exe_path.exists());
   exe_path.mark_executable();
   let output = Command::new(&exe_path)
@@ -54,7 +54,7 @@ fn upgrade_prompt() {
   let cmd = context
     .new_command()
     .args("run --log-level=debug main.js")
-    .env_remove("DENO_NO_UPDATE_CHECK");
+    .env_remove("EDNO_NO_UPDATE_CHECK");
   // run once and wait for the version to be stored
   cmd.with_pty(|mut pty| {
     pty.expect("Finished upgrade checker.");
@@ -66,9 +66,9 @@ fn upgrade_prompt() {
     //   doesn't occur except when there's a pty.
     // - Version comes from the test server.
     pty.expect_any(&[
-      " 99999.99.99 Run `deno upgrade` to install it.",
+      " 99999.99.99 Run `edno upgrade` to install it.",
       // it builds canary releases on main, so check for this in that case
-      "Run `deno upgrade canary` to install it.",
+      "Run `edno upgrade canary` to install it.",
     ]);
   });
 }
@@ -79,7 +79,7 @@ fn upgrade_lsp_repl_sleeps() {
     .use_http_server()
     .use_temp_cwd()
     .env(
-      "DENO_DONT_USE_INTERNAL_BASE_UPGRADE_URL",
+      "EDNO_DONT_USE_INTERNAL_BASE_UPGRADE_URL",
       "http://localhost:4545/upgrade/sleep",
     )
     .build();
@@ -89,7 +89,7 @@ fn upgrade_lsp_repl_sleeps() {
   context
     .new_command()
     .args("repl")
-    .env_remove("DENO_NO_UPDATE_CHECK")
+    .env_remove("EDNO_NO_UPDATE_CHECK")
     .with_pty(|mut pty| {
       pty.write_line("123 + 456\n");
       pty.expect("579");
@@ -105,7 +105,7 @@ fn upgrade_context() -> TestContext {
     .use_http_server()
     .use_temp_cwd()
     .env(
-      "DENO_DONT_USE_INTERNAL_BASE_UPGRADE_URL",
+      "EDNO_DONT_USE_INTERNAL_BASE_UPGRADE_URL",
       "http://localhost:4545",
     )
     .build()

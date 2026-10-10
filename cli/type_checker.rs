@@ -10,19 +10,19 @@ use std::sync::Arc;
 
 use deno_ast::MediaType;
 use deno_ast::ModuleSpecifier;
-use deno_config::deno_json::CompilerOptionTypesDeserializeError;
-use deno_core::url::Url;
+use edno_config::edno_json::CompilerOptionTypesDeserializeError;
+use edno_core::url::Url;
 use deno_error::JsErrorBox;
 use deno_graph::Module;
 use deno_graph::ModuleGraph;
 use deno_graph::ResolutionError;
-use deno_lib::util::hash::FastInsecureHasher;
-use deno_resolver::deno_json::CompilerOptionsData;
-use deno_resolver::deno_json::CompilerOptionsParseError;
-use deno_resolver::deno_json::CompilerOptionsResolver;
-use deno_resolver::deno_json::JsxImportSourceConfigResolver;
-use deno_resolver::deno_json::ToMaybeJsxImportSourceConfigError;
-use deno_resolver::graph::maybe_additional_sloppy_imports_message;
+use edno_lib::util::hash::FastInsecureHasher;
+use edno_resolver::edno_json::CompilerOptionsData;
+use edno_resolver::edno_json::CompilerOptionsParseError;
+use edno_resolver::edno_json::CompilerOptionsResolver;
+use edno_resolver::edno_json::JsxImportSourceConfigResolver;
+use edno_resolver::edno_json::ToMaybeJsxImportSourceConfigError;
+use edno_resolver::graph::maybe_additional_sloppy_imports_message;
 use deno_semver::npm::NpmPackageReqReference;
 use deno_terminal::colors;
 use indexmap::IndexMap;
@@ -32,7 +32,7 @@ use rustc_hash::FxHashSet;
 
 use crate::args::CliOptions;
 use crate::args::CompilerOptions;
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::TsTypeLib;
 use crate::args::TypeCheckMode;
 use crate::cache::CacheDBHash;
@@ -179,19 +179,19 @@ impl TypeChecker {
 
     // Merge declaration-specific options into the base compiler options
     let mut config_value =
-      deno_core::serde_json::to_value(base_compiler_options.as_ref())
+      edno_core::serde_json::to_value(base_compiler_options.as_ref())
         .map_err(|e| CheckErrorKind::Other(JsErrorBox::from_err(e)))?;
     if let Some(config_obj) = config_value.as_object_mut() {
       config_obj.insert(
         "declaration".into(),
-        deno_core::serde_json::Value::Bool(true),
+        edno_core::serde_json::Value::Bool(true),
       );
       config_obj.insert(
         "emitDeclarationOnly".into(),
-        deno_core::serde_json::Value::Bool(true),
+        edno_core::serde_json::Value::Bool(true),
       );
       config_obj
-        .insert("noEmit".into(), deno_core::serde_json::Value::Bool(false));
+        .insert("noEmit".into(), edno_core::serde_json::Value::Bool(false));
     }
 
     let compiler_options = Arc::new(CompilerOptions::new(config_value));
@@ -226,15 +226,15 @@ impl TypeChecker {
     )?;
 
     // Declaration emit type-checks with `TypeCheckMode::All`, which (unlike
-    // `deno check`'s default `Local` mode) doesn't scope semantic diagnostics
+    // `edno check`'s default `Local` mode) doesn't scope semantic diagnostics
     // to the user's own files. That widens the report to every file in the
-    // program, including deno's bundled `asset:///` declarations. Those aren't
+    // program, including edno's bundled `asset:///` declarations. Those aren't
     // self-contained under a user-supplied `compilerOptions.lib`: with
-    // `"lib": ["dom", "deno.ns"]`, `lib.deno.ns.d.ts`'s own `import("node:net")`
+    // `"lib": ["dom", "edno.ns"]`, `lib.edno.ns.d.ts`'s own `import("node:net")`
     // and `NodeJS.Timeout` references have nothing to resolve against, and
     // adding `"node"` instead collides the bundled node types with the web
     // ones. Either way the user gets errors in a file they can't edit.
-    // `deno check` never surfaces these, so neither should declaration emit.
+    // `edno check` never surfaces these, so neither should declaration emit.
     let diagnostics = response.diagnostics.filter(|d| {
       !d.file_name
         .as_deref()
@@ -279,7 +279,7 @@ impl TypeChecker {
         FailedTypeCheckingError {
           can_skip: !matches!(
             self.cli_options.sub_command(),
-            DenoSubcommand::Check(_)
+            EdnoSubcommand::Check(_)
           ),
         }
         .into(),
@@ -293,8 +293,8 @@ impl TypeChecker {
   ///
   /// It is expected that it is determined if a check and/or emit is validated
   /// before the function is called.
-  /// Walk the module graph exactly as Deno 2.x's forked tsc did - for the
-  /// native (external tsc) check path in `crate::tools::check`. Returns deno's
+  /// Walk the module graph exactly as Edno 2.x's forked tsc did - for the
+  /// native (external tsc) check path in `crate::tools::check`. Returns edno's
   /// own graph diagnostics (missing modules + hints) plus a combined check hash
   /// over every compiler-options group, with the pinned tsc version folded in.
   /// Native check runs a single external tsc over the whole generated
@@ -599,7 +599,7 @@ impl Iterator for DiagnosticsByFolderRealIterator<'_> {
 
 /// Converts the list of ambient module names to regex string
 /// Hash of the npm resolution state, folded into the type-check cache key so
-/// the cache busts when npm deps (or nodeModulesDir) change. Shared by Deno
+/// the cache busts when npm deps (or nodeModulesDir) change. Shared by Edno
 /// 2.x's forked tsc and the native (external tsc) check path.
 fn check_state_hash(resolver: &CliNpmResolver) -> Option<u64> {
   match resolver {
@@ -739,7 +739,7 @@ impl DiagnosticsByFolderRealIterator<'_> {
       .write_hashable(&compiler_options)
       .finish();
     let code_cache = self.code_cache.as_ref().map(|c| {
-      let c: Arc<dyn deno_runtime::code_cache::CodeCache> = c.clone();
+      let c: Arc<dyn edno_runtime::code_cache::CodeCache> = c.clone();
       c
     });
     let response = tsc::exec(
@@ -1764,7 +1764,7 @@ mod test {
   fn get_leading_comments_test() {
     assert_eq!(
       get_leading_comments(
-        "#!/usr/bin/env deno\r\n// test\n/* 1 *//*2*///3\n//\n /**/  /*4 */"
+        "#!/usr/bin/env edno\r\n// test\n/* 1 *//*2*///3\n//\n /**/  /*4 */"
       ),
       vec![
         " test".to_string(),
@@ -1791,7 +1791,7 @@ mod test {
     ));
     assert!(has_ts_check(
       MediaType::JavaScript,
-      "// deno-lint-ignore\n// @ts-check\n"
+      "// edno-lint-ignore\n// @ts-check\n"
     ));
     assert!(!has_ts_check(
       MediaType::JavaScript,

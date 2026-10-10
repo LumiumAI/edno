@@ -7,14 +7,14 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use deno_ast::MediaType;
-use deno_config::deno_json;
-use deno_config::deno_json::CompilerOptionTypesDeserializeError;
-use deno_config::deno_json::NodeModulesDirMode;
-use deno_config::workspace::JsrPackageConfig;
-use deno_core::ModuleSpecifier;
-use deno_core::error::AnyError;
-use deno_core::parking_lot::Mutex;
-use deno_core::serde_json;
+use edno_config::edno_json;
+use edno_config::edno_json::CompilerOptionTypesDeserializeError;
+use edno_config::edno_json::NodeModulesDirMode;
+use edno_config::workspace::JsrPackageConfig;
+use edno_core::ModuleSpecifier;
+use edno_core::error::AnyError;
+use edno_core::parking_lot::Mutex;
+use edno_core::serde_json;
 use deno_error::JsErrorBox;
 use deno_error::JsErrorClass;
 use deno_graph::CheckJsOption;
@@ -31,24 +31,24 @@ use deno_graph::WorkspaceFastCheckOption;
 use deno_graph::packages::JsrVersionResolver;
 use deno_graph::source::Loader;
 use deno_graph::source::ResolveError;
-use deno_lib::util::result::downcast_ref_deno_resolve_error;
-use deno_npm_installer::PackageCaching;
-use deno_npm_installer::format_unmet_peer_dep_warning;
-use deno_npm_installer::graph::NpmCachingStrategy;
+use edno_lib::util::result::downcast_ref_deno_resolve_error;
+use edno_npm_installer::PackageCaching;
+use edno_npm_installer::format_unmet_peer_dep_warning;
+use edno_npm_installer::graph::NpmCachingStrategy;
 use deno_path_util::url_to_file_path;
-use deno_resolver::cache::ParsedSourceCache;
-use deno_resolver::deno_json::CompilerOptionsResolver;
-use deno_resolver::deno_json::JsxImportSourceConfigResolver;
-use deno_resolver::deno_json::ToMaybeJsxImportSourceConfigError;
-use deno_resolver::file_fetcher::GraphLoaderReporterRc;
-use deno_resolver::graph::EnhanceGraphErrorMode;
-use deno_resolver::graph::EnhancedGraphError;
-use deno_resolver::graph::NpmTypesResolutionMode;
-use deno_resolver::graph::enhance_graph_error;
-use deno_resolver::graph::enhanced_integrity_error_message;
-use deno_resolver::graph::format_deno_graph_error;
-use deno_resolver::npm::DenoInNpmPackageChecker;
-use deno_runtime::deno_permissions::PermissionsContainer;
+use edno_resolver::cache::ParsedSourceCache;
+use edno_resolver::edno_json::CompilerOptionsResolver;
+use edno_resolver::edno_json::JsxImportSourceConfigResolver;
+use edno_resolver::edno_json::ToMaybeJsxImportSourceConfigError;
+use edno_resolver::file_fetcher::GraphLoaderReporterRc;
+use edno_resolver::graph::EnhanceGraphErrorMode;
+use edno_resolver::graph::EnhancedGraphError;
+use edno_resolver::graph::NpmTypesResolutionMode;
+use edno_resolver::graph::enhance_graph_error;
+use edno_resolver::graph::enhanced_integrity_error_message;
+use edno_resolver::graph::format_deno_graph_error;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
+use edno_runtime::edno_permissions::PermissionsContainer;
 use deno_semver::SmallStackString;
 use deno_semver::jsr::JsrDepPackageReq;
 use deno_semver::npm::NpmPackageReqReference;
@@ -58,7 +58,7 @@ use sys_traits::FsMetadata;
 
 use crate::args::CliLockfile;
 use crate::args::CliOptions;
-use crate::args::DenoSubcommand;
+use crate::args::EdnoSubcommand;
 use crate::args::config_to_deno_graph_workspace_member;
 use crate::args::graph_kind;
 use crate::args::jsr_url;
@@ -427,7 +427,7 @@ pub fn graph_exit_integrity_errors(graph: &ModuleGraph) {
 fn exit_for_integrity_error(err: &ModuleError) {
   if let Some(err_message) = enhanced_integrity_error_message(err) {
     log::error!("{} {}", colors::red("error:"), err_message);
-    deno_runtime::exit(10);
+    edno_runtime::exit(10);
   }
 }
 
@@ -448,7 +448,7 @@ pub struct CreatePublishGraphOptions<'a> {
   /// Whether to skip exports that can't be analyzed as modules
   /// (ex. CSS files) instead of surfacing diagnostics for them.
   /// This is used when linting because validating the exports is
-  /// the responsibility of `deno publish`.
+  /// the responsibility of `edno publish`.
   /// See https://github.com/denoland/deno/issues/26308
   pub skip_unanalyzable_exports: bool,
 }
@@ -604,7 +604,7 @@ impl ModuleGraphCreator {
         is_dynamic: false,
         graph_kind: deno_graph::GraphKind::All,
         roots,
-        // do not include the tsconfig imports for `deno publish`
+        // do not include the tsconfig imports for `edno publish`
         imports: Vec::new(),
         loader: Some(&publish_loader),
         npm_caching: self.options.default_npm_caching_strategy(),
@@ -766,7 +766,7 @@ pub enum BuildGraphWithNpmResolutionError {
   ToMaybeJsxImportSourceConfig(#[from] ToMaybeJsxImportSourceConfigError),
   #[class(inherit)]
   #[error(transparent)]
-  NodeModulesDirParse(#[from] deno_json::NodeModulesDirParseError),
+  NodeModulesDirParse(#[from] edno_json::NodeModulesDirParseError),
   #[class(inherit)]
   #[error(transparent)]
   Other(#[from] JsErrorBox),
@@ -796,7 +796,7 @@ pub struct ModuleGraphBuilder {
   compiler_options_resolver: Arc<CompilerOptionsResolver>,
   file_fetcher: Arc<CliFileFetcher>,
   global_http_cache: Arc<GlobalHttpCache>,
-  in_npm_pkg_checker: DenoInNpmPackageChecker,
+  in_npm_pkg_checker: EdnoInNpmPackageChecker,
   jsr_version_resolver: Arc<JsrVersionResolver>,
   lockfile: Option<Arc<CliLockfile>>,
   maybe_reporter: Option<Arc<dyn deno_graph::source::Reporter>>,
@@ -821,7 +821,7 @@ impl ModuleGraphBuilder {
     compiler_options_resolver: Arc<CompilerOptionsResolver>,
     file_fetcher: Arc<CliFileFetcher>,
     global_http_cache: Arc<GlobalHttpCache>,
-    in_npm_pkg_checker: DenoInNpmPackageChecker,
+    in_npm_pkg_checker: EdnoInNpmPackageChecker,
     jsr_version_resolver: Arc<JsrVersionResolver>,
     lockfile: Option<Arc<CliLockfile>>,
     maybe_reporter: Option<Arc<dyn deno_graph::source::Reporter>>,
@@ -956,7 +956,7 @@ impl ModuleGraphBuilder {
           unstable_css_imports: self.cli_options.unstable_raw_imports(),
           unstable_config_imports: false,
           prefer_cached_jsr_versions: self.cli_options.cache_setting()
-            == deno_cache_dir::file_fetcher::CacheSetting::Only,
+            == edno_cache_dir::file_fetcher::CacheSetting::Only,
         }
       };
     }
@@ -1068,7 +1068,7 @@ impl ModuleGraphBuilder {
       // https redirects
       if has_redirects_changed {
         let graph_redirects = graph.redirects.iter().filter(|(from, _)| {
-          !matches!(from.scheme(), "npm" | "file" | "deno")
+          !matches!(from.scheme(), "npm" | "file" | "edno")
         });
         for (from, to) in graph_redirects {
           lockfile.insert_redirect(from.to_string(), to.to_string());
@@ -1219,7 +1219,7 @@ impl ModuleGraphBuilder {
       self.global_http_cache.clone(),
       self.in_npm_pkg_checker.clone(),
       self.sys.clone(),
-      deno_resolver::file_fetcher::DenoGraphLoaderOptions {
+      edno_resolver::file_fetcher::EdnoGraphLoaderOptions {
         file_header_overrides: self.cli_options.resolve_file_header_overrides(),
         permissions: Some(permissions),
         file_permission_api_name,
@@ -1230,8 +1230,8 @@ impl ModuleGraphBuilder {
   }
 
   fn analyze_npm_sources(&self) -> bool {
-    // only analyze npm packages with deno_graph for deno doc
-    matches!(self.cli_options.sub_command(), DenoSubcommand::Doc(_))
+    // only analyze npm packages with deno_graph for edno doc
+    matches!(self.cli_options.sub_command(), EdnoSubcommand::Doc(_))
   }
 
   /// Check if `roots` and their deps are available. Returns `Ok(())` if

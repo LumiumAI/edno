@@ -4,11 +4,11 @@ import { utimes, utimesSync } from "node:fs";
 
 const randomDate = new Date(Date.now() + 1000);
 
-Deno.test({
+Edno.test({
   name:
     "ASYNC: change the file system timestamps of the object referenced by path",
   async fn() {
-    const file: string = Deno.makeTempFileSync();
+    const file: string = Edno.makeTempFileSync();
 
     await new Promise<void>((resolve, reject) => {
       utimes(file, randomDate, randomDate, (err: Error | null) => {
@@ -18,7 +18,7 @@ Deno.test({
     })
       .then(
         () => {
-          const fileInfo: Deno.FileInfo = Deno.lstatSync(file);
+          const fileInfo: Edno.FileInfo = Edno.lstatSync(file);
           assertEquals(fileInfo.mtime, randomDate);
           assertEquals(fileInfo.mtime, randomDate);
         },
@@ -26,11 +26,11 @@ Deno.test({
           fail("No error expected");
         },
       )
-      .finally(() => Deno.removeSync(file));
+      .finally(() => Edno.removeSync(file));
   },
 });
 
-Deno.test({
+Edno.test({
   name: "ASYNC: should throw error if atime is infinity",
   fn() {
     assertThrows(
@@ -43,7 +43,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "ASYNC: should throw error if atime is NaN",
   fn() {
     assertThrows(
@@ -56,24 +56,24 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name:
     "SYNC: change the file system timestamps of the object referenced by path",
   fn() {
-    const file: string = Deno.makeTempFileSync();
+    const file: string = Edno.makeTempFileSync();
     try {
       utimesSync(file, randomDate, randomDate);
 
-      const fileInfo: Deno.FileInfo = Deno.lstatSync(file);
+      const fileInfo: Edno.FileInfo = Edno.lstatSync(file);
 
       assertEquals(fileInfo.mtime, randomDate);
     } finally {
-      Deno.removeSync(file);
+      Edno.removeSync(file);
     }
   },
 });
 
-Deno.test({
+Edno.test({
   name: "SYNC: should throw error if atime is NaN",
   fn() {
     assertThrows(
@@ -86,7 +86,7 @@ Deno.test({
   },
 });
 
-Deno.test({
+Edno.test({
   name: "SYNC: should throw error if atime is Infinity",
   fn() {
     assertThrows(

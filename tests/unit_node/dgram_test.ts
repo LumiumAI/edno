@@ -7,7 +7,7 @@ import { createSocket, type Socket } from "node:dgram";
 const listenPort = 4503;
 const listenPort2 = 4504;
 
-Deno.test("[node/dgram] udp ref and unref", {
+Edno.test("[node/dgram] udp ref and unref", {
   permissions: { read: true, run: true, net: true },
 }, async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
@@ -27,7 +27,7 @@ Deno.test("[node/dgram] udp ref and unref", {
     resolve();
   });
 
-  const conn = await Deno.listenDatagram({
+  const conn = await Edno.listenDatagram({
     port: listenPort2,
     transport: "udp",
   });
@@ -42,7 +42,7 @@ Deno.test("[node/dgram] udp ref and unref", {
   assertEquals(data, new Uint8Array([0, 1, 2, 3]));
 });
 
-Deno.test("[node/dgram] udp unref", {
+Edno.test("[node/dgram] udp unref", {
   permissions: { read: true, run: true, net: true },
 }, async () => {
   const [statusCode, _output] = await execCode(`
@@ -58,7 +58,7 @@ Deno.test("[node/dgram] udp unref", {
   assertEquals(statusCode, 0);
 });
 
-Deno.test("[node/dgram] addMembership works", async () => {
+Edno.test("[node/dgram] addMembership works", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const socket = createSocket("udp4");
   socket.bind(0, () => {
@@ -72,7 +72,7 @@ Deno.test("[node/dgram] addMembership works", async () => {
   await promise;
 });
 
-Deno.test("[node/dgram] addMembership accepts scoped IPv6 interface", async () => {
+Edno.test("[node/dgram] addMembership accepts scoped IPv6 interface", async () => {
   // Regression test for https://github.com/denoland/deno/issues/34838.
   // A scoped IPv6 interface whose zone id names no existing interface must
   // resolve to the default interface (index 0) — exactly like passing no
@@ -107,7 +107,7 @@ Deno.test("[node/dgram] addMembership accepts scoped IPv6 interface", async () =
       // zone is resolved via `if_nametoindex` (-> 0 for non-names), which is
       // the reporter's exact "::%12" case; on Windows a numeric zone is a
       // literal index (`atoi`), so use a non-numeric unknown name there.
-      const scopedIface = Deno.build.os === "windows"
+      const scopedIface = Edno.build.os === "windows"
         ? "::%nonexistent0"
         : "::%9999999";
       // Use a different multicast group so this is a fresh join rather than a
@@ -122,7 +122,7 @@ Deno.test("[node/dgram] addMembership accepts scoped IPv6 interface", async () =
   await promise;
 });
 
-Deno.test("[node/dgram] createSocket, reuseAddr option", async () => {
+Edno.test("[node/dgram] createSocket, reuseAddr option", async () => {
   const { promise, resolve } = Promise.withResolvers<string>();
   const socket0 = createSocket({ type: "udp4", reuseAddr: true });
   let socket1: Socket | undefined;
@@ -147,7 +147,7 @@ Deno.test("[node/dgram] createSocket, reuseAddr option", async () => {
   socket1?.close();
 });
 
-Deno.test("[node/dgram] addMembership, setBroadcast, setMulticastTTL after bind", async () => {
+Edno.test("[node/dgram] addMembership, setBroadcast, setMulticastTTL after bind", async () => {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
 
   const socket = createSocket({ type: "udp4", reuseAddr: true });
@@ -173,7 +173,7 @@ Deno.test("[node/dgram] addMembership, setBroadcast, setMulticastTTL after bind"
   await promise;
 });
 
-Deno.test("[node/dgram] setTTL sets unicast TTL without error", async () => {
+Edno.test("[node/dgram] setTTL sets unicast TTL without error", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const socket = createSocket("udp4");
   socket.bind(0, () => {
@@ -183,7 +183,7 @@ Deno.test("[node/dgram] setTTL sets unicast TTL without error", async () => {
   await promise;
 });
 
-Deno.test("[node/dgram] setTTL throws on invalid TTL", async () => {
+Edno.test("[node/dgram] setTTL throws on invalid TTL", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const socket = createSocket("udp4");
   socket.bind(0, () => {
@@ -204,7 +204,7 @@ Deno.test("[node/dgram] setTTL throws on invalid TTL", async () => {
   await promise;
 });
 
-Deno.test("[node/dgram] setMulticastInterface sets interface without error", async () => {
+Edno.test("[node/dgram] setMulticastInterface sets interface without error", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const socket = createSocket("udp4");
   socket.bind(0, () => {
@@ -214,7 +214,7 @@ Deno.test("[node/dgram] setMulticastInterface sets interface without error", asy
   await promise;
 });
 
-Deno.test("[node/dgram] addSourceSpecificMembership and dropSourceSpecificMembership", async () => {
+Edno.test("[node/dgram] addSourceSpecificMembership and dropSourceSpecificMembership", async () => {
   const { promise, resolve } = Promise.withResolvers<void>();
   const socket = createSocket("udp4");
   socket.bind(0, () => {
@@ -225,13 +225,13 @@ Deno.test("[node/dgram] addSourceSpecificMembership and dropSourceSpecificMember
   await promise;
 });
 
-Deno.test("[node/dgram] send checks destination permission", {
+Edno.test("[node/dgram] send checks destination permission", {
   permissions: { read: true, write: true, run: true, net: true },
 }, async () => {
   // Verify that a subprocess with restricted --allow-net cannot send to
   // destinations outside the allowed set.
-  const tempFile = Deno.makeTempFileSync({ suffix: ".ts" });
-  Deno.writeTextFileSync(
+  const tempFile = Edno.makeTempFileSync({ suffix: ".ts" });
+  Edno.writeTextFileSync(
     tempFile,
     `import dgram from "node:dgram";
 const socket = dgram.createSocket("udp4");
@@ -252,7 +252,7 @@ socket.on("error", (err) => {
 `,
   );
   try {
-    const { stdout, stderr } = await new Deno.Command(Deno.execPath(), {
+    const { stdout, stderr } = await new Edno.Command(Edno.execPath(), {
       args: [
         "run",
         "--no-prompt",
@@ -270,14 +270,14 @@ socket.on("error", (err) => {
       `Send should have been blocked, but got: ${output}`,
     );
   } finally {
-    Deno.removeSync(tempFile);
+    Edno.removeSync(tempFile);
   }
 });
 
-Deno.test("[node/dgram] addMembership checks group permission", {
+Edno.test("[node/dgram] addMembership checks group permission", {
   permissions: { write: true, run: true, net: true },
 }, async () => {
-  const reservation = Deno.listenDatagram({
+  const reservation = Edno.listenDatagram({
     hostname: "0.0.0.0",
     port: 0,
     transport: "udp",
@@ -286,8 +286,8 @@ Deno.test("[node/dgram] addMembership checks group permission", {
   const port = reservation.addr.port;
   reservation.close();
 
-  const tempFile = Deno.makeTempFileSync({ suffix: ".ts" });
-  Deno.writeTextFileSync(
+  const tempFile = Edno.makeTempFileSync({ suffix: ".ts" });
+  Edno.writeTextFileSync(
     tempFile,
     `import dgram from "node:dgram";
 const socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
@@ -306,8 +306,8 @@ socket.bind(${port}, "0.0.0.0", () => {
   );
 
   const run = async (allowNet: string) => {
-    const { success, stdout, stderr } = await new Deno.Command(
-      Deno.execPath(),
+    const { success, stdout, stderr } = await new Edno.Command(
+      Edno.execPath(),
       {
         args: ["run", "--no-prompt", allowNet, tempFile],
         stdout: "piped",
@@ -339,11 +339,11 @@ socket.bind(${port}, "0.0.0.0", () => {
       `Membership should have been allowed, but got: ${allowed.output}`,
     );
   } finally {
-    Deno.removeSync(tempFile);
+    Edno.removeSync(tempFile);
   }
 });
 
-Deno.test("[node/dgram] large recvBufferSize and sendBufferSize do not throw", async () => {
+Edno.test("[node/dgram] large recvBufferSize and sendBufferSize do not throw", async () => {
   const { promise, resolve, reject } = Promise.withResolvers<void>();
   const socket = createSocket({
     type: "udp4",

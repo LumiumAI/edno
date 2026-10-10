@@ -1,5 +1,5 @@
 try {
-  new Deno.Command("deno", {
+  new Edno.Command("edno", {
     args: ["--version"],
   }).outputSync();
 } catch (err) {
@@ -7,7 +7,7 @@ try {
 }
 
 try {
-  new Deno.Command(Deno.execPath(), {
+  new Edno.Command(Edno.execPath(), {
     args: ["--version"],
   }).outputSync();
 } catch (err) {

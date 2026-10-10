@@ -9,17 +9,17 @@ use std::sync::Arc;
 use deno_ast::MediaType;
 use deno_ast::ModuleKind;
 use deno_ast::ModuleSpecifier;
-use deno_config::glob::FileCollector;
-use deno_config::glob::FilePatterns;
-use deno_config::glob::PathOrPattern;
-use deno_config::glob::PathOrPatternSet;
-use deno_core::anyhow::Context;
-use deno_core::anyhow::anyhow;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_core::sourcemap::SourceMap;
-use deno_core::url::Url;
-use deno_resolver::npm::DenoInNpmPackageChecker;
+use edno_config::glob::FileCollector;
+use edno_config::glob::FilePatterns;
+use edno_config::glob::PathOrPattern;
+use edno_config::glob::PathOrPatternSet;
+use edno_core::anyhow::Context;
+use edno_core::anyhow::anyhow;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_core::sourcemap::SourceMap;
+use edno_core::url::Url;
+use edno_resolver::npm::EdnoInNpmPackageChecker;
 use node_resolver::InNpmPackageChecker;
 use regex::Regex;
 use reporter::CoverageReporter;
@@ -677,7 +677,7 @@ fn filter_coverages(
   coverages: Vec<cdp::ScriptCoverage>,
   include: Vec<String>,
   exclude: Vec<String>,
-  in_npm_pkg_checker: &DenoInNpmPackageChecker,
+  in_npm_pkg_checker: &EdnoInNpmPackageChecker,
   link_dir_urls: &[String],
 ) -> Vec<cdp::ScriptCoverage> {
   let include: Vec<Regex> =
@@ -698,8 +698,8 @@ fn filter_coverages(
         || e.url.starts_with("data:")
         || e.url.starts_with("blob:")
         || e.url.ends_with("__anonymous__")
-        || e.url.ends_with("$deno$test.mjs")
-        || e.url.contains("/$deno$stdin.")
+        || e.url.ends_with("$edno$test.mjs")
+        || e.url.contains("/$edno$stdin.")
         || e.url.ends_with(".snap")
         || is_supported_test_path(Path::new(e.url.as_str()))
         || doc_test_re.is_match(e.url.as_str())
@@ -926,7 +926,7 @@ pub fn cover_files(
     reporter.done(&coverage_root, &file_reports);
   }
 
-  // Layer the `--threshold` CLI flag over per-metric thresholds from deno.json
+  // Layer the `--threshold` CLI flag over per-metric thresholds from edno.json
   // (the flag wins) and fail the command if any configured threshold is unmet.
   let config_thresholds = cli_options.resolve_coverage_thresholds()?;
   let thresholds = CoverageThresholds {
@@ -1006,7 +1006,7 @@ fn check_coverage_thresholds(
 }
 
 /// Returned when a configured coverage threshold is not met. A distinct type so
-/// `deno test --coverage` can treat it as fatal while still tolerating benign
+/// `edno test --coverage` can treat it as fatal while still tolerating benign
 /// report-generation errors.
 #[derive(Debug)]
 pub struct CoverageThresholdError(pub String);

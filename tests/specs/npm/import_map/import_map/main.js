@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getSubPathKind } from "@denotest/subpath/main.mjs";
+import { getSubPathKind } from "@ednotest/subpath/main.mjs";
 
 console.log(chalk.green("chalk import map loads"));
 

@@ -1,2 +1,2 @@
-import * as ns from "npm:@denotest/cjs-require-esm";
+import * as ns from "npm:@ednotest/cjs-require-esm";
 console.log(ns);

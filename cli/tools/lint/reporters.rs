@@ -1,12 +1,12 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
 use deno_ast::diagnostics::Diagnostic;
-use deno_core::error::AnyError;
-use deno_core::serde_json;
-use deno_lib::util::result::js_error_downcast_ref;
+use edno_core::error::AnyError;
+use edno_core::serde_json;
+use edno_lib::util::result::js_error_downcast_ref;
 use deno_lint::diagnostic::LintDiagnostic;
-use deno_runtime::colors;
-use deno_runtime::fmt_errors::format_js_error;
+use edno_runtime::colors;
+use edno_runtime::fmt_errors::format_js_error;
 use log::info;
 use serde::Serialize;
 

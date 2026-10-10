@@ -1,3 +1,3 @@
 console.log(Math.random());
-await Deno.stat(".");
-await Deno.create("foo.txt");
+await Edno.stat(".");
+await Edno.create("foo.txt");

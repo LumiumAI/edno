@@ -4,7 +4,7 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use deno_core::error::AnyError;
+use edno_core::error::AnyError;
 use deno_terminal::colors;
 
 use crate::args::CheckFlags;
@@ -25,7 +25,7 @@ pub async fn check(
     // watcher, so it runs once and never re-checks. Warn rather than appear to
     // watch. See https://github.com/denoland/deno/issues/36089.
     log::warn!(
-      "{} `deno check --watch` does not re-check on file changes yet; it runs once. See https://github.com/denoland/deno/issues/36089",
+      "{} `edno check --watch` does not re-check on file changes yet; it runs once. See https://github.com/denoland/deno/issues/36089",
       colors::yellow("Warning")
     );
     let no_clear_screen = watch_flags.no_clear_screen;
@@ -46,8 +46,8 @@ pub async fn check(
 
 /// Type-check the project with the native TypeScript compiler.
 ///
-/// `deno check` generates a stock `tsconfig.json` and materializes the types of
-/// the project's dependencies (the same work `deno sync-types` performs), then
+/// `edno check` generates a stock `tsconfig.json` and materializes the types of
+/// the project's dependencies (the same work `edno sync-types` performs), then
 /// runs the pinned native `tsc` against it and remaps the compiler's
 /// diagnostics back onto the original module specifiers.
 async fn native_check(
@@ -55,7 +55,7 @@ async fn native_check(
   check_flags: CheckFlags,
 ) -> Result<(), AnyError> {
   if check_flags.doc || check_flags.doc_only {
-    // Doc snippet extraction was handled by Deno 2.x's forked tsc; the native
+    // Doc snippet extraction was handled by Edno 2.x's forked tsc; the native
     // compiler does not type-check markdown/JSDoc snippets yet.
     log::warn!(
       "{} --doc/--doc-only is not yet supported by the native type checker and will be ignored",
@@ -70,19 +70,19 @@ async fn native_check(
     .root_dir_url()
     .to_file_path()
     .map_err(|_| {
-      deno_core::anyhow::anyhow!("workspace root is not a local directory")
+      edno_core::anyhow::anyhow!("workspace root is not a local directory")
     })?;
 
   // Build the module graph over the requested roots (or the whole project).
-  // Deno owns resolution: this drives deno's own graph diagnostics (missing
+  // Edno owns resolution: this drives edno's own graph diagnostics (missing
   // modules + hints) and the incremental type-check cache, so we can skip the
   // external compiler entirely when nothing it sees has changed.
-  // Resolve the requested roots the same way `deno check` always has:
+  // Resolve the requested roots the same way `edno check` always has:
   // globs are expanded, workspace `exclude` is applied, and
   // `include_ignored_specified: false` means an explicitly-passed excluded file
   // is skipped rather than force-checked. An empty result is not an error - it
   // just means there's nothing to check (e.g. every match was excluded), which
-  // deno reports as a warning and a clean exit.
+  // edno reports as a warning and a clean exit.
   let graph_container = factory.main_module_graph_container().await?;
   let mut roots = graph_container.collect_specifiers(
     &check_flags.files,
@@ -120,16 +120,16 @@ async fn native_check(
     })
     .await?;
 
-  // Surface deno's own graph-resolution errors before handing off to tsc:
+  // Surface edno's own graph-resolution errors before handing off to tsc:
   // unsupported import attributes (e.g. `.css` without --unstable-raw-imports),
   // `compilerOptions.paths` that resolve to nothing, integrity/npm-resolution
   // failures, and invalid specifiers. Missing-module errors are deliberately
   // *not* surfaced here (`will_type_check` defers them to tsc, which reports
   // them as TS2307), so a missing import is never double-reported. Note: the
-  // richer `deno add` hint Deno 2.x's forked tsc attached to import-level
+  // richer `edno add` hint Edno 2.x's forked tsc attached to import-level
   // missing modules is not re-added on top of tsc's TS2307 yet; restoring it
   // additively is a follow-up. `allow_unknown_media_types: true` matches
-  // `deno check`, letting tsc handle unknown types instead of erroring.
+  // `edno check`, letting tsc handle unknown types instead of erroring.
   factory.module_graph_builder().await?.graph_roots_valid(
     &graph,
     &roots,
@@ -142,20 +142,20 @@ async fn native_check(
 
   // Enforce the lockfile now that the graph has resolved the project's deps:
   // under `--frozen` this errors if the lockfile is out of date, otherwise it
-  // writes the updated lockfile. Deno 2.x's forked tsc did this via the
+  // writes the updated lockfile. Edno 2.x's forked tsc did this via the
   // module loader; native check builds the graph itself, so do it here - before
   // materializing types and spawning tsc, so `--frozen` fails fast.
   if let Some(lockfile) = factory.maybe_lockfile().await? {
     lockfile.write_if_changed()?;
   }
 
-  // Walk the graph exactly as Deno 2.x's forked tsc did to obtain the combined
-  // check hash (tsc version folded in). The walk also produces deno's own graph
+  // Walk the graph exactly as Edno 2.x's forked tsc did to obtain the combined
+  // check hash (tsc version folded in). The walk also produces edno's own graph
   // diagnostics (missing modules + hints), but merging them additively isn't
-  // safe yet: Deno 2.x's forked tsc filtered those against tsc's reported
+  // safe yet: Edno 2.x's forked tsc filtered those against tsc's reported
   // ambient-module list to suppress false "missing module" errors for `declare
   // module` shims (including our own `*.css`). Native tsc doesn't hand us that
-  // list, so deno would flag ambient specifiers tsc resolves fine. Use the walk
+  // list, so edno would flag ambient specifiers tsc resolves fine. Use the walk
   // only for caching for now; additive diagnostics come once ambient modules
   // are handled.
   let type_checker = factory.type_checker().await?;
@@ -166,11 +166,11 @@ async fn native_check(
       cli_options.type_check_mode(),
     )?;
 
-  // A root (entrypoint) that deno's graph couldn't resolve - a local file that
+  // A root (entrypoint) that edno's graph couldn't resolve - a local file that
   // doesn't exist, or a remote URL that failed to fetch - can't be type-checked.
   // Handing a local one to tsc yields a leaky "File not found. Part of 'files'
   // list in tsconfig.json"; a remote one isn't a tsc `files` entry at all, so it
-  // silently falls back to checking the whole project. Deno's graph walk already
+  // silently falls back to checking the whole project. Edno's graph walk already
   // produced the proper "Cannot find module" diagnostic for the root (the walk
   // only emits one when the root failed to resolve), so surface that and keep
   // the root out of tsc. Missing *imports* stay deferred to tsc (which reports
@@ -218,7 +218,7 @@ async fn native_check(
 
   let tsc_path = ensure_native_tsc_downloaded(&factory).await?;
 
-  // When Deno honors a user `tsconfig.json`, base tsc on a throwaway overlay of
+  // When Edno honors a user `tsconfig.json`, base tsc on a throwaway overlay of
   // it (its options + our generated `extends`/`references`) written to a temp
   // file in the project root - so the user's path-based options (rootDirs,
   // baseUrl, include/files) resolve relative to the project, WITHOUT us
@@ -233,7 +233,7 @@ async fn native_check(
     );
   let root_tsconfig = project_root.join("tsconfig.json");
   // Holds the root overlay temp file open until tsc has run (dropping deletes
-  // it), keeping `deno check` side-effect-free on the user's tree.
+  // it), keeping `edno check` side-effect-free on the user's tree.
   let _root_tsconfig_guard;
   let base_tsconfig = if honor_user_tsconfig && root_tsconfig.exists() {
     let overlay = crate::tsc::tsconfig_gen::build_check_root_overlay(
@@ -241,23 +241,23 @@ async fn native_check(
       &root_tsconfig,
     )?;
     let mut tmp = tempfile::Builder::new()
-      .prefix("deno-check-root-")
+      .prefix("edno-check-root-")
       .suffix(".tsconfig.json")
       .tempfile_in(&project_root)?;
     std::io::Write::write_all(
       &mut tmp,
-      deno_core::serde_json::to_string_pretty(&overlay)?.as_bytes(),
+      edno_core::serde_json::to_string_pretty(&overlay)?.as_bytes(),
     )?;
     let path = tmp.path().to_path_buf();
     _root_tsconfig_guard = tmp;
     path
   } else {
-    project_root.join(".deno").join("tsconfig.json")
+    project_root.join(".edno").join("tsconfig.json")
   };
-  // Pin tsc to exactly the roots deno resolved (glob-expanded and exclude-applied
-  // above), so `deno check *.ts` checks only the matched files - not the whole
+  // Pin tsc to exactly the roots edno resolved (glob-expanded and exclude-applied
+  // above), so `edno check *.ts` checks only the matched files - not the whole
   // project - and an excluded file stays excluded. Local roots map to their
-  // `file://` path; remote roots map to their `.deno/remote/` mirror (added just
+  // `file://` path; remote roots map to their `.edno/remote/` mirror (added just
   // below). Only an extensionless remote root - which stock tsc can't load - is
   // left out, falling back to the base config's `include`.
   let mut files: Vec<String> = roots
@@ -268,25 +268,25 @@ async fn native_check(
     .map(|p| p.to_string_lossy().replace('\\', "/"))
     .collect();
   // A remote (`http(s):`) root is not a `file://` path, but sync-types mirrored
-  // it under `.deno/remote/`. Pin tsc to those mirror files too, so a remote
+  // it under `.edno/remote/`. Pin tsc to those mirror files too, so a remote
   // entrypoint is checked as itself rather than triggering the whole-project
   // `include` fallback below (which would check unrelated files, or nothing).
   files.extend(remote_root_mirror_files(&project_root, &roots));
 
-  // Render each root relative to the invocation directory, matching deno's own
+  // Render each root relative to the invocation directory, matching edno's own
   // `Check <specifier>` output.
   let current_dir =
     deno_path_util::url_from_directory_path(cli_options.initial_cwd())
-      .map_err(|e| deno_core::anyhow::anyhow!("{e}"))?;
+      .map_err(|e| edno_core::anyhow::anyhow!("{e}"))?;
 
   // Every requested root was a missing (non-existent) local entrypoint: there's
-  // nothing for tsc to check, so report deno's graph diagnostics for them
+  // nothing for tsc to check, so report edno's graph diagnostics for them
   // directly instead of falling back to the base config's project-wide
   // `include` (which would check unrelated files).
   if files.is_empty() && root_diagnostics.has_diagnostic() {
     log_check_roots(&roots, &current_dir);
     log::error!("{}\n", root_diagnostics);
-    return Err(deno_core::anyhow::anyhow!("Type checking failed."));
+    return Err(edno_core::anyhow::anyhow!("Type checking failed."));
   }
 
   // Holds the per-file config's temp file open until tsc has run (dropping it
@@ -295,7 +295,7 @@ async fn native_check(
   let tsconfig_path = if files.is_empty() {
     base_tsconfig
   } else {
-    // `deno check <files>` checks only the named files (and their imports), not
+    // `edno check <files>` checks only the named files (and their imports), not
     // the whole project. The generated `tsconfig.json` keeps an open `include`
     // (so bundlers can consume its resolver mappings), so write a per-file
     // config that extends it (by absolute path) and pins `files` - `files`/
@@ -309,10 +309,10 @@ async fn native_check(
     // `compilerOptions.types` (npm packages, relative paths) that provide global
     // augmentations - would be dropped. Carry them over so those types still
     // apply when checking specific files.
-    let generated_base = project_root.join(".deno").join("tsconfig.json");
+    let generated_base = project_root.join(".edno").join("tsconfig.json");
     if let Ok(text) = std::fs::read_to_string(&generated_base)
       && let Ok(value) =
-        deno_core::serde_json::from_str::<deno_core::serde_json::Value>(&text)
+        edno_core::serde_json::from_str::<edno_core::serde_json::Value>(&text)
       && let Some(base_files) = value.get("files").and_then(|f| f.as_array())
     {
       for f in base_files {
@@ -333,18 +333,18 @@ async fn native_check(
     // with anything enumerating the project directory - e.g. a sibling
     // spec-test variant that copies the directory while this ephemeral file
     // briefly exists (and then vanishes when the guard drops).
-    let content = deno_core::serde_json::json!({
+    let content = edno_core::serde_json::json!({
       "extends": base_tsconfig.to_string_lossy().replace('\\', "/"),
       "include": [],
       "files": files,
     });
     let mut tmp = tempfile::Builder::new()
-      .prefix("deno-check-")
+      .prefix("edno-check-")
       .suffix(".tsconfig.json")
       .tempfile()?;
     std::io::Write::write_all(
       &mut tmp,
-      deno_core::serde_json::to_string_pretty(&content)?.as_bytes(),
+      edno_core::serde_json::to_string_pretty(&content)?.as_bytes(),
     )?;
     let path = tmp.path().to_path_buf();
     _check_tsconfig_guard = tmp;
@@ -365,7 +365,7 @@ async fn native_check(
   let mut diagnostics = Diagnostics::from(
     crate::tsc::native::parse_tsc_diagnostics(&stdout, &project_root),
   );
-  // Fold in deno's own diagnostics for missing entrypoints (some roots existed
+  // Fold in edno's own diagnostics for missing entrypoints (some roots existed
   // and were type-checked by tsc above; any that didn't are reported here).
   diagnostics.extend(root_diagnostics);
 
@@ -375,7 +375,7 @@ async fn native_check(
 
   if diagnostics.has_diagnostic() {
     log::error!("{}\n", diagnostics);
-    return Err(deno_core::anyhow::anyhow!("Type checking failed."));
+    return Err(edno_core::anyhow::anyhow!("Type checking failed."));
   }
 
   // tsc exited non-zero but we have nothing to show. If it printed diagnostic
@@ -392,7 +392,7 @@ async fn native_check(
     } else {
       detail
     };
-    return Err(deno_core::anyhow::anyhow!(
+    return Err(edno_core::anyhow::anyhow!(
       "native tsc exited with {} without parseable diagnostics{}",
       output.status,
       if detail.is_empty() {
@@ -415,14 +415,14 @@ async fn ensure_native_tsc_downloaded(
   factory: &CliFactory,
 ) -> Result<PathBuf, AnyError> {
   let installer_factory = factory.npm_installer_factory()?;
-  let deno_dir = factory.deno_dir()?;
+  let edno_dir = factory.edno_dir()?;
   let npmrc = factory.npmrc()?;
   let npm_registry_info = installer_factory.registry_info_provider()?;
   let resolver_factory = factory.resolver_factory()?;
   let workspace_factory = resolver_factory.workspace_factory();
 
   crate::tsc::native::ensure_native_tsc(
-    deno_dir,
+    edno_dir,
     npmrc,
     npm_registry_info,
     workspace_factory.workspace_npm_link_packages()?,
@@ -433,10 +433,10 @@ async fn ensure_native_tsc_downloaded(
 }
 
 /// Print a `Check <specifier>` line for each provided root, rendered relative
-/// to `current_dir`, matching Deno 2.x's forked tsc output.
+/// to `current_dir`, matching Edno 2.x's forked tsc output.
 fn log_check_roots(
-  roots: &[deno_core::ModuleSpecifier],
-  current_dir: &deno_core::ModuleSpecifier,
+  roots: &[edno_core::ModuleSpecifier],
+  current_dir: &edno_core::ModuleSpecifier,
 ) {
   for root in roots {
     log::info!(
@@ -448,7 +448,7 @@ fn log_check_roots(
 }
 
 /// Whether a mirror path carries an extension stock tsc can language-detect.
-/// A module Deno serves by content-type but mirrors without a code extension
+/// A module Edno serves by content-type but mirrors without a code extension
 /// (`no_js_ext`) can't be loaded by stock tsc, which keys language off the
 /// extension alone.
 fn has_checkable_extension(path: &str) -> bool {
@@ -462,21 +462,21 @@ fn has_checkable_extension(path: &str) -> bool {
 }
 
 /// Resolve remote (`http(s):`) roots to their mirrored local files under
-/// `.deno/remote/` (via the generated tsconfig's `paths`) so tsc can be pinned
+/// `.edno/remote/` (via the generated tsconfig's `paths`) so tsc can be pinned
 /// to exactly the requested remote entrypoint via `files`, instead of dropping
 /// them and falling back to the base config's whole-project `include`.
 /// Extensionless remote modules have no mirror stock tsc can load and are
 /// skipped (see `has_checkable_extension`).
 fn remote_root_mirror_files(
   project_root: &Path,
-  roots: &[deno_core::ModuleSpecifier],
+  roots: &[edno_core::ModuleSpecifier],
 ) -> Vec<String> {
-  let deno_dir = project_root.join(".deno");
-  let Ok(text) = std::fs::read_to_string(deno_dir.join("tsconfig.json")) else {
+  let edno_dir = project_root.join(".edno");
+  let Ok(text) = std::fs::read_to_string(edno_dir.join("tsconfig.json")) else {
     return Vec::new();
   };
   let Ok(value) =
-    deno_core::serde_json::from_str::<deno_core::serde_json::Value>(&text)
+    edno_core::serde_json::from_str::<edno_core::serde_json::Value>(&text)
   else {
     return Vec::new();
   };
@@ -501,9 +501,9 @@ fn remote_root_mirror_files(
     if !has_checkable_extension(rel) {
       continue;
     }
-    // `paths` targets are relative to `.deno/` (where the generated tsconfig
+    // `paths` targets are relative to `.edno/` (where the generated tsconfig
     // lives); rebase onto an absolute path for the `files` entry.
-    let local = deno_dir.join(rel);
+    let local = edno_dir.join(rel);
     if local.exists() {
       files.push(local.to_string_lossy().replace('\\', "/"));
     }

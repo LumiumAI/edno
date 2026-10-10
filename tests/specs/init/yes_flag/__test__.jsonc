@@ -2,12 +2,12 @@
   "tempDir": true,
   "tests": {
     "missing": {
-      "args": "init --npm @denotest",
+      "args": "init --npm @ednotest",
       "output": "missing.out",
       "exitCode": 1
     },
     "yes": {
-      "args": "init --npm --yes @denotest",
+      "args": "init --npm --yes @ednotest",
       "output": "init.out"
     }
   }

@@ -4,13 +4,13 @@
 //! binary (`node.exe`) via a regular import.
 //!
 //! Such addons depend on the V8 C++ ABI, Node internal APIs and/or libuv that
-//! are exported by the `node.exe` executable — none of which Deno provides —
+//! are exported by the `node.exe` executable — none of which Edno provides —
 //! and they fail to load into any host that isn't literally named `node.exe`
 //! with the opaque Windows loader error `LoadLibraryExW failed`.
 //!
 //! Delay-loaded imports are intentionally ignored: a delay-loaded `node.exe`
 //! import is the node-gyp blessed pattern whose `win_delay_load_hook` redirects
-//! symbol resolution to the host process at runtime, so it works fine in Deno.
+//! symbol resolution to the host process at runtime, so it works fine in Edno.
 //! `object`'s import table only covers the regular import directory, so that
 //! distinction comes for free.
 

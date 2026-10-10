@@ -1,6 +1,6 @@
 // Copyright 2018-2026 the Deno authors. MIT license.
 
-// deno-lint-ignore-file no-var
+// edno-lint-ignore-file no-var
 
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
@@ -307,7 +307,7 @@ interface OffscreenCanvas extends EventTarget {
     contextId: OffscreenRenderingContextId,
     options?: any,
   ): OffscreenRenderingContext | null;
-  // Spec also defines "2d", "webgl", and "webgl2" context ids; Deno does
+  // Spec also defines "2d", "webgl", and "webgl2" context ids; Edno does
   // not implement those and getContext returns null for them.
   getContext(
     contextId: "2d" | "webgl" | "webgl2",

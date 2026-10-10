@@ -14,5 +14,5 @@ if (result !== 0) {
   console.log("PASS: Invalid fd returns error code");
 } else {
   console.log("FAIL: Invalid fd should return error code");
-  Deno.exit(1);
+  Edno.exit(1);
 }

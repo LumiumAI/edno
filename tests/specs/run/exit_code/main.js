@@ -1,7 +1,7 @@
-if (Deno.exitCode != 0) {
+if (Edno.exitCode != 0) {
   throw new Error("boom!");
 }
 
-Deno.exitCode = 42;
+Edno.exitCode = 42;
 
-console.log("Deno.exitCode", Deno.exitCode);
+console.log("Edno.exitCode", Edno.exitCode);

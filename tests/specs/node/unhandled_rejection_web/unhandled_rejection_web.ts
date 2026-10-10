@@ -7,7 +7,7 @@ globalThis.addEventListener("unhandledrejection", (e) => {
   e.preventDefault();
 });
 
-// deno-lint-ignore require-await
+// edno-lint-ignore require-await
 (async () => {
   throw new Error("boom!");
 })();
